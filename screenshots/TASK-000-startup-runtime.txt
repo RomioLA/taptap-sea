@@ -1,0 +1,21 @@
+[2026-10-01 17_38_09_141][0] INFO: DownloadManager initialized
+[2026-10-01 17_38_09_142][0] INFO: a couple of Subsystems registered finish.
+[2026-10-01 17_38_09_143][0] INFO: Engine construct finish.
+[2026-10-01 17_38_09_169][0] WARNING: -graphicsheadless ignored: -graphicssurfaceless takes precedence (real GLES rendering vs Noop); the two are mutually exclusive.
+/workspace/engine/Source/ThirdParty/bgfx-all/bgfx/src/renderer_gl.cpp (2474): LOG Support Color buffer fetch.
+[2026-10-01 17_38_09_904][0] WARNING: Directory[/workspace/.cli/AgentProject] not exists.
+[2026-10-01 17_38_10_051][3] WARNING: RuntimeRetargeterCache: Cannot load mapping table: uuid://F4ItQUiV0gmvAelLXpk5yrTs
+[2026-10-01 17_38_10_052][3][Script] IsNetworkMode:    false
+[2026-10-01 17_38_10_060][3][Script] [InputAdaptor] Loading input event adaptor...
+[2026-10-01 17_38_10_060][3][Script] [InputAdaptor] Hooked SubscribeToEvent for event mapping.
+[2026-10-01 17_38_10_060][3][Script] [InputAdaptor] Platform: Linux, isTouchPlatform: false
+[2026-10-01 17_38_10_060][3][Script] [InputAdaptor] Hooked Input methods for touch emulation fallback.
+[2026-10-01 17_38_10_061][3][Script] Check Transition.lua SimpleGrid.lua
+[2026-10-01 17_38_10_151][3][Script] [海洋框架] 初始化状态：飞鸟 2，鱼群 2，船只 1，小岛 1
+[2026-10-01 17_38_10_159][3][Script] [海洋框架] 开始初始化
+[2026-10-01 17_38_10_165][3][Script] [海洋框架] 界面就绪：左右移动、暂停、重置；支持键盘和触摸
+[2026-10-01 17_38_10_165][3][Script] [海洋框架] 初始化完成
+[2026-10-01 17_38_10_165][3][Script] [海洋框架] 画面 1280x720，DPR 1.00，逻辑尺寸 1280.0x720.0
+[2026-10-01 17_38_10_166][3][Script] [海洋框架] 首帧绘制完成
+[2026-10-01 17_38_13_033][123]INFO__VALIDATE_UPDATE__:false
+[2026-10-01 17_38_13_057][123][Script] [海洋框架] 场景资源已释放
