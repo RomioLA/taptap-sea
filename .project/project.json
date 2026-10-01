@@ -1,0 +1,26 @@
+{
+  "$schema": "../schemas/project.schema.json",
+  "project_id": "m_009f",
+  "author": {
+    "id": "340992998"
+  },
+  "entry": "Main.lua",
+  "version": "1.0.0",
+  "taptap_publish": {
+    "title": "渔夫漂流记",
+    "description": "",
+    "category": "casual",
+    "screen_orientation": "landscape",
+    "collection_type": "sce",
+    "trial_note": "",
+    "app_platforms": "1,2",
+    "app_id": 954419,
+    "developer_id": 459714,
+    "miniapp_id": "tapmcafwqun9cspwz9"
+  },
+  "assets": {
+    "icon": "",
+    "screenshots": [],
+    "promotional_image": ""
+  }
+}

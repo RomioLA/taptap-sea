@@ -1,0 +1,209 @@
+[2026-10-01 15_17_11_262][0] INFO: DownloadManager initialized
+[2026-10-01 15_17_11_317][0] INFO: a couple of Subsystems registered finish.
+[2026-10-01 15_17_11_343][0] INFO: Engine construct finish.
+[2026-10-01 15_17_11_362][0] INFO: Engine initialize begin.
+[2026-10-01 15_17_11_362][0] WARNING: -graphicsheadless ignored: -graphicssurfaceless takes precedence (real GLES rendering vs Noop); the two are mutually exclusive.
+[2026-10-01 15_17_11_362][0] INFO: Rendering pipeline: forward
+[2026-10-01 15_17_11_427][0] INFO: Engine resourcePrefixPath: /workspace/.cli/, resource: Res
+[2026-10-01 15_17_11_429][0] INFO: Added resource path /workspace/.cli/Res/
+[2026-10-01 15_17_11_429][0] INFO: Now resource dir: 
+[2026-10-01 15_17_11_429][0] INFO: 0 - /workspace/.cli/Res/
+[2026-10-01 15_17_11_435][0] INFO: AddPackageFile '/workspace/.cli/Autoload/CoreData.pak' to cache
+[2026-10-01 15_17_11_435][0] INFO: PackageFile::Open, /workspace/.cli/Autoload/CoreData.pak, 0
+[2026-10-01 15_17_11_448][0] INFO: UZSD package opened: /workspace/.cli/Autoload/CoreData.pak, 123 entries (122 unique blocks), decompressed 65750 -> 149066 bytes, dict 7480 bytes
+[2026-10-01 15_17_11_448][0] INFO: Added resource package CoreData
+[2026-10-01 15_17_11_448][0] INFO: AddPackageFile '/workspace/.cli/Autoload/Data.pak' to cache
+[2026-10-01 15_17_11_448][0] INFO: PackageFile::Open, /workspace/.cli/Autoload/Data.pak, 0
+[2026-10-01 15_17_11_537][0] INFO: UZSD package opened: /workspace/.cli/Autoload/Data.pak, 1292 entries (1205 unique blocks), decompressed 16553473 -> 31928814 bytes, dict 22280 bytes
+[2026-10-01 15_17_11_537][0] INFO: Added resource package Data
+[2026-10-01 15_17_11_537][0] INFO: AddPackageFile '/workspace/.cli/Autoload/Res.pak' to cache
+[2026-10-01 15_17_11_537][0] INFO: PackageFile::Open, /workspace/.cli/Autoload/Res.pak, 0
+[2026-10-01 15_17_11_723][0] INFO: UZSD package opened: /workspace/.cli/Autoload/Res.pak, 552 entries (532 unique blocks), decompressed 15088032 -> 48220552 bytes, dict 41727 bytes
+[2026-10-01 15_17_11_723][0] INFO: Added resource package Res
+/workspace/engine/Source/ThirdParty/bgfx-all/bgfx/src/renderer_gl.cpp (2474): LOG Support Color buffer fetch.
+[2026-10-01 15_17_15_040][0] ERROR: Directory not exist, create new one: /workspace/assets
+[2026-10-01 15_17_14_996][0] INFO: computeShaderSupport 1,caps->supported:4,aps->supported & BGFX_CAPS_INDEX32:4096
+[2026-10-01 15_17_14_996][0] INFO: Detected 1 GPUs
+[2026-10-01 15_17_14_996][0] INFO: GPU 0 Name: llvmpipe (LLVM 20.1.2, 256 bits)
+[2026-10-01 15_17_14_996][0] INFO: Selected GPU name: llvmpipe (LLVM 20.1.2, 256 bits)
+[2026-10-01 15_17_14_996][0] INFO: Renderer Type: OpenGL ES 3.1
+[2026-10-01 15_17_14_996][0] INFO: CheckFeatureSupport => CpuInstance=1, _R32I=1, _R32U=1, _R32F=1, _RGBA16F=1, _RGBA32F=1, MaxTextureSizeLimit=16384
+[2026-10-01 15_17_14_996][0] INFO: Graphics mode: 1280x720 (logic=1280x720, dpr=1) windowed monitor 0
+[2026-10-01 15_17_14_996][0] INFO: Initialized input
+[2026-10-01 15_17_14_996][0] INFO: Initialized user interface
+[2026-10-01 15_17_15_006][0] INFO: Initialized renderer
+[2026-10-01 15_17_15_010][0] INFO: Initialized graphics & audio output.
+[2026-10-01 15_17_15_010][0] INFO: Initialized engine
+[2026-10-01 15_17_15_016][0] INFO: LogUploader: auto-upload disabled (no SLS URL), UploadLogPack still available on demand
+[2026-10-01 15_17_15_037][0] INFO: Device Max Storage Block Binding Range: 16
+[2026-10-01 15_17_15_038][0] WARNING: Directory[/workspace/.cli/AgentProject] not exists.
+[2026-10-01 15_17_15_040][0] INFO: Added resource path /workspace/assets/
+[2026-10-01 15_17_15_040][0] INFO: Now resource dir: 
+[2026-10-01 15_17_15_040][0] INFO: 0 - /workspace/assets/
+[2026-10-01 15_17_15_040][0] INFO: 1 - /workspace/.cli/Res/
+[2026-10-01 15_17_15_041][0] INFO: Added resource path /workspace/scripts/
+[2026-10-01 15_17_15_041][0] INFO: Now resource dir: 
+[2026-10-01 15_17_15_041][0] INFO: 0 - /workspace/scripts/
+[2026-10-01 15_17_15_041][0] INFO: 1 - /workspace/assets/
+[2026-10-01 15_17_15_041][0] INFO: 2 - /workspace/.cli/Res/
+[2026-10-01 15_17_15_047][0] INFO: PackageFile::Open, /workspace/.cli/Res/shadercache_runtime/shadercache_essl.pak, 0
+[2026-10-01 15_17_15_133][0] INFO: UZSD MemoryLess package opened: /workspace/.cli/Res/shadercache_runtime/shadercache_essl.pak, 23316 entries (6163 unique blocks), compressed 7796155 bytes, dict 65536 bytes
+[2026-10-01 15_17_15_133][0] INFO: Added resource package shadercache_runtime
+[2026-10-01 15_17_15_151][0] INFO: Loaded shader cache package: /workspace/.cli/Res/shadercache_runtime/shadercache_essl.pak
+[2026-10-01 15_17_15_159][0] INFO: Custom Lua require system installed (module cache active)
+[2026-10-01 15_17_15_191][0] INFO: Lua 5.4: Generational GC enabled.
+[2026-10-01 15_17_15_196][0] INFO: Lua official log file initialized: /home/Maker/logs/lua/lua-2026-10-01 15_17_15_191.log
+[2026-10-01 15_17_15_198][0] INFO: LobbyBridge Lua API registered
+[2026-10-01 15_17_15_198][0] INFO: [Validate] Mode enabled: frames=160, timeout=100s
+[2026-10-01 15_17_15_198][0] INFO: [Screenshot] enabled: frame=120 -> /workspace/screenshots/ocean-landscape.png
+[2026-10-01 15_17_15_201][0] INFO: Localization: auto-selected 'en' from [en, zh_CN]
+[2026-10-01 15_17_15_201][0] INFO: BootstrapManager: Localization initialized, language=en
+[2026-10-01 15_17_15_207][0] INFO: LoadingUI::Show()
+[2026-10-01 15_17_15_228][0] INFO: BootstrapPipeline: starting with 1 steps, total weight 1.00
+[2026-10-01 15_17_15_228][0] INFO: BootstrapPipeline: executing step [1/1] 'Ready'
+[2026-10-01 15_17_15_228][0] INFO: [Bootstrap/Ready] Starting...
+[2026-10-01 15_17_15_228][0] INFO: [Bootstrap/Ready] No project_id (-game=), project-scoped Lobby requests will be rejected
+[2026-10-01 15_17_15_231][0] INFO: [Bootstrap/Ready] settings.json not found, single player mode assumed
+[2026-10-01 15_17_15_231][1] INFO: Shader::BeginLoad: /Shaders/BLGL/UI.glsl
+[2026-10-01 15_17_15_231][1] INFO: Shader::EndLoad
+[2026-10-01 15_17_15_232][1] INFO: Loaded vertex shader UI(DIFFMAP GAMMA_IN_SHADERING MIXCOLOR VERTEXCOLOR)
+[2026-10-01 15_17_15_232][1] INFO: Loaded pixel shader UI(DIFFMAP GAMMA_IN_SHADERING MIXCOLOR OPACITY VERTEXCOLOR)
+[2026-10-01 15_17_15_232][1] INFO: Loaded vertex shader UI(DIFFMAP)
+[2026-10-01 15_17_15_232][1] INFO: Loaded pixel shader UI(DIFFMAP OPACITY)
+[2026-10-01 15_17_15_232][1] INFO: BXLOG:/workspace/engine/Source/ThirdParty/bgfx-all/bgfx/src/renderer_gl.cpp (2474): LOG Support Color buffer fetch.
+
+[2026-10-01 15_17_15_232][2] INFO: [Bootstrap/Ready] Completed successfully (4 ms)
+[2026-10-01 15_17_15_232][2] INFO: BootstrapPipeline: step 'Ready' completed successfully
+[2026-10-01 15_17_15_463][3] INFO: BootstrapPipeline: completed successfully
+[2026-10-01 15_17_15_463][3] INFO: LoadingUI::Hide()
+[2026-10-01 15_17_15_463][3] INFO: BootstrapManager: pipeline completed successfully
+[2026-10-01 15_17_15_463][3] INFO: BootstrapManager: using provided scriptFileName: Main.lua
+[2026-10-01 15_17_15_466][3] WARNING: RuntimeRetargeterCache: Cannot load mapping table: uuid://F4ItQUiV0gmvAelLXpk5yrTs
+[2026-10-01 15_17_15_469][3] INFO: Loaded Lua script LuaScripts/Utilities/EnginePreview.lua
+[2026-10-01 15_17_15_470][3][Script] IsNetworkMode:    false
+[2026-10-01 15_17_15_478][3] INFO: Loaded Lua script urhox-libs/Engine/init.lua
+[2026-10-01 15_17_15_478][3] INFO: Loaded Lua script urhox-libs/Engine/InputExtensions.lua
+[2026-10-01 15_17_15_482][3] INFO: Loaded Lua script urhox-libs/Engine/ResourceCacheExtensions.lua
+[2026-10-01 15_17_15_483][3] INFO: Loaded Lua script urhox-libs/Engine/i18n.lua
+[2026-10-01 15_17_15_488][3] INFO: [i18n] loadConfig: i18n.json not found, i18n disabled
+[2026-10-01 15_17_15_488][3] INFO: [i18n] GetLanguage: no language resolved
+[2026-10-01 15_17_15_488][3] INFO: [i18n] init: no config found, hooks NOT installed
+[2026-10-01 15_17_15_488][3] INFO: Loaded Lua script LuaScripts/Utilities/Previews/InputAdaptor.lua
+[2026-10-01 15_17_15_488][3][Script] [InputAdaptor] Loading input event adaptor...
+[2026-10-01 15_17_15_488][3][Script] [InputAdaptor] Hooked SubscribeToEvent for event mapping.
+[2026-10-01 15_17_15_488][3][Script] [InputAdaptor] Platform: Linux, isTouchPlatform: false
+[2026-10-01 15_17_15_488][3][Script] [InputAdaptor] Hooked Input methods for touch emulation fallback.
+[2026-10-01 15_17_15_489][3] INFO: Loaded Lua script LuaScripts/Utilities/Previews/Scene.lua
+[2026-10-01 15_17_15_489][3] INFO: Loaded Lua script LuaScripts/Utilities/Previews/SceneGuard.lua
+[2026-10-01 15_17_15_489][3] INFO: Loaded Lua script LuaScripts/Utilities/Previews/UIGuard.lua
+[2026-10-01 15_17_15_489][3] INFO: Loaded Lua script LuaScripts/Utilities/Previews/RewardVideoAd.lua
+[2026-10-01 15_17_15_489][3] INFO: Loaded Lua script LuaScripts/Utilities/Previews/UserInfo.lua
+[2026-10-01 15_17_15_489][3][Script] Check Transition.lua SimpleGrid.lua
+[2026-10-01 15_17_15_489][3] INFO: Executed Lua script LuaScripts/Utilities/EnginePreview.lua
+[2026-10-01 15_17_15_493][3] INFO: Loaded Lua script Validate/cloud_stub.lua
+[2026-10-01 15_17_15_493][3] INFO: Executed Lua script Validate/cloud_stub.lua
+[2026-10-01 15_17_15_493][3] INFO: Loaded Lua script Validate/servercloud_stub.lua
+[2026-10-01 15_17_15_493][3] INFO: Executed Lua script Validate/servercloud_stub.lua
+[2026-10-01 15_17_15_495][3] INFO: Loaded Lua script Main.lua
+[2026-10-01 15_17_15_495][3] INFO: Loaded Lua script urhox-libs/UI/init.lua
+[2026-10-01 15_17_15_497][3] INFO: Loaded Lua script urhox-libs/UI/Core/UI.lua
+[2026-10-01 15_17_15_497][3] INFO: Loaded Lua script urhox-libs/UI/Core/Theme.lua
+[2026-10-01 15_17_15_497][3] INFO: Loaded Lua script urhox-libs/UI/Core/ImageCache.lua
+[2026-10-01 15_17_15_498][3] INFO: Loaded Lua script urhox-libs/UI/Core/PointerEvent.lua
+[2026-10-01 15_17_15_498][3] INFO: Loaded Lua script urhox-libs/UI/Core/Input.lua
+[2026-10-01 15_17_15_499][3] INFO: Loaded Lua script urhox-libs/UI/Core/InputAdapter.lua
+[2026-10-01 15_17_15_499][3] INFO: Loaded Lua script urhox-libs/UI/Core/Gesture.lua
+[2026-10-01 15_17_15_499][3] INFO: Loaded Lua script urhox-libs/UI/Core/GestureEvent.lua
+[2026-10-01 15_17_15_502][3] INFO: Loaded Lua script urhox-libs/UI/Core/Widget.lua
+[2026-10-01 15_17_15_503][3] INFO: Loaded Lua script urhox-libs/UI/Core/Style.lua
+[2026-10-01 15_17_15_503][3] INFO: Loaded Lua script urhox-libs/UI/Core/Transition.lua
+[2026-10-01 15_17_15_504][3] INFO: Loaded Lua script urhox-libs/UI/Core/UILoader.lua
+[2026-10-01 15_17_15[2026-10-01 15_17_15_576][3] ERROR: Could not find resource Fonts/ResourceHanRoundedCN-Bold.ttf
+[2026-10-01 15_17_15_576][3] ERROR: nvgCreateFontUrho: Failed to load font: Fonts/ResourceHanRoundedCN-Bold.ttf
+[2026-10-01 15_17_15_576][3] ERROR: Could not find resource Fonts/ResourceHanRoundedCN-Regular.ttf
+[2026-10-01 15_17_15_576][3] ERROR: nvgCreateFontUrho: Failed to load font: Fonts/ResourceHanRoundedCN-Regular.ttf
+_504][3] INFO: Loaded Lua script urhox-libs/UI/Core/UISerializer.lua
+[2026-10-01 15_17_15_505][3] INFO: Loaded Lua script urhox-libs/UI/Core/UIInspector/init.lua
+[2026-10-01 15_17_15_506][3] INFO: Loaded Lua script urhox-libs/UI/Core/UIInspector/Context.lua
+[2026-10-01 15_17_15_507][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/ColorPicker.lua
+[2026-10-01 15_17_15_507][3] INFO: Loaded Lua script urhox-libs/UI/Core/UIInspector/Schema.lua
+[2026-10-01 15_17_15_508][3] INFO: Loaded Lua script urhox-libs/UI/Core/UIInspector/Selection.lua
+[2026-10-01 15_17_15_509][3] INFO: Loaded Lua script urhox-libs/UI/Core/UIInspector/Overlay.lua
+[2026-10-01 15_17_15_510][3] INFO: Loaded Lua script urhox-libs/UI/Core/UIInspector/Report.lua
+[2026-10-01 15_17_15_511][3] INFO: Loaded Lua script urhox-libs/UI/Core/UIInspector/QuickTweak.lua
+[2026-10-01 15_17_15_512][3] INFO: Loaded Lua script urhox-libs/UI/Core/UIInspector/EditTool.lua
+[2026-10-01 15_17_15_514][3] INFO: Loaded Lua script urhox-libs/UI/Core/UIInspector/Panel.lua
+[2026-10-01 15_17_15_515][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Panel.lua
+[2026-10-01 15_17_15_516][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Label.lua
+[2026-10-01 15_17_15_517][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Button.lua
+[2026-10-01 15_17_15_518][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/TextField.lua
+[2026-10-01 15_17_15_518][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/EditMenu.lua
+[2026-10-01 15_17_15_519][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Checkbox.lua
+[2026-10-01 15_17_15_519][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Toggle.lua
+[2026-10-01 15_17_15_520][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Slider.lua
+[2026-10-01 15_17_15_520][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/ProgressBar.lua
+[2026-10-01 15_17_15_521][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/ScrollView.lua
+[2026-10-01 15_17_15_522][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Dropdown.lua
+[2026-10-01 15_17_15_523][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Modal.lua
+[2026-10-01 15_17_15_523][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Toast.lua
+[2026-10-01 15_17_15_524][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Tabs.lua
+[2026-10-01 15_17_15_525][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Tooltip.lua
+[2026-10-01 15_17_15_526][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Badge.lua
+[2026-10-01 15_17_15_526][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Avatar.lua
+[2026-10-01 15_17_15_528][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Card.lua
+[2026-10-01 15_17_15_529][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/List.lua
+[2026-10-01 15_17_15_530][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Divider.lua
+[2026-10-01 15_17_15_530][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Skeleton.lua
+[2026-10-01 15_17_15_531][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Chip.lua
+[2026-10-01 15_17_15_532][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Accordion.lua
+[2026-10-01 15_17_15_532][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Stepper.lua
+[2026-10-01 15_17_15_533][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Rating.lua
+[2026-10-01 15_17_15_534][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Breadcrumb.lua
+[2026-10-01 15_17_15_534][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Pagination.lua
+[2026-10-01 15_17_15_535][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Alert.lua
+[2026-10-01 15_17_15_536][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Timeline.lua
+[2026-10-01 15_17_15_537][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Menu.lua
+[2026-10-01 15_17_15_538][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Tree.lua
+[2026-10-01 15_17_15_539][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/DatePicker.lua
+[2026-10-01 15_17_15_540][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/TimePicker.lua
+[2026-10-01 15_17_15_541][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Table.lua
+[2026-10-01 15_17_15_542][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Carousel.lua
+[2026-10-01 15_17_15_543][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Drawer.lua
+[2026-10-01 15_17_15_544][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Popover.lua
+[2026-10-01 15_17_15_545][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Calendar.lua
+[2026-10-01 15_17_15_545][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/FileUpload.lua
+[2026-10-01 15_17_15_546][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/RichText.lua
+[2026-10-01 15_17_15_547][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/SafeAreaView.lua
+[2026-10-01 15_17_15_547][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/SimpleGrid.lua
+[2026-10-01 15_17_15_548][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Spine.lua
+[2026-10-01 15_17_15_548][3] INFO: Loaded Lua script urhox-libs/Sprite/SpriteSheet.lua
+[2026-10-01 15_17_15_549][3] INFO: Loaded Lua script urhox-libs/UI/Widgets/Sprite.lua
+[2026-10-01 15_17_15_549][3] INFO: Loaded Lua script urhox-libs/Sprite/SpriteAnimator.lua
+[2026-10-01 15_17_15_550][3] INFO: Loaded Lua script urhox-libs/UI/Components/VirtualList.lua
+[2026-10-01 15_17_15_550][3] INFO: Loaded Lua script urhox-libs/UI/Components/DragDropContext.lua
+[2026-10-01 15_17_15_551][3] INFO: Loaded Lua script urhox-libs/UI/Components/ItemSlot.lua
+[2026-10-01 15_17_15_551][3] INFO: Loaded Lua script urhox-libs/UI/Components/InventoryManager.lua
+[2026-10-01 15_17_15_551][3] INFO: Loaded Lua script urhox-libs/UI/Components/SkillTree.lua
+[2026-10-01 15_17_15_552][3] INFO: Loaded Lua script urhox-libs/UI/Components/ChatWindow.lua
+[2026-10-01 15_17_15_552][3] INFO: Loaded Lua script urhox-libs/UI/Components/ItemTooltip.lua
+[2026-10-01 15_17_15_558][3] INFO: Loaded Lua script Ocean/Config.lua
+[2026-10-01 15_17_15_560][3] INFO: Loaded Lua script Ocean/State.lua
+[2026-10-01 15_17_15_564][3] INFO: Loaded Lua script Ocean/Draw.lua
+[2026-10-01 15_17_15_567][3] INFO: Loaded Lua script Ocean/HUD.lua
+[2026-10-01 15_17_15_568][3][Script] [海洋框架] 初始化状态：飞鸟 2，鱼群 2，船只 1，小岛 1
+[2026-10-01 15_17_15_571][3] INFO: Executed Lua script Main.lua
+[2026-10-01 15_17_15_571][3][Script] [海洋框架] 开始初始化
+[2026-10-01 15_17_15_576][3] INFO: Loaded Lua script urhox-libs/UI/Theme/DefaultTaptap.lua
+[2026-10-01 15_17_15_576][3] INFO: Shader::BeginLoad: /Shaders/BLGL/NanoVGFill.glsl
+[2026-10-01 15_17_15_576][3] INFO: Shader::EndLoad
+[2026-10-01 15_17_15_576][3] INFO: Loaded vertex shader NanoVGFill()
+[2026-10-01 15_17_15_576][3] INFO: Loaded pixel shader NanoVGFill()
+[2026-10-01 15_17_15_580][3][Script] [海洋框架] 界面就绪：左右移动、暂停、重置；支持键盘和触摸
+[2026-10-01 15_17_15_580][3][Script] [海洋框架] 初始化完成
+[2026-10-01 15_17_15_580][3] INFO: UrhoXRuntime: Game started successfully
+[2026-10-01 15_17_15_580][3][Script] [海洋框架] 画面 1280x720，DPR 1.00，逻辑尺寸 1280.0x720.0
+[2026-10-01 15_17_15_581][3][Script] [海洋框架] 首帧绘制完成
+[2026-10-01 15_17_18_602][120] INFO: [Screenshot] captured at frame 120 -> /workspace/screenshots/ocean-landscape.png
+[2026-10-01 15_17_22_442][163]INFO__VALIDATE_UPDATE__:false
+[2026-10-01 15_17_22_460][163][Script] [海洋框架] 场景资源已释放
+[2026-10-01 15_17_23_841][163] INFO: DownloadManager: all tasks cancelled
