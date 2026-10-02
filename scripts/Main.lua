@@ -3,6 +3,7 @@
 -- 操作：A/D 或方向键移动，空格暂停，R 重置；点击海面也可移动船只。
 local UI = require("urhox-libs/UI")
 local Config = require("Ocean.Config")
+local Camera = require("Ocean.Camera")
 local Game = require("Game.Game")
 local Draw = require("Ocean.Draw")
 local HUD = require("Ocean.HUD")
@@ -101,21 +102,16 @@ function HandleOceanRender(eventType, eventData)
     end
 end
 
--- STEP-3 米制坐标基座：屏幕点 → 世界米制坐标。
--- 最小镜头模型（参数表「船镜头」）：正交视高 45m（正方形像素），船锚点比例 (boatX, 0.60)。
--- M0 接入真实船世界坐标后，原点替换为船的世界位置；当前以船锚点为临时原点 (0,0)。
+-- STEP-3 米制坐标基座（STEP-6 修正：换算统一走 Ocean.Camera）：
+-- 最小镜头模型（参数表「船镜头」）：正交视高 45m（正方形像素），
+-- 世界原点 = 船初始位置的锚点，不随船移动（船动过之后点击坐标依然准确）。
 local function ScreenPointToWorldMeters(screenX, screenY)
     local width, height = graphics:GetWidth(), graphics:GetHeight()
     if width <= 0 or height <= 0 then return nil, nil end
     local dpr = math.max(graphics:GetDPR(), 0.1)
     local logicalW, logicalH = width / dpr, height / dpr
-    local metersPerLogicalPixel = Config.world.viewHeight / logicalH
-    local state = game:GetRenderState()
-    local anchorX = logicalW * (state and state.boatX or 0.5)
-    local anchorY = logicalH * 0.60
-    local dx = screenX / dpr - anchorX
-    local dy = screenY / dpr - anchorY
-    return dx * metersPerLogicalPixel, -dy * metersPerLogicalPixel
+    return Camera.ScreenToWorld(logicalW, logicalH, game:GetRenderState(),
+        screenX / dpr, screenY / dpr)
 end
 
 local function MoveToScreenPoint(x, y)
@@ -129,7 +125,10 @@ local function MoveToScreenPoint(x, y)
     game:SetTarget(x / width)
     local worldX, worldY = ScreenPointToWorldMeters(x, y)
     if worldX then
-        local dist = math.sqrt(worldX * worldX + worldY * worldY)
+        local dpr = math.max(graphics:GetDPR(), 0.1)
+        local logicalW, logicalH = width / dpr, height / dpr
+        local boatWorldX = Camera.BoatWorldX(game:GetRenderState(), logicalW, logicalH)
+        local dist = math.sqrt((worldX - boatWorldX) ^ 2 + worldY * worldY)
         local clickText = string.format("点击 (%.1f, %.1f)m 距船 %.1fm", worldX, worldY, dist)
         print(string.format("[米制坐标] %s", clickText))
         if hud and hud.updateDiagnostics then

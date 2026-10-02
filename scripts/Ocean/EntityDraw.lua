@@ -1,7 +1,8 @@
 -- 实体调试绘制（STEP-4 渲染通道）：只读 World 实体并画在海面上，不修改任何状态。
--- 坐标换算与 Main.ScreenPointToWorldMeters 同一模型：正交视高 45m，锚点比例 (boatX, 0.60)。
+-- 坐标换算统一走 Ocean.Camera（STEP-6 修正）：世界原点钉在船初始位置锚点，
+-- 不随船移动——修复"实体跟着船跑"（旧实现以当前锚点为原点，船动=全体平移）。
 -- 这是 World 实体的唯一渲染入口；水面信号（涟漪/水花/剪影）后续在本模块扩展。
-local Config = require("Ocean.Config")
+local Camera = require("Ocean.Camera")
 
 local EntityDraw = {}
 
@@ -42,13 +43,10 @@ end
 ---@param world table Game.World
 function EntityDraw.Scene(ctx, w, h, state, world)
     if not world then return end
-    local pixelsPerMeter = h / Config.world.viewHeight
-    local anchorX = w * (state and state.boatX or 0.5)
-    local anchorY = h * 0.60
+    local pixelsPerMeter = Camera.PixelsPerMeter(h)
     for _, entity in ipairs(world:GetEntities()) do
         if entity.alive and entity.position then
-            local sx = anchorX + entity.position.x * pixelsPerMeter
-            local sy = anchorY - entity.position.y * pixelsPerMeter
+            local sx, sy = Camera.WorldToScreen(w, h, state, entity.position.x, entity.position.y)
             if entity.kind == "fish" then
                 -- STEP-6 鱼体渲染；Wander 无水面信号（不画涟漪）
                 local color = FISH_COLORS[entity.fishKey] or KIND_COLORS.fish
