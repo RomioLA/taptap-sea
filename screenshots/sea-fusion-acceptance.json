@@ -1,0 +1,86 @@
+{
+  "SEA_ART_FUSION_AUTOMATIC_ACCEPTANCE": "PASS",
+  "checkedAt": "2026-10-02T12:14:23.759998+08:00",
+  "checks": {
+    "runtime_behavior": true,
+    "adapter_composition": true,
+    "artwork_render_contracts": true,
+    "all_lua_syntax": true,
+    "maker_static_errors_zero": true,
+    "long_voyage_stability": true,
+    "physics_and_original_HUD_State_unchanged": true,
+    "correct_cwd": true,
+    "correct_title": true,
+    "correct_maker_binding": true
+  },
+  "counts": {
+    "runtimeBehavior": 53,
+    "adapter": 8,
+    "renderContracts": 8,
+    "stability": 3,
+    "luaSyntax": 25,
+    "makerFilteredLspErrors": 0
+  },
+  "sourceSHA256": {
+    "scripts\\Main.lua": "930dfa4714c9ffe64d88ff3f4d15da6e00c8177aad4c84762e80fd16ba16de62",
+    "scripts\\Ocean\\Bootstrap.lua": "12363f5bf09f1adb53178bbf5d64f2e5bc6a5426b2ad195854ae7f2be143fb69",
+    "scripts\\Ocean\\Config.lua": "acb2cd4aeb069b0393cc30b001e99bd889610ffc9d5e05d1abedec79218f8cd8",
+    "scripts\\Ocean\\Draw.lua": "663eb992c3b217fa9a9a7a81a58184cd4282e44a64d641317f7d90a709d7f574",
+    "scripts\\Ocean\\Fish.lua": "bf50b7f35f7a5eb7725bcf6376de026c057dfe84edb750899f27a7b892d80d1d",
+    "scripts\\Ocean\\FishData.lua": "d8aa8e1c336081dae3ee5fa4e6f0aa22924a1d257f50c42d51910984433dcb89",
+    "scripts\\Ocean\\FusedScene.lua": "8bfb660db1d2b5dd2e0b7a9eabe4e0f9b539b741fac9026ac7a55c9c8f81d6bf",
+    "scripts\\Ocean\\HUD.lua": "3e54576096a956becc6890a9aae91d1c1b2a781e62afd366658500cc31fff625",
+    "scripts\\Ocean\\Math.lua": "9cb75e3c99f667e1529944db1f777a99cd3a9eab3e45ebed631776b0a22e1a5d",
+    "scripts\\Ocean\\Movement.lua": "53e54955b4f4c596cfc1a65f1840c4edcfc31a998727172dee1656bd1b513dab",
+    "scripts\\Ocean\\SceneState.lua": "f78aab095bd890f968564c05426cab843a5344aad519edbf724bbf49b5c3c5be",
+    "scripts\\Ocean\\SeaDebug.lua": "6c0fa07b96c1811d62e84ea78b61136529c8ad498543c07c5bdb6d0f5c2c69f0",
+    "scripts\\Ocean\\SeaDraw.lua": "5a2324cc33a0fa87c38351f9fecf3dc3bb3396218a0d4be212f28d4bd4fd6422",
+    "scripts\\Ocean\\SeaRuntime.lua": "8e5abb274bd2495c8160f70b5835889a2274ac52b27fdeda0d980eb88df67f31",
+    "scripts\\Ocean\\SpawnStrategy.lua": "dbb5b67e46b21b00f6d9a86f5de806bcb70d233678f59a7f1d730e3f484a5b9f",
+    "scripts\\Ocean\\State.lua": "cb95df6447bd3ba046a1d4f1b25d84ec6014756422b9bc7abc46dc0a8ad1db52",
+    "scripts\\Ocean\\World.lua": "4154ccdcb4021e8161e08d87987b6f3263fcc2efed4897e840cd041b81d4defe",
+    "scripts\\SeaPreviewEntry.lua": "6bd8f0140b149d75628424806f3eaf2950f7bfe40d8e9b95614d1b77ce6553fa",
+    "scripts\\tests\\SeaEngineSmoke.lua": "700bdf37e55a805b33eb1950ff73f4110c611637e6dae42a0f85b74efdee6be7",
+    "scripts\\tests\\SeaFusedSceneTests.lua": "513d62c7c18d9ed28e3b09bfd782bdf3da58ecec27923a55670df5adf2c1f779",
+    "scripts\\tests\\SeaFusionRenderTests.lua": "5757046bd466dac589d5fcb8f5d7d7f58197fc72842865564393ffe99a60b3ed",
+    "scripts\\tests\\SeaNativeVoyage.lua": "97927d01a089a7a186631fe09d398e48c6af598fd9a26852e8fba7a53485a145",
+    "scripts\\tests\\SeaNativeVoyageEntry.lua": "3d189d95774b774b3088268800b99785a6862934d9f988028a78df3b292d7faa",
+    "scripts\\tests\\SeaRuntimeTests.lua": "2f2e2297b049e9743bb22f465e96c2d7abfc1afccf10d339ef796acf10cd5983",
+    "scripts\\tests\\SeaStabilityTests.lua": "464e66542dd485ca6f4417a2a486cb199db5bf5dfbadcf39b077198d2c7a9809"
+  },
+  "protectedFileCurrentSHA256": {
+    "AGENTS.md": "2f7d49f8cf1b642f4590d6cf7c932426c3f49ef1ae6fe08a62eec8fed888fcbf",
+    ".gitignore": "e2cd43688b5d1486af4a750cf2e0a2485f0593d4a12326cf38d80567c7c03295",
+    ".project/project.json": "fb71fc676ec750345b35fb1195227f6a18f62c98026d746da93515e9d9b59f2e",
+    ".maker-mcp/config.json": "7fa72de02e703af6ab252f8cb76f2c41b6aa2fb8ff9410865eb3d3b9b0cfe3db"
+  },
+  "sharedEntry": {
+    "path": "scripts/Main.lua",
+    "authorization": "latest user request to integrate runtime into original artwork",
+    "registration": "require Ocean.FusedScene; Start/Stop only"
+  },
+  "preview": {
+    "state": "stopped",
+    "process_alive": false,
+    "native_verified_this_round": false
+  },
+  "ENVIRONMENT_RUNTIME_ISSUE": [
+    "Cube/Day/DaySpecularHDR.dds",
+    "themis_x64.dll"
+  ],
+  "offlinePreview": {
+    "engineScreenshot": false,
+    "hudIncluded": false,
+    "testOnlyNearbyFishIslandFixtures": true,
+    "formalMapOrDensityChanged": false,
+    "fishVisibleOnlyViaDebugInRevealPNG": true
+  },
+  "pendingManual": [
+    "native HUD layout and input hit-testing",
+    "native screen/DPR resize and sun/ship/fish artwork",
+    "side-view art and world collision footprint alignment",
+    "native graphics performance"
+  ],
+  "scopeBoundary": "Full fishing action/CompleteFishing and port/location contracts remain unimplemented as previously reported; no B logic changes.",
+  "workspace": "local uncommitted; existing .gitignore change retained; no push, remote build, project metadata or dependency edits"
+}

@@ -1,0 +1,47 @@
+{
+  "luaVersion": "Lua 5.4",
+  "tests": [
+    {
+      "name": "original HUD directional contract drives the real ship",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "original HUD pause and reset synchronize and preserve ship level",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "fused scene retains the original HUD root and appends hidden debug tools",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "sky clicks do not sail; sea clicks target world meters; UI blocks clicks",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "one event owner updates and renders the real simulation at mode-B DPR",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "keyboard pause reset and hidden debug visibility keep the HUD synchronized",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "shutdown is idempotent and releases only this event owner and UI",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "B may supply a UI factory without replacing or initializing its UI",
+      "error": "",
+      "passed": true
+    }
+  ],
+  "nativeRuntimeVerified": false,
+  "passed": true
+}

@@ -1,0 +1,154 @@
+{
+  "A_MODULE_ACCEPTANCE": "PASS",
+  "checkedAt": "2026-10-02T11:21:08.233288+08:00",
+  "scope": "Current values/ship levels/single fishing target interfaces: pure Lua, syntax, stability and static checks. Previous native evidence is historical; stopped preview was not restarted.",
+  "checks": {
+    "allUserImplementationNumbers": true,
+    "shipLevels": true,
+    "meterUnit": true,
+    "fishValueStatus": true,
+    "balanceDensityStatus": true,
+    "behaviorTests": true,
+    "allLuaSyntax": true,
+    "stability": true,
+    "static": true,
+    "sharedEntryAndProtectedFiles": true,
+    "identity": true
+  },
+  "actualImplementationValues": {
+    "ship": {
+      "turnDegPerSec": 180,
+      "arrivalRadius": 1.5,
+      "maxSpeed": 10.0,
+      "defaultLevel": 1
+    },
+    "world": {
+      "travelSec": 180,
+      "mapSize": 1800.0,
+      "halfSize": 900.0,
+      "visualPadding": 100,
+      "pushSpeed": 3,
+      "pushSec": 0.3,
+      "temporaryLifetimeSec": 20,
+      "activateRadius": 120,
+      "freezeRadius": 150
+    },
+    "camera": {
+      "minX": 0.35,
+      "maxX": 0.65,
+      "minY": 0.45,
+      "maxY": 0.75,
+      "followSec": 0.15
+    },
+    "sardine": {
+      "wanderSpeed": 4,
+      "attractedSpeed": 5,
+      "fleeSpeed": 7,
+      "turnDegPerSec": 220,
+      "wanderMinSec": 2,
+      "wanderMaxSec": 4,
+      "fleeJitterSec": 0.4,
+      "fleeJitterDeg": 25,
+      "attractRadius": 18,
+      "dangerRadius": 12,
+      "targetActiveCount": 20
+    },
+    "tuna": {
+      "wanderSpeed": 5,
+      "attractedSpeed": 6.0,
+      "chaseSpeed": 8,
+      "turnDegPerSec": 90,
+      "preyRadius": 30,
+      "attractRadius": 36,
+      "eatRadius": 1.5,
+      "lostPreySec": 2,
+      "minSpawnDistance": 200,
+      "targetActiveCount": 4
+    }
+  },
+  "shipSpeeds": [
+    6,
+    8,
+    10
+  ],
+  "logicTests": 45,
+  "syntaxFiles": 21,
+  "stabilityGroups": 3,
+  "staticErrors": 0,
+  "sourceSHA256": {
+    "scripts\\Main.lua": "45dfcaba2a0f31975db4998debdd5929416ac6f249c5cf113b0e422ec0be6f68",
+    "scripts\\Ocean\\Bootstrap.lua": "028799a65b6dda73006ffb54abb3b440afdfd94a3b4d72a6e419fa8fe9b693f8",
+    "scripts\\Ocean\\Config.lua": "d6667f075fb08fd51bf8f5017dfdd30481a2ccfb1a2e4df0812dfb5920e66b2a",
+    "scripts\\Ocean\\Draw.lua": "bd4d4fea3d8d0184b56d772361fcaed004bbd4b03879df75f5e784f454d6f3b3",
+    "scripts\\Ocean\\Fish.lua": "1edd9ea7122ccf1826a7b11c98cfff2d9a5ac180e9e942d7c9f14143450269c3",
+    "scripts\\Ocean\\FishData.lua": "057ae7788685ddc2db8cd520ae8ff2ef71cc03da579c3f6756c4279b97e9e702",
+    "scripts\\Ocean\\HUD.lua": "3e54576096a956becc6890a9aae91d1c1b2a781e62afd366658500cc31fff625",
+    "scripts\\Ocean\\Math.lua": "9cb75e3c99f667e1529944db1f777a99cd3a9eab3e45ebed631776b0a22e1a5d",
+    "scripts\\Ocean\\Movement.lua": "17a4b2e7e58176f561f6fc776750e1edf18548d06237488861f6266fd27b7e3a",
+    "scripts\\Ocean\\SeaDebug.lua": "efc9fd88d40a22502134096603421f1bdd33317c5084bcaebbb50131ab77de3b",
+    "scripts\\Ocean\\SeaDraw.lua": "2fb9e3e7cff0c6e4d185492a610522b9aad0516f75d98ff64482bd8200b47a9d",
+    "scripts\\Ocean\\SeaRuntime.lua": "a1cecf72df7bc72db6d8a3dd124c4665f9e74fda7c5f4aaad56da311eef2edc5",
+    "scripts\\Ocean\\SpawnStrategy.lua": "4f9feb0c46062be7bbbd66477f3c0ae69dcf587deacb598667dbfb54f2d5813d",
+    "scripts\\Ocean\\State.lua": "cb95df6447bd3ba046a1d4f1b25d84ec6014756422b9bc7abc46dc0a8ad1db52",
+    "scripts\\Ocean\\World.lua": "4154ccdcb4021e8161e08d87987b6f3263fcc2efed4897e840cd041b81d4defe",
+    "scripts\\SeaPreviewEntry.lua": "6bd8f0140b149d75628424806f3eaf2950f7bfe40d8e9b95614d1b77ce6553fa",
+    "scripts\\tests\\SeaEngineSmoke.lua": "700bdf37e55a805b33eb1950ff73f4110c611637e6dae42a0f85b74efdee6be7",
+    "scripts\\tests\\SeaNativeVoyage.lua": "97927d01a089a7a186631fe09d398e48c6af598fd9a26852e8fba7a53485a145",
+    "scripts\\tests\\SeaNativeVoyageEntry.lua": "3d189d95774b774b3088268800b99785a6862934d9f988028a78df3b292d7faa",
+    "scripts\\tests\\SeaRuntimeTests.lua": "609ebb258a98aadb89421313dc319ca042b5b663f3e3d51756b498477f59d929",
+    "scripts\\tests\\SeaStabilityTests.lua": "464e66542dd485ca6f4417a2a486cb199db5bf5dfbadcf39b077198d2c7a9809"
+  },
+  "sevenRequiredChecks": {
+    "configurationFiles": [
+      "scripts/Ocean/Config.lua",
+      "scripts/Ocean/FishData.lua"
+    ],
+    "old24048Logic": "not implemented/no active code",
+    "tuna": {
+      "preyRadius": 30,
+      "attractRadius": 36,
+      "attractedSpeed": 6
+    },
+    "fishingResult": "single nearest live fish or nil; selection only, B owns action/remove",
+    "dailyFishingHardLimit": "none",
+    "worldUnit": "1 world unit = 1 meter",
+    "balanceTargetsOnly": {
+      "localDensity": {
+        "sardine": 20,
+        "tuna": 4
+      },
+      "effectiveCatchesPerDayEarly": 3,
+      "effectiveCatchesPerDayLate": [
+        5,
+        6
+      ],
+      "firstPlaythrough": {
+        "days": 7,
+        "opportunities": 30,
+        "sardine": 21,
+        "tuna": 9
+      },
+      "secondPlaythrough": {
+        "catches": [
+          24,
+          26
+        ],
+        "tunaShare": [
+          0.6,
+          0.7
+        ]
+      }
+    }
+  },
+  "environmentIssuesUnchanged": [
+    "Cube/Day/DaySpecularHDR.dds",
+    "themis_x64.dll"
+  ],
+  "manualAndBIntegrationPending": [
+    "hardware inputs and visual feel",
+    "new level and single-target interface native integration",
+    "net radius and maximum casting distance undecided",
+    "B 4s fishing/40 stamina for empty or full net, unpaused world time"
+  ],
+  "workspace": "local uncommitted; existing .gitignore change retained; shared Main unchanged; preview stopped; no push"
+}

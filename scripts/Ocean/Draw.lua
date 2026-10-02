@@ -1,5 +1,6 @@
 -- 矢量场景绘制模块：只负责画面，不修改游戏状态，也不依赖外部图片。
 local Config = require("Ocean.Config")
+local FishData = require("Ocean.FishData")
 local Draw = {}
 
 ---@param ctx NVGContextWrapper
@@ -304,6 +305,82 @@ local function Island(ctx, x, y, scale, time)
     nvgRestore(ctx)
 end
 
+--- Draw the existing side-view fishing boat at a projected world position.
+---@param ctx NVGContextWrapper
+---@param x number
+---@param y number
+---@param pixelsPerUnit number
+---@param ship table
+---@param time number
+function Draw.WorldBoat(ctx, x, y, pixelsPerUnit, ship, time)
+    if not ctx or not ship then return end
+
+    local visual = Config.visual
+    local scaleX = (visual.shipLength or 5) * pixelsPerUnit / 200
+    -- The legacy hull, cabin, and flag span about 102 art units vertically.
+    local scaleY = (visual.shipWidth or 2.4) * pixelsPerUnit / 102
+    local direction = ship.direction
+    local facingX = type(direction) == "table" and direction.x or nil
+    if type(facingX) ~= "number" or math.abs(facingX) < 0.000001 then
+        facingX = math.cos(ship.rotation or 0)
+    end
+    local horizontalFacing = facingX < 0 and -1 or 1
+
+    nvgSave(ctx)
+    nvgTranslate(ctx, x, y)
+    -- Keep the side-view upright; only mirror it when the ship faces left.
+    nvgScale(ctx, scaleX * horizontalFacing, scaleY)
+    Boat(ctx, 0, 0, 1, time or 0)
+    nvgRestore(ctx)
+end
+
+--- Draw the existing fish silhouette at its real projected heading and render length.
+---@param ctx NVGContextWrapper
+---@param x number
+---@param y number
+---@param pixelsPerUnit number
+---@param entity table
+---@param time number
+function Draw.WorldFish(ctx, x, y, pixelsPerUnit, entity, time)
+    if not ctx or not entity then return end
+    local fishConfig = FishData[entity.species]
+    if not fishConfig then return end
+
+    -- The legacy shape spans 67 art units from its tail to its nose.
+    local scale = (fishConfig.renderLength or fishConfig.radius or 1) * pixelsPerUnit / 67
+    local heading = entity.rotation or 0
+    local direction = entity.direction
+    if type(direction) == "table"
+        and type(direction.x) == "number"
+        and type(direction.y) == "number"
+        and (math.abs(direction.x) + math.abs(direction.y)) > 0.000001 then
+        heading = math.atan(direction.y, direction.x)
+    end
+
+    nvgSave(ctx)
+    nvgTranslate(ctx, x, y)
+    -- Screen Y is inverted relative to world Y; this rotates the fish along its world heading.
+    nvgRotate(ctx, -heading)
+    Fish(ctx, 0, 0, scale, 1, fishConfig.color, time or 0, entity.phase or 0)
+    nvgRestore(ctx)
+end
+
+--- Draw the legacy palm-island art around the unchanged circular world radius.
+---@param ctx NVGContextWrapper
+---@param x number
+---@param y number
+---@param pixelsPerUnit number
+---@param entity table
+---@param time number
+function Draw.WorldIsland(ctx, x, y, pixelsPerUnit, entity, time)
+    if not ctx or not entity then return end
+    local radius = (entity.radius or 1) * pixelsPerUnit
+    if radius <= 0 then return end
+
+    -- Match the old shoreline width to the world's circular island radius.
+    Island(ctx, x, y, radius / 149, time or 0)
+end
+
 ---@param ctx NVGContextWrapper
 local function Arrow(ctx, x, y, scale, alpha)
     nvgBeginPath(ctx)
@@ -315,10 +392,14 @@ local function Arrow(ctx, x, y, scale, alpha)
     Stroke(ctx, { 246, 246, 215, alpha }, 1.5 * scale)
 end
 
+--- Draw the reusable sky, sun, birds, and layered sea backdrop.
 ---@param ctx NVGContextWrapper
----@param state table
-function Draw.Scene(ctx, w, h, state)
-    local time = state.time
+---@param w number
+---@param h number
+---@param time number
+function Draw.SceneBackdrop(ctx, w, h, time)
+    if not ctx or w <= 0 or h <= 0 then return end
+    time = time or 0
     local scale = math.min(w / 520, h / 800)
     Background(ctx, w, h, time)
     Sea(ctx, w, h, time)
@@ -327,6 +408,14 @@ function Draw.Scene(ctx, w, h, state)
         local y = h * Config.layers.birds + math.sin(time * 1.2 + bird.phase) * 5 * scale
         Bird(ctx, x, y, scale * bird.scale, time, bird.phase)
     end
+end
+
+---@param ctx NVGContextWrapper
+---@param state table
+function Draw.Scene(ctx, w, h, state)
+    local time = state.time
+    local scale = math.min(w / 520, h / 800)
+    Draw.SceneBackdrop(ctx, w, h, time)
     for _, fish in ipairs(Config.fish) do
         local x = w * fish.x + math.sin(time * 0.65 + fish.phase) * 23 * scale
         local y = h * Config.layers.fish + math.sin(time * 1.4 + fish.phase) * 6 * scale

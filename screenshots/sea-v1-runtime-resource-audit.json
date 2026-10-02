@@ -1,0 +1,14 @@
+{
+  "archiveSHA256": "bd63619db3e979ef81ce0c52faad6d1cfad1b2f06af58021b43cba7d0c6f356d",
+  "entryCount": 8,
+  "themisArchiveEntries": [],
+  "directDDSArchiveEntries": [],
+  "resourcePackages": [
+    "Autoload/Data.pak",
+    "Autoload/CoreData.pak",
+    "Autoload/Res.pak",
+    "Res/shadercache_runtime/shadercache_dx11.pak"
+  ],
+  "themisFilesPresent": [],
+  "note": "DDS may be inside resource .pak files; archive filename absence alone does not inspect pak contents. Archive is read-only; no extraction or install."
+}
