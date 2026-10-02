@@ -4,6 +4,7 @@ local State = require("Ocean.State")
 local World = require("Game.World")
 local EntityStateSystem = require("Systems.EntityStateSystem")
 local ClockSystem = require("Systems.ClockSystem")
+local FishSystem = require("Systems.FishSystem")
 
 local Game = {}
 Game.__index = Game
@@ -24,6 +25,9 @@ function Game.New()
     if Config.debug and Config.debug.spawnTestEntity then
         self.world:CreateEntity("debug_marker", { position = { x = 10, y = 0 } })
     end
+    -- STEP-6 初始沙丁鱼群（Wander；Wander 推进走 EntityStateSystem 统一链；
+    -- 正式区域密度 20 Sardine / 4 Tuna 属 M2 区域生成）
+    FishSystem.SpawnSardines(self.world, (Config.debug and Config.debug.sardineCount) or 8)
     return self
 end
 

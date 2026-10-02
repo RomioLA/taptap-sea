@@ -11,6 +11,30 @@ local KIND_COLORS = {
     bird = { 255, 255, 255, 255 },
 }
 
+-- STEP-6 鱼种配色（sardine 银蓝 / tuna 深蓝，仅表现层，不改 AI）
+local FISH_COLORS = {
+    sardine = { 126, 183, 212, 235 },
+    tuna = { 46, 82, 110, 255 },
+}
+
+-- 鱼体：身体椭圆 + 尾鳍三角，约 1.1m 体长，按朝向旋转（世界 y 向上，屏幕 y 向下故取负）
+local function DrawFish(ctx, sx, sy, ppm, heading, color)
+    nvgSave(ctx)
+    nvgTranslate(ctx, sx, sy)
+    nvgRotate(ctx, -(heading or 0))
+    nvgBeginPath(ctx)
+    nvgEllipse(ctx, 0, 0, 0.55 * ppm, 0.22 * ppm)
+    nvgFillColor(ctx, nvgRGBA(color[1], color[2], color[3], color[4] or 255))
+    nvgFill(ctx)
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, -0.45 * ppm, 0)
+    nvgLineTo(ctx, -0.85 * ppm, -0.20 * ppm)
+    nvgLineTo(ctx, -0.85 * ppm, 0.20 * ppm)
+    nvgClosePath(ctx)
+    nvgFill(ctx)
+    nvgRestore(ctx)
+end
+
 ---@param ctx NVGContextWrapper
 ---@param w number 逻辑宽（像素）
 ---@param h number 逻辑高（像素）
@@ -25,20 +49,26 @@ function EntityDraw.Scene(ctx, w, h, state, world)
         if entity.alive and entity.position then
             local sx = anchorX + entity.position.x * pixelsPerMeter
             local sy = anchorY - entity.position.y * pixelsPerMeter
-            local color = KIND_COLORS[entity.kind] or { 200, 200, 200, 255 }
-            -- 调试标记：2m 半径外圈 + 4m 十字，全部以米定义、随视高缩放
-            nvgBeginPath(ctx)
-            nvgEllipse(ctx, sx, sy, 2 * pixelsPerMeter, 2 * pixelsPerMeter)
-            nvgStrokeColor(ctx, nvgRGBA(color[1], color[2], color[3], color[4] or 255))
-            nvgStrokeWidth(ctx, 2)
-            nvgStroke(ctx)
-            nvgBeginPath(ctx)
-            nvgMoveTo(ctx, sx - 4 * pixelsPerMeter, sy)
-            nvgLineTo(ctx, sx + 4 * pixelsPerMeter, sy)
-            nvgMoveTo(ctx, sx, sy - 4 * pixelsPerMeter)
-            nvgLineTo(ctx, sx, sy + 4 * pixelsPerMeter)
-            nvgStrokeWidth(ctx, 1)
-            nvgStroke(ctx)
+            if entity.kind == "fish" then
+                -- STEP-6 鱼体渲染；Wander 无水面信号（不画涟漪）
+                local color = FISH_COLORS[entity.fishKey] or KIND_COLORS.fish
+                DrawFish(ctx, sx, sy, pixelsPerMeter, entity.heading, color)
+            else
+                -- 调试标记：2m 半径外圈 + 4m 十字，全部以米定义、随视高缩放
+                local color = KIND_COLORS[entity.kind] or { 200, 200, 200, 255 }
+                nvgBeginPath(ctx)
+                nvgEllipse(ctx, sx, sy, 2 * pixelsPerMeter, 2 * pixelsPerMeter)
+                nvgStrokeColor(ctx, nvgRGBA(color[1], color[2], color[3], color[4] or 255))
+                nvgStrokeWidth(ctx, 2)
+                nvgStroke(ctx)
+                nvgBeginPath(ctx)
+                nvgMoveTo(ctx, sx - 4 * pixelsPerMeter, sy)
+                nvgLineTo(ctx, sx + 4 * pixelsPerMeter, sy)
+                nvgMoveTo(ctx, sx, sy - 4 * pixelsPerMeter)
+                nvgLineTo(ctx, sx, sy + 4 * pixelsPerMeter)
+                nvgStrokeWidth(ctx, 1)
+                nvgStroke(ctx)
+            end
         end
     end
 end

@@ -17,6 +17,13 @@ local Config = {
     },
     debug = {
         spawnTestEntity = true, -- STEP-4 渲染通道验证：生成 1 个调试实体；FishSystem 落地后关闭
+        sardineCount = 8,       -- STEP-6 初始沙丁鱼数（正式区域密度 20/4 属 M2 区域生成）
+    },
+    -- STEP-6 鱼群 Wander（换向区间按 data/fish.lua 头注约定放代码侧）
+    fish = {
+        wanderRetargetMin = 2, -- 每 2~4s 换方向（参数表「Wander」）
+        wanderRetargetMax = 4,
+        worldMargin = 30,      -- 距世界边缘 30m 内目标朝向回指中心（1800m 地图内不贴边）
     },
     layers = {
         birds = 0.21,
