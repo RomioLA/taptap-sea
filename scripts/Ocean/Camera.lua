@@ -9,7 +9,7 @@ local Config = require("Ocean.Config")
 
 local Camera = {}
 
-local ANCHOR_Y_RATIO = 0.60 -- 船锚点纵向比例（与 Main 旧换算一致）
+Camera.ANCHOR_Y_RATIO = 0.60 -- 船锚点纵向比例（与 Main 旧换算一致）
 
 function Camera.PixelsPerMeter(logicalH)
     return logicalH / Config.world.viewHeight
@@ -26,11 +26,17 @@ function Camera.BoatWorldX(state, logicalW, logicalH)
     return (boatX - Config.boat.initialX) * Camera.ViewWidthMeters(logicalW, logicalH)
 end
 
+-- 船的世界 y 偏移（米）：STEP-8 船 2D 化后纵向也随屏幕比例移动
+function Camera.BoatWorldY(state, logicalH)
+    local boatY = (state and state.boatY) or Config.boat.initialY
+    return (Camera.ANCHOR_Y_RATIO - boatY) * Config.world.viewHeight
+end
+
 -- 世界（米）→ 逻辑屏幕（px）。返回 sx, sy。
 function Camera.WorldToScreen(logicalW, logicalH, state, wx, wy)
     local ppm = Camera.PixelsPerMeter(logicalH)
     local anchorX = logicalW * (state and state.boatX or Config.boat.initialX)
-    local anchorY = logicalH * ANCHOR_Y_RATIO
+    local anchorY = logicalH * Camera.ANCHOR_Y_RATIO
     local boatX = Camera.BoatWorldX(state, logicalW, logicalH)
     return anchorX + (wx - boatX) * ppm, anchorY - wy * ppm
 end
@@ -39,7 +45,7 @@ end
 function Camera.ScreenToWorld(logicalW, logicalH, state, sx, sy)
     local ppm = Camera.PixelsPerMeter(logicalH)
     local anchorX = logicalW * (state and state.boatX or Config.boat.initialX)
-    local anchorY = logicalH * ANCHOR_Y_RATIO
+    local anchorY = logicalH * Camera.ANCHOR_Y_RATIO
     local boatX = Camera.BoatWorldX(state, logicalW, logicalH)
     return (sx - anchorX) / ppm + boatX, -(sy - anchorY) / ppm
 end

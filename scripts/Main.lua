@@ -1,7 +1,8 @@
 -- 海风小岛：基于 templates/scaffold-2d.lua 的轻量 2D 项目框架。
 -- 层次：飞鸟 → 海浪与鱼群 → 船只 → 小岛。
--- 操作：A/D 或方向键移动，空格暂停，R 重置；点击海面移动船。
--- STEP-7 调试信号：B=在最近点击处放诱饵（触发 Attracted），N=放捕食者（触发 Flee）。
+-- 操作：WASD/方向键在海面任意移动（点击海面也可），空格暂停，R 重置。
+-- STEP-7/8 调试信号：B=在最近点击处放诱饵（触发 Attracted），N=放捕食者（触发 Flee）；
+-- 屏幕按钮同效（诱饵/捕食者）。
 local UI = require("urhox-libs/UI")
 local Config = require("Ocean.Config")
 local Camera = require("Ocean.Camera")
@@ -69,14 +70,21 @@ end
 ---@param eventType string
 ---@param eventData UpdateEventData
 function HandleOceanUpdate(eventType, eventData)
-    local direction = 0
+    -- STEP-8 船 2D 化：WASD/方向键双轴移动（屏幕 y 向下，故上键为 -1）
+    local dirX, dirY = 0, 0
     if input:GetKeyDown(KEY_A) or input:GetKeyDown(KEY_LEFT) then
-        direction = direction - 1
+        dirX = dirX - 1
     end
     if input:GetKeyDown(KEY_D) or input:GetKeyDown(KEY_RIGHT) then
-        direction = direction + 1
+        dirX = dirX + 1
     end
-    game:Update(eventData:GetFloat("TimeStep"), direction)
+    if input:GetKeyDown(KEY_W) or input:GetKeyDown(KEY_UP) then
+        dirY = dirY - 1
+    end
+    if input:GetKeyDown(KEY_S) or input:GetKeyDown(KEY_DOWN) then
+        dirY = dirY + 1
+    end
+    game:Update(eventData:GetFloat("TimeStep"), dirX, dirY)
     -- STEP-5 昼夜倒计时上屏（文本变化时才重排，见 HUD.Tick）
     if hud and hud.tick then hud.tick() end
 end
@@ -119,17 +127,20 @@ local function MoveToScreenPoint(x, y)
     if game:IsPaused() then return end
     local width, height = graphics:GetWidth(), graphics:GetHeight()
     if width <= 0 or height <= 0 then return end
-    -- 仅海面中部接收点击，顶部标题与底部按钮不触发移动。
+    -- 仅海面接收点击，顶部标题与底部按钮不触发移动。
     local ratioY = y / height
-    if ratioY < 0.36 or ratioY > 0.76 then return end
+    if ratioY < 0.36 or ratioY > 0.78 then return end
     if UI.IsPointerOverUI() then return end
-    game:SetTarget(x / width)
+    -- STEP-8 船 2D 化：点击点即双轴目标
+    game:SetTarget(x / width, y / height)
     local worldX, worldY = ScreenPointToWorldMeters(x, y)
     if worldX then
         local dpr = math.max(graphics:GetDPR(), 0.1)
         local logicalW, logicalH = width / dpr, height / dpr
-        local boatWorldX = Camera.BoatWorldX(game:GetRenderState(), logicalW, logicalH)
-        local dist = math.sqrt((worldX - boatWorldX) ^ 2 + worldY * worldY)
+        local state = game:GetRenderState()
+        local dxMeters = worldX - Camera.BoatWorldX(state, logicalW, logicalH)
+        local dyMeters = worldY - Camera.BoatWorldY(state, logicalH)
+        local dist = math.sqrt(dxMeters ^ 2 + dyMeters ^ 2)
         -- STEP-7：记录最近点击的世界坐标，B/N 调试信号源生成于此
         game.lastClickWorld = { x = worldX, y = worldY }
         local clickText = string.format("点击 (%.1f, %.1f)m 距船 %.1fm", worldX, worldY, dist)

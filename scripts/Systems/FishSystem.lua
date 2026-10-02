@@ -37,15 +37,23 @@ local function TurnToward(entity, dt, targetHeading, rateDeg)
     end
 end
 
--- 世界边缘回正：临近边界时把目标朝向指向世界中心（推回 3m/s 属 M0 世界规则，此处仅转向）
-local function SteerAwayFromEdge(entity)
+-- 边界回正（STEP-8 扩展）：世界边缘 + 演示视口海面活动带。
+-- 鱼游到带边（海面线/小岛上沿）即把目标朝向改指带内，防止"沙丁鱼在天上游"。
+local function SteerIntoBounds(entity)
     local half = Config.world.worldSize / 2
     local margin = Config.fishSystem.worldMargin
-    if math.abs(entity.position.x) < half - margin
-        and math.abs(entity.position.y) < half - margin then
+    if math.abs(entity.position.x) >= half - margin
+        or math.abs(entity.position.y) >= half - margin then
+        entity.targetHeading = math.atan(-entity.position.y, -entity.position.x)
         return
     end
-    entity.targetHeading = math.atan(-entity.position.y, -entity.position.x)
+    local bandMargin = Config.fishSystem.bandMargin
+    local keepX = math.cos(entity.heading) >= 0 and 2 or -2 -- 回正时保留水平趋势
+    if entity.position.y > Config.world.seaTopY - bandMargin then
+        entity.targetHeading = math.atan(-3, keepX)
+    elseif entity.position.y < Config.world.seaBottomY + bandMargin then
+        entity.targetHeading = math.atan(3, keepX)
+    end
 end
 
 -- 找半径内最近的指定 kind 实体（当前实体规模 O(n) 遍历无压力）
@@ -102,7 +110,7 @@ local FishStates = {
                 -- 相对当前朝向 ±120° 内偏转，不做瞬间掉头
                 entity.targetHeading = entity.heading + (math.random() * 2 - 1) * 120 * DEG
             end
-            SteerAwayFromEdge(entity)
+            SteerIntoBounds(entity)
             TurnToward(entity, dt, entity.targetHeading, def.turnRate)
             local speed = def.speeds.wander
             entity.position.x = entity.position.x + math.cos(entity.heading) * speed * dt
@@ -185,7 +193,7 @@ local FishStates = {
                 local dev = (math.random() * 2 - 1) * def.avoid.steerDeviation * DEG
                 entity.targetHeading = away + dev
             end
-            SteerAwayFromEdge(entity) -- 边界优先级高于危险方向
+            SteerIntoBounds(entity) -- 边界优先级高于危险方向
             TurnToward(entity, dt, entity.targetHeading, def.turnRate)
             local speed = def.speeds.flee
             entity.position.x = entity.position.x + math.cos(entity.heading) * speed * dt
@@ -216,24 +224,37 @@ function FishSystem.SpawnFish(world, speciesId, position)
     return entity
 end
 
--- STEP-6 初始沙丁鱼群：围绕锚点环形随机分布（离船 ≥15m，参数表「区域生成防贴脸」）
+-- STEP-6 初始沙丁鱼群：在海面活动带内随机分布（离船 ≥15m，参数表「区域生成防贴脸」）。
+-- STEP-8：带内生成，防止开局就有鱼出现在画面上方的天空区。
 function FishSystem.SpawnSardines(world, count, center)
     center = center or { x = 0, y = 0 }
     local def = SPECIES.sardine
+    local top = Config.world.seaTopY - 2
+    local bottom = Config.world.seaBottomY + 2
     for _ = 1, count do
-        local angle = math.random() * 2 * math.pi
-        local dist = RandRange(def.spawn.minDistFromBoat, def.spawn.minDistFromBoat + 25)
-        FishSystem.SpawnFish(world, "sardine", {
-            x = center.x + math.cos(angle) * dist,
-            y = center.y + math.sin(angle) * dist,
-        })
+        local x, y
+        for _ = 1, 20 do -- 拒绝采样：落在离船 15m 内则重抽
+            x = center.x + RandRange(-35, 35)
+            y = center.y + RandRange(bottom - center.y, top - center.y)
+            local dx, dy = x - center.x, y - center.y
+            if dx * dx + dy * dy >= def.spawn.minDistFromBoat ^ 2 then break end
+        end
+        FishSystem.SpawnFish(world, "sardine", { x = x, y = y })
     end
-    print(string.format("[鱼群] 初始生成 %d 条沙丁鱼（Wander，离船≥%dm）",
+    print(string.format("[鱼群] 初始生成 %d 条沙丁鱼（Wander，海面带内，离船≥%dm）",
         count, def.spawn.minDistFromBoat))
 end
 
--- STEP-7 调试信号源：诱饵（Attracted 触发）与捕食者（Flee 触发，Tuna Chase 替身）
+-- STEP-7/8 调试信号源：诱饵（Attracted 触发）与捕食者（Flee 触发，Tuna Chase 替身）。
+-- 生成位置夹在海面活动带内，保证信号出现在海里。
+local function ClampToBand(y)
+    local top = Config.world.seaTopY - 2
+    local bottom = Config.world.seaBottomY + 2
+    return math.max(bottom, math.min(top, y))
+end
+
 function FishSystem.SpawnBait(world, position)
+    position = { x = position.x, y = ClampToBand(position.y) }
     local entity = world:CreateEntity("bait", { position = position })
     entity.ttl = Config.fishSystem.baitTtl
     print(string.format("[鱼群] 生成诱饵 (%.1f, %.1f)m，%ds 后消散",
@@ -242,6 +263,7 @@ function FishSystem.SpawnBait(world, position)
 end
 
 function FishSystem.SpawnPredator(world, position)
+    position = { x = position.x, y = ClampToBand(position.y) }
     local entity = world:CreateEntity("predator", { position = position })
     print(string.format("[鱼群] 生成捕食者 (%.1f, %.1f)m", position.x, position.y))
     return entity

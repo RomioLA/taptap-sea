@@ -33,10 +33,10 @@ function Game.New()
     return self
 end
 
-function Game:Update(dt, direction)
+function Game:Update(dt, dirX, dirY)
     -- 演示层仍读 state.paused；由 pauseReasons 集合统一推导。
     self.state.paused = self:IsPaused()
-    self.state:Update(dt, direction)
+    self.state:Update(dt, dirX or 0, dirY or 0)
     if not self.state.paused then
         self.world:Update(math.max(0, math.min(dt, 0.05)))
     end
@@ -88,8 +88,9 @@ function Game:SpawnDebugPredator(position)
     FishSystem.SpawnPredator(self.world, position)
 end
 
-function Game:SetTarget(x)
-    self.state:SetTarget(x)
+-- STEP-8 船 2D 化：点击海面传双轴屏幕比例
+function Game:SetTarget(x, y)
+    self.state:SetTarget(x, y)
 end
 
 function Game:MoveBy(direction)

@@ -6,6 +6,11 @@ local Config = {
         unit = 1,          -- 1 world unit = 1m（参数表「世界单位」）
         viewHeight = 45,   -- 正交可视高度 45m；16:9 约 80m 宽（参数表「船镜头」）
         worldSize = 1800,  -- 1800×1800m = 最大船速 10m/s × 180s（参数表「地图/世界结构」）
+        -- 演示固定视口的海面活动带（世界 y，锚点 0.60h）：
+        -- +10m ≈ 屏幕 0.378h（海面线），-9m ≈ 屏幕 0.80h（小岛上沿）。
+        -- 鱼群被约束在此带内，防止游进画面上方的"天空"。M0 镜头跟船后整屏皆海，可移除。
+        seaTopY = 10,
+        seaBottomY = -9,
     },
     boatSpeedLevels = { 6, 8, 10 }, -- m/s（参数表「船移动」；M0 接入真实船逻辑时消费）
     -- STEP-5 昼夜时钟（参数表「GameClock」「夜晚处罚」「昼夜视觉」）
@@ -25,6 +30,7 @@ local Config = {
         wanderRetargetMin = 2, -- 每 2~4s 换方向（参数表「Wander」）
         wanderRetargetMax = 4,
         worldMargin = 30,      -- 距世界边缘 30m 内目标朝向回指中心（1800m 地图内不贴边）
+        bandMargin = 3,        -- 距海面活动带边界 3m 内回正（防鱼进天空/小岛）
         -- STEP-7 Attracted/Flee（代码侧表现参数，不属于 DATA_SCHEMA 契约）
         baitTtl = 20,          -- 调试诱饵存留秒数，过期移除、鱼群回 Wander
         baitContact = 2,       -- 距诱饵 2m 内减速聚集（到达减速）
@@ -40,8 +46,11 @@ local Config = {
     },
     boat = {
         initialX = 0.5,
+        initialY = 0.61, -- 与 layers.boat 一致（STEP-8 船 2D 化：WASD/点击任意移动）
         minX = 0.18,
         maxX = 0.82,
+        minY = 0.40,     -- 纵向活动范围限制在海面内（避开顶部标题与底部按钮）
+        maxY = 0.76,
         speed = 0.24,
         buttonStep = 0.12,
     },

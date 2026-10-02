@@ -194,56 +194,78 @@ local function Ripple(ctx, x, y, rx, ry, alpha)
 end
 
 ---@param ctx NVGContextWrapper
+-- 船只（STEP-8 改俯视角）：船首朝上，木甲板 + 舱室 + 航行尾迹
 local function Boat(ctx, x, y, scale, time)
-    Ripple(ctx, x, y + 28 * scale, 112 * scale, 13 * scale, 80)
-    Ripple(ctx, x, y + 28 * scale, 135 * scale, 21 * scale, 35)
+    -- 船尾航行涟漪
+    Ripple(ctx, x, y + 48 * scale, 62 * scale, 14 * scale, 80)
+    Ripple(ctx, x, y + 60 * scale, 90 * scale, 22 * scale, 40)
+    -- V 形尾迹
     nvgSave(ctx)
-    nvgTranslate(ctx, x, y + math.sin(time * 1.7) * 3 * scale)
-    nvgRotate(ctx, math.sin(time * 1.1) * 0.018)
+    nvgTranslate(ctx, x, y)
     nvgScale(ctx, scale, scale)
-    Ellipse(ctx, 0, 30, 92, 11, { 11, 79, 99, 85 })
-
-    -- 白色船舱、暖色烟囱和深蓝船体。
-    Rect(ctx, -47, -28, 83, 34, 5, { 251, 244, 219, 255 })
-    Rect(ctx, -28, -48, 58, 24, 4, { 255, 251, 230, 255 })
-    Rect(ctx, -18, -54, 58, 7, 3, { 46, 88, 98, 255 })
-    Rect(ctx, 43, -41, 18, 42, 2, { 223, 141, 104, 255 })
-    Rect(ctx, 41, -45, 22, 7, 2, { 51, 86, 91, 255 })
-    for i = 1, 4 do
-        Rect(ctx, -38 + (i - 1) * 17, -18, 11, 12, 2, { 68, 133, 147, 255 })
-    end
-    Rect(ctx, -17, -40, 17, 10, 2, { 68, 133, 147, 255 })
-    Rect(ctx, 8, -40, 13, 10, 2, { 68, 133, 147, 255 })
     nvgBeginPath(ctx)
-    nvgMoveTo(ctx, -100, 0)
-    nvgLineTo(ctx, 100, 0)
-    nvgQuadTo(ctx, 84, 39, 58, 40)
-    nvgLineTo(ctx, -64, 40)
-    nvgQuadTo(ctx, -85, 32, -100, 0)
+    nvgMoveTo(ctx, -20, 50)
+    nvgQuadTo(ctx, -38, 78, -56, 96)
+    nvgStrokeColor(ctx, nvgRGBA(226, 246, 238, 70))
+    nvgStrokeWidth(ctx, 3)
+    nvgStroke(ctx)
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, 20, 50)
+    nvgQuadTo(ctx, 38, 78, 56, 96)
+    nvgStroke(ctx)
+    nvgRestore(ctx)
+    -- 船体随波微摆
+    nvgSave(ctx)
+    nvgTranslate(ctx, x, y + math.sin(time * 1.7) * 2 * scale)
+    nvgRotate(ctx, math.sin(time * 1.1) * 0.02)
+    nvgScale(ctx, scale, scale)
+    -- 船壳：尖首圆尾
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, 0, -62)
+    nvgBezierTo(ctx, 26, -50, 34, -18, 34, 18)
+    nvgQuadTo(ctx, 34, 52, 0, 56)
+    nvgQuadTo(ctx, -34, 52, -34, 18)
+    nvgBezierTo(ctx, -34, -18, -26, -50, 0, -62)
     nvgClosePath(ctx)
-    Fill(ctx, { 39, 78, 92, 255 })
+    nvgFillColor(ctx, nvgRGBA(39, 78, 92, 255))
+    nvgFill(ctx)
+    -- 木甲板（内缩）
     nvgBeginPath(ctx)
-    nvgMoveTo(ctx, -94, 9)
-    nvgLineTo(ctx, 94, 9)
-    Stroke(ctx, { 226, 151, 105, 255 }, 5)
-    for i = 1, 3 do
-        Ellipse(ctx, -34 + (i - 1) * 29, 24, 4, 4, { 255, 229, 178, 255 })
-    end
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, -64, -2)
-    nvgLineTo(ctx, -64, -62)
-    Stroke(ctx, { 50, 88, 96, 255 }, 2.5)
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, -63, -60)
-    nvgLineTo(ctx, -39, -53)
-    nvgLineTo(ctx, -63, -45)
+    nvgMoveTo(ctx, 0, -54)
+    nvgBezierTo(ctx, 21, -44, 28, -16, 28, 16)
+    nvgQuadTo(ctx, 28, 46, 0, 49)
+    nvgQuadTo(ctx, -28, 46, -28, 16)
+    nvgBezierTo(ctx, -28, -16, -21, -44, 0, -54)
     nvgClosePath(ctx)
-    Fill(ctx, { 222, 149, 103, 255 })
-    for i = 1, 3 do
-        local drift = (time * 0.34 + i * 0.31) % 1
-        Ellipse(ctx, 53 + drift * 29, -58 - drift * 35,
-            5 + drift * 8, 4 + drift * 5, { 225, 241, 221, math.floor((1 - drift) * 70) })
+    nvgFillColor(ctx, nvgRGBA(226, 190, 138, 255))
+    nvgFill(ctx)
+    -- 甲板木纹
+    nvgStrokeColor(ctx, nvgRGBA(190, 150, 100, 90))
+    nvgStrokeWidth(ctx, 1.5)
+    for i = -2, 2 do
+        nvgBeginPath(ctx)
+        nvgMoveTo(ctx, i * 10, -46)
+        nvgLineTo(ctx, i * 10, 44)
+        nvgStroke(ctx)
     end
+    -- 舱室（船尾侧）
+    Rect(ctx, -16, 8, 32, 26, 5, { 251, 244, 219, 255 })
+    Rect(ctx, -12, 12, 24, 12, 3, { 120, 170, 165, 255 })
+    -- 桅杆与船首旗
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, 0, -50)
+    nvgLineTo(ctx, 0, -6)
+    nvgStrokeColor(ctx, nvgRGBA(60, 60, 60, 200))
+    nvgStrokeWidth(ctx, 2.5)
+    nvgStroke(ctx)
+    Ellipse(ctx, 0, -8, 4, 4, { 223, 141, 104, 255 })
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, 0, -50)
+    nvgLineTo(ctx, 12, -46)
+    nvgLineTo(ctx, 0, -42)
+    nvgClosePath(ctx)
+    nvgFillColor(ctx, nvgRGBA(222, 149, 103, 255))
+    nvgFill(ctx)
     nvgRestore(ctx)
 end
 
@@ -324,11 +346,11 @@ function Draw.Scene(ctx, w, h, state, world)
     local scale = math.min(w / 520, h / 800)
     Background(ctx, w, h, time)
     Sea(ctx, w, h, time)
-    for _, bird in ipairs(Config.birds) do
-        local x = w * bird.x + math.sin(time * 0.4 + bird.phase) * 15 * scale
-        local y = h * Config.layers.birds + math.sin(time * 1.2 + bird.phase) * 5 * scale
-        Bird(ctx, x, y, scale * bird.scale, time, bird.phase)
-    end
+    -- 海浪与鱼群层（层次：飞鸟 → 海浪与鱼群 → 船只 → 小岛）：
+    -- STEP-8 把 World 实体（沙丁鱼/水面信号/调试实体）画在海浪层、船与岛之下，
+    -- 替代此前"实体最后画=浮在所有东西之上"的旧顺序。
+    EntityDraw.Scene(ctx, w, h, state, world)
+    -- 脚手架装饰鱼（演示层，与真实鱼群同层）
     for _, fish in ipairs(Config.fish) do
         local x = w * fish.x + math.sin(time * 0.65 + fish.phase) * 23 * scale
         local y = h * Config.layers.fish + math.sin(time * 1.4 + fish.phase) * 6 * scale
@@ -339,14 +361,19 @@ function Draw.Scene(ctx, w, h, state, world)
                 math.floor((1 - rise) * 85))
         end
     end
-    Boat(ctx, w * state.boatX, h * Config.layers.boat, scale, time)
+    -- 飞鸟层
+    for _, bird in ipairs(Config.birds) do
+        local x = w * bird.x + math.sin(time * 0.4 + bird.phase) * 15 * scale
+        local y = h * Config.layers.birds + math.sin(time * 1.2 + bird.phase) * 5 * scale
+        Bird(ctx, x, y, scale * bird.scale, time, bird.phase)
+    end
+    -- 船只层（俯视角，2D 位置）
+    Boat(ctx, w * state.boatX, h * (state.boatY or Config.layers.boat), scale, time)
     Island(ctx, w * 0.5, h * Config.layers.island, scale, time)
     local arrowAlpha = math.floor(85 + math.sin(time * 1.5) * 20)
     Arrow(ctx, w * 0.5, h * 0.275, scale, arrowAlpha)
     Arrow(ctx, w * 0.5, h * 0.52, scale, arrowAlpha)
     Arrow(ctx, w * 0.5, h * 0.705, scale, arrowAlpha)
-    -- World 实体调试绘制（只读；渲染通道见 STEP-4）
-    EntityDraw.Scene(ctx, w, h, state, world)
     -- STEP-5 夜间遮罩（参数表「昼夜视觉」：约 75% 黑蓝透明；船、港口标识、UI 保持可见）
     local clock = state.clock
     if clock and clock.phase == "night" then

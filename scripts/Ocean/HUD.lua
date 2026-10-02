@@ -84,6 +84,24 @@ function HUD.Create(game)
         }
     end
 
+    -- STEP-8 调试信号按钮：与键盘 B/N 同效，生成于最近一次点击的海面位置
+    local function DebugButton(text, spawn)
+        return UI.Button {
+            text = text,
+            width = 88,
+            height = 40,
+            fontSize = 10,
+            borderRadius = 20,
+            backgroundColor = { 249, 247, 221, 22 },
+            textColor = { 246, 244, 218, 255 },
+            hoverBackgroundColor = { 249, 247, 221, 50 },
+            pressedBackgroundColor = { 249, 247, 221, 75 },
+            borderWidth = 1,
+            borderColor = { 212, 235, 219, 65 },
+            onClick = function() spawn(game.lastClickWorld or { x = 12, y = 0 }) end,
+        }
+    end
+
     local root = UI.Panel {
         id = "oceanRoot",
         width = "100%",
@@ -153,6 +171,18 @@ function HUD.Create(game)
                                     MoveButton("→", 1),
                                 },
                             },
+                            UI.Row {
+                                alignItems = "center",
+                                justifyContent = "center",
+                                gap = 8,
+                                pointerEvents = "box-none",
+                                children = {
+                                    DebugButton("诱饵 (B)",
+                                        function(pos) game:SpawnDebugBait(pos) end),
+                                    DebugButton("捕食者 (N)",
+                                        function(pos) game:SpawnDebugPredator(pos) end),
+                                },
+                            },
                             statusLabel,
                             diagLabel,
                         },
@@ -162,7 +192,7 @@ function HUD.Create(game)
         },
     }
     UI.SetRoot(root)
-    print("[海洋框架] 界面就绪：左右移动、暂停、重置；支持键盘和触摸")
+    print("[海洋框架] 界面就绪：WASD/方向键移动、暂停、重置、诱饵(B)、捕食者(N)")
     return { togglePause = TogglePause, reset = Reset, refresh = Refresh,
              updateDiagnostics = UpdateDiagnostics, tick = Tick }
 end
