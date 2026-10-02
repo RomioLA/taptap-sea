@@ -24,6 +24,7 @@ local Config = {
         spawnTestEntity = true, -- STEP-4 渲染通道验证：生成 1 个调试实体；FishSystem 落地后关闭
         sardineCount = 8,       -- STEP-6 初始沙丁鱼数（正式区域密度 20/4 属 M2 区域生成）
         tunaCount = 2,          -- STEP-9 初始金枪鱼数（Chase 演示）
+        birdCount = 2,          -- STEP-10 初始海鸟数（T4/T5 读海演示）
     },
     -- STEP-6 鱼群 Wander（键名用 fishSystem：脚手架的 fish=装饰鱼群数组仍被 Draw 消费，
     -- 同名会被表构造器覆盖——19:57 预览崩溃根因，勿改回）
@@ -40,6 +41,20 @@ local Config = {
         -- STEP-9 Tuna Chase 白色尾迹（代码侧表现参数）
         chaseTrailInterval = 0.08, -- 每 0.08s 记录一个尾迹点
         chaseTrailPoints = 24,     -- 最多保留 24 点 ≈ 2s 尾迹
+    },
+    -- STEP-10 海鸟（T4/T5）代码侧演示参数；正式值待 birds.lua 数据契约（B 侧）迁移
+    birdSystem = {
+        cruiseSpeedMin = 6,       -- 巡航 6~9 m/s（T5）
+        cruiseSpeedMax = 9,
+        detectionRadius = 15,     -- 发现 Flee 目标距离（T4）
+        actionDurationMin = 8,    -- 俯冲/盘旋总时长 8~12s（T5）
+        actionDurationMax = 12,
+        diveSpeed = 14,           -- 俯冲速度（演示占位，待参数表）
+        diveArriveRadius = 2,     -- 距目标 2m 内转盘旋
+        cruiseRetargetMin = 3,    -- 巡航换向 3~6s
+        cruiseRetargetMax = 6,
+        circleRadius = 4,         -- 盘旋半径 4m
+        circleAngularSpeed = 1.8, -- 盘旋角速度 rad/s（≈3.5s 一圈）
     },
     layers = {
         birds = 0.21,

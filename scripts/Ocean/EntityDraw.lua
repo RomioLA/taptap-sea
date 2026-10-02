@@ -100,6 +100,45 @@ local function DrawSplash(ctx, sx, sy, ppm, splashTimer)
     nvgStroke(ctx)
 end
 
+-- STEP-10 海鸟（俯视）：身体 + 后掠双翼，按朝向旋转
+local function DrawSeabird(ctx, sx, sy, ppm, heading)
+    nvgSave(ctx)
+    nvgTranslate(ctx, sx, sy)
+    nvgRotate(ctx, -(heading or 0))
+    local s = ppm * 0.9
+    -- 后掠双翼
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, 0.1 * s, 0)
+    nvgLineTo(ctx, -0.55 * s, -0.50 * s)
+    nvgLineTo(ctx, -0.15 * s, -0.10 * s)
+    nvgClosePath(ctx)
+    nvgMoveTo(ctx, 0.1 * s, 0)
+    nvgLineTo(ctx, -0.55 * s, 0.50 * s)
+    nvgLineTo(ctx, -0.15 * s, 0.10 * s)
+    nvgClosePath(ctx)
+    nvgFillColor(ctx, nvgRGBA(250, 250, 240, 235))
+    nvgFill(ctx)
+    -- 身体 + 头部
+    nvgBeginPath(ctx)
+    nvgEllipse(ctx, 0, 0, 0.55 * s, 0.15 * s)
+    nvgFillColor(ctx, nvgRGBA(255, 255, 248, 245))
+    nvgFill(ctx)
+    nvgBeginPath(ctx)
+    nvgEllipse(ctx, 0.5 * s, 0, 0.12 * s, 0.10 * s)
+    nvgFillColor(ctx, nvgRGBA(235, 190, 130, 255)) -- 喙
+    nvgFill(ctx)
+    nvgRestore(ctx)
+end
+
+-- STEP-10 读海信号：Dive/Circle 时目标处的白色聚焦圈（玩家据此读出海面下有动静）
+local function DrawBirdFocusRing(ctx, sx, sy, ppm)
+    nvgBeginPath(ctx)
+    nvgEllipse(ctx, sx, sy, 2.6 * ppm, 1.7 * ppm)
+    nvgStrokeColor(ctx, nvgRGBA(240, 252, 250, 95))
+    nvgStrokeWidth(ctx, 1.8)
+    nvgStroke(ctx)
+end
+
 ---@param ctx NVGContextWrapper
 ---@param w number 逻辑宽（像素）
 ---@param h number 逻辑高（像素）
@@ -149,6 +188,16 @@ function EntityDraw.Scene(ctx, w, h, state, world)
                 nvgEllipse(ctx, sx, sy, 2.2 * pixelsPerMeter, 0.9 * pixelsPerMeter)
                 nvgFillColor(ctx, nvgRGBA(35, 45, 55, 220))
                 nvgFill(ctx)
+            elseif entity.kind == "bird" then
+                -- STEP-10 海鸟：Dive/Circle 时在目标处画聚焦圈（读海信号）
+                local stateName = entity.fsm and entity.fsm.current or "Cruise"
+                if (stateName == "Dive" or stateName == "Circle")
+                    and entity.target and entity.target.alive then
+                    local tx, ty = Camera.WorldToScreen(w, h, state,
+                        entity.target.position.x, entity.target.position.y)
+                    DrawBirdFocusRing(ctx, tx, ty, pixelsPerMeter)
+                end
+                DrawSeabird(ctx, sx, sy, pixelsPerMeter, entity.heading)
             else
                 -- 调试标记：2m 半径外圈 + 4m 十字，全部以米定义、随视高缩放
                 local color = KIND_COLORS[entity.kind] or { 200, 200, 200, 255 }

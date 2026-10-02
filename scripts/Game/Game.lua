@@ -5,6 +5,7 @@ local World = require("Game.World")
 local EntityStateSystem = require("Systems.EntityStateSystem")
 local ClockSystem = require("Systems.ClockSystem")
 local FishSystem = require("Systems.FishSystem")
+local BirdSystem = require("Systems.BirdSystem")
 
 local Game = {}
 Game.__index = Game
@@ -27,10 +28,11 @@ function Game.New()
     if Config.debug and Config.debug.spawnTestEntity then
         self.world:CreateEntity("debug_marker", { position = { x = 10, y = 0 } })
     end
-    -- STEP-6/9 初始鱼群（Wander/Chase；正式区域密度 20 Sardine / 4 Tuna 属 M2 区域生成）
+    -- STEP-6/9/10 初始实体（正式区域密度 20 Sardine / 4 Tuna 属 M2 区域生成）
     local debugCfg = Config.debug or {}
     FishSystem.SpawnSardines(self.world, debugCfg.sardineCount or 8)
     FishSystem.SpawnTuna(self.world, debugCfg.tunaCount or 2)
+    BirdSystem.SpawnBirds(self.world, debugCfg.birdCount or 2)
     return self
 end
 
@@ -80,6 +82,7 @@ function Game:Reset()
     local debugCfg = Config.debug or {}
     FishSystem.SpawnSardines(self.world, debugCfg.sardineCount or 8)
     FishSystem.SpawnTuna(self.world, debugCfg.tunaCount or 2)
+    BirdSystem.SpawnBirds(self.world, debugCfg.birdCount or 2)
 end
 
 -- STEP-7 调试信号源（Main 按键 B/N 调用；位置=最近一次点击的世界坐标）
