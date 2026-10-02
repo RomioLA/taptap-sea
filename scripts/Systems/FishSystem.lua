@@ -1,9 +1,9 @@
--- FishSystem（STEP-6/7）：鱼群生成 + FSM 状态定义（Wander/Attracted/Flee）。
+-- FishSystem（STEP-6/7/9）：鱼群生成 + FSM 状态定义（Wander/Attracted/Flee/Chase）。
 -- 数值全部读 scripts/data/fish.lua（DATA_SCHEMA 契约）；本模块不推进 FSM——
 -- 所有实体的 fsm:Update 由 EntityStateSystem 在 World 更新链里统一推进，避免双推进。
--- 状态优先级（FEASIBILITY_PLAN）：边界/危险 > 吸引 > Wander（Chase/Avoid 属后续 Step）。
+-- 状态优先级（FEASIBILITY_PLAN）：边界/追猎/危险 > 吸引 > Wander（Avoid 属后续 Step）。
 -- 调试信号源：bait/predator 实体由按键生成（Main 调 SpawnDebugBait/Predator），
--- 正式入口=投海道具与 Tuna Chase，落地后本模块的调试生成路径即可退役。
+-- 正式入口=投海道具；Tuna Chase 已落地（STEP-9），predator 仅作调试保留。
 local StateMachine = require("FSM.StateMachine")
 local Config = require("Ocean.Config")
 local FishData = require("data.fish")
@@ -56,11 +56,29 @@ local function SteerIntoBounds(entity)
     end
 end
 
--- 找半径内最近的指定 kind 实体（当前实体规模 O(n) 遍历无压力）
-local function FindNearest(entity, kind, radius)
+-- STEP-9：危险源=调试捕食者 + 真实金枪鱼（Tuna Chase 落地后前者仅为调试保留）
+local DANGER_KINDS = { predator = true, tuna = true }
+
+local function IsDanger(other)
+    return DANGER_KINDS[other.kind] == true
+end
+
+local function IsBait(other)
+    return other.kind == "bait"
+end
+
+-- 猎物=异种鱼（当前仅金枪鱼追沙丁鱼；同种互不追猎）
+local function IsPreyFor(entity)
+    return function(other)
+        return other.kind == "fish" and other.fishKey ~= entity.fishKey
+    end
+end
+
+-- 找半径内最近的匹配实体（当前实体规模 O(n) 遍历无压力）
+local function FindNearest(entity, radius, matchFn)
     local best, bestD2 = nil, radius * radius
     for _, other in ipairs(entity.world:GetEntities()) do
-        if other ~= entity and other.alive and other.kind == kind then
+        if other ~= entity and other.alive and matchFn(other) then
             local d2 = Dist2(entity.position, other.position)
             if d2 <= bestD2 then
                 best, bestD2 = other, d2
@@ -70,10 +88,19 @@ local function FindNearest(entity, kind, radius)
     return best
 end
 
--- 感知决策：危险 > 吸引；鱼种缺对应感知字段时跳过该路
+-- 感知决策：追猎 > 危险 > 吸引（FEASIBILITY_PLAN 优先级）；鱼种缺对应感知字段则跳过该路
 local function Sense(entity, def)
+    if def.sense.prey then
+        local prey = FindNearest(entity, def.sense.prey, IsPreyFor(entity))
+        if prey then
+            entity.prey = prey
+            entity.loseTimer = 0
+            entity.fsm:Change("Chase")
+            return true
+        end
+    end
     if def.sense.danger then
-        local predator = FindNearest(entity, "predator", def.sense.danger)
+        local predator = FindNearest(entity, def.sense.danger, IsDanger)
         if predator then
             entity.dangerSource = predator
             entity.fsm:Change("Flee")
@@ -81,7 +108,7 @@ local function Sense(entity, def)
         end
     end
     if def.sense.attract then
-        local bait = FindNearest(entity, "bait", def.sense.attract)
+        local bait = FindNearest(entity, def.sense.attract, IsBait)
         if bait then
             entity.baitTarget = bait
             entity.fsm:Change("Attracted")
@@ -126,9 +153,18 @@ local FishStates = {
         update = function(entity, dt)
             local def = SPECIES[entity.fishKey]
             if not def then return end
-            -- 危险优先于吸引：感知半径内出现捕食者立即转 Flee
+            -- 高优先级感知可打断聚集：追猎 > 危险（FEASIBILITY_PLAN 优先级）
+            if def.sense.prey then
+                local prey = FindNearest(entity, def.sense.prey, IsPreyFor(entity))
+                if prey then
+                    entity.prey = prey
+                    entity.loseTimer = 0
+                    entity.fsm:Change("Chase")
+                    return
+                end
+            end
             if def.sense.danger then
-                local predator = FindNearest(entity, "predator", def.sense.danger)
+                local predator = FindNearest(entity, def.sense.danger, IsDanger)
                 if predator then
                     entity.dangerSource = predator
                     entity.fsm:Change("Flee")
@@ -212,6 +248,70 @@ local FishStates = {
             entity.riseTimer = 0
         end,
     },
+
+    -- Chase（STEP-9）：Tuna 追猎。白色尾迹线为读海信号（R1 第二段）。
+    -- 数值契约：speeds.chase / sense.prey / predation.contact / predation.loseTargetAfter
+    Chase = {
+        enter = function(entity)
+            entity.loseTimer = 0
+            entity.trailTimer = 0
+            entity.trail = nil -- 尾迹点列（世界坐标，表现层读）
+        end,
+        update = function(entity, dt)
+            local def = SPECIES[entity.fishKey]
+            if not def then return end
+            -- 每帧重锁感知半径内最近猎物；脱离感知进入 loseTargetAfter 宽限
+            local prey = FindNearest(entity, def.sense.prey, IsPreyFor(entity))
+            if prey then
+                entity.prey = prey
+                entity.loseTimer = 0
+            elseif entity.prey and entity.prey.alive then
+                entity.loseTimer = entity.loseTimer + dt
+                if entity.loseTimer > def.predation.loseTargetAfter then
+                    entity.prey = nil
+                    entity.fsm:Change("Wander")
+                    return
+                end
+            else
+                entity.prey = nil
+                entity.fsm:Change("Wander")
+                return
+            end
+            -- 追向猎物当前位置（宽限期内=最后所见，猎物仍存活故位置实时）
+            local target = entity.prey.position
+            entity.targetHeading = math.atan(
+                target.y - entity.position.y,
+                target.x - entity.position.x)
+            SteerIntoBounds(entity) -- 边界优先级高于追猎方向
+            TurnToward(entity, dt, entity.targetHeading, def.turnRate)
+            local speed = def.speeds.chase
+            entity.position.x = entity.position.x + math.cos(entity.heading) * speed * dt
+            entity.position.y = entity.position.y + math.sin(entity.heading) * speed * dt
+            -- 白色尾迹：按固定间隔记录点列（表现层连线）
+            entity.trailTimer = entity.trailTimer - dt
+            if entity.trailTimer <= 0 then
+                entity.trailTimer = Config.fishSystem.chaseTrailInterval
+                entity.trail = entity.trail or {}
+                entity.trail[#entity.trail + 1] = { x = entity.position.x, y = entity.position.y }
+                if #entity.trail > Config.fishSystem.chaseTrailPoints then
+                    table.remove(entity.trail, 1)
+                end
+            end
+            -- 捕食接触：猎物被吃掉（进入背包属捕获玩法，此处按生态规则直接移除）
+            local contact = def.predation.contact
+            if Dist2(entity.position, entity.prey.position) < contact * contact then
+                entity.world:RemoveEntity(entity.prey.id)
+                entity.splashTimer = 0.6 -- 捕食水花（复用表现层）
+                entity.prey = nil
+                entity.fsm:Change("Wander")
+                print("[捕食] 金枪鱼捕获沙丁鱼")
+            end
+        end,
+        exit = function(entity)
+            entity.prey = nil
+            entity.trail = nil
+        end,
+    },
 }
 
 -- 生成一条鱼并挂 FSM；挂 world 引用供感知查询，离船约束由调用方保证
@@ -242,6 +342,27 @@ function FishSystem.SpawnSardines(world, count, center)
         FishSystem.SpawnFish(world, "sardine", { x = x, y = y })
     end
     print(string.format("[鱼群] 初始生成 %d 条沙丁鱼（Wander，海面带内，离船≥%dm）",
+        count, def.spawn.minDistFromBoat))
+end
+
+-- STEP-9 初始金枪鱼群：海面带内随机分布，离船 ≥30m（spawn.minDistFromBoat）。
+-- 正式区域密度 20 Sardine / 4 Tuna 属 M2 区域生成；演示固定 2 条（Config.debug.tunaCount）。
+function FishSystem.SpawnTuna(world, count, center)
+    center = center or { x = 0, y = 0 }
+    local def = SPECIES.tuna
+    local top = Config.world.seaTopY - 2
+    local bottom = Config.world.seaBottomY + 2
+    for _ = 1, count do
+        local x, y
+        for _ = 1, 20 do -- 拒绝采样：落在离船 30m 内则重抽
+            x = center.x + RandRange(-42, 42)
+            y = center.y + RandRange(bottom - center.y, top - center.y)
+            local dx, dy = x - center.x, y - center.y
+            if dx * dx + dy * dy >= def.spawn.minDistFromBoat ^ 2 then break end
+        end
+        FishSystem.SpawnFish(world, "tuna", { x = x, y = y })
+    end
+    print(string.format("[鱼群] 初始生成 %d 条金枪鱼（离船≥%dm）",
         count, def.spawn.minDistFromBoat))
 end
 

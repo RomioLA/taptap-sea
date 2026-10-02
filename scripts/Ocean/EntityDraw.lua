@@ -18,6 +18,28 @@ local FISH_COLORS = {
     tuna = { 46, 82, 110, 255 },
 }
 
+-- STEP-9 体型（倍率，表现层）：金枪鱼约为沙丁鱼两倍体长
+local FISH_SCALE = {
+    sardine = 1.0,
+    tuna = 1.9,
+}
+
+-- STEP-9 Chase 白色尾迹线（R1 第二段）：世界坐标点列连线 + 实时末端
+local function DrawChaseTrail(ctx, w, h, state, entity, ppm)
+    local trail = entity.trail
+    if not trail or #trail < 2 then return end
+    nvgBeginPath(ctx)
+    for i, p in ipairs(trail) do
+        local px, py = Camera.WorldToScreen(w, h, state, p.x, p.y)
+        if i == 1 then nvgMoveTo(ctx, px, py) else nvgLineTo(ctx, px, py) end
+    end
+    local tx, ty = Camera.WorldToScreen(w, h, state, entity.position.x, entity.position.y)
+    nvgLineTo(ctx, tx, ty)
+    nvgStrokeColor(ctx, nvgRGBA(240, 252, 250, 120))
+    nvgStrokeWidth(ctx, 2.5)
+    nvgStroke(ctx)
+end
+
 -- 鱼体：身体椭圆 + 尾鳍三角，约 1.1m 体长，按朝向旋转（世界 y 向上，屏幕 y 向下故取负）
 local function DrawFish(ctx, sx, sy, ppm, heading, color)
     nvgSave(ctx)
@@ -90,20 +112,25 @@ function EntityDraw.Scene(ctx, w, h, state, world)
         if entity.alive and entity.position then
             local sx, sy = Camera.WorldToScreen(w, h, state, entity.position.x, entity.position.y)
             if entity.kind == "fish" then
-                -- STEP-7 按 FSM 状态渲染信号；Wander 仍无水面信号
+                -- STEP-7/9 按 FSM 状态渲染信号；Wander 仍无水面信号
                 local stateName = entity.fsm and entity.fsm.current or "Wander"
                 if stateName == "Flee" and (entity.riseTimer or 0) > 0 then
                     -- T1 上浮阶段：只画剪影（鱼体仍在水面下）
                     DrawSilhouette(ctx, sx, sy, pixelsPerMeter, entity.heading, entity.depth or 0)
                 else
-                    if stateName == "Flee" and (entity.splashTimer or 0) > 0 then
+                    -- 捕食水花（Tuna 捕获瞬间）与 Flee 出水水花共用表现
+                    if (entity.splashTimer or 0) > 0 then
                         DrawSplash(ctx, sx, sy, pixelsPerMeter, entity.splashTimer)
+                    end
+                    if stateName == "Chase" then
+                        DrawChaseTrail(ctx, w, h, state, entity, pixelsPerMeter)
                     end
                     if stateName == "Attracted" then
                         DrawRippleRings(ctx, sx, sy, pixelsPerMeter, entity.rippleTimer or 0)
                     end
                     local color = FISH_COLORS[entity.fishKey] or KIND_COLORS.fish
-                    DrawFish(ctx, sx, sy, pixelsPerMeter, entity.heading, color)
+                    local bodyScale = FISH_SCALE[entity.fishKey] or 1.0
+                    DrawFish(ctx, sx, sy, pixelsPerMeter * bodyScale, entity.heading, color)
                 end
             elseif entity.kind == "bait" then
                 -- STEP-7 调试诱饵：橙色饵球 + 淡环

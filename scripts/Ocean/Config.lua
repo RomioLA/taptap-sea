@@ -23,6 +23,7 @@ local Config = {
     debug = {
         spawnTestEntity = true, -- STEP-4 渲染通道验证：生成 1 个调试实体；FishSystem 落地后关闭
         sardineCount = 8,       -- STEP-6 初始沙丁鱼数（正式区域密度 20/4 属 M2 区域生成）
+        tunaCount = 2,          -- STEP-9 初始金枪鱼数（Chase 演示）
     },
     -- STEP-6 鱼群 Wander（键名用 fishSystem：脚手架的 fish=装饰鱼群数组仍被 Draw 消费，
     -- 同名会被表构造器覆盖——19:57 预览崩溃根因，勿改回）
@@ -36,6 +37,9 @@ local Config = {
         baitContact = 2,       -- 距诱饵 2m 内减速聚集（到达减速）
         fleeRiseSeconds = 2,   -- T1：Flee 前 2s 上浮剪影，不水平移动
         fleeCalmDistance = 24, -- 距危险源超过该距离解除 Flee（danger 感知 12m × 2）
+        -- STEP-9 Tuna Chase 白色尾迹（代码侧表现参数）
+        chaseTrailInterval = 0.08, -- 每 0.08s 记录一个尾迹点
+        chaseTrailPoints = 24,     -- 最多保留 24 点 ≈ 2s 尾迹
     },
     layers = {
         birds = 0.21,

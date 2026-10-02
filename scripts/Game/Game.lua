@@ -27,9 +27,10 @@ function Game.New()
     if Config.debug and Config.debug.spawnTestEntity then
         self.world:CreateEntity("debug_marker", { position = { x = 10, y = 0 } })
     end
-    -- STEP-6 初始沙丁鱼群（Wander；Wander 推进走 EntityStateSystem 统一链；
-    -- 正式区域密度 20 Sardine / 4 Tuna 属 M2 区域生成）
-    FishSystem.SpawnSardines(self.world, (Config.debug and Config.debug.sardineCount) or 8)
+    -- STEP-6/9 初始鱼群（Wander/Chase；正式区域密度 20 Sardine / 4 Tuna 属 M2 区域生成）
+    local debugCfg = Config.debug or {}
+    FishSystem.SpawnSardines(self.world, debugCfg.sardineCount or 8)
+    FishSystem.SpawnTuna(self.world, debugCfg.tunaCount or 2)
     return self
 end
 
@@ -76,7 +77,9 @@ function Game:Reset()
     self.pauseReasons = {}
     self.state.paused = false
     -- STEP-7 补：R 重置后重生初始鱼群（此前 Clear 后海里没鱼）
-    FishSystem.SpawnSardines(self.world, (Config.debug and Config.debug.sardineCount) or 8)
+    local debugCfg = Config.debug or {}
+    FishSystem.SpawnSardines(self.world, debugCfg.sardineCount or 8)
+    FishSystem.SpawnTuna(self.world, debugCfg.tunaCount or 2)
 end
 
 -- STEP-7 调试信号源（Main 按键 B/N 调用；位置=最近一次点击的世界坐标）
