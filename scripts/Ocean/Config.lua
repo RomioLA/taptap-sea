@@ -24,7 +24,7 @@ local Config = {
         spawnTestEntity = true, -- STEP-4 渲染通道验证：生成 1 个调试实体；FishSystem 落地后关闭
         sardineCount = 8,       -- STEP-6 初始沙丁鱼数（正式区域密度 20/4 属 M2 区域生成）
         tunaCount = 2,          -- STEP-9 初始金枪鱼数（Chase 演示）
-        birdCount = 2,          -- STEP-10 初始海鸟数（T4/T5 读海演示）
+        birdCount = 4,          -- STEP-10 初始海鸟数（T4/T5 读海演示；检测半径契约 15m 不变，增数量提覆盖）
     },
     -- STEP-6 鱼群 Wander（键名用 fishSystem：脚手架的 fish=装饰鱼群数组仍被 Draw 消费，
     -- 同名会被表构造器覆盖——19:57 预览崩溃根因，勿改回）

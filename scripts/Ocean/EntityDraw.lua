@@ -61,7 +61,8 @@ end
 -- STEP-7 信号渲染（R1 信号链第一段）：
 -- Attracted=聚集涟漪 / Flee 出水前=T1 上浮剪影 / 出水后=白色水花 / Wander=无信号
 
--- T1 上浮剪影：深色鱼影随深度渐显、微放大（depth 0 水下 → 1 水面）
+-- T1 上浮剪影：深色鱼影随深度渐显、微放大（depth 0 水下 → 1 水面）；
+-- 外圈淡白提示环随深度增强（上浮是读海信号，需在海面上醒目可见）
 local function DrawSilhouette(ctx, sx, sy, ppm, heading, depth)
     nvgSave(ctx)
     nvgTranslate(ctx, sx, sy)
@@ -69,9 +70,17 @@ local function DrawSilhouette(ctx, sx, sy, ppm, heading, depth)
     local s = 1 + 0.2 * depth
     nvgBeginPath(ctx)
     nvgEllipse(ctx, 0, 0, 0.55 * ppm * s, 0.22 * ppm * s)
-    nvgFillColor(ctx, nvgRGBA(24, 46, 64, math.floor(120 + 120 * depth)))
+    nvgFillColor(ctx, nvgRGBA(14, 34, 52, math.floor(160 + 95 * depth)))
     nvgFill(ctx)
     nvgRestore(ctx)
+    local ring = math.floor(40 + 110 * depth)
+    if ring > 8 then
+        nvgBeginPath(ctx)
+        nvgEllipse(ctx, sx, sy, 1.5 * ppm, 1.0 * ppm)
+        nvgStrokeColor(ctx, nvgRGBA(235, 250, 248, ring))
+        nvgStrokeWidth(ctx, 1.6)
+        nvgStroke(ctx)
+    end
 end
 
 -- 聚集涟漪：3 道相位错开的扩散环（phase 由 FishSystem 的 rippleTimer 推进）

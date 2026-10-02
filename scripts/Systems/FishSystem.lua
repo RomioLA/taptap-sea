@@ -279,12 +279,16 @@ local FishStates = {
             end
             -- 追向猎物当前位置（宽限期内=最后所见，猎物仍存活故位置实时）
             local target = entity.prey.position
+            local dist2 = Dist2(entity.position, target)
+            -- T1 演出保护：猎物上浮阶段（水下剪影）不可捕获，金枪鱼减速游弋伏击，
+            -- 出水水花后恢复全速追击——保证「剪影→水花→逃窜」读海序列可见
+            local preyRising = (entity.prey.riseTimer or 0) > 0
+            local speed = preyRising and def.speeds.wander or def.speeds.chase
             entity.targetHeading = math.atan(
                 target.y - entity.position.y,
                 target.x - entity.position.x)
             SteerIntoBounds(entity) -- 边界优先级高于追猎方向
             TurnToward(entity, dt, entity.targetHeading, def.turnRate)
-            local speed = def.speeds.chase
             entity.position.x = entity.position.x + math.cos(entity.heading) * speed * dt
             entity.position.y = entity.position.y + math.sin(entity.heading) * speed * dt
             -- 白色尾迹：按固定间隔记录点列（表现层连线）
@@ -297,9 +301,9 @@ local FishStates = {
                     table.remove(entity.trail, 1)
                 end
             end
-            -- 捕食接触：猎物被吃掉（进入背包属捕获玩法，此处按生态规则直接移除）
+            -- 捕食接触：仅出水猎物可捕获（上浮阶段不可捕，见 T1 演出保护）
             local contact = def.predation.contact
-            if Dist2(entity.position, entity.prey.position) < contact * contact then
+            if not preyRising and dist2 < contact * contact then
                 entity.world:RemoveEntity(entity.prey.id)
                 entity.splashTimer = 0.6 -- 捕食水花（复用表现层）
                 entity.prey = nil

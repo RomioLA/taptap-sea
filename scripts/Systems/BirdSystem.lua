@@ -135,6 +135,11 @@ local BirdStates = {
                 bird.fsm:Change("Cruise")
                 return
             end
+            -- 目标仍在逃跑：盘旋中心每帧跟随目标（绕着移动的鱼转）
+            local t = bird.target
+            if t and t.alive and t.fsm and t.fsm.current == "Flee" then
+                bird.circleCenter = { x = t.position.x, y = t.position.y }
+            end
             bird.circleAngle = bird.circleAngle + Config.birdSystem.circleAngularSpeed * dt
             local r = Config.birdSystem.circleRadius
             bird.position.x = bird.circleCenter.x + math.cos(bird.circleAngle) * r
