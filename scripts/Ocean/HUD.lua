@@ -3,7 +3,7 @@ local UI = require("urhox-libs/UI")
 local Config = require("Ocean.Config")
 local HUD = {}
 
-function HUD.Create(state)
+function HUD.Create(game)
     local statusLabel = UI.Label {
         text = "场景运行中",
         fontSize = 9,
@@ -23,17 +23,17 @@ function HUD.Create(state)
     }
 
     local function Refresh()
-        pauseButton:SetText(state.paused and "继续" or "暂停")
-        statusLabel:SetText(state.paused and "场景已暂停" or "场景运行中")
+        pauseButton:SetText(game:IsPaused() and "继续" or "暂停")
+        statusLabel:SetText(game:IsPaused() and "场景已暂停" or "场景运行中")
     end
 
     local function TogglePause()
-        state:TogglePause()
+        game:TogglePause()
         Refresh()
     end
 
     local function Reset()
-        state:Reset()
+        game:Reset()
         Refresh()
     end
 
@@ -53,7 +53,7 @@ function HUD.Create(state)
             textColor = { 246, 244, 218, 255 },
             borderWidth = 1,
             borderColor = { 212, 235, 219, 65 },
-            onClick = function() state:MoveBy(direction) end,
+            onClick = function() game:MoveBy(direction) end,
         }
     end
 

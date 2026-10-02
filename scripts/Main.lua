@@ -3,13 +3,13 @@
 -- 操作：A/D 或方向键移动，空格暂停，R 重置；点击海面也可移动船只。
 local UI = require("urhox-libs/UI")
 local Config = require("Ocean.Config")
-local State = require("Ocean.State")
+local Game = require("Game.Game")
 local Draw = require("Ocean.Draw")
 local HUD = require("Ocean.HUD")
 
 ---@type NVGContextWrapper?
 local oceanContext = nil
-local state = State.New()
+local game = Game.New()
 ---@type { togglePause: function, reset: function, refresh: function }?
 local hud = nil
 local lastWidth, lastHeight = 0, 0
@@ -38,7 +38,7 @@ function Start()
             } },
         },
     })
-    hud = HUD.Create(state)
+    hud = HUD.Create(game)
     SubscribeToEvent(oceanContext, "NanoVGRender", "HandleOceanRender")
     SubscribeToEvent("Update", "HandleOceanUpdate")
     SubscribeToEvent("KeyDown", "HandleOceanKeyDown")
@@ -57,7 +57,7 @@ function HandleOceanUpdate(eventType, eventData)
     if input:GetKeyDown(KEY_D) or input:GetKeyDown(KEY_RIGHT) then
         direction = direction + 1
     end
-    state:Update(eventData:GetFloat("TimeStep"), direction)
+    game:Update(eventData:GetFloat("TimeStep"), direction)
 end
 
 ---@param eventType string
@@ -74,7 +74,7 @@ function HandleOceanRender(eventType, eventData)
     end
     -- 模式 B：系统逻辑分辨率，响应式比例布局；不用 graphics:SetMode。
     nvgBeginFrame(oceanContext, w, h, dpr)
-    Draw.Scene(oceanContext, w, h, state)
+    Draw.Scene(oceanContext, w, h, game:GetRenderState())
     nvgEndFrame(oceanContext)
     if firstFrame then
         firstFrame = false
@@ -83,15 +83,15 @@ function HandleOceanRender(eventType, eventData)
 end
 
 local function MoveToScreenPoint(x, y)
-    if state.paused then return end
+    if game:IsPaused() then return end
     local width, height = graphics:GetWidth(), graphics:GetHeight()
     if width <= 0 or height <= 0 then return end
     -- 仅海面中部接收点击，顶部标题与底部按钮不触发移动。
     local ratioY = y / height
     if ratioY < 0.36 or ratioY > 0.76 then return end
     if UI.IsPointerOverUI() then return end
-    state:SetTarget(x / width)
-    print(string.format("[海洋框架] 船只目标位置 %.2f", state.targetX))
+    game:SetTarget(x / width)
+    print(string.format("[海洋框架] 船只目标位置 %.2f", game:GetTargetX()))
 end
 
 ---@param eventType string
