@@ -129,6 +129,8 @@ screenshots/
 | TASK-004a | M0 单人闭环骨架：船移动/镜头 dead-zone/昼夜时钟/HUD 雏形 | A+AI | 程序 | 未开始 | 原 TASK-004 前半；闸口=能开船出海、看到天黑、HUD 数字正确 |
 | TASK-004b | M1 核心行动：体力/捕鱼/商店/背包/港口/每日结算存档 | A+AI | 程序 | 未开始 | 原 TASK-004 后半；闸口=完整一天经济闭环；依赖 TASK-006 schema |
 | TASK-005 | 数据层与内容填充：data/ 七表（items/fish/events/locations/upgrades/oldman/ui_text） | B（Codex 辅助） | 内容 | 未开始 | 首个任务=校对 A 预填的 items/fish 基准行 + 补齐约 10 个事件；格式契约=DATA_SCHEMA.md；只许修改 `data/` 与 `docs/`，禁止触碰 `scripts/` |
+| TASK-007 | 架构提案验收：远端提交 1e0d8c8（Game/World/FSM/Entities/Systems 骨架） | B 提交，A 验收 | 程序 | 待验收 | 静态审查已通过（无策划规则落地，纯通用骨架，~145 行）；**缺运行验证**：A 在 Preview 确认启动与既有画面正常；验收通过后按 FEASIBILITY_PLAN §2.1 收编为基础设施层 |
+| TASK-007N | 边界先例登记 | A | 流程 | 已决议 | 1e0d8c8 越界修改 🔴 核心文件，本次特赦收编、不追责；先例已写入 FEASIBILITY_PLAN §2.1——此后 B 改 `scripts/` 必须先走 docs/ 提案 + A 审查 |
 
 原 TASK-001（核心循环设计）、TASK-002（视觉规范）、TASK-003（世界观设定）保留，C/D 职能当前并入 B；推进由 A 明确发出任务后开始。
 - [ ] A 核对全部最终验收条件，将 TASK-000 标为“已验收”；必要时再确认“稳定版”。

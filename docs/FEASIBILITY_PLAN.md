@@ -50,6 +50,20 @@ data/                    # [对方] 全部内容与数值，纯数据表，无�
 - 参数表中的 A/B 模块标注（「A负责距离检测」「B保存识别状态」等）按上表归并：**所有带逻辑的模块归你**；对方通过 data 文件提供这些模块消费的内容。
 - `State.lua` 读 `data/*.lua` 只依赖 schema，不依赖具体数值——这是隔离的关键。
 
+### 2.1 架构归一决议（2026-10-02 增补）
+
+远端提交 `1e0d8c8`（B 经 Codex 实现，越界但产出合格）经 A 审查后**收编采纳**为基础设施层。映射如下：
+
+| 原 Ocean/ 规划 | 归一后落点 |
+|---|---|
+| World.lua（实体注册/生成/冻结） | `scripts/Game/World.lua` + `Entities/EntityFactory.lua` 承担；**待补**：`direction/rotation`、`active/frozen` 字段（现仅有 `alive`）、120/150m 双阈值调度、生成约束 |
+| Fish.lua 的 FSM 部分 | 用 `scripts/FSM/StateMachine.lua` 实例化 Sardine/Tuna 四状态（Wander/Attracted/Flee/Chase）+ 优先级：障碍/边界 > 危险/追猎 > 吸引 > Wander |
+| Boat / Clock / Action / Port / Save | 仍由 A 实现，经 `Game.World:AddSystem()` 挂载——System 调度机制即这些模块的挂载点 |
+| `Game/Game.lua` | 保留为协调层；Clock 的 pause reason 需扩展其 `wasPaused` 单一判断为多来源 |
+| Config.lua / data/ 三表 | 不变（`1e0d8c8` 未触碰） |
+
+流程决议（先例记录）：**本次特赦不追责，规则不变**——B 后续对 `scripts/` 的任何改动必须先以提案文档形式落在 `docs/`，经 A 审查后由 A 或 A 授权实施；直接用 AI 修改 🔴 核心文件的行为不再放行。
+
 ---
 
 ## 3. 文件所有权（冲突防火墙）
