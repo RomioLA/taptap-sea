@@ -131,6 +131,7 @@ screenshots/
 | TASK-005 | 数据层与内容填充：data/ 七表（items/fish/events/locations/upgrades/oldman/ui_text） | B（Codex 辅助） | 内容 | 未开始 | 首个任务=校对 A 预填的 items/fish 基准行 + 补齐约 10 个事件；格式契约=DATA_SCHEMA.md；只许修改 `data/` 与 `docs/`，禁止触碰 `scripts/` |
 | TASK-007 | 架构提案验收：远端提交 1e0d8c8（Game/World/FSM/Entities/Systems 骨架） | B 提交，A 验收 | 程序 | 待验收 | 静态审查已通过（无策划规则落地，纯通用骨架，~145 行）；**缺运行验证**：A 在 Preview 确认启动与既有画面正常；验收通过后按 FEASIBILITY_PLAN §2.1 收编为基础设施层 |
 | TASK-007N | 边界先例登记 | A | 流程 | 已决议 | 1e0d8c8 越界修改 🔴 核心文件，本次特赦收编、不追责；先例已写入 FEASIBILITY_PLAN §2.1——此后 B 改 `scripts/` 必须先走 docs/ 提案 + A 审查 |
+| TASK-008 | 程序接入提案验收：目录分层 Ocean/+Gameplay/+Integration/（远端 2569cd4，AGENTS.md + docs/ARCHITECTURE_LAYOUT.md） | B 提案，A 审查 | 流程 | 待验收 | 提案本身边界合规（仅改 docs 与自建 AGENTS.md）；A 审查意见：①采纳三层职责划分，Integration 只做装配/转发/事务编排、不得持有任何状态；②Gameplay 模块须以 System 注册进 Game.World（单一更新链）；③**修正文档失实**：AGENTS.md 以"现有"描述的 SeaRuntime、Ocean/World.lua、GeneratedData/、tests/sync_runtime_data.py 在共享 main 上均不存在，须改为"计划引入"或先落地基础设施；④Ocean/World.lua 与 Game/World.lua 命名冲突，建议改名或写明扩展机制 |
 
 原 TASK-001（核心循环设计）、TASK-002（视觉规范）、TASK-003（世界观设定）保留，C/D 职能当前并入 B；推进由 A 明确发出任务后开始。
 - [ ] A 核对全部最终验收条件，将 TASK-000 标为“已验收”；必要时再确认“稳定版”。
