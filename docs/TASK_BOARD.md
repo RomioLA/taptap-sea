@@ -118,6 +118,19 @@ screenshots/
 - [ ] A 验证 A/D、方向键、海面点击、屏幕按钮、空格暂停/继续、R 重置；需要触摸设备时另行真机检查。
 - [ ] A/B/C/D 阅读并确认自己能改、不能改的文件及停改求助规则。
 - [ ] A 确认配置字段授权与共享 docs/data 的交接方式。
+
+## 6. 2026-10-02 任务更新（双人实现分工）
+
+依据 `docs/FEASIBILITY_PLAN.md`，实现人力调整为 2 人：A（WorkBuddy，核心代码）+ B（数据/内容，Codex 辅助）。TASK-004 按里程碑拆分，新增数据层任务。本表为增量快照，日常跟踪以本表为准。
+
+| ID | 任务 | 负责人 | 类型 | 状态 | 说明 |
+|---|---|---|---|---|---|
+| TASK-006 | 数据契约 DATA_SCHEMA.md 定稿（items/fish/events 三份 schema + data/ 三表基准数据预填） | A | 技术 | 待验收 | 已交付 `docs/DATA_SCHEMA.md`、`data/items.lua`、`data/fish.lua`、`data/events.lua`（items/fish 按参数表预填，events 含 1 条格式示范） |
+| TASK-004a | M0 单人闭环骨架：船移动/镜头 dead-zone/昼夜时钟/HUD 雏形 | A+AI | 程序 | 未开始 | 原 TASK-004 前半；闸口=能开船出海、看到天黑、HUD 数字正确 |
+| TASK-004b | M1 核心行动：体力/捕鱼/商店/背包/港口/每日结算存档 | A+AI | 程序 | 未开始 | 原 TASK-004 后半；闸口=完整一天经济闭环；依赖 TASK-006 schema |
+| TASK-005 | 数据层与内容填充：data/ 七表（items/fish/events/locations/upgrades/oldman/ui_text） | B（Codex 辅助） | 内容 | 未开始 | 首个任务=校对 A 预填的 items/fish 基准行 + 补齐约 10 个事件；格式契约=DATA_SCHEMA.md；只许修改 `data/` 与 `docs/`，禁止触碰 `scripts/` |
+
+原 TASK-001（核心循环设计）、TASK-002（视觉规范）、TASK-003（世界观设定）保留，C/D 职能当前并入 B；推进由 A 明确发出任务后开始。
 - [ ] A 核对全部最终验收条件，将 TASK-000 标为“已验收”；必要时再确认“稳定版”。
 
 “原有功能未破坏”的证据包括源码未变、启动/画面回归；不因此代替人工操作验收。全部条件确认后才算 TASK-000 正式完成。
