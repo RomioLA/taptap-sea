@@ -7,6 +7,16 @@ local Game = require("Game.Game")
 local Draw = require("Ocean.Draw")
 local HUD = require("Ocean.HUD")
 
+-- 启动自检（STEP-2 数据加载验证）：确认根目录 data/ 数据表可被运行时 require。
+-- data/ 为纯数据表（DATA_SCHEMA 契约），加载失败只报警不阻断启动。
+do
+    local okFish, fishData = pcall(require, "data.fish")
+    local okItems, itemsData = pcall(require, "data.items")
+    print(string.format("[数据自检] fish=%s(%s) items=%s(%s)",
+        tostring(okFish), okFish and (#fishData .. "种") or "加载失败",
+        tostring(okItems), okItems and (#itemsData .. "种") or "加载失败"))
+end
+
 ---@type NVGContextWrapper?
 local oceanContext = nil
 local game = Game.New()
