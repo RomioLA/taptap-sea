@@ -32,7 +32,7 @@ end
 -- 世界边缘回正：临近边界时把目标朝向指向世界中心（推回 3m/s 属 M0 世界规则，此处仅转向）
 local function SteerAwayFromEdge(entity)
     local half = Config.world.worldSize / 2
-    local margin = Config.fish.worldMargin
+    local margin = Config.fishSystem.worldMargin
     if math.abs(entity.position.x) < half - margin
         and math.abs(entity.position.y) < half - margin then
         return
@@ -45,7 +45,7 @@ end
 local WanderStates = {
     Wander = {
         enter = function(entity)
-            entity.retargetTimer = RandRange(Config.fish.wanderRetargetMin, Config.fish.wanderRetargetMax)
+            entity.retargetTimer = RandRange(Config.fishSystem.wanderRetargetMin, Config.fishSystem.wanderRetargetMax)
             entity.targetHeading = entity.heading or 0
         end,
         update = function(entity, dt)
@@ -53,7 +53,7 @@ local WanderStates = {
             if not def then return end
             entity.retargetTimer = entity.retargetTimer - dt
             if entity.retargetTimer <= 0 then
-                entity.retargetTimer = RandRange(Config.fish.wanderRetargetMin, Config.fish.wanderRetargetMax)
+                entity.retargetTimer = RandRange(Config.fishSystem.wanderRetargetMin, Config.fishSystem.wanderRetargetMax)
                 -- 相对当前朝向 ±120° 内偏转，不做瞬间掉头
                 entity.targetHeading = entity.heading + (math.random() * 2 - 1) * 120 * DEG
             end
