@@ -8,6 +8,13 @@ local Config = {
         worldSize = 1800,  -- 1800×1800m = 最大船速 10m/s × 180s（参数表「地图/世界结构」）
     },
     boatSpeedLevels = { 6, 8, 10 }, -- m/s（参数表「船移动」；M0 接入真实船逻辑时消费）
+    -- STEP-5 昼夜时钟（参数表「GameClock」「夜晚处罚」「昼夜视觉」）
+    clock = {
+        dayLength = 120,         -- 白天 120s
+        nightLength = 60,        -- 夜晚 60s；耗尽自动结束当天（「夜晚强制返港」）
+        nightGraceSeconds = 30,  -- 夜晚前 30s 安全，之后每晚 1 秒减 1 体力（M1 消费）
+        nightOverlayAlpha = 190, -- 夜间遮罩透明度，190/255≈75% 黑蓝
+    },
     debug = {
         spawnTestEntity = true, -- STEP-4 渲染通道验证：生成 1 个调试实体；FishSystem 落地后关闭
     },

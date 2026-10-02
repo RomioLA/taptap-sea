@@ -347,6 +347,14 @@ function Draw.Scene(ctx, w, h, state, world)
     Arrow(ctx, w * 0.5, h * 0.705, scale, arrowAlpha)
     -- World 实体调试绘制（只读；渲染通道见 STEP-4）
     EntityDraw.Scene(ctx, w, h, state, world)
+    -- STEP-5 夜间遮罩（参数表「昼夜视觉」：约 75% 黑蓝透明；船、港口标识、UI 保持可见）
+    local clock = state.clock
+    if clock and clock.phase == "night" then
+        local alpha = (Config.clock and Config.clock.nightOverlayAlpha) or 190
+        nvgBeginPath(ctx)
+        nvgRect(ctx, 0, 0, w, h)
+        Fill(ctx, { 10, 22, 48, alpha })
+    end
 end
 
 return Draw

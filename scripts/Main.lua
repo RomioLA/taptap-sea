@@ -75,6 +75,8 @@ function HandleOceanUpdate(eventType, eventData)
         direction = direction + 1
     end
     game:Update(eventData:GetFloat("TimeStep"), direction)
+    -- STEP-5 昼夜倒计时上屏（文本变化时才重排，见 HUD.Tick）
+    if hud and hud.tick then hud.tick() end
 end
 
 ---@param eventType string

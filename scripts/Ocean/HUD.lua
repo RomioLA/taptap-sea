@@ -32,9 +32,26 @@ function HUD.Create(game)
         pressedBackgroundColor = { 221, 205, 169, 255 },
     }
 
+    -- STEP-5 昼夜倒计时：每帧 tick，仅在整秒文本变化时 SetText，避免 UI 每帧重排。
+    local lastStatusText
+    local function FormatClock()
+        local clock = game:GetClock()
+        if not clock then return "" end
+        local phaseText = clock.phase == "night" and "夜晚" or "白天"
+        return string.format("第%d天 · %s · 剩余%d秒",
+            clock.day, phaseText, math.max(0, math.ceil(clock.remaining)))
+    end
+    local function Tick()
+        local statusText = game:IsPaused() and ("已暂停 · " .. FormatClock()) or FormatClock()
+        if statusText ~= lastStatusText then
+            lastStatusText = statusText
+            statusLabel:SetText(statusText)
+        end
+    end
+
     local function Refresh()
         pauseButton:SetText(game:IsPaused() and "继续" or "暂停")
-        statusLabel:SetText(game:IsPaused() and "场景已暂停" or "场景运行中")
+        Tick()
     end
 
     local function TogglePause()
@@ -147,7 +164,7 @@ function HUD.Create(game)
     UI.SetRoot(root)
     print("[海洋框架] 界面就绪：左右移动、暂停、重置；支持键盘和触摸")
     return { togglePause = TogglePause, reset = Reset, refresh = Refresh,
-             updateDiagnostics = UpdateDiagnostics }
+             updateDiagnostics = UpdateDiagnostics, tick = Tick }
 end
 
 return HUD
