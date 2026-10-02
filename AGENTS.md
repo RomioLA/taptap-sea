@@ -1120,11 +1120,19 @@ workspace/
 ## 渔夫漂流记项目级约定
 
 - 本项目是 2D 俯视游戏。
-- `scripts/Main.lua` 只作 Maker 生命周期与引擎事件适配/接线（包括当前输入和渲染回调）；游戏流程与规则由 Game/World 负责。
-- `scripts/Game/Game.lua` 协调整局流程；`scripts/Game/World.lua` 管理世界、Entity 集合与 System 更新。
-- Entity 使用轻量数据对象，不建立深层继承；对象状态切换使用 `scripts/FSM/StateMachine.lua` 中的轻量 FSM。
-- 有明确复用需求的对象行为放在 Behavior 模块；当前没有行为实现，不为未来猜测建立空目录。
-- 世界级规则放在 `scripts/Systems/`；参数集中放 Config，当前演示参数位于 `scripts/Ocean/Config.lua`。
-- `scripts/Ocean/Draw.lua` 只读取状态并绘制，不直接修改 World 或 Entity 状态。
-- UI/HUD 通过 Game/World 暴露的方法交互，不直接修改 Entity 内部字段。
-- 不引入完整 ECS 或重型 OOP；未确认的游戏规则不要自行实现。
+- 沿用已确认的轻量 `Game/Entities/FSM/Systems` 骨架，按实际需求扩充 `Ocean/`，新增 `Gameplay/` 与 `Integration/`；不引入完整 ECS 或重型继承。
+- `scripts/Main.lua` 仅负责 Maker 生命周期和场景接线；引擎输入、渲染事件适配在场景层，规则不写进入口。
+- `Game/Game.lua` 协调整局更新和暂停同步。玩家状态、昼夜与保存由 `Gameplay/` 持有；Game 不另建一份玩家状态或时钟。
+- `Game/World.lua` 是唯一 Entity 注册和 System 调度实现；`Entities/EntityFactory.lua` 创建轻量数据对象。每个运行实例只有一套对象集合和 ID 索引。
+- `Ocean/World.lua` 在同一个 Game.World 实例上扩展海洋碰撞、范围查询、临时对象与揭示，不建立第二份对象集合；保留旧海洋接口供现有调用方兼容使用。
+- `FSM/StateMachine.lua` 提供 enter/update/exit 和状态切换；`Systems/EntityStateSystem.lua` 是对象 FSM 的唯一自动更新者。SeaRuntime 的现有子步长调度调用 World.Update，不再额外逐鱼更新。
+- `Ocean/` 负责船移动、鱼行为、生成与冻结、海面信号和绘制；绘制只读取状态。`Ocean/State.lua` 等旧演示模块保留兼容，不与正式场景同时运行。
+- `Gameplay/` 负责体力、背包、交易、升级、昼夜、日结与保存；后续老人、事件进度和结局按需求在该目录新增模块。只消费海洋接口，不复制移动或鱼 AI。
+- `Integration/` 负责场景装配、输入转发与跨模块事务（例如鱼获入包、投放确认和新日通知）；整局更新委托 Game。不得在这里重复维护时钟、库存或生态规则。
+- UI/HUD 通过游戏/玩法公开接口操作状态，不直接改 Entity 字段；一个场景只有一个 UI 根和一条更新链。暂停、换日和 Reset 后继续使用当前 Runtime 的 World，不保留陈旧世界引用。
+- 根目录 `data/` 为策划唯一可编辑数据源，遵守 `docs/DATA_SCHEMA.md`。允许仅含表和注释的 `data/*.lua`，禁止函数、逻辑与 require；缺表或字段先由负责人确认契约。
+- Maker 当前资源根为 assets/scripts；`scripts/GeneratedData/` 是同步生成的资源副本，不手工编辑。数据编辑后由程序任务执行 `tests/sync_runtime_data.py` 并通过 `--check`，再预览或构建。
+- 数据编辑任务仅改 `data/` 与 `docs/`。架构约定同步与程序接入分别交付；程序任务需明确授权后才允许必要 scripts/测试改动，不据此扩大数据助手权限。本批共享交付仅含本节约定与 `docs/ARCHITECTURE_LAYOUT.md`。
+- 策划优先级：2026-10-02 工作簿 Sheet1（阿木策划记录）为 V1 基线；Sheet5、Sheet6 为未定过程稿。不得将过程稿“用户已定”等标签或候选规则直接作为新的实现授权。
+- 未定老人救法、宝藏内容、生态扩展等不自行实现；不为候选功能创建空目录或空模块。具体内容确认后再增加文件，目录变化不要求重写已验证玩法。
+- 骨架接入须验证：对象身份和 ID 稳定、每帧更新不重复、暂停停船/鱼/临时寿命、冻结鱼不更新、同日状态保留、新日清理、捕鱼事务失败恢复、新周目不引用旧 World。
