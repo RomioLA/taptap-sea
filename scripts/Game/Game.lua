@@ -16,6 +16,8 @@ function Game.New()
     -- STEP-5 昼夜时钟：状态挂 world.clock，System 进唯一更新链（每帧只推进一次）。
     self.world.clock = ClockSystem.NewState()
     self.world:AddSystem(ClockSystem)
+    -- STEP-7 FishSystem 进更新链（当前只负责诱饵倒计时；FSM 推进仍归 EntityStateSystem）
+    self.world:AddSystem(FishSystem)
     self.world:AddSystem(EntityStateSystem)
     -- STEP-5 多来源暂停：reason 集合（"user"=暂停按钮；"port"/"event"/"dialog" 等留给 M1/M3）。
     self.pauseReasons = {}
@@ -73,6 +75,17 @@ function Game:Reset()
     ClockSystem.ResetState(self.world.clock)
     self.pauseReasons = {}
     self.state.paused = false
+    -- STEP-7 补：R 重置后重生初始鱼群（此前 Clear 后海里没鱼）
+    FishSystem.SpawnSardines(self.world, (Config.debug and Config.debug.sardineCount) or 8)
+end
+
+-- STEP-7 调试信号源（Main 按键 B/N 调用；位置=最近一次点击的世界坐标）
+function Game:SpawnDebugBait(position)
+    FishSystem.SpawnBait(self.world, position)
+end
+
+function Game:SpawnDebugPredator(position)
+    FishSystem.SpawnPredator(self.world, position)
 end
 
 function Game:SetTarget(x)

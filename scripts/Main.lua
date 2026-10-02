@@ -1,6 +1,7 @@
 -- 海风小岛：基于 templates/scaffold-2d.lua 的轻量 2D 项目框架。
 -- 层次：飞鸟 → 海浪与鱼群 → 船只 → 小岛。
--- 操作：A/D 或方向键移动，空格暂停，R 重置；点击海面也可移动船只。
+-- 操作：A/D 或方向键移动，空格暂停，R 重置；点击海面移动船。
+-- STEP-7 调试信号：B=在最近点击处放诱饵（触发 Attracted），N=放捕食者（触发 Flee）。
 local UI = require("urhox-libs/UI")
 local Config = require("Ocean.Config")
 local Camera = require("Ocean.Camera")
@@ -129,6 +130,8 @@ local function MoveToScreenPoint(x, y)
         local logicalW, logicalH = width / dpr, height / dpr
         local boatWorldX = Camera.BoatWorldX(game:GetRenderState(), logicalW, logicalH)
         local dist = math.sqrt((worldX - boatWorldX) ^ 2 + worldY * worldY)
+        -- STEP-7：记录最近点击的世界坐标，B/N 调试信号源生成于此
+        game.lastClickWorld = { x = worldX, y = worldY }
         local clickText = string.format("点击 (%.1f, %.1f)m 距船 %.1fm", worldX, worldY, dist)
         print(string.format("[米制坐标] %s", clickText))
         if hud and hud.updateDiagnostics then
@@ -159,6 +162,13 @@ function HandleOceanKeyDown(eventType, eventData)
     local key = eventData:GetInt("Key")
     if key == KEY_SPACE then hud.togglePause() end
     if key == KEY_R then hud.reset() end
+    -- STEP-7 调试信号源：先点海面选位置，再按键生成（默认船首前方 12m）
+    if key == KEY_B then
+        game:SpawnDebugBait(game.lastClickWorld or { x = 12, y = 0 })
+    end
+    if key == KEY_N then
+        game:SpawnDebugPredator(game.lastClickWorld or { x = 12, y = 0 })
+    end
 end
 
 function Stop()

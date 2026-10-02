@@ -25,6 +25,11 @@ local Config = {
         wanderRetargetMin = 2, -- 每 2~4s 换方向（参数表「Wander」）
         wanderRetargetMax = 4,
         worldMargin = 30,      -- 距世界边缘 30m 内目标朝向回指中心（1800m 地图内不贴边）
+        -- STEP-7 Attracted/Flee（代码侧表现参数，不属于 DATA_SCHEMA 契约）
+        baitTtl = 20,          -- 调试诱饵存留秒数，过期移除、鱼群回 Wander
+        baitContact = 2,       -- 距诱饵 2m 内减速聚集（到达减速）
+        fleeRiseSeconds = 2,   -- T1：Flee 前 2s 上浮剪影，不水平移动
+        fleeCalmDistance = 24, -- 距危险源超过该距离解除 Flee（danger 感知 12m × 2）
     },
     layers = {
         birds = 0.21,
