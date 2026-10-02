@@ -276,18 +276,18 @@ v1 DEFERRED
 确认是否已经存在：
 
 ```text
-data/fish.lua
-data/items.lua
-data/events.lua
-data/upgrades.lua
+scripts/data/fish.lua
+scripts/data/items.lua
+scripts/data/events.lua
+scripts/data/upgrades.lua
 ```
 
 并判断：
 
 ```text
-data/worldobjects.lua
-data/birds.lua
-data/oldman.lua
+scripts/data/worldobjects.lua
+scripts/data/birds.lua
+scripts/data/oldman.lua
 ```
 
 是否应该新增。

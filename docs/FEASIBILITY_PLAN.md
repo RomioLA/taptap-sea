@@ -36,7 +36,7 @@ scripts/
     ├── Port.lua          # [你] 新增：返港、商店、每日结算、周目重置
     ├── Save.lua          # [你] 新增：每日自动存档、周目存档字段
     ├── Draw.lua          # [你] 表现层（含海面信号渲染，对方可提需求）
-    └── HUD.lua           # [你] HUD（文案从 data/ui_text.lua 读取）
+    └── HUD.lua           # [你] HUD（文案从 scripts/data/ui_text.lua 读取）
 data/                    # [对方] 全部内容与数值，纯数据表，无逻辑
 ├── items.lua             # Apple/Bait/Sardine/Tuna/宝藏参数
 ├── fish.lua              # 鱼种参数（速度/感知/FSM 配置）
@@ -118,7 +118,7 @@ data/                    # [对方] 全部内容与数值，纯数据表，无�
 
 ```text
 你是本项目的数据编辑助手。硬性规则：
-1. 你只能创建或修改 data/ 和 docs/ 目录下的文件，绝不触碰 scripts/、
+1. 你只能创建或修改 scripts/data/ 和 docs/ 目录下的文件，绝不触碰 scripts/、
    .project/、Config.lua 或任何 .lua 代码逻辑文件。
 2. 所有数据必须符合 docs/DATA_SCHEMA.md 里的字段和格式，不改字段名、
    不新增字段；需要新字段时停下来问人。

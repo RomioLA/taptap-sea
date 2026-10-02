@@ -2,13 +2,13 @@
 
 - 发布人：A（核心代码负责人）；发布日期：2026-10-02。
 - 阅读对象：B（数据/内容负责人，Codex 辅助）。
-- 用途：`data/` 目录所有数据表的唯一格式依据。**本文件由 A 维护；B 发现字段不够用时提需求，不得自行改字段名或新增字段。**
+- 用途：`scripts/data/` 目录所有数据表的唯一格式依据。**本文件由 A 维护；B 发现字段不够用时提需求，不得自行改字段名或新增字段。**
 
 ---
 
 ## 0. 总规则
 
-1. `data/` 是**纯数据**：只有 Lua 表和注释，不写函数、不写逻辑、不 require 其他文件。
+1. `scripts/data/` 是**纯数据**：只有 Lua 表和注释，不写函数、不写逻辑、不 require 其他文件。
 2. 字段名、类型、枚举值必须与本文件完全一致；不确定就停下问 A。
 3. 每条数据的注释里注明**来源**：策划参数表的行名，或平衡目标表（例：`-- 来源：参数表「Sardine物品」`）。
 4. 数值单位：距离/速度 = 米、米/秒；时间 = 秒；角度 = 度；钱 = coins；体力 = stamina。
@@ -17,7 +17,7 @@
 
 ---
 
-## 1. `data/items.lua` — 物品表
+## 1. `scripts/data/items.lua` — 物品表
 
 ### 字段定义
 
@@ -34,7 +34,7 @@
 | `shopStockPerDay` | number | 商店物品 | 每日可购买数量，新一天补回 | 非商店物品省略 |
 | `description` | string | 建议 | 一句话描述（老人/弹窗用） | |
 
-### 基准数据（已按参数表录入 `data/items.lua`，B 负责后续校对与扩充宝藏条目）
+### 基准数据（已按参数表录入 `scripts/data/items.lua`，B 负责后续校对与扩充宝藏条目）
 
 | id | category | buy | sell | heal | worldEffect | worldDuration | shopStock | 来源 |
 |---|---|---|---|---|---|---|---|---|
@@ -53,7 +53,7 @@
 
 ---
 
-## 2. `data/fish.lua` — 鱼种表
+## 2. `scripts/data/fish.lua` — 鱼种表
 
 ### 字段定义
 
@@ -79,7 +79,7 @@
 | `spawn.minDistFromDayStart` | number | 可选 | 离当天出发点最小距离 m |
 | `ai.fullRange` / `ai.freezeRange` | number | ✅ | 完整 AI 半径 / 冻结半径（双阈值防抖） |
 
-### 基准数据（已按参数表录入 `data/fish.lua`）
+### 基准数据（已按参数表录入 `scripts/data/fish.lua`）
 
 | 字段 | sardine | tuna | 来源 |
 |---|---|---|---|
@@ -96,7 +96,7 @@
 
 ---
 
-## 3. `data/events.lua` — 事件表
+## 3. `scripts/data/events.lua` — 事件表
 
 ### 字段定义
 
@@ -152,10 +152,10 @@
 
 ## 5. B 提交前自检清单
 
-- [ ] 只改了 `data/` 和 `docs/` 下的文件（`git diff --stat` 确认）
+- [ ] 只改了 `scripts/data/` 和 `docs/` 下的文件（`git diff --stat` 确认）
 - [ ] 字段名与本文档逐字一致；没有新增字段
 - [ ] 每条数据有来源注释
 - [ ] 枚举值拼写正确（`ATTRACT_SMALL_FISH` 不是 `attract_small_fish`）
-- [ ] Lua 表能通过 `lua -e "loadfile('data/items.lua')"` 类语法检查（或让 Codex 做语法自检）
+- [ ] Lua 表能通过 `lua -e "loadfile('scripts/data/items.lua')"` 类语法检查（或让 Codex 做语法自检）
 - [ ] 事件 reward 非空；实操选项 staminaCost 已填
 - [ ] 提交信息写明：改了哪张表、动了几条数据
