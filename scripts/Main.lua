@@ -14,9 +14,10 @@ local dataCheckText = "数据自检未运行"
 do
     local okFish, fishData = pcall(require, "data.fish")
     local okItems, itemsData = pcall(require, "data.items")
+    local fishInfo = okFish and (#fishData .. "种") or ("失败:" .. tostring(fishData):sub(1, 60))
+    local itemsInfo = okItems and (#itemsData .. "种") or ("失败:" .. tostring(itemsData):sub(1, 60))
     dataCheckText = string.format("数据自检 fish=%s(%s) items=%s(%s)",
-        tostring(okFish), okFish and (#fishData .. "种") or "加载失败",
-        tostring(okItems), okItems and (#itemsData .. "种") or "加载失败")
+        tostring(okFish), fishInfo, tostring(okItems), itemsInfo)
     print("[数据自检] " .. dataCheckText)
 end
 
@@ -112,7 +113,7 @@ local function ScreenPointToWorldMeters(screenX, screenY)
     local anchorY = logicalH * 0.60
     local dx = screenX / dpr - anchorX
     local dy = screenY / dpr - anchorY
-    return dx / metersPerLogicalPixel, -dy / metersPerLogicalPixel
+    return dx * metersPerLogicalPixel, -dy * metersPerLogicalPixel
 end
 
 local function MoveToScreenPoint(x, y)
