@@ -84,7 +84,7 @@ function HandleOceanRender(eventType, eventData)
     end
     -- 模式 B：系统逻辑分辨率，响应式比例布局；不用 graphics:SetMode。
     nvgBeginFrame(oceanContext, w, h, dpr)
-    Draw.Scene(oceanContext, w, h, game:GetRenderState())
+    Draw.Scene(oceanContext, w, h, game:GetRenderState(), game:GetRenderWorld())
     nvgEndFrame(oceanContext)
     if firstFrame then
         firstFrame = false

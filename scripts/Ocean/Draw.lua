@@ -1,5 +1,6 @@
 -- 矢量场景绘制模块：只负责画面，不修改游戏状态，也不依赖外部图片。
 local Config = require("Ocean.Config")
+local EntityDraw = require("Ocean.EntityDraw")
 local Draw = {}
 
 ---@param ctx NVGContextWrapper
@@ -317,7 +318,8 @@ end
 
 ---@param ctx NVGContextWrapper
 ---@param state table
-function Draw.Scene(ctx, w, h, state)
+---@param world table? Game.World（STEP-4 渲染通道，可选；只读绘制）
+function Draw.Scene(ctx, w, h, state, world)
     local time = state.time
     local scale = math.min(w / 520, h / 800)
     Background(ctx, w, h, time)
@@ -343,6 +345,8 @@ function Draw.Scene(ctx, w, h, state)
     Arrow(ctx, w * 0.5, h * 0.275, scale, arrowAlpha)
     Arrow(ctx, w * 0.5, h * 0.52, scale, arrowAlpha)
     Arrow(ctx, w * 0.5, h * 0.705, scale, arrowAlpha)
+    -- World 实体调试绘制（只读；渲染通道见 STEP-4）
+    EntityDraw.Scene(ctx, w, h, state, world)
 end
 
 return Draw
