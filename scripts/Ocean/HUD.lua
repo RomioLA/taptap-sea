@@ -10,6 +10,16 @@ function HUD.Create(game)
         fontColor = { 205, 231, 218, 255 },
         textAlign = "center",
     }
+    -- STEP-1~4 基座诊断行：数据自检 / 点击世界坐标直接上屏（Maker 预览无控制台日志）
+    local diagLabel = UI.Label {
+        text = "诊断: -",
+        fontSize = 9,
+        fontColor = { 255, 226, 150, 255 },
+        textAlign = "center",
+    }
+    local function UpdateDiagnostics(text)
+        diagLabel:SetText(text or "-")
+    end
     local pauseButton = UI.Button {
         text = "暂停",
         width = 72,
@@ -127,6 +137,7 @@ function HUD.Create(game)
                                 },
                             },
                             statusLabel,
+                            diagLabel,
                         },
                     },
                 },
@@ -135,7 +146,8 @@ function HUD.Create(game)
     }
     UI.SetRoot(root)
     print("[海洋框架] 界面就绪：左右移动、暂停、重置；支持键盘和触摸")
-    return { togglePause = TogglePause, reset = Reset, refresh = Refresh }
+    return { togglePause = TogglePause, reset = Reset, refresh = Refresh,
+             updateDiagnostics = UpdateDiagnostics }
 end
 
 return HUD

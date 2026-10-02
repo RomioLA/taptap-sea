@@ -9,12 +9,15 @@ local HUD = require("Ocean.HUD")
 
 -- 启动自检（STEP-2 数据加载验证）：确认根目录 data/ 数据表可被运行时 require。
 -- data/ 为纯数据表（DATA_SCHEMA 契约），加载失败只报警不阻断启动。
+-- 结果同时写入 HUD 诊断行（Maker 预览无控制台日志，屏幕可见优先）。
+local dataCheckText = "数据自检未运行"
 do
     local okFish, fishData = pcall(require, "data.fish")
     local okItems, itemsData = pcall(require, "data.items")
-    print(string.format("[数据自检] fish=%s(%s) items=%s(%s)",
+    dataCheckText = string.format("数据自检 fish=%s(%s) items=%s(%s)",
         tostring(okFish), okFish and (#fishData .. "种") or "加载失败",
-        tostring(okItems), okItems and (#itemsData .. "种") or "加载失败"))
+        tostring(okItems), okItems and (#itemsData .. "种") or "加载失败")
+    print("[数据自检] " .. dataCheckText)
 end
 
 ---@type NVGContextWrapper?
@@ -49,6 +52,9 @@ function Start()
         },
     })
     hud = HUD.Create(game)
+    if hud.updateDiagnostics then
+        hud.updateDiagnostics(dataCheckText .. " | 点击: -")
+    end
     SubscribeToEvent(oceanContext, "NanoVGRender", "HandleOceanRender")
     SubscribeToEvent("Update", "HandleOceanUpdate")
     SubscribeToEvent("KeyDown", "HandleOceanKeyDown")
@@ -121,8 +127,11 @@ local function MoveToScreenPoint(x, y)
     local worldX, worldY = ScreenPointToWorldMeters(x, y)
     if worldX then
         local dist = math.sqrt(worldX * worldX + worldY * worldY)
-        print(string.format("[米制坐标] 点击 → 世界 (%.1f, %.1f) m，距船锚点 %.1f m",
-            worldX, worldY, dist))
+        local clickText = string.format("点击 (%.1f, %.1f)m 距船 %.1fm", worldX, worldY, dist)
+        print(string.format("[米制坐标] %s", clickText))
+        if hud and hud.updateDiagnostics then
+            hud.updateDiagnostics(dataCheckText .. " | " .. clickText)
+        end
     end
     print(string.format("[海洋框架] 船只目标位置 %.2f", game:GetTargetX()))
 end
