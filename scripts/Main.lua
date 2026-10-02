@@ -92,6 +92,23 @@ function HandleOceanRender(eventType, eventData)
     end
 end
 
+-- STEP-3 米制坐标基座：屏幕点 → 世界米制坐标。
+-- 最小镜头模型（参数表「船镜头」）：正交视高 45m（正方形像素），船锚点比例 (boatX, 0.60)。
+-- M0 接入真实船世界坐标后，原点替换为船的世界位置；当前以船锚点为临时原点 (0,0)。
+local function ScreenPointToWorldMeters(screenX, screenY)
+    local width, height = graphics:GetWidth(), graphics:GetHeight()
+    if width <= 0 or height <= 0 then return nil, nil end
+    local dpr = math.max(graphics:GetDPR(), 0.1)
+    local logicalW, logicalH = width / dpr, height / dpr
+    local metersPerLogicalPixel = Config.world.viewHeight / logicalH
+    local state = game:GetRenderState()
+    local anchorX = logicalW * (state and state.boatX or 0.5)
+    local anchorY = logicalH * 0.60
+    local dx = screenX / dpr - anchorX
+    local dy = screenY / dpr - anchorY
+    return dx / metersPerLogicalPixel, -dy / metersPerLogicalPixel
+end
+
 local function MoveToScreenPoint(x, y)
     if game:IsPaused() then return end
     local width, height = graphics:GetWidth(), graphics:GetHeight()
@@ -101,6 +118,12 @@ local function MoveToScreenPoint(x, y)
     if ratioY < 0.36 or ratioY > 0.76 then return end
     if UI.IsPointerOverUI() then return end
     game:SetTarget(x / width)
+    local worldX, worldY = ScreenPointToWorldMeters(x, y)
+    if worldX then
+        local dist = math.sqrt(worldX * worldX + worldY * worldY)
+        print(string.format("[米制坐标] 点击 → 世界 (%.1f, %.1f) m，距船锚点 %.1f m",
+            worldX, worldY, dist))
+    end
     print(string.format("[海洋框架] 船只目标位置 %.2f", game:GetTargetX()))
 end
 
