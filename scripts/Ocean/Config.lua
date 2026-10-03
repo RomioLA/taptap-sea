@@ -1,61 +1,17 @@
--- 海洋场景配置：所有位置以屏幕比例表达，横竖屏使用同一套层次。
+-- Legacy illustration config plus centralized Sea Runtime values.
+-- World lengths are meters. Camera full height is stable; width derives from aspect.
+local FishRows = require("GeneratedData.Fish")
+local activityRange = FishRows[1].ai
+-- The existing world has one shared activity range, not per-species thresholds.
+for _, row in ipairs(FishRows) do
+    assert(row.ai.fullRange == activityRange.fullRange and row.ai.freezeRange == activityRange.freezeRange,
+        "fish AI ranges must match the shared world activity range")
+end
+---@type number[]
+local shipSpeeds = { 6.0, 8.0, 10.0 }
 local Config = {
+    units = { length = "meter", metersPerWorldUnit = 1, speed = "meter_per_second" },
     title = "海风小岛",
-    -- 米制世界常量（STEP-3 坐标基座）：所有距离/速度统一米，来源=第一版参数表。
-    world = {
-        unit = 1,          -- 1 world unit = 1m（参数表「世界单位」）
-        viewHeight = 45,   -- 正交可视高度 45m；16:9 约 80m 宽（参数表「船镜头」）
-        worldSize = 1800,  -- 1800×1800m = 最大船速 10m/s × 180s（参数表「地图/世界结构」）
-        -- 演示固定视口的海面活动带（世界 y，锚点 0.60h）：
-        -- +10m ≈ 屏幕 0.378h（海面线），-9m ≈ 屏幕 0.80h（小岛上沿）。
-        -- 鱼群被约束在此带内，防止游进画面上方的"天空"。M0 镜头跟船后整屏皆海，可移除。
-        seaTopY = 10,
-        seaBottomY = -9,
-    },
-    boatSpeedLevels = { 6, 8, 10 }, -- m/s（参数表「船移动」；M0 接入真实船逻辑时消费）
-    -- STEP-5 昼夜时钟（参数表「GameClock」「夜晚处罚」「昼夜视觉」）
-    clock = {
-        dayLength = 120,         -- 白天 120s
-        nightLength = 60,        -- 夜晚 60s；耗尽自动结束当天（「夜晚强制返港」）
-        nightGraceSeconds = 30,  -- 夜晚前 30s 安全，之后每晚 1 秒减 1 体力（M1 消费）
-        nightOverlayAlpha = 190, -- 夜间遮罩透明度，190/255≈75% 黑蓝
-    },
-    debug = {
-        spawnTestEntity = true, -- STEP-4 渲染通道验证：生成 1 个调试实体；FishSystem 落地后关闭
-        sardineCount = 8,       -- STEP-6 初始沙丁鱼数（正式区域密度 20/4 属 M2 区域生成）
-        tunaCount = 2,          -- STEP-9 初始金枪鱼数（Chase 演示）
-        birdCount = 4,          -- STEP-10 初始海鸟数（T4/T5 读海演示；检测半径契约 15m 不变，增数量提覆盖）
-    },
-    -- STEP-6 鱼群 Wander（键名用 fishSystem：脚手架的 fish=装饰鱼群数组仍被 Draw 消费，
-    -- 同名会被表构造器覆盖——19:57 预览崩溃根因，勿改回）
-    fishSystem = {
-        wanderRetargetMin = 2, -- 每 2~4s 换方向（参数表「Wander」）
-        wanderRetargetMax = 4,
-        worldMargin = 30,      -- 距世界边缘 30m 内目标朝向回指中心（1800m 地图内不贴边）
-        bandMargin = 3,        -- 距海面活动带边界 3m 内回正（防鱼进天空/小岛）
-        -- STEP-7 Attracted/Flee（代码侧表现参数，不属于 DATA_SCHEMA 契约）
-        baitTtl = 20,          -- 调试诱饵存留秒数，过期移除、鱼群回 Wander
-        baitContact = 2,       -- 距诱饵 2m 内减速聚集（到达减速）
-        fleeRiseSeconds = 2,   -- T1：Flee 前 2s 上浮剪影，不水平移动
-        fleeCalmDistance = 24, -- 距危险源超过该距离解除 Flee（danger 感知 12m × 2）
-        -- STEP-9 Tuna Chase 白色尾迹（代码侧表现参数）
-        chaseTrailInterval = 0.08, -- 每 0.08s 记录一个尾迹点
-        chaseTrailPoints = 24,     -- 最多保留 24 点 ≈ 2s 尾迹
-    },
-    -- STEP-10 海鸟（T4/T5）代码侧演示参数；正式值待 birds.lua 数据契约（B 侧）迁移
-    birdSystem = {
-        cruiseSpeedMin = 6,       -- 巡航 6~9 m/s（T5）
-        cruiseSpeedMax = 9,
-        detectionRadius = 15,     -- 发现 Flee 目标距离（T4）
-        actionDurationMin = 8,    -- 俯冲/盘旋总时长 8~12s（T5）
-        actionDurationMax = 12,
-        diveSpeed = 14,           -- 俯冲速度（演示占位，待参数表）
-        diveArriveRadius = 2,     -- 距目标 2m 内转盘旋
-        cruiseRetargetMin = 3,    -- 巡航换向 3~6s
-        cruiseRetargetMax = 6,
-        circleRadius = 4,         -- 盘旋半径 4m
-        circleAngularSpeed = 1.8, -- 盘旋角速度 rad/s（≈3.5s 一圈）
-    },
     layers = {
         birds = 0.21,
         waves = 0.32,
@@ -65,11 +21,8 @@ local Config = {
     },
     boat = {
         initialX = 0.5,
-        initialY = 0.61, -- 与 layers.boat 一致（STEP-8 船 2D 化：WASD/点击任意移动）
         minX = 0.18,
         maxX = 0.82,
-        minY = 0.40,     -- 纵向活动范围限制在海面内（避开顶部标题与底部按钮）
-        maxY = 0.76,
         speed = 0.24,
         buttonStep = 0.12,
     },
@@ -81,6 +34,60 @@ local Config = {
         { x = 0.38, phase = 0, direction = 1, color = { 255, 165, 112, 255 } },
         { x = 0.65, phase = 2.4, direction = -1, color = { 176, 238, 218, 255 } },
     },
+    -- Legacy fields remain compatible with the unmodified HUD/Draw.
+    ship = { tuningStatus = "V1_IMPLEMENTATION_VALUE", defaultLevel = 1,
+    speedByLevel = shipSpeeds, speed = 0, maxSpeed = 0, turnDegPerSec = 180, arrivalRadius = 1.5,
+    radius = 1.8, start = { x = 0, y = 0 } },
+    world = { tuningStatus = "V1_IMPLEMENTATION_VALUE", travelSec = 180, visualPadding = 100, pushSpeed = 3, pushSec = 0.3,
+    temporaryLifetimeSec = 20, activateRadius = activityRange.fullRange, freezeRadius = activityRange.freezeRange,
+    maxStepSec = 0.05, maxFrameSec = 0.25, spawnAttempts = 1000, seed = 271828, spawnInset = 8,
+    mapSize = 0, halfSize = 0, overlapRadius = 3, epsilon = 0.000001, regionSize = 120,
+    fixedObjects = {
+        { entityType = "island", position = { x = 35, y = 25 }, radius = 12, blocking = true },
+        { entityType = "island", position = { x = -80, y = 90 }, radius = 20, blocking = true },
+        { entityType = "float", position = { x = 10, y = 0 }, radius = 2, blocking = false },
+    },
+    -- Circle1 A2 temporary required geometry, not a planning/data-schema entry.
+    -- Near the existing (35,25), radius12 island; reachable by the open-water
+    -- route (0,0) -> (35,5) -> (60,25). Reuses the existing float's 2m size.
+    -- Discovery and operation thresholds stay in Config.interaction (80/20/5).
+    fixedBarrel = { position = { x = 60, y = 25 }, radius = 2,
+        tuningStatus = "CIRCLE1_A2_PROVISIONAL_REQUIRED_GEOMETRY" },
+},
+    camera = { tuningStatus = "V1_IMPLEMENTATION_VALUE",
+    minX = 0.35, maxX = 0.65, minY = 0.45, maxY = 0.75,
+    anchorX = 0.5, anchorY = 0.6, followSec = 0.15, viewHeight = 45 },
+    fishing = { tuningStatus = "V1_IMPLEMENTATION_VALUE", maxCastDistance = 30,
+        netRadius = 8, durationSec = 4, maxCatchCount = 1 },
+    -- Circle 1 confirmed playtest value; not a new planning/data-schema field.
+    predation = { cooldownSeconds = 5, tuningStatus = "USER_APPROVED_TEST_VALUE" },
+    interaction = { tuningStatus = "V1_IMPLEMENTATION_VALUE", operateDistance = 5,
+        portDistance = 10, maxThrowDistance = 12, outlineDistance = 80,
+        recognitionDistance = 20, revealRadius = 20 },
+    debug = { enabled = true, showUnderwater = false, showStates = false, showPerception = false,
+    showActivity = false, showBounds = false, spawnOffset = 12, baitOffset = 8,
+    refreshSec = 0.25 },
+    visual = { waveSpacing = 12, waveLength = 3, waveSpeed = 0.6,
+    -- Remote STEP-5 visual, confirmed by the planning workbook's night-visual rule.
+    nightOverlay = { 10, 22, 48, 190 },
+    background = { 15, 91, 125, 255 }, wave = { 89, 184, 202, 80 },
+    island = { 135, 171, 110, 255 }, shore = { 209, 193, 137, 255 },
+    ship = { 251, 222, 139, 255 }, float = { 184, 130, 90, 255 },
+    effect = { 255, 192, 97, 255 }, bound = { 145, 231, 255, 180 },
+    target = { 243, 247, 208, 160 }, shipLength = 5, shipWidth = 2.4 },
+    tuningStatus = "V1_PROVISIONAL_TUNING",
+    -- User-approved playtest values; this table does not amend planning documents.
+    surfaceSignals = {
+        enabled = true, riseSeconds = 2, riseTuningStatus = "USER_APPROVED_TEST_VALUE",
+        birdOffset = 9, birdRadius = 3, birdsPerGroup = 2, birdPollSeconds = 0.25,
+        birdDiveSeconds = 1.5, birdAngularSpeed = 1.8, birdAnimationStatus = "VISUAL_TEST_VALUE",
+        splashInterval = 1, chaseSplashInterval = 0.5, splashLifetime = 0.6, trailLength = 2,
+    },
+    seaTitle = "渔夫漂流记 · Sea Runtime V1",
 }
-
+-- Compatibility speed alias; all level speeds and the map derive from this one table.
+Config.ship.speed = Config.ship.speedByLevel[Config.ship.defaultLevel]
+Config.ship.maxSpeed = math.max(table.unpack(Config.ship.speedByLevel))
+Config.world.mapSize = Config.ship.maxSpeed * Config.world.travelSec
+Config.world.halfSize = Config.world.mapSize / 2
 return Config

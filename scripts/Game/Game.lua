@@ -1,125 +1,67 @@
--- 整局游戏的协调层：连接现有 Ocean 演示状态与可扩展的 World。
-local Config = require("Ocean.Config")
-local State = require("Ocean.State")
-local World = require("Game.World")
-local EntityStateSystem = require("Systems.EntityStateSystem")
-local ClockSystem = require("Systems.ClockSystem")
-local FishSystem = require("Systems.FishSystem")
-local BirdSystem = require("Systems.BirdSystem")
-
+-- Coordinates existing gameplay and sea modules; owns no duplicate player/world state.
+local GameplayUpdateSystem = require("Gameplay.UpdateSystem")
+local OceanConfig = require("Ocean.Config")
+---@class SeaGameplayGame
+---@field runtime table
+---@field loop GameplayLoop
+---@field gameplaySystem table
 local Game = {}
 Game.__index = Game
 
-function Game.New()
+---@return SeaGameplayGame
+function Game.New(runtime, loop)
     local self = setmetatable({}, Game)
-    self.state = State.New()
-    self.world = World.New()
-    -- STEP-5 昼夜时钟：状态挂 world.clock，System 进唯一更新链（每帧只推进一次）。
-    self.world.clock = ClockSystem.NewState()
-    self.world:AddSystem(ClockSystem)
-    -- STEP-7 FishSystem 进更新链（当前只负责诱饵倒计时；FSM 推进仍归 EntityStateSystem）
-    self.world:AddSystem(FishSystem)
-    self.world:AddSystem(EntityStateSystem)
-    -- STEP-5 多来源暂停：reason 集合（"user"=暂停按钮；"port"/"event"/"dialog" 等留给 M1/M3）。
-    self.pauseReasons = {}
-    -- 渲染/HUD/Draw 经 state 只读时钟（引用共享，Reset 就地重建字段）。
-    self.state.clock = self.world.clock
-    -- STEP-4 渲染通道验证：调试实体，世界坐标 10m 处（船锚点右侧 10m 应可见同尺寸标记）。
-    if Config.debug and Config.debug.spawnTestEntity then
-        self.world:CreateEntity("debug_marker", { position = { x = 10, y = 0 } })
-    end
-    -- STEP-6/9/10 初始实体（正式区域密度 20 Sardine / 4 Tuna 属 M2 区域生成）
-    local debugCfg = Config.debug or {}
-    FishSystem.SpawnSardines(self.world, debugCfg.sardineCount or 8)
-    FishSystem.SpawnTuna(self.world, debugCfg.tunaCount or 2)
-    BirdSystem.SpawnBirds(self.world, debugCfg.birdCount or 2)
+    self:Init(runtime, loop)
     return self
 end
 
-function Game:Update(dt, dirX, dirY)
-    -- 演示层仍读 state.paused；由 pauseReasons 集合统一推导。
-    self.state.paused = self:IsPaused()
-    self.state:Update(dt, dirX or 0, dirY or 0)
-    if not self.state.paused then
-        self.world:Update(math.max(0, math.min(dt, 0.05)))
+function Game:Init(runtime, loop)
+    assert(type(runtime) == "table" and type(loop) == "table", "Game requires runtime and gameplay loop")
+    self.runtime = runtime
+    self.loop = loop
+    self.gameplaySystem = GameplayUpdateSystem.New(loop)
+    self:GetWorld()
+end
+
+function Game:GetWorld()
+    -- Runtime.Reset can replace its world; never retain a stale second registry.
+    local world = self.runtime.world
+    world:AddSystem(self.gameplaySystem, "frame")
+    return world
+end
+
+function Game:GetPlayerState()
+    return self.loop.player
+end
+
+---@return boolean paused, number shipLevel, boolean scopeSynced, string? scopeReason
+function Game:Sync()
+    local paused = self.loop.clock:IsPaused()
+    local shipLevel = self.loop.player.boatSpeedLevel
+    self.runtime.paused = paused
+    self.runtime:SetShipLevel(shipLevel)
+    local scopeSynced, scopeReason = self.loop:SyncScope()
+    return paused, shipLevel, scopeSynced, scopeReason
+end
+
+function Game:Update(dt, axisX, axisY)
+    -- One frame System dispatch receives the full dt. Boundary slices share the
+    -- original Runtime frame budget, so a large dt never increases sea simulation.
+    local seaBudget = math.min(dt, OceanConfig.world.maxFrameSec)
+    self.gameplaySystem.advanceWorld = function(slice)
+        self:Sync()
+        local blocked = self.loop:IsMovementBlocked()
+        if blocked then self.runtime:ClearMovementTarget() end
+        local seaSlice = dt > 0 and seaBudget * (slice / dt) or 0
+        self.runtime:Update(seaSlice, blocked and 0 or axisX, blocked and 0 or axisY)
     end
-end
-
--- STEP-5 多来源暂停：任意一个 reason 存在即视为暂停；来源互不覆盖。
-function Game:AddPause(reason)
-    self.pauseReasons[reason] = true
-    self.state.paused = true
-end
-
-function Game:RemovePause(reason)
-    self.pauseReasons[reason] = nil
-    self.state.paused = self:IsPaused()
-end
-
-function Game:IsPaused()
-    for _ in pairs(self.pauseReasons) do
-        return true
+    local ok, reason = pcall(function() self:GetWorld():Update(dt, "frame") end)
+    self.gameplaySystem.advanceWorld = nil
+    if not ok then
+        if self.loop.actions then self.loop.actions:CancelActiveFishing("fishing_update_failed") end
+        error(reason, 0)
     end
-    return false
-end
-
-function Game:TogglePause()
-    if self.pauseReasons.user then
-        self.pauseReasons.user = nil
-    else
-        self.pauseReasons.user = true
-    end
-    self.state.paused = self:IsPaused()
-end
-
-function Game:Reset()
-    self.state:Reset()
-    self.world:Clear()
-    ClockSystem.ResetState(self.world.clock)
-    self.pauseReasons = {}
-    self.state.paused = false
-    -- STEP-7 补：R 重置后重生初始鱼群（此前 Clear 后海里没鱼）
-    local debugCfg = Config.debug or {}
-    FishSystem.SpawnSardines(self.world, debugCfg.sardineCount or 8)
-    FishSystem.SpawnTuna(self.world, debugCfg.tunaCount or 2)
-    BirdSystem.SpawnBirds(self.world, debugCfg.birdCount or 2)
-end
-
--- STEP-7 调试信号源（Main 按键 B/N 调用；位置=最近一次点击的世界坐标）
-function Game:SpawnDebugBait(position)
-    FishSystem.SpawnBait(self.world, position)
-end
-
-function Game:SpawnDebugPredator(position)
-    FishSystem.SpawnPredator(self.world, position)
-end
-
--- STEP-8 船 2D 化：点击海面传双轴屏幕比例
-function Game:SetTarget(x, y)
-    self.state:SetTarget(x, y)
-end
-
-function Game:MoveBy(direction)
-    self.state:MoveBy(direction)
-end
-
--- STEP-5 时钟只读访问（HUD/调试消费；渲染走 state.clock 引用）。
-function Game:GetClock()
-    return self.world.clock
-end
-
-function Game:GetTargetX()
-    return self.state.targetX
-end
-
--- 渲染层只读取现有演示状态，不直接改写 World 或 Entity。
-function Game:GetRenderState()
-    return self.state
-end
-
--- STEP-4 渲染通道：World 实体的只读渲染入口（EntityDraw 消费，禁止反向修改）。
-function Game:GetRenderWorld()
-    return self.world
+    self:Sync()
 end
 
 return Game

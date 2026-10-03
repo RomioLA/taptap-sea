@@ -1,6 +1,6 @@
 -- 矢量场景绘制模块：只负责画面，不修改游戏状态，也不依赖外部图片。
 local Config = require("Ocean.Config")
-local EntityDraw = require("Ocean.EntityDraw")
+local FishData = require("Ocean.FishData")
 local Draw = {}
 
 ---@param ctx NVGContextWrapper
@@ -194,78 +194,56 @@ local function Ripple(ctx, x, y, rx, ry, alpha)
 end
 
 ---@param ctx NVGContextWrapper
--- 船只（STEP-8 改俯视角）：船首朝上，木甲板 + 舱室 + 航行尾迹
 local function Boat(ctx, x, y, scale, time)
-    -- 船尾航行涟漪
-    Ripple(ctx, x, y + 48 * scale, 62 * scale, 14 * scale, 80)
-    Ripple(ctx, x, y + 60 * scale, 90 * scale, 22 * scale, 40)
-    -- V 形尾迹
+    Ripple(ctx, x, y + 28 * scale, 112 * scale, 13 * scale, 80)
+    Ripple(ctx, x, y + 28 * scale, 135 * scale, 21 * scale, 35)
     nvgSave(ctx)
-    nvgTranslate(ctx, x, y)
+    nvgTranslate(ctx, x, y + math.sin(time * 1.7) * 3 * scale)
+    nvgRotate(ctx, math.sin(time * 1.1) * 0.018)
     nvgScale(ctx, scale, scale)
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, -20, 50)
-    nvgQuadTo(ctx, -38, 78, -56, 96)
-    nvgStrokeColor(ctx, nvgRGBA(226, 246, 238, 70))
-    nvgStrokeWidth(ctx, 3)
-    nvgStroke(ctx)
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, 20, 50)
-    nvgQuadTo(ctx, 38, 78, 56, 96)
-    nvgStroke(ctx)
-    nvgRestore(ctx)
-    -- 船体随波微摆
-    nvgSave(ctx)
-    nvgTranslate(ctx, x, y + math.sin(time * 1.7) * 2 * scale)
-    nvgRotate(ctx, math.sin(time * 1.1) * 0.02)
-    nvgScale(ctx, scale, scale)
-    -- 船壳：尖首圆尾
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, 0, -62)
-    nvgBezierTo(ctx, 26, -50, 34, -18, 34, 18)
-    nvgQuadTo(ctx, 34, 52, 0, 56)
-    nvgQuadTo(ctx, -34, 52, -34, 18)
-    nvgBezierTo(ctx, -34, -18, -26, -50, 0, -62)
-    nvgClosePath(ctx)
-    nvgFillColor(ctx, nvgRGBA(39, 78, 92, 255))
-    nvgFill(ctx)
-    -- 木甲板（内缩）
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, 0, -54)
-    nvgBezierTo(ctx, 21, -44, 28, -16, 28, 16)
-    nvgQuadTo(ctx, 28, 46, 0, 49)
-    nvgQuadTo(ctx, -28, 46, -28, 16)
-    nvgBezierTo(ctx, -28, -16, -21, -44, 0, -54)
-    nvgClosePath(ctx)
-    nvgFillColor(ctx, nvgRGBA(226, 190, 138, 255))
-    nvgFill(ctx)
-    -- 甲板木纹
-    nvgStrokeColor(ctx, nvgRGBA(190, 150, 100, 90))
-    nvgStrokeWidth(ctx, 1.5)
-    for i = -2, 2 do
-        nvgBeginPath(ctx)
-        nvgMoveTo(ctx, i * 10, -46)
-        nvgLineTo(ctx, i * 10, 44)
-        nvgStroke(ctx)
+    Ellipse(ctx, 0, 30, 92, 11, { 11, 79, 99, 85 })
+
+    -- 白色船舱、暖色烟囱和深蓝船体。
+    Rect(ctx, -47, -28, 83, 34, 5, { 251, 244, 219, 255 })
+    Rect(ctx, -28, -48, 58, 24, 4, { 255, 251, 230, 255 })
+    Rect(ctx, -18, -54, 58, 7, 3, { 46, 88, 98, 255 })
+    Rect(ctx, 43, -41, 18, 42, 2, { 223, 141, 104, 255 })
+    Rect(ctx, 41, -45, 22, 7, 2, { 51, 86, 91, 255 })
+    for i = 1, 4 do
+        Rect(ctx, -38 + (i - 1) * 17, -18, 11, 12, 2, { 68, 133, 147, 255 })
     end
-    -- 舱室（船尾侧）
-    Rect(ctx, -16, 8, 32, 26, 5, { 251, 244, 219, 255 })
-    Rect(ctx, -12, 12, 24, 12, 3, { 120, 170, 165, 255 })
-    -- 桅杆与船首旗
+    Rect(ctx, -17, -40, 17, 10, 2, { 68, 133, 147, 255 })
+    Rect(ctx, 8, -40, 13, 10, 2, { 68, 133, 147, 255 })
     nvgBeginPath(ctx)
-    nvgMoveTo(ctx, 0, -50)
-    nvgLineTo(ctx, 0, -6)
-    nvgStrokeColor(ctx, nvgRGBA(60, 60, 60, 200))
-    nvgStrokeWidth(ctx, 2.5)
-    nvgStroke(ctx)
-    Ellipse(ctx, 0, -8, 4, 4, { 223, 141, 104, 255 })
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, 0, -50)
-    nvgLineTo(ctx, 12, -46)
-    nvgLineTo(ctx, 0, -42)
+    nvgMoveTo(ctx, -100, 0)
+    nvgLineTo(ctx, 100, 0)
+    nvgQuadTo(ctx, 84, 39, 58, 40)
+    nvgLineTo(ctx, -64, 40)
+    nvgQuadTo(ctx, -85, 32, -100, 0)
     nvgClosePath(ctx)
-    nvgFillColor(ctx, nvgRGBA(222, 149, 103, 255))
-    nvgFill(ctx)
+    Fill(ctx, { 39, 78, 92, 255 })
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, -94, 9)
+    nvgLineTo(ctx, 94, 9)
+    Stroke(ctx, { 226, 151, 105, 255 }, 5)
+    for i = 1, 3 do
+        Ellipse(ctx, -34 + (i - 1) * 29, 24, 4, 4, { 255, 229, 178, 255 })
+    end
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, -64, -2)
+    nvgLineTo(ctx, -64, -62)
+    Stroke(ctx, { 50, 88, 96, 255 }, 2.5)
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, -63, -60)
+    nvgLineTo(ctx, -39, -53)
+    nvgLineTo(ctx, -63, -45)
+    nvgClosePath(ctx)
+    Fill(ctx, { 222, 149, 103, 255 })
+    for i = 1, 3 do
+        local drift = (time * 0.34 + i * 0.31) % 1
+        Ellipse(ctx, 53 + drift * 29, -58 - drift * 35,
+            5 + drift * 8, 4 + drift * 5, { 225, 241, 221, math.floor((1 - drift) * 70) })
+    end
     nvgRestore(ctx)
 end
 
@@ -327,6 +305,235 @@ local function Island(ctx, x, y, scale, time)
     nvgRestore(ctx)
 end
 
+--- Draw the existing side-view fishing boat at a projected world position.
+---@param ctx NVGContextWrapper
+---@param x number
+---@param y number
+---@param pixelsPerUnit number
+---@param ship table
+---@param time number
+function Draw.WorldBoat(ctx, x, y, pixelsPerUnit, ship, time)
+    if not ctx or not ship then return end
+
+    local visual = Config.visual
+    local scaleX = (visual.shipLength or 5) * pixelsPerUnit / 200
+    -- The legacy hull, cabin, and flag span about 102 art units vertically.
+    local scaleY = (visual.shipWidth or 2.4) * pixelsPerUnit / 102
+    local direction = ship.direction
+    local facingX = type(direction) == "table" and direction.x or nil
+    if type(facingX) ~= "number" or math.abs(facingX) < 0.000001 then
+        facingX = math.cos(ship.rotation or 0)
+    end
+    local horizontalFacing = facingX < 0 and -1 or 1
+
+    nvgSave(ctx)
+    nvgTranslate(ctx, x, y)
+    -- Keep the side-view upright; only mirror it when the ship faces left.
+    nvgScale(ctx, scaleX * horizontalFacing, scaleY)
+    Boat(ctx, 0, 0, 1, time or 0)
+    nvgRestore(ctx)
+end
+
+--- Draw the existing fish silhouette at its real projected heading and render length.
+---@param ctx NVGContextWrapper
+---@param x number
+---@param y number
+---@param pixelsPerUnit number
+---@param entity table
+---@param time number
+function Draw.WorldFish(ctx, x, y, pixelsPerUnit, entity, time)
+    if not ctx or not entity then return end
+    local fishConfig = FishData[entity.species]
+    if not fishConfig then return end
+
+    -- The legacy shape spans 67 art units from its tail to its nose.
+    local scale = (fishConfig.renderLength or fishConfig.radius or 1) * pixelsPerUnit / 67
+    local heading = entity.rotation or 0
+    local direction = entity.direction
+    if type(direction) == "table"
+        and type(direction.x) == "number"
+        and type(direction.y) == "number"
+        and (math.abs(direction.x) + math.abs(direction.y)) > 0.000001 then
+        heading = math.atan(direction.y, direction.x)
+    end
+
+    nvgSave(ctx)
+    nvgTranslate(ctx, x, y)
+    -- Screen Y is inverted relative to world Y; this rotates the fish along its world heading.
+    nvgRotate(ctx, -heading)
+    Fish(ctx, 0, 0, scale, 1, fishConfig.color, time or 0, entity.phase or 0)
+    nvgRestore(ctx)
+end
+
+--- Draw the legacy palm-island art around the unchanged circular world radius.
+---@param ctx NVGContextWrapper
+---@param x number
+---@param y number
+---@param pixelsPerUnit number
+---@param entity table
+---@param time number
+function Draw.WorldIsland(ctx, x, y, pixelsPerUnit, entity, time)
+    if not ctx or not entity then return end
+    local radius = (entity.radius or 1) * pixelsPerUnit
+    if radius <= 0 then return end
+
+    -- Match the old shoreline width to the world's circular island radius.
+    Island(ctx, x, y, radius / 149, time or 0)
+end
+
+local function clamp01(value)
+    return math.max(0, math.min(1, value))
+end
+
+--- Draw a rising fish as a dark, depth-sensitive silhouette and surface ring.
+---@param ctx NVGContextWrapper
+---@param x number Screen-space center in logical pixels.
+---@param y number Screen-space center in logical pixels.
+---@param pixelsPerUnit number Screen pixels per meter.
+---@param entity table Fish entity with species, direction/rotation, and surfaceDepth.
+---@param time number Animation time; this function does not advance it.
+function Draw.WorldRise(ctx, x, y, pixelsPerUnit, entity, time)
+    if not ctx or not entity or type(pixelsPerUnit) ~= "number" or pixelsPerUnit <= 0 then return end
+    local fishConfig = FishData[entity.species]
+    if not fishConfig then return end
+    local surfaceDepth = tonumber(entity.surfaceDepth)
+    if not surfaceDepth then return end
+
+    local depth = clamp01(surfaceDepth)
+    local scale = (fishConfig.renderLength or fishConfig.radius or 1) * pixelsPerUnit / 67
+        * (1 + 0.2 * depth)
+    local heading = entity.rotation or 0
+    local direction = entity.direction
+    if type(direction) == "table"
+        and type(direction.x) == "number"
+        and type(direction.y) == "number"
+        and (math.abs(direction.x) + math.abs(direction.y)) > 0.000001 then
+        heading = math.atan(direction.y, direction.x)
+    end
+
+    -- Keep the local fish silhouette proportions, but omit its eye and belly marks.
+    local alpha = math.floor(255 * depth)
+    local sway = math.sin((time or 0) * 4 + (entity.phase or 0)) * 3
+    nvgSave(ctx)
+    nvgTranslate(ctx, x, y)
+    -- Screen Y is inverted relative to world Y, matching WorldFish's heading convention.
+    nvgRotate(ctx, -heading)
+    nvgScale(ctx, scale, scale)
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, -21, 0)
+    nvgLineTo(ctx, -40, -13 + sway)
+    nvgQuadTo(ctx, -35, 0, -40, 13 + sway)
+    nvgClosePath(ctx)
+    Fill(ctx, { 14, 34, 52, alpha })
+    Ellipse(ctx, 0, 0, 27, 14, { 14, 34, 52, alpha })
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, -5, -10)
+    nvgLineTo(ctx, 3, -21)
+    nvgLineTo(ctx, 11, -10)
+    nvgClosePath(ctx)
+    Fill(ctx, { 14, 34, 52, alpha })
+    nvgRestore(ctx)
+
+    local ringAlpha = math.floor(150 * depth)
+    nvgBeginPath(ctx)
+    nvgEllipse(ctx, x, y, 1.5 * pixelsPerUnit, 1.0 * pixelsPerUnit)
+    Stroke(ctx, { 235, 250, 248, ringAlpha }, 1.6)
+end
+
+--- Draw a short-lived expanding splash and a short wake behind its heading.
+---@param ctx NVGContextWrapper
+---@param x number Screen-space center in logical pixels.
+---@param y number Screen-space center in logical pixels.
+---@param pixelsPerUnit number Screen pixels per meter.
+---@param remaining number Remaining lifetime in seconds.
+---@param lifetime number Total lifetime in seconds.
+---@param heading number Radians in world space, with forward along positive X.
+---@param trailLength number? Requested wake length in meters; capped at 2m.
+function Draw.WorldSplash(ctx, x, y, pixelsPerUnit, remaining, lifetime, heading, trailLength)
+    if not ctx or type(pixelsPerUnit) ~= "number" or pixelsPerUnit <= 0 then return end
+    lifetime = tonumber(lifetime) or 0.6
+    remaining = tonumber(remaining) or 0
+    if lifetime <= 0 or remaining <= 0 then return end
+
+    local lifeRatio = clamp01(remaining / lifetime)
+    local age = 1 - lifeRatio
+    local alpha = math.floor(lifeRatio * 230)
+    local length = math.min(2, math.max(0, tonumber(trailLength) or 2)) * pixelsPerUnit
+    if length > 0 and alpha > 0 then
+        nvgSave(ctx)
+        nvgTranslate(ctx, x, y)
+        -- Screen Y is inverted relative to world Y, as in WorldFish.
+        nvgRotate(ctx, -(tonumber(heading) or 0))
+        nvgBeginPath(ctx)
+        nvgMoveTo(ctx, -length, 0)
+        nvgQuadTo(ctx, -length * 0.55, -pixelsPerUnit * 0.08,
+            -length * 0.15, pixelsPerUnit * 0.02)
+        nvgLineTo(ctx, 0, 0)
+        Stroke(ctx, { 240, 252, 250, math.floor(alpha * 0.72) },
+            math.max(1.25, math.min(4, pixelsPerUnit * 0.08)))
+        nvgRestore(ctx)
+    end
+
+    nvgBeginPath(ctx)
+    nvgEllipse(ctx, x, y, (0.5 + age * 3.2) * pixelsPerUnit,
+        (0.3 + age * 2.0) * pixelsPerUnit)
+    Stroke(ctx, { 240, 252, 250, alpha }, 2.5)
+end
+
+--- Draw a top-down seabird silhouette whose wings fold during its dive.
+---@param ctx NVGContextWrapper
+---@param x number Screen-space center in logical pixels.
+---@param y number Screen-space center in logical pixels.
+---@param pixelsPerUnit number Screen pixels per meter.
+---@param heading number Radians in world space, with forward along positive X.
+---@param diveProgress number? Dive progress from 0 (gliding) to 1 (folded dive).
+function Draw.WorldSeabird(ctx, x, y, pixelsPerUnit, heading, diveProgress)
+    if not ctx or type(pixelsPerUnit) ~= "number" or pixelsPerUnit <= 0 then return end
+
+    local dive = clamp01(tonumber(diveProgress) or 0)
+    local size = pixelsPerUnit * 0.9
+    local wingSpan = 1 - 0.62 * dive
+    local wingSweep = 0.18 * dive
+    local tipX = (-0.55 - wingSweep) * size
+    local tipY = 0.50 * wingSpan * size
+    local innerX = -0.15 * size
+    local innerY = 0.10 * wingSpan * size
+
+    nvgSave(ctx)
+    nvgTranslate(ctx, x, y)
+    -- Screen Y is inverted relative to world Y, matching WorldFish.
+    nvgRotate(ctx, -(tonumber(heading) or 0))
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, 0.10 * size, 0)
+    nvgLineTo(ctx, tipX, -tipY)
+    nvgLineTo(ctx, innerX, -innerY)
+    nvgClosePath(ctx)
+    nvgMoveTo(ctx, 0.10 * size, 0)
+    nvgLineTo(ctx, tipX, tipY)
+    nvgLineTo(ctx, innerX, innerY)
+    nvgClosePath(ctx)
+    nvgFillColor(ctx, nvgRGBA(250, 250, 240, 238))
+    nvgFill(ctx)
+
+    -- The body shortens slightly with the folded wings to make dive progress readable.
+    nvgBeginPath(ctx)
+    nvgEllipse(ctx, 0, 0, 0.48 * size, (0.15 - 0.025 * dive) * size)
+    nvgFillColor(ctx, nvgRGBA(255, 255, 248, 245))
+    nvgFill(ctx)
+    nvgBeginPath(ctx)
+    nvgEllipse(ctx, 0.43 * size, 0, 0.12 * size, 0.10 * size)
+    nvgFillColor(ctx, nvgRGBA(255, 255, 248, 245))
+    nvgFill(ctx)
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, 0.52 * size, -0.045 * size)
+    nvgLineTo(ctx, 0.72 * size, 0)
+    nvgLineTo(ctx, 0.52 * size, 0.045 * size)
+    nvgClosePath(ctx)
+    nvgFillColor(ctx, nvgRGBA(235, 190, 130, 255))
+    nvgFill(ctx)
+    nvgRestore(ctx)
+end
+
 ---@param ctx NVGContextWrapper
 local function Arrow(ctx, x, y, scale, alpha)
     nvgBeginPath(ctx)
@@ -338,19 +545,43 @@ local function Arrow(ctx, x, y, scale, alpha)
     Stroke(ctx, { 246, 246, 215, alpha }, 1.5 * scale)
 end
 
+--- Draw the reusable sky, sun, birds, and layered sea backdrop.
 ---@param ctx NVGContextWrapper
----@param state table
----@param world table? Game.World（STEP-4 渲染通道，可选；只读绘制）
-function Draw.Scene(ctx, w, h, state, world)
-    local time = state.time
+---@param w number
+---@param h number
+---@param time number
+function Draw.SceneBackdrop(ctx, w, h, time)
+    if not ctx or w <= 0 or h <= 0 then return end
+    time = time or 0
     local scale = math.min(w / 520, h / 800)
     Background(ctx, w, h, time)
     Sea(ctx, w, h, time)
-    -- 海浪与鱼群层（层次：飞鸟 → 海浪与鱼群 → 船只 → 小岛）：
-    -- STEP-8 把 World 实体（沙丁鱼/水面信号/调试实体）画在海浪层、船与岛之下，
-    -- 替代此前"实体最后画=浮在所有东西之上"的旧顺序。
-    EntityDraw.Scene(ctx, w, h, state, world)
-    -- 脚手架装饰鱼（演示层，与真实鱼群同层）
+    for _, bird in ipairs(Config.birds) do
+        local x = w * bird.x + math.sin(time * 0.4 + bird.phase) * 15 * scale
+        local y = h * Config.layers.birds + math.sin(time * 1.2 + bird.phase) * 5 * scale
+        Bird(ctx, x, y, scale * bird.scale, time, bird.phase)
+    end
+end
+
+--- Remote STEP-5 night tint, drawn below the boat and the separate UI context.
+--- The caller owns clipping/layer order and supplies the existing gameplay clock.
+---@param ctx NVGContextWrapper
+---@param w number
+---@param h number
+---@param clock table?
+function Draw.NightOverlay(ctx, w, h, clock)
+    if not ctx or w <= 0 or h <= 0 or not clock or clock.phase ~= "night" then return end
+    nvgBeginPath(ctx)
+    nvgRect(ctx, 0, 0, w, h)
+    Fill(ctx, Config.visual.nightOverlay)
+end
+
+---@param ctx NVGContextWrapper
+---@param state table
+function Draw.Scene(ctx, w, h, state)
+    local time = state.time
+    local scale = math.min(w / 520, h / 800)
+    Draw.SceneBackdrop(ctx, w, h, time)
     for _, fish in ipairs(Config.fish) do
         local x = w * fish.x + math.sin(time * 0.65 + fish.phase) * 23 * scale
         local y = h * Config.layers.fish + math.sin(time * 1.4 + fish.phase) * 6 * scale
@@ -361,27 +592,12 @@ function Draw.Scene(ctx, w, h, state, world)
                 math.floor((1 - rise) * 85))
         end
     end
-    -- 飞鸟层
-    for _, bird in ipairs(Config.birds) do
-        local x = w * bird.x + math.sin(time * 0.4 + bird.phase) * 15 * scale
-        local y = h * Config.layers.birds + math.sin(time * 1.2 + bird.phase) * 5 * scale
-        Bird(ctx, x, y, scale * bird.scale, time, bird.phase)
-    end
-    -- 船只层（俯视角，2D 位置）
-    Boat(ctx, w * state.boatX, h * (state.boatY or Config.layers.boat), scale, time)
+    Boat(ctx, w * state.boatX, h * Config.layers.boat, scale, time)
     Island(ctx, w * 0.5, h * Config.layers.island, scale, time)
     local arrowAlpha = math.floor(85 + math.sin(time * 1.5) * 20)
     Arrow(ctx, w * 0.5, h * 0.275, scale, arrowAlpha)
     Arrow(ctx, w * 0.5, h * 0.52, scale, arrowAlpha)
     Arrow(ctx, w * 0.5, h * 0.705, scale, arrowAlpha)
-    -- STEP-5 夜间遮罩（参数表「昼夜视觉」：约 75% 黑蓝透明；船、港口标识、UI 保持可见）
-    local clock = state.clock
-    if clock and clock.phase == "night" then
-        local alpha = (Config.clock and Config.clock.nightOverlayAlpha) or 190
-        nvgBeginPath(ctx)
-        nvgRect(ctx, 0, 0, w, h)
-        Fill(ctx, { 10, 22, 48, alpha })
-    end
 end
 
 return Draw

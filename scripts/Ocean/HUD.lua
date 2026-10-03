@@ -3,23 +3,13 @@ local UI = require("urhox-libs/UI")
 local Config = require("Ocean.Config")
 local HUD = {}
 
-function HUD.Create(game)
+function HUD.Create(state)
     local statusLabel = UI.Label {
         text = "场景运行中",
         fontSize = 9,
         fontColor = { 205, 231, 218, 255 },
         textAlign = "center",
     }
-    -- STEP-1~4 基座诊断行：数据自检 / 点击世界坐标直接上屏（Maker 预览无控制台日志）
-    local diagLabel = UI.Label {
-        text = "诊断: -",
-        fontSize = 9,
-        fontColor = { 255, 226, 150, 255 },
-        textAlign = "center",
-    }
-    local function UpdateDiagnostics(text)
-        diagLabel:SetText(text or "-")
-    end
     local pauseButton = UI.Button {
         text = "暂停",
         width = 72,
@@ -32,35 +22,18 @@ function HUD.Create(game)
         pressedBackgroundColor = { 221, 205, 169, 255 },
     }
 
-    -- STEP-5 昼夜倒计时：每帧 tick，仅在整秒文本变化时 SetText，避免 UI 每帧重排。
-    local lastStatusText
-    local function FormatClock()
-        local clock = game:GetClock()
-        if not clock then return "" end
-        local phaseText = clock.phase == "night" and "夜晚" or "白天"
-        return string.format("第%d天 · %s · 剩余%d秒",
-            clock.day, phaseText, math.max(0, math.ceil(clock.remaining)))
-    end
-    local function Tick()
-        local statusText = game:IsPaused() and ("已暂停 · " .. FormatClock()) or FormatClock()
-        if statusText ~= lastStatusText then
-            lastStatusText = statusText
-            statusLabel:SetText(statusText)
-        end
-    end
-
     local function Refresh()
-        pauseButton:SetText(game:IsPaused() and "继续" or "暂停")
-        Tick()
+        pauseButton:SetText(state.paused and "继续" or "暂停")
+        statusLabel:SetText(state.paused and "场景已暂停" or "场景运行中")
     end
 
     local function TogglePause()
-        game:TogglePause()
+        state:TogglePause()
         Refresh()
     end
 
     local function Reset()
-        game:Reset()
+        state:Reset()
         Refresh()
     end
 
@@ -80,25 +53,7 @@ function HUD.Create(game)
             textColor = { 246, 244, 218, 255 },
             borderWidth = 1,
             borderColor = { 212, 235, 219, 65 },
-            onClick = function() game:MoveBy(direction) end,
-        }
-    end
-
-    -- STEP-8 调试信号按钮：与键盘 B/N 同效，生成于最近一次点击的海面位置
-    local function DebugButton(text, spawn)
-        return UI.Button {
-            text = text,
-            width = 88,
-            height = 40,
-            fontSize = 10,
-            borderRadius = 20,
-            backgroundColor = { 249, 247, 221, 22 },
-            textColor = { 246, 244, 218, 255 },
-            hoverBackgroundColor = { 249, 247, 221, 50 },
-            pressedBackgroundColor = { 249, 247, 221, 75 },
-            borderWidth = 1,
-            borderColor = { 212, 235, 219, 65 },
-            onClick = function() spawn(game.lastClickWorld or { x = 12, y = 0 }) end,
+            onClick = function() state:MoveBy(direction) end,
         }
     end
 
@@ -171,20 +126,7 @@ function HUD.Create(game)
                                     MoveButton("→", 1),
                                 },
                             },
-                            UI.Row {
-                                alignItems = "center",
-                                justifyContent = "center",
-                                gap = 8,
-                                pointerEvents = "box-none",
-                                children = {
-                                    DebugButton("诱饵 (B)",
-                                        function(pos) game:SpawnDebugBait(pos) end),
-                                    DebugButton("捕食者 (N)",
-                                        function(pos) game:SpawnDebugPredator(pos) end),
-                                },
-                            },
                             statusLabel,
-                            diagLabel,
                         },
                     },
                 },
@@ -192,9 +134,8 @@ function HUD.Create(game)
         },
     }
     UI.SetRoot(root)
-    print("[海洋框架] 界面就绪：WASD/方向键移动、暂停、重置、诱饵(B)、捕食者(N)")
-    return { togglePause = TogglePause, reset = Reset, refresh = Refresh,
-             updateDiagnostics = UpdateDiagnostics, tick = Tick }
+    print("[海洋框架] 界面就绪：左右移动、暂停、重置；支持键盘和触摸")
+    return { togglePause = TogglePause, reset = Reset, refresh = Refresh }
 end
 
 return HUD
