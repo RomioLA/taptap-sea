@@ -11,5 +11,10 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install lupa
+      # Test runners require "Tests.*" (capital T) but the repo stores
+      # scripts/tests/ (lowercase) -- fine on Windows, broken on Linux.
+      # Symlink as a stopgap; runners should be fixed to lowercase later.
+      - name: Align test module path casing (Linux case-sensitivity)
+        run: ln -s tests scripts/Tests
       - name: Run Circle1B offline regression suites
         run: python tests/run_circle1_b.py
