@@ -4,14 +4,12 @@ local OceanConfig = require("Ocean.Config")
 local OceanMath = require("Ocean.Math")
 local Loop = require("Gameplay.Loop")
 local Game = require("Game.Game")
-local Diagnostics = require("Gameplay.Diagnostics")
 
 ---@class GameplayOceanBridge
 ---@field runtime table
 ---@field loop GameplayLoop
 ---@field game SeaGameplayGame
 ---@field _externalDropReceiver (fun(payload:table, position:GameplayActionPoint):boolean)?
----@field _barrelReadErrorLogged boolean? Diagnostic latch only; no action state.
 local Bridge = {}
 Bridge.__index = Bridge
 
@@ -46,7 +44,7 @@ end
 
 local function getWorldIdentity(runtime)
     if type(runtime.GetFishingGeneration) ~= "function" then error("world_identity_unavailable", 0) end
-    local ok, identity = Diagnostics.Call("Integration", "world_identity", runtime.GetFishingGeneration, runtime)
+    local ok, identity = pcall(runtime.GetFishingGeneration, runtime)
     if not ok or type(identity) ~= "number" or identity ~= identity
         or identity < 0 or identity == math.huge or identity ~= math.floor(identity) then
         error("world_identity_unavailable", 0)
@@ -92,12 +90,12 @@ local function receiveDrop(self, payload)
     local distanceSquared = OceanMath.distanceSquared(self.runtime:GetShipPosition(), position)
     if distanceSquared > OceanConfig.interaction.maxThrowDistance ^ 2 then return false end
 
-    local spawnOk, entity = Diagnostics.Call("Integration", "drop_spawn", self.runtime.spawnDroppedItem, self.runtime, payload, position)
+    local spawnOk, entity = pcall(self.runtime.spawnDroppedItem, self.runtime, payload, position)
     if not spawnOk or not entity then return false end
 
     local externalReceiver = self._externalDropReceiver
     if externalReceiver then
-        local callbackOk, accepted = Diagnostics.Call("Integration", "drop_receiver", externalReceiver, payload, copyPoint(position))
+        local callbackOk, accepted = pcall(externalReceiver, payload, copyPoint(position))
         if not callbackOk or accepted ~= true then
             self.runtime:RejectDroppedItem(entity.id)
             return false
@@ -172,14 +170,7 @@ function Bridge:Update(dt, axisX, axisY)
     self.game:Update(dt, axisX, axisY)
     local runtime = self.runtime
     if type(runtime.GetFixedBarrel) == "function" then
-        local ok, barrel = xpcall(runtime.GetFixedBarrel, function(err)
-            if not self._barrelReadErrorLogged then
-                self._barrelReadErrorLogged = true
-                Diagnostics.Exception("Integration", "barrel_read", err)
-            end
-            return err
-        end, runtime)
-        if ok then self._barrelReadErrorLogged = false end
+        local ok, barrel = pcall(runtime.GetFixedBarrel, runtime)
         if ok and barrel and type(barrel.contentId) == "string" and barrel.position then
             self:RecognizeLocation(barrel.contentId, barrel.position)
         end

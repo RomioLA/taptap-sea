@@ -5,18 +5,9 @@ local PlayerState = require("Gameplay.PlayerState")
 local GameClock = require("Gameplay.GameClock")
 local Persistence = require("Gameplay.Persistence")
 local Actions = require("Gameplay.Actions")
-local Diagnostics = require("Gameplay.Diagnostics")
 local Progress = require("Gameplay.Circle1B2Progress")
 local Barrel = require("Gameplay.Circle1B2Barrel")
 ---@alias GameplayWorldPreparation {generation:number, day:integer, worldIdentity:number}
----@class GameplayPortAccessDetails
----@field shipX number
----@field shipY number
----@field portX number
----@field portY number
----@field distance number
----@field radius number
-
 ---@class GameplayLoop
 ---@field player PlayerState
 ---@field clock GameClock
@@ -50,8 +41,6 @@ local Barrel = require("Gameplay.Circle1B2Barrel")
 ---@field worldPreparation GameplayWorldPreparation?
 ---@field initialSaveStatus string
 ---@field initialSaveBusy boolean
----@field requestSequence integer
----@field lastSettlementSaveId integer?
 local Loop = {}
 Loop.__index = Loop
 
@@ -65,7 +54,6 @@ function Loop:Init(options)
     self.options = options
     self.store = options.store or Persistence.Cloud(options.cloud)
     self.generation = 0
-    self.requestSequence = 0
     self:ResetState()
     self.barrel = Barrel.New(self)
 end
@@ -130,16 +118,6 @@ end
 
 function Loop:GetShopStock(itemId)
     return self.shopStock[itemId] or 0
-end
-
-local function emit(self, event, fields)
-    fields.generation = fields.generation or self.generation
-    Diagnostics.Event("Loop", event, fields)
-end
-
-local function newRequest(self, kind)
-    self.requestSequence = self.requestSequence + 1
-    return { kind = kind, id = self.requestSequence }
 end
 
 function Loop:Update(dt, advanceWorld)
@@ -248,8 +226,8 @@ function Loop:SetStateObserver(observer)
         "LoadSaved", "NewRun", "RetryInitialSave", "UpgradeBoatSpeed" }) do
         local original = self[name]
         self[name] = function(_, ...)
-            local result = table.pack(Diagnostics.Call("Loop", "operation_" .. name, original, self, ...))
-            local syncOk, syncError = Diagnostics.Call("Loop", "state_observer", observer)
+            local result = table.pack(pcall(original, self, ...))
+            local syncOk, syncError = pcall(observer)
             if not result[1] then error(result[2], 0) end
             if not syncOk then error(syncError, 0) end
             return table.unpack(result, 2, result.n)
@@ -307,19 +285,8 @@ end
 function Loop:RetryInventoryRollback()
     local pending = self.inventoryRollback
     if not pending then return true end
-    local ok, restored
-    if pending.diagnosticExceptionLogged then
-        ok, restored = pcall(self.RestoreActionResources, self, pending.items, pending.stamina, pending.portSnapshot)
-    else
-        ok, restored = Diagnostics.Call(
-            "Loop", "inventory_rollback", self.RestoreActionResources,
-            self, pending.items, pending.stamina, pending.portSnapshot)
-        if not ok then pending.diagnosticExceptionLogged = true end
-    end
+    local ok, restored = pcall(self.RestoreActionResources, self, pending.items, pending.stamina, pending.portSnapshot)
     if not ok or restored ~= true then return false, "inventory_rollback_pending" end
-    if pending.diagnosticExceptionLogged then
-        emit(self, "inventory_rollback", { kind = "operation", result = "recovered", reason = "rollback_restored" })
-    end
     self.inventoryRollback = nil
     return true
 end
@@ -332,10 +299,10 @@ end
 
 function Loop:RemoveCargo(index)
     local inventory = self.player.inventory
-    local readOk, previous = Diagnostics.Call("Loop", "cargo_snapshot", inventory.GetItems, inventory)
+    local readOk, previous = pcall(inventory.GetItems, inventory)
     if not readOk then return false, "inventory_snapshot_failed" end
     local stamina = self.player.stamina
-    local ok, removed, reason = Diagnostics.Call("Loop", "cargo_remove", inventory.Remove, inventory, index)
+    local ok, removed, reason = pcall(inventory.Remove, inventory, index)
     if not ok or removed ~= true then
         return self:RollbackInventory(previous, stamina, ok and reason or "inventory_remove_failed")
     end
@@ -371,75 +338,34 @@ function Loop:SetElderOpen(open)
     return true
 end
 
-local function readPortAccess(runtime)
-    if not runtime then return true end
+-- Standalone rules have no spatial world. A bound product must prove access.
+function Loop:CanAccessPort()
+    if not self.runtime then return true end
+    local runtime = self.runtime
     if type(runtime.GetPortPosition) ~= "function" or type(runtime.GetShipPosition) ~= "function" then
         return false, "port_interface_unavailable"
     end
-    local port, ship = runtime:GetPortPosition(), runtime:GetShipPosition()
-    local dx, dy = ship.x - port.x, ship.y - port.y
-    local distance = math.sqrt(dx * dx + dy * dy)
-    assert(distance == distance and distance < math.huge)
-    local radius = require("Ocean.Config").interaction.portDistance
-    local details = {
-        shipX = ship.x, shipY = ship.y, portX = port.x, portY = port.y,
-        distance = distance, radius = radius,
-    }
-    if distance <= radius then return true, nil, details end
-    return false, "port_out_of_range", details
-end
-
-local function portFields(self, kind, result, reason, details, purpose)
-    local fields = {
-        kind = kind, result = result, reason = reason, purpose = purpose,
-        generation = self.generation, radius = details and details.radius or 10,
-        position_status = details and "available" or "unavailable",
-    }
-    if details then
-        fields.ship_x, fields.ship_y = details.shipX, details.shipY
-        fields.port_x, fields.port_y = details.portX, details.portY
-        fields.distance, fields.radius = details.distance, details.radius
-    end
-    return fields
-end
-
--- Standalone rules have no spatial world. A bound product must prove access.
----@return boolean, string?, GameplayPortAccessDetails?
-function Loop:CanAccessPort()
-    if not self.runtime then return true end
-    local ok, near, reason, details = pcall(readPortAccess, self.runtime)
+    local ok, near = pcall(function()
+        local port, ship = runtime:GetPortPosition(), runtime:GetShipPosition()
+        local dx, dy = ship.x - port.x, ship.y - port.y
+        local distance = math.sqrt(dx * dx + dy * dy)
+        assert(distance == distance and distance < math.huge)
+        return distance <= require("Ocean.Config").interaction.portDistance
+    end)
     if not ok then return false, "port_interface_unavailable" end
-    return near, reason, details
+    if near then return true end
+    return false, "port_out_of_range"
 end
 
 -- Only forced return, new-day preparation, new run and restore call this.
 function Loop:PreparePort(reason)
     if not self.runtime then return true end
-    if type(self.runtime.ResetShipAtPort) ~= "function" then
-        emit(self, "port_preparation", portFields(self, "failure", "failed", "port_reset_unavailable", nil, reason))
-        return false, "port_reset_unavailable"
-    end
-    local ok, accepted, errorReason = Diagnostics.Call(
-        "Loop", "port_reset", self.runtime.ResetShipAtPort, self.runtime)
-    if not ok or accepted ~= true then
-        local failure = errorReason or "port_reset_failed"
-        emit(self, "port_preparation", portFields(self, "failure", "failed", failure, nil, reason))
-        return false, failure
-    end
-    local accessOk, atPort, portReason, details = Diagnostics.Call(
-        "Loop", "port_access_after_reset", readPortAccess, self.runtime)
-    if not accessOk then atPort, portReason = false, "port_interface_unavailable" end
-    if not atPort then
-        emit(self, "port_preparation", portFields(self, "failure", "failed", portReason, details, reason))
-        return false, portReason
-    end
-    if type(self.runtime.ClearMovementTarget) == "function" then
-        local clearOk, clearError = Diagnostics.Call("Loop", "port_clear_movement", function()
-            return self.runtime:ClearMovementTarget()
-        end)
-        if not clearOk then error(clearError, 0) end
-    end
-    emit(self, "port_preparation", portFields(self, "operation", "prepared", nil, details, reason))
+    if type(self.runtime.ResetShipAtPort) ~= "function" then return false, "port_reset_unavailable" end
+    local ok, accepted, errorReason = pcall(self.runtime.ResetShipAtPort, self.runtime)
+    if not ok or accepted ~= true then return false, errorReason or "port_reset_failed" end
+    local atPort, portReason = self:CanAccessPort()
+    if not atPort then return false, portReason end
+    if type(self.runtime.ClearMovementTarget) == "function" then self.runtime:ClearMovementTarget() end
     return true
 end
 
@@ -458,36 +384,17 @@ function Loop:MarkWorldPrepared(day, worldIdentity)
 end
 
 function Loop:ReturnToPort()
-    ---@type GameplayPortAccessDetails?
-    local details
-    local function reject(reason, kind)
-        emit(self, "return_to_port", portFields(self, kind or "rejected", "rejected", reason, details))
-        return false, reason
-    end
-    local detailRead, detailNear, detailReason, detailValue = Diagnostics.Call(
-        "Loop", "return_port_access", readPortAccess, self.runtime)
-    if detailRead then details = detailValue end
-    if self:HasPendingCatch() then return reject("pending_catch_required") end
-    if not self:Ready() then return reject("busy") end
-    if not detailRead then return reject("port_interface_unavailable", "failure") end
-    local near, reason = detailNear, detailReason
-    if not near then return reject(reason or "port_interface_unavailable") end
-    if self.inPort then
-        emit(self, "return_to_port", portFields(self, "operation", "already_at_port", nil, details))
-        return true
-    end
-    if self.runtime then
-        local clearOk, clearError = Diagnostics.Call("Loop", "return_port_clear_movement", function()
-            return self.runtime:ClearMovementTarget()
-        end)
-        if not clearOk then error(clearError, 0) end
-    end
+    if self:HasPendingCatch() then return false, "pending_catch_required" end
+    if not self:Ready() then return false, "busy" end
+    local near, reason = self:CanAccessPort()
+    if not near then return false, reason end
+    if self.inPort then return true end
+    if self.runtime then self.runtime:ClearMovementTarget() end
     self:CancelThrowSelection()
     self.inPort = true
     self.portNightElapsed = self.clock.phase == "night" and self.clock.elapsed or 0
     self.clock:Pause("port")
     self.lastMessage = "已返港，可交易、结束今天或再次出航"
-    emit(self, "return_to_port", portFields(self, "operation", "returned", nil, details))
     return true
 end
 
@@ -541,29 +448,14 @@ function Loop:GetNextDayStamina(forced)
 end
 
 function Loop:BeginNewDay()
-    emit(self, "new_day_preparation", {
-        kind = "operation", result = "started", day = self.player.day,
-    })
-    local function reject(reason)
-        emit(self, "new_day_preparation", {
-            kind = "rejected", result = "rejected", reason = reason, day = self.player.day,
-        })
-        return false, reason
-    end
-    if self:HasPendingCatch() then return reject("pending_catch_required") end
-    if self.inventoryRollback or (self.actions and self.actions:IsBusy()) then return reject("busy") end
-    if (self.barrel and self.barrel:IsBusy()) or self.storyDialog then return reject("busy") end
+    if self:HasPendingCatch() then return false, "pending_catch_required" end
+    if self.inventoryRollback or (self.actions and self.actions:IsBusy()) then return false, "busy" end
+    if (self.barrel and self.barrel:IsBusy()) or self.storyDialog then return false, "busy" end
     -- 对外只允许由已经确认的结算调用，防止海上绕过处罚/自动存档。
-    if not self.settlementPending or self.settlementApplied then return reject("settlement_required") end
+    if not self.settlementPending or self.settlementApplied then return false, "settlement_required" end
     if not self.portPreparedForSettlement then
         local prepared, reason = self:PreparePort("new_day")
-        if not prepared then
-            emit(self, "new_day_preparation", {
-                kind = "failure", result = "failed", reason = reason or "port_preparation_failed",
-                day = self.player.day,
-            })
-            return false, reason
-        end
+        if not prepared then return false, reason end
         self.portPreparedForSettlement = true
     end
     local stamina = self:GetNextDayStamina(self.settlementForced)
@@ -580,18 +472,13 @@ function Loop:BeginNewDay()
     self:CancelThrowSelection()
     self.settlementApplied = true
     self.forcedAtPort = false
-    local snapshotOk, snapshot = Diagnostics.Call(
-        "Loop", "new_day_snapshot", Persistence.Snapshot, self.player)
+    local snapshotOk, snapshot = pcall(Persistence.Snapshot, self.player)
     if not snapshotOk then
         self.settlementSnapshot, self.saveStatus = nil, "error"
         self:SetMessage("日结快照暂未生成，可重试；当天进度已保留。")
-        emit(self, "new_day_preparation", {
-            kind = "failure", result = "failed", reason = "settlement_snapshot_failed", day = self.player.day,
-        })
         return false, "settlement_snapshot_failed"
     end
     self.settlementSnapshot = snapshot
-    emit(self, "new_day_preparation", { kind = "operation", result = "prepared", day = self.player.day })
     return true
 end
 
@@ -602,16 +489,10 @@ local function finishSettlement(self, saved)
     end
     self.settlementSaveDecision = saved and "saved" or "skipped"
     if self.options.onNewDay then
-        local hookOk, accepted, hookReason = Diagnostics.Call(
-            "Loop", "new_day_world_prepare", self.options.onNewDay, self.player.day)
+        local hookOk, accepted = pcall(self.options.onNewDay, self.player.day)
         if not hookOk or accepted == false then
             self.dayPreparationError = true
             self.lastMessage = "新日海洋准备失败，仍停留在港口；请重试准备。"
-            emit(self, "new_day_preparation", {
-                kind = "failure", result = "failed",
-                reason = hookOk and (hookReason or "new_day_preparation_rejected") or "new_day_preparation_failed",
-                day = self.player.day,
-            })
             return false, "new_day_preparation_failed"
         end
     end
@@ -622,20 +503,14 @@ local function finishSettlement(self, saved)
     self.clock:Resume("settlement")
     self.lastMessage = saved and "每日结算已保存，下一天已就绪"
         or "本次结算未保存，下一天已就绪；旧存档仍保留，退出后当天未保存进度可能丢失。"
-    emit(self, "new_day_preparation", {
-        kind = "operation", result = "ready", reason = saved and "saved" or "explicitly_skipped",
-        day = self.player.day,
-    })
     return true
 end
 
 function Loop:ContinueWithoutSaving()
     if self.dayPreparationError and self.settlementSaveDecision == "skipped" then
-        emit(self, "settlement_skip", { kind = "operation", result = "retry_preparation", reason = "explicitly_skipped" })
         return finishSettlement(self, false)
     end
     if self.entryPending and (self.initialSaveStatus == "saving" or self.initialSaveStatus == "error") then
-        local request = self.activeRequest
         self.activeRequest = nil
         self.initialSaveBusy = false
         self.initialSaveSnapshot = nil
@@ -643,10 +518,6 @@ function Loop:ContinueWithoutSaving()
         self.entryPending = false
         self.clock:Resume("entry")
         self.lastMessage = "已不等待新周目初始存档并继续；保存请求仍可能稍后完成，若未写入，旧云档可能在下次启动时恢复。"
-        emit(self, "initial_save", {
-            kind = "operation", result = "skipped", reason = "explicitly_skipped",
-            id = request and request.id,
-        })
         return true
     end
     if not self.settlementPending or not self.settlementApplied or self.loading
@@ -657,17 +528,9 @@ function Loop:ContinueWithoutSaving()
         if not self.activeRequest or self.activeRequest.kind ~= "settlement_save" then
             return false, "no_failed_settlement"
         end
-        local request = self.activeRequest
         -- The cloud call may still finish remotely. Invalidate its local callback so
         -- a later response cannot change the explicit skip decision.
         self.activeRequest, self.busy = nil, false
-        emit(self, "settlement_save", {
-            kind = "operation", result = "skipped", reason = "explicitly_skipped", id = request.id,
-        })
-    else
-        emit(self, "settlement_save", {
-            kind = "operation", result = "skipped", reason = "explicitly_skipped", id = self.lastSettlementSaveId,
-        })
     end
     return finishSettlement(self, false)
 end
@@ -684,60 +547,28 @@ function Loop:ConfirmSettlement()
         if not started then return false, reason end
     end
     if not self.settlementSnapshot then
-        local snapshotOk, snapshot = Diagnostics.Call(
-            "Loop", "settlement_snapshot", Persistence.Snapshot, self.player)
-        if not snapshotOk then
-            emit(self, "settlement_save", {
-                kind = "failure", result = "failed", reason = "settlement_snapshot_failed",
-            })
-            return false, "settlement_snapshot_failed"
-        end
+        local snapshotOk, snapshot = pcall(Persistence.Snapshot, self.player)
+        if not snapshotOk then return false, "settlement_snapshot_failed" end
         self.settlementSnapshot = snapshot
     end
-    local retrying = self.saveStatus == "error"
     self.busy, self.saveStatus = true, "saving"
     local generation = self.generation
-    local request = newRequest(self, "settlement_save")
-    self.lastSettlementSaveId = request.id
+    local request = { kind = "settlement_save" }
     self.activeRequest = request
     local completed = false
     local function done(ok, reason)
-        if completed then
-            emit(self, "settlement_save_callback", {
-                kind = "rejected", result = "ignored", reason = "duplicate_callback",
-                generation = generation, id = request.id,
-            })
-            return
-        end
-        if self.closed or generation ~= self.generation or self.activeRequest ~= request then
-            local ignoredReason = self.closed and "scene_closed" or generation ~= self.generation
-                and "generation_changed" or "request_replaced"
-            emit(self, "settlement_save_callback", {
-                kind = "rejected", result = "ignored", reason = ignoredReason,
-                generation = generation, current_generation = self.generation, id = request.id,
-            })
-            return
-        end
+        if completed or self.closed or generation ~= self.generation or self.activeRequest ~= request then return end
         completed = true
         self.activeRequest = nil
         self.busy = false
         self.saveStatus = ok and "saved" or "error"
-        emit(self, "settlement_save", {
-            kind = ok and "operation" or "failure", result = ok and "saved" or "failed",
-            reason = ok and "saved" or "backend_failure", reason_type = type(reason), id = request.id,
-        })
         if not ok then
             self.lastMessage = "结算存档失败，可重试保存，或明确放弃本次保存进入下一天。旧存档仍保留。"
             return
         end
         finishSettlement(self, true)
     end
-    emit(self, "settlement_save", {
-        kind = "operation", result = retrying and "retry_started" or "started", id = request.id,
-    })
-    local ok, accepted, err = Diagnostics.Call("Loop", "settlement_save_call", function()
-        return self.store:Save(self.settlementSnapshot, done)
-    end)
+    local ok, accepted, err = pcall(self.store.Save, self.store, self.settlementSnapshot, done)
     if not ok then done(false, accepted) elseif accepted == false then done(false, err) end
     return true
 end
@@ -753,20 +584,16 @@ function Loop:BeginEntry()
 end
 
 local function notifyState(self)
-    if self.stateObserver then Diagnostics.Call("Loop", "state_observer", self.stateObserver) end
+    if self.stateObserver then pcall(self.stateObserver) end
 end
 
 function Loop:SaveInitialState()
     if self.closed then return false, "scene_closed" end
     if not self.entryPending or self.initialSaveBusy then return false, "busy" end
-    local snapshotOk, snapshot = Diagnostics.Call(
-        "Loop", "initial_save_snapshot", Persistence.Snapshot, self.player)
+    local snapshotOk, snapshot = pcall(Persistence.Snapshot, self.player)
     if not snapshotOk then
         self.initialSaveStatus, self.saveStatus = "error", "error"
         self.lastMessage = "新周目初始存档暂未生成；可重试，或不保存继续。"
-        emit(self, "initial_save", {
-            kind = "failure", result = "failed", reason = "initial_snapshot_failed",
-        })
         return true
     end
     self.initialSaveSnapshot = snapshot
@@ -774,35 +601,16 @@ function Loop:SaveInitialState()
     self.initialSaveStatus, self.saveStatus = "saving", "saving"
     self.lastMessage = "正在保存新周目初始状态；成功后会立即开始游戏。"
     local generation = self.generation
-    local request = newRequest(self, "initial_save")
+    local request = { kind = "initial_save" }
     self.activeRequest = request
     local completed = false
     local function done(ok, reason)
-        if completed then
-            emit(self, "initial_save_callback", {
-                kind = "rejected", result = "ignored", reason = "duplicate_callback",
-                generation = generation, id = request.id,
-            })
-            return
-        end
-        if self.closed or generation ~= self.generation or self.activeRequest ~= request then
-            local ignoredReason = self.closed and "scene_closed" or generation ~= self.generation
-                and "generation_changed" or "request_replaced"
-            emit(self, "initial_save_callback", {
-                kind = "rejected", result = "ignored", reason = ignoredReason,
-                generation = generation, current_generation = self.generation, id = request.id,
-            })
-            return
-        end
+        if completed or self.closed or generation ~= self.generation or self.activeRequest ~= request then return end
         completed = true
         self.activeRequest = nil
         self.initialSaveBusy = false
         self.initialSaveStatus = ok and "saved" or "error"
         self.saveStatus = self.initialSaveStatus
-        emit(self, "initial_save", {
-            kind = ok and "operation" or "failure", result = ok and "saved" or "failed",
-            reason = ok and "saved" or "backend_failure", reason_type = type(reason), id = request.id,
-        })
         if ok then
             self.initialSaveSnapshot = nil
             self.entryPending = false
@@ -813,22 +621,15 @@ function Loop:SaveInitialState()
         end
         notifyState(self)
     end
-    emit(self, "initial_save", { kind = "operation", result = "started", id = request.id })
-    local ok, accepted, err = Diagnostics.Call("Loop", "initial_save_call", function()
-        return self.store:Save(snapshot, done)
-    end)
+    local ok, accepted, err = pcall(self.store.Save, self.store, snapshot, done)
     if not ok then done(false, accepted) elseif accepted == false then done(false, err) end
     return true
 end
 
 function Loop:RetryInitialSave()
     if not self.entryPending or self.initialSaveBusy or self.initialSaveStatus ~= "error" then
-        emit(self, "initial_save_retry", {
-            kind = "rejected", result = "rejected", reason = "initial_save_not_retryable",
-        })
         return false, "initial_save_not_retryable"
     end
-    emit(self, "initial_save_retry", { kind = "operation", result = "started" })
     return self:SaveInitialState()
 end
 
@@ -847,53 +648,31 @@ function Loop:LoadSaved(done)
         or self.forcedReturnPending or self.inventoryRollback or not self.inPort
         or (self.actions and self.actions:IsBusy()) or (self.barrel and self.barrel:IsBusy())
         or self.storyDialog then return false, "busy_or_at_sea" end
-    local retrying = self.loadStatus == "error"
     self.loading = true
     self.loadStatus = "loading"
     self.clock:Pause("loading")
     local generation = self.generation
-    local request = newRequest(self, "load")
+    local request = {}
     self.activeRequest = request
     local completed = false
     local function loaded(ok, data)
-        if completed then
-            emit(self, "load_callback", {
-                kind = "rejected", result = "ignored", reason = "duplicate_callback",
-                generation = generation, id = request.id,
-            })
-            return
-        end
-        if self.closed or generation ~= self.generation or self.activeRequest ~= request then
-            local ignoredReason = self.closed and "scene_closed" or generation ~= self.generation
-                and "generation_changed" or "request_replaced"
-            emit(self, "load_callback", {
-                kind = "rejected", result = "ignored", reason = ignoredReason,
-                generation = generation, current_generation = self.generation, id = request.id,
-            })
-            return
-        end
+        if completed or self.closed or generation ~= self.generation or self.activeRequest ~= request then return end
         completed = true
         self.activeRequest = nil
         self.loading = false
         self.clock:Resume("loading")
         if ok and data ~= nil then
-            local restoreOk, player, err = Diagnostics.Call(
-                "Loop", "load_restore", Persistence.Restore, data)
+            local restoreOk, player, err = pcall(Persistence.Restore, data)
             if restoreOk and player then
                 local prepared, prepareReason = self:PreparePort("restore")
                 if prepared and self.options.prepareLoadedWorld then
-                    local hookOk, accepted = Diagnostics.Call(
-                        "Loop", "loaded_world_prepare", self.options.prepareLoadedWorld, player.day)
+                    local hookOk, accepted = pcall(self.options.prepareLoadedWorld, player.day)
                     prepared = hookOk and accepted ~= false
                     prepareReason = "new_day_preparation_failed"
                 end
                 if not prepared then
                     self.loadStatus = "error"
                     self.lastMessage = "存档已读取，但港口与海洋准备失败；当前玩家状态保留，请重试读取。"
-                    emit(self, "load", {
-                        kind = "failure", result = "failed", reason = "world_preparation_failed",
-                        reason_type = type(prepareReason), id = request.id,
-                    })
                     if done then done(false, prepareReason) end
                     return
                 end
@@ -915,81 +694,46 @@ function Loop:LoadSaved(done)
         if ok and data == nil then
             self.loadStatus = "empty"
             self.lastMessage = "没有云存档，可开始新周目。"
-            emit(self, "load", {
-                kind = "operation", result = "empty", reason = "no_saved_data", id = request.id,
-            })
         elseif not ok then
             self.loadStatus = "error"
             self.lastMessage = "云存档读档失败，当前状态保留；可重试读取或明确开始新周目。"
-            emit(self, "load", {
-                kind = "failure", result = "failed", reason = "backend_failure",
-                reason_type = type(data), id = request.id,
-            })
-        else
-            emit(self, "load", { kind = "operation", result = "loaded", id = request.id })
         end
         if done then done(ok, data) end
     end
-    emit(self, "load", {
-        kind = "operation", result = retrying and "retry_started" or "started", id = request.id,
-    })
-    local ok, accepted, err = Diagnostics.Call("Loop", "load_call", function()
-        return self.store:Load(loaded)
-    end)
+    local ok, accepted, err = pcall(self.store.Load, self.store, loaded)
     if not ok then loaded(false, accepted) elseif accepted == false then loaded(false, err) end
     return true
 end
 
 function Loop:NewRun()
-    emit(self, "new_run_preparation", { kind = "operation", result = "started" })
-    local function reject(reason)
-        emit(self, "new_run_preparation", {
-            kind = "rejected", result = "rejected", reason = reason,
-        })
-        return false, reason
-    end
-    if self.closed then return reject("scene_closed") end
-    if self:HasPendingCatch() then return reject("pending_catch_required") end
+    if self.closed then return false, "scene_closed" end
+    if self:HasPendingCatch() then return false, "pending_catch_required" end
     if self.busy or self.loading or self.initialSaveBusy or self.dropInFlight or self.forcedReturnPending or self.settlementPending then
-        return reject("busy")
+        return false, "busy"
     end
     if self.actions then
         local cancelled, reason = self.actions:CancelActiveFishing("reset_interrupted")
-        if not cancelled then return reject(reason or "busy") end
+        if not cancelled then return false, reason end
     end
     if self.barrel then
         local cancelled, reason = self.barrel:Cancel("reset_interrupted")
-        if not cancelled then return reject(reason or "busy") end
+        if not cancelled then return false, reason end
     end
     self:CloseStoryDialog()
     self:CancelThrowSelection()
-    if not self:Ready() and not self.entryPending then return reject("busy") end
+    if not self:Ready() and not self.entryPending then return false, "busy" end
     local prepared, prepareReason = self:PreparePort("new_run")
-    if not prepared then
-        emit(self, "new_run_preparation", {
-            kind = "failure", result = "failed", reason = prepareReason or "port_preparation_failed",
-        })
-        return false, prepareReason
-    end
+    if not prepared then return false, prepareReason end
     local resetOk, resetReason = self:ResetState()
-    if not resetOk then
-        emit(self, "new_run_preparation", { kind = "failure", result = "failed", reason = resetReason })
-        return false, resetReason
-    end
+    if not resetOk then return false, resetReason end
     if self.options.resetDynamicWorld then
-        local ok, accepted = Diagnostics.Call(
-            "Loop", "new_run_world_prepare", self.options.resetDynamicWorld)
+        local ok, accepted = pcall(self.options.resetDynamicWorld)
         if not ok or accepted == false then
             self:BeginEntry()
             self.lastMessage = "新周目港口准备未能完成，请重试开始新周目。"
-            emit(self, "new_run_preparation", {
-                kind = "failure", result = "failed",
-                reason = ok and "new_day_preparation_rejected" or "new_day_preparation_failed",
-            })
             return false, "new_day_preparation_failed"
         end
     end
-    emit(self, "new_run_preparation", { kind = "operation", result = "prepared" })
     -- Replace the old cloud snapshot before gameplay starts so another process
     -- cannot restore the previous run after this run has begun.
     self:BeginEntry()
@@ -1024,8 +768,7 @@ function Loop:UseItem(index)
     self.dropInFlight = true
     local removed, previous, stamina = self:RemoveCargo(index)
     if not removed then self.dropInFlight = false; return false, previous end
-    local restoredCall, restored = Diagnostics.Call(
-        "Loop", "item_restore_stamina", self.player.RestoreStamina, self.player, definition.heal)
+    local restoredCall, restored = pcall(self.player.RestoreStamina, self.player, definition.heal)
     self.dropInFlight = false
     if not restoredCall or restored ~= true then return self:RollbackInventory(previous, stamina, "inventory_use_failed") end
     self.lastMessage = "使用了" .. definition.name
@@ -1045,7 +788,7 @@ function Loop:DropItem(index)
     local removed, previous, stamina = self:RemoveCargo(index)
     if not removed then self.dropInFlight = false; return false, previous end
     -- receiver 必须同步确认交接成功（true）。没有世界坐标的 B 不自行创建对象。
-    local ok, accepted = Diagnostics.Call("Loop", "drop_receiver", self.options.dropReceiver, payload)
+    local ok, accepted = pcall(self.options.dropReceiver, payload)
     self.dropInFlight = false
     if not ok or accepted ~= true then return self:RollbackInventory(previous, stamina, "drop_rejected") end
     self.lastMessage = "已交接投放请求：" .. definition.name
@@ -1069,15 +812,13 @@ function Loop:GiveToElder(index)
     local removed, previous, stamina = self:RemoveCargo(index)
     if not removed then self.dropInFlight = false; return false, previous end
     local ok, accepted, message = true, true, "老人收下了" .. definition.name
-    if self.options.elderReceiver then
-        ok, accepted, message = Diagnostics.Call("Loop", "elder_receiver", self.options.elderReceiver, id)
-    end
+    if self.options.elderReceiver then ok, accepted, message = pcall(self.options.elderReceiver, id) end
     self.dropInFlight = false
     if not ok or accepted ~= true then return self:RollbackInventory(previous, stamina, "elder_rejected") end
     if id == "apple" and self.player.day <= 3 then
         local record = self.player.elder.circle1B2
         local priorCount = record.applesGiven
-        local countOk, counted = Diagnostics.Call("Loop", "elder_record_apple", Progress.RecordApple, self.player)
+        local countOk, counted = pcall(Progress.RecordApple, self.player)
         if not countOk or counted ~= true then
             record.applesGiven = priorCount
             return self:RollbackInventory(previous, stamina, "elder_progress_failed")
@@ -1093,7 +834,7 @@ function Loop:PortTransaction(action)
     if not self:Ready() or not self.inPort then return false, "port_required" end
     local near, reason = self:CanAccessPort()
     if not near then return false, reason end
-    local readOk, before = Diagnostics.Call("Loop", "port_transaction_snapshot", function()
+    local readOk, before = pcall(function()
         local stock = {}
         for key, value in pairs(self.shopStock) do stock[key] = value end
         return { items = self.player.inventory:GetItems(), level = self.player.inventory:GetLevel(),
@@ -1102,7 +843,7 @@ function Loop:PortTransaction(action)
     end)
     if not readOk then return false, "transaction_snapshot_failed" end
     self.dropInFlight = true
-    local ok, accepted, actionReason = Diagnostics.Call("Loop", "port_transaction_action", action)
+    local ok, accepted, actionReason = pcall(action)
     self.dropInFlight = false
     if not ok or accepted ~= true then
         self.inventoryRollback = { items = before.items, stamina = before.stamina, portSnapshot = before }

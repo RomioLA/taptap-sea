@@ -4,7 +4,6 @@ local PlayerState = require("Gameplay.PlayerState")
 local Inventory = require("Gameplay.Inventory")
 local Items = require("data.items")
 local Progress = require("Gameplay.Circle1B2Progress")
-local Diagnostics = require("Gameplay.Diagnostics")
 local Persistence = {}
 
 local function finite(value)
@@ -122,7 +121,7 @@ end
 ---@param data table
 ---@return PlayerState?, string?
 function Persistence.Restore(data)
-    local ok, player, err = Diagnostics.Call("persistence", "restore", restoreValidated, data)
+    local ok, player, err = pcall(restoreValidated, data)
     if not ok then return nil, "invalid_save_state:" .. tostring(player) end
     return player, err
 end
@@ -138,48 +137,22 @@ function Persistence.Cloud(cloud)
         return ok and result or "<unprintable>"
     end
 
-    local function diagnosticReason(value)
-        if value == "cloud_unavailable" or value == "cloud_timeout"
-            or value == "cloud_request_rejected" or value == "cloud_invalid_response" then
-            return value
+    local function reportError(reason)
+        if type(print) == "function" then
+            pcall(print, "[Persistence.Cloud] " .. safeString(reason))
         end
-        return "cloud_operation_failed"
     end
 
-    local function invoke(operation, action, done, expectsValuesTable)
-        if type(done) ~= "function" then
-            Diagnostics.Event("persistence", "request_rejected", {
-                kind = "rejected", operation = operation, reason = "callback_required",
-            })
-            return false, "callback_required"
-        end
+    local function invoke(action, done, expectsValuesTable)
+        if type(done) ~= "function" then return false, "callback_required" end
         local completed = false
         local completionOk = false
-        local requestReturned = false
         local function finish(ok, value)
-            if completed then
-                Diagnostics.Event("persistence", "callback_ignored", {
-                    kind = "rejected", operation = operation, reason = "duplicate_callback",
-                    phase = requestReturned and "late" or "same_request",
-                })
-                return false
-            end
+            if completed then return false end
             completed = true
             completionOk = ok
-            local resultKind = ok and "operation" or "failure"
-            if not ok and (value == "callback_required" or value == "cloud_request_rejected"
-                or value == "cloud_invalid_response") then resultKind = "rejected" end
-            local fields = {
-                kind = resultKind, operation = operation,
-                outcome = ok and "succeeded" or "failed",
-            }
-            if expectsValuesTable then
-                fields.resultType = ok and type(value) or "error"
-                if ok then fields.hasSave = value ~= nil end
-            end
-            if not ok then fields.reason = diagnosticReason(value) end
-            Diagnostics.Event("persistence", operation .. "_result", fields)
-            Diagnostics.Call("persistence", "completion_callback", done, ok, value)
+            local callbackOk, callbackError = pcall(done, ok, value)
+            if not callbackOk then reportError("completion callback failed: " .. safeString(callbackError)) end
             return true
         end
         if backend == nil or backend == false then
@@ -202,15 +175,12 @@ function Persistence.Cloud(cloud)
             end,
             timeout = function() finish(false, "cloud_timeout") end,
         }
-        local callOk, result = Diagnostics.Call("persistence", operation .. "_request", action, callbacks)
-        requestReturned = true
+        local callOk, result = pcall(action, callbacks)
         if not callOk then
             local reason = safeString(result)
             local firstCompletion = finish(false, reason)
             if not firstCompletion then
-                Diagnostics.Event("persistence", "request_exception_after_callback", {
-                    kind = "failure", operation = operation, reason = "request_raised_after_completion",
-                })
+                reportError("cloud request raised after callback: " .. reason)
                 return completionOk, reason
             end
             return false, reason
@@ -221,19 +191,16 @@ function Persistence.Cloud(cloud)
             if not firstCompletion then return completionOk, reason end
             return false, reason
         end
-        Diagnostics.Event("persistence", "request_accepted", {
-            kind = "operation", operation = operation, outcome = "accepted",
-        })
         return true
     end
     return {
         Save = function(_, snapshot, done)
-            return invoke("save", function(callbacks)
+            return invoke(function(callbacks)
                 return backend:Set(key, copy(snapshot), callbacks)
             end, done, false)
         end,
         Load = function(_, done)
-            return invoke("load", function(callbacks)
+            return invoke(function(callbacks)
                 return backend:Get(key, callbacks)
             end, done, true)
         end,

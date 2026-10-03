@@ -9,6 +9,9 @@ local function color(value)
 end
 
 local function planes(movement)
+    -- Screen-X boundaries still map to straight sides in the water plane.
+    -- Projection.ViewPolygon also keeps its near cap at q >= 1 and its far cap
+    -- at farDepth, so the curved far-water horizon needs no new world clip shape.
     local polygon = Projection.ViewPolygon(movement)
     local result = {}
     for index, point in ipairs(polygon) do

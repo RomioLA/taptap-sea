@@ -2,7 +2,6 @@
 local UI = require("urhox-libs/UI")
 local Config = require("config.gameplay")
 local Items = require("data.items")
-local Diagnostics = require("Gameplay.Diagnostics")
 
 local HUD = {}
 
@@ -48,7 +47,7 @@ local HUD = {}
 local ERROR_MESSAGES = {
     busy = "当前操作尚未完成",
     port_interface_unavailable = "港口位置接口暂不可用，无法确认交易权限。",
-    port_out_of_range = "距港超过10米；请航行到港口标记10米内，再返港或交易。",
+    port_out_of_range = "请航行到港口10米内，再进入港口交易。",
     port_reset_unavailable = "实际返港接口暂不可用，请稍后重试。",
     port_reset_failed = "船只未能回到港口，请重试。",
     cargo_changed = "船舱物品已变化，请重新选择要出售的鱼。",
@@ -305,9 +304,6 @@ function HUD.Create(loop, parent, debugTools)
     }
     root:AddChild(refs.messagePanel)
 
-    refs.portAccessReason = makeLabel("锚形标记=港口（交易中心）· 返港/交易需距港≤10米。", 12, { 203, 218, 202, 255 })
-    root:AddChild(refs.portAccessReason)
-
     refs.fishingPanel = card("捕鱼")
     refs.fishingStatus = makeLabel("选择海面网心开始捕鱼。", 13)
     refs.fishingProgress = makeLabel("动作进度：0%", 12, { 180, 203, 191, 255 })
@@ -506,6 +502,8 @@ function HUD.Create(loop, parent, debugTools)
     refs.loadStatus = makeLabel("", 12)
     refs.portPanel:AddChild(refs.loadStatus)
     refs.portPanel:AddChild(makeLabel("新周目起始状态会在开始时保存；入口处可读取已有云存档。", 12))
+    refs.portAccessReason = makeLabel("", 12)
+    refs.portPanel:AddChild(refs.portAccessReason)
     refs.staminaUpgrade = makeButton("升级体力", function() invokeLoop("UpgradeStamina") end, "secondary", 180)
     refs.speedUpgrade = makeButton("升级航速", function() invokeLoop("UpgradeBoatSpeed") end, "secondary", 180)
     refs.portPanel:AddChild(refs.staminaUpgrade)
@@ -732,7 +730,7 @@ function HUD.Create(loop, parent, debugTools)
             refresh()
             return
         end
-        local ok, result, reason = Diagnostics.Call("HUD", "invoke_loop", method, loop, ...)
+        local ok, result, reason = pcall(method, loop, ...)
         if not ok then
             state.localMessage = "操作失败，当前进度保留，请稍后重试。"
         elseif result == false then
@@ -745,11 +743,9 @@ function HUD.Create(loop, parent, debugTools)
 
     invokeDebug = function(command, argument)
         if state.destroyed or not debugTools then return end
-        local ok, result, reason = Diagnostics.Call(
-            "HUD", "invoke_debug", debugTools.Execute, debugTools, command, argument)
+        local ok, result, reason = pcall(debugTools.Execute, debugTools, command, argument)
         if not ok then
-            local errorText = (type(result) == "string" or type(result) == "number") and tostring(result) or "未知异常"
-            state.localMessage = "调试命令失败：" .. errorText
+            state.localMessage = "调试命令失败：" .. tostring(result)
         elseif result == false then
             state.localMessage = "调试命令失败：" .. userMessage(reason)
         else
@@ -1028,19 +1024,9 @@ function HUD.Create(loop, parent, debugTools)
         local showInventory = loop.inventoryOpen == true or pendingCatch
         refs.inventoryPanel:SetVisible(showInventory)
         refs.portPanel:SetVisible(inPort)
-        local portAccess, portReason, portDetails = loop:CanAccessPort()
-        local portDistance = portDetails and portDetails.distance
-        local portRadius = portDetails and portDetails.radius or 10
-        local portInfo
-        if type(portDistance) == "number" then
-            local accessText = portAccess and "范围内，可返港/交易" or "范围外，需≤10米才可返港/交易"
-            portInfo = string.format("锚形标记=港口（交易中心）· 距港 %.3f/%.0f米（%s）；同日往返不恢复体力、不补充库存。",
-                portDistance, portRadius, accessText)
-        else
-            portInfo = "锚形标记=港口（交易中心）· 距离暂不可读；返港/交易需距港≤10米。"
-            if not portAccess and portReason then portInfo = portInfo .. " " .. userMessage(portReason) end
-        end
-        setText(refs.portAccessReason, "portAccessReason", portInfo)
+        local portAccess, portReason = loop:CanAccessPort()
+        setText(refs.portAccessReason, "portAccessReason", portAccess and "港口10米内可交易；同日往返不恢复体力、不补充库存。"
+            or userMessage(portReason))
         refs.loadSaved:SetVisible(inPort)
         refs.loadSaved:SetText(loop.loadStatus == "error" and "重试读取" or "读取云存档")
         refs.loadSaved:SetDisabled(busy or loop.settlementPending == true or pendingCatch or fishingRestricted)

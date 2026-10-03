@@ -163,7 +163,9 @@ function Tests.Run()
             near(x, movement.viewportWidth * view.anchorX + offsets[index] * base * q,
                 1e-6, "projected X")
             near(y, movement.viewportHeight * view.horizonY
-                + movement.viewportHeight * (view.anchorY - view.horizonY) * q,
+                + movement.viewportHeight * (view.anchorY - view.horizonY) * q
+                + movement.viewportHeight * Config.visual.curvature.heightRatio
+                    * ((x - movement.viewportWidth / 2) / (movement.viewportWidth / 2)) ^ 2 * (1 - q) ^ 2,
                 1e-6, "projected Y")
             near(scale, base * q, 1e-6, "projected pixels per meter")
             roundTrip(movement, world)
@@ -196,7 +198,9 @@ function Tests.Run()
                 + 9 * (sample.physicalHeight / Config.camera.viewHeight) * q,
                 1e-5, "DPR-scaled physical X")
             near(y * sample.dpr, sample.physicalHeight * Config.camera.horizonY
-                + sample.physicalHeight * (Config.camera.anchorY - Config.camera.horizonY) * q,
+                + sample.physicalHeight * (Config.camera.anchorY - Config.camera.horizonY) * q
+                + sample.physicalHeight * Config.visual.curvature.heightRatio
+                    * ((x - logicalWidth / 2) / (logicalWidth / 2)) ^ 2 * (1 - q) ^ 2,
                 1e-5, "DPR-scaled physical Y")
         end
         metrics.viewportCases = #cases

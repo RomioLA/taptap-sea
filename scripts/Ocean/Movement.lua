@@ -16,6 +16,7 @@ local Wake = require("Ocean.Wake")
 ---@field direction OceanPoint
 ---@field radius number
 ---@field level number?
+---@field visualTurnRate number? Smoothed yaw rate in rad/s, presentation only.
 
 ---@class OceanWorld
 ---@field moveEntity fun(self:OceanWorld, entity:OceanShip, dx:number, dy:number): boolean, number, number
@@ -87,6 +88,7 @@ function Movement:Init(world, ship)
         end
     end
     updateDirection(ship)
+    ship.visualTurnRate = 0
 
     self.world = world
     self.ship = ship
@@ -129,6 +131,7 @@ function Movement:ResetAtPosition(position)
         "reset position requires x,y")
     self.ship.position = copyPoint(position)
     updateDirection(self.ship)
+    self.ship.visualTurnRate = 0
     self.target = nil
     self.pushRemaining = 0
     self.pushNormal.x, self.pushNormal.y = 0, 0
@@ -198,8 +201,8 @@ function Movement:ProjectVector(position, dx, dy)
     return Projection.Vector(self, position, dx, dy)
 end
 
-function Movement:GetHorizonY()
-    return Projection.Horizon(self)
+function Movement:GetHorizonY(x)
+    return Projection.Horizon(self, x)
 end
 
 function Movement:GetViewBounds(paddingMeters)
@@ -209,6 +212,7 @@ end
 function Movement:_UpdateShip(step, axisX, axisY, keyboardActive)
     local ship = self.ship
     local previousPosition = copyPoint(ship.position)
+    local previousRotation = ship.rotation
     local target = self.target
     ---@type number?
     local desiredAngle
@@ -233,6 +237,11 @@ function Movement:_UpdateShip(step, axisX, axisY, keyboardActive)
         ship.rotation = Math.turn(ship.rotation, desiredAngle, maxTurn)
     end
     updateDirection(ship)
+    local motion = Config.visual.boatMotion
+    local blend = 1 - math.exp(-step / math.max(0.001, motion.turnSmoothSec))
+    local rotationDelta = (ship.rotation - previousRotation + math.pi) % (2 * math.pi) - math.pi
+    ship.visualTurnRate = (ship.visualTurnRate or 0)
+        + (rotationDelta / step - (ship.visualTurnRate or 0)) * blend
 
     local travel = 0
     if keyboardActive then

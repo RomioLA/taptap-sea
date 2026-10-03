@@ -4,6 +4,8 @@ local FishData = require("Ocean.FishData")
 local Draw = require("Ocean.Draw")
 local Art = require("Ocean.SeaViewArt")
 local Geometry = require("Ocean.ProjectedGeometry")
+local Presentation = require("Ocean.SeaPresentation")
+local Atmosphere = require("Ocean.SeaAtmosphere")
 local SeaDraw = {}
 local FIXED_BARREL_CONTENT_ID = "driftwood_barrel"
 local PORT_MARK_RADIUS = 16
@@ -287,6 +289,7 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
     if clock and clock.phase == "night" then Draw.NightOverlay(ctx, width, height, clock) end
     nvgSave(ctx)
     nvgScissor(ctx, 0, horizon, width, height - horizon)
+    Atmosphere.CloudShadows(ctx, movement, time, runtime.daySeed)
     local flags, entities = runtime.debug or Config.debug, nearbyEntities(runtime)
     local scope = world and type(world.GetScopeView) == "function" and world:GetScopeView() or nil
     if scope then
@@ -295,37 +298,48 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
     end
     for _, entity in ipairs(entities) do
         if not entity.removed and entity.species and entity.layer == "underwater" and isVisible(world, entity) then
-            drawFish(ctx, movement, entity, flags.showActivity, time)
+            Presentation.Draw(ctx, movement, entity.position, FishData[entity.species].renderLength, 0,
+                function() drawFish(ctx, movement, entity, flags.showActivity, time) end)
         end
     end
     Art.Wake(ctx, movement, movement.wake)
     local snapshot = type(runtime.GetFixedBarrel) == "function" and runtime:GetFixedBarrel() or nil
     for _, entry in ipairs(surfaceEntries(runtime, entities)) do
         local entity, point = entry.entity, entry.position
-        if entry.kind == "ship" then Art.Boat(ctx, movement, entity, time)
-        elseif entry.kind == "entity" then
-            if entity.entityType == "island" then Art.Island(ctx, movement, entity, time)
-            elseif entity.entityType == "float" then
-                if world and entity == world.fixedBarrel then
-                    drawFixedBarrel(ctx, runtime, entity, snapshot, isLocationRecognized)
-                else drawFloat(ctx, movement, entity) end
-            elseif entity.entityType == "droppedItem" then drawDroppedItem(ctx, movement, entity)
-            elseif entity.species then drawFish(ctx, movement, entity, flags.showActivity, time) end
-        elseif entry.kind == "rise" then
-            groundFrame(ctx, movement, point, 0,
-                function(scale) Draw.WorldRise(ctx, 0, 0, scale, entity, time) end,
-                (FishData[entity.species].renderLength or 1) * 1.5)
-        elseif entry.kind == "splash" then
-            groundFrame(ctx, movement, point, 0, function(scale)
-                Draw.WorldSplash(ctx, 0, 0, scale, entry.remaining, entry.lifetime, entry.heading, entry.length)
-            end, math.max(3, entry.length))
-        elseif entry.kind == "bird" then
-            local altitude = Config.visual.projection.birdAltitude * (1 - (entry.dive or 0))
-            groundFrame(ctx, movement, point, altitude, function(scale)
-                Draw.WorldSeabird(ctx, 0, 0, scale, entry.heading, entry.dive)
+        local radius = entity and (entity.radius or 1) or math.max(3, entry.length or 0)
+        local altitude = entry.kind == "entity" and entity.entityType == "island" and 5.4
+            or entry.kind == "bird" and Config.visual.projection.birdAltitude or 0
+        if entry.kind == "ship" then
+            Art.Boat(ctx, movement, entity, time)
+        else
+            Presentation.Draw(ctx, movement, point, radius, altitude, function(appearance)
+                if entry.kind == "entity" then
+                    if entity.entityType == "island" then
+                        Art.Island(ctx, movement, entity, time, appearance and appearance.airMix or 0)
+                    elseif entity.entityType == "float" then
+                        if world and entity == world.fixedBarrel then
+                            drawFixedBarrel(ctx, runtime, entity, snapshot, isLocationRecognized)
+                        else drawFloat(ctx, movement, entity) end
+                    elseif entity.entityType == "droppedItem" then drawDroppedItem(ctx, movement, entity)
+                    elseif entity.species then drawFish(ctx, movement, entity, flags.showActivity, time) end
+                elseif entry.kind == "rise" then
+                    groundFrame(ctx, movement, point, 0,
+                        function(scale) Draw.WorldRise(ctx, 0, 0, scale, entity, time) end,
+                        (FishData[entity.species].renderLength or 1) * 1.5)
+                elseif entry.kind == "splash" then
+                    groundFrame(ctx, movement, point, 0, function(scale)
+                        Draw.WorldSplash(ctx, 0, 0, scale, entry.remaining, entry.lifetime, entry.heading, entry.length)
+                    end, math.max(3, entry.length))
+                elseif entry.kind == "bird" then
+                    local birdAltitude = Config.visual.projection.birdAltitude * (1 - (entry.dive or 0))
+                    groundFrame(ctx, movement, point, birdAltitude, function(scale)
+                        Draw.WorldSeabird(ctx, 0, 0, scale, entry.heading, entry.dive)
+                    end)
+                end
             end)
         end
     end
+    Atmosphere.Fog(ctx, movement, time, runtime.daySeed)
     drawPortMark(ctx, runtime, width, height, horizon)
     if flags.showPerception then
         for _, entity in ipairs(entities) do

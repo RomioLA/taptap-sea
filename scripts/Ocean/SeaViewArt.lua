@@ -3,10 +3,12 @@
 local Config = require("Ocean.Config")
 local Draw = require("Ocean.Draw")
 local Projection = require("Ocean.Projection")
+local SurfaceEffects = require("Ocean.SeaSurfaceEffects")
 
 local SeaViewArt = {}
 local TWO_PI = math.pi * 2
 local VIEW_PADDING_METERS = 0.8
+local AIR_PERSPECTIVE_TINT = { 174, 209, 211 }
 
 local function finite(value)
     return type(value) == "number" and value == value and math.abs(value) < math.huge
@@ -16,11 +18,18 @@ local function clamp(value, low, high)
     return math.max(low, math.min(high, value))
 end
 
-local function rgba(color, fallback, alpha)
+local function rgba(color, fallback, alpha, airMix)
     local source = color or fallback or { 255, 255, 255, 255 }
     local a = alpha
     if not finite(a) then a = source[4] or 255 end
-    return nvgRGBA(source[1] or 255, source[2] or 255, source[3] or 255, clamp(math.floor(a + 0.5), 0, 255))
+    local r, g, b = source[1] or 255, source[2] or 255, source[3] or 255
+    if finite(airMix) and airMix > 0 then
+        local mix = clamp(airMix, 0, 1)
+        r = math.floor(r + (AIR_PERSPECTIVE_TINT[1] - r) * mix + 0.5)
+        g = math.floor(g + (AIR_PERSPECTIVE_TINT[2] - g) * mix + 0.5)
+        b = math.floor(b + (AIR_PERSPECTIVE_TINT[3] - b) * mix + 0.5)
+    end
+    return nvgRGBA(r, g, b, clamp(math.floor(a + 0.5), 0, 255))
 end
 
 local function screenPoint(movement, position, altitudeMeters)
@@ -101,7 +110,9 @@ local function projectWorldPolygon(movement, worldPoints, bounds, altitudeMeters
     local points = {}
     if #worldPoints < 3 then return points end
     for _, worldPoint in ipairs(worldPoints) do
-        local point = screenPoint(movement, worldPoint, altitudeMeters or 0)
+        local altitude = finite(altitudeMeters) and altitudeMeters
+            or (finite(worldPoint.altitude) and worldPoint.altitude or 0)
+        local point = screenPoint(movement, worldPoint, altitude)
         if not point then return {} end
         includeScreenPoint(bounds, point)
         points[#points + 1] = point
@@ -163,14 +174,35 @@ end
 local function getSurfaceSettings()
     local visual = Config.visual or {}
     local settings = visual.surface or {}
+    local nearSpacing = math.max(1, settings.nearSpacingMeters
+        or settings.spacingMeters or visual.waveSpacing or 12)
+    local transitionStart = math.max(0, settings.detailTransitionStartMeters or 35)
+    local transitionEnd = math.max(transitionStart + 0.1,
+        settings.detailTransitionEndMeters or 110)
     return {
-        spacing = math.max(1, settings.spacingMeters or visual.waveSpacing or 12),
+        spacing = nearSpacing,
+        nearSpacing = nearSpacing,
+        farSpacing = math.max(1, settings.farSpacingMeters or nearSpacing * 0.5),
         length = math.max(0.1, settings.lengthMeters or visual.waveLength or 3),
         driftSpeed = math.max(0, settings.driftSpeed or visual.waveSpeed or 0.6),
         amplitude = math.max(0, settings.amplitudeMeters or 0.18),
         period = math.max(0.1, settings.periodSec or 5),
-        maxMarks = math.max(1, math.floor(settings.maxMarks or 900)),
+        transitionStart = transitionStart,
+        transitionEnd = transitionEnd,
+        nearLengthScale = clamp(settings.nearLengthScale or 1.8, 1, 3),
+        farLengthScale = clamp(settings.farLengthScale or 0.78, 0.25, 1),
+        nearAmplitudeScale = clamp(settings.nearAmplitudeScale or 1.35, 0.5, 2.5),
+        farAmplitudeScale = clamp(settings.farAmplitudeScale or 0.82, 0.25, 1.5),
+        nearStrokeWidthMeters = clamp(settings.nearStrokeWidthMeters or 0.12, 0.02, 0.3),
+        farStrokeWidthMeters = clamp(settings.farStrokeWidthMeters or 0.055, 0.01, 0.16),
+        maxMarks = math.max(1, math.floor(settings.maxMarks or 2400)),
     }
+end
+
+-- Continuous world phase shared by wave marks and boat heave. Voyage time
+-- freezes with pause; sampling never changes the ship's world position.
+local function surfacePhase(settings, time, cellX, cellY)
+    return SurfaceEffects.SurfacePhase(settings, time, cellX, cellY)
 end
 
 local function projectVector(movement, position, dx, dy)
@@ -184,74 +216,176 @@ local function projectVector(movement, position, dx, dy)
     return endpoint.x - origin.x, endpoint.y - origin.y
 end
 
-local function drawSurfaceMark(ctx, movement, position, settings, time, indexX, indexY,
-    viewportWidth, viewportHeight, horizon)
+local function surfaceMark(movement, position, settings, time, indexX, indexY,
+    viewportWidth, viewportHeight, horizonAtX, lengthScale, amplitudeScale, strokeWidthMeters)
     local center = screenPoint(movement, position, 0)
-    if not center then return false end
-    local spatialPhase = TWO_PI * ((indexX * 0.61803398875 + indexY * 0.41421356237) % 1)
-    local driftPhase = time * settings.driftSpeed * TWO_PI / settings.spacing
-    local cyclePhase = time * TWO_PI / settings.period
-    local phase = spatialPhase - driftPhase + cyclePhase
+    if not center then return nil end
+    local phase = surfacePhase(settings, time, indexX, indexY)
     local shape = math.sin(phase)
 
-    local markLength = settings.length * (0.72 + 0.28 * (0.5 + 0.5 * math.cos(phase * 0.83)))
+    local markLength = settings.length * lengthScale
+        * (0.72 + 0.28 * (0.5 + 0.5 * math.cos(phase * 0.83)))
     local alongX, alongY = projectVector(movement, position, markLength, 0)
-    if not alongX then return false end
+    if not alongX then return nil end
     local alongLength = math.sqrt(alongX * alongX + alongY * alongY)
-    if alongLength < 1 then return false end
+    if alongLength < 1 then return nil end
 
-    local waveX, waveY = projectVector(movement, position, 0, settings.amplitude * shape)
-    if not waveX then return false end
+    local waveX, waveY = projectVector(movement, position, 0,
+        settings.amplitude * amplitudeScale * shape)
+    if not waveX then return nil end
     local startX, startY = center.x - alongX * 0.5, center.y - alongY * 0.5
     local middleX, middleY = center.x + waveX, center.y + waveY
     local endX, endY = center.x + alongX * 0.5, center.y + alongY * 0.5
 
-    local visual = Config.visual or {}
-    local color = visual.wave or { 89, 184, 202, 80 }
-    local basePixelsPerMeter = viewportHeight / (Config.camera.viewHeight or 45)
-    local depthWeight = clamp(math.sqrt(center.scale / math.max(basePixelsPerMeter, 1e-6)), 0.28, 1)
-    local alpha = (color[4] or 80) * depthWeight * (0.78 + 0.22 * (0.5 + 0.5 * math.cos(phase)))
-    local strokeWidth = clamp(center.scale * 0.045, 0.65, 1.8)
-    local strokePadding = strokeWidth * 0.55
+    local strokePadding = clamp(center.scale * strokeWidthMeters, 0.55, 3.2) * 0.75
     local minX = math.min(startX, middleX, endX)
     local maxX = math.max(startX, middleX, endX)
     local minY = math.min(startY, middleY, endY)
     local maxY = math.max(startY, middleY, endY)
     if maxX + strokePadding < 0 or minX - strokePadding > viewportWidth
-        or maxY + strokePadding < horizon or minY - strokePadding > viewportHeight then
-        return false
+        or maxY + strokePadding < horizonAtX(center.x)
+        or minY - strokePadding > viewportHeight then
+        return nil
     end
 
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, startX, startY)
-    nvgLineTo(ctx, middleX, middleY)
-    nvgLineTo(ctx, endX, endY)
-    nvgStrokeColor(ctx, rgba(color, nil, alpha))
-    nvgStrokeWidth(ctx, strokeWidth)
-    nvgStroke(ctx)
-    return true
+    return {
+        startX = startX, startY = startY,
+        middleX = middleX, middleY = middleY,
+        endX = endX, endY = endY,
+    }, center.scale
 end
 
--- A screen-fixed gradient plus a bounded world lattice of wave crests.
+local function drawSurfaceRow(ctx, marks, scale, settings, layerWeight, isFarLayer)
+    if #marks == 0 or layerWeight <= 0 then return end
+    local visual = Config.visual or {}
+    local color = visual.wave or { 109, 207, 216, 145 }
+    local widthMeters = isFarLayer and settings.farStrokeWidthMeters or settings.nearStrokeWidthMeters
+    local lineWidth = isFarLayer
+        and clamp(scale * widthMeters, 0.55, 1.15)
+        or clamp(scale * widthMeters, 1.05, 3.2)
+    local haloWidth = lineWidth + (isFarLayer and 0.55 or 1.15)
+    local alpha = (color[4] or 145) * layerWeight
+    nvgBeginPath(ctx)
+    for _, mark in ipairs(marks) do
+        nvgMoveTo(ctx, mark.startX, mark.startY)
+        nvgLineTo(ctx, mark.middleX, mark.middleY)
+        nvgLineTo(ctx, mark.endX, mark.endY)
+    end
+    nvgStrokeColor(ctx, nvgRGBA(10, 87, 110, math.floor(math.min(68, alpha * 0.38) + 0.5)))
+    nvgStrokeWidth(ctx, haloWidth)
+    nvgStroke(ctx)
+    nvgStrokeColor(ctx, rgba(color, nil, alpha))
+    nvgStrokeWidth(ctx, lineWidth)
+    nvgStroke(ctx)
+end
+
+local function drawSurfaceLayer(ctx, movement, time, settings, bounds, horizonAtX,
+    spacing, isFarLayer, drawn)
+    local camera = movement.camera
+    local firstY, lastY = SurfaceEffects.CellRange(bounds.minY, bounds.maxY, spacing)
+    if isFarLayer then
+        firstY = math.max(firstY, math.ceil((camera.y + settings.transitionStart) / spacing - 1e-8))
+    else
+        lastY = math.min(lastY, math.floor((camera.y + settings.transitionEnd) / spacing + 1e-8))
+    end
+    if firstY > lastY then return drawn end
+
+    -- Near detail is drawn first. The far grid is visited from the horizon back
+    -- toward the transition so a bounded mark budget keeps the distant plane covered.
+    local indexY = isFarLayer and lastY or firstY
+    local terminalY = isFarLayer and firstY or lastY
+    local yStep = isFarLayer and -1 or 1
+    local lengthScale = isFarLayer and settings.farLengthScale or settings.nearLengthScale
+    local amplitudeScale = isFarLayer and settings.farAmplitudeScale or 1
+    if not isFarLayer then amplitudeScale = settings.nearAmplitudeScale end
+    local strokeWidthMeters = isFarLayer
+        and settings.farStrokeWidthMeters or settings.nearStrokeWidthMeters
+    local worldMargin = settings.length * lengthScale * 0.75
+
+    while true do
+        if drawn >= settings.maxMarks then return drawn end
+        local worldY = indexY * spacing
+        local nearWeight, farWeight = SurfaceEffects.SurfaceLayerWeights(
+            worldY - camera.y, settings.transitionStart, settings.transitionEnd)
+        local layerWeight = isFarLayer and farWeight or nearWeight
+        local rowAnchor = layerWeight > 0.001
+            and screenPoint(movement, addPoint(camera.x, worldY), 0) or nil
+        if rowAnchor and rowAnchor.scale > 1e-8 then
+            local rowLeft = camera.x - rowAnchor.x / rowAnchor.scale - worldMargin
+            local rowRight = camera.x + (movement.viewportWidth - rowAnchor.x) / rowAnchor.scale + worldMargin
+            local firstX, lastX = SurfaceEffects.CellRange(rowLeft, rowRight, spacing)
+            local rowMarks = {}
+            for indexX = firstX, lastX do
+                -- Static world-cell offsets break up straight grid lanes without
+                -- making marks jump or swim when the camera moves.
+                local jitterX = ((indexX * 0.754877666 + indexY * 0.569840291) % 1 - 0.5) * spacing * 0.55
+                local jitterY = ((indexX * 0.438579021 + indexY * 0.819172513) % 1 - 0.5) * spacing * 0.55
+                local mark = surfaceMark(movement, addPoint(indexX * spacing + jitterX, worldY + jitterY), settings,
+                    time, indexX, indexY, movement.viewportWidth, movement.viewportHeight,
+                    horizonAtX, lengthScale, amplitudeScale, strokeWidthMeters)
+                if mark then
+                    rowMarks[#rowMarks + 1] = mark
+                    if drawn + #rowMarks >= settings.maxMarks then break end
+                end
+            end
+            drawSurfaceRow(ctx, rowMarks, rowAnchor.scale, settings, layerWeight, isFarLayer)
+            drawn = drawn + #rowMarks
+        end
+        if indexY == terminalY then break end
+        indexY = indexY + yStep
+    end
+    return drawn
+end
+
+local function surfaceHorizonAt(movement, x, width, height, fallback)
+    local y = Projection.Horizon(movement, clamp(x, 0, width))
+    if finite(y) then return clamp(y, 0, height) end
+    return fallback
+end
+
+-- A screen-fixed gradient follows the projected horizon while world-grid
+-- crests transition from broad near marks to finer distant detail.
 function SeaViewArt.Surface(ctx, movement, time)
     if not ctx or type(movement) ~= "table" then return end
     local width, height = movement.viewportWidth, movement.viewportHeight
     if not finite(width) or not finite(height) or width <= 0 or height <= 0 then return end
     time = finite(time) and time or 0
-    local horizon = type(movement.GetHorizonY) == "function"
-        and movement:GetHorizonY() or height * (Config.camera.horizonY or 0.24)
-    horizon = clamp(horizon, 0, height)
+    local fallbackHorizon = height * (Config.camera.horizonY or 0.24)
+    if type(movement.GetHorizonY) == "function" then
+        fallbackHorizon = movement:GetHorizonY() or fallbackHorizon
+    end
+    local centerHorizon = surfaceHorizonAt(movement, width * 0.5, width, height, fallbackHorizon)
+    local horizonPoints = {}
+    local segmentCount = 24
+    for index = 0, segmentCount do
+        local x = width * index / segmentCount
+        horizonPoints[#horizonPoints + 1] = {
+            x = x,
+            y = surfaceHorizonAt(movement, x, width, height, centerHorizon),
+        }
+    end
+    local function horizonAtX(x)
+        return surfaceHorizonAt(movement, x, width, height, centerHorizon)
+    end
 
     nvgBeginPath(ctx)
-    nvgRect(ctx, 0, horizon, width, math.max(0, height - horizon))
-    nvgFillPaint(ctx, nvgLinearGradient(ctx, 0, horizon, 0, height,
+    nvgMoveTo(ctx, horizonPoints[1].x, horizonPoints[1].y)
+    for index = 2, #horizonPoints do
+        nvgLineTo(ctx, horizonPoints[index].x, horizonPoints[index].y)
+    end
+    nvgLineTo(ctx, width, height)
+    nvgLineTo(ctx, 0, height)
+    nvgClosePath(ctx)
+    nvgFillPaint(ctx, nvgLinearGradient(ctx, 0, centerHorizon, 0, height,
         nvgRGBA(54, 151, 165, 255), nvgRGBA(13, 73, 105, 255)))
     nvgFill(ctx)
 
-    -- Draw after the water fill so the screen-fixed horizon remains visible.
+    -- Draw the same sampled curve over the fill so the two edges stay aligned.
     nvgBeginPath(ctx)
-    nvgMoveTo(ctx, 0, horizon)
-    nvgLineTo(ctx, width, horizon)
+    nvgMoveTo(ctx, horizonPoints[1].x, horizonPoints[1].y)
+    for index = 2, #horizonPoints do
+        nvgLineTo(ctx, horizonPoints[index].x, horizonPoints[index].y)
+    end
     nvgStrokeColor(ctx, nvgRGBA(242, 242, 213, 170))
     nvgStrokeWidth(ctx, 1.5)
     nvgStroke(ctx)
@@ -263,32 +397,13 @@ function SeaViewArt.Surface(ctx, movement, time)
         return
     end
 
-    local minIndexY = math.ceil(bounds.minY / settings.spacing)
-    local maxIndexY = math.floor(bounds.maxY / settings.spacing)
     local camera = movement.camera
-    if type(camera) ~= "table" or not finite(camera.x) or minIndexY > maxIndexY then return end
+    if type(camera) ~= "table" or not finite(camera.x) or not finite(camera.y) then return end
 
-    -- Visit every fixed world-space row from near to far. At each row, the
-    -- projection scale gives its visible world-X interval.
-    local worldMargin = settings.length * 0.75
-    local drawn = 0
-    for indexY = minIndexY, maxIndexY do
-        local worldY = indexY * settings.spacing
-        local rowAnchor = screenPoint(movement, addPoint(camera.x, worldY), 0)
-        if rowAnchor and rowAnchor.scale > 1e-8 then
-            local rowLeft = camera.x - rowAnchor.x / rowAnchor.scale - worldMargin
-            local rowRight = camera.x + (width - rowAnchor.x) / rowAnchor.scale + worldMargin
-            local firstIndexX = math.ceil(rowLeft / settings.spacing)
-            local lastIndexX = math.floor(rowRight / settings.spacing)
-            for indexX = firstIndexX, lastIndexX do
-                if drawSurfaceMark(ctx, movement, addPoint(indexX * settings.spacing, worldY),
-                    settings, time, indexX, indexY, width, height, horizon) then
-                    drawn = drawn + 1
-                    if drawn >= settings.maxMarks then return end
-                end
-            end
-        end
-    end
+    local drawn = drawSurfaceLayer(ctx, movement, time, settings, bounds, horizonAtX,
+        settings.nearSpacing, false, 0)
+    drawSurfaceLayer(ctx, movement, time, settings, bounds, horizonAtX,
+        settings.farSpacing, true, drawn)
 end
 
 local function circlePoints(center, radius, segmentCount)
@@ -304,7 +419,7 @@ local function localIslandPoint(center, x, y)
     return addPoint(center.x + x, center.y + y)
 end
 
-local function drawHill(ctx, movement, center, radius, bounds)
+local function drawHill(ctx, movement, center, radius, bounds, airMix)
     if radius < 3 then return end
     local back = {
         { position = localIslandPoint(center, -radius * 0.42, radius * 0.08), altitude = 0.15 },
@@ -333,8 +448,8 @@ local function drawHill(ctx, movement, center, radius, bounds)
                 end
             end
             if #screenPoints >= 3 then
-                fillPolygon(ctx, screenPoints, nvgRGBA(102, 143, 91, 255))
-                strokePolygon(ctx, screenPoints, nvgRGBA(77, 118, 83, 210), 1.1)
+                fillPolygon(ctx, screenPoints, rgba({ 102, 143, 91, 255 }, nil, nil, airMix))
+                strokePolygon(ctx, screenPoints, rgba({ 77, 118, 83, 210 }, nil, nil, airMix), 1.1)
             end
         end
     end
@@ -347,7 +462,7 @@ local TREE_LAYOUT = {
     { x = 0.43, y = -0.08, size = 0.79 },
 }
 
-local function drawTree(ctx, movement, base, heightMeters, bounds, paletteShift)
+local function drawTree(ctx, movement, base, heightMeters, bounds, paletteShift, airMix)
     local crownWidth = heightMeters * 0.38
     local topAltitude = heightMeters
     local trunkTop = screenPoint(movement, base, topAltitude * 0.44)
@@ -362,20 +477,56 @@ local function drawTree(ctx, movement, base, heightMeters, bounds, paletteShift)
     nvgBeginPath(ctx)
     nvgMoveTo(ctx, trunkBottom.x, trunkBottom.y)
     nvgLineTo(ctx, trunkTop.x, trunkTop.y)
-    nvgStrokeColor(ctx, nvgRGBA(111, 72, 47, 255))
+    nvgStrokeColor(ctx, rgba({ 111, 72, 47, 255 }, nil, nil, airMix))
     nvgStrokeWidth(ctx, clamp(trunkTop.scale * 0.13, 1, 4))
     nvgStroke(ctx)
 
-    local leafColor = paletteShift == 1 and nvgRGBA(57, 123, 91, 255) or nvgRGBA(72, 141, 93, 255)
+    local leafColor = paletteShift == 1
+        and rgba({ 57, 123, 91, 255 }, nil, nil, airMix)
+        or rgba({ 72, 141, 93, 255 }, nil, nil, airMix)
     fillPolygon(ctx, { leftBase, rightBase, crownTop }, leafColor)
     local middleLeft = { x = (leftBase.x + crownTop.x) * 0.5, y = (leftBase.y + crownTop.y) * 0.5 }
     local middleRight = { x = (rightBase.x + crownTop.x) * 0.5, y = (rightBase.y + crownTop.y) * 0.5 }
-    fillPolygon(ctx, { middleLeft, middleRight, crownTop }, nvgRGBA(91, 163, 102, 245))
+    fillPolygon(ctx, { middleLeft, middleRight, crownTop }, rgba({ 91, 163, 102, 245 }, nil, nil, airMix))
+end
+
+local function drawShoreFoam(ctx, movement, center, shorelineRadius, time, bounds)
+    local settings = (Config.visual and Config.visual.shoreFoam) or {}
+    if settings.enabled == false then return end
+    local count = clamp(math.floor(settings.bubbleCount or 24), 1, 64)
+    local baseOpacity = clamp(settings.opacity or 165, 0, 255)
+    for index = 1, count do
+        local arc = SurfaceEffects.ShoreFoamArc(center, shorelineRadius, index, count, time, settings)
+        if arc and arc.strength > 0.02 then
+            local screenPoints, valid = {}, true
+            for _, worldPoint in ipairs(arc.points) do
+                local point = screenPoint(movement, worldPoint, 0)
+                if not point then
+                    valid = false
+                    break
+                end
+                includeScreenPoint(bounds, point, 1.2)
+                screenPoints[#screenPoints + 1] = point
+            end
+            if valid and #screenPoints >= 3 then
+                local scale = screenPoints[math.ceil(#screenPoints * 0.5)].scale
+                local alpha = math.floor(baseOpacity * arc.strength + 0.5)
+                nvgBeginPath(ctx)
+                nvgMoveTo(ctx, screenPoints[1].x, screenPoints[1].y)
+                for pointIndex = 2, #screenPoints do
+                    nvgLineTo(ctx, screenPoints[pointIndex].x, screenPoints[pointIndex].y)
+                end
+                nvgStrokeColor(ctx, nvgRGBA(239, 250, 246, alpha))
+                nvgStrokeWidth(ctx, clamp(scale * arc.strokeWidthMeters, 0.65, 1.9))
+                nvgStroke(ctx)
+            end
+        end
+    end
 end
 
 -- World-space island disc with a projected shoreline and raised, screen-scaled landmarks.
 -- Returns a screen-space envelope for optional depth/occlusion checks.
-function SeaViewArt.Island(ctx, movement, entity, time)
+function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     if not ctx or type(movement) ~= "table" or type(entity) ~= "table"
         or type(entity.position) ~= "table" or not finite(entity.position.x) or not finite(entity.position.y) then
         return nil
@@ -384,41 +535,51 @@ function SeaViewArt.Island(ctx, movement, entity, time)
     local radius = math.max(0.5, finite(entity.radius) and entity.radius or 4)
     local settings = Config.visual and Config.visual.projection or {}
     local segmentCount = math.max(16, math.floor(settings.circleSegments or 48))
-    local shoreColor = rgba(Config.visual and Config.visual.shore, { 209, 193, 137, 255 })
-    local landColor = rgba(Config.visual and Config.visual.island, { 135, 171, 110, 255 })
+    local shoreColor = rgba(Config.visual and Config.visual.shore,
+        { 209, 193, 137, 255 }, nil, airMix)
+    local landColor = rgba(Config.visual and Config.visual.island,
+        { 135, 171, 110, 255 }, nil, airMix)
     local bounds = newScreenBounds()
 
     local outerWorld = circlePoints(center, radius, segmentCount)
     local outerScreen = fillWorldPolygon(ctx, movement, outerWorld, shoreColor, bounds)
     if #outerScreen >= 3 then
-        strokePolygon(ctx, outerScreen, nvgRGBA(167, 154, 112, 190), 1.25)
+        strokePolygon(ctx, outerScreen, rgba({ 167, 154, 112, 190 }, nil, nil, airMix), 1.25)
     end
 
     local landWorld = circlePoints(center, radius * 0.89, segmentCount)
     local landScreen = fillWorldPolygon(ctx, movement, landWorld, landColor, bounds)
     if #landScreen >= 3 then
-        strokePolygon(ctx, landScreen, nvgRGBA(105, 145, 92, 170), 1)
+        strokePolygon(ctx, landScreen, rgba({ 105, 145, 92, 170 }, nil, nil, airMix), 1)
     end
+    drawShoreFoam(ctx, movement, center, radius, finite(time) and time or 0, bounds)
 
-    drawHill(ctx, movement, center, radius, bounds)
+    drawHill(ctx, movement, center, radius, bounds, airMix)
     if radius >= 5 then
         local treeHeight = clamp(radius * 0.30, 2.2, 5.4)
         for index, layout in ipairs(TREE_LAYOUT) do
             local x, y = layout.x * radius, layout.y * radius
             if x * x + y * y < radius * radius * 0.38 then
-                drawTree(ctx, movement, localIslandPoint(center, x, y), treeHeight * layout.size, bounds, index % 2)
+                drawTree(ctx, movement, localIslandPoint(center, x, y),
+                    treeHeight * layout.size, bounds, index % 2, airMix)
             end
         end
     end
     return finishScreenBounds(bounds)
 end
 
-local function boatWorldPoint(position, forwardX, forwardY, sideX, sideY, along, across)
-    return addPoint(position.x + forwardX * along + sideX * across,
-        position.y + forwardY * along + sideY * across)
+local function raisedBoatPoint(position, forwardX, forwardY, sideX, sideY,
+    along, across, height, heave, rollSin)
+    local lateralShift = -height * rollSin
+    return {
+        x = position.x + forwardX * along + sideX * (across + lateralShift),
+        y = position.y + forwardY * along + sideY * (across + lateralShift),
+        altitude = heave + height + across * rollSin,
+    }
 end
 
-local function boatFootprint(position, forwardX, forwardY, sideX, sideY, length, width, scale)
+local function boatFootprint(position, forwardX, forwardY, sideX, sideY, length, width, scale,
+    heave, rollSin)
     local halfLength, halfWidth = length * 0.5 * scale, width * 0.5 * scale
     local shape = {
         { halfLength, 0 }, { halfLength * 0.56, halfWidth * 0.72 },
@@ -429,27 +590,34 @@ local function boatFootprint(position, forwardX, forwardY, sideX, sideY, length,
     }
     local points = {}
     for _, vertex in ipairs(shape) do
-        points[#points + 1] = boatWorldPoint(position, forwardX, forwardY, sideX, sideY, vertex[1], vertex[2])
+        points[#points + 1] = raisedBoatPoint(position, forwardX, forwardY, sideX, sideY,
+            vertex[1], vertex[2], 0, heave, rollSin)
     end
     return points
 end
 
-local function drawSail(ctx, movement, position, forwardX, forwardY, sideX, sideY, length, bounds)
+local function drawSail(ctx, movement, position, forwardX, forwardY, sideX, sideY,
+    length, bounds, heave, rollSin)
     local mastAlong = -length * 0.08
-    local mastPosition = boatWorldPoint(position, forwardX, forwardY, sideX, sideY, mastAlong, 0)
-    local mastBase = screenPoint(movement, mastPosition, 0)
-    local mastTop = screenPoint(movement, mastPosition, 3.3)
+    local mastBaseWorld = raisedBoatPoint(position, forwardX, forwardY, sideX, sideY,
+        mastAlong, 0, 0, heave, rollSin)
+    local mastTopWorld = raisedBoatPoint(position, forwardX, forwardY, sideX, sideY,
+        mastAlong, 0, 3.3, heave, rollSin)
+    local mastBase = screenPoint(movement, mastBaseWorld, mastBaseWorld.altitude)
+    local mastTop = screenPoint(movement, mastTopWorld, mastTopWorld.altitude)
     if not mastBase or not mastTop then return end
     includeScreenPoint(bounds, mastTop, 1.5)
 
     local sailPointsWorld = {
-        { position = mastPosition, altitude = 3.05 },
-        { position = boatWorldPoint(position, forwardX, forwardY, sideX, sideY, length * 0.27, 0), altitude = 0.45 },
-        { position = boatWorldPoint(position, forwardX, forwardY, sideX, sideY, -length * 0.34, 0), altitude = 0.45 },
+        { along = mastAlong, across = 0, height = 3.05 },
+        { along = length * 0.27, across = 0, height = 0.45 },
+        { along = -length * 0.34, across = 0, height = 0.45 },
     }
     local sailPoints = {}
     for _, item in ipairs(sailPointsWorld) do
-        local point = screenPoint(movement, item.position, item.altitude)
+        local worldPoint = raisedBoatPoint(position, forwardX, forwardY, sideX, sideY,
+            item.along, item.across, item.height, heave, rollSin)
+        local point = screenPoint(movement, worldPoint, worldPoint.altitude)
         if not point then return end
         includeScreenPoint(bounds, point, 1)
         sailPoints[#sailPoints + 1] = point
@@ -458,13 +626,15 @@ local function drawSail(ctx, movement, position, forwardX, forwardY, sideX, side
     strokePolygon(ctx, sailPoints, nvgRGBA(104, 115, 112, 205), 1)
 
     local smallSailWorld = {
-        { position = mastPosition, altitude = 2.45 },
-        { position = boatWorldPoint(position, forwardX, forwardY, sideX, sideY, -length * 0.36, 0), altitude = 0.42 },
-        { position = mastPosition, altitude = 0.42 },
+        { along = mastAlong, across = 0, height = 2.45 },
+        { along = -length * 0.36, across = 0, height = 0.42 },
+        { along = mastAlong, across = 0, height = 0.42 },
     }
     local smallSail = {}
     for _, item in ipairs(smallSailWorld) do
-        local point = screenPoint(movement, item.position, item.altitude)
+        local worldPoint = raisedBoatPoint(position, forwardX, forwardY, sideX, sideY,
+            item.along, item.across, item.height, heave, rollSin)
+        local point = screenPoint(movement, worldPoint, worldPoint.altitude)
         if not point then return end
         includeScreenPoint(bounds, point)
         smallSail[#smallSail + 1] = point
@@ -488,32 +658,41 @@ function SeaViewArt.Boat(ctx, movement, ship, time)
     local visual = Config.visual or {}
     local length = math.max(1, visual.shipLength or 5)
     local width = math.max(0.5, visual.shipWidth or 2.4)
+    local motion = visual.boatMotion or {}
+    local settings = getSurfaceSettings()
+    local heave, roll = SurfaceEffects.BoatAttitude(motion, finite(time) and time or 0,
+        ship.position.x, ship.position.y, settings, ship.visualTurnRate)
+    local rollSin = math.sin(roll)
     local rotation = finite(ship.rotation) and ship.rotation or 0
     local forwardX, forwardY = math.cos(rotation), math.sin(rotation)
     local sideX, sideY = -forwardY, forwardX
     local bounds = newScreenBounds()
-    local hullWorld = boatFootprint(ship.position, forwardX, forwardY, sideX, sideY, length, width, 1)
+    local hullWorld = boatFootprint(ship.position, forwardX, forwardY, sideX, sideY,
+        length, width, 1, heave, rollSin)
     local clippedHull = clipConvexPolygon(hullWorld, Projection.ViewPolygon(movement, VIEW_PADDING_METERS))
-    local hullScreen = projectWorldPolygon(movement, clippedHull, bounds, 0)
+    local hullScreen = projectWorldPolygon(movement, clippedHull, bounds)
     if #hullScreen < 3 then return nil end
 
     local shadow = {}
-    for _, point in ipairs(hullScreen) do
+    -- The shadow stays on the water while every part of the boat heaves together.
+    for _, point in ipairs(projectWorldPolygon(movement, clippedHull, bounds, 0)) do
         shadow[#shadow + 1] = { x = point.x + 1.5, y = point.y + 3, scale = point.scale }
     end
     fillPolygon(ctx, shadow, nvgRGBA(9, 44, 62, 75))
     fillPolygon(ctx, hullScreen, rgba(visual.ship, { 251, 222, 139, 255 }))
     strokePolygon(ctx, hullScreen, nvgRGBA(100, 67, 51, 245), 1.5)
 
-    local deckWorld = boatFootprint(ship.position, forwardX, forwardY, sideX, sideY, length * 0.77, width * 0.62, 1)
+    local deckWorld = boatFootprint(ship.position, forwardX, forwardY, sideX, sideY,
+        length * 0.77, width * 0.62, 1, heave, rollSin)
     local deck = clipConvexPolygon(deckWorld, Projection.ViewPolygon(movement, VIEW_PADDING_METERS))
-    local deckScreen = projectWorldPolygon(movement, deck, bounds, 0)
+    local deckScreen = projectWorldPolygon(movement, deck, bounds)
     fillPolygon(ctx, deckScreen, nvgRGBA(226, 158, 89, 255))
     if #deckScreen >= 3 then strokePolygon(ctx, deckScreen, nvgRGBA(143, 94, 61, 205), 1) end
 
-    local center = screenPoint(movement, ship.position, 0)
+    local center = screenPoint(movement, ship.position, heave)
     if center then includeScreenPoint(bounds, center, 1) end
-    drawSail(ctx, movement, ship.position, forwardX, forwardY, sideX, sideY, length, bounds)
+    drawSail(ctx, movement, ship.position, forwardX, forwardY, sideX, sideY,
+        length, bounds, heave, rollSin)
     return finishScreenBounds(bounds)
 end
 

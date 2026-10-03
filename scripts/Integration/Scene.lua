@@ -8,7 +8,6 @@ local SeaDebug = require("Ocean.SeaDebug")
 local SeaConfig = require("Ocean.Config")
 local Circle1BInput = require("Integration.Circle1BInput")
 local Persistence = require("Gameplay.Persistence")
-local Diagnostics = require("Gameplay.Diagnostics")
 
 local Scene = {}
 ---@type table?
@@ -214,9 +213,9 @@ function Scene.Start(options)
         return { phase = phase, center = state.center, elapsedSec = phase == "aim" and 0 or state.elapsed }
     end
 
-    local ok, seaOrError = Diagnostics.Call("Integration", "scene_start", FusedScene.Start, oceanOptions)
+    local ok, seaOrError = pcall(FusedScene.Start, oceanOptions)
     if not ok then
-        if hud then Diagnostics.Call("Integration", "hud_destroy", hud.Destroy) end
+        if hud then pcall(hud.Destroy) end
         UI.Shutdown()
         error(seaOrError, 0)
     end
@@ -267,7 +266,7 @@ function Scene.Start(options)
         if pendingPointerListener then UI.Input.Off("PointerDown", pendingPointerListener) end
         initializedBridge.loop:Close()
         uiShutdown = true
-        local stopOk, stopError = Diagnostics.Call("Integration", "scene_stop", oceanStop, self)
+        local stopOk, stopError = pcall(oceanStop, self)
         if activeSea == self then activeSea = nil end
         UI.Shutdown()
         if not stopOk then error(stopError, 0) end
