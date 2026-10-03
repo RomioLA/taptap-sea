@@ -27,9 +27,7 @@ end
 local function projectedPort(runtime)
     local port = runtime:GetPortPosition()
     local movement = runtime.movement
-    local scale = movement.viewportWidth / movement.viewWidth
-    return movement.viewportWidth * 0.5 + (port.x - movement.camera.x) * scale,
-        movement.viewportHeight * 0.5 - (port.y - movement.camera.y) * scale
+    return movement:WorldToScreen(port)
 end
 
 local function captureState(runtime)
@@ -179,12 +177,10 @@ function Tests.Run(recorder)
         local expectedX, expectedY = projectedPort(runtime)
         local capture = render(runtime, logicalWidth, logicalHeight, recorder)
         assertAnchorAt(capture, expectedX, expectedY)
-        assertNear(expectedX * dpr,
-            physicalWidth * 0.5 + (runtime:GetPortPosition().x - runtime.movement.camera.x)
-                * (physicalWidth / runtime.movement.viewWidth), "DPR-scaled port X")
-        assertNear(expectedY * dpr,
-            physicalHeight * 0.5 - (runtime:GetPortPosition().y - runtime.movement.camera.y)
-                * (physicalHeight / runtime.movement.viewHeight), "DPR-scaled port Y")
+        local physicalRuntime = createRuntime(physicalWidth, physicalHeight)
+        local physicalX, physicalY = projectedPort(physicalRuntime)
+        assertNear(expectedX * dpr, physicalX, "DPR-scaled port X")
+        assertNear(expectedY * dpr, physicalY, "DPR-scaled port Y")
     end)
 
     check("offscreen_port_is_culled_without_edge_snapping_or_view_expansion", function()
@@ -194,10 +190,10 @@ function Tests.Run(recorder)
         local movement = runtime.movement
         local scale = movement.viewportWidth / movement.viewWidth
         movement.camera.x = port.x + (width * 0.5 + PORT_MARK_RADIUS + 20) / scale
-        movement.camera.y = port.y + height * 0.1 / scale
+        movement.camera.y = port.y
         local projectedX, projectedY = projectedPort(runtime)
         assert(projectedX < -(PORT_MARK_RADIUS + 2), "offscreen fixture left the port partially visible")
-        assertNear(projectedY, height * 0.6, "offscreen fixture water position")
+        assertNear(projectedY, height * Config.camera.anchorY, "offscreen fixture water position")
         local viewWidth, viewHeight = movement.viewWidth, movement.viewHeight
         local capture = render(runtime, width, height, recorder)
         local edgeRings = 0

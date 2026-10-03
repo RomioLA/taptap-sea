@@ -430,6 +430,15 @@ function World:isVisible(entity)
     return false
 end
 
+-- Presentation reads the very same constants as isInsideScope; it cannot
+-- enlarge the sector, reveal fish, or turn on observation.
+function World:GetScopeView()
+    local ship = self.scopeShip
+    if not self.scopeEnabled or not ship or not ship.position then return nil end
+    return { center = M.copy(ship.position), heading = ship.rotation,
+        radius = math.sqrt(SCOPE_LENGTH_SQUARED), halfAngle = math.atan(SCOPE_HALF_ANGLE_TANGENT) }
+end
+
 function World:clearOrdinaryFish()
     for _, entity in ipairs(self.entities) do
         if entity.ordinaryFish then self:remove(entity.id, "clearOrdinaryFish") end

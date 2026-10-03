@@ -135,24 +135,30 @@ end
 local function onScreenSplashSamples(runtime, step)
     local centerInWater, fullyInWater = {}, {}
     local width, height = 1920, 1080
-    local horizonY = height * (Config.layers.waves or 0.32)
-    local pixelsPerUnit = height / runtime.movement.viewHeight
-    local seaDrawMargin = 4 * pixelsPerUnit + 3
+    local movement = runtime.movement
+    local horizonY = movement:GetHorizonY()
     for _, splash in ipairs(runtime.surfaceSignals:GetSplashes()) do
-        local screenX, screenY = runtime.movement:WorldToScreen(splash.position)
-        -- Match SeaDraw.onScreen for the splash's actual effect margin, then
-        -- account for its water-only scissor region (horizonY..height).
-        local seaDrawEligible = screenX + seaDrawMargin >= 0
-            and screenX - seaDrawMargin <= width
-            and screenY + seaDrawMargin >= horizonY
-            and screenY - seaDrawMargin <= height
-        if seaDrawEligible and screenY >= horizonY then
+        local screenX, screenY, scale = movement:WorldToScreen(splash.position)
+        local projectedNorthX, projectedNorthY = movement:ProjectVector(splash.position, 0, -1)
+        if screenX and scale and projectedNorthX and projectedNorthY and scale > 0 then
+            -- Match SeaDraw's projected silhouette margin. The old test used
+            -- one constant orthographic pixels-per-meter value, which no
+            -- longer matches depth compression or perspective shear.
+            local seaDrawMargin = math.max(8, scale * 8 * (1
+                + math.abs(projectedNorthX / scale) + math.abs(projectedNorthY / scale)))
+            local seaDrawEligible = screenX + seaDrawMargin >= 0
+                and screenX - seaDrawMargin <= width
+                and screenY + seaDrawMargin >= horizonY
+                and screenY - seaDrawMargin <= height
+            if seaDrawEligible and screenY >= horizonY then
             local sample = {
                 step = step,
                 simulatedSeconds = runtime.world.time,
                 sourceId = splash.sourceId,
                 worldPosition = Math.copy(splash.position),
                 screenPosition = { x = screenX, y = screenY },
+                scalePxPerMeter = scale,
+                projectedNorthVector = { x = projectedNorthX, y = projectedNorthY },
                 shipPosition = Math.copy(runtime.ship.position),
                 seaDrawSplashMarginPixels = seaDrawMargin,
                 waterHorizonY = horizonY,
@@ -162,6 +168,7 @@ local function onScreenSplashSamples(runtime, step)
                 and screenY >= horizonY + seaDrawMargin
                 and screenY <= height - seaDrawMargin then
                 fullyInWater[#fullyInWater + 1] = sample
+            end
             end
         end
     end

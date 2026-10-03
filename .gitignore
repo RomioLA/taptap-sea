@@ -76,3 +76,4 @@ urhox-libs/
 # Isolated comparison checkouts and merge evidence stay local.
 /outputs/remote-review-*/
 /outputs/selective-merge-*/
+/.maker-mcp/config.json

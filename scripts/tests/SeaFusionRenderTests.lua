@@ -6,6 +6,7 @@ local Config = require("Ocean.Config")
 local Runtime = require("Ocean.SeaRuntime")
 local FishData = require("Ocean.FishData")
 local Draw = require("Ocean.Draw")
+local Art = require("Ocean.SeaViewArt")
 local SeaDraw = require("Ocean.SeaDraw")
 
 local function near(actual, expected, tolerance)
@@ -65,9 +66,19 @@ local function wrapDrawMethod(calls, originals, name, key)
     originals[name] = original
     Draw[name] = function(...)
         calls[key] = (calls[key] or 0) + 1
-        if name == "WorldIsland" then
-            local _, _, _, pixelsPerUnit = ...
-            calls.islandScales[#calls.islandScales + 1] = pixelsPerUnit
+        return original(...)
+    end
+end
+
+local function wrapArtMethod(calls, originals, name, key, recorder)
+    local original = Art[name]
+    assert(type(original) == "function", "missing reusable SeaViewArt." .. name .. " API")
+    originals[name] = original
+    Art[name] = function(...)
+        calls[key] = (calls[key] or 0) + 1
+        if name == "Boat" and calls.expectedBoatTint ~= nil then
+            assert(recorder.countFillColor(table.unpack(Config.visual.nightOverlay)) == calls.expectedBoatTint,
+                "night tint must be drawn before the boat, and removed in daytime")
         end
         return original(...)
     end
@@ -75,6 +86,10 @@ end
 
 local function restoreDrawMethods(originals)
     for name, original in pairs(originals) do Draw[name] = original end
+end
+
+local function restoreArtMethods(originals)
+    for name, original in pairs(originals) do Art[name] = original end
 end
 
 local function addPreviewFixture(runtime)
@@ -96,13 +111,13 @@ function Tests.CreatePreviewRuntime(width, height)
 end
 
 function Tests.Run(recorder)
-    local calls = { islandScales = {} }
+    local calls = {}
     local originals = {}
     wrapDrawMethod(calls, originals, "SceneBackdrop", "sceneBackdrop")
-    wrapDrawMethod(calls, originals, "WorldBoat", "worldBoat")
     wrapDrawMethod(calls, originals, "WorldFish", "worldFish")
-    wrapDrawMethod(calls, originals, "WorldIsland", "worldIsland")
     wrapDrawMethod(calls, originals, "NightOverlay", "nightOverlay")
+    wrapArtMethod(calls, originals, "Boat", "boatArt", recorder)
+    wrapArtMethod(calls, originals, "Island", "islandArt", recorder)
 
     local ok, result = pcall(function()
         local runtime = Tests.CreatePreviewRuntime(1920, 1080)
@@ -113,20 +128,22 @@ function Tests.Run(recorder)
             and runtime.world:isVisible(runtime.previewTuna) == false,
             "preview fish unexpectedly visible before reveal")
 
-        assertNear(runtime.movement.viewHeight, 45, "landscape camera view height")
-        assertNear(runtime.movement.viewWidth, 80, "landscape camera view width")
-        local shipScreenX, shipScreenY = runtime.movement:WorldToScreen(runtime.ship.position)
-        assertNear(shipScreenX, 960, "landscape ship screen X")
-        assertNear(shipScreenY, 648, "landscape ship screen Y")
-        assertNear(1080 / runtime.movement.viewHeight, 24, "landscape pixels per world unit")
+        local shipScreenX, shipScreenY, shipScale = runtime.movement:WorldToScreen(runtime.ship.position)
+        local landscapeShipScreenX, landscapeShipScreenY = shipScreenX, shipScreenY
+        assertNear(shipScreenX, 1920 * Config.camera.anchorX, "landscape ship screen X")
+        assertNear(shipScreenY, 1080 * Config.camera.anchorY, "landscape ship screen anchor Y")
+        assertNear(shipScale, 1080 / Config.camera.viewHeight, "landscape base pixels per meter")
+        assertNear(runtime.movement:GetHorizonY(), 1080 * Config.camera.horizonY, "landscape projection horizon")
+        local _, _, islandScale = runtime.movement:WorldToScreen(runtime.previewIsland.position)
+        assert(islandScale > shipScale, "nearer island should have a larger perspective scale than the ship anchor")
 
         recorder.reset()
         local beforeHidden = snapshot(runtime)
         SeaDraw.Scene({}, 1920, 1080, runtime)
         assertUnchanged(beforeHidden, runtime, "hidden-fish landscape draw")
         assert(calls.sceneBackdrop == 1, "the original scene backdrop was not reused once")
-        assert(calls.worldBoat == 1, "the shared world-boat shape was not reused once")
-        assert(calls.worldIsland >= 1, "the shared world-island shape was not reused")
+        assert(calls.boatArt == 1, "the projected SeaViewArt boat was not reused once")
+        assert(calls.islandArt >= 1, "the projected SeaViewArt island was not reused")
         assert(calls.worldFish == nil, "hidden ordinary fish reached WorldFish")
         assert(recorder.countFillColor(FishData.sardine.color[1], FishData.sardine.color[2],
             FishData.sardine.color[3], FishData.sardine.color[4]) == 0,
@@ -140,19 +157,19 @@ function Tests.Run(recorder)
             "the original configured birds were not drawn")
         assert(recorder.callCount("nvgScissor") == 1,
             "world layer should establish one sea-area NanoVG scissor")
-        assert(recorder.scissorMatches(0, 1080 * Config.layers.waves, 1920,
-            1080 * (1 - Config.layers.waves), 0.01), "world-layer scissor does not begin at the wave line")
+        local landscapeHorizon = runtime.movement:GetHorizonY()
+        assert(recorder.scissorMatches(0, landscapeHorizon, 1920,
+            1080 - landscapeHorizon, 0.01), "world-layer scissor does not begin at the projected horizon")
 
         runtime:setDebugFlag("showUnderwater", true)
         assert(runtime.world:isVisible(runtime.previewSardine) and runtime.world:isVisible(runtime.previewTuna),
             "showUnderwater did not reveal both preview fish")
         assert(runtime.movement:SetViewport(1200, 1150), "portrait resize was not applied")
-        assertNear(runtime.movement.viewHeight, 45, "portrait camera view height")
-        assertNear(runtime.movement.viewWidth, 45 * 1200 / 1150, "portrait camera view width")
-        shipScreenX, shipScreenY = runtime.movement:WorldToScreen(runtime.ship.position)
-        assertNear(shipScreenX, 600, "portrait ship screen X")
-        assertNear(shipScreenY, 1150 * 0.6, "portrait ship screen Y")
-        assertNear(1150 / runtime.movement.viewHeight, 1150 / 45, "portrait pixels per world unit")
+        shipScreenX, shipScreenY, shipScale = runtime.movement:WorldToScreen(runtime.ship.position)
+        assertNear(shipScreenX, 1200 * Config.camera.anchorX, "portrait ship screen X")
+        assertNear(shipScreenY, 1150 * Config.camera.anchorY, "portrait ship screen anchor Y")
+        assertNear(shipScale, 1150 / Config.camera.viewHeight, "portrait base pixels per meter")
+        assertNear(runtime.movement:GetHorizonY(), 1150 * Config.camera.horizonY, "portrait projection horizon")
 
         recorder.reset()
         local beforeReveal = snapshot(runtime)
@@ -167,13 +184,13 @@ function Tests.Run(recorder)
         assert(recorder.countFillColor(FishData.tuna.color[1], FishData.tuna.color[2],
             FishData.tuna.color[3], FishData.tuna.color[4]) > 0,
             "revealed tuna was not rendered")
-        assert(recorder.scissorMatches(0, 1150 * Config.layers.waves, 1200,
-            1150 * (1 - Config.layers.waves), 0.01), "portrait world-layer scissor did not resize")
+        local portraitHorizon = runtime.movement:GetHorizonY()
+        assert(recorder.scissorMatches(0, portraitHorizon, 1200,
+            1150 - portraitHorizon, 0.01), "portrait world-layer scissor did not track the projected horizon")
 
-        local landscapeScale = calls.islandScales[1]
-        local portraitScale = calls.islandScales[#calls.islandScales]
-        assertNear(landscapeScale, 1080 / 45, "landscape world-object draw scale")
-        assertNear(portraitScale, 1150 / 45, "portrait world-object draw scale")
+        local _, _, portraitIslandScale = runtime.movement:WorldToScreen(runtime.previewIsland.position)
+        assert(portraitIslandScale > shipScale,
+            "portrait projection should preserve larger scale for the nearer island")
         assert(#Config.world.fixedObjects == configObjectCount,
             "offline presentation fixtures changed formal Config fixedObjects")
 
@@ -183,13 +200,8 @@ function Tests.Run(recorder)
         clock:Pause("inventory")
         local elapsed = clock.elapsed
         local nightColor = Config.visual.nightOverlay
-        local boatDraw = Draw.WorldBoat
         local expectedTintCount = 1
-        Draw.WorldBoat = function(...)
-            assert(recorder.countFillColor(table.unpack(nightColor)) == expectedTintCount,
-                "night tint must be drawn before the boat, and removed in daytime")
-            return boatDraw(...)
-        end
+        calls.expectedBoatTint = expectedTintCount
         recorder.reset()
         local beforeNight = snapshot(runtime)
         SeaDraw.Scene({}, 1200, 1150, runtime, clock)
@@ -200,36 +212,40 @@ function Tests.Run(recorder)
         assert(recorder.callCount("nvgSave") == recorder.callCount("nvgRestore"),
             "night tint left the NanoVG state stack unbalanced")
         expectedTintCount = 0
+        calls.expectedBoatTint = expectedTintCount
         clock:Seek("day", 0)
         recorder.reset()
         SeaDraw.Scene({}, 1200, 1150, runtime, clock)
         assert(recorder.countFillColor(table.unpack(nightColor)) == 0,
             "returning to daytime retained the night tint")
-        Draw.WorldBoat = boatDraw
+        calls.expectedBoatTint = nil
         return {
             status = "PASS",
             tests = {
                 "draw_is_pure_for_runtime_state",
                 "original_sun_and_birds_reused",
-                "existing_world_shape_apis_reused",
+                "projected_sea_view_art_apis_reused",
                 "ordinary_fish_hidden_by_default",
                 "show_underwater_draws_both_fixture_fish",
-                "resize_keeps_camera_height_at_45_world_units",
-                "sea_scissor_tracks_wave_horizon_in_both_aspects",
+                "resize_preserves_projection_anchor_horizon_and_perspective_scale",
+                "sea_scissor_tracks_projection_horizon_in_both_aspects",
                 "presentation_fixture_does_not_change_config_world",
                 "night_tint_precedes_boat_and_preserves_paused_gameplay_clock",
                 "daytime_removes_night_tint_and_nvg_state_stack_is_balanced",
             },
             metrics = {
                 landscape = {
-                    width = 1920, height = 1080, viewHeight = 45, viewWidth = 80,
-                    pixelsPerWorldUnit = 24, shipScreenX = 960, shipScreenY = 648,
+                    width = 1920, height = 1080, anchorX = Config.camera.anchorX,
+                    anchorY = Config.camera.anchorY, horizonY = 1080 * Config.camera.horizonY,
+                    basePixelsPerMeter = 1080 / Config.camera.viewHeight,
+                    shipScreenX = landscapeShipScreenX, shipScreenY = landscapeShipScreenY,
                     hiddenWorldFishCalls = 0,
                 },
                 portrait = {
-                    width = 1200, height = 1150, viewHeight = 45,
-                    viewWidth = 45 * 1200 / 1150, pixelsPerWorldUnit = 1150 / 45,
-                    shipScreenX = 600, shipScreenY = 690, revealedWorldFishCalls = 2,
+                    width = 1200, height = 1150, anchorX = Config.camera.anchorX,
+                    anchorY = Config.camera.anchorY, horizonY = 1150 * Config.camera.horizonY,
+                    basePixelsPerMeter = 1150 / Config.camera.viewHeight,
+                    shipScreenX = shipScreenX, shipScreenY = shipScreenY, revealedWorldFishCalls = 2,
                 },
                 originalConfiguredBirds = #Config.birds,
                 originalFixedObjectCount = configObjectCount,
@@ -238,6 +254,7 @@ function Tests.Run(recorder)
         }
     end)
     restoreDrawMethods(originals)
+    restoreArtMethods(originals)
     if not ok then error(result) end
     return result
 end

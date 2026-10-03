@@ -150,8 +150,8 @@ function Tests.Run()
         local ok,err=pcall(function()
             Config.camera.viewHeight=48
             local r=fresh();r.movement:SetViewport(1000,600)
-            local a=r.movement:ScreenToWorld(0,0)
-            local b=r.movement:ScreenToWorld(1000,0);near(b.x-a.x,80)
+            local a=r.movement:ScreenToWorld(0,600*Config.camera.anchorY)
+            local b=r.movement:ScreenToWorld(1000,600*Config.camera.anchorY);near(b.x-a.x,80)
             step(r,1,1,0);near(r.ship.position.x,6)
         end)
         Config.camera.viewHeight=original
@@ -223,22 +223,25 @@ function Tests.Run()
         for _, size in ipairs({{1000,600},{400,800},{1920,1080}}) do
             r.movement:SetViewport(size[1],size[2])
             local x,y=r.movement:WorldToScreen(r.ship.position)
-            near(x,size[1]*0.5); near(y,size[2]*0.6)
-            local left=r.movement:ScreenToWorld(0,0)
-            local right=r.movement:ScreenToWorld(size[1],0)
+            near(x,size[1]*Config.camera.anchorX); near(y,size[2]*Config.camera.anchorY)
+            assert(r.movement:ScreenToWorld(0,0)==nil, "sky must not unproject to water")
+            local left=r.movement:ScreenToWorld(0,y)
+            local right=r.movement:ScreenToWorld(size[1],y)
             near(right.x-left.x,Config.camera.viewHeight*size[1]/size[2])
             local bottom=r.movement:ScreenToWorld(0,size[2])
-            near(left.y-bottom.y,45)
-            local p={x=17,y=-9}; local sx,sy=r.movement:WorldToScreen(p)
+            assert(bottom.y < left.y, "near water must be below the anchor in world depth")
+            local p={x=math.min(4,r.movement.viewWidth*0.15),y=-4}; local sx,sy=r.movement:WorldToScreen(p)
             local q=r.movement:ScreenToWorld(sx,sy); near(q.x,p.x); near(q.y,p.y)
         end
     end)
-    check("camera deadzone stays still then smooth follows", function()
+    check("camera continuously smooth follows and settles", function()
         local r=fresh(); r.movement:SetViewport(1000,600)
         local p=M.copy(r.movement.camera); step(r,1,1,0)
-        near(r.movement.camera.x,p.x); near(r.movement.camera.y,p.y)
+        assert(r.movement.camera.x>p.x and r.movement.camera.x<r.ship.position.x)
+        near(r.movement.camera.y,p.y)
+        local previousX=r.movement.camera.x
         r.ship.position={x=25,y=0}; r:Update(0.05)
-        near(r.movement.camera.x,(25-(Config.camera.maxX-0.5)*r.movement.viewWidth)*(1-math.exp(-0.05/0.15)))
+        near(r.movement.camera.x,previousX+(25-previousX)*(1-math.exp(-0.05/Config.camera.followSec)))
     end)
     check("all world edges block and outward intent produces feedback", function()
         for _, axis in ipairs({{1,0},{-1,0},{0,1},{0,-1}}) do
@@ -491,10 +494,11 @@ function Tests.Run()
             startT=startT+#r:queryEntitiesInRadius(r.ship.position,120,{species="tuna"})
             r.ship.position={x=400,y=400};r:ensureNearbyRegions();r.world:updateActivity(r.ship.position)
             r.movement:SetViewport(1920,1080)
+            r.movement:_AnchorCameraToShip()
             local nearby=r:queryEntitiesInRadius(r.ship.position,120,{entityType="fish"})
             for _,e in ipairs(nearby) do
                 local x,y=r.movement:WorldToScreen(e.position)
-                if x>=0 and x<=1920 and y>=0 and y<=1080 then
+                if x and y and x>=0 and x<=1920 and y>=r.movement:GetHorizonY() and y<=1080 then
                     if e.species=="sardine" then viewS=viewS+1 else viewT=viewT+1 end
                 end
             end

@@ -1,0 +1,24 @@
+{
+  "lsp": {
+    "currentErrors": 6,
+    "baselineErrors": 6,
+    "newErrors": [],
+    "resolvedErrors": [],
+    "allFilesReported": true
+  },
+  "generatedData": [
+    {
+      "source": "items.lua",
+      "sha256": "1a369da6cfe8ed9a0e1f1df975fe49896c08981dfc40f4cd86a2a254a6fedd45",
+      "strictBytesMatch": false,
+      "contentAndHashMatchWithNormalizedNewlines": true
+    },
+    {
+      "source": "fish.lua",
+      "sha256": "f6563e4cfc32c55adbd471118c43658e1c59d27fffc8d752dffc4c688bdd7a21",
+      "strictBytesMatch": false,
+      "contentAndHashMatchWithNormalizedNewlines": true
+    }
+  ],
+  "nativeVisualAcceptance": "UNDETERMINED: target is missing Maker binding"
+}

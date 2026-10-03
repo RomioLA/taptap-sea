@@ -550,12 +550,12 @@ end
 ---@param w number
 ---@param h number
 ---@param time number
-function Draw.SceneBackdrop(ctx, w, h, time)
+function Draw.SceneBackdrop(ctx, w, h, time, skyOnly)
     if not ctx or w <= 0 or h <= 0 then return end
     time = time or 0
     local scale = math.min(w / 520, h / 800)
     Background(ctx, w, h, time)
-    Sea(ctx, w, h, time)
+    if not skyOnly then Sea(ctx, w, h, time) end
     for _, bird in ipairs(Config.birds) do
         local x = w * bird.x + math.sin(time * 0.4 + bird.phase) * 15 * scale
         local y = h * Config.layers.birds + math.sin(time * 1.2 + bird.phase) * 5 * scale

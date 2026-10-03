@@ -94,10 +94,8 @@ function Tests.Run()
         assert(runtime.movement.pushRemaining == 0
             and runtime.movement.pushNormal.x == 0 and runtime.movement.pushNormal.y == 0,
             "port reset kept collision push feedback")
-        near(runtime.movement.camera.x,
-            Config.ship.start.x - (Config.camera.anchorX - 0.5) * runtime.movement.viewWidth)
-        near(runtime.movement.camera.y,
-            Config.ship.start.y + (Config.camera.anchorY - 0.5) * runtime.movement.viewHeight)
+        near(runtime.movement.camera.x, Config.ship.start.x)
+        near(runtime.movement.camera.y, Config.ship.start.y)
         assert(ship.position ~= Config.ship.start, "ship position aliases the config point")
 
         local secondOk, secondReason = runtime:ResetShipAtPort()

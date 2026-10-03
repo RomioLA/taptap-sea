@@ -2,6 +2,8 @@
 -- This module stays independent from UrhoX so the runtime can use its world model directly.
 local Config = require("Ocean.Config")
 local Math = require("Ocean.Math")
+local Projection = require("Ocean.Projection")
+local Wake = require("Ocean.Wake")
 
 ---@class OceanPoint
 ---@field x number
@@ -33,6 +35,7 @@ local Math = require("Ocean.Math")
 ---@field viewportReady boolean
 ---@field pushRemaining number
 ---@field pushNormal OceanPoint
+---@field wake OceanWake
 local Movement = {}
 Movement.__index = Movement
 
@@ -100,6 +103,7 @@ function Movement:Init(world, ship)
     self.viewportReady = false
     self.pushRemaining = 0
     self.pushNormal = { x = 0, y = 0 }
+    self.wake = Wake.New(ship)
     self:_AnchorCameraToShip()
 end
 
@@ -128,6 +132,7 @@ function Movement:ResetAtPosition(position)
     self.target = nil
     self.pushRemaining = 0
     self.pushNormal.x, self.pushNormal.y = 0, 0
+    self.wake:Reset(self.ship)
     self:_AnchorCameraToShip()
     return self
 end
@@ -150,9 +155,8 @@ function Movement:SetLevel(level)
 end
 
 function Movement:_AnchorCameraToShip()
-    local cameraConfig = Config.camera
-    self.camera.x = self.ship.position.x - (cameraConfig.anchorX - 0.5) * self.viewWidth
-    self.camera.y = self.ship.position.y + (cameraConfig.anchorY - 0.5) * self.viewHeight
+    self.camera.x = self.ship.position.x
+    self.camera.y = self.ship.position.y
 end
 
 ---@param logicalW number
@@ -172,35 +176,39 @@ function Movement:SetViewport(logicalW, logicalH)
     self.viewHeight = Config.camera.viewHeight
     self.viewWidth = self.viewHeight * logicalW / logicalH
     self.viewportReady = true
-    -- Recompute the camera offset after a resize so the ship keeps its configured screen anchor.
-    self:_AnchorCameraToShip()
+    -- The world reference is independent of aspect/DPR. Preserve its current lag
+    -- through resizing rather than snapping the camera during a voyage.
     return true
 end
 
 ---@param position OceanPoint?
----@return number, number
-function Movement:WorldToScreen(position)
-    position = position or self.ship.position
-    local width = self.viewportWidth
-    local height = self.viewportHeight
-    local scale = width / self.viewWidth
-    return width * 0.5 + (position.x - self.camera.x) * scale,
-        height * 0.5 - (position.y - self.camera.y) * scale
+---@return number?, number?, number?
+function Movement:WorldToScreen(position, altitudeMeters)
+    return Projection.Project(self, position or self.ship.position, altitudeMeters)
 end
 
 ---@param x number
 ---@param y number
----@return OceanPoint
+---@return OceanPoint?
 function Movement:ScreenToWorld(x, y)
-    local scale = self.viewportWidth / self.viewWidth
-    return {
-        x = self.camera.x + (x - self.viewportWidth * 0.5) / scale,
-        y = self.camera.y - (y - self.viewportHeight * 0.5) / scale,
-    }
+    return Projection.Unproject(self, x, y)
+end
+
+function Movement:ProjectVector(position, dx, dy)
+    return Projection.Vector(self, position, dx, dy)
+end
+
+function Movement:GetHorizonY()
+    return Projection.Horizon(self)
+end
+
+function Movement:GetViewBounds(paddingMeters)
+    return Projection.ViewBounds(self, paddingMeters)
 end
 
 function Movement:_UpdateShip(step, axisX, axisY, keyboardActive)
     local ship = self.ship
+    local previousPosition = copyPoint(ship.position)
     local target = self.target
     ---@type number?
     local desiredAngle
@@ -288,6 +296,7 @@ function Movement:_UpdateShip(step, axisX, axisY, keyboardActive)
     if self.target and Math.distance(ship.position, self.target) <= Config.ship.arrivalRadius then
         self.target = nil
     end
+    self.wake:Update(step, ship, previousPosition)
 end
 
 function Movement:_UpdateCamera(dt)
@@ -295,20 +304,7 @@ function Movement:_UpdateCamera(dt)
 
     local cameraConfig = Config.camera
     local ship = self.ship.position
-    local shipScreenX = 0.5 + (ship.x - self.camera.x) / self.viewWidth
-    local shipScreenY = 0.5 + (self.camera.y - ship.y) / self.viewHeight
-    local targetX, targetY = self.camera.x, self.camera.y
-
-    if shipScreenX < cameraConfig.minX then
-        targetX = ship.x - (cameraConfig.minX - 0.5) * self.viewWidth
-    elseif shipScreenX > cameraConfig.maxX then
-        targetX = ship.x - (cameraConfig.maxX - 0.5) * self.viewWidth
-    end
-    if shipScreenY < cameraConfig.minY then
-        targetY = ship.y + (cameraConfig.minY - 0.5) * self.viewHeight
-    elseif shipScreenY > cameraConfig.maxY then
-        targetY = ship.y + (cameraConfig.maxY - 0.5) * self.viewHeight
-    end
+    local targetX, targetY = ship.x, ship.y
 
     local followSec = math.max(cameraConfig.followSec, Config.world.epsilon)
     local blend = 1 - math.exp(-dt / followSec)
