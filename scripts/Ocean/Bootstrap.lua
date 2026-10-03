@@ -30,7 +30,7 @@ function Bootstrap:Init(options)
     options = self.options
     self.runtime = Runtime.New(options)
     self.ownsUI = options.ownsUI ~= false
-    self.pointerMinY = options.pointerMinY or 0
+    self.pointerMinY = math.max(options.pointerMinY or 0, Config.camera.horizonY)
     self.stopped = false
     self.physicalWidth, self.physicalHeight, self.dpr = 0, 0, 1
     self.firstFrame = true

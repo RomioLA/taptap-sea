@@ -54,9 +54,11 @@ local Config = {
     fixedBarrel = { position = { x = 60, y = 25 }, radius = 2,
         tuningStatus = "CIRCLE1_A2_PROVISIONAL_REQUIRED_GEOMETRY" },
 },
-    camera = { tuningStatus = "V1_IMPLEMENTATION_VALUE",
+    camera = { tuningStatus = "SEA_VIEW_VISUAL_TEST_VALUE",
     minX = 0.35, maxX = 0.65, minY = 0.45, maxY = 0.75,
-    anchorX = 0.5, anchorY = 0.6, followSec = 0.15, viewHeight = 45 },
+    -- min/max retained for legacy callers; continuous follow no longer uses a dead zone.
+    anchorX = 0.5, anchorY = 0.72, followSec = 0.15, viewHeight = 45,
+    horizonY = 0.24, depthCompression = 0.65, farDepth = 220 },
     fishing = { tuningStatus = "V1_IMPLEMENTATION_VALUE", maxCastDistance = 30,
         netRadius = 8, durationSec = 4, maxCatchCount = 1 },
     -- Circle 1 confirmed playtest value; not a new planning/data-schema field.
@@ -68,6 +70,12 @@ local Config = {
     showActivity = false, showBounds = false, spawnOffset = 12, baitOffset = 8,
     refreshSec = 0.25 },
     visual = { waveSpacing = 12, waveLength = 3, waveSpeed = 0.6,
+    -- Presentation-only temporary values; no world interaction/AI distances change.
+    surface = { spacingMeters = 12, lengthMeters = 3, driftSpeed = 0.6,
+        amplitudeMeters = 0.18, periodSec = 5, maxMarks = 900 },
+    wake = { lifetimeSec = 3, spacingMeters = 0.6, minSpeed = 0.15, maxSamples = 96,
+        initialWidth = 0.65, spreadPerSec = 0.45, sternOffset = 2.5, opacity = 125 },
+    projection = { circleSegments = 48, sectorSegments = 32, birdAltitude = 1.2 },
     -- Remote STEP-5 visual, confirmed by the planning workbook's night-visual rule.
     nightOverlay = { 10, 22, 48, 190 },
     background = { 15, 91, 125, 255 }, wave = { 89, 184, 202, 80 },

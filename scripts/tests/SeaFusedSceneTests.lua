@@ -102,7 +102,8 @@ function Tests.Run()
     end)
     check("sky clicks do not sail; sea clicks target world meters; UI blocks clicks", function()
         assert(not sea:HandlePointer(960, 100))
-        assert(sea:HandlePointer(1200, 648))
+        local sx, sy = sea.runtime.movement:WorldToScreen({ x = 10, y = 0 })
+        assert(sea:HandlePointer(sx * sea.dpr, sy * sea.dpr))
         assert(math.abs(sea.runtime.movement.target.x - 10) < 0.00001)
         local x = sea.runtime.movement.target.x
         UI.hit = {}

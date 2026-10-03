@@ -2,6 +2,7 @@ local Tests = {}
 local Runtime = require("Ocean.SeaRuntime")
 local SeaDraw = require("Ocean.SeaDraw")
 local Config = require("Ocean.Config")
+local Geometry = require("Ocean.ProjectedGeometry")
 
 local function readonly(values)
     return setmetatable({}, { __index = values,
@@ -20,15 +21,17 @@ function Tests.Run(recorder)
         runtime.movement:SetViewport(1920, 1080)
         runtime:TogglePause()
         local center = readonly({ x = 8, y = -6 })
-        local originalCircle = nvgCircle
+        local originalWorldCircle = Geometry.WorldCircle
         local circles = {}
-        nvgCircle = function(ctx, x, y, radius)
-            circles[#circles + 1] = { x = x, y = y, radius = radius }
-            return originalCircle(ctx, x, y, radius)
+        Geometry.WorldCircle = function(ctx, movement, position, radius, fill, stroke, strokeWidth, altitude)
+            circles[#circles + 1] = {
+                x = position.x, y = position.y, radius = radius, altitude = altitude,
+            }
+            return originalWorldCircle(ctx, movement, position, radius, fill, stroke, strokeWidth, altitude)
         end
         local ok, err = pcall(function()
-            local x, y = runtime.movement:WorldToScreen(center)
-            local scale = 1080 / runtime.movement.viewHeight
+            local ship = runtime.ship.position
+            local flightCenter = { x = (ship.x + center.x) * 0.5, y = (ship.y + center.y) * 0.5 }
             local function draw(phase, elapsed)
                 circles = {}
                 recorder.reset()
@@ -38,22 +41,30 @@ function Tests.Run(recorder)
                 assert(recorder.callCount("nvgSave") == recorder.callCount("nvgRestore"))
                 return circles
             end
-            local function hasCircle(list, cx, cy, radius)
+            local function hasCircle(list, cx, cy, radius, altitude)
                 for _, circle in ipairs(list) do
                     if math.abs(circle.x - cx) < 0.001 and math.abs(circle.y - cy) < 0.001
-                        and math.abs(circle.radius - radius) < 0.001 then return true end
+                        and math.abs(circle.radius - radius) < 0.001
+                        and (altitude == nil or math.abs((circle.altitude or 0) - altitude) < 0.001) then return true end
                 end
                 return false
             end
-            assert(hasCircle(draw("aim", 0), x, y, 8 * scale), "8m aim circle missing")
-            assert(not hasCircle(draw("casting", 0.25), x, y, 8 * scale), "net landed before .5s")
-            assert(hasCircle(draw("casting", 0.5), x, y, 8 * scale), "net missing at .5s landing")
+            local netRadius = Config.fishing.netRadius
+            assert(hasCircle(draw("aim", 0), center.x, center.y, netRadius), "world-space aim net circle missing")
+            local flight = draw("casting", 0.25)
+            assert(hasCircle(flight, flightCenter.x, flightCenter.y, netRadius * 0.5, netRadius),
+                "halfway cast net circle must follow the world-space flight arc and altitude")
+            assert(not hasCircle(flight, center.x, center.y, netRadius), "net landed before .5s")
+            assert(hasCircle(draw("casting", 0.5), center.x, center.y, netRadius),
+                "world-space net circle missing at .5s landing")
             assert(recorder.callCount("nvgEllipse") > 0, "landing splash missing")
-            assert(hasCircle(draw("reeling", 2.25), x, y, 4 * scale), "reeling visual does not contract")
+            local reeling = math.max(0, math.min(1, (2.25 - 0.5) / (Config.fishing.durationSec - 0.5)))
+            assert(hasCircle(draw("reeling", 2.25), center.x, center.y, netRadius * (1 - reeling)),
+                "reeling world-space visual does not contract with gameplay progress")
             draw("reeling", 4)
             assert(#runtime.world.entities == originalEntityCount, "draw selected/spawned/removed entity")
         end)
-        nvgCircle = originalCircle
+        Geometry.WorldCircle = originalWorldCircle
         if not ok then error(err) end
     end)
     check("optional_sixth_argument_keeps_fifth_clock_and_absent_view", function()
@@ -66,21 +77,23 @@ function Tests.Run(recorder)
             assert(recorder.countFillColor(table.unpack(Config.visual.nightOverlay)) == 1, "fifth clock lost")
         end
     end)
-    check("offscreen_fish_culling_keeps_partial_horizon_and_edge_shapes", function()
+    check("projected_fish_culling_keeps_partial_edge_and_rejects_far_depth", function()
         local runtime = Runtime.New({ initializeRegions = false })
         runtime.movement:SetViewport(1920, 1080)
         runtime:setDebugFlag("showUnderwater", true)
         runtime:spawnFish("sardine", { x = 0, y = 20 })
-        runtime:spawnFish("sardine", { x = 50, y = -4 })
-        runtime:spawnFish("sardine", { x = 0, y = 12.6 })
-        runtime:spawnFish("sardine", { x = -40.05, y = -4 })
+        runtime:spawnFish("sardine", { x = 100, y = -4 })
+        local beyondFarDepth = runtime:spawnFish("sardine", { x = 0, y = 221 })
+        runtime:spawnFish("sardine", { x = -40.05, y = 0 })
+        assert(runtime.movement:WorldToScreen(beyondFarDepth.position) == nil,
+            "fish beyond configured far depth unexpectedly projected")
         local Draw = require("Ocean.Draw")
         local original, count = Draw.WorldFish, 0
         Draw.WorldFish = function(...) count = count + 1; return original(...) end
         local ok, err = pcall(function() SeaDraw.Scene({}, 1920, 1080, runtime) end)
         Draw.WorldFish = original
         if not ok then error(err) end
-        assert(count == 2, "culling removed a partial shape or drew a fully clipped fish")
+        assert(count == 2, "culling removed the partial edge fish or drew an offscreen/far-depth fish")
     end)
     check("pointer_consumption_preserves_navigation_and_guards", function()
         local oldUI, oldBootstrap = package.loaded["urhox-libs/UI"], package.loaded["Ocean.Bootstrap"]

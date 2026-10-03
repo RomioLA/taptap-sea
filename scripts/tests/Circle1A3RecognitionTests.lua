@@ -3,6 +3,7 @@ local Tests = {}
 local Runtime = require("Ocean.SeaRuntime")
 local SeaDraw = require("Ocean.SeaDraw")
 local Config = require("Ocean.Config")
+local Geometry = require("Ocean.ProjectedGeometry")
 local PlayerState = require("Gameplay.PlayerState")
 local Persistence = require("Gameplay.Persistence")
 local CONTENT_ID = "driftwood_barrel"
@@ -21,16 +22,16 @@ end
 local function render(recorder, runtime, callback, width)
     width = width or 5000
     local barrel = runtime:GetFixedBarrel()
-    local x, y = runtime.movement:WorldToScreen(barrel.position)
-    local originalEllipse = nvgEllipse
+    local originalCircle = Geometry.WorldCircle
     local details = 0
-    nvgEllipse = function(ctx, px, py, rx, ry)
-        if near(px, x) and near(py, y) then details = details + 1 end
-        return originalEllipse(ctx, px, py, rx, ry)
+    Geometry.WorldCircle = function(ctx, movement, center, radius, ...)
+        if near(center.x, barrel.position.x) and near(center.y, barrel.position.y)
+            and near(radius, Config.world.fixedBarrel.radius * 0.72) then details = details + 1 end
+        return originalCircle(ctx, movement, center, radius, ...)
     end
     recorder.reset()
     local ok, err = pcall(SeaDraw.Scene, {}, width, 1080, runtime, nil, nil, callback)
-    nvgEllipse = originalEllipse
+    Geometry.WorldCircle = originalCircle
     if not ok then error(err) end
     return details
 end

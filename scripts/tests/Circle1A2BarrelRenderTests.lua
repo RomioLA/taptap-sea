@@ -3,6 +3,7 @@ local Tests = {}
 local Runtime = require("Ocean.SeaRuntime")
 local SeaDraw = require("Ocean.SeaDraw")
 local Config = require("Ocean.Config")
+local Geometry = require("Ocean.ProjectedGeometry")
 
 local BARREL_CONTENT_ID = "driftwood_barrel"
 
@@ -106,23 +107,31 @@ local function renderAt(recorder, distance, width, height, addDecoys)
     assert(not idWriteOk and not positionWriteOk, "fixed-barrel snapshot was writable")
 
     local targetX, targetY = runtime.movement:WorldToScreen(snapshot.position)
+    local targetMaxX = -math.huge
+    for _, point in ipairs(Geometry.SampleCircle(snapshot.position, Config.world.fixedBarrel.radius)) do
+        local px = runtime.movement:WorldToScreen(point)
+        if px then targetMaxX = math.max(targetMaxX, px) end
+    end
     local before = captureState(runtime)
     local circles, ellipses = {}, {}
-    local originalCircle, originalEllipse = nvgCircle, nvgEllipse
-    nvgCircle = function(ctx, x, y, radius)
-        circles[#circles + 1] = { x = x, y = y, radius = radius }
-        return originalCircle(ctx, x, y, radius)
-    end
-    nvgEllipse = function(ctx, x, y, radiusX, radiusY)
-        ellipses[#ellipses + 1] = { x = x, y = y, radiusX = radiusX, radiusY = radiusY }
-        return originalEllipse(ctx, x, y, radiusX, radiusY)
+    local originalCircle = Geometry.WorldCircle
+    Geometry.WorldCircle = function(ctx, movement, center, radius, ...)
+        if #Geometry.ClipPolygon(movement, Geometry.SampleCircle(center, radius)) >= 3 then
+            local x, y, scale = movement:WorldToScreen(center)
+            circles[#circles + 1] = { x = x, y = y, radius = radius * scale }
+            if near(center.x, snapshot.position.x) and near(center.y, snapshot.position.y)
+                and near(radius, Config.world.fixedBarrel.radius * 0.72) then
+                ellipses[#ellipses + 1] = { x = x, y = y }
+            end
+        end
+        return originalCircle(ctx, movement, center, radius, ...)
     end
 
     recorder.reset()
     local ok, err = pcall(function()
         SeaDraw.Scene({}, width, height, runtime)
     end)
-    nvgCircle, nvgEllipse = originalCircle, originalEllipse
+    Geometry.WorldCircle = originalCircle
     if not ok then error(err) end
     assertStateUnchanged(before, runtime)
 
@@ -133,6 +142,7 @@ local function renderAt(recorder, distance, width, height, addDecoys)
     return {
         targetX = targetX,
         targetY = targetY,
+        targetMaxX = targetMaxX,
         targetCircles = circlesAt(circles, targetX, targetY),
         targetEllipses = ellipsesAt(ellipses, targetX, targetY),
         decoyCircleCounts = decoyCircleCounts,
@@ -167,13 +177,13 @@ function Tests.Run(recorder)
     end)
 
     check("barrel_screen_culling_keeps_partial_edges_and_skips_fully_offscreen", function()
-        local partial = renderAt(recorder, 42, 1920, 1080)
-        assert(partial.targetX < 0 and partial.targetX + 52 >= 0,
+        local partial = renderAt(recorder, 41.5, 1920, 1080)
+        assert(partial.targetX < 0 and partial.targetMaxX > 0,
             "partial-edge fixture did not place the barrel inside its conservative screen margin")
         assert(partial.targetCircles == 1, "a partially visible barrel outline was culled")
 
-        local outside = renderAt(recorder, 43, 1920, 1080)
-        assert(outside.targetX + 52 < 0, "offscreen fixture did not clear the barrel screen margin")
+        local outside = renderAt(recorder, 44, 1920, 1080)
+        assert(outside.targetMaxX < 0, "offscreen fixture did not clear the projected barrel silhouette")
         assert(outside.targetCircles == 0 and outside.targetEllipses == 0,
             "a fully offscreen barrel was drawn")
     end)
@@ -184,7 +194,7 @@ function Tests.Run(recorder)
         assert(result.targetEllipses == 1 and result.targetCircles == 2,
             "the exact fixed barrel did not receive its close-range detail")
         assert(#result.decoyCircleCounts == 2
-            and result.decoyCircleCounts[1] == 2 and result.decoyCircleCounts[2] == 2,
+            and result.decoyCircleCounts[1] == 1 and result.decoyCircleCounts[2] == 1,
             "ordinary or contentId-matching non-barrel floats changed their generic drawing")
     end)
 
