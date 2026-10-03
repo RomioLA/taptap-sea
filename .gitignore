@@ -1,0 +1,78 @@
+# Build artifacts & runtime state
+.build/
+dist/
+.cli/
+logs/
+*.log
+logs/.nfs*
+.sce/logs/
+.sce/build/build_steps/__pycache__/
+
+# Temp & swap files
+.tmp/
+*.crswap
+.DS_Store
+
+# OSS util
+.ossutil_checkpoint/
+ossutil_output/
+
+# Editor / IDE / agent configs
+.vscode/
+.cursor/
+.codex/
+.gemini/
+.claude/
+.emmylua/
+.installer/
+.maker/
+
+# Maker engine assets & agent files (provided by ai-dev-kit, not user source)
+engine-docs/
+examples/
+lua-tools/
+schemas/
+skills/
+templates/
+tools/
+urhox-libs/
+AGENTS.md
+CLAUDE.md
+
+# >>> TapTap Maker AI dev kit (local only) >>>
+.DS_Store
+.agents\skills\custom-lobby/
+.agents\skills\materials/
+.agents\skills\nvg-resolution-mode/
+.agents\skills\online-system-notification/
+.agents\skills\setup-achievements/
+.agents\skills\setup-ads/
+.agents\skills\setup-fsm/
+.agents\skills\skill-creator/
+.agents\skills\sprite-gen/
+.agents\skills\ui-astroon/
+.agents\skills\ui-brawlforge/
+.agents\skills\ui-pixelforge/
+.claude/
+.cli/
+.codex/
+.emmylua/
+.installer/
+.maker/
+AGENTS.md
+CLAUDE.md
+engine-docs/
+examples/
+schemas/
+skills/
+templates/
+tools/
+urhox-libs/
+# <<< TapTap Maker AI dev kit (local only) <<<
+
+# Share the project's existing guidance, as on the teammate branch.
+!AGENTS.md
+
+# Isolated comparison checkouts and merge evidence stay local.
+/outputs/remote-review-*/
+/outputs/selective-merge-*/
