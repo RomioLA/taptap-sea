@@ -59,6 +59,36 @@ return {
         schemaVersion = 1,
         localFilename = "sea_loop_save.json",
     },
+    -- 玩家界面设计方案 v1.0（2026-10-04）：海洋主题 token，HUD 表现层唯一取色来源。
+    ui = {
+        palette = {
+            seaDeep = { 12, 68, 124, 242 },         -- #0C447C 操作坞/白天面板
+            seaNight = { 4, 32, 62, 248 },          -- #04203E 夜间面板（更深，与海面明度反向）
+            seaMid = { 24, 95, 165, 235 },          -- #185FA5 状态条
+            actionPrimary = { 15, 110, 86, 255 },   -- #0F6E56 主行动青
+            actionPressed = { 8, 80, 65, 255 },     -- #085041 按压态
+            coinBright = { 250, 199, 117, 255 },    -- #FAC775 金币高亮
+            coinDeep = { 133, 79, 11, 255 },        -- #854F0B 金币深色（浅底上用）
+            warnCoral = { 216, 90, 48, 255 },       -- #D85A30 警示珊瑚
+            textOnDark = { 230, 241, 251, 255 },    -- #E6F1FB 深面板正文
+            textMuted = { 159, 225, 203, 255 },     -- #9FE1CB 深面板注释
+            textGold = { 250, 213, 130, 255 },      -- #FAD582 面板标题金
+            cardDay = { 20, 52, 92, 240 },          -- 白天卡片底（海蓝系）
+            cardNight = { 6, 26, 50, 246 },         -- 夜晚卡片底
+            border = { 55, 138, 221, 150 },         -- #378ADD 半透明描边
+            backdrop = { 4, 20, 40, 150 },          -- 抽屉背后压暗层
+            disabledBg = { 96, 116, 138, 210 },     -- 禁用底（深面板系）
+            disabledText = { 190, 204, 216, 220 },  -- 禁用文字
+        },
+        size = {
+            touchMajor = 88,       -- 主操作按钮热区
+            touchMinor = 64,       -- 次级圆钮视觉尺寸
+            touchGap = 12,         -- 可点元素最小间距
+            buttonMinHeight = 44,  -- 通用按钮最小触控高度
+            radiusCard = 10,
+            drawerHeightPct = "65%",
+        },
+    },
 }
 
 

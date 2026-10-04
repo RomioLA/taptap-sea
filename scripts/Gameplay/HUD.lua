@@ -163,11 +163,62 @@ local function itemName(itemId)
     return definition and definition.name or tostring(itemId)
 end
 
+-- 玩家界面设计方案 v1.0（2026-10-04）：所有取色来自 config.ui.palette；
+-- 未配置时回退到本表，保证旧存档/测试桩环境可运行。
+local FALLBACK_PALETTE = {
+    seaDeep = { 12, 68, 124, 242 },
+    seaNight = { 4, 32, 62, 248 },
+    seaMid = { 24, 95, 165, 235 },
+    actionPrimary = { 15, 110, 86, 255 },
+    actionPressed = { 8, 80, 65, 255 },
+    coinBright = { 250, 199, 117, 255 },
+    coinDeep = { 133, 79, 11, 255 },
+    warnCoral = { 216, 90, 48, 255 },
+    textOnDark = { 230, 241, 251, 255 },
+    textMuted = { 159, 225, 203, 255 },
+    textGold = { 250, 213, 130, 255 },
+    cardDay = { 20, 52, 92, 240 },
+    cardNight = { 6, 26, 50, 246 },
+    border = { 55, 138, 221, 150 },
+    backdrop = { 4, 20, 40, 150 },
+    disabledBg = { 96, 116, 138, 210 },
+    disabledText = { 190, 204, 216, 220 },
+}
+local UI_PALETTE = {}
+local UI_SIZE = { touchMajor = 88, touchMinor = 64, touchGap = 12, buttonMinHeight = 44, radiusCard = 10 }
+do
+    local cfg = Config.ui or {}
+    for key, value in pairs(FALLBACK_PALETTE) do
+        UI_PALETTE[key] = (cfg.palette and cfg.palette[key]) or value
+    end
+    for key, value in pairs(cfg.size or {}) do UI_SIZE[key] = value end
+end
+
+-- 安全应用背景色：真机 Widget 支持 SetBackgroundColor；测试桩缺失时静默跳过。
+local function applyBackground(widget, color)
+    if type(widget) == "table" and type(widget.SetBackgroundColor) == "function" then
+        widget:SetBackgroundColor(color)
+    end
+end
+
+-- 昼夜主题应用器：只在 phase 变化时写样式，避免每帧 SetBackgroundColor。
+local function makeThemer()
+    local lastPhase = nil
+    return function(phase, panels)
+        if lastPhase == phase then return end
+        lastPhase = phase
+        local night = phase == "night"
+        for _, entry in ipairs(panels) do
+            applyBackground(entry.widget, night and entry.night or entry.day)
+        end
+    end
+end
+
 local function makeLabel(text, size, color, weight)
     return UI.Label {
         text = text,
         fontSize = size or 14,
-        fontColor = color or { 237, 231, 215, 255 },
+        fontColor = color or UI_PALETTE.textOnDark,
         fontWeight = weight or "normal",
         whiteSpace = "normal",
     }
@@ -178,7 +229,9 @@ local function makeButton(text, onClick, variant, width)
         text = text,
         variant = variant or "secondary",
         width = width or "auto",
-        minHeight = 38,
+        -- 触控目标 ≥44px（设计方案 v1.0 尺寸 token）；主操作按钮的 88px 热区
+        -- 由 Scene 层的抛竿交互承担，此处为通用面板按钮。
+        minHeight = UI_SIZE.buttonMinHeight or 44,
         fontSize = 13,
         onClick = function() onClick() end,
     }
@@ -230,18 +283,22 @@ function HUD.Create(loop, parent, debugTools)
         widget:SetText(text)
     end
 
+    local themedPanels = {} -- 昼夜主题注册表：{widget=, day=, night=}
+    local applyTheme = makeThemer()
+
     local function card(title)
         local panel = UI.Panel {
             width = "100%",
             padding = 10,
             gap = 7,
             flexDirection = "column",
-            backgroundColor = { 31, 48, 51, 238 },
-            borderColor = { 102, 133, 124, 210 },
+            backgroundColor = UI_PALETTE.cardDay,
+            borderColor = UI_PALETTE.border,
             borderWidth = 1,
-            borderRadius = 8,
+            borderRadius = UI_SIZE.radiusCard or 10,
         }
-        panel:AddChild(makeLabel(title, 16, { 237, 213, 159, 255 }, "bold"))
+        themedPanels[#themedPanels + 1] = { widget = panel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight }
+        panel:AddChild(makeLabel(title, 16, UI_PALETTE.textGold, "bold"))
         return panel
     end
 
@@ -261,14 +318,17 @@ function HUD.Create(loop, parent, debugTools)
         alignItems = "center",
         gap = 8,
         paddingHorizontal = 10,
-        backgroundColor = { 27, 42, 48, 238 },
-        borderRadius = 8,
+        backgroundColor = UI_PALETTE.seaDeep,
+        borderColor = UI_PALETTE.border,
+        borderWidth = 1,
+        borderRadius = 12,
     }
+    themedPanels[#themedPanels + 1] = { widget = header, day = UI_PALETTE.seaDeep, night = UI_PALETTE.seaNight }
     -- UI 精简（2026-10-04）：顶部只保留"看"的信息（天/昼夜/金币），去掉常驻标题；
     -- 详细提示按需显隐（见 refresh 内各 SetVisible），常态下海面占比最大化。
     refs.day = makeLabel("第 1 天", 14)
-    refs.phase = makeLabel("白天 · 剩余 -- 秒", 14)
-    refs.money = makeLabel("钱：0", 14, { 249, 211, 118, 255 }, "bold")
+    refs.phase = makeLabel("白天 · 剩余 -- 秒", 14, UI_PALETTE.textMuted)
+    refs.money = makeLabel("钱：0", 14, UI_PALETTE.coinBright, "bold")
     header:AddChild(refs.day)
     header:AddChild(refs.phase)
     header:AddChild(UI.Spacer())
@@ -286,12 +346,13 @@ function HUD.Create(loop, parent, debugTools)
         alignItems = "center",
         gap = 14,
         paddingHorizontal = 10,
-        backgroundColor = { 42, 59, 59, 225 },
-        borderRadius = 7,
+        backgroundColor = UI_PALETTE.seaMid,
+        borderRadius = 10,
     }
+    themedPanels[#themedPanels + 1] = { widget = stats, day = UI_PALETTE.seaMid, night = UI_PALETTE.seaNight }
     refs.stamina = makeLabel("体力：0/0", 14)
-    refs.pauseReasons = makeLabel("暂停：无", 12, { 180, 203, 191, 255 })
-    refs.save = makeLabel("尚未保存", 12, { 181, 203, 193, 255 })
+    refs.pauseReasons = makeLabel("暂停：无", 12, UI_PALETTE.textMuted)
+    refs.save = makeLabel("尚未保存", 12, UI_PALETTE.textMuted)
     refs.save:SetVisible(false) -- 常态隐藏，仅读取中/保存中/失败时显示（见 refresh）
     stats:AddChild(refs.stamina)
     refs.inventorySummary = makeLabel("背包 0 / 0 格", 12, { 184, 204, 190, 255 })
@@ -301,16 +362,17 @@ function HUD.Create(loop, parent, debugTools)
     stats:AddChild(refs.save)
     root:AddChild(stats)
 
-    refs.message = makeLabel("", 13, { 245, 223, 174, 255 })
+    refs.message = makeLabel("", 13, UI_PALETTE.textGold)
     refs.messagePanel = UI.Panel {
         width = "100%",
         minHeight = 28,
         paddingHorizontal = 10,
         justifyContent = "center",
-        backgroundColor = { 42, 59, 59, 190 },
-        borderRadius = 6,
+        backgroundColor = UI_PALETTE.seaMid,
+        borderRadius = 14,
         children = { refs.message },
     }
+    themedPanels[#themedPanels + 1] = { widget = refs.messagePanel, day = UI_PALETTE.seaMid, night = UI_PALETTE.seaNight }
     root:AddChild(refs.messagePanel)
 
     refs.portAccessReason = makeLabel("锚形标记=港口（交易中心）· 返港/交易需距港≤10米。", 12, { 203, 218, 202, 255 })
@@ -388,6 +450,66 @@ function HUD.Create(loop, parent, debugTools)
     }
     contentScroll:AddChild(content)
 
+    -- 背包底部抽屉（设计方案 v1.0）：从底部滑入占屏 65%，背后场景压暗；
+    -- 港口商店留在滚动区——抽屉若同时容纳商店会遮挡出航/结算等核心按钮。
+    refs.drawerBackdrop = UI.Panel {
+        position = "absolute",
+        top = 0,
+        left = 0,
+        width = "100%",
+        height = "100%",
+        zIndex = 90,
+        backgroundColor = UI_PALETTE.backdrop,
+        pointerEvents = "auto",
+    }
+    refs.drawerBackdrop:Hide()
+    refs.drawer = UI.Panel {
+        position = "absolute",
+        left = 0,
+        bottom = 0,
+        width = "100%",
+        height = UI_SIZE.drawerHeightPct or "65%",
+        zIndex = 91,
+        padding = 12,
+        gap = 8,
+        flexDirection = "column",
+        backgroundColor = UI_PALETTE.seaDeep,
+        borderColor = UI_PALETTE.border,
+        borderWidth = 1,
+        borderRadius = 16,
+        pointerEvents = "auto",
+        transition = "opacity 0.25s easeOut",
+    }
+    themedPanels[#themedPanels + 1] = { widget = refs.drawer, day = UI_PALETTE.seaDeep, night = UI_PALETTE.seaNight }
+    refs.drawer:Hide()
+    local drawerGrabber = UI.Panel {
+        width = "100%",
+        minHeight = 10,
+        justifyContent = "center",
+        alignItems = "center",
+    }
+    drawerGrabber:AddChild(UI.Panel {
+        width = 44,
+        height = 4,
+        backgroundColor = UI_PALETTE.border,
+        borderRadius = 2,
+    })
+    refs.drawer:AddChild(drawerGrabber)
+    refs.drawerScroll = UI.ScrollView {
+        width = "100%",
+        flexGrow = 1,
+        flexBasis = 0,
+        scrollY = true,
+        showScrollbar = true,
+    }
+    local drawerContent = UI.Panel {
+        width = "100%",
+        gap = 8,
+        flexDirection = "column",
+    }
+    refs.drawerScroll:AddChild(drawerContent)
+    refs.drawer:AddChild(refs.drawerScroll)
+
     refs.throwSelectionPanel = card("投掷物品")
     refs.throwSelectionText = makeLabel("", 13, { 255, 236, 207, 255 }, "bold")
     refs.throwSelectionPanel:AddChild(refs.throwSelectionText)
@@ -422,9 +544,12 @@ function HUD.Create(loop, parent, debugTools)
     content:AddChild(refs.scopePanel)
 
     refs.inventoryPanel = card("背包")
-    refs.inventoryCount = makeLabel("0 / 0 格", 12, { 180, 203, 191, 255 })
+    refs.inventoryCount = makeLabel("0 / 0 格", 12, UI_PALETTE.textMuted)
     refs.upgrade = makeButton("扩容", function() invokeLoop("UpgradeInventory") end, "secondary", 148)
     refs.sellAll = makeButton("全部卖出", function() invokeLoop("SellAll") end, "primary", 108)
+    refs.inventoryClose = makeButton("收起", function()
+        invokeLoop("SetInventoryOpen", false)
+    end, "secondary", 72)
     local inventoryHeader = UI.Panel {
         width = "100%",
         flexDirection = "row",
@@ -435,6 +560,7 @@ function HUD.Create(loop, parent, debugTools)
             UI.Spacer(),
             refs.sellAll,
             refs.upgrade,
+            refs.inventoryClose,
         },
     }
     refs.inventoryPanel:AddChild(inventoryHeader)
@@ -510,7 +636,7 @@ function HUD.Create(loop, parent, debugTools)
     }
     refs.inventoryPanel:AddChild(refs.inventoryScroll)
     refs.inventoryPanel:SetVisible(false)
-    content:AddChild(refs.inventoryPanel)
+    drawerContent:AddChild(refs.inventoryPanel)
 
     refs.portPanel = card("港口商店")
     refs.loadStatus = makeLabel("", 12)
@@ -619,6 +745,8 @@ function HUD.Create(loop, parent, debugTools)
     end
 
     root:AddChild(contentScroll)
+    root:AddChild(refs.drawerBackdrop)
+    root:AddChild(refs.drawer)
 
     -- 统一遮罩承载强制返港、每日结算和拜访老人的反馈。
     refs.overlay = UI.Panel {
@@ -866,6 +994,8 @@ function HUD.Create(loop, parent, debugTools)
         local player = loop.player or {}
         local clockState = loop.clock and loop.clock:GetState() or {}
         local phase = clockState.phase == "night" and "夜晚" or "白天"
+        -- 昼夜主题（设计方案 v1.0）：面板明度与海面反向，夜晚更深；仅 phase 变化时写样式。
+        applyTheme(clockState.phase == "night" and "night" or "day", themedPanels)
         local remaining = tonumber(clockState.remaining) or 0
         setText(refs.day, "day", "第 " .. tostring(player.day or 1) .. " 天")
         setText(refs.phase, "phase", string.format("%s · 剩余 %.0f 秒", phase, math.max(0, remaining)))
@@ -1047,6 +1177,11 @@ function HUD.Create(loop, parent, debugTools)
             or (not elderPresent and loop.elderOpen ~= true))
         local showInventory = loop.inventoryOpen == true or pendingCatch
         refs.inventoryPanel:SetVisible(showInventory)
+        -- 背包抽屉（v1.0）：开背包或有待领渔获时，底部抽屉 + 压暗层整体出现。
+        refs.drawer:SetVisible(showInventory)
+        refs.drawerBackdrop:SetVisible(showInventory)
+        refs.inventoryClose:SetVisible(true)
+        refs.inventoryClose:SetDisabled(busy or loop.loading == true)
         refs.portPanel:SetVisible(inPort)
         local portAccess, portReason, portDetails = loop:CanAccessPort()
         local portDistance = portDetails and portDetails.distance
