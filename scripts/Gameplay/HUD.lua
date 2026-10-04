@@ -66,6 +66,7 @@ local ERROR_MESSAGES = {
     new_day_preparation_failed = "港口或海洋准备未完成，请重试。",
     settlement_snapshot_failed = "日结快照尚未生成，请重试保存。",
     fishing_runtime_interface_unavailable = "捕鱼接口暂未就绪，请稍后重试。",
+    cast_out_of_range_or_invalid = "请点击船只30米内的合法海面，网心不能落在陆地上。",
     fishing_requires_bridge_token = "请从正式捕鱼按钮开始操作。",
     pending_catch_required = "请先处理已有待接收收获；物品会完整保留。",
     no_forced_return = "当前没有待确认的强制返港。",
@@ -434,7 +435,7 @@ function HUD.Create(loop, parent, debugTools)
     refs.fishingPanel:AddChild(refs.fishingProgress)
     refs.fishingPanel:AddChild(refs.fishingResult)
     -- v1.1：捕鱼入口收敛为按钮坞的单个"捕鱼"按钮；引导文字走消息条（对话形式），
-    -- 本面板只在抛网/收网/结算过程中出现，承载 确认抛网/取消/重试清理。
+    -- 本面板只在选点/抛网/收网/结算过程中出现，承载取消和清理重试。
     refs.beginFishing = makeButton("捕鱼", function()
         invokeLoop("BeginFishingSelection")
     end, "primary", 72)
@@ -445,13 +446,9 @@ function HUD.Create(loop, parent, debugTools)
         alignItems = "center",
         gap = 7,
     }
-    refs.confirmFishing = makeButton("确认抛网", function()
-        invokeLoop("ConfirmFishing")
-    end, "primary", 96)
     refs.cancelFishing = makeButton("取消捕鱼", function()
         invokeLoop("CancelFishingAction")
     end, "danger", 88)
-    fishingButtons:AddChild(refs.confirmFishing)
     fishingButtons:AddChild(refs.cancelFishing)
     refs.fishingPanel:AddChild(fishingButtons)
     root:AddChild(refs.fishingPanel)
@@ -1190,16 +1187,9 @@ function HUD.Create(loop, parent, debugTools)
         local fishingActive = fishingPhase == "casting" or fishingPhase == "landed" or fishingCleanupPending
         local fishingRestricted = fishingSelecting or fishingActive
         local fishingTerminal = fishingPhase == "complete" or fishingPhase == "failed" or fishingPhase == "cancelled"
-        local fishingCenter = fishingState and fishingState.center
-        local centerX = fishingCenter and fishingCenter.x
-        local centerY = fishingCenter and fishingCenter.y
         local fishingStatus
         if fishingSelecting then
-            if centerX ~= nil and centerY ~= nil then
-                fishingStatus = string.format("网心已设定（%.1f，%.1f），确认后抛网。", centerX, centerY)
-            else
-                fishingStatus = "请在海面选择网心，再确认抛网。"
-            end
+            fishingStatus = "点击或触摸30米内合法海面，立即抛网；可取消选点。"
         elseif fishingPhase == "casting" then
             fishingStatus = "抛网进行中。"
         elseif fishingPhase == "landed" then
@@ -1266,8 +1256,6 @@ function HUD.Create(loop, parent, debugTools)
         refs.scopeToggleBar:SetVisible(not inPort and (hasLens or barrelNearForDock))
         refs.scopeToggleBar:SetText(hasLens and (scopeEnabled and "望远镜·开" or "望远镜·关") or "望远镜")
         refs.scopeToggleBar:SetDisabled(busy or fishingRestricted)
-        refs.confirmFishing:SetVisible(fishingSelecting)
-        refs.confirmFishing:SetDisabled(busy or centerX == nil or centerY == nil)
         refs.cancelFishing:SetVisible(fishingRestricted)
         refs.cancelFishing:SetText(fishingCleanupPending and "重试清理" or "取消捕鱼")
         refs.cancelFishing:SetDisabled(false)
