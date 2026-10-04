@@ -229,8 +229,9 @@ end
 -- 设计方案 v2.0（零遮挡）：信息层无底板纯文字，靠描边+阴影保证海面上
 -- 白天/夜晚均可读。urhox Label 原生支持 textStroke/textShadow（测试桩
 -- 环境未知字段会被忽略，不影响断言）。
-local function makeInfoLabel(text, size, color, weight)
-    return UI.Label {
+-- extraProps：允许调用方补充布局属性（如 flexGrow/flexBasis 防压缩）。
+local function makeInfoLabel(text, size, color, weight, extraProps)
+    local props = {
         text = text,
         fontSize = size or 14,
         fontColor = color or UI_PALETTE.textOnDark,
@@ -239,6 +240,24 @@ local function makeInfoLabel(text, size, color, weight)
         textStroke = { width = 3, color = UI_PALETTE.infoStroke },
         textShadow = { offsetX = 1, offsetY = 1, blur = 2, color = UI_PALETTE.infoShadow },
     }
+    if extraProps then
+        for key, value in pairs(extraProps) do props[key] = value end
+    end
+    return UI.Label(props)
+end
+
+-- 真机踩坑（Codex 定位确认）：row 布局下无宽度约束的 label 会被 flex
+-- 压缩为不可见——真机"两层纯色栏没有字"即此原因。信息层每行用
+-- 「行容器 + 单个 flexGrow/flexBasis=0 的 label」保证文字占满行宽。
+local INFO_FLEX = { flexGrow = 1, flexBasis = 0 }
+local function infoLine(label)
+    local line = UI.Panel {
+        width = "100%",
+        flexDirection = "row",
+        gap = 6,
+    }
+    line:AddChild(label)
+    return line
 end
 
 local function makeButton(text, onClick, variant, width)
@@ -329,23 +348,22 @@ function HUD.Create(loop, parent, debugTools)
     }
 
     -- v2.0 零遮挡：header 保持 root 首子节点（测试契约 + Scene 左侧注入依赖），
-    -- 但去掉纯色底板——只留描边文字，固定在画面左上角。
+    -- 去掉纯色底板——每行一个 flexGrow label，固定在画面左上角。
     local header = UI.Panel {
         width = "100%",
         minHeight = 40,
-        flexDirection = "row",
-        alignItems = "center",
-        flexWrap = "wrap",
-        gap = 8,
+        flexDirection = "column",
+        alignItems = "flex-start",
+        gap = 2,
     }
     -- UI 精简（2026-10-04）：顶部只保留"看"的信息（天/昼夜/金币），去掉常驻标题；
     -- 详细提示按需显隐（见 refresh 内各 SetVisible），常态下海面占比最大化。
-    refs.day = makeInfoLabel("第 1 天", 14)
-    refs.phase = makeInfoLabel("白天 · 剩余 -- 秒", 14, UI_PALETTE.textMuted)
-    refs.money = makeInfoLabel("钱：0", 14, UI_PALETTE.coinBright, "bold")
-    header:AddChild(refs.day)
-    header:AddChild(refs.phase)
-    header:AddChild(refs.money)
+    refs.day = makeInfoLabel("第 1 天", 14, nil, nil, INFO_FLEX)
+    refs.phase = makeInfoLabel("白天 · 剩余 -- 秒", 13, UI_PALETTE.textMuted, nil, INFO_FLEX)
+    refs.money = makeInfoLabel("钱：0", 14, UI_PALETTE.coinBright, "bold", INFO_FLEX)
+    header:AddChild(infoLine(refs.day))
+    header:AddChild(infoLine(refs.phase))
+    header:AddChild(infoLine(refs.money))
     refs.debugToggle = makeButton("开发调试", function()
         if refs.debugPanel then refs.debugPanel:SetVisible(not refs.debugPanel:IsVisible()) end
     end, "secondary", 92)
@@ -354,24 +372,24 @@ function HUD.Create(loop, parent, debugTools)
 
     -- v2.0 零遮挡：第二行信息同样去底板，纯描边文字（root 次子节点保留给
     -- Scene 的 flexWrap 注入契约）。
+    -- v2.0 零遮挡：第二段信息同样去底板，逐行 flexGrow 防压缩
+    -- （root 次子节点保留给 Scene 的 flexWrap 注入契约）。
     local stats = UI.Panel {
         width = "100%",
         minHeight = 36,
-        flexDirection = "row",
-        alignItems = "center",
-        flexWrap = "wrap",
-        gap = 14,
+        flexDirection = "column",
+        alignItems = "flex-start",
+        gap = 2,
     }
-    refs.stamina = makeInfoLabel("体力：0/0", 14)
-    refs.pauseReasons = makeInfoLabel("暂停：无", 12, UI_PALETTE.textMuted)
-    refs.save = makeInfoLabel("尚未保存", 12, UI_PALETTE.textMuted)
+    refs.stamina = makeInfoLabel("体力：0/0", 14, nil, nil, INFO_FLEX)
+    refs.pauseReasons = makeInfoLabel("暂停：无", 12, UI_PALETTE.textMuted, nil, INFO_FLEX)
+    refs.save = makeInfoLabel("尚未保存", 12, UI_PALETTE.textMuted, nil, INFO_FLEX)
     refs.save:SetVisible(false) -- 常态隐藏，仅读取中/保存中/失败时显示（见 refresh）
-    stats:AddChild(refs.stamina)
-    refs.inventorySummary = makeInfoLabel("背包 0 / 0 格", 12)
-    stats:AddChild(refs.inventorySummary)
-    stats:AddChild(refs.pauseReasons)
-    stats:AddChild(UI.Spacer())
-    stats:AddChild(refs.save)
+    refs.inventorySummary = makeInfoLabel("背包 0 / 0 格", 12, nil, nil, INFO_FLEX)
+    stats:AddChild(infoLine(refs.stamina))
+    stats:AddChild(infoLine(refs.inventorySummary))
+    stats:AddChild(infoLine(refs.pauseReasons))
+    stats:AddChild(infoLine(refs.save))
     root:AddChild(stats)
 
     -- v2.0 零遮挡：消息条改为透明 toast 文字（描边），仅真实反馈出现时显示。
