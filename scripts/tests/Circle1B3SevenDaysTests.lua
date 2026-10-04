@@ -339,7 +339,7 @@ local function route(appleGiftDays)
             clickButton(root, "捕鱼")
             assert(bridge:OnSeaPointer(center), "sea-pointer selection should be consumed")
             hud.Refresh() -- mirrors Scene's onSeaPointer refresh after the ocean callback
-            clickButton(root, "确认抛网")
+            eq(loop:GetFishingState().state, "casting", "one sea pointer starts the cast")
             assert(not loop.clock:IsPaused(), "four-second fishing must use active clock updates")
             local fishItemCountBefore = countItem(loop.player.inventory, "sardine")
             local activeBeforeFishing = routeData.activeClockUpdateSeconds
