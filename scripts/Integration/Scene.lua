@@ -145,17 +145,31 @@ function Scene.Start(options)
 
         local function refresh(dt)
             sceneBridge:Sync()
-            sceneHud.Refresh()
             if seaDebugTools then seaDebugTools.refresh(dt or 0) end
+        end
+
+        -- HUD 全量刷新节流（UI 精简性能项）：Refresh 内含 ~15 个 pcall、背包签名拼接
+        -- 与 20+ 个 string.format，每帧执行产生大量 Lua 临时对象，GC 抖动=画面卡顿。
+        -- 时钟/体力等文本变化粒度为秒级，0.15s 节流无感知；事件路径（按钮回调、
+        -- 指针按下、按键）仍走 refreshNow 即时刷新，交互不受影响。
+        local hudRefreshInterval = 0.15
+        local hudRefreshTimer = hudRefreshInterval -- 首帧立即刷一次
+        local function refreshNow()
+            sceneBridge:Sync()
+            sceneHud.Refresh()
         end
 
         return {
             refresh = function(dt)
-                sceneBridge:Sync()
                 local currentWidth = logicalScreenWidth()
                 if math.abs(currentWidth - lastLayoutWidth) > 1 then
                     fitHudToLeftSide(sceneHud)
                     lastLayoutWidth = currentWidth
+                end
+                hudRefreshTimer = hudRefreshTimer + (dt or 0)
+                if hudRefreshTimer >= hudRefreshInterval then
+                    hudRefreshTimer = 0
+                    sceneHud.Refresh()
                 end
                 refresh(dt)
             end,
@@ -163,19 +177,19 @@ function Scene.Start(options)
                 sceneBridge:Sync()
                 if key == KEY_SPACE then
                     sceneBridge:TogglePause()
-                    refresh(0)
+                    refreshNow()
                     return true
                 elseif key == KEY_R and settings.development == true then
                     local ok, reason = sceneBridge:NewRun()
                     if ok == false then sceneBridge.loop:SetMessage(tostring(reason or "新周目未能开始")) end
                     sceneBridge:Sync()
                     ocean:SyncViewport()
-                    refresh(0)
+                    refreshNow()
                     return true
                 end
                 if seaDebugTools and seaDebugTools.handleKey(key) then
                     sceneBridge:Sync()
-                    refresh(0)
+                    refreshNow()
                     return true
                 end
                 return false

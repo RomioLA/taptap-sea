@@ -184,6 +184,14 @@ local function makeButton(text, onClick, variant, width)
     }
 end
 
+-- 淡入辅助：真机 urhox Widget 支持 SetOpacity（transition 驱动），
+-- 测试桩未实现该方法时静默跳过，不影响功能断言。
+local function fadeOpacity(widget, value)
+    if type(widget) == "table" and type(widget.SetOpacity) == "function" then
+        widget:SetOpacity(value)
+    end
+end
+
 function HUD.Create(loop, parent, debugTools)
     if not loop then error("HUD.Create requires a gameplay loop", 2) end
 
@@ -256,11 +264,11 @@ function HUD.Create(loop, parent, debugTools)
         backgroundColor = { 27, 42, 48, 238 },
         borderRadius = 8,
     }
-    refs.title = makeLabel("渔夫漂流记", 19, { 246, 223, 171, 255 }, "bold")
+    -- UI 精简（2026-10-04）：顶部只保留"看"的信息（天/昼夜/金币），去掉常驻标题；
+    -- 详细提示按需显隐（见 refresh 内各 SetVisible），常态下海面占比最大化。
     refs.day = makeLabel("第 1 天", 14)
     refs.phase = makeLabel("白天 · 剩余 -- 秒", 14)
     refs.money = makeLabel("钱：0", 14, { 249, 211, 118, 255 }, "bold")
-    header:AddChild(refs.title)
     header:AddChild(refs.day)
     header:AddChild(refs.phase)
     header:AddChild(UI.Spacer())
@@ -284,14 +292,14 @@ function HUD.Create(loop, parent, debugTools)
     refs.stamina = makeLabel("体力：0/0", 14)
     refs.pauseReasons = makeLabel("暂停：无", 12, { 180, 203, 191, 255 })
     refs.save = makeLabel("尚未保存", 12, { 181, 203, 193, 255 })
+    refs.save:SetVisible(false) -- 常态隐藏，仅读取中/保存中/失败时显示（见 refresh）
     stats:AddChild(refs.stamina)
+    refs.inventorySummary = makeLabel("背包 0 / 0 格", 12, { 184, 204, 190, 255 })
+    stats:AddChild(refs.inventorySummary)
     stats:AddChild(refs.pauseReasons)
     stats:AddChild(UI.Spacer())
     stats:AddChild(refs.save)
     root:AddChild(stats)
-
-    refs.inventorySummary = makeLabel("背包 0 / 0 格：空", 12, { 184, 204, 190, 255 })
-    root:AddChild(refs.inventorySummary)
 
     refs.message = makeLabel("", 13, { 245, 223, 174, 255 })
     refs.messagePanel = UI.Panel {
@@ -638,6 +646,7 @@ function HUD.Create(loop, parent, debugTools)
         borderColor = { 159, 133, 88, 255 },
         borderWidth = 2,
         borderRadius = 10,
+        transition = "opacity 0.25s easeOut", -- 模态出现时淡入，替代硬切
     }
     refs.modalTitle = makeLabel("", 18, { 246, 223, 171, 255 }, "bold")
     refs.modalCard:AddChild(refs.modalTitle)
@@ -720,6 +729,7 @@ function HUD.Create(loop, parent, debugTools)
     refs.modalCard:AddChild(refs.storyBody)
     refs.overlay:AddChild(refs.modalCard)
     refs.overlay:Hide()
+    fadeOpacity(refs.modalCard, 0) -- 隐藏期间保持全透明；显示时由 transition 淡入
     refs.forcedBody:Hide()
     refs.settlementBody:Hide()
     refs.elderBody:Hide()
@@ -866,11 +876,19 @@ function HUD.Create(loop, parent, debugTools)
         local pauseText = #reasons > 0 and table.concat(reasons, "、") or "无"
         if clockState.paused and #reasons == 0 then pauseText = "暂停中" end
         setText(refs.pauseReasons, "pauseReasons", "暂停：" .. pauseText)
+        -- UI 精简：暂停原因/存档状态仅异常或有事发生时占位，常态让位给海面
+        refs.pauseReasons:SetVisible(clockState.paused == true or #reasons > 0)
         setText(refs.save, "save", saveText(loop))
+        -- 仅"尚未保存/未保存"两个无信息量状态隐藏；读取/保存/已保存/失败均可见
+        local saveStatus = loop.saveStatus
+        refs.save:SetVisible(loop.loading == true or saveStatus == "loading"
+            or saveStatus == "saving" or saveStatus == "saved" or saveStatus == "error")
 
         local message = state.localMessage ~= "" and state.localMessage or userMessage(loop.lastMessage)
         if message == "" then message = "出海采集，返港交易与结算。" end
         setText(refs.message, "message", message)
+        -- 默认引导语不占行；仅真实操作反馈出现时显示消息条
+        refs.messagePanel:SetVisible(message ~= "" and message ~= "出海采集，返港交易与结算。")
 
         local inPort = loop.inPort == true
 
@@ -1042,7 +1060,11 @@ function HUD.Create(loop, parent, debugTools)
             portInfo = "锚形标记=港口（交易中心）· 距离暂不可读；返港/交易需距港≤10米。"
             if not portAccess and portReason then portInfo = portInfo .. " " .. userMessage(portReason) end
         end
-        setText(refs.portAccessReason, "portAccessReason", portInfo)
+        setText(refs.portAccessReason, "portInfo", portInfo)
+        -- 港口提示仅在有意义时占位：接近港口（≤30m）或范围外警示；远海航行时隐藏
+        local showPortHint = (type(portDistance) == "number" and (not portAccess or portDistance <= 30))
+            or (type(portDistance) ~= "number" and not portAccess)
+        refs.portAccessReason:SetVisible(showPortHint)
         refs.loadSaved:SetVisible(inPort)
         refs.loadSaved:SetText(loop.loadStatus == "error" and "重试读取" or "读取云存档")
         refs.loadSaved:SetDisabled(busy or loop.settlementPending == true or pendingCatch or fishingRestricted)
@@ -1073,7 +1095,8 @@ function HUD.Create(loop, parent, debugTools)
             or (elderPresent and "拜访老人" or "老人不在")
         refs.elderToggle:SetText(elderToggleText)
 
-        refs.barrelPanel:SetVisible(not inPort)
+        -- UI 精简：木桶未进入可交互上下文（无 barrelState）时不显示"暂未开放"卡
+        refs.barrelPanel:SetVisible(not inPort and barrelState ~= nil)
         local barrelGatesAvailable = barrelState ~= nil and barrelState.timingAvailable == true
             and barrelState.interfaceAvailable == true
         local barrelFinished = barrelState ~= nil and (tonumber(barrelState.stage) or 0) >= 3
@@ -1123,6 +1146,9 @@ function HUD.Create(loop, parent, debugTools)
             refs.scopeToggle:SetDisabled(busy or fishingRestricted)
         end
 
+        -- 注：scopePanel（宝物与望远镜）保留常驻——测试契约要求无透镜时显示
+        -- "透镜未获得"禁用按钮；整卡收纳留待 UI 方案 v1.0 确认后的正式重构。
+
         refs.throwSelectionPanel:SetVisible(throwSelection ~= nil)
         if throwSelection then
             setText(refs.throwSelectionText, "throwSelectionText",
@@ -1144,13 +1170,9 @@ function HUD.Create(loop, parent, debugTools)
         end
         refs.sellAll:SetText(sellableCount > 0 and ("全部卖出 · " .. tostring(sellableCount) .. " 件") or "全部卖出")
         refs.sellAll:SetDisabled(not inPort or not ready or busy or fishingRestricted or sellableCount == 0)
-        local itemNames = {}
-        local shownCount = math.min(#items, 4)
-        for index = 1, shownCount do itemNames[index] = itemName(items[index]) end
-        local contentsText = #items == 0 and "空" or table.concat(itemNames, "、")
-        if #items > shownCount then contentsText = contentsText .. " 等 " .. tostring(#items - shownCount) .. " 件" end
+        -- 背包摘要精简为纯计数（原物品清单文本移除，明细看背包卡）
         setText(refs.inventorySummary, "inventorySummary",
-            string.format("背包 %d / %d 格：%s", #items, capacity, contentsText))
+            string.format("背包 %d / %d 格", #items, capacity))
         ---@type string[]
         local signatureParts = { tostring(loop:GetCargoRevision()), tostring(capacity), tostring(inPort), tostring(loop.elderOpen == true) }
         for _, itemId in ipairs(items) do signatureParts[#signatureParts + 1] = itemId end
@@ -1215,7 +1237,9 @@ function HUD.Create(loop, parent, debugTools)
         local showStory = not pendingCatch and not showForced and not showSettlement and storyDialog ~= nil
         local showElder = not showForced and not showSettlement and not showStory
             and loop.elderOpen == true and elderPresent
-        refs.overlay:SetVisible(showEntry or showForced or showSettlement or showStory or showElder)
+        local overlayShown = showEntry or showForced or showSettlement or showStory or showElder
+        refs.overlay:SetVisible(overlayShown)
+        fadeOpacity(refs.modalCard, overlayShown and 1 or 0)
         local overlayTitle = showEntry and "云存档" or showForced and "夜晚返港"
             or (showSettlement and "每日结算" or (showStory and "纸条" or (showElder and "拜访老人" or "")))
         setText(refs.modalTitle, "modalTitle", overlayTitle)
