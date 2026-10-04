@@ -17,6 +17,7 @@ local Wake = require("Ocean.Wake")
 ---@field radius number
 ---@field level number?
 ---@field visualTurnRate number? Smoothed yaw rate in rad/s, presentation only.
+---@field isMoving boolean Actual translation in the current simulation step.
 
 ---@class OceanWorld
 ---@field moveEntity fun(self:OceanWorld, entity:OceanShip, dx:number, dy:number): boolean, number, number
@@ -89,6 +90,7 @@ function Movement:Init(world, ship)
     end
     updateDirection(ship)
     ship.visualTurnRate = 0
+    ship.isMoving = false
 
     self.world = world
     self.ship = ship
@@ -132,6 +134,7 @@ function Movement:ResetAtPosition(position)
     self.ship.position = copyPoint(position)
     updateDirection(self.ship)
     self.ship.visualTurnRate = 0
+    self.ship.isMoving = false
     self.target = nil
     self.pushRemaining = 0
     self.pushNormal.x, self.pushNormal.y = 0, 0
@@ -305,6 +308,9 @@ function Movement:_UpdateShip(step, axisX, axisY, keyboardActive)
     if self.target and Math.distance(ship.position, self.target) <= Config.ship.arrivalRadius then
         self.target = nil
     end
+    -- Measure resolved movement, including collision push; input/turning alone
+    -- is not motion. The epsilon is the existing numeric tolerance, not a speed rule.
+    ship.isMoving = Math.distanceSquared(ship.position, previousPosition) > Config.world.epsilon ^ 2
     self.wake:Update(step, ship, previousPosition)
 end
 
