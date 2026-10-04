@@ -63,7 +63,7 @@ end
 
 function Loop:Init(options)
     self.options = options
-    self.store = options.store or Persistence.Cloud(options.cloud)
+    self.store = options.store or Persistence.Dual(options.cloud)
     self.generation = 0
     self.requestSequence = 0
     self:ResetState()
@@ -245,7 +245,7 @@ function Loop:SetStateObserver(observer)
     self.stateObserver = observer
     for _, name in ipairs({ "SetInventoryOpen", "SetElderOpen", "ReturnToPort", "Depart",
         "EndToday", "ConfirmForcedReturn", "ConfirmSettlement", "ContinueWithoutSaving", "SettleDay",
-        "LoadSaved", "NewRun", "RetryInitialSave", "UpgradeBoatSpeed" }) do
+        "LoadSaved", "NewRun", "RetryInitialSave", "UpgradeBoatSpeed", "SellAll" }) do
         local original = self[name]
         self[name] = function(_, ...)
             local result = table.pack(Diagnostics.Call("Loop", "operation_" .. name, original, self, ...))
@@ -457,6 +457,17 @@ function Loop:MarkWorldPrepared(day, worldIdentity)
     self.worldPreparation = { generation = self.generation, day = day, worldIdentity = worldIdentity }
 end
 
+-- F2: 港口方位文案。世界坐标 Y 向上（见 Ocean/Draw.lua 屏幕反转注释），dx>0=东、dy>0=北。
+local function compassText(details)
+    local dx = details.portX - details.shipX
+    local dy = details.portY - details.shipY
+    local axisX = dx > 0 and "东" or dx < 0 and "西" or ""
+    local axisY = dy > 0 and "北" or dy < 0 and "南" or ""
+    local direction = axisX .. axisY
+    if direction == "" then return "脚下" end
+    return direction
+end
+
 function Loop:ReturnToPort()
     ---@type GameplayPortAccessDetails?
     local details
@@ -471,7 +482,15 @@ function Loop:ReturnToPort()
     if not self:Ready() then return reject("busy") end
     if not detailRead then return reject("port_interface_unavailable", "failure") end
     local near, reason = detailNear, detailReason
-    if not near then return reject(reason or "port_interface_unavailable") end
+    if not near then
+        -- F2: 返港引导——拒绝时给出港口方位与距离，玩家不再对着 port_out_of_range 找不到方向。
+        if reason == "port_out_of_range" and details then
+            self.lastMessage = string.format(
+                "距港 %.0f 米：港口在%s方向，朝港口航行到 %d 米内再返港。",
+                details.distance, compassText(details), details.radius)
+        end
+        return reject(reason or "port_interface_unavailable")
+    end
     if self.inPort then
         emit(self, "return_to_port", portFields(self, "operation", "already_at_port", nil, details))
         return true
@@ -1144,6 +1163,32 @@ function Loop:Sell(index, expectedItemId, expectedRevision)
     if not paid then return false, payReason end
     self.lastMessage = "已出售" .. definition.name
     return true
+    end)
+end
+
+-- F2: 一键卖出全部渔获（category=fish 且有正售价），原子交易，空手而归拒绝。
+function Loop:SellAll()
+    return self:PortTransaction(function()
+        local items = self.player.inventory:GetItems()
+        local total, count = 0, 0
+        -- 倒序移除，避免 Remove 造成的索引位移。
+        for index = #items, 1, -1 do
+            local id = items[index]
+            local definition = id and Items.GetDefinition(id)
+            if definition and definition.category == "fish"
+                and definition.sellPrice and definition.sellPrice > 0 then
+                local ok = self.player.inventory:Remove(index)
+                if ok then
+                    total = total + definition.sellPrice
+                    count = count + 1
+                end
+            end
+        end
+        if count == 0 then return false, "nothing_to_sell" end
+        local paid, payReason = self.player:ChangeMoney(total)
+        if not paid then return false, payReason end
+        self.lastMessage = string.format("共出售 %d 件渔获，收入 ¥%d", count, total)
+        return true
     end)
 end
 

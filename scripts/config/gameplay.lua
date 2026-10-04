@@ -57,6 +57,7 @@ return {
     persistence = {
         key = "sea_game_loop_v1",
         schemaVersion = 1,
+        localFilename = "sea_loop_save.json",
     },
 }
 

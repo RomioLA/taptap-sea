@@ -42,7 +42,7 @@ def main():
         syntax.append({"file": path.relative_to(ROOT).as_posix(), "passed": bool(ok), "error": error})
 
     suites = []
-    for module in ("Circle1BFishingFlowTests", "Circle1BPendingCatchTests",
+    for module in ("Circle1BFishingFlowTests", "Circle1BPendingCatchTests", "LocalSaveLoopTests",
                    "ABIntegrationTests", "ArchitectureIntegrationTests", "SeaFusedSceneTests"):
         log = []
         lua = runtime(log)

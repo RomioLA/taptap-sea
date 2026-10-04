@@ -1,0 +1,11 @@
+{
+  "suite": "SeaViewUpgradeTests",
+  "sourceRoot": "E:\\workbath\\Fishing\\fisherman-drift\\scripts",
+  "status": "BLOCKED_ENVIRONMENT",
+  "luaVersion": null,
+  "syntax": [],
+  "tests": [],
+  "nativeEngineVisualAcceptance": "NOT_RUN",
+  "nvgMockVisualAcceptance": false,
+  "error": "RuntimeError: Lupa Lua 5.4 is unavailable; checked no dependency directory"
+}

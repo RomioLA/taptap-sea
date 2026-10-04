@@ -3,6 +3,7 @@ local Math = require("Ocean.Math")
 local Runtime = require("Ocean.SeaRuntime")
 local Geometry = require("Ocean.ProjectedGeometry")
 local Wake = require("Ocean.Wake")
+local Projection = require("Ocean.Projection")
 
 local Tests = {}
 
@@ -81,7 +82,8 @@ function Tests.Run()
         near(Config.camera.anchorY, 0.72)
         near(Config.camera.horizonY, 0.24)
         near(Config.camera.depthCompression, 0.65)
-        near(Config.camera.farDepth, 220)
+        near(Config.camera.farDepth, 110)
+        near(Config.visual.curvature.heightRatio, 0.045)
         near(Config.camera.anchorX, 0.5)
         near(Config.camera.viewHeight, 45)
         near(Config.visual.wake.lifetimeSec, 3)
@@ -154,7 +156,7 @@ function Tests.Run()
         local cameraDistance = view.viewHeight * (view.anchorY - view.horizonY)
             / view.depthCompression
         local base = movement.viewportHeight / view.viewHeight
-        local depths = { 0, 20, 85, 200 }
+        local depths = { 0, 20, 85, Config.camera.farDepth - 1 }
         local offsets = { 0, 7, -12, 32 }
         for index, depth in ipairs(depths) do
             local world = point(camera.x + offsets[index], camera.y + depth)
@@ -162,9 +164,7 @@ function Tests.Run()
             local q = cameraDistance / (cameraDistance + depth)
             near(x, movement.viewportWidth * view.anchorX + offsets[index] * base * q,
                 1e-6, "projected X")
-            near(y, movement.viewportHeight * view.horizonY
-                + movement.viewportHeight * (view.anchorY - view.horizonY) * q,
-                1e-6, "projected Y")
+            assert(y > movement:GetHorizonY(x), "visible depths stay on the near side of the horizon")
             near(scale, base * q, 1e-6, "projected pixels per meter")
             roundTrip(movement, world)
         end
@@ -195,9 +195,10 @@ function Tests.Run()
             near(x * sample.dpr, sample.physicalWidth * Config.camera.anchorX
                 + 9 * (sample.physicalHeight / Config.camera.viewHeight) * q,
                 1e-5, "DPR-scaled physical X")
-            near(y * sample.dpr, sample.physicalHeight * Config.camera.horizonY
-                + sample.physicalHeight * (Config.camera.anchorY - Config.camera.horizonY) * q,
-                1e-5, "DPR-scaled physical Y")
+            local physicalView={camera=movement.camera,viewportWidth=sample.physicalWidth,viewportHeight=sample.physicalHeight}
+            local physicalX,physicalY=Projection.Project(physicalView,world)
+            near(x*sample.dpr,physicalX,1e-5,"DPR physical X")
+            near(y*sample.dpr,physicalY,1e-5,"DPR physical Y")
         end
         metrics.viewportCases = #cases
     end, results)
@@ -218,24 +219,26 @@ function Tests.Run()
             "screen points outside the viewport must be rejected")
         assert(movement:ScreenToWorld(movement.viewportWidth * 0.5,
             movement.viewportHeight + 1) == nil, "screen point below the viewport must be rejected")
-        assert(movement:WorldToScreen(point(camera.x, camera.y + view.farDepth + 0.01)) == nil,
-            "world point beyond farDepth must be rejected")
+        local beyondX, beyondY = project(movement, point(camera.x, camera.y + view.farDepth + 0.01))
+        assert(beyondY > movement:GetHorizonY(beyondX),
+            "the far surface must sink behind the intervening water")
         local d = view.viewHeight * (view.anchorY - view.horizonY) / view.depthCompression
         assert(movement:WorldToScreen(point(camera.x, camera.y - d)) == nil,
             "world point at the projection singularity must be rejected")
-        local beyondFarQ = d / (d + view.farDepth + 1)
-        local beyondFarY = movement.viewportHeight * view.horizonY
-            + movement.viewportHeight * (view.anchorY - view.horizonY) * beyondFarQ
-        assert(movement:ScreenToWorld(movement.viewportWidth * 0.5, beyondFarY) == nil,
-            "inverse projection beyond farDepth must be rejected")
+        assert(movement:ScreenToWorld(movement.viewportWidth * 0.5, horizon) == nil,
+            "inverse projection must reject the finite horizon edge")
         local atFar = point(camera.x, camera.y + view.farDepth)
-        roundTrip(movement, atFar)
+        local farX, farY = project(movement, atFar)
+        near(farY, movement:GetHorizonY(farX), 1e-7, "far ground point projects to horizon")
+        assert(movement:ScreenToWorld(farX, farY) == nil,
+            "the exact horizon remains non-interactive")
+        roundTrip(movement, point(camera.x, camera.y + view.farDepth - 0.01))
     end, results)
 
     check("sampled_net_circles_and_lens_sectors_preserve_world_distance_and_angle", function()
         local runtime = fresh(1280, 720)
         local movement = runtime.movement
-        local center = point(movement.camera.x + 0.5, movement.camera.y + 110)
+        local center = point(movement.camera.x + 0.5, movement.camera.y + 70)
         local radius = Config.fishing.netRadius
         local circle = Geometry.SampleCircle(center, radius, 32)
         assert(#circle == 32, "net circle sample count changed")

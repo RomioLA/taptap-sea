@@ -5,6 +5,7 @@ local Inventory = require("Gameplay.Inventory")
 local Items = require("data.items")
 local Progress = require("Gameplay.Circle1B2Progress")
 local Diagnostics = require("Gameplay.Diagnostics")
+local LocalSaveBackend = require("Gameplay.LocalSaveBackend")
 local Persistence = {}
 
 local function finite(value)
@@ -236,6 +237,122 @@ function Persistence.Cloud(cloud)
             return invoke("load", function(callbacks)
                 return backend:Get(key, callbacks)
             end, done, true)
+        end,
+    }
+end
+
+-- F1: 云 + 本地双写装配。
+-- 保存：本地写成功即视为存档成功（立即回调），云降级为后台影子同步；
+--       本地写失败退化为纯云语义。真机 cloud_unavailable 时存档不再失败。
+-- 读取：本地优先（本地总是最新：每次保存本地必写）；无本地档回退云端，
+--       云端命中后回写本地缓存。本地档损坏时也回退云端。
+-- 离线/无引擎环境（localBackend 为 nil 且引擎不可用）时退化为纯 Cloud 行为，测试零破坏。
+---@param cloud any? clientCloud 或测试替身；nil 时 Cloud 内部取全局
+---@param localBackend table? LocalSaveBackend 实例或测试替身；nil 时按引擎可用性构造
+function Persistence.Dual(cloud, localBackend)
+    local fallback = Persistence.Cloud(cloud)
+    if localBackend == nil then
+        if LocalSaveBackend.Available() then
+            localBackend = LocalSaveBackend.New()
+        else
+            return fallback
+        end
+    end
+
+    -- 防重入壳：下游（Loop/Cloud）各有防重入，这里再兜一层保证 done 只发一次。
+    local function once(done)
+        local fired = false
+        return function(ok, value)
+            if fired then return end
+            fired = true
+            done(ok, value)
+        end
+    end
+
+    local function shadowSave(snapshot)
+        local accepted = fallback:Save(snapshot, function(ok, reason)
+            Diagnostics.Event("persistence", "cloud_shadow_result", {
+                kind = ok and "operation" or "failure",
+                outcome = ok and "succeeded" or "failed",
+                reason = ok and "cloud_saved" or tostring(reason),
+            })
+        end)
+        if not accepted then
+            Diagnostics.Event("persistence", "cloud_shadow_result", {
+                kind = "failure", outcome = "failed", reason = "cloud_request_rejected",
+            })
+        end
+    end
+
+    return {
+        Save = function(_, snapshot, done)
+            if type(done) ~= "function" then
+                Diagnostics.Event("persistence", "dual_save_result", {
+                    kind = "rejected", outcome = "failed", reason = "callback_required",
+                })
+                return false, "callback_required"
+            end
+            local guarded = once(done)
+            local accepted = localBackend:Save(snapshot, function(ok, err)
+                if ok then
+                    Diagnostics.Event("persistence", "dual_save_result", {
+                        kind = "operation", outcome = "succeeded", reason = "local_saved",
+                    })
+                    guarded(true, nil)
+                    shadowSave(snapshot)
+                else
+                    Diagnostics.Event("persistence", "dual_save_result", {
+                        kind = "failure", outcome = "failed", reason = "local_write_failed:" .. tostring(err),
+                    })
+                    -- 本地失败退化为纯云语义（Cloud 内部完成回调）
+                    fallback:Save(snapshot, guarded)
+                end
+            end)
+            if accepted == false then
+                -- 本地后端拒绝（未回调），直接走云
+                fallback:Save(snapshot, guarded)
+            end
+            return true
+        end,
+        Load = function(_, done)
+            if type(done) ~= "function" then
+                Diagnostics.Event("persistence", "dual_load_result", {
+                    kind = "rejected", outcome = "failed", reason = "callback_required",
+                })
+                return false, "callback_required"
+            end
+            local guarded = once(done)
+            local accepted = localBackend:Load(function(ok, data)
+                if ok and data ~= nil then
+                    Diagnostics.Event("persistence", "dual_load_result", {
+                        kind = "operation", outcome = "succeeded", reason = "local_hit",
+                    })
+                    guarded(true, data)
+                elseif ok then
+                    -- 无本地档 → 云；云命中后回写本地缓存
+                    fallback:Load(function(cloudOk, cloudData)
+                        if cloudOk and cloudData ~= nil then
+                            Diagnostics.Event("persistence", "dual_load_result", {
+                                kind = "operation", outcome = "succeeded", reason = "cloud_hit",
+                            })
+                            guarded(true, cloudData)
+                            localBackend:Save(cloudData, function() end)
+                        else
+                            Diagnostics.Event("persistence", "dual_load_result", {
+                                kind = "operation", outcome = "empty", reason = "no_save_anywhere",
+                            })
+                            guarded(cloudOk, cloudData)
+                        end
+                    end)
+                else
+                    Diagnostics.Event("persistence", "dual_load_result", {
+                        kind = "failure", outcome = "failed", reason = "local_unreadable:" .. tostring(data),
+                    })
+                    fallback:Load(guarded)
+                end
+            end)
+            if accepted == false then fallback:Load(guarded) end
+            return true
         end,
     }
 end

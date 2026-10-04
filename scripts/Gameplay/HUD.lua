@@ -416,6 +416,7 @@ function HUD.Create(loop, parent, debugTools)
     refs.inventoryPanel = card("背包")
     refs.inventoryCount = makeLabel("0 / 0 格", 12, { 180, 203, 191, 255 })
     refs.upgrade = makeButton("扩容", function() invokeLoop("UpgradeInventory") end, "secondary", 148)
+    refs.sellAll = makeButton("全部卖出", function() invokeLoop("SellAll") end, "primary", 108)
     local inventoryHeader = UI.Panel {
         width = "100%",
         flexDirection = "row",
@@ -424,6 +425,7 @@ function HUD.Create(loop, parent, debugTools)
         children = {
             refs.inventoryCount,
             UI.Spacer(),
+            refs.sellAll,
             refs.upgrade,
         },
     }
@@ -1131,6 +1133,17 @@ function HUD.Create(loop, parent, debugTools)
         local items = copyItems(loop)
         local capacity = player.inventory and player.inventory:GetCapacity() or 0
         setText(refs.inventoryCount, "inventoryCount", string.format("%d / %d 格", #items, capacity))
+        -- F2: 全部卖出——在港且背包有可售渔获时启用。
+        local sellableCount = 0
+        for _, itemId in ipairs(items) do
+            local definition = Items.GetDefinition(itemId)
+            if definition and definition.category == "fish"
+                and definition.sellPrice and definition.sellPrice > 0 then
+                sellableCount = sellableCount + 1
+            end
+        end
+        refs.sellAll:SetText(sellableCount > 0 and ("全部卖出 · " .. tostring(sellableCount) .. " 件") or "全部卖出")
+        refs.sellAll:SetDisabled(not inPort or not ready or busy or fishingRestricted or sellableCount == 0)
         local itemNames = {}
         local shownCount = math.min(#items, 4)
         for index = 1, shownCount do itemNames[index] = itemName(items[index]) end

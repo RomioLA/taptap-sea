@@ -69,7 +69,7 @@ function Scene.Start(options)
     local settings = copyOptions(options)
     local uiTheme = settings.theme or "default-taptap"
     local bridgeOptions = copyOptions(settings)
-    bridgeOptions.store = settings.store or Persistence.Cloud(settings.cloud)
+    bridgeOptions.store = settings.store or Persistence.Dual(settings.cloud)
     bridgeOptions.loadSaved = false
 
     UI.Init({ theme = uiTheme, scale = UI.Scale.DEFAULT })

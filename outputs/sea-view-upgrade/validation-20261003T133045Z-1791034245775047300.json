@@ -1,0 +1,701 @@
+{
+  "suite": "SeaViewUpgradeTests",
+  "sourceRoot": "E:\\workbath\\Fishing\\fisherman-drift\\scripts",
+  "status": "PASS",
+  "luaVersion": "Lua 5.4",
+  "syntax": [
+    {
+      "file": "config/gameplay.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "data/events.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "data/fish.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "data/items.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Entities/EntityFactory.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "FSM/StateMachine.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Game/Game.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Game/World.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Actions.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Bootstrap.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Circle1B2Barrel.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Circle1B2Progress.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Debug.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Diagnostics.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/GameClock.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/HUD.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Inventory.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Loop.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Persistence.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/PlayerState.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/UpdateSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "GeneratedData/Fish.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "GeneratedData/Items.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Integration/Bridge.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Integration/Circle1BInput.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Integration/Scene.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Main.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Bootstrap.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Camera.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Config.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Draw.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/EntityDraw.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Fish.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/FishData.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/FusedScene.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/HUD.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Math.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Movement.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/ProjectedGeometry.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Projection.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SceneState.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SeaDebug.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SeaDraw.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SeaRuntime.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SeaViewArt.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SpawnStrategy.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/State.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SurfaceSignals.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Wake.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/World.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "SeaPreviewEntry.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Systems/BirdSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Systems/ClockSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Systems/EntityStateSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Systems/FishSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/ABIntegrationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/ArchitectureIntegrationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A2BarrelRenderTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A2BarrelTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A2FishingTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A2ScopeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A2SignalsTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A3ExperienceTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A3InputTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A3PortTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A3RecognitionTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A3SignalsTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A3StabilityTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1ABMergeFrameBudgetTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1AFishLocksTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1APredationCooldownTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B2BarrelTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B2ProgressTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B2ScopeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B2ThrowTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B2UITests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B3ClockAsyncTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B3CloudTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B3EconomyTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B3SceneUITests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B3SevenDaysTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B3SpatialTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B5DiagnosticsIntegrationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B5GameplayTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B5PersistenceBarrelTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B5PortDrawTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1BFishingFlowTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1BPendingCatchTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/GameLoopSpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/GameLoopUISpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/NumericEconomySpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/PersistenceRegressionSpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaEngineSmoke.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaFusedSceneTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaFusionRenderTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaNativeVoyage.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaNativeVoyageEntry.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaRuntimeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaStabilityTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaViewUpgradeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/ShopStockSpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SurfaceRiseTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SurfaceSignalsTests.lua",
+      "passed": true,
+      "error": null
+    }
+  ],
+  "tests": [
+    {
+      "error": "",
+      "name": "camera_configuration_uses_the_confirmed_world_oblique_values",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "eight_heading_inputs_keep_the_same_meter_speed",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "camera_follows_continuously_and_returns_smoothly_when_the_ship_stops",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "projection_formula_and_inverse_hold_at_multiple_world_depths",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "logical_projection_resizes_correctly_across_aspect_and_dpr",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "horizon_far_depth_and_near_singularity_are_rejected",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "sampled_net_circles_and_lens_sectors_preserve_world_distance_and_angle",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "world_visibility_and_interaction_distances_do_not_change_with_camera",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "wake_uses_measured_displacement_and_expires_while_stationary",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "pause_resize_return_port_and_reset_preserve_or_clear_wake_as_required",
+      "passed": true
+    }
+  ],
+  "nativeEngineVisualAcceptance": "NOT_RUN",
+  "nvgMockVisualAcceptance": false,
+  "metrics": {
+    "netCircleSamples": 32,
+    "clippedFarCircleSamples": 21,
+    "headingCount": 8,
+    "lensSectorSamples": 26,
+    "viewportCases": 3,
+    "projectedDepthsMeters": [
+      0,
+      20,
+      85,
+      200
+    ]
+  },
+  "evidence": {
+    "kind": "pure Lua logic suite using real project modules",
+    "nativeEngineVisualAcceptance": "NOT_RUN",
+    "NanoVGMockVisualAcceptance": false
+  },
+  "testSuiteStatus": "PASS",
+  "sourceHashes": {
+    "config/gameplay.lua": "08b667679b16b272ebe293a78dfbd6906972eaf8f6d45a5dcccff0c3c4749024",
+    "data/events.lua": "8d1de381011a1058094f5dbb58c4470ecfe76252e56a85d8c0a09a5c8467fff7",
+    "data/fish.lua": "f6563e4cfc32c55adbd471118c43658e1c59d27fffc8d752dffc4c688bdd7a21",
+    "data/items.lua": "e0e74b36fa1fe33e17e5ac6797d37c9bbc2047ebcff64a5dedaab35ef9ae6eca",
+    "Entities/EntityFactory.lua": "9397282c899e038bd7b172c837feec62f971689a42cca70c92b9448f4d04694f",
+    "FSM/StateMachine.lua": "911dec4d4c78796c30a4674e3a7008c1c04905ae248d733af2996193faf5060d",
+    "Game/Game.lua": "a3496a507147bc3a8158583f2b4b8e9c4e797dd90a17d6e51ec9a98ad11a1798",
+    "Game/World.lua": "1bf3442e0bf73898d63799b2eb31449f429a5761215bc5dc541d502a44ad600f",
+    "Gameplay/Actions.lua": "8e8615e3151befb1f1625aa3e03d44b74f1891047fdc2987e8f94f2f3e913b40",
+    "Gameplay/Bootstrap.lua": "5a0c834d34787edce71d244c7f63c51e8f1e0fd8d3d52e4e1c13918d3591208b",
+    "Gameplay/Circle1B2Barrel.lua": "b3b641cef48678fd3518ceebf11afe38c28f6313da628f697d3aaffff4c14566",
+    "Gameplay/Circle1B2Progress.lua": "cedb0d9a6d8301e1cd7d61923642aef0c1a70f22e5169028f98e2971bf0f5e25",
+    "Gameplay/Debug.lua": "855e27643e641c7dbe25f45b3427ad4c8086161e7444607282cfa8b028e0dd3b",
+    "Gameplay/Diagnostics.lua": "13b68e08240ee04beea890ab7ba32d114b7e3d799a17ccfef643a144f56507bc",
+    "Gameplay/GameClock.lua": "76e5a617c5d6dc18b1634b2d6799ea1c983bf9af569031cb09c042727a48285b",
+    "Gameplay/HUD.lua": "7d6b9f7dd5aaadb2bdd302b547c0f92c24bb5f52b72625e3e79530e2eef2bf03",
+    "Gameplay/Inventory.lua": "63fd5e5deff4874823e29f9eaf5f96906a207bcaac81a83ea5c970d39ecaee97",
+    "Gameplay/Loop.lua": "b2d4024c348ad690e56fba7f5a4e7a60ccbb260a18ae47588cc6af5bc92222d8",
+    "Gameplay/Persistence.lua": "c8207493dcfe6bd1a084d1dba3fd688adad0573894ac2d576e6a7b6cc60d573b",
+    "Gameplay/PlayerState.lua": "34e770dba6dde61a4f778455b96f193898d2dd8151422b184c3c5394e02b0a7c",
+    "Gameplay/UpdateSystem.lua": "f96bd324cd6ade84edf8c119e40261d569c06a8a7011df9c58349a21bbbe562e",
+    "GeneratedData/Fish.lua": "c7cfa04df130baf3c73d34759c15099f6365f95ca84b7940eb58ed0543459ba9",
+    "GeneratedData/Items.lua": "2d6b202c7f8439d2531513400a8da6ef87a461d34e9a2e4aaf2f019738104c5a",
+    "Integration/Bridge.lua": "fee48b05891ec24bb0e8e62d7c07eea3f531341e76e19b3bd3703bb4c2f11daf",
+    "Integration/Circle1BInput.lua": "b84a24881fd370fbea843e7231073013625c9634675a4c7bbb35b0b1c9318b88",
+    "Integration/Scene.lua": "ac1d8a902e9015ba5315031fd4e45f1b2036eb42529cdd77bb9f1692bf0706c5",
+    "Main.lua": "aacd7359f01c9e6f4f0fff60a29ba6a949acbe60fd5d23f7d5ce048c82e52ae3",
+    "Ocean/Bootstrap.lua": "1ce1a131b7f8cd78864a0185e64516ed672ec20d0783701a3951ecd4e0a1fa3e",
+    "Ocean/Camera.lua": "75532512629f2f33681d00cb58d9bea60248c8030d6cb218117e152c888b4197",
+    "Ocean/Config.lua": "344301c0b1b34bc9e4d0e9a2f8c00fcd6dfb3544eeefc50ff025ed11355b4078",
+    "Ocean/Draw.lua": "f467af0787c3c20d201c9281b42219664d099de2418d8a826812b329b2ffb825",
+    "Ocean/EntityDraw.lua": "d82eae40d93fe4d0bf019e3bd80fc9f49a6ea375376a944df0f0e9db14f7f322",
+    "Ocean/Fish.lua": "a6840109c22b4f76efd1747614c8e59b17aac332af15f876ae8fc0aace8ddae2",
+    "Ocean/FishData.lua": "95d90604f2dc84d4597dccec7276b3f91a3a1074adf131962e2fa6c641062563",
+    "Ocean/FusedScene.lua": "e2f563954fb4894314496cdf482dfb0c537f42cb9f22751b57ffbf1c67653c1a",
+    "Ocean/HUD.lua": "3e54576096a956becc6890a9aae91d1c1b2a781e62afd366658500cc31fff625",
+    "Ocean/Math.lua": "66d2d3cc13b4e97ac6efb62168a6dc30a6ea1a7c4f2e929413160c8c3629486c",
+    "Ocean/Movement.lua": "5cc823e916a2c19554de9da867eeca96515d36bbe8f60b6fa891bba2284a4b77",
+    "Ocean/ProjectedGeometry.lua": "8c2b7b46cef5c8db528c6ec83b0f3d2ae125f9f0b75e0b5bc97a10f5f5cf2653",
+    "Ocean/Projection.lua": "94941ed7913dd8edcce72855ba2d9c82afbd3a57eec385bb608885daf726c11d",
+    "Ocean/SceneState.lua": "5db3c000d403de80d20447a284519983cbfcdc31e4d6596a8fad47ceaa1f7c6c",
+    "Ocean/SeaDebug.lua": "9645d0673d933bdb9e3b50ac0dd0d3be436fed113875bbef23ba9c20fb4a0c31",
+    "Ocean/SeaDraw.lua": "ad90047d3fa0ce0597334135ca9ee627fc2ae133d383fb2419490becea4dee53",
+    "Ocean/SeaRuntime.lua": "b914c87a2557ff528426f7c587d92638f96c66ce6956054a609104f1fa78219f",
+    "Ocean/SeaViewArt.lua": "41dd1cfc3121e02c0723ef8eb3ce3122ac8229a5dd3cdbb042da56cfdc0e7632",
+    "Ocean/SpawnStrategy.lua": "7a248eb772b5223a4bf6e1e21984475e123b90fe71da1ecbcc53685cd939ca67",
+    "Ocean/State.lua": "cb95df6447bd3ba046a1d4f1b25d84ec6014756422b9bc7abc46dc0a8ad1db52",
+    "Ocean/SurfaceSignals.lua": "deedcfa005f51f8a3aef0d5a73bea4fcc99f540748a73adde0aea13758dc2c9c",
+    "Ocean/Wake.lua": "fcd5f4981ca7f4cb226c1a15198d433e4c91c2c2eca8fe4274d48a1ac380db15",
+    "Ocean/World.lua": "2ce2021c00c564cc43b95ebdfb485f5d7da9e655cf3f8e58e27e1260d9303e3b",
+    "SeaPreviewEntry.lua": "6bd8f0140b149d75628424806f3eaf2950f7bfe40d8e9b95614d1b77ce6553fa",
+    "Systems/BirdSystem.lua": "e8482b4bac7e0d4b905bf8c2a63059a5b9b0b473066fa8976513c7049e300406",
+    "Systems/ClockSystem.lua": "5839ce5f971f6ee66f9b82f61fab30cc1b73e3fa5b3533c78a5534d2d570827a",
+    "Systems/EntityStateSystem.lua": "571ac526dfba085970a7babd3e0048bf6724aa92ad54118e3714967bcb81cde3",
+    "Systems/FishSystem.lua": "92bb1b556c4548535166c7fae466046faaa3b5e2206546bf9529b9fae89fa59a",
+    "tests/ABIntegrationTests.lua": "0231ac859462dec97586135d5bc7d7491fa83ee97b0dcc4b33fc1699b506365a",
+    "tests/ArchitectureIntegrationTests.lua": "a39e1b26bd3e8aba30d2cc2417c49aaa958e934b44aa0d74151cad2c1d3425f4",
+    "tests/Circle1A2BarrelRenderTests.lua": "530ee6564029afad3f0eb80d4319488e1a88729286485592c1b46efebe9c91fc",
+    "tests/Circle1A2BarrelTests.lua": "08f3059765838fd0512ca3faf03063a702e9cbfbd6d34e0c61cc75ded90ef943",
+    "tests/Circle1A2FishingTests.lua": "72d6020a8325b50d617f0d0b69687e33737f831907b8ad33b8eb933eb187d3bd",
+    "tests/Circle1A2ScopeTests.lua": "24d4b92d232bff85bd4f093c06214f786231c7b1c8059c88a5847b36e1ffc3ce",
+    "tests/Circle1A2SignalsTests.lua": "22a8fddc4f68a31e6354f58113218f563b06dbfad82801aa6b56b0f1f96b76b5",
+    "tests/Circle1A3ExperienceTests.lua": "8c7481aeb09c84ef6cd286e0f14a01206df55f5f1fecfe837edb9a88e2504061",
+    "tests/Circle1A3InputTests.lua": "f7df75a4794c9c058b4a4c2d98f484a54c1bee99617c110ce762d3161d2e209f",
+    "tests/Circle1A3PortTests.lua": "9b103905a8df16c4adca87997de9c65598d1450f8a0d5d318cb23e2744473f7e",
+    "tests/Circle1A3RecognitionTests.lua": "3477c6265cd97c71b59c8d6bd69b88a344f8f5b43bd234299d6e02af0fad4908",
+    "tests/Circle1A3SignalsTests.lua": "e3e6380ce246cb512f466cf0b46873d05180b5c17238d782681f8ecd635f0700",
+    "tests/Circle1A3StabilityTests.lua": "f4c9a1463f516191a37ad33cad9de94819d671bd431a09eb0416e10af6dbc93c",
+    "tests/Circle1ABMergeFrameBudgetTests.lua": "81ed541f21f537871ec5fc27ce6f16268e3704ab2c5f4ae694cf7d73479eaf1c",
+    "tests/Circle1AFishLocksTests.lua": "504ad28b0bf7e945ee58a9b00a9ffa4e43157fea281bc7be1e59891fb088e016",
+    "tests/Circle1APredationCooldownTests.lua": "fbae1e48b96b7c60f30747fe078692ab3c0bf38bc48a4e641547a7aadd4fc811",
+    "tests/Circle1B2BarrelTests.lua": "154525cd16f3c49d9d99c7b827c90acefb00e0c893c4fa6c690ab773010566ce",
+    "tests/Circle1B2ProgressTests.lua": "23f2e4d623bf9289d8ca010c461f940c1d01d3b40c8bfe05163172cae600722c",
+    "tests/Circle1B2ScopeTests.lua": "48e190d33e8e87f3be0797dfe1c71e0475a578c3eb923f97adb586fd68c9b3b1",
+    "tests/Circle1B2ThrowTests.lua": "8f8db560c41ca189715224537c871ced81602530856637a915bb820a0217e303",
+    "tests/Circle1B2UITests.lua": "fe5018dbf340c97a459145c2b69cbe2ab96c879f0b934eda6b9f347b6b7e8d29",
+    "tests/Circle1B3ClockAsyncTests.lua": "006ac44b3404cc5007a89f6e5c9c83f5b4051e22c1427e83e96eedde46157f43",
+    "tests/Circle1B3CloudTests.lua": "9c4b049724965f3a8ec26d7930b7a245adc65d815f48c10f372aa6f816a18b30",
+    "tests/Circle1B3EconomyTests.lua": "47dda794a6e29b98457f06dd5615b36a1a983c2833ded5c2bae9b5da8ce84fec",
+    "tests/Circle1B3SceneUITests.lua": "8ced07a129ecf244a6c8f332524519f06b4b36f5431ca8bfc559f83634d26295",
+    "tests/Circle1B3SevenDaysTests.lua": "56c3008e1f22126e793bc5a7cdc359257bd13e5cbd14216dda456f147ecdb864",
+    "tests/Circle1B3SpatialTests.lua": "de4a029c22f67e3ac053a74d2a3ae0be76d86007597c8a54f888283cc9789639",
+    "tests/Circle1B5DiagnosticsIntegrationTests.lua": "0ffa35d888e84cf5ecbd265578e0e9bb27f38c233b5824a0b1c038c8162c26a1",
+    "tests/Circle1B5GameplayTests.lua": "109629128c7de4d29b9b0d4d78a2ce2fda5f4afb974e5724f1a6b79faaf3aef7",
+    "tests/Circle1B5PersistenceBarrelTests.lua": "dc2974023771df0ea5b9b0400c03593d6f9c1d66dd90c0debd455e491011b5a7",
+    "tests/Circle1B5PortDrawTests.lua": "1894c648fddb0337fa2ccc6187430f89d7467464ba20d13bba0e27ca369aa30e",
+    "tests/Circle1BFishingFlowTests.lua": "3510d3b366ad1c79169e14709d50ab5e3443383c08e2d9fca7c214837855d609",
+    "tests/Circle1BPendingCatchTests.lua": "c0b49d507c85e29ad822653c723ba8da84a11afbc7834bbfd3d45accc6077a52",
+    "tests/GameLoopSpec.lua": "ed4274f139197245d83ab87e19efb0413fa85bb98b6dad7c4541e676cb0c27f3",
+    "tests/GameLoopUISpec.lua": "c9d6df2b8e249d7f83cd8178cbb16bdd6aaf20497d933d15f8b4e78e5b6e7bb5",
+    "tests/NumericEconomySpec.lua": "80a6e973bc1823877b38f164bd220ec0c4cce709db018546a3ca3980108601c6",
+    "tests/PersistenceRegressionSpec.lua": "c00ac6a308fd06fbf2eb59f4d53199c34f3b67ace2e51b8dddb90b7474bde1c9",
+    "tests/SeaEngineSmoke.lua": "700bdf37e55a805b33eb1950ff73f4110c611637e6dae42a0f85b74efdee6be7",
+    "tests/SeaFusedSceneTests.lua": "cd1fe5887d9fe46430a378fb392e63848cfac5306e81143e79f3c14698e28b83",
+    "tests/SeaFusionRenderTests.lua": "279d9f3afe251feb68fd75b536fe128d86351180e4c0500b3189872249173783",
+    "tests/SeaNativeVoyage.lua": "4b62871e1a031347fd6b16a1bebc3a356304b6f9d5f4867b805fd7555d6837f4",
+    "tests/SeaNativeVoyageEntry.lua": "e84d273e3617549ee3668e686975b5285e56df02bfc183979ea65a4a735ad895",
+    "tests/SeaRuntimeTests.lua": "f7cdceae192d87d9b7bee4449e074c0124420828b0283a26ad031afe5c0281da",
+    "tests/SeaStabilityTests.lua": "57bbdb816cfaeef529d8833508f2ee73180bb07afbf115c6b16b16cfc483d6a2",
+    "tests/SeaViewUpgradeTests.lua": "dca2f1dfb4da57017982131da309818c0d9dadf61cf62988dd0a2fdb872f3f70",
+    "tests/ShopStockSpec.lua": "b4398c05e73d3932ec73e3171ea03c48d0bc331edf6232a86a0b358c19a93723",
+    "tests/SurfaceRiseTests.lua": "ed4528e0f27f411c4130fad4a6fb2ec92d349c558ecd3555ad70482b66751d14",
+    "tests/SurfaceSignalsTests.lua": "8b5a38e02354f84d92d6e3ebf061e2fe0608ae3d992904c09c7ff6d754b18cf0"
+  }
+}
