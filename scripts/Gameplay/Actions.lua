@@ -211,7 +211,7 @@ function Actions:BeginSelection()
     Diagnostics.Call('Actions','fishing_selection_clear_movement',function()
         return self.runtime:ClearMovementTarget()
     end)
-    self.loop:SetMessage('点击海面选择网心，再确认抛网。')
+    self.loop:SetMessage('点击或触摸30米内合法海面，立即抛网。')
     actionEvent('fishing_selection', nil, 'operation', 'started')
     return true
 end
@@ -231,7 +231,7 @@ function Actions:SetFishingCenter(center)
         return false,'cast_out_of_range_or_invalid'
     end
     self.selection.center=copyPoint(center)
-    self.loop:SetMessage('网心已选定，请确认抛网。')
+    self.loop:SetMessage('网心已选定。')
     actionEvent('fishing_center', nil, 'operation', 'selected')
     return true
 end
