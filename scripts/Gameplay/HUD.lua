@@ -66,6 +66,7 @@ local ERROR_MESSAGES = {
     new_day_preparation_failed = "港口或海洋准备未完成，请重试。",
     settlement_snapshot_failed = "日结快照尚未生成，请重试保存。",
     fishing_runtime_interface_unavailable = "捕鱼接口暂未就绪，请稍后重试。",
+    cast_out_of_range_or_invalid = "请点击船只30米内的合法海面，网心不能落在陆地上。",
     fishing_requires_bridge_token = "请从正式捕鱼按钮开始操作。",
     pending_catch_required = "请先处理已有待接收收获；物品会完整保留。",
     no_forced_return = "当前没有待确认的强制返港。",
@@ -241,6 +242,7 @@ function HUD.Create(loop, parent, debugTools)
         width = "100%",
         height = "100%",
         padding = 12,
+        paddingBottom = 72,
         gap = 8,
         flexDirection = "column",
         pointerEvents = "box-none",
@@ -316,7 +318,15 @@ function HUD.Create(loop, parent, debugTools)
     refs.fishingPanel:AddChild(refs.fishingProgress)
     refs.fishingPanel:AddChild(refs.fishingResult)
     local fishingButtons = UI.Panel {
-        width = "100%",
+        id = "gameplayFishingActions",
+        position = "absolute",
+        left = 12,
+        right = 12,
+        bottom = 12,
+        minHeight = 48,
+        padding = 5,
+        backgroundColor = { 31, 48, 51, 238 },
+        borderRadius = 8,
         flexDirection = "row",
         flexWrap = "wrap",
         alignItems = "center",
@@ -325,16 +335,11 @@ function HUD.Create(loop, parent, debugTools)
     refs.beginFishing = makeButton("捕鱼 · 选择网心", function()
         invokeLoop("BeginFishingSelection")
     end, "primary", 138)
-    refs.confirmFishing = makeButton("确认抛网", function()
-        invokeLoop("ConfirmFishing")
-    end, "primary", 96)
     refs.cancelFishing = makeButton("取消捕鱼", function()
         invokeLoop("CancelFishingAction")
     end, "danger", 88)
     fishingButtons:AddChild(refs.beginFishing)
-    fishingButtons:AddChild(refs.confirmFishing)
     fishingButtons:AddChild(refs.cancelFishing)
-    refs.fishingPanel:AddChild(fishingButtons)
     root:AddChild(refs.fishingPanel)
 
     local actionBar = UI.Panel {
@@ -609,6 +614,9 @@ function HUD.Create(loop, parent, debugTools)
     end
 
     root:AddChild(contentScroll)
+    -- Pin controls to the SafeAreaView bottom; reserve padding for them above.
+    -- The modal remains the final child and covers the controls when open.
+    root:AddChild(fishingButtons)
 
     -- 统一遮罩承载强制返港、每日结算和拜访老人的反馈。
     refs.overlay = UI.Panel {
@@ -939,16 +947,9 @@ function HUD.Create(loop, parent, debugTools)
         local fishingActive = fishingPhase == "casting" or fishingPhase == "landed" or fishingCleanupPending
         local fishingRestricted = fishingSelecting or fishingActive
         local fishingTerminal = fishingPhase == "complete" or fishingPhase == "failed" or fishingPhase == "cancelled"
-        local fishingCenter = fishingState and fishingState.center
-        local centerX = fishingCenter and fishingCenter.x
-        local centerY = fishingCenter and fishingCenter.y
         local fishingStatus
         if fishingSelecting then
-            if centerX ~= nil and centerY ~= nil then
-                fishingStatus = string.format("网心已设定（%.1f，%.1f），确认后抛网。", centerX, centerY)
-            else
-                fishingStatus = "请在海面选择网心，再确认抛网。"
-            end
+            fishingStatus = "点击或触摸30米内合法海面，立即抛网；可取消选点。"
         elseif fishingPhase == "casting" then
             fishingStatus = "抛网进行中。"
         elseif fishingPhase == "landed" then
@@ -995,8 +996,7 @@ function HUD.Create(loop, parent, debugTools)
         refs.beginFishing:SetVisible(not inPort and not fishingSelecting and not fishingActive)
         refs.beginFishing:SetDisabled(not ready or busy or inPort or loop.inventoryOpen == true
             or loop.elderOpen == true or fishingRestricted)
-        refs.confirmFishing:SetVisible(fishingSelecting)
-        refs.confirmFishing:SetDisabled(busy or centerX == nil or centerY == nil)
+        fishingButtons:SetVisible(not inPort or fishingRestricted)
         refs.cancelFishing:SetVisible(fishingRestricted)
         refs.cancelFishing:SetText(fishingCleanupPending and "重试清理" or "取消捕鱼")
         refs.cancelFishing:SetDisabled(false)
