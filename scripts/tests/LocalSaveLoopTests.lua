@@ -293,12 +293,15 @@ function Tests.Run()
         "SellAllSellsOnlyFishAndSumsIncome", "SellAllEmptyInventoryRejected", "SellAllAtSeaRejected",
         "ReturnToPortOutOfRangeGivesCompass",
     }
-    local failures = {}
+    -- 返回 { results = ... } 格式：run_circle1_b.py 与 run_sea_view_regression.py 两个 runner 均认。
+    local results = {}
     for _, name in ipairs(names) do
         local ok, err = xpcall(Tests[name], debug.traceback)
-        if not ok then failures[#failures + 1] = { name = name, error = tostring(err) } end
+        results[#results + 1] = {
+            name = name, passed = ok, error = ok and "" or tostring(err),
+        }
     end
-    return { passed = #failures == 0, total = #names, failures = failures }
+    return { results = results, metrics = {} }
 end
 
 return Tests
