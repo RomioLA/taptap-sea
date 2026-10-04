@@ -183,6 +183,8 @@ local FALLBACK_PALETTE = {
     backdrop = { 4, 20, 40, 150 },
     disabledBg = { 96, 116, 138, 210 },
     disabledText = { 190, 204, 216, 220 },
+    infoStroke = { 10, 28, 46, 225 },
+    infoShadow = { 6, 16, 28, 150 },
 }
 local UI_PALETTE = {}
 local UI_SIZE = { touchMajor = 88, touchMinor = 64, touchGap = 12, buttonMinHeight = 44, radiusCard = 10 }
@@ -221,6 +223,21 @@ local function makeLabel(text, size, color, weight)
         fontColor = color or UI_PALETTE.textOnDark,
         fontWeight = weight or "normal",
         whiteSpace = "normal",
+    }
+end
+
+-- 设计方案 v2.0（零遮挡）：信息层无底板纯文字，靠描边+阴影保证海面上
+-- 白天/夜晚均可读。urhox Label 原生支持 textStroke/textShadow（测试桩
+-- 环境未知字段会被忽略，不影响断言）。
+local function makeInfoLabel(text, size, color, weight)
+    return UI.Label {
+        text = text,
+        fontSize = size or 14,
+        fontColor = color or UI_PALETTE.textOnDark,
+        fontWeight = weight or "normal",
+        whiteSpace = "normal",
+        textStroke = { width = 3, color = UI_PALETTE.infoStroke },
+        textShadow = { offsetX = 1, offsetY = 1, blur = 2, color = UI_PALETTE.infoShadow },
     }
 end
 
@@ -311,27 +328,23 @@ function HUD.Create(loop, parent, debugTools)
         pointerEvents = "box-none",
     }
 
+    -- v2.0 零遮挡：header 保持 root 首子节点（测试契约 + Scene 左侧注入依赖），
+    -- 但去掉纯色底板——只留描边文字，固定在画面左上角。
     local header = UI.Panel {
         width = "100%",
-        minHeight = 48,
+        minHeight = 40,
         flexDirection = "row",
         alignItems = "center",
+        flexWrap = "wrap",
         gap = 8,
-        paddingHorizontal = 10,
-        backgroundColor = UI_PALETTE.seaDeep,
-        borderColor = UI_PALETTE.border,
-        borderWidth = 1,
-        borderRadius = 12,
     }
-    themedPanels[#themedPanels + 1] = { widget = header, day = UI_PALETTE.seaDeep, night = UI_PALETTE.seaNight }
     -- UI 精简（2026-10-04）：顶部只保留"看"的信息（天/昼夜/金币），去掉常驻标题；
     -- 详细提示按需显隐（见 refresh 内各 SetVisible），常态下海面占比最大化。
-    refs.day = makeLabel("第 1 天", 14)
-    refs.phase = makeLabel("白天 · 剩余 -- 秒", 14, UI_PALETTE.textMuted)
-    refs.money = makeLabel("钱：0", 14, UI_PALETTE.coinBright, "bold")
+    refs.day = makeInfoLabel("第 1 天", 14)
+    refs.phase = makeInfoLabel("白天 · 剩余 -- 秒", 14, UI_PALETTE.textMuted)
+    refs.money = makeInfoLabel("钱：0", 14, UI_PALETTE.coinBright, "bold")
     header:AddChild(refs.day)
     header:AddChild(refs.phase)
-    header:AddChild(UI.Spacer())
     header:AddChild(refs.money)
     refs.debugToggle = makeButton("开发调试", function()
         if refs.debugPanel then refs.debugPanel:SetVisible(not refs.debugPanel:IsVisible()) end
@@ -339,45 +352,43 @@ function HUD.Create(loop, parent, debugTools)
     if debugTools and debugTools.enabled == true then header:AddChild(refs.debugToggle) end
     root:AddChild(header)
 
+    -- v2.0 零遮挡：第二行信息同样去底板，纯描边文字（root 次子节点保留给
+    -- Scene 的 flexWrap 注入契约）。
     local stats = UI.Panel {
         width = "100%",
-        minHeight = 42,
+        minHeight = 36,
         flexDirection = "row",
         alignItems = "center",
+        flexWrap = "wrap",
         gap = 14,
-        paddingHorizontal = 10,
-        backgroundColor = UI_PALETTE.seaMid,
-        borderRadius = 10,
     }
-    themedPanels[#themedPanels + 1] = { widget = stats, day = UI_PALETTE.seaMid, night = UI_PALETTE.seaNight }
-    refs.stamina = makeLabel("体力：0/0", 14)
-    refs.pauseReasons = makeLabel("暂停：无", 12, UI_PALETTE.textMuted)
-    refs.save = makeLabel("尚未保存", 12, UI_PALETTE.textMuted)
+    refs.stamina = makeInfoLabel("体力：0/0", 14)
+    refs.pauseReasons = makeInfoLabel("暂停：无", 12, UI_PALETTE.textMuted)
+    refs.save = makeInfoLabel("尚未保存", 12, UI_PALETTE.textMuted)
     refs.save:SetVisible(false) -- 常态隐藏，仅读取中/保存中/失败时显示（见 refresh）
     stats:AddChild(refs.stamina)
-    refs.inventorySummary = makeLabel("背包 0 / 0 格", 12, { 184, 204, 190, 255 })
+    refs.inventorySummary = makeInfoLabel("背包 0 / 0 格", 12)
     stats:AddChild(refs.inventorySummary)
     stats:AddChild(refs.pauseReasons)
     stats:AddChild(UI.Spacer())
     stats:AddChild(refs.save)
     root:AddChild(stats)
 
-    refs.message = makeLabel("", 13, UI_PALETTE.textGold)
+    -- v2.0 零遮挡：消息条改为透明 toast 文字（描边），仅真实反馈出现时显示。
+    refs.message = makeInfoLabel("", 13, UI_PALETTE.textGold)
     refs.messagePanel = UI.Panel {
         width = "100%",
-        minHeight = 28,
-        paddingHorizontal = 10,
+        minHeight = 24,
         justifyContent = "center",
-        backgroundColor = UI_PALETTE.seaMid,
-        borderRadius = 14,
         children = { refs.message },
     }
-    themedPanels[#themedPanels + 1] = { widget = refs.messagePanel, day = UI_PALETTE.seaMid, night = UI_PALETTE.seaNight }
     root:AddChild(refs.messagePanel)
 
-    refs.portAccessReason = makeLabel("锚形标记=港口（交易中心）· 返港/交易需距港≤10米。", 12, { 203, 218, 202, 255 })
+    refs.portAccessReason = makeInfoLabel("锚形标记=港口（交易中心）· 返港/交易需距港≤10米。", 12, UI_PALETTE.textMuted)
     root:AddChild(refs.portAccessReason)
 
+    -- v2.0 零遮挡：捕鱼面板只在选择/收网/结算过程中出现（点击"捕鱼"入口后）；
+    -- 常驻入口按钮移至右下按钮坞（actionBar 段）。
     refs.fishingPanel = card("捕鱼")
     refs.fishingStatus = makeLabel("选择海面网心开始捕鱼。", 13)
     refs.fishingProgress = makeLabel("动作进度：0%", 12, { 180, 203, 191, 255 })
@@ -385,6 +396,9 @@ function HUD.Create(loop, parent, debugTools)
     refs.fishingPanel:AddChild(refs.fishingStatus)
     refs.fishingPanel:AddChild(refs.fishingProgress)
     refs.fishingPanel:AddChild(refs.fishingResult)
+    refs.beginFishing = makeButton("捕鱼 · 选择网心", function()
+        invokeLoop("BeginFishingSelection")
+    end, "primary", 138)
     local fishingButtons = UI.Panel {
         width = "100%",
         flexDirection = "row",
@@ -392,29 +406,38 @@ function HUD.Create(loop, parent, debugTools)
         alignItems = "center",
         gap = 7,
     }
-    refs.beginFishing = makeButton("捕鱼 · 选择网心", function()
-        invokeLoop("BeginFishingSelection")
-    end, "primary", 138)
     refs.confirmFishing = makeButton("确认抛网", function()
         invokeLoop("ConfirmFishing")
     end, "primary", 96)
     refs.cancelFishing = makeButton("取消捕鱼", function()
         invokeLoop("CancelFishingAction")
     end, "danger", 88)
-    fishingButtons:AddChild(refs.beginFishing)
     fishingButtons:AddChild(refs.confirmFishing)
     fishingButtons:AddChild(refs.cancelFishing)
     refs.fishingPanel:AddChild(fishingButtons)
     root:AddChild(refs.fishingPanel)
 
+    -- v2.0 零遮挡按钮坞：右下角拇指区常驻的"明确按钮"集合。容器透明 +
+    -- box-none——空白区域点击穿透海面，只有按钮本身接收点击。
+    -- zIndex 低于抽屉(90/91)与模态(100)：抽屉/弹窗打开时自然盖住按钮坞。
     local actionBar = UI.Panel {
-        width = "100%",
-        minHeight = 42,
-        flexDirection = "row",
-        flexWrap = "wrap",
-        alignItems = "center",
+        position = "absolute",
+        right = 0,
+        bottom = 0,
+        zIndex = 60,
+        padding = 10,
         gap = 7,
+        flexDirection = "column",
+        alignItems = "flex-end",
+        pointerEvents = "box-none",
     }
+    local function dockRow()
+        return UI.Panel {
+            flexDirection = "row",
+            gap = 7,
+            pointerEvents = "box-none",
+        }
+    end
     refs.depart = makeButton("出航", function() invokeLoop("Depart") end, "primary", 80)
     refs.returnToPort = makeButton("返港", function() invokeLoop("ReturnToPort") end, "secondary", 80)
     refs.endToday = makeButton("结束今日", function() invokeLoop("EndToday") end, "primary", 98)
@@ -426,13 +449,20 @@ function HUD.Create(loop, parent, debugTools)
     refs.elderToggle = makeButton("拜访老人", function()
         invokeLoop("SetElderOpen", not (loop.elderOpen == true))
     end, "secondary", 98)
-    actionBar:AddChild(refs.depart)
-    actionBar:AddChild(refs.returnToPort)
-    actionBar:AddChild(refs.endToday)
-    actionBar:AddChild(refs.inventoryToggle)
-    actionBar:AddChild(refs.elderToggle)
-    actionBar:AddChild(refs.loadSaved)
-    actionBar:AddChild(refs.newRun)
+    local dockUtility = dockRow()
+    dockUtility:AddChild(refs.loadSaved)
+    dockUtility:AddChild(refs.newRun)
+    local dockContext = dockRow()
+    dockContext:AddChild(refs.inventoryToggle)
+    dockContext:AddChild(refs.elderToggle)
+    local dockMain = dockRow()
+    dockMain:AddChild(refs.depart)
+    dockMain:AddChild(refs.returnToPort)
+    dockMain:AddChild(refs.endToday)
+    dockMain:AddChild(refs.beginFishing)
+    actionBar:AddChild(dockUtility)
+    actionBar:AddChild(dockContext)
+    actionBar:AddChild(dockMain)
     root:AddChild(actionBar)
 
     local contentScroll = UI.ScrollView {
@@ -534,8 +564,16 @@ function HUD.Create(loop, parent, debugTools)
     refs.barrelPanel:SetVisible(false)
     content:AddChild(refs.barrelPanel)
 
-    refs.scopePanel = card("宝物与望远镜")
-    refs.scopeStatus = makeLabel("尚未获得透镜；无法查看或切换望远镜功能。", 13)
+    -- v2.0 零遮挡：望远镜条目去卡片底板，收为一行紧凑文字+按钮；
+    -- 测试契约要求"透镜未获得"按钮无透镜时可见且禁用，故保留常驻。
+    refs.scopePanel = UI.Panel {
+        width = "100%",
+        flexDirection = "row",
+        flexWrap = "wrap",
+        alignItems = "center",
+        gap = 7,
+    }
+    refs.scopeStatus = makeInfoLabel("尚未获得透镜；无法查看或切换望远镜功能。", 12, UI_PALETTE.textMuted)
     refs.scopePanel:AddChild(refs.scopeStatus)
     refs.scopeToggle = makeButton("切换望远镜", function()
         invokeLoop(loop.scopeSyncError and "DisableScope" or "ToggleScope")
@@ -1141,7 +1179,9 @@ function HUD.Create(loop, parent, debugTools)
         end
         refs.fishingResult:SetVisible(fishingTerminal)
         setText(refs.fishingResult, "fishingResult", resultText)
-        refs.fishingPanel:SetVisible(not inPort or fishingRestricted or fishingTerminal)
+        -- v2.0 零遮挡：捕鱼面板只在捕鱼过程（选择/收网/清理/结算）中出现；
+        -- 待机状态的出海画面只保留左上信息文字与右下按钮坞。
+        refs.fishingPanel:SetVisible(fishingRestricted or fishingTerminal)
         refs.beginFishing:SetVisible(not inPort and not fishingSelecting and not fishingActive)
         refs.beginFishing:SetDisabled(not ready or busy or inPort or loop.inventoryOpen == true
             or loop.elderOpen == true or fishingRestricted)
@@ -1281,8 +1321,8 @@ function HUD.Create(loop, parent, debugTools)
             refs.scopeToggle:SetDisabled(busy or fishingRestricted)
         end
 
-        -- 注：scopePanel（宝物与望远镜）保留常驻——测试契约要求无透镜时显示
-        -- "透镜未获得"禁用按钮；整卡收纳留待 UI 方案 v1.0 确认后的正式重构。
+        -- 注：scopePanel（望远镜条目）保留常驻——测试契约要求无透镜时显示
+        -- "透镜未获得"禁用按钮；v2.0 已将其压成一行透明文字+按钮。
 
         refs.throwSelectionPanel:SetVisible(throwSelection ~= nil)
         if throwSelection then
