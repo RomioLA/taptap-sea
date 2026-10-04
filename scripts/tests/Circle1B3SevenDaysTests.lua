@@ -336,7 +336,7 @@ local function route(appleGiftDays)
             clickButton(root, "出航")
             advance(2, 1, 0)
             local center = runtime:GetShipPosition()
-            clickButton(root, "捕鱼 · 选择网心")
+            clickButton(root, "捕鱼")
             assert(bridge:OnSeaPointer(center), "sea-pointer selection should be consumed")
             hud.Refresh() -- mirrors Scene's onSeaPointer refresh after the ocean callback
             clickButton(root, "确认抛网")

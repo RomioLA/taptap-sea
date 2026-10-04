@@ -142,10 +142,11 @@ function World:Init()
     self.fixedBarrelGeneration = barrelGenerationCounter
     local barrel = Config.world.fixedBarrel
     assert(self:isPositionFree(barrel.position, barrel.radius), "fixed barrel must be in open sea")
-    -- Separate identity from other floats; no FSM, expiry, drift or obstruction.
+    -- 碰撞实体：与岛屿同一 swept-circle 阻挡（World:moveEntity 检查 blocking），
+    -- 船不能穿过木桶；接触距离 1.8+2=3.8m < operateDistance 5m，抵近即可检查。
     self.fixedBarrel = self:spawn({ entityType = "float", kind = "fixed", layer = "surface",
         contentId = "driftwood_barrel", position = barrel.position, radius = barrel.radius,
-        blocking = false })
+        blocking = true })
 end
 
 ---@return SeaEntity

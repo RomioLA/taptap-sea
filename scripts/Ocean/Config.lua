@@ -46,13 +46,10 @@ local Config = {
         { entityType = "island", position = { x = 35, y = 25 }, radius = 12, blocking = true },
         { entityType = "island", position = { x = -80, y = 90 }, radius = 20, blocking = true },
         { entityType = "float", position = { x = 10, y = 0 }, radius = 2, blocking = false },
-    },
-    -- Circle1 A2 temporary required geometry, not a planning/data-schema entry.
-    -- Near the existing (35,25), radius12 island; reachable by the open-water
-    -- route (0,0) -> (35,5) -> (60,25). Reuses the existing float's 2m size.
-    -- Discovery and operation thresholds stay in Config.interaction (80/20/5).
-    fixedBarrel = { position = { x = 60, y = 25 }, radius = 2,
-        tuningStatus = "CIRCLE1_A2_PROVISIONAL_REQUIRED_GEOMETRY" },
+    },    -- 新手教程点位：出港点(0,0)右侧近海的固定木桶，出港即可见、抵达即教学。
+    -- 碰撞实体（blocking），靠近 ≤ operateDistance(5m) 可检查（World:Init 注册）。
+    fixedBarrel = { position = { x = 14, y = 6 }, radius = 2,
+        tuningStatus = "TUTORIAL_PROVISIONAL_GEOMETRY" },
 },
     camera = { tuningStatus = "SEA_VIEW_VISUAL_TEST_VALUE",
     minX = 0.35, maxX = 0.65, minY = 0.45, maxY = 0.75,

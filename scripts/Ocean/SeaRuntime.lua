@@ -223,6 +223,11 @@ function Runtime:GetFixedBarrel()
         position = readOnlySnapshot(M.copy(barrel.position)) })
 end
 
+---木桶操作半径（新手教程点位按钮显隐用），权威值仍在 Config.interaction。
+function Runtime:GetBarrelOperateDistance()
+    return Config.interaction.operateDistance
+end
+
 ---@param id string
 ---@param generation integer
 ---@return boolean, string?

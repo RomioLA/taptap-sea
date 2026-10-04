@@ -412,6 +412,37 @@ function Loop:CanAccessPort()
     return near, reason, details
 end
 
+---新手教程木桶方位与可达性（供 HUD 按钮显隐）；只读，不改任何状态。
+---@return boolean, string?, GameplayBarrelAccessDetails?
+function Loop:GetBarrelAccess()
+    if not self.runtime or type(self.runtime.GetFixedBarrel) ~= "function"
+        or type(self.runtime.GetShipPosition) ~= "function" then
+        return false, "barrel_interface_unavailable"
+    end
+    local ok, barrel = pcall(self.runtime.GetFixedBarrel, self.runtime)
+    if not ok or type(barrel) ~= "table" or type(barrel.position) ~= "table"
+        or type(barrel.position.x) ~= "number" then
+        return false, "barrel_unavailable"
+    end
+    local okShip, ship = pcall(self.runtime.GetShipPosition, self.runtime)
+    if not okShip or type(ship) ~= "table" or type(ship.x) ~= "number" then
+        return false, "barrel_position_unavailable"
+    end
+    local operateDistance = 5
+    if type(self.runtime.GetBarrelOperateDistance) == "function" then
+        local okDist, dist = pcall(self.runtime.GetBarrelOperateDistance, self.runtime)
+        if okDist and type(dist) == "number" then operateDistance = dist end
+    end
+    local dx = barrel.position.x - ship.x
+    local dy = barrel.position.y - ship.y
+    local distance = math.sqrt(dx * dx + dy * dy)
+    local near = distance <= operateDistance
+    ---@class GameplayBarrelAccessDetails
+    local details = { distance = distance, shipX = ship.x, shipY = ship.y,
+        barrelX = barrel.position.x, barrelY = barrel.position.y, operateDistance = operateDistance }
+    return near, near and nil or "barrel_out_of_range", details
+end
+
 -- Only forced return, new-day preparation, new run and restore call this.
 function Loop:PreparePort(reason)
     if not self.runtime then return true end

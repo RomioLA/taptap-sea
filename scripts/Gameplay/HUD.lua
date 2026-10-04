@@ -158,9 +158,21 @@ local function copyItems(loop)
     return result
 end
 
+local ITEM_NAME_FALLBACK = {
+    apple = "苹果", bait = "鱼饵", sardine = "沙丁鱼", tuna = "金枪鱼",
+    wood = "木材", mineral = "矿产", scopeLens = "望远镜",
+}
+
+-- 开场教学（事物设定集：被救老人以陪伴者身份开场，赠旧背包——内含开局苹果与鱼饵）。
+-- HUD 演出层实现：不进 Loop 状态机、不阻塞出航/存档；每个周目(generation)在港演出一次。
+local OPENING_ELDER_TEXT = "被救起的老人把一只旧背包递给你：“孩子，这海上讨生活，"
+    .. "先学会看海——海鸟盘旋、水面翻花的地方才有鱼。"
+    .. "背包里有些苹果和鱼饵，出海去试试吧。出港往右看，那只木桶是我的旧物，靠近了敲一敲。”"
+
 local function itemName(itemId)
     local definition = Items.GetDefinition(itemId)
-    return definition and definition.name or tostring(itemId)
+    if definition and definition.name then return definition.name end
+    return ITEM_NAME_FALLBACK[itemId] or tostring(itemId)
 end
 
 -- 玩家界面设计方案 v1.0（2026-10-04）：所有取色来自 config.ui.palette；
@@ -216,14 +228,18 @@ local function makeThemer()
     end
 end
 
-local function makeLabel(text, size, color, weight)
-    return UI.Label {
+local function makeLabel(text, size, color, weight, extraProps)
+    local props = {
         text = text,
         fontSize = size or 14,
         fontColor = color or UI_PALETTE.textOnDark,
         fontWeight = weight or "normal",
         whiteSpace = "normal",
     }
+    if extraProps then
+        for key, value in pairs(extraProps) do props[key] = value end
+    end
+    return UI.Label(props)
 end
 
 -- 设计方案 v2.0（零遮挡）：信息层无底板纯文字，靠描边+阴影保证海面上
@@ -303,6 +319,9 @@ function HUD.Create(loop, parent, debugTools)
         addItemText = "",
         selectedItemIndex = nil,
         storyShownToken = nil,
+        openingDismissedGeneration = nil,
+        openingActive = false,
+        openingGeneration = nil,
     }
     ---@type table<string, any>
     local refs = {}
@@ -414,9 +433,11 @@ function HUD.Create(loop, parent, debugTools)
     refs.fishingPanel:AddChild(refs.fishingStatus)
     refs.fishingPanel:AddChild(refs.fishingProgress)
     refs.fishingPanel:AddChild(refs.fishingResult)
-    refs.beginFishing = makeButton("捕鱼 · 选择网心", function()
+    -- v1.1：捕鱼入口收敛为按钮坞的单个"捕鱼"按钮；引导文字走消息条（对话形式），
+    -- 本面板只在抛网/收网/结算过程中出现，承载 确认抛网/取消/重试清理。
+    refs.beginFishing = makeButton("捕鱼", function()
         invokeLoop("BeginFishingSelection")
-    end, "primary", 138)
+    end, "primary", 72)
     local fishingButtons = UI.Panel {
         width = "100%",
         flexDirection = "row",
@@ -467,10 +488,22 @@ function HUD.Create(loop, parent, debugTools)
     refs.elderToggle = makeButton("拜访老人", function()
         invokeLoop("SetElderOpen", not (loop.elderOpen == true))
     end, "secondary", 98)
+    -- 与捕鱼同级的上下文按钮：靠近出港点右侧木桶（新手教程点位）后出现；
+    -- 望远镜（窥视镜）在获得后常驻、未获得时靠近木桶作为线索入口。
+    refs.barrelToggle = makeButton("检查木桶", function()
+        invokeLoop("BeginBarrelInspection")
+    end, "secondary", 96)
+    refs.barrelToggle:SetVisible(false)
+    refs.scopeToggleBar = makeButton("望远镜", function()
+        invokeLoop(loop.scopeSyncError and "DisableScope" or "ToggleScope")
+    end, "secondary", 80)
+    refs.scopeToggleBar:SetVisible(false)
     local dockUtility = dockRow()
     dockUtility:AddChild(refs.loadSaved)
     dockUtility:AddChild(refs.newRun)
     local dockContext = dockRow()
+    dockContext:AddChild(refs.barrelToggle)
+    dockContext:AddChild(refs.scopeToggleBar)
     dockContext:AddChild(refs.inventoryToggle)
     dockContext:AddChild(refs.elderToggle)
     local dockMain = dockRow()
@@ -908,7 +941,15 @@ function HUD.Create(loop, parent, debugTools)
         whiteSpace = "normal",
     }
     refs.storyBody:AddChild(refs.storyText)
-    refs.storyClose = makeButton("结束对话", function() invokeLoop("CloseStoryDialog") end, "primary", 104)
+    refs.storyClose = makeButton("结束对话", function()
+        if state.openingActive then
+            state.openingDismissedGeneration = state.openingGeneration
+            state.openingActive = false
+            refresh()
+        else
+            invokeLoop("CloseStoryDialog")
+        end
+    end, "primary", 104)
     refs.storyBody:AddChild(refs.storyClose)
     refs.modalCard:AddChild(refs.storyBody)
     refs.overlay:AddChild(refs.modalCard)
@@ -989,7 +1030,9 @@ function HUD.Create(loop, parent, debugTools)
                 backgroundColor = { 45, 64, 61, 220 },
                 borderRadius = 5,
             }
-            inventoryRow:AddChild(makeLabel(string.format("%02d · %s", itemIndex, name), 12))
+            -- 名称标签必须占满剩余宽度：row 布局下无宽度约束的 label 会被压缩为不可见。
+            inventoryRow:AddChild(makeLabel(string.format("%02d · %s", itemIndex, name), 12,
+                nil, nil, { flexGrow = 1, flexBasis = 0 }))
             local itemActions = makeButton("操作", function()
                 state.selectedItemIndex = itemIndex
                 refresh()
@@ -1014,7 +1057,8 @@ function HUD.Create(loop, parent, debugTools)
                     alignItems = "center",
                     gap = 5,
                 }
-                saleRow:AddChild(makeLabel(string.format("%s · 槽位 %d", name, itemIndex), 12))
+                saleRow:AddChild(makeLabel(string.format("%s · 槽位 %d", name, itemIndex), 12,
+                    nil, nil, { flexGrow = 1, flexBasis = 0 }))
                 local price = definition.sellPrice
                 local saleButton = makeButton(price and ("出售 ¥" .. tostring(price)) or "售价未定", function()
                     invokeLoop("Sell", itemIndex, itemId, cargoRevision)
@@ -1113,7 +1157,8 @@ function HUD.Create(loop, parent, debugTools)
         local storyDialog
         if type(loop.GetStoryDialog) == "function" then
             local ok, value = pcall(loop.GetStoryDialog, loop)
-            if ok and type(value) == "table" and value.kind == "paper"
+            if ok and type(value) == "table"
+                and (value.kind == "paper" or value.kind == "elder")
                 and type(value.token) == "table" and type(value.text) == "string" then
                 storyDialog = value
             end
@@ -1203,6 +1248,24 @@ function HUD.Create(loop, parent, debugTools)
         refs.beginFishing:SetVisible(not inPort and not fishingSelecting and not fishingActive)
         refs.beginFishing:SetDisabled(not ready or busy or inPort or loop.inventoryOpen == true
             or loop.elderOpen == true or fishingRestricted)
+        -- 新手教程点位：靠近出港点右侧木桶（≤操作距离+3m 余量）时出现 检查木桶/望远镜；
+        -- 望远镜获得后常驻（设定集：窥视镜=看海面下）。
+        local barrelNearForDock, barrelDistanceForDock = false, nil
+        if type(loop.GetBarrelAccess) == "function" then
+            local okBarrel, nearBarrel, _barrelReason, barrelDetails = pcall(loop.GetBarrelAccess, loop)
+            if okBarrel and type(barrelDetails) == "table" and type(barrelDetails.distance) == "number" then
+                barrelDistanceForDock = barrelDetails.distance
+                barrelNearForDock = nearBarrel == true
+                    or barrelDetails.distance <= (barrelDetails.operateDistance or 5) + 3
+            end
+        end
+        local barrelDockEngaged = bucketActiveForInput or (barrelState ~= nil and barrelState.active == true)
+        refs.barrelToggle:SetVisible(not inPort and (barrelNearForDock or barrelDockEngaged))
+        refs.barrelToggle:SetDisabled(busy or fishingRestricted
+            or (not barrelNearForDock and not barrelDockEngaged))
+        refs.scopeToggleBar:SetVisible(not inPort and (hasLens or barrelNearForDock))
+        refs.scopeToggleBar:SetText(hasLens and (scopeEnabled and "望远镜·开" or "望远镜·关") or "望远镜")
+        refs.scopeToggleBar:SetDisabled(busy or fishingRestricted)
         refs.confirmFishing:SetVisible(fishingSelecting)
         refs.confirmFishing:SetDisabled(busy or centerX == nil or centerY == nil)
         refs.cancelFishing:SetVisible(fishingRestricted)
@@ -1288,8 +1351,8 @@ function HUD.Create(loop, parent, debugTools)
             or (elderPresent and "拜访老人" or "老人不在")
         refs.elderToggle:SetText(elderToggleText)
 
-        -- UI 精简：木桶未进入可交互上下文（无 barrelState）时不显示"暂未开放"卡
-        refs.barrelPanel:SetVisible(not inPort and barrelState ~= nil)
+        -- UI 精简 v1.1：木桶卡仅在检查过程中出现；入口走按钮坞"检查木桶"
+        refs.barrelPanel:SetVisible(not inPort and barrelDockEngaged)
         local barrelGatesAvailable = barrelState ~= nil and barrelState.timingAvailable == true
             and barrelState.interfaceAvailable == true
         local barrelFinished = barrelState ~= nil and (tonumber(barrelState.stage) or 0) >= 3
@@ -1427,14 +1490,25 @@ function HUD.Create(loop, parent, debugTools)
         local showEntry = loop.entryPending == true
         local showForced = not showEntry and not pendingCatch and loop.forcedReturnPending == true
         local showSettlement = not showEntry and not pendingCatch and not showForced and loop.settlementPending == true
-        local showStory = not pendingCatch and not showForced and not showSettlement and storyDialog ~= nil
+        local showStory = not showEntry and not pendingCatch and not showForced and not showSettlement
+            and storyDialog ~= nil
         local showElder = not showForced and not showSettlement and not showStory
             and loop.elderOpen == true and elderPresent
+        -- 开场教学（演出层，见 OPENING_ELDER_TEXT）：模态独占，优先级低于存档/结算弹窗。
+        local showOpening = player.day == 1 and inPort == true
+            and state.openingDismissedGeneration ~= loop.generation
+            and not showEntry and not pendingCatch and not showForced and not showSettlement
+            and not showStory and not showElder and loop.inventoryOpen ~= true
+        state.openingActive = showOpening
+        if showOpening then state.openingGeneration = loop.generation end
         local overlayShown = showEntry or showForced or showSettlement or showStory or showElder
+            or showOpening
         refs.overlay:SetVisible(overlayShown)
         fadeOpacity(refs.modalCard, overlayShown and 1 or 0)
+        local storyTitle = storyDialog and storyDialog.kind == "elder" and "海岸边的老人" or "纸条"
         local overlayTitle = showEntry and "云存档" or showForced and "夜晚返港"
-            or (showSettlement and "每日结算" or (showStory and "纸条" or (showElder and "拜访老人" or "")))
+            or (showSettlement and "每日结算" or (showOpening and "海岸边的老人")
+            or (showStory and storyTitle or (showElder and "拜访老人" or "")))
         setText(refs.modalTitle, "modalTitle", overlayTitle)
         refs.entryBody:SetVisible(showEntry)
         if showEntry then
@@ -1457,7 +1531,7 @@ function HUD.Create(loop, parent, debugTools)
         end
         refs.forcedBody:SetVisible(showForced)
         refs.settlementBody:SetVisible(showSettlement)
-        refs.storyBody:SetVisible(showStory)
+        refs.storyBody:SetVisible(showStory or showOpening)
         refs.elderBody:SetVisible(showElder)
 
         if showSettlement then
@@ -1519,7 +1593,9 @@ function HUD.Create(loop, parent, debugTools)
             end
             refs.elderLensGive:SetVisible(true)
         end
-        if showStory and storyDialog then
+        if showOpening then
+            setText(refs.storyText, "storyText", OPENING_ELDER_TEXT)
+        elseif showStory and storyDialog then
             setText(refs.storyText, "storyText", storyDialog.text)
             -- 文本和两个可见状态先完成，再通知 Loop 这张纸条已展示。
             refs.overlay:SetVisible(true)

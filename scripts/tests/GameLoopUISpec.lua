@@ -176,7 +176,7 @@ test("production fishing HUD selects confirms pauses cancels without a debug sho
     env.runtime:spawnFish("sardine",{x=1,y=0})
     assert(env.loop:Depart())
     local hud=HUD.Create(env.loop)
-    button(hud.root,"捕鱼 · 选择网心")
+    button(hud.root,"捕鱼")
     eq(env.runtime.selectCalls,0)
     assert(env.loop:SetFishingCenter({x=0,y=0})); hud.Refresh()
     button(hud.root,"确认抛网")
@@ -193,7 +193,7 @@ test("pending cabin menu returns without closing then consumes and claims exactl
     local env=FishingFlow.Fixture{items={"apple","bait","bait","bait","bait"}}
     env.runtime:spawnFish("sardine",{x=1,y=0}); assert(env.loop:Depart())
     local hud=HUD.Create(env.loop)
-    button(hud.root,"捕鱼 · 选择网心");assert(env.loop:SetFishingCenter({x=0,y=0}));hud.Refresh()
+    button(hud.root,"捕鱼");assert(env.loop:SetFishingCenter({x=0,y=0}));hud.Refresh()
     button(hud.root,"确认抛网"); env.bridge:Update(4); hud.Refresh()
     eq(env.loop:HasPendingCatch(),true);eq(env.loop.inventoryOpen,true)
     eq(env.loop:SetInventoryOpen(false),false)
