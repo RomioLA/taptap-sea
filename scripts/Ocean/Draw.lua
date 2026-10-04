@@ -30,6 +30,18 @@ local function Stroke(ctx, color, width)
     nvgStroke(ctx)
 end
 
+-- Optional explicit path adapter used by SeaDraw for world-space silhouettes.
+-- Legacy callers continue using the native drawing API.
+local function vectorAPI(canvas)
+    return canvas or {
+        nvgSave=nvgSave,nvgRestore=nvgRestore,nvgTranslate=nvgTranslate,
+        nvgScale=nvgScale,nvgRotate=nvgRotate,nvgBeginPath=nvgBeginPath,
+        nvgMoveTo=nvgMoveTo,nvgLineTo=nvgLineTo,nvgQuadTo=nvgQuadTo,
+        nvgClosePath=nvgClosePath,nvgEllipse=nvgEllipse,
+        nvgFillColor=nvgFillColor,nvgFill=nvgFill,Fill=Fill,Ellipse=Ellipse,Stroke=Stroke,
+    }
+end
+
 ---@param ctx NVGContextWrapper
 local function Cloud(ctx, x, y, scale)
     nvgSave(ctx)
@@ -158,32 +170,33 @@ local function Bird(ctx, x, y, scale, time, phase)
 end
 
 ---@param ctx NVGContextWrapper
-local function Fish(ctx, x, y, scale, direction, color, time, phase)
-    nvgSave(ctx)
-    nvgTranslate(ctx, x, y)
-    nvgScale(ctx, scale * direction, scale)
+local function Fish(ctx, x, y, scale, direction, color, time, phase, canvas)
+    local api = vectorAPI(canvas)
+    api.nvgSave(ctx)
+    api.nvgTranslate(ctx, x, y)
+    api.nvgScale(ctx, scale * direction, scale)
     local sway = math.sin(time * 4 + phase) * 3
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, -21, 0)
-    nvgLineTo(ctx, -40, -13 + sway)
-    nvgQuadTo(ctx, -35, 0, -40, 13 + sway)
-    nvgClosePath(ctx)
-    Fill(ctx, color)
-    Ellipse(ctx, 0, 0, 27, 14, color)
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, -5, -10)
-    nvgLineTo(ctx, 3, -21)
-    nvgLineTo(ctx, 11, -10)
-    nvgClosePath(ctx)
-    Fill(ctx, color)
-    Ellipse(ctx, 3, 4, 9, 4, { 255, 249, 221, 105 })
-    Ellipse(ctx, 15, -3, 4, 4, { 255, 252, 237, 255 })
-    Ellipse(ctx, 16, -3, 1.8, 1.8, { 30, 74, 85, 255 })
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, 7, -6)
-    nvgQuadTo(ctx, 3, 0, 7, 6)
-    Stroke(ctx, { 50, 106, 113, 90 }, 1.2)
-    nvgRestore(ctx)
+    api.nvgBeginPath(ctx)
+    api.nvgMoveTo(ctx, -21, 0)
+    api.nvgLineTo(ctx, -40, -13 + sway)
+    api.nvgQuadTo(ctx, -35, 0, -40, 13 + sway)
+    api.nvgClosePath(ctx)
+    api.Fill(ctx, color)
+    api.Ellipse(ctx, 0, 0, 27, 14, color)
+    api.nvgBeginPath(ctx)
+    api.nvgMoveTo(ctx, -5, -10)
+    api.nvgLineTo(ctx, 3, -21)
+    api.nvgLineTo(ctx, 11, -10)
+    api.nvgClosePath(ctx)
+    api.Fill(ctx, color)
+    api.Ellipse(ctx, 3, 4, 9, 4, { 255, 249, 221, 105 })
+    api.Ellipse(ctx, 15, -3, 4, 4, { 255, 252, 237, 255 })
+    api.Ellipse(ctx, 16, -3, 1.8, 1.8, { 30, 74, 85, 255 })
+    api.nvgBeginPath(ctx)
+    api.nvgMoveTo(ctx, 7, -6)
+    api.nvgQuadTo(ctx, 3, 0, 7, 6)
+    api.Stroke(ctx, { 50, 106, 113, 90 }, 1.2)
+    api.nvgRestore(ctx)
 end
 
 ---@param ctx NVGContextWrapper
@@ -341,7 +354,8 @@ end
 ---@param pixelsPerUnit number
 ---@param entity table
 ---@param time number
-function Draw.WorldFish(ctx, x, y, pixelsPerUnit, entity, time)
+function Draw.WorldFish(ctx, x, y, pixelsPerUnit, entity, time, canvas)
+    local api = vectorAPI(canvas)
     if not ctx or not entity then return end
     local fishConfig = FishData[entity.species]
     if not fishConfig then return end
@@ -357,12 +371,12 @@ function Draw.WorldFish(ctx, x, y, pixelsPerUnit, entity, time)
         heading = math.atan(direction.y, direction.x)
     end
 
-    nvgSave(ctx)
-    nvgTranslate(ctx, x, y)
+    api.nvgSave(ctx)
+    api.nvgTranslate(ctx, x, y)
     -- Screen Y is inverted relative to world Y; this rotates the fish along its world heading.
-    nvgRotate(ctx, -heading)
-    Fish(ctx, 0, 0, scale, 1, fishConfig.color, time or 0, entity.phase or 0)
-    nvgRestore(ctx)
+    api.nvgRotate(ctx, -heading)
+    Fish(ctx, 0, 0, scale, 1, fishConfig.color, time or 0, entity.phase or 0, canvas)
+    api.nvgRestore(ctx)
 end
 
 --- Draw the legacy palm-island art around the unchanged circular world radius.
@@ -392,7 +406,8 @@ end
 ---@param pixelsPerUnit number Screen pixels per meter.
 ---@param entity table Fish entity with species, direction/rotation, and surfaceDepth.
 ---@param time number Animation time; this function does not advance it.
-function Draw.WorldRise(ctx, x, y, pixelsPerUnit, entity, time)
+function Draw.WorldRise(ctx, x, y, pixelsPerUnit, entity, time, canvas)
+    local api = vectorAPI(canvas)
     if not ctx or not entity or type(pixelsPerUnit) ~= "number" or pixelsPerUnit <= 0 then return end
     local fishConfig = FishData[entity.species]
     if not fishConfig then return end
@@ -414,30 +429,30 @@ function Draw.WorldRise(ctx, x, y, pixelsPerUnit, entity, time)
     -- Keep the local fish silhouette proportions, but omit its eye and belly marks.
     local alpha = math.floor(255 * depth)
     local sway = math.sin((time or 0) * 4 + (entity.phase or 0)) * 3
-    nvgSave(ctx)
-    nvgTranslate(ctx, x, y)
+    api.nvgSave(ctx)
+    api.nvgTranslate(ctx, x, y)
     -- Screen Y is inverted relative to world Y, matching WorldFish's heading convention.
-    nvgRotate(ctx, -heading)
-    nvgScale(ctx, scale, scale)
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, -21, 0)
-    nvgLineTo(ctx, -40, -13 + sway)
-    nvgQuadTo(ctx, -35, 0, -40, 13 + sway)
-    nvgClosePath(ctx)
-    Fill(ctx, { 14, 34, 52, alpha })
-    Ellipse(ctx, 0, 0, 27, 14, { 14, 34, 52, alpha })
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, -5, -10)
-    nvgLineTo(ctx, 3, -21)
-    nvgLineTo(ctx, 11, -10)
-    nvgClosePath(ctx)
-    Fill(ctx, { 14, 34, 52, alpha })
-    nvgRestore(ctx)
+    api.nvgRotate(ctx, -heading)
+    api.nvgScale(ctx, scale, scale)
+    api.nvgBeginPath(ctx)
+    api.nvgMoveTo(ctx, -21, 0)
+    api.nvgLineTo(ctx, -40, -13 + sway)
+    api.nvgQuadTo(ctx, -35, 0, -40, 13 + sway)
+    api.nvgClosePath(ctx)
+    api.Fill(ctx, { 14, 34, 52, alpha })
+    api.Ellipse(ctx, 0, 0, 27, 14, { 14, 34, 52, alpha })
+    api.nvgBeginPath(ctx)
+    api.nvgMoveTo(ctx, -5, -10)
+    api.nvgLineTo(ctx, 3, -21)
+    api.nvgLineTo(ctx, 11, -10)
+    api.nvgClosePath(ctx)
+    api.Fill(ctx, { 14, 34, 52, alpha })
+    api.nvgRestore(ctx)
 
     local ringAlpha = math.floor(150 * depth)
-    nvgBeginPath(ctx)
-    nvgEllipse(ctx, x, y, 1.5 * pixelsPerUnit, 1.0 * pixelsPerUnit)
-    Stroke(ctx, { 235, 250, 248, ringAlpha }, 1.6)
+    api.nvgBeginPath(ctx)
+    api.nvgEllipse(ctx, x, y, 1.5 * pixelsPerUnit, 1.0 * pixelsPerUnit)
+    api.Stroke(ctx, { 235, 250, 248, ringAlpha }, 1.6)
 end
 
 --- Draw a short-lived expanding splash and a short wake behind its heading.
@@ -449,7 +464,8 @@ end
 ---@param lifetime number Total lifetime in seconds.
 ---@param heading number Radians in world space, with forward along positive X.
 ---@param trailLength number? Requested wake length in meters; capped at 2m.
-function Draw.WorldSplash(ctx, x, y, pixelsPerUnit, remaining, lifetime, heading, trailLength)
+function Draw.WorldSplash(ctx, x, y, pixelsPerUnit, remaining, lifetime, heading, trailLength, canvas)
+    local api = vectorAPI(canvas)
     if not ctx or type(pixelsPerUnit) ~= "number" or pixelsPerUnit <= 0 then return end
     lifetime = tonumber(lifetime) or 0.6
     remaining = tonumber(remaining) or 0
@@ -460,24 +476,24 @@ function Draw.WorldSplash(ctx, x, y, pixelsPerUnit, remaining, lifetime, heading
     local alpha = math.floor(lifeRatio * 230)
     local length = math.min(2, math.max(0, tonumber(trailLength) or 2)) * pixelsPerUnit
     if length > 0 and alpha > 0 then
-        nvgSave(ctx)
-        nvgTranslate(ctx, x, y)
+        api.nvgSave(ctx)
+        api.nvgTranslate(ctx, x, y)
         -- Screen Y is inverted relative to world Y, as in WorldFish.
-        nvgRotate(ctx, -(tonumber(heading) or 0))
-        nvgBeginPath(ctx)
-        nvgMoveTo(ctx, -length, 0)
-        nvgQuadTo(ctx, -length * 0.55, -pixelsPerUnit * 0.08,
+        api.nvgRotate(ctx, -(tonumber(heading) or 0))
+        api.nvgBeginPath(ctx)
+        api.nvgMoveTo(ctx, -length, 0)
+        api.nvgQuadTo(ctx, -length * 0.55, -pixelsPerUnit * 0.08,
             -length * 0.15, pixelsPerUnit * 0.02)
-        nvgLineTo(ctx, 0, 0)
-        Stroke(ctx, { 240, 252, 250, math.floor(alpha * 0.72) },
+        api.nvgLineTo(ctx, 0, 0)
+        api.Stroke(ctx, { 240, 252, 250, math.floor(alpha * 0.72) },
             math.max(1.25, math.min(4, pixelsPerUnit * 0.08)))
-        nvgRestore(ctx)
+        api.nvgRestore(ctx)
     end
 
-    nvgBeginPath(ctx)
-    nvgEllipse(ctx, x, y, (0.5 + age * 3.2) * pixelsPerUnit,
+    api.nvgBeginPath(ctx)
+    api.nvgEllipse(ctx, x, y, (0.5 + age * 3.2) * pixelsPerUnit,
         (0.3 + age * 2.0) * pixelsPerUnit)
-    Stroke(ctx, { 240, 252, 250, alpha }, 2.5)
+    api.Stroke(ctx, { 240, 252, 250, alpha }, 2.5)
 end
 
 --- Draw a top-down seabird silhouette whose wings fold during its dive.
@@ -487,7 +503,8 @@ end
 ---@param pixelsPerUnit number Screen pixels per meter.
 ---@param heading number Radians in world space, with forward along positive X.
 ---@param diveProgress number? Dive progress from 0 (gliding) to 1 (folded dive).
-function Draw.WorldSeabird(ctx, x, y, pixelsPerUnit, heading, diveProgress)
+function Draw.WorldSeabird(ctx, x, y, pixelsPerUnit, heading, diveProgress, canvas)
+    local api = vectorAPI(canvas)
     if not ctx or type(pixelsPerUnit) ~= "number" or pixelsPerUnit <= 0 then return end
 
     local dive = clamp01(tonumber(diveProgress) or 0)
@@ -499,39 +516,39 @@ function Draw.WorldSeabird(ctx, x, y, pixelsPerUnit, heading, diveProgress)
     local innerX = -0.15 * size
     local innerY = 0.10 * wingSpan * size
 
-    nvgSave(ctx)
-    nvgTranslate(ctx, x, y)
+    api.nvgSave(ctx)
+    api.nvgTranslate(ctx, x, y)
     -- Screen Y is inverted relative to world Y, matching WorldFish.
-    nvgRotate(ctx, -(tonumber(heading) or 0))
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, 0.10 * size, 0)
-    nvgLineTo(ctx, tipX, -tipY)
-    nvgLineTo(ctx, innerX, -innerY)
-    nvgClosePath(ctx)
-    nvgMoveTo(ctx, 0.10 * size, 0)
-    nvgLineTo(ctx, tipX, tipY)
-    nvgLineTo(ctx, innerX, innerY)
-    nvgClosePath(ctx)
-    nvgFillColor(ctx, nvgRGBA(250, 250, 240, 238))
-    nvgFill(ctx)
+    api.nvgRotate(ctx, -(tonumber(heading) or 0))
+    api.nvgBeginPath(ctx)
+    api.nvgMoveTo(ctx, 0.10 * size, 0)
+    api.nvgLineTo(ctx, tipX, -tipY)
+    api.nvgLineTo(ctx, innerX, -innerY)
+    api.nvgClosePath(ctx)
+    api.nvgMoveTo(ctx, 0.10 * size, 0)
+    api.nvgLineTo(ctx, tipX, tipY)
+    api.nvgLineTo(ctx, innerX, innerY)
+    api.nvgClosePath(ctx)
+    api.nvgFillColor(ctx, nvgRGBA(250, 250, 240, 238))
+    api.nvgFill(ctx)
 
     -- The body shortens slightly with the folded wings to make dive progress readable.
-    nvgBeginPath(ctx)
-    nvgEllipse(ctx, 0, 0, 0.48 * size, (0.15 - 0.025 * dive) * size)
-    nvgFillColor(ctx, nvgRGBA(255, 255, 248, 245))
-    nvgFill(ctx)
-    nvgBeginPath(ctx)
-    nvgEllipse(ctx, 0.43 * size, 0, 0.12 * size, 0.10 * size)
-    nvgFillColor(ctx, nvgRGBA(255, 255, 248, 245))
-    nvgFill(ctx)
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, 0.52 * size, -0.045 * size)
-    nvgLineTo(ctx, 0.72 * size, 0)
-    nvgLineTo(ctx, 0.52 * size, 0.045 * size)
-    nvgClosePath(ctx)
-    nvgFillColor(ctx, nvgRGBA(235, 190, 130, 255))
-    nvgFill(ctx)
-    nvgRestore(ctx)
+    api.nvgBeginPath(ctx)
+    api.nvgEllipse(ctx, 0, 0, 0.48 * size, (0.15 - 0.025 * dive) * size)
+    api.nvgFillColor(ctx, nvgRGBA(255, 255, 248, 245))
+    api.nvgFill(ctx)
+    api.nvgBeginPath(ctx)
+    api.nvgEllipse(ctx, 0.43 * size, 0, 0.12 * size, 0.10 * size)
+    api.nvgFillColor(ctx, nvgRGBA(255, 255, 248, 245))
+    api.nvgFill(ctx)
+    api.nvgBeginPath(ctx)
+    api.nvgMoveTo(ctx, 0.52 * size, -0.045 * size)
+    api.nvgLineTo(ctx, 0.72 * size, 0)
+    api.nvgLineTo(ctx, 0.52 * size, 0.045 * size)
+    api.nvgClosePath(ctx)
+    api.nvgFillColor(ctx, nvgRGBA(235, 190, 130, 255))
+    api.nvgFill(ctx)
+    api.nvgRestore(ctx)
 end
 
 ---@param ctx NVGContextWrapper

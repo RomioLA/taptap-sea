@@ -99,7 +99,7 @@ local function addPreviewFixture(runtime)
         position = { x = -14, y = -12 }, radius = 4, blocking = false,
     })
     runtime.previewSardine = runtime:spawnFish("sardine", { x = -8, y = -8 }, 0)
-    runtime.previewTuna = runtime:spawnFish("tuna", { x = 8, y = -14 }, math.pi)
+    runtime.previewTuna = runtime:spawnFish("tuna", { x = 8, y = -8 }, math.pi)
 end
 
 function Tests.CreatePreviewRuntime(width, height)
@@ -155,11 +155,11 @@ function Tests.Run(recorder)
             "the original background sun ellipses were not drawn at their configured center")
         assert(recorder.countEllipseArgs(1, 1, 16, 6, 0.001) == #Config.birds,
             "the original configured birds were not drawn")
-        assert(recorder.callCount("nvgScissor") == 1,
-            "world layer should establish one sea-area NanoVG scissor")
+        assert(recorder.callCount("nvgScissor") == 0,
+            "a scene-wide horizontal scissor must not cut raised island silhouettes")
         local landscapeHorizon = runtime.movement:GetHorizonY()
-        assert(recorder.scissorMatches(0, landscapeHorizon, 1920,
-            1080 - landscapeHorizon, 0.01), "world-layer scissor does not begin at the projected horizon")
+        assert(recorder.hasGreenFillAboveY(landscapeHorizon),
+            "the existing far-island tree silhouette should render naturally above the horizon")
 
         runtime:setDebugFlag("showUnderwater", true)
         assert(runtime.world:isVisible(runtime.previewSardine) and runtime.world:isVisible(runtime.previewTuna),
@@ -185,8 +185,8 @@ function Tests.Run(recorder)
             FishData.tuna.color[3], FishData.tuna.color[4]) > 0,
             "revealed tuna was not rendered")
         local portraitHorizon = runtime.movement:GetHorizonY()
-        assert(recorder.scissorMatches(0, portraitHorizon, 1200,
-            1150 - portraitHorizon, 0.01), "portrait world-layer scissor did not track the projected horizon")
+        assert(recorder.callCount("nvgScissor") == 0,
+            "portrait scene must also avoid a global horizon scissor")
 
         local _, _, portraitIslandScale = runtime.movement:WorldToScreen(runtime.previewIsland.position)
         assert(portraitIslandScale > shipScale,
@@ -228,7 +228,7 @@ function Tests.Run(recorder)
                 "ordinary_fish_hidden_by_default",
                 "show_underwater_draws_both_fixture_fish",
                 "resize_preserves_projection_anchor_horizon_and_perspective_scale",
-                "sea_scissor_tracks_projection_horizon_in_both_aspects",
+                "curved_ground_clips_preserve_elevated_island_silhouettes_in_both_aspects",
                 "presentation_fixture_does_not_change_config_world",
                 "night_tint_precedes_boat_and_preserves_paused_gameplay_clock",
                 "daytime_removes_night_tint_and_nvg_state_stack_is_balanced",
@@ -249,7 +249,7 @@ function Tests.Run(recorder)
                 },
                 originalConfiguredBirds = #Config.birds,
                 originalFixedObjectCount = configObjectCount,
-                previewFixtures = { island = "(-14,-12)", sardine = "(-8,-8)", tuna = "(8,-14)" },
+                previewFixtures = { island = "(-14,-12)", sardine = "(-8,-8)", tuna = "(8,-8)" },
             },
         }
     end)

@@ -83,17 +83,19 @@ function Tests.Run(recorder)
         runtime:setDebugFlag("showUnderwater", true)
         runtime:spawnFish("sardine", { x = 0, y = 20 })
         runtime:spawnFish("sardine", { x = 100, y = -4 })
-        local beyondFarDepth = runtime:spawnFish("sardine", { x = 0, y = 221 })
+        local beyondFarDepth = runtime:spawnFish("sardine", { x = 0,
+            y = Config.camera.farDepth + 1 })
         runtime:spawnFish("sardine", { x = -40.05, y = 0 })
-        assert(runtime.movement:WorldToScreen(beyondFarDepth.position) == nil,
-            "fish beyond configured far depth unexpectedly projected")
+        local farX, farY = runtime.movement:WorldToScreen(beyondFarDepth.position)
+        assert(farY > runtime.movement:GetHorizonY(farX),
+            "far ground must sink behind intervening water instead of clamping to the horizon")
         local Draw = require("Ocean.Draw")
         local original, count = Draw.WorldFish, 0
         Draw.WorldFish = function(...) count = count + 1; return original(...) end
         local ok, err = pcall(function() SeaDraw.Scene({}, 1920, 1080, runtime) end)
         Draw.WorldFish = original
         if not ok then error(err) end
-        assert(count == 2, "culling removed the partial edge fish or drew an offscreen/far-depth fish")
+        assert(count == 3, "footprint culling must retain the partial edge and possible far footprint, rejecting the offscreen fish")
     end)
     check("pointer_consumption_preserves_navigation_and_guards", function()
         local oldUI, oldBootstrap = package.loaded["urhox-libs/UI"], package.loaded["Ocean.Bootstrap"]
