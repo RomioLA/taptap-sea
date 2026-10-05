@@ -1,0 +1,125 @@
+[
+  {
+    "name": "ArchitectureIntegrationTests",
+    "kind": "run",
+    "file": "scripts/tests/ArchitectureIntegrationTests.lua",
+    "passed": true,
+    "subtestCount": 12,
+    "failures": [],
+    "returned": {
+      "results": [
+        {
+          "passed": true,
+          "name": "shared registry and factory retain entity identity"
+        },
+        {
+          "passed": true,
+          "name": "one automatic fish update per sea substep"
+        },
+        {
+          "passed": true,
+          "name": "frozen and removed entities never receive FSM updates"
+        },
+        {
+          "passed": true,
+          "name": "paused Game leaves sea and temporary lifetime unchanged"
+        },
+        {
+          "passed": true,
+          "name": "Game uses reset runtime world rather than cached registry"
+        },
+        {
+          "passed": true,
+          "name": "shared FSM calls enter exit and update once"
+        },
+        {
+          "passed": true,
+          "name": "base skeleton retains numeric IDs and remove/clear interfaces"
+        },
+        {
+          "passed": true,
+          "name": "Integration owns references while Gameplay owns transient action records"
+        },
+        {
+          "passed": true,
+          "name": "registered frame System keeps raw clock dt separate from sea substeps"
+        },
+        {
+          "passed": true,
+          "name": "runtime replacement rejects old tokens even when fish IDs are reused"
+        },
+        {
+          "passed": true,
+          "name": "Ocean rollback restores removed fish identity and active FSM"
+        },
+        {
+          "passed": true,
+          "name": "Bridge works through public Runtime APIs without sea internals"
+        }
+      ],
+      "skipped_count": 0
+    },
+    "stdout": "",
+    "nvgCalls": {},
+    "nvgCallTotal": 0,
+    "durationMs": 235.201
+  },
+  {
+    "name": "Circle1A2BarrelRenderTests",
+    "kind": "run",
+    "file": "scripts/tests/Circle1A2BarrelRenderTests.lua",
+    "passed": true,
+    "subtestCount": 3,
+    "failures": [],
+    "returned": {
+      "tests": [
+        {
+          "passed": true,
+          "name": "barrel_outline_and_recognition_boundaries_are_inclusive"
+        },
+        {
+          "passed": true,
+          "name": "barrel_screen_culling_keeps_partial_edges_and_skips_fully_offscreen"
+        },
+        {
+          "passed": true,
+          "name": "only_the_exact_barrel_gets_recognition_and_other_floats_keep_their_shape"
+        }
+      ],
+      "status": "PASS",
+      "metrics": {
+        "recognitionDistance": 20,
+        "contentId": "driftwood_barrel",
+        "outlineDistance": 80,
+        "offscreenCulling": "partial visible / full margin culled"
+      }
+    },
+    "stdout": "",
+    "nvgCalls": {
+      "nvgBeginPath": 768,
+      "nvgBezierTo": 1649,
+      "nvgCircle": 26,
+      "nvgClosePath": 1372,
+      "nvgEllipse": 9,
+      "nvgFill": 739,
+      "nvgFillColor": 713,
+      "nvgFillPaint": 26,
+      "nvgGlobalAlpha": 5,
+      "nvgIntersectScissor": 24,
+      "nvgLineTo": 5666,
+      "nvgLinearGradient": 2,
+      "nvgMoveTo": 3027,
+      "nvgRadialGradient": 24,
+      "nvgRect": 1,
+      "nvgRestore": 36,
+      "nvgSave": 36,
+      "nvgScale": 22,
+      "nvgStroke": 29,
+      "nvgStrokeColor": 29,
+      "nvgStrokeWidth": 29,
+      "nvgTranslate": 22
+    },
+    "nvgCallTotal": 14254,
+    "durationMs": 10513.824
+  }
+]

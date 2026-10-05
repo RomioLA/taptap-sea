@@ -1,0 +1,134 @@
+{
+  "task": "Ocean 航海绘本美术替换闭环",
+  "date": "2026-10-05",
+  "reference": "_uploads/c3fb8b9b0834ca6c098bcb452e23f0c1a899c2747c3b9787e317156cb7abd5b8.png",
+  "style": "暖赭细描边、简化色块、轻水彩纸感",
+  "format": "RGBA PNG，直通 Alpha；透明边RGB扩边；船和海鸥船头/鸟喙朝 +X",
+  "projection": "现有 Ocean.Projection；贴图在世界平面先旋转，再分片投影",
+  "anchor": [
+    0.5,
+    0.5
+  ],
+  "assets": {
+    "boat": {
+      "path": "image/OceanLoop/boat.png",
+      "source": "assets/image/OceanStory_boat_20261005114947.png",
+      "size": [
+        1024,
+        512
+      ],
+      "content_bounds": [
+        62,
+        30,
+        962,
+        481
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.4573192596435547,
+      "sha256": "8dcbf03106fa368741d039efa2cbe9f5f835ec150e57fc7fe2bb822252ae75ec"
+    },
+    "island": {
+      "path": "image/OceanLoop/island.png",
+      "source": "assets/image/OceanStory_island_20261005114948.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        62,
+        61,
+        962,
+        962
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.4374551773071289,
+      "sha256": "35264230d15c56511e0fe440f31620a76bc930ec533369d1a171c08079f4e5d5"
+    },
+    "gull": {
+      "path": "image/OceanLoop/gull.png",
+      "source": "assets/image/OceanStory_gull_20261005114946.png",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        138,
+        30,
+        374,
+        481
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.8383941650390625,
+      "sha256": "4741c60dc6f01ace54c6cced47c66c26b33c014d15995ee43454aee10b1e1c23"
+    },
+    "barrel": {
+      "path": "image/OceanLoop/barrel.png",
+      "source": "assets/image/OceanStory_barrel_20261005115009.png",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        30,
+        30,
+        481,
+        481
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.3880767822265625,
+      "sha256": "22e9f1052e09375b75d4a3b1dcac3d7813791728a993d27f1c3ed196622db529"
+    },
+    "ripple": {
+      "path": "image/OceanLoop/ripple.png",
+      "source": "tests/prepare_ocean_art.py:绘本透明弧环",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        39,
+        22,
+        483,
+        485
+      ],
+      "alpha_range": [
+        0,
+        230
+      ],
+      "transparent_ratio": 0.9568672180175781,
+      "sha256": "7981764dcd6a3a85c9d0c7fc9e1ae4407e1d2ea487228747641ebe2afc16b8ed"
+    },
+    "waterpaper": {
+      "path": "image/OceanLoop/waterpaper.png",
+      "source": "assets/image/OceanStory_waterpaper_20261005114940.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "b83f348aee8a49d1a770b324eefae9ce987783bb513d189f0e2aab5e59ea0ccf"
+    }
+  }
+}

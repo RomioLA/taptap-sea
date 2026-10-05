@@ -42,9 +42,11 @@ end
 
 local function drawFloat(ctx, movement, entity, outlineOnly, recognized, time)
     local point, radius = entity.position, entity.radius or 1
-    ImageArt.ContactRipple(ctx, movement, point, time, radius)
+    -- 只缩小木桶的视觉尺寸，原radius/识别/交互/阻挡边界不变。
+    local visualRadius = radius * 0.65
+    ImageArt.ContactRipple(ctx, movement, point, time, visualRadius)
     if not outlineOnly and ImageArt.Plane(ctx, "barrel", movement, point,
-        radius * 2 / 0.88, radius * 2 / 0.88, 0, 0) then return end
+        visualRadius * 2 / 0.88, visualRadius * 2 / 0.88, 0, 0) then return end
     Geometry.WorldCircle(ctx, movement, point, radius, outlineOnly and nil or Config.visual.float,
         { 225, 203, 156, 160 }, 1.5)
     if not recognized then return end

@@ -26,7 +26,7 @@ V.atFrame(10, function()
     Test.world, Test.ship = scene.runtime.world, scene.runtime.ship
     if depth == 0 then scene.runtime:spawnFish("sardine", { x = 7, y = 10 }, 0) end
     scene.options.simulationUpdate = function() scene.bridge:Update(1 / 60, 0, 0) end
-    for _, name in ipairs({ "boat", "island", "barrel", "gull", "ripple" }) do
+    for _, name in ipairs({ "boat", "island", "barrel", "gull", "ripple", "waterpaper" }) do
         V.assert(Images.IsLoaded(scene.context, name), name .. " PNG 实际加载")
     end
 end)

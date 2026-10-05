@@ -10,6 +10,7 @@ local paths = {
     barrel = "image/OceanLoop/barrel.png",
     gull = "image/OceanLoop/gull.png",
     ripple = "image/OceanLoop/ripple.png",
+    waterpaper = "image/OceanLoop/waterpaper.png",
 }
 
 ---@param ctx NVGContextWrapper
@@ -18,7 +19,10 @@ function Art.Load(ctx)
     local images = {}
     contexts[ctx] = images
     for name, path in pairs(paths) do
-        local handle = nvgCreateImage(ctx, path, 0)
+        local flags = name == "waterpaper"
+            and (NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY | NVG_IMAGE_GENERATE_MIPMAPS)
+            or NVG_IMAGE_GENERATE_MIPMAPS
+        local handle = nvgCreateImage(ctx, path, flags)
         images[name] = handle
         if handle and handle > 0 then
             print("[OceanArt] loaded " .. name .. " path=" .. path)
@@ -137,6 +141,31 @@ function Art.Plane(ctx, name, movement, origin, length, width, heading, altitude
             triangle(ctx, movement, image, a, c, d, alpha or 1, frame)
         end
     end
+    return true
+end
+
+-- 海面纸纹为画布材质层，只用一条海线遮罩；不作为世界地标或动态波浪。
+---@param ctx NVGContextWrapper
+function Art.WaterPaper(ctx, movement, width, height)
+    local images = contexts[ctx]
+    local image = images and images.waterpaper or 0
+    if image <= 0 then return false end
+    local horizon = Projection.HorizonFunction(movement)
+    if not horizon then return false end
+    nvgSave(ctx)
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, 0, horizon(0))
+    for index = 1, 48 do
+        local x = width * index / 48
+        nvgLineTo(ctx, x, horizon(x))
+    end
+    nvgLineTo(ctx, width, height)
+    nvgLineTo(ctx, 0, height)
+    nvgClosePath(ctx)
+    local size = height * 1.5
+    nvgFillPaint(ctx, nvgImagePattern(ctx, 0, 0, size, size, 0, image, 0.5))
+    nvgFill(ctx)
+    nvgRestore(ctx)
     return true
 end
 

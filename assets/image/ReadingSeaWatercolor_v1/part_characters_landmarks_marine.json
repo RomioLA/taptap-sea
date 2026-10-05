@@ -1,0 +1,290 @@
+[
+  {
+    "id": "characters/young_fisher",
+    "path": "characters/young_fisher.png",
+    "size": [
+      512,
+      1024
+    ],
+    "source": "sources/reading_sea_watercolor_characters_20261005115718.png",
+    "source_rect": [
+      0,
+      0,
+      576,
+      768
+    ],
+    "sha256": "dd21ec630b5c07fb1ac1cafe3c0983ac35f2b60f3c12e4bb7d32083f7de4c917",
+    "status": "未接入",
+    "view": "静态插画"
+  },
+  {
+    "id": "characters/elder",
+    "path": "characters/elder.png",
+    "size": [
+      512,
+      1024
+    ],
+    "source": "sources/reading_sea_watercolor_characters_20261005115718.png",
+    "source_rect": [
+      576,
+      0,
+      1152,
+      768
+    ],
+    "sha256": "f57b0293b7eea69fb4f2e893f7bdb830573fdfa5d1fb6f3842e2cad650545368",
+    "status": "未接入",
+    "view": "静态插画"
+  },
+  {
+    "id": "landmarks/lighthouse",
+    "path": "landmarks/lighthouse.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "source": "sources/reading_sea_watercolor_landmarks_20261005115646.png",
+    "source_rect": [
+      0,
+      0,
+      512,
+      512
+    ],
+    "sha256": "69d62f7945535fc8165fb010f1fecdb28dfa27033822a47d7a2861846af01124",
+    "status": "未接入",
+    "view": "静态插画"
+  },
+  {
+    "id": "landmarks/reef",
+    "path": "landmarks/reef.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "source": "sources/reading_sea_watercolor_landmarks_20261005115646.png",
+    "source_rect": [
+      512,
+      0,
+      1024,
+      512
+    ],
+    "sha256": "62b8a9e6d843c5ad366bd76a7616eef6550111df75f0fd63c4dcad0fc393cf08",
+    "status": "未接入",
+    "view": "静态插画"
+  },
+  {
+    "id": "landmarks/shipwreck",
+    "path": "landmarks/shipwreck.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "source": "sources/reading_sea_watercolor_landmarks_20261005115646.png",
+    "source_rect": [
+      1024,
+      0,
+      1536,
+      512
+    ],
+    "sha256": "249758078c247ae658a1c061e001e86ee8a9cb967be48e7bfe962751927a6b5c",
+    "status": "未接入",
+    "view": "静态插画"
+  },
+  {
+    "id": "landmarks/harbor",
+    "path": "landmarks/harbor.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "source": "sources/reading_sea_watercolor_landmarks_20261005115646.png",
+    "source_rect": [
+      0,
+      512,
+      512,
+      1024
+    ],
+    "sha256": "f4b9a7cc0df05794fc9f50eba1242c26a89c9a71bf961940fc8a7938ceeebdf7",
+    "status": "未接入",
+    "view": "静态插画"
+  },
+  {
+    "id": "landmarks/driftwood",
+    "path": "landmarks/driftwood.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "source": "sources/reading_sea_watercolor_landmarks_20261005115646.png",
+    "source_rect": [
+      512,
+      512,
+      1024,
+      1024
+    ],
+    "sha256": "beb3f3d3bf10f52dfe476ccd91359aeb4d09441d21485ed0df6f287800c065c7",
+    "status": "未接入",
+    "view": "静态插画"
+  },
+  {
+    "id": "landmarks/island_cottage",
+    "path": "landmarks/island_cottage.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "source": "sources/reading_sea_watercolor_landmarks_20261005115646.png",
+    "source_rect": [
+      1024,
+      512,
+      1536,
+      1024
+    ],
+    "sha256": "4405e6af8986e9cda951b420a46523a1918be0c6d35af458e99d1e2e8fa78252",
+    "status": "未接入",
+    "view": "静态插画"
+  },
+  {
+    "id": "marine/sardine",
+    "path": "marine/sardine.png",
+    "size": [
+      512,
+      512
+    ],
+    "source": "sources/reading_sea_watercolor_marine_life_20261005115707.png",
+    "source_rect": [
+      0,
+      0,
+      288,
+      384
+    ],
+    "sha256": "e0bd3791437334f0cf588abb213a6f371cf9d8bfa62177fe9c6fc9d7128d14be",
+    "status": "未接入",
+    "view": "图鉴侧视插画，非俯视运行精灵"
+  },
+  {
+    "id": "marine/tuna",
+    "path": "marine/tuna.png",
+    "size": [
+      512,
+      512
+    ],
+    "source": "sources/reading_sea_watercolor_marine_life_20261005115707.png",
+    "source_rect": [
+      288,
+      0,
+      576,
+      384
+    ],
+    "sha256": "de432f4808f87e68aa360d55498f8f84cfbeb6849edcb3e76b2929d42d874540",
+    "status": "未接入",
+    "view": "图鉴侧视插画，非俯视运行精灵"
+  },
+  {
+    "id": "marine/dolphin",
+    "path": "marine/dolphin.png",
+    "size": [
+      512,
+      512
+    ],
+    "source": "sources/reading_sea_watercolor_marine_life_20261005115707.png",
+    "source_rect": [
+      576,
+      0,
+      864,
+      384
+    ],
+    "sha256": "75723c24160eeacd3f8ecb3efef874a19563bd1e3ed023d19f3e0c4533e97f59",
+    "status": "未接入",
+    "view": "图鉴侧视插画，非俯视运行精灵"
+  },
+  {
+    "id": "marine/reef_shark",
+    "path": "marine/reef_shark.png",
+    "size": [
+      512,
+      512
+    ],
+    "source": "sources/reading_sea_watercolor_marine_life_20261005115707.png",
+    "source_rect": [
+      864,
+      0,
+      1152,
+      384
+    ],
+    "sha256": "2d9f2a35c198c4fe9eb9cda69892300bf4a14f8711e8bfadd199a3459a845a99",
+    "status": "未接入",
+    "view": "图鉴侧视插画，非俯视运行精灵"
+  },
+  {
+    "id": "marine/turtle",
+    "path": "marine/turtle.png",
+    "size": [
+      512,
+      512
+    ],
+    "source": "sources/reading_sea_watercolor_marine_life_20261005115707.png",
+    "source_rect": [
+      0,
+      384,
+      288,
+      768
+    ],
+    "sha256": "3178c86df817fa659e0775b50c0492fcd2a3fffda1abac526ff4d659aa3389d6",
+    "status": "未接入",
+    "view": "静态插画"
+  },
+  {
+    "id": "marine/manta",
+    "path": "marine/manta.png",
+    "size": [
+      512,
+      512
+    ],
+    "source": "sources/reading_sea_watercolor_marine_life_20261005115707.png",
+    "source_rect": [
+      288,
+      384,
+      576,
+      768
+    ],
+    "sha256": "a4ff0d5edbc7858a27628368f06190acaef5e4e6281273b819e4f11ef3069623",
+    "status": "未接入",
+    "view": "静态插画"
+  },
+  {
+    "id": "marine/octopus",
+    "path": "marine/octopus.png",
+    "size": [
+      512,
+      512
+    ],
+    "source": "sources/reading_sea_watercolor_marine_life_20261005115707.png",
+    "source_rect": [
+      576,
+      384,
+      864,
+      768
+    ],
+    "sha256": "87e0b6f93e7ba19e1c60cdae71eae7c99237041f05931797177242332b690811",
+    "status": "未接入",
+    "view": "静态插画"
+  },
+  {
+    "id": "marine/jellyfish",
+    "path": "marine/jellyfish.png",
+    "size": [
+      512,
+      512
+    ],
+    "source": "sources/reading_sea_watercolor_marine_life_20261005115707.png",
+    "source_rect": [
+      864,
+      384,
+      1152,
+      768
+    ],
+    "sha256": "f55abbc55bb7d8457992850589fff5c19ae66ec38b60e3f3f7cd73bb66ab8a25",
+    "status": "未接入",
+    "view": "静态插画"
+  }
+]

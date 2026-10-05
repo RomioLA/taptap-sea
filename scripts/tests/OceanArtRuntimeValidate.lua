@@ -35,6 +35,7 @@ V.atFrame(10, function()
     V.assert(Images.IsLoaded(Test.scene.context, "gull"), "海鸥 PNG 已由引擎加载")
     V.assert(Images.IsLoaded(Test.scene.context, "island"), "岛 PNG 已由引擎加载")
     V.assert(Images.IsLoaded(Test.scene.context, "ripple"), "波纹 PNG 已由引擎加载")
+    V.assert(Images.IsLoaded(Test.scene.context, "waterpaper"), "水彩海面纸纹已由引擎加载")
 end)
 
 V.atFrame(115, function()

@@ -1,0 +1,124 @@
+{
+  "assets": [
+    {
+      "name": "boat",
+      "size": [
+        1024,
+        512
+      ],
+      "shaMatch": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "remainingBrightContamination": 0
+    },
+    {
+      "name": "island",
+      "size": [
+        1024,
+        1024
+      ],
+      "shaMatch": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "remainingBrightContamination": 0
+    },
+    {
+      "name": "gull",
+      "size": [
+        512,
+        512
+      ],
+      "shaMatch": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "remainingBrightContamination": 0
+    },
+    {
+      "name": "barrel",
+      "size": [
+        512,
+        512
+      ],
+      "shaMatch": true,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "remainingBrightContamination": 0
+    },
+    {
+      "name": "ripple",
+      "size": [
+        512,
+        512
+      ],
+      "shaMatch": true,
+      "alphaRange": [
+        0,
+        230
+      ],
+      "remainingBrightContamination": 0
+    },
+    {
+      "name": "waterpaper",
+      "size": [
+        1024,
+        1024
+      ],
+      "shaMatch": true,
+      "alphaRange": [
+        255,
+        255
+      ],
+      "remainingBrightContamination": 0
+    }
+  ],
+  "previousSceneBootstrapUnchanged": {
+    "scripts/Ocean/Bootstrap.lua": true,
+    "scripts/Integration/Scene.lua": true
+  },
+  "protectedFilesCurrentHashes": {
+    "scripts/data/events.lua": "8d1de381011a1058094f5dbb58c4470ecfe76252e56a85d8c0a09a5c8467fff7",
+    "scripts/data/fish.lua": "699f8b4eca3c1d49070c050937f9000f586f95b8c9fb49590f842734e157625a",
+    "scripts/data/items.lua": "16188d479fe593accde391bd17858543b51cb57832397ce8cf7023b28ab50a84",
+    "scripts/GeneratedData/Fish.lua": "f9e6197bc4882fd4cf44de56cc7d1f807e3f513cf3c4e7a9e02f7edb620b17d6",
+    "scripts/GeneratedData/Items.lua": "e9a770afa9ed5ff8414c2e4d3769a3d5d0c475f56ef1a40f7ec1583f48cd3812",
+    "scripts/Game/Game.lua": "ed51ae6666093d0e089b8f93cf48d5a2200e59c7969a269e3364cf08e7cd7ed6",
+    "scripts/Game/World.lua": "566adfe3c4560b6f55d38059c72514b710485a290112e40172fa650b694c6ded",
+    "scripts/Gameplay/Actions.lua": "cd94fa0cdbf831b52e2cedf7f78fa244312bc859d8d84cb8a368ae862a5531bd",
+    "scripts/Gameplay/Bootstrap.lua": "02a87994bed0c28260715a50e1d089d3566b8933cabc4c526431dd4c8578d847",
+    "scripts/Gameplay/Circle1B2Barrel.lua": "60b02a176a40e913d9b7e603f0c234993182ee99069fc5b1c5f87e653e741786",
+    "scripts/Gameplay/Circle1B2Progress.lua": "a49e1852b73304842f7a147b5b2846bf9a657d1f9a41e434a1177028f67b0d7a",
+    "scripts/Gameplay/Debug.lua": "3d65eabe082740fbca3dd040245ae68431f440cac9f92577332ec477159d7ca2",
+    "scripts/Gameplay/Diagnostics.lua": "0fe71dd080f86ae294cb66ffe1ae851676d35800c5b340fe65ed4a2ea0572ad8",
+    "scripts/Gameplay/GameClock.lua": "d9eedb1bc9d53a8fe948ba95c196a378cf8d99759e67cc4b7b0b1f7d16f35525",
+    "scripts/Gameplay/HUD.lua": "9c9e36a91f2852256feaea2828493f21e90848114b4a2bbbe73fbb0bcbdfb53f",
+    "scripts/Gameplay/HUDPresentation.lua": "4ddf1ce63ee88df39c286a50e8216f61a8c4e03068e30540fdab1a0acdb25df1",
+    "scripts/Gameplay/Inventory.lua": "3ff40bdfeb2be554704f65dfa4b3a35d40a1e603456637e96a4005297c1ec1d0",
+    "scripts/Gameplay/LocalSaveBackend.lua": "ac5a15364f85a6534fad2ff33a156482452db71bda9c820b193619f5d86e64c7",
+    "scripts/Gameplay/Loop.lua": "c44b0aba668d58545312e419a732672f8563c4532461975bac62ae8dfca0033c",
+    "scripts/Gameplay/Persistence.lua": "0718924b597d182e6ca7db8cf7b283f3c861a802dbc3341dde03b6bacd897971",
+    "scripts/Gameplay/PlayerState.lua": "f28c10723ac80ca36a82ae80f585b6aae25b7ab69ebe9476cdb5e4458f92fd5b",
+    "scripts/Gameplay/UpdateSystem.lua": "12a92a5c2117935faf0393188e23a2440beee11999ba7f268210c4a5d26a2cd1",
+    "scripts/FSM/StateMachine.lua": "34376bb99d73878a4ea8b042ac810e0940f6549c0e67339dab042b9cdd003ee4",
+    "scripts/Systems/BirdSystem.lua": "e8482b4bac7e0d4b905bf8c2a63059a5b9b0b473066fa8976513c7049e300406",
+    "scripts/Systems/ClockSystem.lua": "5839ce5f971f6ee66f9b82f61fab30cc1b73e3fa5b3533c78a5534d2d570827a",
+    "scripts/Systems/EntityStateSystem.lua": "2c44801d07e2921c3d5a5492faf0832d2b86890a759d11e9ec23b597ec3e8f18",
+    "scripts/Systems/FishSystem.lua": "92bb1b556c4548535166c7fae466046faaa3b5e2206546bf9529b9fae89fa59a",
+    "scripts/Main.lua": "7b14e1225833ed502b329a78681c5257fb1db75dcb72e1cccb6da906e322b7c2",
+    "scripts/Ocean/Config.lua": "24d171360bc2c363962e545b2689e821b155ac6499bde25d9768ad4f27726175",
+    "scripts/Ocean/World.lua": "c31668e509889399ebcd2fa708a12ae27219f11c754c41575ea3f7de71858366",
+    "scripts/Ocean/SeaRuntime.lua": "5139fdfb977cc0dfe5a7a5542be8786ffb2c858a36982af3886f18798bf208c7",
+    "scripts/Ocean/Movement.lua": "abc0c5ea1f892a022be9813b168f3fcf5f7754760645bd2ba2cbc250a8aa8ebf",
+    "scripts/Ocean/Projection.lua": "028c379c23657584fc930d7d15f0e0a6495f8cc637b01e71f01f4e618627bb87",
+    "scripts/Ocean/ProjectedGeometry.lua": "672892c1ce8fc77897016e7baa9e9a8a89e7615672dacd796316a984c22fa1df",
+    "scripts/Ocean/SurfaceSignals.lua": "724390ae99c892205fd8606ed220dbf42d40cc8faad8cd0bd0feaba67a9fcbb3",
+    "scripts/Ocean/Wake.lua": "9f785b02d3cf8240eb7a6e424a3ad0bf6fce6b83ca9ff20cfe537fe493155666"
+  }
+}

@@ -1,0 +1,122 @@
+[
+  {
+    "id": "buttons/pill_default",
+    "path": "buttons/pill_default.png",
+    "size": [
+      1024,
+      320
+    ],
+    "source": "sources/reading_sea_watercolor_button_states_20261005115716.png",
+    "source_rect": [
+      0,
+      0,
+      870,
+      256
+    ],
+    "sha256": "b19b4321f82a15ffd012dc6e2275ea374ce680291940f1e07b68d2dfbdd1f250",
+    "status": "未接入",
+    "note": "空白按钮底图，保留等比缩放；默认/按下/禁用独立PNG"
+  },
+  {
+    "id": "buttons/round_default",
+    "path": "buttons/round_default.png",
+    "size": [
+      512,
+      512
+    ],
+    "source": "sources/reading_sea_watercolor_button_states_20261005115716.png",
+    "source_rect": [
+      870,
+      0,
+      1152,
+      256
+    ],
+    "sha256": "63c2b30fd493065f508f5c867672a877c5fa1cfcdf6c3250ede4beea08505a55",
+    "status": "未接入",
+    "note": "空白按钮底图，保留等比缩放；默认/按下/禁用独立PNG"
+  },
+  {
+    "id": "buttons/pill_pressed",
+    "path": "buttons/pill_pressed.png",
+    "size": [
+      1024,
+      320
+    ],
+    "source": "sources/reading_sea_watercolor_button_states_20261005115716.png",
+    "source_rect": [
+      0,
+      256,
+      870,
+      512
+    ],
+    "sha256": "cf82021396954517944d16c8765d3110cdd04b8a1998861633465f65937c74fd",
+    "status": "未接入",
+    "note": "空白按钮底图，保留等比缩放；默认/按下/禁用独立PNG"
+  },
+  {
+    "id": "buttons/round_pressed",
+    "path": "buttons/round_pressed.png",
+    "size": [
+      512,
+      512
+    ],
+    "source": "sources/reading_sea_watercolor_button_states_20261005115716.png",
+    "source_rect": [
+      870,
+      256,
+      1152,
+      512
+    ],
+    "sha256": "59500586ad201bfcbe42029ee92a3b1c37906990949f80ddc49ffd4dc80f718d",
+    "status": "未接入",
+    "note": "空白按钮底图，保留等比缩放；默认/按下/禁用独立PNG"
+  },
+  {
+    "id": "buttons/pill_disabled",
+    "path": "buttons/pill_disabled.png",
+    "size": [
+      1024,
+      320
+    ],
+    "source": "sources/reading_sea_watercolor_button_states_20261005115716.png",
+    "source_rect": [
+      0,
+      512,
+      870,
+      768
+    ],
+    "sha256": "4045591d155456eff5e01eedce961fa5790b62badcf894539a75f70053b47144",
+    "status": "未接入",
+    "note": "空白按钮底图，保留等比缩放；默认/按下/禁用独立PNG"
+  },
+  {
+    "id": "buttons/round_disabled",
+    "path": "buttons/round_disabled.png",
+    "size": [
+      512,
+      512
+    ],
+    "source": "sources/reading_sea_watercolor_button_states_20261005115716.png",
+    "source_rect": [
+      870,
+      512,
+      1152,
+      768
+    ],
+    "sha256": "7f40a2ffb35505790becca27db80c1cbca1fc73a4a8d1e71847eec9274ffa064",
+    "status": "未接入",
+    "note": "空白按钮底图，保留等比缩放；默认/按下/禁用独立PNG"
+  },
+  {
+    "id": "background/ocean_tile",
+    "path": "background/ocean_tile.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "source": "sources/reading_sea_watercolor_ocean_tile_20261005115327.png",
+    "sha256": "d5b4c55f7f24ed4670bbf8dd7403644d8d7a9c724100047bec8fe124a389fa69",
+    "status": "未接入",
+    "note": "64像素边界混合实现对边像素一致；原生平铺未验证"
+  }
+]
