@@ -90,6 +90,42 @@ function Tests.Run()
             end
         end
     end)
+    check("S1 spawn distribution prefers sardine near day start and tuna in far band, soft fallback keeps far regions stocked", function()
+        assert(Data.sardine.spawnBandFromDayStart.min == 15 and Data.sardine.spawnBandFromDayStart.max == 150)
+        assert(Data.tuna.spawnBandFromDayStart.min == 200 and Data.tuna.spawnBandFromDayStart.max == 600)
+        assert(Data.sardine.bandStatus == "S1_BALANCE_PLACEHOLDER" and Data.tuna.bandStatus == "S1_BALANCE_PLACEHOLDER")
+        -- Near-departure region [0,120]^2: sardines should land inside the 150m band;
+        -- tuna can never pass the 200m hard constraint here and must stay absent.
+        local world=World.New();local departure={x=0,y=0};local boat={x=8,y=8}
+        local inBandSardine,outOfBandSardine=0,0
+        for seed=1,40 do
+            for _,p in ipairs(Strategy.GenerateRegion(world,seed,12,12,departure,Data,boat)) do
+                if p.species=="sardine" then
+                    assert(M.distance(p.position,boat)>=Data.sardine.minShipSpawnDistance)
+                    if M.distance(p.position,departure)<=Data.sardine.spawnBandFromDayStart.max then
+                        inBandSardine=inBandSardine+1
+                    else outOfBandSardine=outOfBandSardine+1 end
+                else assert(p.species=="tuna" and M.distance(p.position,departure)>=200) end
+            end
+        end
+        assert(inBandSardine>0 and outOfBandSardine*10<inBandSardine)
+        -- Far region x in [240,360]: sardines fall back to uniform placement (no dead
+        -- zones) while tuna land inside their 200-600m band.
+        local farSardine,farTuna=0,0
+        for seed=1,40 do
+            for _,p in ipairs(Strategy.GenerateRegion(world,seed,14,12,departure,Data,boat)) do
+                local dist=M.distance(p.position,departure)
+                if p.species=="sardine" then farSardine=farSardine+1
+                else assert(dist>=Data.tuna.spawnBandFromDayStart.min and dist<=Data.tuna.spawnBandFromDayStart.max);farTuna=farTuna+1 end
+            end
+        end
+        assert(farSardine>0 and farTuna>0)
+        -- Same seed reproduces the same placements after the two-phase change.
+        local a=Strategy.GenerateRegion(World.New(),77,12,12,departure,Data,boat)
+        local b=Strategy.GenerateRegion(World.New(),77,12,12,departure,Data,boat)
+        assert(#a==#b)
+        for i=1,#a do assert(a[i].species==b[i].species and M.distance(a[i].position,b[i].position)<1e-9) end
+    end)
     check("birth exclusion is not an AI barrier after generation", function()
         for _,spec in ipairs({{"sardine",18,"ATTRACT_SMALL_FISH"},{"tuna",31,"ATTRACT_BIG_FISH"}}) do
             local r=fresh();local fish=r:spawnFish(spec[1],{x=spec[2],y=0},math.pi)
