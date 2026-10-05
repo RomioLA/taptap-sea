@@ -46,11 +46,14 @@ local function fitHudToLeftSide(hud)
     local width = math.floor(math.min(620, logicalScreenWidth() * 0.62))
     for index = 1, visibleChildCount do
         local child = children[index]
-        setStyle(child, {
-            width = width,
-            maxWidth = width,
-            alignSelf = "flex-start",
-        })
+        -- 左侧宽度只约束信息流；absolute操作坞、抽屉及遮罩由HUD自行定位。
+        if not child.props or child.props.position ~= "absolute" then
+            setStyle(child, {
+                width = width,
+                maxWidth = width,
+                alignSelf = "flex-start",
+            })
+        end
     end
     if children[1] then setStyle(children[1], { flexWrap = "wrap" }) end
     if children[2] then setStyle(children[2], { flexWrap = "wrap" }) end

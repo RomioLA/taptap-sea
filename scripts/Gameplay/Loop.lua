@@ -671,7 +671,7 @@ local function finishSettlement(self, saved)
     self.saveStatus = saved and "saved" or "skipped"
     self.clock:Resume("settlement")
     self.lastMessage = saved and "每日结算已保存，下一天已就绪"
-        or "本次结算未保存，下一天已就绪；旧存档仍保留，退出后当天未保存进度可能丢失。"
+        or "已跳过本次保存等待，下一天已就绪；未保存进度可能在退出后丢失，已发出的保存请求仍可能稍后写入。"
     emit(self, "new_day_preparation", {
         kind = "operation", result = "ready", reason = saved and "saved" or "explicitly_skipped",
         day = self.player.day,

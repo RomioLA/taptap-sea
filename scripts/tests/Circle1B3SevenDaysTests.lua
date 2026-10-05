@@ -311,10 +311,13 @@ local function route(appleGiftDays)
                     }
                 else
                     local elderButton = findVisibleButton(root, "老人不在")
-                    assert(elderButton.disabled, "unrescued elder must not expose an enabled day-four visit")
+                    assert(not elderButton.disabled, "absent elder entry must explain why it is unavailable")
+                    clickButton(root, "老人不在")
+                    assert(hasVisibleLabel(root, "操作未完成：老人不在船上，当前无法赠送。"),
+                        "absence click must explain the rejection")
                     assert(not loop.elderOpen, "unrescued elder dialogue must remain closed on day four")
                     routeData.day4ElderAccess = {
-                        visible = true, enabled = false, label = elderButton.props.text,
+                        visible = true, enabled = true, label = elderButton.props.text,
                         explanation = "老人不在",
                     }
                 end

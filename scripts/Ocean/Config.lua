@@ -47,7 +47,7 @@ local Config = {
         { entityType = "island", position = { x = -80, y = 90 }, radius = 20, blocking = true },
         { entityType = "float", position = { x = 10, y = 0 }, radius = 2, blocking = false },
     },    -- 新手教程点位：出港点(0,0)右侧近海的固定木桶，出港即可见、抵达即教学。
-    -- 碰撞实体（blocking），靠近 ≤ operateDistance(5m) 可检查（World:Init 注册）。
+    -- 非阻挡漂浮物，靠近 ≤ operateDistance(5m) 可检查（World:Init 注册）。
     fixedBarrel = { position = { x = 14, y = 6 }, radius = 2,
         tuningStatus = "TUTORIAL_PROVISIONAL_GEOMETRY" },
 },

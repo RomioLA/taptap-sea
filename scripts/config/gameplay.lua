@@ -61,6 +61,12 @@ return {
     },
     -- 玩家界面设计方案 v1.0（2026-10-04）：海洋主题 token，HUD 表现层唯一取色来源。
     ui = {
+        -- 圈1鱼获识别标签，仅用于展示，不改变捕获概率/价格或存档结构。
+        fishDisplay = {
+            sardine = { rarity = "普通", paletteKey = "textMuted" },
+            tuna = { rarity = "稀有", paletteKey = "textGold" },
+        },
+        themeTransition = "backgroundColor 0.8s easeInOut",
         palette = {
             seaDeep = { 12, 68, 124, 242 },         -- #0C447C 操作坞/白天面板
             seaNight = { 4, 32, 62, 248 },          -- #04203E 夜间面板（更深，与海面明度反向）

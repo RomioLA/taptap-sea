@@ -31,6 +31,151 @@ function Tests.Run(recorder)
         results[#results+1]={name=name,passed=ok,error=not ok and tostring(err) or nil}
     end
 
+    check("separated screen polygons retain their geometry across horizon extrema",function()
+        local v=view(1000,700)
+        local center=Projection.Horizon(v,500)
+        local edge=Projection.Horizon(v,0)
+        local function box(x1,x2,y1,y2)
+            return {{x=x1,y=y1},{x=x2,y=y1},{x=x2,y=y2},{x=x1,y=y2}}
+        end
+        for _,range in ipairs({{-20,1020},{20,300},{700,980}}) do
+            local water=box(range[1],range[2],edge+2,edge+10)
+            local sky=box(range[1],range[2],center-10,center-2)
+            assert(Geometry.ClipScreenPolygon(v,water,1)==water,
+                "separated water geometry should bypass redundant sampling")
+            assert(Geometry.ClipScreenPolygon(v,sky,-1)==sky)
+            assert(#Geometry.ClipScreenPolygon(v,sky,1)==0)
+            assert(#Geometry.ClipScreenPolygon(v,water,-1)==0)
+        end
+    end)
+
+    check("horizon snapshots match the live formula and renew after viewport or config changes",function()
+        local v=view(1000,700)
+        local old=Config.visual.curvature.heightRatio
+        local ok,err=pcall(function()
+            for _,ratio in ipairs({0,.045,1}) do
+                Config.visual.curvature.heightRatio=ratio
+                for _,size in ipairs({{1000,700},{390,844},{1920,1080}}) do
+                    v.viewportWidth,v.viewportHeight=size[1],size[2]
+                    local horizon=assert(Projection.HorizonFunction(v))
+                    for index=-10,110 do
+                        local x=size[1]*index/100
+                        near(horizon(x),Projection.Horizon(v,x),1e-9)
+                    end
+                    near(horizon(0/0),Projection.Horizon(v,0/0),1e-9)
+                end
+            end
+            assert(Projection.HorizonFunction({})==nil)
+        end)
+        Config.visual.curvature.heightRatio=old
+        assert(ok,tostring(err))
+    end)
+
+    check("scalar projection snapshots match live projection and renew after changes",function()
+        local v=view(1000,700)
+        local oldRatio=Config.visual.curvature.heightRatio
+        local oldSpan=Config.visual.horizonOcclusion.tangentSpan
+        local ok,err=pcall(function()
+            for _,size in ipairs({{1000,700},{390,844},{1920,1080}}) do
+                v.viewportWidth,v.viewportHeight=size[1],size[2]
+                for _,ratio in ipairs({0,.045,1}) do
+                    Config.visual.curvature.heightRatio=ratio
+                    for _,span in ipairs({.1,.25}) do
+                        Config.visual.horizonOcclusion.tangentSpan=span
+                        v.camera.x,v.camera.y=17+ratio*30,-9+span*20
+                        local project=assert(Projection.ProjectFunction(v))
+                        for _,depth in ipairs({-100,-20,0,25,Config.camera.farDepth,
+                            Config.camera.farDepth+15,Config.camera.farDepth+100}) do
+                            for _,lateral in ipairs({-100,0,25,100}) do
+                                for _,altitude in ipairs({0,.15,5.4}) do
+                                    local point={x=v.camera.x+lateral,y=v.camera.y+depth}
+                                    local ax,ay,as=Projection.Project(v,point,altitude)
+                                    local bx,by,bs=project(point.x,point.y,altitude)
+                                    assert((ax==nil)==(bx==nil))
+                                    if ax then near(ax,bx,1e-9);near(ay,by,1e-9);near(as,bs,1e-9) end
+                                end
+                            end
+                        end
+                        assert(project(0/0,0,0)==nil)
+                    end
+                end
+            end
+            assert(Projection.ProjectFunction({})==nil)
+        end)
+        Config.visual.curvature.heightRatio=oldRatio
+        Config.visual.horizonOcclusion.tangentSpan=oldSpan
+        assert(ok,tostring(err))
+    end)
+
+    check("world bounds reject complete screen-exterior geometry but retain crossing heights",function()
+        local v=view()
+        local far=Config.camera.farDepth
+        assert(not Geometry.WorldBoundsVisible(v,{{x=100000,y=0},{x=100002,y=2}},0))
+        local crossing={pointAt(v,-.2,10),pointAt(v,1.2,10),pointAt(v,.5,12)}
+        assert(Geometry.WorldBoundsVisible(v,crossing,0))
+        local heights={{x=v.camera.x,y=v.camera.y+far+1,altitude=5.4},
+            {x=v.camera.x+1,y=v.camera.y+far+1,altitude=5.4}}
+        assert(Geometry.WorldBoundsVisible(v,heights))
+        assert(not Geometry.WorldBoundsVisible(v,heights,0))
+    end)
+
+    check("clip planes renew after camera viewport config padding and height changes",function()
+        local v=view(1000,700)
+        local original=Projection.ViewPolygon
+        local calls=0
+        Projection.ViewPolygon=function(...)
+            calls=calls+1
+            return original(...)
+        end
+        local oldAnchor=Config.camera.anchorX
+        local ok,err=pcall(function()
+            local points={{x=17,y=-9},{x=18,y=-9},{x=17,y=-8}}
+            local function polygon(height,padding) return Geometry.ClipPolygon(v,points,height,padding) end
+            assert(#polygon(0,0)==3)
+            for _=1,5 do assert(#polygon(0,0)==3) end
+            assert(calls==1,"stable clip planes were rebuilt")
+            v.camera.x=v.camera.x+10000
+            assert(#polygon(0,0)==0 and calls==2,"camera change reused stale planes")
+            v.camera.x=17;polygon(0,0);assert(calls==3)
+            v.viewportWidth=1200;polygon(0,0);assert(calls==4)
+            v.viewportHeight=900;polygon(0,0);assert(calls==5)
+            Config.camera.anchorX=.6;polygon(0,0);assert(calls==6)
+            polygon(0,2);assert(calls==7,"padding reused the wrong plane set")
+            polygon(5,2);assert(calls==8,"raised geometry reused ground-only planes")
+            polygon(0,2);assert(calls==8,"read-only plane set was not reused")
+        end)
+        Projection.ViewPolygon=original
+        Config.camera.anchorX=oldAnchor
+        assert(ok,tostring(err))
+    end)
+
+    check("intersecting and tangent screen polygons still clip against the curved horizon",function()
+        local v=view(1000,700)
+        local center,edge=Projection.Horizon(v,500),Projection.Horizon(v,0)
+        local points={{x=-20,y=center-2},{x=1020,y=center-2},
+            {x=1020,y=edge+2},{x=-20,y=edge+2}}
+        for _,side in ipairs({1,-1}) do
+            local clipped=Geometry.ClipScreenPolygon(v,points,side)
+            assert(clipped~=points and #clipped>4,"intersections require the original curved clip")
+            local touches=false
+            for _,p in ipairs(clipped) do
+                assert(side*(p.y-Projection.Horizon(v,p.x))>=-1e-6)
+                touches=touches or p.occlusionEdge==true
+            end
+            assert(touches,"crossing must preserve horizon intersections")
+        end
+        local tangent={{x=0,y=edge},{x=1000,y=edge},{x=1000,y=edge+2},{x=0,y=edge+2}}
+        assert(Geometry.ClipScreenPolygon(v,tangent,1)~=tangent,
+            "an exact tangent must retain the original boundary handling")
+        assert(#Geometry.ClipScreenPolygon(v,{},1)==0)
+        local badView={camera={x=0,y=0},viewportWidth=0,viewportHeight=700}
+        assert(not pcall(Geometry.ClipScreenPolygon,badView,points,1),
+            "invalid viewport must not be mistaken for a valid separated polygon")
+        local invalid={{x=0/0,y=edge+10},{x=1000,y=edge+10},{x=0,y=edge+20}}
+        local success,result=pcall(Geometry.ClipScreenPolygon,v,invalid,1)
+        assert(not success or result~=invalid,"non-finite coordinates took the fast path")
+    end)
+
     check("the lowest raised vertices disappear before the top as the surface recedes",function()
         local v=view()
         for _,fraction in ipairs({.05,.5,.95}) do

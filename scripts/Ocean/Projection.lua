@@ -54,11 +54,29 @@ function Projection.Horizon(view, screenX)
     return baseline + rise
 end
 
+-- Snapshot only for a synchronous drawing operation. Repeated clipping samples
+-- share viewport/configuration constants; callers recreate this after changes.
+---@return (fun(screenX:number):number)?
+function Projection.HorizonFunction(view)
+    local width, height, _, _, baseline, anchorHeight = parameters(view)
+    if not width then return end
+    local magnitude = curvature(width, height, anchorHeight, 0)
+    local halfWidth = width * 0.5
+    return function(screenX)
+        if not finite(screenX) then return baseline end
+        local u = math.max(-1, math.min(1, (screenX - halfWidth) / halfWidth))
+        return baseline + magnitude * u * u
+    end
+end
+
 -- A short tangent interval joins the established near-water projection to a
 -- curved surface. The continued surface sinks behind the tangent; it is never
 -- clamped to the horizon. r is dimensionless and distances remain world meters.
-local function surface(r)
-    local span = Config.visual.horizonOcclusion.tangentSpan or 0.1
+---@param r number
+---@param span number?
+---@return number,number
+local function surface(r,span)
+    span = span or Config.visual.horizonOcclusion.tangentSpan or 0.1
     if r >= span then return r, 1 end
     if r >= 0 then
         return r * r * (2 * span - r) / (span * span),
@@ -100,6 +118,42 @@ function Projection.Project(view, position, altitude)
         - (finite(altitude) and altitude or 0) * scale
     if not finite(x) or not finite(y) or not finite(scale) then return end
     return x, y, scale
+end
+
+-- One synchronous geometry operation shares these camera/config constants.
+-- No persistent screen cache: recreate after camera, viewport or config changes.
+---@return function?
+function Projection.ProjectFunction(view)
+    local width,height,base,distance,horizon,anchorHeight=parameters(view)
+    if not width or not finite(view.camera.x) or not finite(view.camera.y) then return end
+    local cameraX,cameraY,anchorX=view.camera.x,view.camera.y,Config.camera.anchorX
+    local farQ=distance/(distance+Config.camera.farDepth)
+    local span=Config.visual.horizonOcclusion.tangentSpan or 0.1
+    local epsilon=Config.world.epsilon
+    local magnitude=curvature(width,height,anchorHeight,0)
+    local halfWidth=width*.5
+    return function(worldX,worldY,altitude)
+        if not finite(worldX) or not finite(worldY) then return end
+        local depth=worldY-cameraY
+        local denominator=distance+depth
+        if denominator<=epsilon then return end
+        local q=distance/denominator
+        local horizonQ=surface((q-farQ)/(1-farQ),span)
+        local scale=base*q
+        local x=width*anchorX+(worldX-cameraX)*scale
+        ---@type number
+        local bend=0
+        if horizonQ<1 then
+            local u=math.max(-1,math.min(1,(x-halfWidth)/halfWidth))
+            local amount=magnitude*u*u
+            local remaining=1-horizonQ
+            bend=amount*remaining*remaining
+        end
+        local y=horizon+anchorHeight*horizonQ+bend
+            -(finite(altitude) and altitude or 0)*scale
+        if not finite(x) or not finite(y) or not finite(scale) then return end
+        return x,y,scale
+    end
 end
 
 ---@return OceanPoint?

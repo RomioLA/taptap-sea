@@ -14,7 +14,10 @@ function Input.HandlePendingPointer(bridge, ocean, event, ui)
     local x, y = event.x * scale, event.y * scale
     if x < 0 or x > ocean.physicalWidth or y < 0 or y > ocean.physicalHeight then return false end
     if y / ocean.physicalHeight < ocean.pointerMinY then return false end
-    if ui.FindWidgetAt(event.x, event.y) then return false end
+    local hit = ui.FindWidgetAt(event.x, event.y)
+    -- 背包遮罩继续拦普通航行点击；仅在已暂停的选投放点流程放行它。
+    -- 抽屉、物品按钮、对话等实际UI仍不得触发投放或丢弃选点。
+    if hit and (not hit.props or hit.props.id ~= "gameplayDrawerBackdrop") then return false end
     local position = bridge.runtime.movement:ScreenToWorld(x / ocean.dpr, y / ocean.dpr)
     -- The shared inverse rejects sky, the horizon and clipped water. Never
     -- consume the paused throw selection or clear navigation for such a click.
