@@ -377,6 +377,11 @@ function Actions:CompleteFishing(runtime,token,...)
     self._pendingFishing=nil
     record.result=table.pack(true,hasSpace and 'caught' or 'pending_catch',record.itemId)
     actionEvent('fishing_complete', record, 'operation', hasSpace and 'caught' or 'pending_catch')
+    -- S6 教学：成功捕获即完成"投饵→捕鱼→结果反馈"闭环（05 页 P6）；
+    -- 非满舱在此标记，满舱延迟到 claim 成功（下方）。容错调用，旧 Loop 无此方法时静默。
+    if hasSpace and type(self.loop.NotifyCatchObtained) == 'function' then
+        Diagnostics.Call('Actions','teaching_done_mark',self.loop.NotifyCatchObtained,self.loop)
+    end
     if not hasSpace then
         self._pendingCatch={itemIds={record.itemId},token=record.token,claiming=false}
         -- Receipt is authoritative before observer/UI callbacks run or throw.
@@ -466,6 +471,10 @@ function Actions:ClaimPendingCatch()
     self._pendingCatch=nil
     pending.claiming=false
     Diagnostics.Call('Actions','pending_catch_claim_message',self.loop.SetMessage,self.loop,'已领取保留的收获，不再扣体力。')
+    -- S6 教学：满舱路径的收获在 claim 成功入包时补标记。
+    if type(self.loop.NotifyCatchObtained) == 'function' then
+        Diagnostics.Call('Actions','teaching_done_mark',self.loop.NotifyCatchObtained,self.loop)
+    end
     actionEvent('pending_catch_claim', record, 'operation', 'claimed')
     return true
 end

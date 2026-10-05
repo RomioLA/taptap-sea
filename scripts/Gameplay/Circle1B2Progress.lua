@@ -2,7 +2,7 @@
 local Progress = {}
 
 local RECORD_KEY = "circle1B2"
-local ELDER_DEFAULTS = { applesGiven = 0, decision = "pending" }
+local ELDER_DEFAULTS = { applesGiven = 0, decision = "pending", teachingDone = false }
 local STORY_DEFAULTS = { barrelStage = 0, paperShown = false }
 
 local function finite(value)
@@ -83,6 +83,10 @@ function Progress.Validate(data)
         local decision = elder.decision
         if decision ~= "pending" and decision ~= "saved" and decision ~= "dead" then
             return false, "invalid_elder_decision"
+        end
+
+        if elder.teachingDone ~= nil and type(elder.teachingDone) ~= "boolean" then
+            return false, "invalid_elder_teaching_done"
         end
 
         if decision == "saved" or decision == "dead" then
@@ -206,6 +210,33 @@ function Progress.IsElderPresent(player)
         return false, "elder_not_present"
     end
     return false, "规则尚未确定"
+end
+
+---查询教学是否已完成（首次领取捕鱼收获后置位）。
+---@param player table
+---@return boolean, string|nil
+function Progress.IsTeachingDone(player)
+    if type(player) ~= "table" then return false, "invalid_player_state" end
+    local record, reason = getRecord(player, "elder", "elder_progress")
+    if reason then return false, reason end
+    if not record or record.teachingDone == nil then return false end
+    if type(record.teachingDone) ~= "boolean" then return false, "invalid_elder_teaching_done" end
+    return record.teachingDone
+end
+
+---标记看海教学完成；重复标记幂等。由首次领取捕鱼收获触发（05 页：
+---"配合一次玩家实际投饵、捕鱼和结果反馈"）。
+---@param player table
+---@return boolean, string|nil
+function Progress.MarkTeachingDone(player)
+    if type(player) ~= "table" or not integer(player.day, 1) then return false, "invalid_day" end
+    local record, reason = ensureRecord(player, "elder", ELDER_DEFAULTS, "elder_progress")
+    if not record then return false, reason end
+    if record.teachingDone ~= nil and type(record.teachingDone) ~= "boolean" then
+        return false, "invalid_elder_teaching_done"
+    end
+    record.teachingDone = true
+    return true
 end
 
 ---查询是否持有透镜。

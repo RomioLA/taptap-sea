@@ -1325,6 +1325,17 @@ function Loop:CancelFishingAction()
     if not self.actions then return true end
     return self.actions:CancelActiveFishing("cancelled")
 end
+---S6 教学：首次成功捕获（含满舱 claim 入包）= "投饵→捕鱼→结果反馈" 闭环完成
+---（05 页 P6 口径），标记后老人对话面板的教学对白区收起。幂等。
+function Loop:NotifyCatchObtained()
+    local Progress = require("Gameplay.Circle1B2Progress")
+    return Progress.MarkTeachingDone(self.player)
+end
+function Loop:IsTeachingDone()
+    local Progress = require("Gameplay.Circle1B2Progress")
+    local done = Progress.IsTeachingDone(self.player)
+    return done == true
+end
 function Loop:GetFishingState()
     return self.actions and self.actions:GetFishingState() or { state = "idle", elapsed = 0, duration = Config.fishing.durationSec }
 end

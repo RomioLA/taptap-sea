@@ -717,6 +717,9 @@ function HUD.Create(loop, parent, debugTools)
     refs.elderBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 8 }
     refs.elderMessage = makeLabel("食物可给予老人；鱼和鱼饵可向老人展示。", 13)
     refs.elderBody:AddChild(refs.elderMessage)
+    -- S6 教学（05 页 P6）：前 3 天且未完成首次捕鱼领取时，展示两条看海对白。
+    refs.elderTeaching = makeLabel("", 12, { 237, 213, 159, 255 })
+    refs.elderBody:AddChild(refs.elderTeaching)
     refs.elderStatus = makeLabel("", 12, { 237, 213, 159, 255 }, "bold")
     refs.elderBody:AddChild(refs.elderStatus)
     refs.elderTreasure = UI.Panel {
@@ -1482,6 +1485,17 @@ function HUD.Create(loop, parent, debugTools)
                 end
             end
             setText(refs.elderMessage, "elderMessage", feedback)
+            -- S6 教学区：Day1~3 且教学未完成（首次领取捕鱼收获）时展示，完成后收起。
+            local teachingDone = type(loop.IsTeachingDone) == "function" and loop:IsTeachingDone()
+            local day = tonumber(player.day) or 1
+            local showTeaching = showElder and teachingDone ~= true and day <= 3
+            refs.elderTeaching:SetVisible(showTeaching)
+            if showTeaching then
+                setText(refs.elderTeaching, "elderTeaching",
+                    "「鸟在那边盘旋，附近应该有小鱼，投点饵试试。」\n"
+                    .. "「留意水花留下的方向，那是大鱼经过的痕迹。」\n"
+                    .. "船开动会惊散鱼群，停船再投；饵不保证成功，多试几次。")
+            end
         end
         if loop.elderOpen == true then
             local elderProgressText = "老人进展暂不可用。"
