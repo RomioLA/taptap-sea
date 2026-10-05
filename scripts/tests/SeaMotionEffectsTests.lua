@@ -128,6 +128,36 @@ function Tests.Run(recorder)
         Config.visual.surface.maxMarks = oldLimit
         assert(ok, tostring(err))
     end)
+    check("meter-width foam clips once and returns the same projected edge endpoints", function()
+        local Geometry = require("Ocean.ProjectedGeometry")
+        local Projection = require("Ocean.Projection")
+        local runtime = require("Ocean.SeaRuntime").New({ initializeRegions = false })
+        runtime.movement:SetViewport(1920, 1080)
+        local movement, camera = runtime.movement, runtime.movement.camera
+        local from, to = {x=camera.x-100,y=camera.y+40}, {x=camera.x+100,y=camera.y+40}
+        local a,b = Geometry.ClipLine(movement,from,to,0)
+        assert(a and b, "test line must cross the visible viewport")
+        local expectedAX,expectedAY = Projection.Project(movement,a,0)
+        local expectedBX,expectedBY = Projection.Project(movement,b,0)
+        local original, calls = Geometry.ClipLine, 0
+        Geometry.ClipLine = function(...)
+            calls=calls+1
+            return original(...)
+        end
+        local ok,err = pcall(function()
+            recorder.reset()
+            local visible,ax,ay,bx,by = Geometry.StrokeWorldLine({},movement,from,to,nvgRGBA(239,250,246,165),
+                {meters=.06,minPixels=.65,maxPixels=1.9},0)
+            assert(visible and calls==1, "foam must clip only once")
+            near(ax,expectedAX);near(ay,expectedAY);near(bx,expectedBX);near(by,expectedBY)
+            local hidden,hx = Geometry.StrokeWorldLine({},movement,
+                {x=camera.x+10000,y=camera.y+40},{x=camera.x+10001,y=camera.y+40},
+                nvgRGBA(239,250,246,165),{meters=.06,minPixels=.65,maxPixels=1.9},0)
+            assert(not hidden and hx==nil and calls==2,"fully offscreen foam must produce no endpoints")
+        end)
+        Geometry.ClipLine=original
+        assert(ok,tostring(err))
+    end)
     check("turn bank eases back when stopped and freezes while paused", function()
         local Runtime = require("Ocean.SeaRuntime")
         local runtime = Runtime.New({ initializeRegions = false })

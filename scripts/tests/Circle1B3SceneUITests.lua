@@ -218,9 +218,20 @@ function Tests.Run()
             local Bootstrap=require("Ocean.Bootstrap")
             UI.hit={}; assert(not Bootstrap.HandlePointer(sea,450,350)); assert(sea.runtime.movement.target==nil)
             UI.hit=nil; assert(sea.loop:BeginFishingSelection()); sea.hud.Refresh()
+            local beforeStamina=sea.loop.player.stamina
+            assert(sea.bridge:OnSeaPointer({x=1000,y=1000}))
+            assert(sea.loop:GetFishingState().state=="selecting" and sea.loop.player.stamina==beforeStamina)
             assert(Bootstrap.HandlePointer(sea,450,350))
-            assert(sea.loop:GetFishingState().center and sea.runtime.movement.target==nil)
+            assert(sea.loop:GetFishingState().state=="casting" and sea.runtime.movement.target==nil)
+            assert(sea.runtime.ship.isMoving==false and sea.loop.player.stamina==beforeStamina)
             assert(sea.loop:GetThrowSelection()==nil)
+            sea.hud.Refresh()
+            assert(not button(sea.uiRoot,"确认抛网"))
+            local hudChildren=sea.hud.root:GetChildren()
+            assert(hudChildren[#hudChildren-1].props.id=="gameplayInventoryDrawer",
+                "inventory drawer must precede the full-screen modal")
+            assert(hudChildren[#hudChildren-1].props.position=="absolute"
+                and hudChildren[#hudChildren-1].props.bottom==0)
             assert(sea.loop:CancelFishingAction())
         end)
     end)
@@ -232,6 +243,13 @@ function Tests.Run()
             dimensions.w,dimensions.h=500,360; sea.tools.refresh(0)
             local header=sea.hud.root:GetChildren()[1]
             assert(header.props.maxWidth==310 and header.props.flexWrap=="wrap")
+            for _, id in ipairs({"gameplayActionDock","gameplayDrawerBackdrop","gameplayInventoryDrawer"}) do
+                local positioned=sea.hud.root:FindById(id)
+                assert(positioned and positioned.props.position=="absolute"
+                    and (positioned.props.maxWidth==nil or positioned.props.maxWidth=="100%"))
+            end
+            assert(sea.hud.root:FindById("gameplayInventoryDrawer").props.width=="100%")
+            assert(sea.hud.root:FindById("gameplayActionDock").props.right==0)
             assert(sea.uiRoot:FindById("gameplayContentScroll").props.pointerEvents=="box-none")
             assert(UI.rootCount==1)
         end)

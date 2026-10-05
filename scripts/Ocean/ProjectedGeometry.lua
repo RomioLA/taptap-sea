@@ -3,6 +3,11 @@
 local Config = require("Ocean.Config")
 local Projection = require("Ocean.Projection")
 local Geometry = {}
+local planeCache = setmetatable({}, {__mode="k"})
+
+local function finite(value)
+    return type(value) == "number" and value == value and math.abs(value) < math.huge
+end
 
 local function color(value)
     return nvgRGBA(value[1], value[2], value[3], value[4] or 255)
@@ -13,6 +18,37 @@ local function planes(movement, altitude, padding)
     -- Extend only for the height bound; the surface visibility test clips the
     -- remaining silhouette against intervening water.
     local extension = Projection.VisibleDepth(movement, altitude or 0) - Config.camera.farDepth
+    ---@type table|nil
+    local cached
+    ---@type table|nil
+    local byExtension
+    local pad = finite(padding) and math.max(0,padding) or 0
+    if type(movement)=="table" and type(movement.camera)=="table"
+        and finite(movement.camera.x) and finite(movement.camera.y)
+        and finite(movement.viewportWidth) and movement.viewportWidth>0
+        and finite(movement.viewportHeight) and movement.viewportHeight>0 and finite(extension) then
+        local camera=Config.camera
+        local span=Config.visual.horizonOcclusion.tangentSpan or 0.1
+        cached=planeCache[movement]
+        -- Every ViewPolygon input is compared, including mutable config values.
+        -- Reuse read-only planes; movement/config changes invalidate the set.
+        if not cached or cached.x~=movement.camera.x or cached.y~=movement.camera.y
+            or cached.width~=movement.viewportWidth or cached.height~=movement.viewportHeight
+            or cached.viewHeight~=camera.viewHeight or cached.anchorX~=camera.anchorX
+            or cached.anchorY~=camera.anchorY or cached.horizonY~=camera.horizonY
+            or cached.depthCompression~=camera.depthCompression or cached.farDepth~=camera.farDepth
+            or cached.span~=span or cached.projector~=Projection.ViewPolygon then
+            cached={x=movement.camera.x,y=movement.camera.y,width=movement.viewportWidth,
+                height=movement.viewportHeight,viewHeight=camera.viewHeight,anchorX=camera.anchorX,
+                anchorY=camera.anchorY,horizonY=camera.horizonY,depthCompression=camera.depthCompression,
+                farDepth=camera.farDepth,span=span,projector=Projection.ViewPolygon,sets={},count=0}
+            planeCache[movement]=cached
+        end
+        byExtension=cached.sets[pad]
+        if byExtension and byExtension[extension] then return byExtension[extension] end
+        if cached.count>=64 then cached.sets={};cached.count=0;byExtension=nil end
+        if not byExtension then byExtension={};cached.sets[pad]=byExtension end
+    end
     local polygon = Projection.ViewPolygon(movement, padding, extension)
     local result = {}
     for index, point in ipairs(polygon) do
@@ -20,11 +56,35 @@ local function planes(movement, altitude, padding)
         local dx, dy = nextPoint.x - point.x, nextPoint.y - point.y
         result[#result + 1] = { a = -dy, b = dx, c = dy * point.x - dx * point.y }
     end
+    if cached and byExtension then
+        byExtension[extension]=result
+        cached.count=cached.count+1
+    end
     return result
 end
 
 local function signed(plane, point)
     return plane.a * point.x + plane.b * point.y + plane.c
+end
+
+-- Reject only when the complete world AABB lies outside one clip plane.
+-- Heights extend the same view as ClipPolygon/ClipLine; uncertain input stays.
+function Geometry.WorldBoundsVisible(movement,points,altitude,padding)
+    if #points==0 then return false end
+    local minX,minY,maxX,maxY=math.huge,math.huge,-math.huge,-math.huge
+    local maxHeight=altitude or 0
+    for _,point in ipairs(points) do
+        if not finite(point.x) or not finite(point.y) then return true end
+        minX,minY=math.min(minX,point.x),math.min(minY,point.y)
+        maxX,maxY=math.max(maxX,point.x),math.max(maxY,point.y)
+        maxHeight=math.max(maxHeight,altitude or point.altitude or 0)
+    end
+    for _,plane in ipairs(planes(movement,maxHeight,padding)) do
+        local x=plane.a>=0 and maxX or minX
+        local y=plane.b>=0 and maxY or minY
+        if plane.a*x+plane.b*y+plane.c < -1e-7 then return false end
+    end
+    return true
 end
 
 local function between(from, to, fraction)
@@ -119,15 +179,25 @@ end
 
 -- Project every edge, including a newly clipped shore/hill boundary, along the
 -- actual horizon curve instead of connecting its endpoints with a chord.
-function Geometry.ProjectPolygon(movement, points, altitude, padding)
+function Geometry.ProjectPolygon(movement, points, altitude, padding,frame)
     local clipped = Geometry.ClipPolygon(movement, points, altitude, padding)
     local output = {}
     if #clipped < 3 then return output end
+    local project=frame and frame.project or Projection.ProjectFunction(movement)
+    if not project then return output end
+    ---@type {x:number,y:number,scale:number}[]
+    local projected = {}
+    for index, p in ipairs(clipped) do
+        local x, y, scale = project(p.x,p.y,p.altitude)
+        if not x then return {} end
+        projected[index] = {x=x,y=y,scale=scale}
+    end
     for index, a in ipairs(clipped) do
         local b = clipped[index % #clipped + 1]
-        local ax, ay = Projection.Project(movement, a, a.altitude)
-        local bx, by = Projection.Project(movement, b, b.altitude)
-        if not ax or not bx then return {} end
+        local screenA, screenB = projected[index], projected[index % #clipped + 1]
+        ---@cast screenA -nil
+        ---@cast screenB -nil
+        local ax, ay, bx, by = screenA.x, screenA.y, screenB.x, screenB.y
         local boundary = (a.occlusionEdge and b.occlusionEdge)
             or ((a.altitude or 0)==0 and (b.altitude or 0)==0
                 and math.abs(a.y-movement.camera.y-Config.camera.farDepth) < 1e-7
@@ -135,9 +205,13 @@ function Geometry.ProjectPolygon(movement, points, altitude, padding)
         local count = math.max(1, math.ceil(math.sqrt((bx-ax)^2+(by-ay)^2)/6),
             math.ceil(math.sqrt((b.x-a.x)^2+(b.y-a.y)^2)/0.5))
         for sample = 0, count - 1 do
-            local p = between(a, b, sample/count)
-            local x, y, scale = Projection.Project(movement, p, p.altitude)
-            if boundary then y = Projection.Horizon(movement, x) end
+            local x, y, scale = ax, ay, screenA.scale
+            if sample > 0 then
+                local fraction=sample/count
+                x,y,scale=project(a.x+(b.x-a.x)*fraction,a.y+(b.y-a.y)*fraction,
+                    (a.altitude or 0)+((b.altitude or 0)-(a.altitude or 0))*fraction)
+            end
+            if boundary then y = frame and frame.horizon and frame.horizon(x) or Projection.Horizon(movement, x) end
             output[#output + 1] = { x=x, y=y, scale=scale }
         end
     end
@@ -158,10 +232,64 @@ end
 
 -- side=1 is water, side=-1 is exposed far-side height. Used on stroke ribbons
 -- too, so a minimum-width stroke cannot leak across the curved sea/sky edge.
+-- Horizon is a clamped upward parabola: its maximum on an X interval is
+-- at an endpoint, and its minimum is at the center if the interval spans it.
+-- A separated bounding box proves that no edge needs sampling or clipping.
+local function horizonSide(movement, points, side, horizon)
+    if (side ~= 1 and side ~= -1) or #points < 3
+        or type(movement) ~= "table" or type(movement.camera) ~= "table"
+        or not finite(movement.viewportWidth) or movement.viewportWidth <= 0
+        or not finite(movement.viewportHeight) or movement.viewportHeight <= 0 then return end
+    local minX, maxX, minY, maxY = math.huge, -math.huge, math.huge, -math.huge
+    for _, point in ipairs(points) do
+        if not finite(point.x) or not finite(point.y) then return end
+        minX, maxX = math.min(minX, point.x), math.max(maxX, point.x)
+        minY, maxY = math.min(minY, point.y), math.max(maxY, point.y)
+    end
+    local left, right = horizon(minX), horizon(maxX)
+    if not finite(left) or not finite(right) then return end
+    local minH, maxH = math.min(left, right), math.max(left, right)
+    local center = movement.viewportWidth * 0.5
+    if minX <= center and maxX >= center then
+        local middle = horizon(center)
+        if not finite(middle) then return end
+        minH = math.min(minH, middle)
+    end
+    -- Keep touching and numerically uncertain cases on the original path.
+    local epsilon = 1e-7
+    if side == 1 then
+        if minY > maxH + epsilon then return true end
+        if maxY < minH - epsilon then return false end
+    else
+        if maxY < minH - epsilon then return true end
+        if minY > maxH + epsilon then return false end
+    end
+end
+
 function Geometry.ClipScreenPolygon(movement, points, side)
-    local function signedDistance(p) return side * (p.y-Projection.Horizon(movement,p.x)) end
+    local horizon = Projection.HorizonFunction(movement)
+        or function(x) return Projection.Horizon(movement,x) end
+    local inside = horizonSide(movement, points, side, horizon)
+    if inside == true then return points end
+    if inside == false then return {} end
+    local function signedDistance(p) return side * (p.y-horizon(p.x)) end
+    local function crossing(a,b)
+        -- Keep the same 40-step solver and arithmetic, but create only the
+        -- final vertex instead of a temporary table for every horizon sample.
+        local low,high=0,1
+        local fromInside=signedDistance(a)>=0
+        for _=1,40 do
+            local middle=(low+high)*0.5
+            local x=a.x+(b.x-a.x)*middle
+            local y=a.y+(b.y-a.y)*middle
+            if (side*(y-horizon(x))>=0)==fromInside then low=middle else high=middle end
+        end
+        local point=between(a,b,(low+high)*0.5)
+        point.occlusionEdge=true
+        return point
+    end
     local dense = sampled(points,true,4)
-    local clipped = clipPlane(dense,signedDistance,function(a,b) return root(a,b,signedDistance) end)
+    local clipped = clipPlane(dense,signedDistance,crossing)
     local output = {}
     for index, a in ipairs(clipped) do
         output[#output+1] = a
@@ -170,7 +298,7 @@ function Geometry.ClipScreenPolygon(movement, points, side)
             local count=math.max(1,math.ceil(math.abs(b.x-a.x)/4))
             for sample=1,count-1 do
                 local x=a.x+(b.x-a.x)*sample/count
-                output[#output+1]={x=x,y=Projection.Horizon(movement,x)}
+                output[#output+1]={x=x,y=horizon(x)}
             end
         end
     end
@@ -193,18 +321,84 @@ function Geometry.StrokeScreenLine(ctx,movement,a,b,tint,width,side)
     return Geometry.FillScreenPolygon(ctx,screenRibbon(movement,a,b,width,side),tint)
 end
 
-function Geometry.StrokeWorldLine(ctx,movement,from,to,tint,width,altitude)
+-- The same four ribbon vertices, without allocating tables when its complete
+-- envelope is separated from the horizon. Touching ribbons keep the old clip.
+local function appendSurfaceRibbon(ctx,movement,ax,ay,bx,by,width,horizon,started)
+    local dx,dy=bx-ax,by-ay
+    local length=math.sqrt(dx*dx+dy*dy)
+    if length<1e-9 then return started end
+    local nx,ny=-dy/length*width*.5,dx/length*width*.5
+    local x1,y1,x2,y2=ax+nx,ay+ny,bx+nx,by+ny
+    local x3,y3,x4,y4=bx-nx,by-ny,ax-nx,ay-ny
+    local minX,maxX=math.min(x1,x2,x3,x4),math.max(x1,x2,x3,x4)
+    local minY,maxY=math.min(y1,y2,y3,y4),math.max(y1,y2,y3,y4)
+    local left,right=horizon(minX),horizon(maxX)
+    local minH,maxH=math.min(left,right),math.max(left,right)
+    local center=movement.viewportWidth*.5
+    if minX<=center and maxX>=center then minH=math.min(minH,horizon(center)) end
+    if maxY<minH-1e-7 then return started end
+    if minY>maxH+1e-7 then
+        if not started then nvgBeginPath(ctx) end
+        nvgMoveTo(ctx,x1,y1);nvgLineTo(ctx,x2,y2)
+        nvgLineTo(ctx,x3,y3);nvgLineTo(ctx,x4,y4);nvgClosePath(ctx)
+        return true
+    end
+    local ribbon=screenRibbon(movement,{x=ax,y=ay},{x=bx,y=by},width,1)
+    if #ribbon<3 then return started end
+    if not started then nvgBeginPath(ctx) end
+    for index,point in ipairs(ribbon) do
+        if index==1 then nvgMoveTo(ctx,point.x,point.y)
+        else nvgLineTo(ctx,point.x,point.y) end
+    end
+    nvgClosePath(ctx)
+    return true
+end
+
+-- A meter-width specification also returns the already projected clip endpoints
+-- for bounds bookkeeping, avoiding a second ClipLine/Project in the caller.
+---@param width number|{meters:number,minPixels:number,maxPixels:number}|nil
+function Geometry.StrokeWorldLine(ctx,movement,from,to,tint,width,altitude,frame)
     local a,b=Geometry.ClipLine(movement,from,to,altitude)
     if not a then return false end
     if altitude then a.altitude,b.altitude=altitude,altitude end
-    local ax,ay=Projection.Project(movement,a,a.altitude)
+    local ax,ay,aScale=Projection.Project(movement,a,a.altitude)
     local bx,by=Projection.Project(movement,b,b.altitude)
     if not ax or not bx then return false end
+    local meterWidth=type(width)=="table" and width or nil
+    if meterWidth then
+        width=math.max(meterWidth.minPixels,math.min(meterWidth.maxPixels,aScale*meterWidth.meters))
+    end
+    ---@cast width number|nil
     local worldLength=math.sqrt((b.x-a.x)^2+(b.y-a.y)^2)
     local count=math.max(1,math.ceil(worldLength/.75),math.ceil(math.sqrt((bx-ax)^2+(by-ay)^2)/8))
+    local tangent=movement.camera.y+Config.camera.farDepth
+    if math.max(a.y,b.y)<tangent-1e-7 and (a.altitude or 0)==0 and (b.altitude or 0)==0 then
+        -- Entirely near-side geometry is visible. Stream the original sample
+        -- sequence instead of constructing samples/points/ribbon tables.
+        local sampleCount=math.max(1,math.ceil(worldLength/(worldLength/count+1e-12)))
+        local horizon=frame and frame.horizon or Projection.HorizonFunction(movement)
+        local project=frame and frame.project or Projection.ProjectFunction(movement)
+        if horizon and project then
+            local visible=false
+            local px,py=ax,ay
+            for index=1,sampleCount do
+                local qx,qy=bx,by
+                if index<sampleCount then
+                    local fraction=index/sampleCount
+                    qx,qy=project(a.x+(b.x-a.x)*fraction,a.y+(b.y-a.y)*fraction,0)
+                end
+                if px and qx then
+                    visible=appendSurfaceRibbon(ctx,movement,px,py,qx,qy,width or 1,horizon,visible)
+                end
+                px,py=qx,qy
+            end
+            if visible then nvgFillColor(ctx,tint);nvgFill(ctx) end
+            if meterWidth then return visible,ax,ay,bx,by end
+            return visible
+        end
+    end
     local samples=sampled({a,b},false,worldLength/count+1e-12)
     local points={samples[1]}
-    local tangent=movement.camera.y+Config.camera.farDepth
     for index=2,#samples do
         local p,q=samples[index-1],samples[index]
         if (p.y<tangent and q.y>tangent) or (p.y>tangent and q.y<tangent) then
@@ -213,14 +407,25 @@ function Geometry.StrokeWorldLine(ctx,movement,from,to,tint,width,altitude)
         points[#points+1]=q
     end
     local visible=false
+    -- Adjacent segments share an endpoint. Reuse its visibility and projection
+    -- only within this invocation; camera, time and configuration never persist.
+    local function clearance(v)return Projection.Visibility(movement,v,v.altitude)end
+    local previousClearance=clearance(points[1])
+    local previousX,previousY=Projection.Project(movement,points[1],points[1].altitude)
     for index=1,#points-1 do
         local p,q=points[index],points[index+1]
-        local function clearance(v)return Projection.Visibility(movement,v,v.altitude)end
-        local cp,cq=clearance(p),clearance(q)
+        local cp,cq=previousClearance,clearance(q)
+        local px,py=previousX,previousY
+        local qx,qy=Projection.Project(movement,q,q.altitude)
+        previousClearance,previousX,previousY=cq,qx,qy
         if cp>=0 or cq>=0 then
-            if cp<0 then p=root(p,q,clearance) elseif cq<0 then q=root(p,q,clearance) end
-            local px,py=Projection.Project(movement,p,p.altitude)
-            local qx,qy=Projection.Project(movement,q,q.altitude)
+            if cp<0 then
+                p=root(p,q,clearance)
+                px,py=Projection.Project(movement,p,p.altitude)
+            elseif cq<0 then
+                q=root(p,q,clearance)
+                qx,qy=Projection.Project(movement,q,q.altitude)
+            end
             local side
             if (p.altitude or 0)==0 and (q.altitude or 0)==0 then side=1
             elseif math.min(p.y,q.y)>=tangent-1e-9 then side=-1 end
@@ -238,6 +443,7 @@ function Geometry.StrokeWorldLine(ctx,movement,from,to,tint,width,altitude)
         end
     end
     if visible then nvgFillColor(ctx,tint);nvgFill(ctx) end
+    if meterWidth then return visible,ax,ay,bx,by end
     return visible
 end
 

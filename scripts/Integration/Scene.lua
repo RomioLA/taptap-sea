@@ -51,7 +51,9 @@ local function fitHudToLeftSide(hud)
     local width = math.floor(math.min(620, logicalScreenWidth() * 0.62))
     for index = 1, visibleChildCount do
         local child = children[index]
-        if child ~= fishingCompact then
+        -- 左侧宽度只约束信息流；absolute操作坞、抽屉及遮罩由HUD自行定位；
+        -- 紧凑捕鱼面板自带小尺寸（≤216px），不参与左侧栏等宽注入，避免重新被拉宽遮挡船心。
+        if (not child.props or child.props.position ~= "absolute") and child ~= fishingCompact then
             setStyle(child, {
                 width = width,
                 maxWidth = width,

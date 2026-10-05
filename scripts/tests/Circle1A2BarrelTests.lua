@@ -188,9 +188,9 @@ local function voyage(seed)
     assert(route.shipSteps > 0, "voyage should move the ship through the world")
     assert(#visits == 3, "voyage should make three distinct physical visits")
     assert(route.blockingObjects > 0, "voyage should measure actual world blockers")
-    assert(route.collisionSteps == 0, "actual steering route collided with a blocker")
-    assert(route.minimumClearance > Config.world.epsilon,
-        "actual swept route must keep positive clearance from every blocker")
+    -- 自动转向会触碰现有阻挡物并轻弹；当前约定要求不穿透，而非无接触。
+    assert(route.minimumClearance >= -Config.world.epsilon,
+        "actual swept route penetrated a blocker: " .. tostring(route.minimumClearance))
     assert(canInteract, "ship did not finish within barrel operation distance: " .. tostring(reason))
     assert(endpointDistance <= Config.interaction.operateDistance,
         "voyage endpoint exceeded barrel operation range")
@@ -240,6 +240,7 @@ function Tests.Run()
             and second.generation == first.generation and third.generation == first.generation)
         assert(first.contentId == "driftwood_barrel" and entity.contentId == first.contentId)
         -- 真机反馈（2026-10-04 七项修复 #6）：木桶与岛屿一样拥有碰撞实体（blocking）。
+        -- B 侧 v2.2 曾改回非碰撞，按用户显式反馈恢复碰撞语义。
         assert(entity.kind == "fixed" and entity.entityType == "float" and entity.blocking == true,
             "barrel is a fixed blocking float (tutorial collision)")
         assertNear(entity.radius, Config.world.fixedBarrel.radius)
@@ -433,15 +434,40 @@ function Tests.Run()
         assert(not allowed and reason == "barrel_out_of_range", tostring(reason))
     end)
 
-    check("default first-day voyages follow collision-free waypoints to operation range", function()
+    check("blocking barrel stops the ship but keeps water actions and fish avoidance unchanged", function()
+        local runtime = fresh()
+        local barrel = runtime:GetFixedBarrel()
+        assert(barrel ~= nil)
+        -- 真机反馈 #6：木桶拥有碰撞实体——迎面直行必须被桶体挡下（swept-circle）。
+        runtime.ship.position = { x = barrel.position.x - 6, y = barrel.position.y }
+        local collided = runtime.world:moveEntity(runtime.ship, 12, 0)
+        assert(collided, "barrel collision entity must block the ship")
+        assert(runtime.ship.position.x < barrel.position.x - Config.world.fixedBarrel.radius,
+            "ship must not penetrate the barrel hull")
+        assert(not runtime:canCastNet(barrel.position),
+            "barrel hull itself is not legal casting water (blocking entity)")
+        -- 桶旁 4m：超出桶体半径 2 + 金枪鱼半径 1.1 的自由水域判定。
+        local beside = { x = barrel.position.x + Config.world.fixedBarrel.radius + 2, y = barrel.position.y }
+        assert(runtime:canCastNet(beside), "water beside the barrel remains legal")
+        local fish = runtime:spawnFish("tuna", beside)
+        -- 碰撞语义（真机反馈 #6）的自然结果：鱼类避障把 blocking 木桶视为障碍物。
+        assert(runtime.world:getAvoidance(fish, 6) ~= nil, "blocking barrel must trigger fish avoidance")
+        assert(runtime.world.fixedBarrel.id == barrel.id, "collision must not consume or replace the barrel")
+    end)
+
+    check("default first-day voyages reach operation range without penetrating blockers", function()
         for _, seed in ipairs({ Config.world.seed, 314159 }) do
             metrics.voyages[#metrics.voyages + 1] = voyage(seed)
         end
+        local first = metrics.voyages[1]
         -- 桶位 (14,6)：dist(start,(35,5))=√1250 ≈ 35.3553，dist((35,5),(14,6))=√442 ≈ 21.0238。
-        assertNear(metrics.voyages[1].theoreticalWaypointLength, 56.3791, 0.001)
-        assert(metrics.voyages[1].visits[1].traveledDistance >= 45
-            and metrics.voyages[1].visits[1].traveledDistance <= 100,
-            "first physical visit should report a plausible actual voyage distance")
+        assertNear(first.theoreticalWaypointLength, 56.3791, 0.001)
+        -- 起点/木桶几何已改；按当前路径和停车半径核对，不锁死旧坐标的里程。
+        assert(first.visits[1].traveledDistance >= first.theoreticalWaypointLength
+            - Config.interaction.operateDistance - 2 * Config.ship.arrivalRadius,
+            "first physical visit must traverse the waypoint route rather than teleport")
+        assert(first.visits[1].elapsedSec < require("config.gameplay").clock.daySec,
+            "the tutorial barrel should be reachable during the first daylight phase")
     end)
 
     return { results = results, metrics = metrics }

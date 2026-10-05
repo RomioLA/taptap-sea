@@ -10,6 +10,7 @@ local SeaViewArt = {}
 local TWO_PI = math.pi * 2
 local VIEW_PADDING_METERS = 0.8
 local AIR_PERSPECTIVE_TINT = { 174, 209, 211 }
+local islandGeometry = setmetatable({}, {__mode="k"})
 
 local function finite(value)
     return type(value) == "number" and value == value and math.abs(value) < math.huge
@@ -146,16 +147,17 @@ local function strokePolygon(ctx, points, color, width)
     nvgStroke(ctx)
 end
 
-local function fillWorldPolygon(ctx, movement, points, color, bounds, altitudeMeters)
-    local projected = Geometry.ProjectPolygon(movement, points, altitudeMeters)
+local function fillWorldPolygon(ctx, movement, points, color, bounds, altitudeMeters,frame)
+    if not Geometry.WorldBoundsVisible(movement,points,altitudeMeters) then return {} end
+    local projected = Geometry.ProjectPolygon(movement, points, altitudeMeters,nil,frame)
     for _, point in ipairs(projected) do includeScreenPoint(bounds, point) end
     fillPolygon(ctx, projected, color)
     return projected
 end
 
-local function strokeWorldPolygon(ctx, movement, points, color, width, bounds, altitudeMeters)
+local function strokeWorldPolygon(ctx, movement, points, color, width, bounds, altitudeMeters,frame)
     for index, point in ipairs(points) do
-        Geometry.StrokeWorldLine(ctx, movement, point, points[index % #points+1], color, width, altitudeMeters)
+        Geometry.StrokeWorldLine(ctx, movement, point, points[index % #points+1], color, width, altitudeMeters,frame)
     end
 end
 
@@ -207,7 +209,20 @@ end
 
 -- Split a projected mark at the curved water/sky edge. Small screen-space
 -- samples keep the straight NanoVG segments safely on the water side.
-local function clipWaveToHorizon(points, horizonAtX, margin)
+local function clipWaveToHorizon(points, horizonAtX, margin, centerX)
+    -- The clamped parabola's extrema bound the complete mark, including
+    -- straight segments. Preserve its three original vertices when separated;
+    -- only marks touching the horizon require 8px samples and root finding.
+    local minX, maxX, minY, maxY = math.huge, -math.huge, math.huge, -math.huge
+    for _, point in ipairs(points) do
+        minX, maxX = math.min(minX, point.x), math.max(maxX, point.x)
+        minY, maxY = math.min(minY, point.y), math.max(maxY, point.y)
+    end
+    local left, right = horizonAtX(minX), horizonAtX(maxX)
+    local minH, maxH = math.min(left, right), math.max(left, right)
+    if minX <= centerX and maxX >= centerX then minH = math.min(minH, horizonAtX(centerX)) end
+    if minY - margin > maxH + 1e-7 then return { points } end
+    if maxY - margin < minH - 1e-7 then return {} end
     local fragments, active = {}, nil
     local function signed(point)
         return point.y - horizonAtX(point.x) - margin
@@ -298,11 +313,19 @@ local function surfaceMark(movement, position, settings, time, indexX, indexY,
     local endX, endY = center.x + alongX * 0.5, center.y + alongY * 0.5
 
     local strokePadding = clamp(center.scale * strokeWidthMeters, 0.55, 3.2) * 0.75
+    -- Reject an entire offscreen mark before allocating its samples or clipping.
+    -- Keep a conservative extra pixel for the horizon solver's snapped roots.
+    -- A partial mark still follows the complete original clipping path.
+    local minX = math.min(startX, middleX, endX)
+    local maxX = math.max(startX, middleX, endX)
+    local minY = math.min(startY, middleY, endY)
+    if maxX + strokePadding < -1 or minX - strokePadding > viewportWidth + 1
+        or minY - strokePadding > viewportHeight + 1 then return nil end
     local fragments = clipWaveToHorizon({
         { x = startX, y = startY }, { x = middleX, y = middleY }, { x = endX, y = endY },
-    }, horizonAtX, math.max(0.55, strokePadding * 0.5))
+    }, horizonAtX, math.max(0.55, strokePadding * 0.5), viewportWidth * 0.5)
     if #fragments == 0 then return nil end
-    local minX, maxX, minY = math.huge, -math.huge, math.huge
+    minX, maxX, minY = math.huge, -math.huge, math.huge
     for _, fragment in ipairs(fragments) do
         for _, point in ipairs(fragment) do
             minX = math.min(minX, point.x)
@@ -430,8 +453,10 @@ function SeaViewArt.Surface(ctx, movement, time)
             y = surfaceHorizonAt(movement, x, width, height, centerHorizon),
         }
     end
+    local horizon = Projection.HorizonFunction(movement)
     local function horizonAtX(x)
-        return surfaceHorizonAt(movement, x, width, height, centerHorizon)
+        if horizon then return clamp(horizon(clamp(x, 0, width)), 0, height) end
+        return centerHorizon
     end
 
     nvgBeginPath(ctx)
@@ -485,8 +510,8 @@ local function localIslandPoint(center, x, y)
     return addPoint(center.x + x, center.y + y)
 end
 
-local function drawHill(ctx, movement, center, radius, bounds, airMix)
-    if radius < 3 then return end
+local function hillShapes(center,radius)
+    if radius<3 then return {} end
     local back = {
         { position = localIslandPoint(center, -radius * 0.42, radius * 0.08), altitude = 0.15 },
         { position = localIslandPoint(center, radius * 0.35, radius * 0.04), altitude = 0.15 },
@@ -497,17 +522,27 @@ local function drawHill(ctx, movement, center, radius, bounds, airMix)
         { position = localIslandPoint(center, radius * 0.43, -radius * 0.12), altitude = 0.08 },
         { position = localIslandPoint(center, radius * 0.11, -radius * 0.07), altitude = math.min(3.4, radius * 0.19) },
     }
+    local shapes={}
     for _, shape in ipairs({ back, front }) do
-        local worldPoints, screenPoints = {}, {}
+        local worldPoints={}
         for _, item in ipairs(shape) do
             worldPoints[#worldPoints + 1] = {
                 x = item.position.x, y = item.position.y, altitude = item.altitude,
             }
         end
-        local projected = Geometry.ProjectPolygon(movement, worldPoints)
-        for _, point in ipairs(projected) do includeScreenPoint(bounds, point) end
-        fillPolygon(ctx, projected, rgba({102,143,91,255}, nil, nil, airMix))
-        strokeWorldPolygon(ctx,movement,worldPoints,rgba({77,118,83,210},nil,nil,airMix),1.1,bounds)
+        shapes[#shapes+1]=worldPoints
+    end
+    return shapes
+end
+
+local function drawHill(ctx, movement, center, radius, bounds, airMix,shapes,frame)
+    for _,worldPoints in ipairs(shapes or hillShapes(center,radius)) do
+        if Geometry.WorldBoundsVisible(movement,worldPoints) then
+            local projected = Geometry.ProjectPolygon(movement, worldPoints,nil,nil,frame)
+            for _, point in ipairs(projected) do includeScreenPoint(bounds, point) end
+            fillPolygon(ctx, projected, rgba({102,143,91,255}, nil, nil, airMix))
+            strokeWorldPolygon(ctx,movement,worldPoints,rgba({77,118,83,210},nil,nil,airMix),1.1,bounds,nil,frame)
+        end
     end
 end
 
@@ -518,42 +553,48 @@ local TREE_LAYOUT = {
     { x = 0.43, y = -0.08, size = 0.79 },
 }
 
-local function drawTree(ctx, movement, base, heightMeters, bounds, paletteShift, airMix)
+local function treeShape(base,heightMeters)
     local crownWidth = heightMeters * 0.38
     local function raised(x,h) return {x=base.x+x,y=base.y,altitude=h} end
-    Geometry.StrokeWorldLine(ctx,movement,raised(0,0),raised(0,heightMeters*.44),
-        rgba({111,72,47,255},nil,nil,airMix),1.3)
+    local stem={raised(0,0),raised(0,heightMeters*.44)}
     local left,right,top=raised(-crownWidth*.48,heightMeters*.40),
         raised(crownWidth*.48,heightMeters*.40),raised(0,heightMeters)
-    local leafColor = paletteShift == 1 and {57,123,91,255} or {72,141,93,255}
-    local projected=Geometry.ProjectPolygon(movement,{left,right,top})
-    for _,point in ipairs(projected) do includeScreenPoint(bounds,point) end
-    fillPolygon(ctx,projected,rgba(leafColor,nil,nil,airMix))
     local middleLeft=raised(-crownWidth*.24,heightMeters*.70)
     local middleRight=raised(crownWidth*.24,heightMeters*.70)
-    fillPolygon(ctx,Geometry.ProjectPolygon(movement,{middleLeft,middleRight,top}),
+    return {stem=stem,leaf={left,right,top},highlight={middleLeft,middleRight,top},
+        envelope={stem[1],stem[2],left,right,top}}
+end
+
+local function drawTree(ctx, movement, base, heightMeters, bounds, paletteShift, airMix,shape,frame)
+    shape=shape or treeShape(base,heightMeters)
+    if not Geometry.WorldBoundsVisible(movement,shape.envelope) then return end
+    Geometry.StrokeWorldLine(ctx,movement,shape.stem[1],shape.stem[2],
+        rgba({111,72,47,255},nil,nil,airMix),1.3,nil,frame)
+    local leafColor = paletteShift == 1 and {57,123,91,255} or {72,141,93,255}
+    local projected=Geometry.ProjectPolygon(movement,shape.leaf,nil,nil,frame)
+    for _,point in ipairs(projected) do includeScreenPoint(bounds,point) end
+    fillPolygon(ctx,projected,rgba(leafColor,nil,nil,airMix))
+    fillPolygon(ctx,Geometry.ProjectPolygon(movement,shape.highlight,nil,nil,frame),
         rgba({91,163,102,245},nil,nil,airMix))
 end
 
-local function drawShoreFoam(ctx, movement, center, shorelineRadius, time, bounds)
+local function drawShoreFoam(ctx, movement, center, shorelineRadius, time, bounds,frame)
     local settings = (Config.visual and Config.visual.shoreFoam) or {}
     if settings.enabled == false then return end
     local count = clamp(math.floor(settings.bubbleCount or 24), 1, 64)
     local baseOpacity = clamp(settings.opacity or 165, 0, 255)
     for index = 1, count do
         local arc = SurfaceEffects.ShoreFoamArc(center, shorelineRadius, index, count, time, settings)
-        if arc and arc.strength > 0.02 then
+        if arc and arc.strength > 0.02 and Geometry.WorldBoundsVisible(movement,arc.points,0) then
             local alpha=math.floor(baseOpacity*arc.strength+.5)
+            local width={meters=arc.strokeWidthMeters,minPixels=.65,maxPixels=1.9}
+            local tint=nvgRGBA(239,250,246,alpha)
             for pointIndex=1,#arc.points-1 do
-                local a,b=Geometry.ClipLine(movement,arc.points[pointIndex],arc.points[pointIndex+1])
-                if a then
-                    local screenA=screenPoint(movement,a,0)
-                    local screenB=screenPoint(movement,b,0)
-                    if screenA and screenB then
-                        Geometry.StrokeWorldLine(ctx,movement,a,b,nvgRGBA(239,250,246,alpha),
-                            clamp(screenA.scale*arc.strokeWidthMeters,.65,1.9),0)
-                        includeScreenPoint(bounds,screenA,1.2);includeScreenPoint(bounds,screenB,1.2)
-                    end
+                local _,ax,ay,bx,by=Geometry.StrokeWorldLine(ctx,movement,
+                    arc.points[pointIndex],arc.points[pointIndex+1],tint,width,0,frame)
+                if ax and bx then
+                    includeScreenPoint(bounds,{x=ax,y=ay},1.2)
+                    includeScreenPoint(bounds,{x=bx,y=by},1.2)
                 end
             end
         end
@@ -571,35 +612,55 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     local radius = math.max(0.5, finite(entity.radius) and entity.radius or 4)
     local settings = Config.visual and Config.visual.projection or {}
     local segmentCount = math.max(16, math.floor(settings.circleSegments or 48))
+    ---@type table
+    local geometry=islandGeometry[entity]
+    if not geometry or geometry.x~=center.x or geometry.y~=center.y
+        or geometry.radius~=radius or geometry.segments~=segmentCount then
+        geometry={x=center.x,y=center.y,radius=radius,segments=segmentCount,
+            outer=circlePoints(center,radius,segmentCount),
+            land=circlePoints(center,radius*.89,segmentCount),
+            hills=hillShapes(center,radius),trees={}}
+        if radius>=5 then
+            local treeHeight=clamp(radius*.30,2.2,5.4)
+            for index,layout in ipairs(TREE_LAYOUT) do
+                local x,y=layout.x*radius,layout.y*radius
+                if x*x+y*y<radius*radius*.38 then
+                    local base=localIslandPoint(center,x,y)
+                    local height=treeHeight*layout.size
+                    geometry.trees[#geometry.trees+1]={base=base,height=height,
+                        palette=index%2,shape=treeShape(base,height)}
+                end
+            end
+        end
+        islandGeometry[entity]=geometry
+    end
     local shoreColor = rgba(Config.visual and Config.visual.shore,
         { 209, 193, 137, 255 }, nil, airMix)
     local landColor = rgba(Config.visual and Config.visual.island,
         { 135, 171, 110, 255 }, nil, airMix)
     local bounds = newScreenBounds()
 
-    local outerWorld = circlePoints(center, radius, segmentCount)
-    local outerScreen = fillWorldPolygon(ctx, movement, outerWorld, shoreColor, bounds)
+    -- Share projection constants only for this synchronous island draw. The
+    -- persistent cache above contains world geometry, never screen coordinates.
+    local frame={project=Projection.ProjectFunction(movement),
+        horizon=Projection.HorizonFunction(movement)}
+
+    local outerWorld = geometry.outer
+    local outerScreen = fillWorldPolygon(ctx, movement, outerWorld, shoreColor, bounds,nil,frame)
     if #outerScreen >= 3 then
-        strokeWorldPolygon(ctx,movement,outerWorld,rgba({167,154,112,190},nil,nil,airMix),1.25,bounds,0)
+        strokeWorldPolygon(ctx,movement,outerWorld,rgba({167,154,112,190},nil,nil,airMix),1.25,bounds,0,frame)
     end
 
-    local landWorld = circlePoints(center, radius * 0.89, segmentCount)
-    local landScreen = fillWorldPolygon(ctx, movement, landWorld, landColor, bounds)
+    local landWorld = geometry.land
+    local landScreen = fillWorldPolygon(ctx, movement, landWorld, landColor, bounds,nil,frame)
     if #landScreen >= 3 then
-        strokeWorldPolygon(ctx,movement,landWorld,rgba({105,145,92,170},nil,nil,airMix),1,bounds,0)
+        strokeWorldPolygon(ctx,movement,landWorld,rgba({105,145,92,170},nil,nil,airMix),1,bounds,0,frame)
     end
-    drawShoreFoam(ctx, movement, center, radius, finite(time) and time or 0, bounds)
+    drawShoreFoam(ctx, movement, center, radius, finite(time) and time or 0, bounds,frame)
 
-    drawHill(ctx, movement, center, radius, bounds, airMix)
-    if radius >= 5 then
-        local treeHeight = clamp(radius * 0.30, 2.2, 5.4)
-        for index, layout in ipairs(TREE_LAYOUT) do
-            local x, y = layout.x * radius, layout.y * radius
-            if x * x + y * y < radius * radius * 0.38 then
-                drawTree(ctx, movement, localIslandPoint(center, x, y),
-                    treeHeight * layout.size, bounds, index % 2, airMix)
-            end
-        end
+    drawHill(ctx, movement, center, radius, bounds, airMix,geometry.hills,frame)
+    for _,tree in ipairs(geometry.trees) do
+        drawTree(ctx,movement,tree.base,tree.height,bounds,tree.palette,airMix,tree.shape,frame)
     end
     return finishScreenBounds(bounds)
 end

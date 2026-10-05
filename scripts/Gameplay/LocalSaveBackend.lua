@@ -44,10 +44,10 @@ function LocalSaveBackend.New(deps)
     local function writeSnapshot(snapshot)
         local ok, payload = pcall(cjson.encode, snapshot)
         if not ok then return false, "local_encode_failed" end
-        local file = file(filename, MODE_WRITE)
-        if file == nil or not file:IsOpen() then return false, "local_file_open_failed" end
-        file:WriteString(payload)
-        file:Close()
+        local writeFile = file(filename, MODE_WRITE)
+        if writeFile == nil or not writeFile:IsOpen() then return false, "local_file_open_failed" end
+        writeFile:WriteString(payload)
+        writeFile:Close()
         return true
     end
 
@@ -80,14 +80,14 @@ function LocalSaveBackend.New(deps)
             done(true, nil)
             return true
         end
-        local file = file(filename, MODE_READ)
-        if file == nil or not file:IsOpen() then
+        local readFile = file(filename, MODE_READ)
+        if readFile == nil or not readFile:IsOpen() then
             emit("failure", "failed", "local_file_open_failed")
             done(false, "local_file_open_failed")
             return true
         end
-        local content = file:ReadString()
-        file:Close()
+        local content = readFile:ReadString()
+        readFile:Close()
         local ok, data = pcall(cjson.decode, content)
         if not ok or type(data) ~= "table" then
             emit("failure", "failed", "local_file_corrupt")

@@ -261,6 +261,9 @@ function Bridge:OnSeaPointer(position)
     if fishing.state == "selecting" then
         self.runtime:ClearMovementTarget()
         local ok, reason = self.loop:SetFishingCenter(position)
+        -- One legal mouse/touch sea pointer starts the cast. Invalid positions
+        -- keep selection active and never fall through to navigation.
+        if ok then ok, reason = self.loop:ConfirmFishing() end
         if not ok then self.loop:SetMessage(tostring(reason)) end
         return true
     end

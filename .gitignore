@@ -72,3 +72,7 @@ urhox-libs/
 
 # Share project-specific Codex guidance with the Maker project.
 !AGENTS.md
+
+# Local-only preview launcher (machine-specific paths; never commit)
+/本地测试.cmd
+/start-local-preview.ps1

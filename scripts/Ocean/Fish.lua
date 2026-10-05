@@ -211,7 +211,11 @@ function Fish:_findDanger()
     if type(species) ~= "string" or type(radius) ~= "number" or radius <= 0 then return nil end
 
     return self:_nearestEntity(radius, function(candidate)
-        return candidate.entityType == "fish" and candidate.species == species and not candidate.removed
+        -- V2.2: only small fish fear a translating ship, using the same danger
+        -- radius and priority as tuna. A stopped ship has no lingering threat.
+        return (candidate.entityType == "fish" and candidate.species == species)
+            or (self.speciesData.id == "sardine" and candidate.entityType == "ship"
+                and candidate.isMoving == true)
     end)
 end
 
