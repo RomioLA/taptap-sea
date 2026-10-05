@@ -1,0 +1,1912 @@
+{
+  "luaVersion": "Lua 5.4",
+  "syntax": [
+    {
+      "file": "scripts/config/gameplay.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/data/events.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/data/fish.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/data/items.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Entities/EntityFactory.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/FSM/StateMachine.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Game/Game.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Game/World.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Gameplay/Actions.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Gameplay/Bootstrap.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Gameplay/Circle1B2Barrel.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Gameplay/Circle1B2Progress.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Gameplay/Debug.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Gameplay/Diagnostics.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Gameplay/GameClock.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Gameplay/HUD.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Gameplay/HUDPresentation.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Gameplay/Inventory.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Gameplay/LocalSaveBackend.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Gameplay/Loop.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Gameplay/Persistence.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Gameplay/PlayerState.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Gameplay/UpdateSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/GeneratedData/Fish.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/GeneratedData/Items.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Integration/Bridge.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Integration/Circle1BInput.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Integration/Scene.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Main.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/Bootstrap.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/Camera.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/Config.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/Draw.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/EntityDraw.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/Fish.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/FishData.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/FusedScene.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/HUD.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/Math.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/Movement.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/ProjectedGeometry.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/Projection.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/SceneState.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/SeaAtmosphere.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/SeaDebug.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/SeaDraw.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/SeaPresentation.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/SeaRuntime.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/SeaSurfaceEffects.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/SeaViewArt.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/SpawnStrategy.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/State.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/SurfaceSignals.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/Wake.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Ocean/World.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/SeaPreviewEntry.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Systems/BirdSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Systems/ClockSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Systems/EntityStateSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/Systems/FishSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/ABIntegrationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/ArchitectureIntegrationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1A2BarrelRenderTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1A2BarrelTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1A2FishingTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1A2ScopeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1A2SignalsTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1A3ExperienceTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1A3InputTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1A3PortTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1A3RecognitionTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1A3SignalsTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1A3StabilityTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1ABMergeFrameBudgetTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1AFishLocksTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1APredationCooldownTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1B2BarrelTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1B2ProgressTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1B2ScopeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1B2ThrowTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1B2UITests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1B3ClockAsyncTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1B3CloudTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1B3EconomyTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1B3SceneUITests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1B3SevenDaysTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1B3SpatialTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1B5DiagnosticsIntegrationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1B5GameplayTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1B5PersistenceBarrelTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1B5PortDrawTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1BFishingFlowTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1BPendingCatchTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/Circle1HUDReviewTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/GameLoopSpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/GameLoopUISpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/LocalSaveLoopTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/NumericEconomySpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/PersistenceRegressionSpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/SeaAtmosphereTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/SeaCurvatureTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/SeaEngineSmoke.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/SeaFusedSceneTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/SeaFusionRenderTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/SeaHorizonOcclusionTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/SeaMotionEffectsTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/SeaNativeVoyage.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/SeaNativeVoyageEntry.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/SeaPresentationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/SeaRuntimeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/SeaStabilityTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/SeaViewUpgradeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/ShipScareTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/ShopStockSpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/SurfaceRiseTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts/tests/SurfaceSignalsTests.lua",
+      "passed": true,
+      "error": null
+    }
+  ],
+  "suites": [
+    {
+      "name": "Circle1B2BarrelTests",
+      "kind": "protocol",
+      "tests": [
+        {
+          "error": "",
+          "name": "built-in timer advances with the ocean, blocks steering, and pauses for UI",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "barrel completion at night end commits once, while unfinished work cancels free",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "full hold escrows both first rewards and advances only after an atomic two-slot claim",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "controlled barrel receipts charge each stage once and grant lens without cargo",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "the three barrel stages survive real day settlements and memory save restore",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "a rejected first-stage progression rolls back stamina and both appended rewards",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "lens grant rejection rolls back the final-stage charge and leaves stage two intact",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "claim stage failure restores cargo and keeps the receipt retryable without charging again",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "a partial claim rollback is retried on Tick without auto-claiming its pending receipt",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "executor failure before evidence is free, but a synchronous completed receipt returns its token",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "observer errors do not discard an escrowed result and reset cancels an active receipt",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "cancellation and a replaced barrel world invalidate late completions for free",
+          "passed": true
+        }
+      ],
+      "report": {
+        "results": [
+          {
+            "error": "",
+            "name": "built-in timer advances with the ocean, blocks steering, and pauses for UI",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "barrel completion at night end commits once, while unfinished work cancels free",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "full hold escrows both first rewards and advances only after an atomic two-slot claim",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "controlled barrel receipts charge each stage once and grant lens without cargo",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "the three barrel stages survive real day settlements and memory save restore",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "a rejected first-stage progression rolls back stamina and both appended rewards",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "lens grant rejection rolls back the final-stage charge and leaves stage two intact",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "claim stage failure restores cargo and keeps the receipt retryable without charging again",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "a partial claim rollback is retried on Tick without auto-claiming its pending receipt",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "executor failure before evidence is free, but a synchronous completed receipt returns its token",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "observer errors do not discard an escrowed result and reset cancels an active receipt",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "cancellation and a replaced barrel world invalidate late completions for free",
+            "passed": true
+          }
+        ]
+      },
+      "passed": true,
+      "skippedCount": 0,
+      "log": ""
+    },
+    {
+      "name": "Circle1B2ProgressTests",
+      "kind": "protocol",
+      "tests": [
+        {
+          "error": "",
+          "name": "elder counts food apples, displays other offerings without consuming them, and saves after three days",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "elder who received fewer than three apples is marked dead once on day four",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "failed apple progress rolls back the removed apple, stamina, and prior count",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "three apples offered on day one are counted cumulatively until day-four decision",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "three apples offered on day three still save the elder on day four",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "zero apples leave the elder dead after the one-time day-four decision",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "memory save retries once without double-advancing and restores progress through day seven",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "progress validation rejects malformed and inconsistent saved states",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "legacy snapshots preserve unknown progress while filling missing circle records",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "snapshot failure keeps the applied day-four decision and retries without advancing twice",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "day-seven paper opens only explicitly, acknowledgement round-trips without auto-saving",
+          "passed": true
+        }
+      ],
+      "report": {
+        "results": [
+          {
+            "error": "",
+            "name": "elder counts food apples, displays other offerings without consuming them, and saves after three days",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "elder who received fewer than three apples is marked dead once on day four",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "failed apple progress rolls back the removed apple, stamina, and prior count",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "three apples offered on day one are counted cumulatively until day-four decision",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "three apples offered on day three still save the elder on day four",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "zero apples leave the elder dead after the one-time day-four decision",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "memory save retries once without double-advancing and restores progress through day seven",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "progress validation rejects malformed and inconsistent saved states",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "legacy snapshots preserve unknown progress while filling missing circle records",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "snapshot failure keeps the applied day-four decision and retries without advancing twice",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "day-seven paper opens only explicitly, acknowledgement round-trips without auto-saving",
+            "passed": true
+          }
+        ]
+      },
+      "passed": true,
+      "skippedCount": 0,
+      "log": ""
+    },
+    {
+      "name": "Circle1B2ScopeTests",
+      "kind": "protocol",
+      "tests": [
+        {
+          "passed": true,
+          "name": "scope requires lens ownership and toggling does not pause the voyage",
+          "error": ""
+        },
+        {
+          "passed": true,
+          "name": "new run and saved-load both synchronize A scope off",
+          "error": ""
+        },
+        {
+          "passed": true,
+          "name": "false is a valid disabled result while rejection and exceptions fail readback",
+          "error": ""
+        },
+        {
+          "passed": true,
+          "name": "scope readback mismatch is reported and a later close can recover",
+          "error": ""
+        },
+        {
+          "passed": true,
+          "name": "snapshot and restore reject inconsistent Circle 1B2 progress",
+          "error": ""
+        }
+      ],
+      "report": {
+        "results": [
+          {
+            "passed": true,
+            "name": "scope requires lens ownership and toggling does not pause the voyage",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "new run and saved-load both synchronize A scope off",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "false is a valid disabled result while rejection and exceptions fail readback",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "scope readback mismatch is reported and a later close can recover",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "snapshot and restore reject inconsistent Circle 1B2 progress",
+            "error": ""
+          }
+        ]
+      },
+      "passed": true,
+      "skippedCount": 0,
+      "log": ""
+    },
+    {
+      "name": "Circle1B2ThrowTests",
+      "kind": "protocol",
+      "tests": [
+        {
+          "name": "selected inventory item is thrown at the inclusive twelve-meter boundary",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "out-of-range throw attempts consume the pointer without moving or losing the selection",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "receiver rejection rolls back cargo while consuming the throw pointer",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "ordinary sea pointers pass through without creating a drop target",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "all four item payloads preserve their configured world effect and twenty-second lifetime",
+          "passed": true,
+          "error": ""
+        }
+      ],
+      "report": {
+        "results": [
+          {
+            "name": "selected inventory item is thrown at the inclusive twelve-meter boundary",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "out-of-range throw attempts consume the pointer without moving or losing the selection",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "receiver rejection rolls back cargo while consuming the throw pointer",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "ordinary sea pointers pass through without creating a drop target",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "all four item payloads preserve their configured world effect and twenty-second lifetime",
+            "passed": true,
+            "error": ""
+          }
+        ]
+      },
+      "passed": true,
+      "skippedCount": 0,
+      "log": ""
+    },
+    {
+      "name": "Circle1B2UITests",
+      "kind": "protocol",
+      "tests": [
+        {
+          "error": "",
+          "passed": true,
+          "name": "scope toggle stays disabled without a lens and toggles through A without pausing"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "bait use is disabled with a Chinese reason and bait and fish display without consumption"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "barrel uses its built-in timer and exposes cancel without an instant-finish control"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "paper is marked only after the HUD visibly renders exact text and close resumes the clock"
+        }
+      ],
+      "report": {
+        "results": [
+          {
+            "error": "",
+            "passed": true,
+            "name": "scope toggle stays disabled without a lens and toggles through A without pausing"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "bait use is disabled with a Chinese reason and bait and fish display without consumption"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "barrel uses its built-in timer and exposes cancel without an instant-finish control"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "paper is marked only after the HUD visibly renders exact text and close resumes the clock"
+          }
+        ]
+      },
+      "passed": true,
+      "skippedCount": 0,
+      "log": ""
+    },
+    {
+      "name": "Circle1BFishingFlowTests",
+      "kind": "protocol",
+      "tests": [
+        {
+          "error": "",
+          "name": "confirmation does not select or charge and early completion is rejected",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "the 0.5 second landing selects the then-nearest fish and locks once",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "the locked result stays fixed through four seconds and a replay cannot charge twice",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "empty water completes for free",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "cancel before or after landing is free and releases the owned lock",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "lock rejection is a free terminal failure and never selects a replacement",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "39 stamina rejects while 40 starts and a successful catch consumes exactly 40",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "pause freezes progress and time scale advances action time without scaling sea budget",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "large dt uses the real frame World once and clamps aggregate Ocean advancement",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "night exhaustion on the completion boundary cancels first and unlocks for free",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "forced return waits until night-interrupted fishing cleanup releases its lock",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "new run clears the old lock before a reused fish ID enters the new generation",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "scene stop cancellation clears a landed lock without charging",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "reentrant fishing during the lock callback cannot create a second transaction",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "mutation then throw during removal restores the exact fish, inventory and stamina",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "failed unlock stays pending and retries through the next real frame dispatch",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "throwing inventory snapshot during commit fails free and releases the fish",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "world-bound CompleteAction cannot charge for fishing without a bridge token",
+          "passed": true
+        }
+      ],
+      "report": {
+        "results": [
+          {
+            "error": "",
+            "name": "confirmation does not select or charge and early completion is rejected",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "the 0.5 second landing selects the then-nearest fish and locks once",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "the locked result stays fixed through four seconds and a replay cannot charge twice",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "empty water completes for free",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "cancel before or after landing is free and releases the owned lock",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "lock rejection is a free terminal failure and never selects a replacement",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "39 stamina rejects while 40 starts and a successful catch consumes exactly 40",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "pause freezes progress and time scale advances action time without scaling sea budget",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "large dt uses the real frame World once and clamps aggregate Ocean advancement",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "night exhaustion on the completion boundary cancels first and unlocks for free",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "forced return waits until night-interrupted fishing cleanup releases its lock",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "new run clears the old lock before a reused fish ID enters the new generation",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "scene stop cancellation clears a landed lock without charging",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "reentrant fishing during the lock callback cannot create a second transaction",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "mutation then throw during removal restores the exact fish, inventory and stamina",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "failed unlock stays pending and retries through the next real frame dispatch",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "throwing inventory snapshot during commit fails free and releases the fish",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "world-bound CompleteAction cannot charge for fishing without a bridge token",
+            "passed": true
+          }
+        ]
+      },
+      "passed": true,
+      "skippedCount": 0,
+      "log": ""
+    },
+    {
+      "name": "Circle1BPendingCatchTests",
+      "kind": "protocol",
+      "tests": [
+        {
+          "error": "",
+          "name": "full hold can cast and an empty net completes without fee or forced receive",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "full hold preserves a successful catch, charges once and requires the cargo panel",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "using or dropping cargo frees one slot and claims the retained catch exactly once",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "claim restores the full post-freeing inventory after Add mutates then throws",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "claim retries inventory rollback before Add and blocks inventory use while rollback is pending",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "UseItem and DropItem roll back a Remove that mutates then throws before freeing cargo",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "rejected drop receiver restores cargo and allows one later successful release and claim",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "world removal mutation followed by an exception restores fish, inventory and stamina",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "night settlement and NewRun cannot discard an already completed pending catch",
+          "passed": true
+        }
+      ],
+      "report": {
+        "results": [
+          {
+            "error": "",
+            "name": "full hold can cast and an empty net completes without fee or forced receive",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "full hold preserves a successful catch, charges once and requires the cargo panel",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "using or dropping cargo frees one slot and claims the retained catch exactly once",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "claim restores the full post-freeing inventory after Add mutates then throws",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "claim retries inventory rollback before Add and blocks inventory use while rollback is pending",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "UseItem and DropItem roll back a Remove that mutates then throws before freeing cargo",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "rejected drop receiver restores cargo and allows one later successful release and claim",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "world removal mutation followed by an exception restores fish, inventory and stamina",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "night settlement and NewRun cannot discard an already completed pending catch",
+            "passed": true
+          }
+        ]
+      },
+      "passed": true,
+      "skippedCount": 0,
+      "log": ""
+    },
+    {
+      "name": "ABIntegrationTests",
+      "kind": "regression",
+      "tests": [
+        {
+          "name": "Bridge construction uses the real A runtime and starts paused at port",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "one bridge Update advances B's clock and A's world by the same delta",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "B clock keeps raw dt while A simulation applies its own frame clamp",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "large dt forces the B return pause before A can simulate that frame",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "multiple pause reasons stop both layers until the final reason resumes",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "manual pause is a named B clock reason and coexists with UI pauses",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "drop requires a selected copied position and spawns a 20-second world item",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "throwing farther than twelve meters rejects the handoff without losing the item",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "invalid drop selection clears the prior target and receiver reentry stays single-flight",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "all four B inventory items become real A drops with category, effect and TTL",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "exact thirty-meter fishing cast works and anything beyond it is rejected",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "net includes its eight-meter boundary and a single cast catches only one fish",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "hidden and frozen fish are selected at net landing by nearest current position",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "empty-water casts complete after four seconds for free and replay idempotently",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "fishing prechecks require sea access and forty stamina",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "a full hold allows a cast and does not select before net landing",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "B fishing failures run before the A fish selector",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "single-flight and cancellation leave fish, stamina and inventory untouched",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "fishing charge and partially failed delivery roll back player and fish state",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "stale targets and a pause at completion reject without partial costs",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "recognition accepts twenty meters, rejects farther points and reads immutable coordinates",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "moving A fish and ship state cannot alter the B-only save snapshot",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "new run resets B discovery and A temporary fish while preserving fixed objects and ship",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "new-day world refresh waits for save success and retry is idempotent",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "explicit unsaved continuation refreshes the sea once and releases settlement pause",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "successful load restores saved boat speed and refreshes A before one callback",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "offline load fails explicitly without calling a cloud adapter",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "Scene starts one B HUD over A renderer with explicit development tools",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "Scene ticks B once, gates pointer input immediately and consumes an explicit throw pointer",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "Scene with explicit missing cloud fails clearly without auto-loading or calling a late backend",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "formal missing-cloud entry stays paused with retry and new-run choices and no development tools",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "Scene Stop releases five subscriptions, renderer, HUD and UI exactly once",
+          "passed": true,
+          "error": ""
+        }
+      ],
+      "report": {
+        "results": [
+          {
+            "name": "Bridge construction uses the real A runtime and starts paused at port",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "one bridge Update advances B's clock and A's world by the same delta",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "B clock keeps raw dt while A simulation applies its own frame clamp",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "large dt forces the B return pause before A can simulate that frame",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "multiple pause reasons stop both layers until the final reason resumes",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "manual pause is a named B clock reason and coexists with UI pauses",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "drop requires a selected copied position and spawns a 20-second world item",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "throwing farther than twelve meters rejects the handoff without losing the item",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "invalid drop selection clears the prior target and receiver reentry stays single-flight",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "all four B inventory items become real A drops with category, effect and TTL",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "exact thirty-meter fishing cast works and anything beyond it is rejected",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "net includes its eight-meter boundary and a single cast catches only one fish",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "hidden and frozen fish are selected at net landing by nearest current position",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "empty-water casts complete after four seconds for free and replay idempotently",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "fishing prechecks require sea access and forty stamina",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "a full hold allows a cast and does not select before net landing",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "B fishing failures run before the A fish selector",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "single-flight and cancellation leave fish, stamina and inventory untouched",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "fishing charge and partially failed delivery roll back player and fish state",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "stale targets and a pause at completion reject without partial costs",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "recognition accepts twenty meters, rejects farther points and reads immutable coordinates",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "moving A fish and ship state cannot alter the B-only save snapshot",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "new run resets B discovery and A temporary fish while preserving fixed objects and ship",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "new-day world refresh waits for save success and retry is idempotent",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "explicit unsaved continuation refreshes the sea once and releases settlement pause",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "successful load restores saved boat speed and refreshes A before one callback",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "offline load fails explicitly without calling a cloud adapter",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "Scene starts one B HUD over A renderer with explicit development tools",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "Scene ticks B once, gates pointer input immediately and consumes an explicit throw pointer",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "Scene with explicit missing cloud fails clearly without auto-loading or calling a late backend",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "formal missing-cloud entry stays paused with retry and new-run choices and no development tools",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "Scene Stop releases five subscriptions, renderer, HUD and UI exactly once",
+            "passed": true,
+            "error": ""
+          }
+        ],
+        "skipped_count": 0
+      },
+      "passed": true,
+      "skippedCount": 0,
+      "log": "[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] first frame rendered; underwater hidden=true\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap stopped"
+    },
+    {
+      "name": "ArchitectureIntegrationTests",
+      "kind": "regression",
+      "tests": [
+        {
+          "name": "shared registry and factory retain entity identity",
+          "passed": true
+        },
+        {
+          "name": "one automatic fish update per sea substep",
+          "passed": true
+        },
+        {
+          "name": "frozen and removed entities never receive FSM updates",
+          "passed": true
+        },
+        {
+          "name": "paused Game leaves sea and temporary lifetime unchanged",
+          "passed": true
+        },
+        {
+          "name": "Game uses reset runtime world rather than cached registry",
+          "passed": true
+        },
+        {
+          "name": "shared FSM calls enter exit and update once",
+          "passed": true
+        },
+        {
+          "name": "base skeleton retains numeric IDs and remove/clear interfaces",
+          "passed": true
+        },
+        {
+          "name": "Integration owns references while Gameplay owns transient action records",
+          "passed": true
+        },
+        {
+          "name": "registered frame System keeps raw clock dt separate from sea substeps",
+          "passed": true
+        },
+        {
+          "name": "runtime replacement rejects old tokens even when fish IDs are reused",
+          "passed": true
+        },
+        {
+          "name": "Ocean rollback restores removed fish identity and active FSM",
+          "passed": true
+        },
+        {
+          "name": "Bridge works through public Runtime APIs without sea internals",
+          "passed": true
+        }
+      ],
+      "report": {
+        "skipped_count": 0,
+        "results": [
+          {
+            "name": "shared registry and factory retain entity identity",
+            "passed": true
+          },
+          {
+            "name": "one automatic fish update per sea substep",
+            "passed": true
+          },
+          {
+            "name": "frozen and removed entities never receive FSM updates",
+            "passed": true
+          },
+          {
+            "name": "paused Game leaves sea and temporary lifetime unchanged",
+            "passed": true
+          },
+          {
+            "name": "Game uses reset runtime world rather than cached registry",
+            "passed": true
+          },
+          {
+            "name": "shared FSM calls enter exit and update once",
+            "passed": true
+          },
+          {
+            "name": "base skeleton retains numeric IDs and remove/clear interfaces",
+            "passed": true
+          },
+          {
+            "name": "Integration owns references while Gameplay owns transient action records",
+            "passed": true
+          },
+          {
+            "name": "registered frame System keeps raw clock dt separate from sea substeps",
+            "passed": true
+          },
+          {
+            "name": "runtime replacement rejects old tokens even when fish IDs are reused",
+            "passed": true
+          },
+          {
+            "name": "Ocean rollback restores removed fish identity and active FSM",
+            "passed": true
+          },
+          {
+            "name": "Bridge works through public Runtime APIs without sea internals",
+            "passed": true
+          }
+        ]
+      },
+      "passed": true,
+      "skippedCount": 0,
+      "log": ""
+    },
+    {
+      "name": "SeaFusedSceneTests",
+      "kind": "regression",
+      "tests": [
+        {
+          "error": "",
+          "passed": true,
+          "name": "original HUD directional contract drives the real ship"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "original HUD pause and reset synchronize and preserve ship level"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "fused scene retains the original HUD root and appends hidden debug tools"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "sky clicks do not sail; sea clicks target world meters; UI blocks clicks"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "one event owner updates and renders the real simulation at mode-B DPR"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "keyboard pause reset and hidden debug visibility keep the HUD synchronized"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "shutdown is idempotent and releases only this event owner and UI"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "render receives the live external clock without advancing it"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "B may supply a UI factory without replacing or initializing its UI"
+        }
+      ],
+      "report": {
+        "results": [
+          {
+            "error": "",
+            "passed": true,
+            "name": "original HUD directional contract drives the real ship"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "original HUD pause and reset synchronize and preserve ship level"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "fused scene retains the original HUD root and appends hidden debug tools"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "sky clicks do not sail; sea clicks target world meters; UI blocks clicks"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "one event owner updates and renders the real simulation at mode-B DPR"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "keyboard pause reset and hidden debug visibility keep the HUD synchronized"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "shutdown is idempotent and releases only this event owner and UI"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "render receives the live external clock without advancing it"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "B may supply a UI factory without replacing or initializing its UI"
+          }
+        ]
+      },
+      "passed": true,
+      "skippedCount": 0,
+      "log": "[海洋框架] 界面就绪：左右移动、暂停、重置；支持键盘和触摸\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] first frame rendered; underwater hidden=true\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] first frame rendered; underwater hidden=true\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped"
+    },
+    {
+      "name": "GameLoopSpec.lua",
+      "kind": "regression",
+      "passed": true,
+      "log": "PASS configuration values and four authoritative item definitions\nPASS stamina guards, complete action cost and zero stamina return\nPASS special events pause time and prevent starting full actions\nPASS food use, cap and no elder stamina reward\nPASS inventory one item per slot, capacity upgrades and defensive copies\nPASS multi reason pauses and day night boundaries\nPASS port pauses preserve elapsed and repeat departure\nPASS normal return penalties at 0 30 30.9 40 55 59.9\nPASS night 60 forced modal, proportional stamina and one settlement\nPASS save failure retry freezes state and does not advance day twice\nPASS explicitly skipping a failed save releases one settlement without pretending to save\nPASS a save retry in flight can be explicitly skipped and ignores its late callback\nPASS transactions read item prices, reject invalid/full/sea without side effects\nPASS drop acceptance payloads and rejected/error receiver retains item\nPASS new run resets gameplay and immediately saves its starting snapshot\nPASS snapshot round trip and invalid saves leave state intact\nPASS cloud callback mapping, timeout and duplicate completion\nPASS load success failure pending lock and late callbacks\nPASS drop callback reentry and elder rejection have no extra side effects\nPASS new day hooks fire once after successful save, never on failed retry\nPASS clock debug bounds scales sorted reasons and invalid inputs\nPASS only confirmed daily settlement writes, no manual sea save API\nGAME_LOOP_SPEC_PASS 22"
+    },
+    {
+      "name": "GameLoopUISpec.lua",
+      "kind": "regression",
+      "passed": true,
+      "log": "PASS HUD always visible information, host subtree and core button wiring\nPASS forced return modal and failed save retry through actual callbacks\nPASS failed save offers an explicit unsaved continuation through the HUD\nPASS skipping a pending save explains that the remote write may still finish\nPASS debug restricted to development, config steps and freeze during save\nPASS development HUD controls configure actions without production debug\nPASS port upgrade buttons use config prices and refresh after purchase\nPASS daily shop stock sold-out UI and next-day refresh\nPASS production fishing HUD casts on the sea pointer then pauses and cancels\nPASS pending cabin menu returns without closing then consumes and claims exactly once\nPASS pending cabin pointer chooses drop position while paused with mouse and touch\nGAME_LOOP_UI_MOCK_PASS 11"
+    },
+    {
+      "name": "PersistenceRegressionSpec.lua",
+      "kind": "regression",
+      "passed": true,
+      "log": "PERSISTENCE_REGRESSION_PASS 84"
+    },
+    {
+      "name": "NumericEconomySpec.lua",
+      "kind": "regression",
+      "passed": true,
+      "log": "PASS numeric stamina100-to160-cost400\nPASS numeric stamina160-to200-cost600\nPASS numeric upgrade-preserves-missing-stamina\nPASS numeric inventory-transition-1\nPASS numeric inventory-transition-2\nPASS numeric inventory-transition-3\nPASS numeric boat-speed-transition-1\nPASS numeric boat-speed-transition-2\nPASS numeric item-values-apple\nPASS numeric item-values-bait\nPASS numeric item-values-sardine\nPASS numeric item-values-tuna\nPASS numeric standalone-empty-net-is-free-and-world-bound-direct-completion-is-rejected\nPASS numeric free-interactions-no-save-no-player-mutation\nPASS numeric event-operation-cost40-on-explicit-completion\nPASS numeric no-daily-fishing-limit-and-food-action-math\nPASS numeric single-config-prices-and-total-cost3900\nPASS numeric forced-night60-proportional160-and200\nPASS numeric upgrade-rejections-atomic-sea-busy-and-insufficient\nPASS numeric persistence-levels-legacy-validation-and-new-run-reset\nPASS numeric balance-model-references-not-runtime-quotas\nNUMERIC_ECONOMY_SPEC_PASS 21"
+    },
+    {
+      "name": "ShopStockSpec.lua",
+      "kind": "regression",
+      "passed": true,
+      "log": "PASS stock apple-initial-stock2\nPASS stock apple-third-buy-rejected-without-charge\nPASS stock apple-new-day-restocks2\nPASS stock bait-initial-stock2\nPASS stock bait-third-buy-rejected-without-charge\nPASS stock bait-new-day-restocks2\nPASS stock full-inventory-no-money-or-stock-loss\nPASS stock insufficient-money-sea-and-busy-no-stock-loss\nPASS stock stock-does-not-reset-on-repeat-port-or-dialog\nPASS stock stock-independent-of-holding-and-apple-use\nPASS stock drop-world-rejection-keeps-inventory\nPASS stock fishing4sec-clock-runs-empty-catch-free\nPASS stock new-run-and-successful-day-snapshot-load-restock\nPASS stock invalid-load-keeps-current-stock\nPASS stock save-retry-does-not-repeat-day-or-restock\nSHOP_STOCK_SPEC_PASS 15"
+    }
+  ],
+  "allExecutedPassed": true,
+  "allRequestedVerified": true,
+  "unverifiedDependencyTests": [],
+  "failures": [],
+  "guiVerified": false,
+  "realOceanFishingVerified": false,
+  "realCloudVerified": false,
+  "realScopeAndBarrelVerified": false,
+  "localOceanApi": {
+    "CanInteractWithBarrel": true,
+    "IsScopeEnabled": true,
+    "SetScopeEnabled": true,
+    "UnlockFishingTarget": true,
+    "LockFishingTarget": true,
+    "GetFixedBarrel": true
+  },
+  "quotaAudit": []
+}
