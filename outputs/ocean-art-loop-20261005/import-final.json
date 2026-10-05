@@ -1,0 +1,112 @@
+{
+  "task": "Ocean 主航海画面最小美术闭环",
+  "date": "2026-10-05",
+  "format": "RGBA PNG，直通 Alpha；船和海鸥船头/鸟喙朝 +X",
+  "projection": "现有 Ocean.Projection；贴图在世界平面先旋转，再分片投影",
+  "anchor": [
+    0.5,
+    0.5
+  ],
+  "assets": {
+    "boat": {
+      "path": "image/OceanLoop/boat.png",
+      "source": "assets/image/OceanLoop_boat_topdown_20261005103106.png",
+      "size": [
+        1024,
+        512
+      ],
+      "content_bounds": [
+        61,
+        30,
+        962,
+        481
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.3934364318847656,
+      "sha256": "76dbeda06ccfadbf73aae333e3a5803aa010c0e19f5d3571d48e79644fd7ded2"
+    },
+    "island": {
+      "path": "image/OceanLoop/island.png",
+      "source": "assets/image/OceanLoop_island_topdown_20261005103049.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        61,
+        61,
+        962,
+        962
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.44651317596435547,
+      "sha256": "1dc8f8c4c42b5cffbecf83dc886739e7b5ce687df3da1f59430b973bdd186302"
+    },
+    "gull": {
+      "path": "image/OceanLoop/gull.png",
+      "source": "assets/image/OceanLoop_gull_topdown_20261005103040.png",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        128,
+        30,
+        384,
+        481
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.8394050598144531,
+      "sha256": "0ea138e32ac9213330b2548d4b7606840217f47210b338446aca858a1d6027bb"
+    },
+    "barrel": {
+      "path": "image/OceanLoop/barrel.png",
+      "source": "assets/image/OceanLoop_barrel_topdown_20261005103221.png",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        30,
+        30,
+        481,
+        481
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.3854331970214844,
+      "sha256": "2f1a2464347e37e2d717f1595e989612ae7b7a6ac0e611854cade725591cc85e"
+    },
+    "ripple": {
+      "path": "image/OceanLoop/ripple.png",
+      "source": "tests/prepare_ocean_art.py:程序化透明弧环",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        29,
+        27,
+        483,
+        485
+      ],
+      "alpha_range": [
+        0,
+        235
+      ],
+      "transparent_ratio": 0.9434585571289062,
+      "sha256": "5f43b32e38435b4d3ce33ed51766ae9e31da0c27641de2acc601778af8c5c784"
+    }
+  }
+}

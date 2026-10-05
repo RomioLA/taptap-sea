@@ -5,6 +5,7 @@ local Draw = require("Ocean.Draw")
 local Projection = require("Ocean.Projection")
 local Geometry = require("Ocean.ProjectedGeometry")
 local SurfaceEffects = require("Ocean.SeaSurfaceEffects")
+local ImageArt = require("Ocean.ImageArt")
 
 local SeaViewArt = {}
 local TWO_PI = math.pi * 2
@@ -646,15 +647,23 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
         horizon=Projection.HorizonFunction(movement)}
 
     local outerWorld = geometry.outer
-    local outerScreen = fillWorldPolygon(ctx, movement, outerWorld, shoreColor, bounds,nil,frame)
-    if #outerScreen >= 3 then
-        strokeWorldPolygon(ctx,movement,outerWorld,rgba({167,154,112,190},nil,nil,airMix),1.25,bounds,0,frame)
-    end
-
     local landWorld = geometry.land
-    local landScreen = fillWorldPolygon(ctx, movement, landWorld, landColor, bounds,nil,frame)
-    if #landScreen >= 3 then
-        strokeWorldPolygon(ctx,movement,landWorld,rgba({105,145,92,170},nil,nil,airMix),1,bounds,0,frame)
+    -- 仅替换岛面纹理；保留原岛的高处几何、遮挡、弱键缓存和泡沫。
+    local hasImage = ImageArt.Plane(ctx, "island", movement, center,
+        radius * 2 / 0.88, radius * 2 / 0.88, 0, 0)
+    if not hasImage then
+        local outerScreen = fillWorldPolygon(ctx, movement, outerWorld, shoreColor, bounds, nil, frame)
+        if #outerScreen >= 3 then
+            strokeWorldPolygon(ctx, movement, outerWorld, rgba({167,154,112,190},nil,nil,airMix),1.25,bounds,0,frame)
+        end
+        local landScreen = fillWorldPolygon(ctx, movement, landWorld, landColor, bounds, nil, frame)
+        if #landScreen >= 3 then
+            strokeWorldPolygon(ctx,movement,landWorld,rgba({105,145,92,170},nil,nil,airMix),1,bounds,0,frame)
+        end
+    else
+        for _, point in ipairs(Geometry.ProjectPolygon(movement, outerWorld, 0, nil, frame)) do
+            includeScreenPoint(bounds, point)
+        end
     end
     drawShoreFoam(ctx, movement, center, radius, finite(time) and time or 0, bounds,frame)
 
@@ -776,6 +785,10 @@ function SeaViewArt.Boat(ctx, movement, ship, time)
         shadow[#shadow + 1] = { x = point.x + 1.5, y = point.y + 3, scale = point.scale }
     end
     fillPolygon(ctx, shadow, nvgRGBA(9, 44, 62, 75))
+    if ImageArt.Plane(ctx, "boat", movement, ship.position, length / 0.88, width / 0.88,
+        rotation, heave, 1, roll) then
+        return finishScreenBounds(bounds)
+    end
     fillPolygon(ctx, hullScreen, rgba(visual.ship, { 251, 222, 139, 255 }))
     strokePolygon(ctx, hullScreen, nvgRGBA(100, 67, 51, 245), 1.5)
 

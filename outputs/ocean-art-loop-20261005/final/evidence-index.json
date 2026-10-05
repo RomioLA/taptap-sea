@@ -1,0 +1,225 @@
+{
+  "source_hashes": {
+    "scripts/Ocean/ImageArt.lua": "181f00dd954b15b977487cdedfd2ef5b28ee29b34e895aacc33700b68cd4b512",
+    "scripts/Ocean/Bootstrap.lua": "aae9e4f9e03777ea9d27c4934c819ed0d4bfe6e92c0a7c97b284e76092ce11e1",
+    "scripts/Ocean/SeaViewArt.lua": "eace65ea6b48ce10b04375d667e114f59c9f2d40dc3ccc335581c991e62eaf84",
+    "scripts/Ocean/SeaDraw.lua": "c8572e7e5313b3f6941d300bf9dc5405e1714598a233b32a01fb601d73c11c1c",
+    "scripts/Integration/Scene.lua": "9f05bf9bf7c1a8bc1b96d4046db41980e5fac1aa4939edf55df259d5df5c45d7",
+    "scripts/tests/OceanArtRuntimeValidate.lua": "07f60d97c17c626cbc578c5529f57fff7182ed8b8d998152139408ad460ba70b",
+    "scripts/tests/OceanArtVisualValidate.lua": "7fe42be000405bfbbf3f7776bf2254ec9b32fcdcf66fd15fbfb426f37330e96f"
+  },
+  "asset_manifest": "assets/image/OceanLoop/manifest.json",
+  "runs": [
+    {
+      "name": "direction-1",
+      "result": "PASS",
+      "frames": 150,
+      "assertions": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      "errors": {
+        "lua_errors": 0,
+        "resource_errors": 0,
+        "engine_errors": 0,
+        "total_errors": 0
+      }
+    },
+    {
+      "name": "direction-2",
+      "result": "PASS",
+      "frames": 150,
+      "assertions": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      "errors": {
+        "lua_errors": 0,
+        "resource_errors": 0,
+        "engine_errors": 0,
+        "total_errors": 0
+      }
+    },
+    {
+      "name": "direction-3",
+      "result": "PASS",
+      "frames": 150,
+      "assertions": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      "errors": {
+        "lua_errors": 0,
+        "resource_errors": 0,
+        "engine_errors": 0,
+        "total_errors": 0
+      }
+    },
+    {
+      "name": "direction-4",
+      "result": "PASS",
+      "frames": 150,
+      "assertions": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      "errors": {
+        "lua_errors": 0,
+        "resource_errors": 0,
+        "engine_errors": 0,
+        "total_errors": 0
+      }
+    },
+    {
+      "name": "direction-5",
+      "result": "PASS",
+      "frames": 150,
+      "assertions": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      "errors": {
+        "lua_errors": 0,
+        "resource_errors": 0,
+        "engine_errors": 0,
+        "total_errors": 0
+      }
+    },
+    {
+      "name": "direction-6",
+      "result": "PASS",
+      "frames": 150,
+      "assertions": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      "errors": {
+        "lua_errors": 0,
+        "resource_errors": 0,
+        "engine_errors": 0,
+        "total_errors": 0
+      }
+    },
+    {
+      "name": "direction-7",
+      "result": "PASS",
+      "frames": 150,
+      "assertions": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      "errors": {
+        "lua_errors": 0,
+        "resource_errors": 0,
+        "engine_errors": 0,
+        "total_errors": 0
+      }
+    },
+    {
+      "name": "direction-8",
+      "result": "PASS",
+      "frames": 150,
+      "assertions": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      "errors": {
+        "lua_errors": 0,
+        "resource_errors": 0,
+        "engine_errors": 0,
+        "total_errors": 0
+      }
+    },
+    {
+      "name": "horizon-105-verified",
+      "result": "PASS",
+      "frames": 150,
+      "assertions": {
+        "total": 11,
+        "passed": 11,
+        "failed": 0
+      },
+      "errors": {
+        "lua_errors": 0,
+        "resource_errors": 0,
+        "engine_errors": 0,
+        "total_errors": 0
+      }
+    },
+    {
+      "name": "horizon-125-verified",
+      "result": "PASS",
+      "frames": 150,
+      "assertions": {
+        "total": 11,
+        "passed": 11,
+        "failed": 0
+      },
+      "errors": {
+        "lua_errors": 0,
+        "resource_errors": 0,
+        "engine_errors": 0,
+        "total_errors": 0
+      }
+    },
+    {
+      "name": "dynamic-a-verified",
+      "result": "PASS",
+      "frames": 150,
+      "assertions": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      "errors": {
+        "lua_errors": 0,
+        "resource_errors": 0,
+        "engine_errors": 0,
+        "total_errors": 0
+      }
+    },
+    {
+      "name": "dynamic-b-verified",
+      "result": "PASS",
+      "frames": 150,
+      "assertions": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0
+      },
+      "errors": {
+        "lua_errors": 0,
+        "resource_errors": 0,
+        "engine_errors": 0,
+        "total_errors": 0
+      }
+    },
+    {
+      "name": "entry-normal",
+      "result": "PASS",
+      "frames": 40,
+      "assertions": {
+        "total": 0,
+        "passed": 0,
+        "failed": 0
+      },
+      "errors": {
+        "lua_errors": 0,
+        "resource_errors": 0,
+        "engine_errors": 0,
+        "total_errors": 0
+      }
+    }
+  ],
+  "total_assertions": 162,
+  "passed_assertions": 162,
+  "note": "1280x720 / Linux UrhoXRuntime GLES llvmpipe; not mobile GPU, Web browser or touch acceptance"
+}

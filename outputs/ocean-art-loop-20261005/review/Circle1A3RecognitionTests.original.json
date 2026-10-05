@@ -1,0 +1,69 @@
+{
+  "name": "Circle1A3RecognitionTests",
+  "kind": "run",
+  "file": "scripts/tests/Circle1A3RecognitionTests.lua",
+  "passed": true,
+  "subtestCount": 5,
+  "failures": [],
+  "returned": {
+    "metrics": {
+      "evidenceKind": "NanoVG recorder / render fixtures, not native gameplay",
+      "recognitionMeters": 20,
+      "recognitionOwner": "real Gameplay.PlayerState",
+      "restore": "real Persistence.Restore (offline)",
+      "outlineMeters": 80
+    },
+    "results": [
+      {
+        "passed": true,
+        "name": "first_approach_then_depart_and_return_reads_existing_player_progress"
+      },
+      {
+        "passed": true,
+        "name": "restore_and_new_game_are_read_live_without_ocean_progress_copy"
+      },
+      {
+        "passed": true,
+        "name": "missing_false_nil_and_nonboolean_queries_preserve_unknown_behavior"
+      },
+      {
+        "passed": true,
+        "name": "recognized_offscreen_and_content_decoys_do_not_bypass_existing_filters"
+      },
+      {
+        "passed": true,
+        "name": "repeated_draw_is_readonly_for_world_ship_signals_and_player"
+      }
+    ]
+  },
+  "stdout": "",
+  "nvgCalls": {
+    "nvgBeginPath": 670,
+    "nvgBezierTo": 16,
+    "nvgCircle": 26,
+    "nvgClosePath": 1282,
+    "nvgEllipse": 9,
+    "nvgFill": 641,
+    "nvgFillColor": 615,
+    "nvgFillPaint": 26,
+    "nvgGlobalAlpha": 3,
+    "nvgIntersectScissor": 24,
+    "nvgLineTo": 8546,
+    "nvgLinearGradient": 2,
+    "nvgMoveTo": 2938,
+    "nvgRadialGradient": 24,
+    "nvgRect": 1,
+    "nvgRestore": 34,
+    "nvgSave": 34,
+    "nvgScale": 22,
+    "nvgStroke": 51,
+    "nvgStrokeColor": 51,
+    "nvgStrokeWidth": 51,
+    "nvgTranslate": 22
+  },
+  "nvgCallTotal": 15088,
+  "durationMs": 30177.228,
+  "reviewMode": "original",
+  "explicitSearcherAdaptations": [],
+  "imageArtRequireGuardEnabled": false
+}

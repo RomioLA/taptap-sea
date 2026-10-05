@@ -1,0 +1,81 @@
+{
+  "name": "Circle1HUDReviewTests",
+  "kind": "run",
+  "file": "scripts/tests/Circle1HUDReviewTests.lua",
+  "passed": false,
+  "subtestCount": 12,
+  "failures": [
+    {
+      "name": "pending catch selects a sea drop point through the real drawer backdrop only",
+      "error": "/workspace/scripts/tests/Circle1HUDReviewTests.lua:151: module 'Tests.Circle1BFishingFlowTests' not found:\n\tno field package.preload['Tests.Circle1BFishingFlowTests']\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file './Tests/Circle1BFishingFlowTests.lua'\n\tno file './Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/Tests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests.so'\nstack traceback:\n\t[C]: in function 'require'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:151: in function </workspace/scripts/tests/Circle1HUDReviewTests.lua:150>\n\t[C]: in function 'xpcall'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:80: in local 'check'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:150: in function 'tests.Circle1HUDReviewTests.Run'",
+      "passed": false
+    },
+    {
+      "name": "full cabin gift frees a slot and claims catch once while all dialogue pauses remain",
+      "error": "/workspace/scripts/tests/Circle1HUDReviewTests.lua:202: module 'Tests.Circle1BFishingFlowTests' not found:\n\tno field package.preload['Tests.Circle1BFishingFlowTests']\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file './Tests/Circle1BFishingFlowTests.lua'\n\tno file './Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/Tests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests.so'\nstack traceback:\n\t[C]: in function 'require'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:202: in function </workspace/scripts/tests/Circle1HUDReviewTests.lua:201>\n\t[C]: in function 'xpcall'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:80: in local 'check'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:201: in function 'tests.Circle1HUDReviewTests.Run'",
+      "passed": false
+    }
+  ],
+  "returned": {
+    "guiVerified": false,
+    "results": [
+      {
+        "name": "stable visible and hidden modal opacity does not dirty layout on each refresh",
+        "passed": true
+      },
+      {
+        "name": "fish rows and port sales show rarity without inventing weight",
+        "passed": true
+      },
+      {
+        "name": "empty cabin and supply-only cabin explain disabled sell-all",
+        "passed": true
+      },
+      {
+        "name": "catch at sea explains port requirement and sale becomes available on return",
+        "passed": true
+      },
+      {
+        "name": "drawer and cards use native RGBA interpolation and stable phase writes",
+        "passed": true
+      },
+      {
+        "name": "pending catch selects a sea drop point through the real drawer backdrop only",
+        "error": "/workspace/scripts/tests/Circle1HUDReviewTests.lua:151: module 'Tests.Circle1BFishingFlowTests' not found:\n\tno field package.preload['Tests.Circle1BFishingFlowTests']\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file './Tests/Circle1BFishingFlowTests.lua'\n\tno file './Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/Tests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests.so'\nstack traceback:\n\t[C]: in function 'require'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:151: in function </workspace/scripts/tests/Circle1HUDReviewTests.lua:150>\n\t[C]: in function 'xpcall'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:80: in local 'check'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:150: in function 'tests.Circle1HUDReviewTests.Run'",
+        "passed": false
+      },
+      {
+        "name": "cabin gift opens actual elder dialogue and consumes food without healing player",
+        "passed": true
+      },
+      {
+        "name": "elder absence remains clickable and explains reason without losing cargo",
+        "passed": true
+      },
+      {
+        "name": "full cabin gift frees a slot and claims catch once while all dialogue pauses remain",
+        "error": "/workspace/scripts/tests/Circle1HUDReviewTests.lua:202: module 'Tests.Circle1BFishingFlowTests' not found:\n\tno field package.preload['Tests.Circle1BFishingFlowTests']\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file './Tests/Circle1BFishingFlowTests.lua'\n\tno file './Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/Tests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests.so'\nstack traceback:\n\t[C]: in function 'require'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:202: in function </workspace/scripts/tests/Circle1HUDReviewTests.lua:201>\n\t[C]: in function 'xpcall'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:80: in local 'check'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:201: in function 'tests.Circle1HUDReviewTests.Run'",
+        "passed": false
+      },
+      {
+        "name": "shop shortages explain their cause and are re-enabled after restock",
+        "passed": true
+      },
+      {
+        "name": "treasure ownership remains separate from cargo and mode follows real state",
+        "passed": true
+      },
+      {
+        "name": "night HUD explains grace, precise penalty and exhaustion",
+        "passed": true
+      }
+    ]
+  },
+  "stdout": "",
+  "nvgCalls": {},
+  "nvgCallTotal": 0,
+  "durationMs": 392.729,
+  "reviewMode": "original",
+  "explicitSearcherAdaptations": [],
+  "imageArtRequireGuardEnabled": false
+}

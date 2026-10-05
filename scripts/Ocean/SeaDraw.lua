@@ -6,6 +6,7 @@ local Art = require("Ocean.SeaViewArt")
 local Geometry = require("Ocean.ProjectedGeometry")
 local Presentation = require("Ocean.SeaPresentation")
 local Atmosphere = require("Ocean.SeaAtmosphere")
+local ImageArt = require("Ocean.ImageArt")
 local SeaDraw = {}
 local FIXED_BARREL_CONTENT_ID = "driftwood_barrel"
 local PORT_MARK_RADIUS = 16
@@ -39,8 +40,11 @@ local function worldLine(ctx, movement, a, b, tint, width)
     Geometry.WorldLine(ctx, movement, a, b, tint, width)
 end
 
-local function drawFloat(ctx, movement, entity, outlineOnly, recognized)
+local function drawFloat(ctx, movement, entity, outlineOnly, recognized, time)
     local point, radius = entity.position, entity.radius or 1
+    ImageArt.ContactRipple(ctx, movement, point, time, radius)
+    if not outlineOnly and ImageArt.Plane(ctx, "barrel", movement, point,
+        radius * 2 / 0.88, radius * 2 / 0.88, 0, 0) then return end
     Geometry.WorldCircle(ctx, movement, point, radius, outlineOnly and nil or Config.visual.float,
         { 225, 203, 156, 160 }, 1.5)
     if not recognized then return end
@@ -71,7 +75,7 @@ local function drawFixedBarrel(ctx, runtime, entity, snapshot, recognizedQuery)
         Geometry.SampleCircle(snapshot.position, entity.radius or 1)) < 3 then return end
     local recognized = squared <= Config.interaction.recognitionDistance ^ 2
         or type(recognizedQuery) == "function" and recognizedQuery(snapshot.contentId) == true
-    drawFloat(ctx, runtime.movement, entity, not recognized, recognized)
+    drawFloat(ctx, runtime.movement, entity, not recognized, recognized, runtime.time)
 end
 
 local function drawDroppedItem(ctx, movement, entity)
@@ -304,7 +308,7 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
                     elseif entity.entityType == "float" then
                         if world and entity == world.fixedBarrel then
                             drawFixedBarrel(ctx, runtime, entity, snapshot, isLocationRecognized)
-                        else drawFloat(ctx, movement, entity) end
+                        else drawFloat(ctx, movement, entity, false, false, time) end
                     elseif entity.entityType == "droppedItem" then drawDroppedItem(ctx, movement, entity)
                     elseif entity.species then drawFish(ctx, movement, entity, flags.showActivity, time) end
                 elseif entry.kind == "rise" then
@@ -317,9 +321,13 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
                     end, math.max(3, entry.length))
                 elseif entry.kind == "bird" then
                     local birdAltitude = Config.visual.projection.birdAltitude * (1 - (entry.dive or 0))
-                    groundFrame(ctx, movement, point, birdAltitude, function(scale, api)
-                        Draw.WorldSeabird(ctx, 0, 0, scale, entry.heading, entry.dive, api)
-                    end)
+                    local flapScale = 1 + math.sin(time * 3.2) * 0.035
+                    if not ImageArt.Plane(ctx, "gull", movement, point, 3.2,
+                        3.2 * (1 - 0.62 * (entry.dive or 0)) * flapScale, entry.heading, birdAltitude) then
+                        groundFrame(ctx, movement, point, birdAltitude, function(scale, api)
+                            Draw.WorldSeabird(ctx, 0, 0, scale, entry.heading, entry.dive, api)
+                        end)
+                    end
                 end
             end)
         end

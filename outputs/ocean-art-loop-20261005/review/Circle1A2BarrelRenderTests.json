@@ -1,0 +1,58 @@
+{
+  "name": "Circle1A2BarrelRenderTests",
+  "kind": "run",
+  "file": "scripts/tests/Circle1A2BarrelRenderTests.lua",
+  "passed": true,
+  "subtestCount": 3,
+  "failures": [],
+  "returned": {
+    "metrics": {
+      "recognitionDistance": 20,
+      "outlineDistance": 80,
+      "offscreenCulling": "partial visible / full margin culled",
+      "contentId": "driftwood_barrel"
+    },
+    "tests": [
+      {
+        "name": "barrel_outline_and_recognition_boundaries_are_inclusive",
+        "passed": true
+      },
+      {
+        "name": "barrel_screen_culling_keeps_partial_edges_and_skips_fully_offscreen",
+        "passed": true
+      },
+      {
+        "name": "only_the_exact_barrel_gets_recognition_and_other_floats_keep_their_shape",
+        "passed": true
+      }
+    ],
+    "status": "PASS"
+  },
+  "stdout": "",
+  "nvgCalls": {
+    "nvgBeginPath": 768,
+    "nvgBezierTo": 16,
+    "nvgCircle": 26,
+    "nvgClosePath": 1372,
+    "nvgEllipse": 9,
+    "nvgFill": 739,
+    "nvgFillColor": 713,
+    "nvgFillPaint": 26,
+    "nvgGlobalAlpha": 5,
+    "nvgIntersectScissor": 24,
+    "nvgLineTo": 8932,
+    "nvgLinearGradient": 2,
+    "nvgMoveTo": 3027,
+    "nvgRadialGradient": 24,
+    "nvgRect": 1,
+    "nvgRestore": 36,
+    "nvgSave": 36,
+    "nvgScale": 22,
+    "nvgStroke": 51,
+    "nvgStrokeColor": 51,
+    "nvgStrokeWidth": 51,
+    "nvgTranslate": 22
+  },
+  "nvgCallTotal": 15953,
+  "durationMs": 4467.562
+}

@@ -1,0 +1,183 @@
+{
+  "firstBefore": {
+    "sardineState": "Wander",
+    "avoidance": {
+      "y": -0.7071067811865476,
+      "x": 0.7071067811865476
+    },
+    "tunaPreyRadius": 30,
+    "sardinePosition": {
+      "y": 0,
+      "x": 0
+    },
+    "tunaState": "Wander",
+    "tunaPosition": {
+      "y": 0,
+      "x": 20
+    },
+    "fishDangerRadius": 12,
+    "lostPreySeconds": 2,
+    "lostPreyTime": 0,
+    "worldTime": 0
+  },
+  "firstAfter": {
+    "sardineState": "Wander",
+    "avoidance": {
+      "y": -0.7255425269415816,
+      "x": 0.688177332959481
+    },
+    "tunaPreyRadius": 30,
+    "sardinePosition": {
+      "y": -0.03816179907530898,
+      "x": 0.1963254366895328
+    },
+    "tunaState": "Avoid",
+    "tunaPosition": {
+      "y": -0.23454783398062107,
+      "x": 19.913470735730627
+    },
+    "fishDangerRadius": 12,
+    "lostPreySeconds": 2,
+    "lostPreyTime": 0,
+    "worldTime": 0.05
+  },
+  "secondMoved": {
+    "sardineState": "Wander",
+    "avoidance": {},
+    "tunaPreyRadius": 30,
+    "sardinePosition": {
+      "y": 15,
+      "x": 10
+    },
+    "tunaState": "Chase",
+    "tunaPosition": {
+      "y": 0.0,
+      "x": 0.4
+    },
+    "lastPreyPosition": {
+      "y": 0,
+      "x": 20
+    },
+    "preyId": "sea-5",
+    "lostPreySeconds": 2,
+    "fishDangerRadius": 12,
+    "lostPreyTime": 0,
+    "worldTime": 0
+  },
+  "second": {
+    "1": {
+      "sardineState": "Wander",
+      "avoidance": {},
+      "tunaPreyRadius": 30,
+      "sardinePosition": {
+        "y": 0,
+        "x": 20
+      },
+      "tunaState": "Chase",
+      "tunaPosition": {
+        "y": 0.0,
+        "x": 0.4
+      },
+      "lastPreyPosition": {
+        "y": 0,
+        "x": 20
+      },
+      "preyId": "sea-5",
+      "lostPreySeconds": 2,
+      "fishDangerRadius": 12,
+      "lostPreyTime": 0,
+      "worldTime": 0
+    },
+    "2": {
+      "sardineState": "Wander",
+      "avoidance": {},
+      "tunaPreyRadius": 30,
+      "sardinePosition": {
+        "y": 15,
+        "x": 10
+      },
+      "tunaState": "Chase",
+      "tunaPosition": {
+        "y": 0.03138363829113798,
+        "x": 0.7987669334932512
+      },
+      "lastPreyPosition": {
+        "y": 15,
+        "x": 10
+      },
+      "preyId": "sea-5",
+      "lostPreySeconds": 2,
+      "fishDangerRadius": 12,
+      "lostPreyTime": 0,
+      "worldTime": 0
+    },
+    "3": {
+      "sardineState": "Removed",
+      "avoidance": {
+        "y": 0.7996718308614378,
+        "x": -0.6004373097390904
+      },
+      "tunaPreyRadius": 30,
+      "sardinePosition": {
+        "y": 15,
+        "x": 10
+      },
+      "tunaState": "Chase",
+      "tunaPosition": {
+        "y": 12.980535962450054,
+        "x": 8.758632138742001
+      },
+      "lastPreyPosition": {
+        "y": 15,
+        "x": 10
+      },
+      "preyId": "sea-5",
+      "lostPreySeconds": 2,
+      "fishDangerRadius": 12,
+      "lostPreyTime": 1.9,
+      "worldTime": 0
+    },
+    "4": {
+      "sardineState": "Removed",
+      "avoidance": {},
+      "tunaPreyRadius": 30,
+      "sardinePosition": {
+        "y": 15,
+        "x": 10
+      },
+      "tunaState": "Avoid",
+      "tunaPosition": {
+        "y": 13.952582628222789,
+        "x": 8.993419871726733
+      },
+      "lastPreyPosition": {
+        "y": 15,
+        "x": 10
+      },
+      "preyId": "sea-5",
+      "lostPreySeconds": 2,
+      "fishDangerRadius": 12,
+      "lostPreyTime": 1.9,
+      "worldTime": 0
+    }
+  },
+  "imageLoaded": false,
+  "requested": {
+    "1": "Ocean.SeaRuntime",
+    "2": "Ocean.Config",
+    "3": "GeneratedData.Fish",
+    "4": "Ocean.FishData",
+    "5": "Ocean.Math",
+    "6": "Ocean.World",
+    "7": "Game.World",
+    "8": "Entities.EntityFactory",
+    "9": "Ocean.Movement",
+    "10": "Ocean.Projection",
+    "11": "Ocean.Wake",
+    "12": "Ocean.Fish",
+    "13": "FSM.StateMachine",
+    "14": "Ocean.SpawnStrategy",
+    "15": "Systems.EntityStateSystem",
+    "16": "Ocean.SurfaceSignals"
+  }
+}

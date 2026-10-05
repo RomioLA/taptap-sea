@@ -1,0 +1,56 @@
+{
+  "planeCallCounts": [
+    {
+      "name": "boat",
+      "depth": 0,
+      "fillTriangles": 8,
+      "nvgCalls": 300,
+      "noopLuaGeometryMeanMs": 1.2034501333497853
+    },
+    {
+      "name": "island",
+      "depth": 25,
+      "fillTriangles": 128,
+      "nvgCalls": 4334,
+      "noopLuaGeometryMeanMs": 17.709128800015606
+    },
+    {
+      "name": "island",
+      "depth": 90,
+      "fillTriangles": 128,
+      "nvgCalls": 6048,
+      "noopLuaGeometryMeanMs": 25.14051240001815
+    },
+    {
+      "name": "barrel",
+      "depth": 6,
+      "fillTriangles": 8,
+      "nvgCalls": 258,
+      "noopLuaGeometryMeanMs": 0.9883430333502474
+    },
+    {
+      "name": "gull",
+      "depth": 25,
+      "fillTriangles": 8,
+      "nvgCalls": 136,
+      "noopLuaGeometryMeanMs": 0.8413536666921573
+    }
+  ],
+  "lifecycle": {
+    "creates": 5,
+    "deletes": 5,
+    "before": 5
+  },
+  "farIsland125mRadius12": {
+    "vector": {
+      "fillCount": 18,
+      "minY": 246.8829584815522
+    },
+    "imageLoaded": {
+      "fillCount": 18,
+      "minY": 246.8829584815522,
+      "imageTriangles": 0
+    }
+  },
+  "note": "Native-Lua bindings; NVG methods are noops, timing measures geometry only; no native raster/performance acceptance"
+}
