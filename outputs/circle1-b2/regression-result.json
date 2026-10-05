@@ -588,127 +588,127 @@
       "kind": "protocol",
       "tests": [
         {
-          "error": "",
+          "passed": true,
           "name": "built-in timer advances with the ocean, blocks steering, and pauses for UI",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "barrel completion at night end commits once, while unfinished work cancels free",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "full hold escrows both first rewards and advances only after an atomic two-slot claim",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "controlled barrel receipts charge each stage once and grant lens without cargo",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "the three barrel stages survive real day settlements and memory save restore",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "a rejected first-stage progression rolls back stamina and both appended rewards",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "lens grant rejection rolls back the final-stage charge and leaves stage two intact",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "claim stage failure restores cargo and keeps the receipt retryable without charging again",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "a partial claim rollback is retried on Tick without auto-claiming its pending receipt",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "executor failure before evidence is free, but a synchronous completed receipt returns its token",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "observer errors do not discard an escrowed result and reset cancels an active receipt",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "cancellation and a replaced barrel world invalidate late completions for free",
-          "passed": true
+          "error": ""
         }
       ],
       "report": {
         "results": [
           {
-            "error": "",
+            "passed": true,
             "name": "built-in timer advances with the ocean, blocks steering, and pauses for UI",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "barrel completion at night end commits once, while unfinished work cancels free",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "full hold escrows both first rewards and advances only after an atomic two-slot claim",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "controlled barrel receipts charge each stage once and grant lens without cargo",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "the three barrel stages survive real day settlements and memory save restore",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "a rejected first-stage progression rolls back stamina and both appended rewards",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "lens grant rejection rolls back the final-stage charge and leaves stage two intact",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "claim stage failure restores cargo and keeps the receipt retryable without charging again",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "a partial claim rollback is retried on Tick without auto-claiming its pending receipt",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "executor failure before evidence is free, but a synchronous completed receipt returns its token",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "observer errors do not discard an escrowed result and reset cancels an active receipt",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "cancellation and a replaced barrel world invalidate late completions for free",
-            "passed": true
+            "error": ""
           }
         ]
       },
@@ -721,117 +721,117 @@
       "kind": "protocol",
       "tests": [
         {
-          "error": "",
+          "passed": true,
           "name": "elder counts food apples, displays other offerings without consuming them, and saves after three days",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "elder who received fewer than three apples is marked dead once on day four",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "failed apple progress rolls back the removed apple, stamina, and prior count",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "three apples offered on day one are counted cumulatively until day-four decision",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "three apples offered on day three still save the elder on day four",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "zero apples leave the elder dead after the one-time day-four decision",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "memory save retries once without double-advancing and restores progress through day seven",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "progress validation rejects malformed and inconsistent saved states",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "legacy snapshots preserve unknown progress while filling missing circle records",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "snapshot failure keeps the applied day-four decision and retries without advancing twice",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "day-seven paper opens only explicitly, acknowledgement round-trips without auto-saving",
-          "passed": true
+          "error": ""
         }
       ],
       "report": {
         "results": [
           {
-            "error": "",
+            "passed": true,
             "name": "elder counts food apples, displays other offerings without consuming them, and saves after three days",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "elder who received fewer than three apples is marked dead once on day four",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "failed apple progress rolls back the removed apple, stamina, and prior count",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "three apples offered on day one are counted cumulatively until day-four decision",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "three apples offered on day three still save the elder on day four",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "zero apples leave the elder dead after the one-time day-four decision",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "memory save retries once without double-advancing and restores progress through day seven",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "progress validation rejects malformed and inconsistent saved states",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "legacy snapshots preserve unknown progress while filling missing circle records",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "snapshot failure keeps the applied day-four decision and retries without advancing twice",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "day-seven paper opens only explicitly, acknowledgement round-trips without auto-saving",
-            "passed": true
+            "error": ""
           }
         ]
       },
@@ -844,56 +844,56 @@
       "kind": "protocol",
       "tests": [
         {
-          "passed": true,
           "name": "scope requires lens ownership and toggling does not pause the voyage",
+          "passed": true,
           "error": ""
         },
         {
-          "passed": true,
           "name": "new run and saved-load both synchronize A scope off",
+          "passed": true,
           "error": ""
         },
         {
-          "passed": true,
           "name": "false is a valid disabled result while rejection and exceptions fail readback",
+          "passed": true,
           "error": ""
         },
         {
-          "passed": true,
           "name": "scope readback mismatch is reported and a later close can recover",
+          "passed": true,
           "error": ""
         },
         {
-          "passed": true,
           "name": "snapshot and restore reject inconsistent Circle 1B2 progress",
+          "passed": true,
           "error": ""
         }
       ],
       "report": {
         "results": [
           {
-            "passed": true,
             "name": "scope requires lens ownership and toggling does not pause the voyage",
+            "passed": true,
             "error": ""
           },
           {
-            "passed": true,
             "name": "new run and saved-load both synchronize A scope off",
+            "passed": true,
             "error": ""
           },
           {
-            "passed": true,
             "name": "false is a valid disabled result while rejection and exceptions fail readback",
+            "passed": true,
             "error": ""
           },
           {
-            "passed": true,
             "name": "scope readback mismatch is reported and a later close can recover",
+            "passed": true,
             "error": ""
           },
           {
-            "passed": true,
             "name": "snapshot and restore reject inconsistent Circle 1B2 progress",
+            "passed": true,
             "error": ""
           }
         ]
@@ -907,56 +907,56 @@
       "kind": "protocol",
       "tests": [
         {
+          "passed": true,
           "name": "selected inventory item is thrown at the inclusive twelve-meter boundary",
-          "passed": true,
           "error": ""
         },
         {
+          "passed": true,
           "name": "out-of-range throw attempts consume the pointer without moving or losing the selection",
-          "passed": true,
           "error": ""
         },
         {
+          "passed": true,
           "name": "receiver rejection rolls back cargo while consuming the throw pointer",
-          "passed": true,
           "error": ""
         },
         {
+          "passed": true,
           "name": "ordinary sea pointers pass through without creating a drop target",
-          "passed": true,
           "error": ""
         },
         {
-          "name": "all four item payloads preserve their configured world effect and twenty-second lifetime",
           "passed": true,
+          "name": "all four item payloads preserve their configured world effect and twenty-second lifetime",
           "error": ""
         }
       ],
       "report": {
         "results": [
           {
+            "passed": true,
             "name": "selected inventory item is thrown at the inclusive twelve-meter boundary",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "out-of-range throw attempts consume the pointer without moving or losing the selection",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "receiver rejection rolls back cargo while consuming the throw pointer",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "ordinary sea pointers pass through without creating a drop target",
-            "passed": true,
             "error": ""
           },
           {
-            "name": "all four item payloads preserve their configured world effect and twenty-second lifetime",
             "passed": true,
+            "name": "all four item payloads preserve their configured world effect and twenty-second lifetime",
             "error": ""
           }
         ]
@@ -1023,187 +1023,187 @@
       "kind": "protocol",
       "tests": [
         {
+          "passed": true,
           "error": "",
-          "name": "confirmation does not select or charge and early completion is rejected",
-          "passed": true
+          "name": "confirmation does not select or charge and early completion is rejected"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "the 0.5 second landing selects the then-nearest fish and locks once",
-          "passed": true
+          "name": "the 0.5 second landing selects the then-nearest fish and locks once"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "the locked result stays fixed through four seconds and a replay cannot charge twice",
-          "passed": true
+          "name": "the locked result stays fixed through four seconds and a replay cannot charge twice"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "empty water completes for free",
-          "passed": true
+          "name": "empty water completes for free"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "cancel before or after landing is free and releases the owned lock",
-          "passed": true
+          "name": "cancel before or after landing is free and releases the owned lock"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "lock rejection is a free terminal failure and never selects a replacement",
-          "passed": true
+          "name": "lock rejection is a free terminal failure and never selects a replacement"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "39 stamina rejects while 40 starts and a successful catch consumes exactly 40",
-          "passed": true
+          "name": "39 stamina rejects while 40 starts and a successful catch consumes exactly 40"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "pause freezes progress and time scale advances action time without scaling sea budget",
-          "passed": true
+          "name": "pause freezes progress and time scale advances action time without scaling sea budget"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "large dt uses the real frame World once and clamps aggregate Ocean advancement",
-          "passed": true
+          "name": "large dt uses the real frame World once and clamps aggregate Ocean advancement"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "night exhaustion on the completion boundary cancels first and unlocks for free",
-          "passed": true
+          "name": "night exhaustion on the completion boundary cancels first and unlocks for free"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "forced return waits until night-interrupted fishing cleanup releases its lock",
-          "passed": true
+          "name": "forced return waits until night-interrupted fishing cleanup releases its lock"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "new run clears the old lock before a reused fish ID enters the new generation",
-          "passed": true
+          "name": "new run clears the old lock before a reused fish ID enters the new generation"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "scene stop cancellation clears a landed lock without charging",
-          "passed": true
+          "name": "scene stop cancellation clears a landed lock without charging"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "reentrant fishing during the lock callback cannot create a second transaction",
-          "passed": true
+          "name": "reentrant fishing during the lock callback cannot create a second transaction"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "mutation then throw during removal restores the exact fish, inventory and stamina",
-          "passed": true
+          "name": "mutation then throw during removal restores the exact fish, inventory and stamina"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "failed unlock stays pending and retries through the next real frame dispatch",
-          "passed": true
+          "name": "failed unlock stays pending and retries through the next real frame dispatch"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "throwing inventory snapshot during commit fails free and releases the fish",
-          "passed": true
+          "name": "throwing inventory snapshot during commit fails free and releases the fish"
         },
         {
+          "passed": true,
           "error": "",
-          "name": "world-bound CompleteAction cannot charge for fishing without a bridge token",
-          "passed": true
+          "name": "world-bound CompleteAction cannot charge for fishing without a bridge token"
         }
       ],
       "report": {
         "results": [
           {
+            "passed": true,
             "error": "",
-            "name": "confirmation does not select or charge and early completion is rejected",
-            "passed": true
+            "name": "confirmation does not select or charge and early completion is rejected"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "the 0.5 second landing selects the then-nearest fish and locks once",
-            "passed": true
+            "name": "the 0.5 second landing selects the then-nearest fish and locks once"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "the locked result stays fixed through four seconds and a replay cannot charge twice",
-            "passed": true
+            "name": "the locked result stays fixed through four seconds and a replay cannot charge twice"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "empty water completes for free",
-            "passed": true
+            "name": "empty water completes for free"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "cancel before or after landing is free and releases the owned lock",
-            "passed": true
+            "name": "cancel before or after landing is free and releases the owned lock"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "lock rejection is a free terminal failure and never selects a replacement",
-            "passed": true
+            "name": "lock rejection is a free terminal failure and never selects a replacement"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "39 stamina rejects while 40 starts and a successful catch consumes exactly 40",
-            "passed": true
+            "name": "39 stamina rejects while 40 starts and a successful catch consumes exactly 40"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "pause freezes progress and time scale advances action time without scaling sea budget",
-            "passed": true
+            "name": "pause freezes progress and time scale advances action time without scaling sea budget"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "large dt uses the real frame World once and clamps aggregate Ocean advancement",
-            "passed": true
+            "name": "large dt uses the real frame World once and clamps aggregate Ocean advancement"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "night exhaustion on the completion boundary cancels first and unlocks for free",
-            "passed": true
+            "name": "night exhaustion on the completion boundary cancels first and unlocks for free"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "forced return waits until night-interrupted fishing cleanup releases its lock",
-            "passed": true
+            "name": "forced return waits until night-interrupted fishing cleanup releases its lock"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "new run clears the old lock before a reused fish ID enters the new generation",
-            "passed": true
+            "name": "new run clears the old lock before a reused fish ID enters the new generation"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "scene stop cancellation clears a landed lock without charging",
-            "passed": true
+            "name": "scene stop cancellation clears a landed lock without charging"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "reentrant fishing during the lock callback cannot create a second transaction",
-            "passed": true
+            "name": "reentrant fishing during the lock callback cannot create a second transaction"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "mutation then throw during removal restores the exact fish, inventory and stamina",
-            "passed": true
+            "name": "mutation then throw during removal restores the exact fish, inventory and stamina"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "failed unlock stays pending and retries through the next real frame dispatch",
-            "passed": true
+            "name": "failed unlock stays pending and retries through the next real frame dispatch"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "throwing inventory snapshot during commit fails free and releases the fish",
-            "passed": true
+            "name": "throwing inventory snapshot during commit fails free and releases the fish"
           },
           {
+            "passed": true,
             "error": "",
-            "name": "world-bound CompleteAction cannot charge for fishing without a bridge token",
-            "passed": true
+            "name": "world-bound CompleteAction cannot charge for fishing without a bridge token"
           }
         ]
       },
@@ -1216,97 +1216,97 @@
       "kind": "protocol",
       "tests": [
         {
-          "error": "",
+          "passed": true,
           "name": "full hold can cast and an empty net completes without fee or forced receive",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "full hold preserves a successful catch, charges once and requires the cargo panel",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "using or dropping cargo frees one slot and claims the retained catch exactly once",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "claim restores the full post-freeing inventory after Add mutates then throws",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "claim retries inventory rollback before Add and blocks inventory use while rollback is pending",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "UseItem and DropItem roll back a Remove that mutates then throws before freeing cargo",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "rejected drop receiver restores cargo and allows one later successful release and claim",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "world removal mutation followed by an exception restores fish, inventory and stamina",
-          "passed": true
+          "error": ""
         },
         {
-          "error": "",
+          "passed": true,
           "name": "night settlement and NewRun cannot discard an already completed pending catch",
-          "passed": true
+          "error": ""
         }
       ],
       "report": {
         "results": [
           {
-            "error": "",
+            "passed": true,
             "name": "full hold can cast and an empty net completes without fee or forced receive",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "full hold preserves a successful catch, charges once and requires the cargo panel",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "using or dropping cargo frees one slot and claims the retained catch exactly once",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "claim restores the full post-freeing inventory after Add mutates then throws",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "claim retries inventory rollback before Add and blocks inventory use while rollback is pending",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "UseItem and DropItem roll back a Remove that mutates then throws before freeing cargo",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "rejected drop receiver restores cargo and allows one later successful release and claim",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "world removal mutation followed by an exception restores fish, inventory and stamina",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "night settlement and NewRun cannot discard an already completed pending catch",
-            "passed": true
+            "error": ""
           }
         ]
       },
@@ -1702,7 +1702,6 @@
         }
       ],
       "report": {
-        "skipped_count": 0,
         "results": [
           {
             "name": "shared registry and factory retain entity identity",
@@ -1752,7 +1751,8 @@
             "name": "Bridge works through public Runtime APIs without sea internals",
             "passed": true
           }
-        ]
+        ],
+        "skipped_count": 0
       },
       "passed": true,
       "skippedCount": 0,
@@ -1763,97 +1763,97 @@
       "kind": "regression",
       "tests": [
         {
+          "name": "original HUD directional contract drives the real ship",
           "error": "",
-          "passed": true,
-          "name": "original HUD directional contract drives the real ship"
+          "passed": true
         },
         {
+          "name": "original HUD pause and reset synchronize and preserve ship level",
           "error": "",
-          "passed": true,
-          "name": "original HUD pause and reset synchronize and preserve ship level"
+          "passed": true
         },
         {
+          "name": "fused scene retains the original HUD root and appends hidden debug tools",
           "error": "",
-          "passed": true,
-          "name": "fused scene retains the original HUD root and appends hidden debug tools"
+          "passed": true
         },
         {
+          "name": "sky clicks do not sail; sea clicks target world meters; UI blocks clicks",
           "error": "",
-          "passed": true,
-          "name": "sky clicks do not sail; sea clicks target world meters; UI blocks clicks"
+          "passed": true
         },
         {
+          "name": "one event owner updates and renders the real simulation at mode-B DPR",
           "error": "",
-          "passed": true,
-          "name": "one event owner updates and renders the real simulation at mode-B DPR"
+          "passed": true
         },
         {
+          "name": "keyboard pause reset and hidden debug visibility keep the HUD synchronized",
           "error": "",
-          "passed": true,
-          "name": "keyboard pause reset and hidden debug visibility keep the HUD synchronized"
+          "passed": true
         },
         {
+          "name": "shutdown is idempotent and releases only this event owner and UI",
           "error": "",
-          "passed": true,
-          "name": "shutdown is idempotent and releases only this event owner and UI"
+          "passed": true
         },
         {
+          "name": "render receives the live external clock without advancing it",
           "error": "",
-          "passed": true,
-          "name": "render receives the live external clock without advancing it"
+          "passed": true
         },
         {
+          "name": "B may supply a UI factory without replacing or initializing its UI",
           "error": "",
-          "passed": true,
-          "name": "B may supply a UI factory without replacing or initializing its UI"
+          "passed": true
         }
       ],
       "report": {
         "results": [
           {
+            "name": "original HUD directional contract drives the real ship",
             "error": "",
-            "passed": true,
-            "name": "original HUD directional contract drives the real ship"
+            "passed": true
           },
           {
+            "name": "original HUD pause and reset synchronize and preserve ship level",
             "error": "",
-            "passed": true,
-            "name": "original HUD pause and reset synchronize and preserve ship level"
+            "passed": true
           },
           {
+            "name": "fused scene retains the original HUD root and appends hidden debug tools",
             "error": "",
-            "passed": true,
-            "name": "fused scene retains the original HUD root and appends hidden debug tools"
+            "passed": true
           },
           {
+            "name": "sky clicks do not sail; sea clicks target world meters; UI blocks clicks",
             "error": "",
-            "passed": true,
-            "name": "sky clicks do not sail; sea clicks target world meters; UI blocks clicks"
+            "passed": true
           },
           {
+            "name": "one event owner updates and renders the real simulation at mode-B DPR",
             "error": "",
-            "passed": true,
-            "name": "one event owner updates and renders the real simulation at mode-B DPR"
+            "passed": true
           },
           {
+            "name": "keyboard pause reset and hidden debug visibility keep the HUD synchronized",
             "error": "",
-            "passed": true,
-            "name": "keyboard pause reset and hidden debug visibility keep the HUD synchronized"
+            "passed": true
           },
           {
+            "name": "shutdown is idempotent and releases only this event owner and UI",
             "error": "",
-            "passed": true,
-            "name": "shutdown is idempotent and releases only this event owner and UI"
+            "passed": true
           },
           {
+            "name": "render receives the live external clock without advancing it",
             "error": "",
-            "passed": true,
-            "name": "render receives the live external clock without advancing it"
+            "passed": true
           },
           {
+            "name": "B may supply a UI factory without replacing or initializing its UI",
             "error": "",
-            "passed": true,
-            "name": "B may supply a UI factory without replacing or initializing its UI"
+            "passed": true
           }
         ]
       },
@@ -1901,10 +1901,10 @@
   "realCloudVerified": false,
   "realScopeAndBarrelVerified": false,
   "localOceanApi": {
-    "CanInteractWithBarrel": true,
     "IsScopeEnabled": true,
-    "SetScopeEnabled": true,
     "UnlockFishingTarget": true,
+    "SetScopeEnabled": true,
+    "CanInteractWithBarrel": true,
     "LockFishingTarget": true,
     "GetFixedBarrel": true
   },
