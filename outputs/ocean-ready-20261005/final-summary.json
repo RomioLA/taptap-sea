@@ -1,0 +1,36 @@
+{
+  "raw_result": "FAIL",
+  "frames": 150,
+  "assertions": {
+    "total": 21,
+    "passed": 21,
+    "failed": 0
+  },
+  "test_result": "PASSED",
+  "lua_errors": 0,
+  "resource_errors": 0,
+  "real_errors": [],
+  "software_frame_spikes": 85,
+  "missing": [],
+  "build": {
+    "format": 1,
+    "version": "1.0.10",
+    "build": 11,
+    "client": "d8b83e83",
+    "server": "f132d241",
+    "generated_at": "2026-10-05T12:43:49.917648Z",
+    "engine": "ef9e23e2"
+  },
+  "hashes": {
+    "scripts/Ocean/ImageArt.lua": "a016786215bd0a40a600f291832419bfc23934ad01dd6250dabb04fd0585c096",
+    "scripts/GeneratedData/OceanImageCatalog.lua": "db67872e778627853dcb4d7175a4fa57db97f13801b85e95e8b3407fd1e2ba66",
+    "scripts/tests/OceanImageCatalogTests.lua": "8a77ccc8aa0074ec8a689867d28e7d6787e3d1268cc6858b595431c09f216317",
+    "scripts/tests/OceanImageReadyValidate.lua": "e2a3af5a368a5dc831c176b941b0c49ed92c193d2af216720f2ea642e42bf161",
+    "tests/prepare_ocean_ready_art.py": "e3057dceb999dc11244066e87894a2f2d0038e89b1f561598ab495ef84e115c0",
+    "assets/image/OceanReady/manifest.json": "8d13052fa360b488e30bcc578e4b43c9a63e89c69214825a800f6540588ccd81",
+    "assets/image/OceanReady/reef.png": "14770a151386d151a9b8c110ee82757de67867b0e639687b62bcb2d4cfd0d6e6",
+    "assets/image/OceanReady/shrub.png": "181fbbea322de1efd3fc41be787bf833b6cebcfa7e7f389acc1f4c9d40090b74",
+    "assets/image/OceanReady/driftwood.png": "367a5b1948d5a8f39f106169514c3e0c8f0dabe5f1b7de2ce76f2e9f31475ed0",
+    "assets/image/OceanReady/sardine.png": "f13f43427b98ba4f2987b9cf43470f30275453340fd83f2c12635d706c3b4911"
+  }
+}

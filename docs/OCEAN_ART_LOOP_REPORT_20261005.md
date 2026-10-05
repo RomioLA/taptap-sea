@@ -1,166 +1,173 @@
-# Ocean 主航海画面最小美术闭环测试报告
+# Ocean 主航海画面美术风格替换闭环测试报告
 
 日期：2026-10-05  
 项目：渔夫漂流记  
-结论：**核心接入与原生运行验证完成；整体美术验收部分通过，不标记全部完成。**
+本轮参考：`_uploads/c3fb8b9b0834ca6c098bcb452e23f0c1a899c2747c3b9787e317156cb7abd5b8.png`  
+结论：**素材重新生成、替换、正式接入和已列明的原生运行测试完成；参考图风格仅部分统一，未标记美术定稿或全平台验收完成。**
 
-本报告只覆盖最小主航海画面，不表示商店、背包、捕鱼、剧情、存档、天气、昼夜等全游戏功能验收。本轮没有新增这些系统；截图中已有 UI 和功能均来自原工程。
+用户明确否定前版效果，本轮依据新参考图改为暖赭细描边、简化色块、青蓝海水与轻水彩纸感。仅处理主航海最小素材集及对应视觉层，不新增角色、老人、灯塔、沉船、商店、背包、任务、完整捕鱼或复杂天气系统。截图中已有 UI 和玩法来自原工程，未因参考图扩大开发范围。
+
+前轮报告与可用回退文件已保留在 `outputs/ocean-story-loop-20261005/before/`。前轮 build 6、162 条断言和全量回归属于历史结果，不作为本轮替换后的验收证据。
 
 ## 【1】完成内容
 
-- 检查正式入口、场景装配、唯一 World、System 调度、资源根、NanoVG 投影与层级。
-- 复用已有海面、天空、云和太阳矢量背景，不合并成背景大图。
-- 生成4张透明源图，导入船、岛、海鸥、木桶；程序化生成独立透明波纹，共5张运行 PNG。
-- 船使用现有 Movement 位置、世界弧度、转向、起伏与倾侧，未修改船速或碰撞。
-- 岛复用已有位置与对象。使用1种岛素材，不增加岛；场景仍保留原来的2座固定岛，未为满足数量示意而删除已有岛。
-- 漂浮物复用现有教学木桶；海鸟线索复用现有 SurfaceSignals，由活跃沙丁鱼派生，不另建鸟 AI。
-- 木桶波纹读取现有海洋时间；船尾迹复用已有 Wake。没有新动画调度器、粒子寿命表或 Integration 动作状态。
-- 最终版本完成8方向、跨帧动态、暂停、105/125米远岸及正常入口原生验证。
-- 官方构建成功，显式入口 `Main.lua`、脚本目录 `scripts`。最终 `dist/latest.json` 为版本 `1.0.10`、build `6`。
+- 直接读取用户上传的本地参考图，批量生成5张源图：船、岛面、海鸥、木桶、水彩海面底纹。未使用手写素材 URL。
+- 导入并替换 `assets/image/OceanLoop/` 下船、岛、海鸥、木桶、波纹、水彩底纹，共6张运行 PNG；保留独立对象，不合成一张场景大图。
+- 船与海鸥统一为俯视源图，头朝世界 +X，复用原位置、旋转和投影。
+- 现有天空、云、太阳、海面笔触、船尾迹、岛山树改用同一暖冷色板。
+- 木桶识别态的图片主体直径从4米缩小为2.6米，仅改视觉，不改原2米碰撞半径或80/20/5米玩法距离。
+- RGBA 在预乘空间缩放，保存直通 Alpha；扩展透明边 RGB，并清理生成图中的高饱和黄／洋红污染像素。
+- 最终清理后重新完成8方向、跨帧动态、暂停、105/125米远岸和正常入口共13次原生运行，174/174条断言通过，运行错误0。
+- 官方构建成功：入口显式 `Main.lua`、`scriptsPath="scripts"`。完整13次实跑对应 build `8`；收尾恢复同哈希资源后再次构建，当前 `dist/latest.json` 为版本 `1.0.10`、build `9`，client `ab05c1df`、server `9b9a47fb`、engine `ef9e23e2`。
 
-完成边界：5张运行素材都已经接入并通过加载/绘制运行验证，不属于“素材已生成但未接入”。透明边缘精修、最终比例和全平台验收尚未通过，见第7节。
+完成边界：6张运行素材已实际加载和绘制，不属于“仅生成未接入”。技术闭环完成不等于用户已经认可美术效果，也不等于手机真机测试通过。
 
-## 【2】新增素材
+## 【2】替换素材
 
-运行路径不加 `assets/` 前缀；下列文件实际位于 `assets/image/OceanLoop/`。
+运行资源路径不加 `assets/` 前缀；下表文件实际位于 `assets/image/OceanLoop/`。
 
-| 素材 | 运行路径 | 尺寸 | 导入规则/用途 |
+| 素材 | 运行路径 | 尺寸 | 导入规则／用途 |
 |---|---|---|---|
-| 玩家船 | `image/OceanLoop/boat.png` | 1024×512 | RGBA，中心锚点；船头朝世界+X；主体5×2.4米，画布按88%留边换算 |
-| 岛面 | `image/OceanLoop/island.png` | 1024×1024 | RGBA，中心锚点；复用原12/20米半径岛，不改变阻挡边界 |
-| 海鸥 | `image/OceanLoop/gull.png` | 512×512 | RGBA，鸟喙朝+X；保留源图比例；画布3.2米，实际展翼约2.82米，俯冲会压缩 |
-| 木桶 | `image/OceanLoop/barrel.png` | 512×512 | RGBA，中心锚点；主体直径4米，沿用原2米半径，比例仍需优化 |
-| 波纹 | `image/OceanLoop/ripple.png` | 512×512 | 程序化透明弧环；Alpha 0–235；读取现有时间做扩散/淡出 |
+| 玩家船 | `image/OceanLoop/boat.png` | 1024×512 | RGBA、中心锚点、船头 +X；主体5×2.4米，按88%留边换算画布 |
+| 岛面 | `image/OceanLoop/island.png` | 1024×1024 | 米黄砂岸、灰绿中心与水彩岩石；复用原12/20米半径两座岛 |
+| 海鸥 | `image/OceanLoop/gull.png` | 512×512 | 米白灰青、鸟喙 +X；保留源比例，复用原3.2米画布和俯冲缩放 |
+| 木桶 | `image/OceanLoop/barrel.png` | 512×512 | 暖木与灰绿桶箍；识别态图片主体直径2.6米，原阻挡和识别规则不变 |
+| 波纹 | `image/OceanLoop/ripple.png` | 512×512 | 超采样生成暖白／浅青透明弧环；Alpha 0–230，读取既有海洋时间 |
+| 水彩底纹 | `image/OceanLoop/waterpaper.png` | 1024×1024 | 不透明纹理，实际合成 Alpha 0.5；镜像拼接使左右、上下边周期连续 |
 
-溯源、主体边界、Alpha 范围、透明率、SHA256：`assets/image/OceanLoop/manifest.json`。5张文件均已检查存在且哈希与 manifest 一致，总计约1.52MiB。
+6张运行图合计3,526,890字节，约3.36MiB。最终尺寸、Alpha、SHA256与 manifest 全部一致。污染检查的 `remainingBrightContamination=0` 仅代表导入脚本所定义的高饱和阈值检测通过，不代表所有颜色／边缘问题已穷尽检查。
 
-保留的4张生成原图：
+5张新生成原图：
 
-- `assets/image/OceanLoop_boat_topdown_20261005103106.png`
-- `assets/image/OceanLoop_island_topdown_20261005103049.png`
-- `assets/image/OceanLoop_gull_topdown_20261005103040.png`
-- `assets/image/OceanLoop_barrel_topdown_20261005103221.png`
+- `assets/image/OceanStory_boat_20261005114947.png`
+- `assets/image/OceanStory_island_20261005114948.png`
+- `assets/image/OceanStory_gull_20261005114946.png`
+- `assets/image/OceanStory_barrel_20261005115009.png`
+- `assets/image/OceanStory_waterpaper_20261005114940.png`
 
-既有 `LowPoly_v1` 素材仅作配色/构图参考，未覆盖原图和远端映射。导入脚本处理主体连通域、透明杂点、留边和朝向，但不能据Alpha数值直接宣称运行边缘视觉通过。
+船源图请求768×1152，工具实际返回768×1536；导入按实际主体边界处理，最终运行规格1024×512，未假称生成尺寸与请求相同。
+
+溯源清单：`assets/image/OceanLoop/manifest.json`。旧运行素材及本轮替换前的部分脚本保留在 `before/`；`SeaViewArt.lua`、`Draw.lua` 不在该回退副本中，不声称完整代码回退包齐备。生成源图与远端映射保留，未覆盖其他会话的独立素材包。
 
 ## 【3】修改文件
 
-### 新增程序与测试
+本轮修改7个已有程序／测试文件，没有新建大型 Manager、Service 或 Controller：
 
-- `scripts/Ocean/ImageArt.lua`：只读PNG投影、加载/释放、波纹绘制；不持有Entity或推进世界。
-- `scripts/tests/OceanArtRuntimeValidate.lua`：正式场景8方向移动、朝向、World/ID、Wake和暂停验证。
-- `scripts/tests/OceanArtVisualValidate.lua`：海鸟/波纹跨帧、暂停、105/125米远岸验证。
-- `tests/prepare_ocean_art.py`：可重复导入素材、生成波纹和manifest。
-- `tests/run_ocean_art_checks.py`：复用原runner，明确扫描小写tests，逐套隔离并记录超时。
+- `scripts/Ocean/ImageArt.lua`：增加 `waterpaper` 加载与单次 Fill 材质层；图片使用 Mipmap，底纹增加 RepeatX/RepeatY。
+- `scripts/Ocean/SeaViewArt.lua`：青蓝海面与低对比暖白曲线笔触；短斜向尾迹；米黄山面和灰绿树色；保留原格网、裁剪、预算、缓存及高度遮挡。
+- `scripts/Ocean/Draw.lua`：浅青天、暖白云、暖黄日及装饰鸟视觉尺寸调整；不修改实际 SurfaceSignals 行为。
+- `scripts/Ocean/SeaDraw.lua`：仅缩小识别态木桶图片与其视觉波纹范围。
+- `scripts/tests/OceanArtRuntimeValidate.lua`：增加水彩底纹实际加载断言；每方向15条。
+- `scripts/tests/OceanArtVisualValidate.lua`：六图实际加载；动态15条、远岸12条。
+- `tests/prepare_ocean_art.py`：替换源图、预乘缩放、Alpha主体清理、RGB扩边、高饱和彩点修复、波纹和周期底纹导入。
 
-### 修改既有代码
+另替换6张运行 PNG、更新 manifest 和本报告；构建工具自动更新 `.project`／`dist`。没有 generic Git 提交或推送。
 
-- `scripts/Ocean/Bootstrap.lua:43`：初始化加载图片；`:163`停止前释放图片。
-- `scripts/Ocean/SeaViewArt.lua:652`：替换岛面；保留原山、树、岸泡沫、几何缓存和高度遮挡。
-- `scripts/Ocean/SeaViewArt.lua:788`：替换船体绘制；复用原位置/旋转/起伏/倾侧及阴影。
-- `scripts/Ocean/SeaDraw.lua:45`：木桶及波纹接入；`:325`海鸥接入原排序与信号。
-- `scripts/Integration/Scene.lua`：显式指定运行包已有MiSans字体，解决默认圆体缺失；未重做UI树。
-
-`Main.lua`、World注册/调度、鱼FSM、移动/碰撞、Gameplay事务、策划data表均未因本轮美术接入修改。构建工具自动刷新 `.project` 和 `dist`；未进行generic Git提交/推送。
+本轮未修改 `Main.lua`、World注册与调度、鱼FSM、移动／碰撞、Gameplay事务或策划data表。`Bootstrap.lua` 与 `Integration/Scene.lua` 的SHA对照前轮确认未变；其他受保护文件只记录了当前哈希快照，不能把该快照夸成完整前后比对。
 
 ## 【4】接入方式
 
-正式链路仍为：
+正式链路保持：
 
 `Main → Integration.Scene → Ocean.FusedScene → Ocean.Bootstrap → Ocean.SeaDraw`
 
-- 不使用新的3D Camera。World +X向右、+Y朝地平线、rotation=0朝+X、弧度制全部保留。
-- 逻辑分辨率仍为物理尺寸/DPR；anchor=(0.5,0.72)、viewHeight=45米、farDepth=110米、原弯地平线与深度压缩不变。
-- 图片先在世界平面旋转，再分片经过现有 `Projection`/`ProjectedGeometry`。不是将固定斜视图在屏幕平面旋转。
-- 世界裁剪后恢复UV，以投影三角形生成纹理仿射；地面片再裁剪到水面侧。原始网格最多8×8格，但裁剪后的扇形三角化可能增加Fill，不是严格128次Fill上限。
-- 仍按现有surfaceEntries世界Y稳定远近排序，船不被强制置顶。背景/海面、水下鱼、Wake、海面对象、雾和UI的原链路保留。
-- 图片缺失时保留矢量fallback。图片只在初始化加载、停止释放，重复Load/Release探针为5次创建/5次删除。
-- 同一World的frame/simulation System继续统一更新。绘制不推进海洋时间、鸟状态、实体或Gameplay时钟。
+- 继续纯NanoVG 2D世界投影；不新增或改变3D Camera。+X向右、+Y朝地平线、rotation=0朝+X、弧度制不变。
+- Mode B仍为物理分辨率／DPR；anchor=(0.5,0.72)、viewHeight=45米、farDepth=110米、原弯地平线与深度压缩不变。
+- 船／岛／桶／鸥先在世界平面旋转，再经过原 Projection／ProjectedGeometry 分片投影；保留裁剪后UV恢复，不使用屏幕平面旋转冒充任意方向世界投影。
+- **水彩底纹是屏幕固定的画布材质，不是世界透视波浪。** 使用海线遮罩一次Fill，Alpha 0.5；不创建实体、不随移动作为地标漂移。实际海面笔触仍来自固定世界格网，原间距、抖动、远近过渡、1800个mark预算不变。
+- 曲线笔触仅在原安全凸包内使用Bezier；边界裁剪片保留折线，避免改变海线边界。
+- Wake仍读取原位移采样记录，每记录2次世界线调用；不新建采样、寿命表或调度。木桶波纹读取既有time。
+- 原surfaceEntries按世界Y稳定远近排序，船不强制前景；背景、水下鱼、Wake、海面对象、雾、UI原层级保持。
+- 图片只初始化加载和停止释放，重复Load／Release探针为6次创建／6次删除；重新加载累计12／12。
+- 继续同一World的frame／simulation System统一调度，绘制只读。Integration未新增跨帧玩法或海洋状态。
 
 ## 【5】测试结果
 
-### 实际运行证据
+### 最终真实引擎运行
 
-使用官方 `/workspace/.cli/UrhoXRuntime`，Linux GLES + llvmpipe真实离屏光栅化，1280×720。不是静态拼贴或纯Lua绘制mock，也不是手机GPU实测。
+使用官方 `/workspace/.cli/UrhoXRuntime`，Linux GLES + llvmpipe离屏光栅化，1280×720；不是静态拼贴，也不是纯Lua mock，更不是Android／iOS GPU实测。
 
 | 最终运行 | 次数 | 断言 | 结果 |
 |---|---:|---:|---|
-| 8个方向，150帧/次 | 8 | 112/112 | 全部PASS |
-| 鸟/波纹跨帧、暂停，150帧/次 | 2 | 28/28 | 全部PASS |
-| 岛中心深度105/125米，150帧/次 | 2 | 22/22 | 全部PASS |
-| 无测试注入的Main正常入口，40帧 | 1 | 0（引擎检查） | PASS，显示已有无云存档入口模态 |
-| 合计 | **13** | **162/162** | Lua/资源/引擎错误全部0 |
+| 8方向移动／旋转／暂停，150帧／次 | 8 | 120/120 | 全部PASS |
+| 鸟／波纹跨帧、暂停，150帧／次 | 2 | 30/30 | 全部PASS |
+| 岛中心深度105／125米，150帧／次 | 2 | 24/24 | 全部PASS |
+| 不注入测试脚本的Main正常入口，40帧 | 1 | 0（引擎检查） | PASS，显示已有无云存档入口模态 |
+| 合计 | **13** | **174/174** | **Lua／资源／引擎错误全部0** |
 
-8方向经现有Bridge/Movement注入测试轴输入，船移动超过3米、朝向误差<0.06弧度，World/船/ID不变，Wake生成。不能据此宣称所有实际键鼠/触摸硬件事件都已验收。
+恢复同哈希六图并完成build 9后，额外实跑 `recovery-smoke` 150帧，15/15条加载／鸟与波纹动态／暂停断言通过，Lua／资源／引擎错误0。该补验单独记录，不冒充原13次全部是在build 9后重跑。累计14次运行、189条断言通过。
 
-逐图检查了最终8方向拼图、两个动态时点、105/125米远岸、正常入口及透明边缘局部放大。动态两图来自两个受控运行的不同帧，并结合实际状态变化断言，不将单张截图当动画证明。
+8方向经现有Bridge／Movement注入受控轴值与1/60秒步长：移动超过3米，朝向误差<0.06弧度，World／船／ID不变，Wake生成，暂停冻结。不是所有真实键鼠／触摸硬件事件验收。
 
-最终证据：
+动态报告确认现有SurfaceSignals生成两只海鸟、盘旋／俯冲跨帧变化，波纹相位0.472→0.832；暂停冻结海洋time及鸟位置／朝向／俯冲。两张动态截图取两个受控运行的第70／120帧，并结合状态断言，不将单张图当动画证明。
 
-- `outputs/ocean-art-loop-20261005/final/evidence-index.json`：13次报告索引、源码哈希。
-- 同目录 `direction-1..8.{json,log,png}`。
-- `dynamic-a-verified`、`dynamic-b-verified`、`horizon-105-verified`、`horizon-125-verified`、`entry-normal`对应JSON/日志/图片。
-- `directions-sheet.png`、`alpha-detail.png`为内部检查图，不是新游戏素材。
+已读取最终八方向拼图、船／岛放大、动态两图、远岸两图、正常入口。已测画面无矩形底、无整片异常发光，海线裁剪与分片连续基础通过；放大仍有像素阶梯，不能据此宣称所有采样尺度边缘完美。
 
-原生引擎报告 `scene_exists=false/scene_stalled=true/update_defined=false` 来自本项目纯NanoVG、没有3D Scene或全局Update；正式事件更新、移动和跨帧断言实际通过，不能用这些3D census字段否定运行。
+最终验收文件全部在：`outputs/ocean-story-loop-20261005/final/`。
 
-### 12项验收
+- `evidence-index.json`：13次结果、断言、源码／资产哈希及构建版本；`media-report-hashes.json`：最终报告／日志／截图的SHA256清单。
+- `direction-1..8.{json,log,png}`。
+- `dynamic-a`、`dynamic-b`、`horizon-105`、`horizon-125`、`entry-normal`对应JSON／日志／图片。
+- `recovery-smoke.{json,log,png}`：恢复及build 9后追加的真实引擎检查，报告和截图均已读取。
+- `directions-sheet.png`、`alpha-boat.png`、`alpha-island.png`仅为内部验收图。
 
-| 项 | 检查 | 结论 |
-|---:|---|---|
-| 1 | 正式场景能启动、资源加载 | 通过 |
-| 2 | 原视角、坐标、世界方向 | 通过，未改变 |
-| 3 | 青蓝海面、浅天、云、暖黄太阳 | 通过，复用原矢量背景 |
-| 4 | 岛提供空间参照、远岸遮挡 | 通过；原2座岛保留，高处不因PNG替换丢失 |
-| 5 | 船移动、8方向旋转、起伏 | 通过现有移动链运行验证 |
-| 6 | 船主体5×2.4米、比例与投影 | 接入契约通过；与桶/鸟的最终艺术比例待调整 |
-| 7 | 木桶可见且保持原身份/玩法距离 | 通过接入；视觉尺寸偏大 |
-| 8 | 实际海鸟线索出现并盘旋/俯冲 | 通过；线索可读性仅基础通过，较装饰鸟小 |
-| 9 | 波纹/尾迹真实动态、暂停冻结 | 通过 |
-| 10 | Alpha无矩形底、无白色整圈/异常发光 | 无矩形底通过；暗点/锯齿精修未通过 |
-| 11 | 远近层级、海线裁剪、分片连续 | 已测通过；极限全场景组合不是穷尽验收 |
-| 12 | 无新增更新链/注册表/渲染写状态，原生无报错 | 本轮接入通过；全仓回归不是全绿 |
+`runtime/`、`import.json`、导入中间拼图属于清理前阶段，不替代上述final证据。
 
-### 回归与LSP
+原生报告中的 `scene_exists=false`、`scene_stalled=true`、`update_defined=false` 来自纯NanoVG没有3D Scene／全局Update；正式事件更新与运行断言通过，不把3D census字段误报成未更新。
 
-- 53套全量原样隔离测试最初45套通过；12秒上限下8套未通过。
-- 未通过项60秒独立复核：Recognition5/5、A3Stability6/6通过，因此原样最终确认 **47/53套通过**。
-- Experience、SeaStability仍60秒超时：**未确定**，不判通过。
-- SevenDays、HUDReview、GameLoopUISpec存在 `Tests.Circle1BFishingFlowTests` 大小写引用失败。临时runner显式映射到小写tests后分别2/2、12/12、11条通过；未修改源码，不能覆盖原样失败。
-- SeaRuntime51/53通过，2项失败为现有blocking木桶预避范围与旧fixture冲突，实际进入Avoid而测试期望Chase/Wander。安装禁止require ImageArt的守卫仍复现，NanoVG调用为空，已确认与本轮图片无关。
-- 关键5套架构/岛遮挡/动态/木桶回归45项通过，但这些recorder走矢量fallback，不当作PNG原生证据。
-- 修改/新增7个Lua文件分别LSP Error=0。全仓仍有既存27个Error（与开始时数量一致），不能报告全仓LSP全绿。
+### 回归与专项探针
 
-回归证据：`regression-final.json`、`review/nonpassing-followup.json`、`review/SeaRuntime-failure-steps.json`。最终PNG Loaded专测：`review/image-final-loaded.json`，海线共边差<0.00025纹理像素，24/24朝向冒烟通过。
+本轮共尝试9套已有隔离测试，**8套通过、71项检查通过，1套超时未确定**：
 
-## 【6】发现的问题
+- SeaMotionEffects 7、SeaFusionRender 10、SeaViewUpgrade 10。
+- SeaHorizonOcclusion 13、SeaAtmosphere 7、SeaFusedScene 9。
+- ArchitectureIntegration 12、Circle1A2BarrelRender 3。
+- SeaStability：30秒超时，不判通过。
 
-已处理：
+这些原样回归的绘制recorder走矢量fallback，不代替PNG真实引擎证据。未重跑全仓53套；前轮47/53不能写成本轮全量结论。
 
-1. 既有LowPoly固定斜视船不适合任意方向旋转：生成俯视源图，统一+X，使用世界平面投影。
-2. 默认主题圆体在运行包缺失，开场文字不可见：改显式MiSans，最终运行资源错误0。
-3. 初次缩略导入不放大，岛/桶主体未达88%：改主体边界resize，重新导入并复验。
-4. 全岛图片提前返回会丢原山树高度：只替换岛面，保留高处、泡沫与缓存。
-5. 海线附近曲线密采样与三端点仿射UV不兼容，误采透明留白：改裁剪后恢复UV再三角化，原错误点恢复RGBA=(244,218,172,255)，共边连续；原生远岸复验通过。
-6. 新远岸测试曾错误要求Project返回nil：按原Visibility接口契约修测试。初失败证据保留，最终以`*-verified`为准；未为让测试通过修改投影。
+专项证据：
 
-## 【7】暂未解决的问题
+- `import-final-checks.json`：6张最终PNG尺寸／Alpha／哈希／高饱和彩点检查。
+- `visual-layer-checks.json`、`architecture-barrel-checks.json`：本轮回归。
+- `visual-clip-budget-probes.json`：9种视口／相机／时间组合271–648个mark≤1800；54种Wake边界组合保持每记录2次世界线调用，未发现海线泄漏。
+- `image-loaded-final-probes.json`：清理高饱和彩点前的Loaded分支探针，六图生命周期、单次底纹Fill、7种深度共边UV及24朝向冒烟通过。Lua未变，可沿用几何／生命周期结论；其PNG哈希明确不是最终像素快照，不将其冒充最终素材验收。
 
-- **透明边缘尚未完成美术验收**：放大图可见船/桶细碎暗点、局部锯齿。源图透明底成立并不等于缩小、投影、采样后的干净边缘成立，不能标记该项完成。
-- 海鸟线索仍比天空装饰鸟小；木桶主体4米相对5米船偏大。比例最终定稿未通过，不为此修改碰撞/交互距离。
-- 岛面绘本贴图叠加原矢量山树，功能遮挡保持，但风格尚未完全统一。
-- 软件离屏运行慢，新增逐片NanoVG提交有性能风险；没有手机GPU/浏览器FPS结论，不给稳定帧率承诺。
-- 未做Android/iOS高DPR、触摸硬件或实际浏览器运行验收；这些为“已接入但尚未通过该平台运行验证”。没有生成测试二维码或视频。
-- 两套回归超时、三套大小写失败、SeaRuntime两项fixture冲突，以及既存全仓LSP Error未在本美术任务中修复。
-- 当前环境无`taptap-maker`与maker://status，无法执行其本地preview status/refresh。未启动dev server或擅自恢复停止会话；使用已暴露的官方build和UrhoXRuntime完成本轮证据。
-- 协作Issue已读取，但当前无GitHub写入认证，未能发开工/收工留言，也未形成有效远端冻结声明；不得宣称留言或解除冻结成功。
+### LSP与导入脚本
+
+- 本轮6个修改Lua文件逐个通过 `lua_lsp_client` 诊断，Error=0。
+- 全仓83文件仍有27个Error、880个Warning、184个Hint，与前轮数量一致；不是全仓清零。
+- Python导入脚本语法通过；最终底纹左右／上下边像素相同，周期检查通过。
+
+## 【6】发现并处理的问题
+
+1. 前版偏写实木纹与新参考不一致：重新生成暖赭描边、简化色块和纸感源图，并调整实际场景色板，不仅改文件名。
+2. 木桶相对5米船过大：识别态PNG主体缩为2.6米，保持碰撞、未知轮廓和玩法距离原契约。
+3. Alpha连通域清理无法去除与主体相连的不透明黄／洋红杂点：增加颜色污染mask与最近干净主体RGB恢复，最终按定义的阈值剩余0；清理后完整复跑，不沿用旧截图。
+4. 缩小透明图容易暗圈：预乘RGBA空间缩放，保存直通Alpha并做透明边RGB扩边；加载使用Mipmap。
+5. 水彩纹理平铺易接缝：镜像拼接为周期纹理，四边像素一致。纸纹与波浪职责分离，未创建新的海洋更新链。
+6. 前轮已修的字体缺失、岛高处丢失和海线UV错采保持不变，本轮不重新改动投影或装配。
+7. 收尾期间正式 `OceanLoop` 派生资源目录一度不可见，生成源PNG与原生证据仍在；另一个会话只读观察到其独立派生目录也不可见。没有审计记录，原因及执行者未确定，不归因于任何会话。使用现有导入脚本恢复本轮六图，SHA256逐项与13次最终实跑素材完全一致，再次官方构建为build 9；没有恢复或覆盖其他会话素材包。
+
+## 【7】尚未完成的美术／平台验收
+
+- **未完全复刻参考图。** 色板与笔触已调整，但原矢量山树仍有明显三角几何感，与PNG水彩岩石不是完全同一造型语言。
+- 船保留俯视、收拢帆／简化舱面的表达，便于原世界平面任意方向旋转；没有做成参考图中立起三角帆的侧视小帆船。不能据颜色一致就宣称船型完全一致。
+- 水彩底纹较明显，且屏幕固定；它不提供世界透视运动。海面空间感仍依靠原格网、对象投影与动态笔触。
+- 尾迹较淡，动态与暂停契约已通过，但可读性及强弱是否符合用户要求仍需美术定稿。
+- 放大后的棕色描边仍有像素阶梯，微小杂色／全尺寸采样未穷尽。已测无矩形底，不等于所有透明边缘完全精修。
+- 海鸟线索只有基础可读性；未新增鸟数量或AI。原UI未按参考图羊皮纸重做。
+- 软件离屏较慢，逐片NanoVG提交仍有性能风险。未进行手机GPU、Android／iOS高DPR、触摸硬件或实际浏览器FPS验收，不承诺手机稳定帧率。
+- SeaStability本轮超时；前轮大小写引用、旧fixture冲突和既存全仓LSP问题未在美术替换任务中修复。
+- 当前环境无 `taptap-maker` 或 `maker://status`，无法执行CLI本地preview status／refresh；使用已暴露官方build与Runtime。未安装未知客户端、修改服务环境、启动dev server或擅自复活停止窗口。
+- 协作Issue已读取，但无GitHub写入认证，开工／收工留言均未发布，也未形成远端冻结或解除记录。
+- 其他会话的 `ReadingSeaWatercolor_v1` 是独立未接入资产包，不计入本轮6图和运行成果。
 
 ## 【8】后续建议
 
-1. 首先只修透明边缘：检查Alpha与RGB边缘、纹理过滤和投影采样，做深/浅海底以及8方向原生局部对比。保持当前World、移动和投影不变。
-2. 视觉比例独立调整：降低桶视觉直径、提高真实线索辨识度，同时保持现有radius、交互距离、AI与排序契约。
-3. 将岛面与原山树统一为同一扁平绘本笔触，仍保留真实高度遮挡，勿用提前return再丢高处。
-4. 选一台Android和一台iOS做1280级/高DPR实际移动、旋转、海线、暂停及GPU帧率验收，再决定图片分片优化。
-5. 单独处理测试大小写与旧fixture、长跑超时、既存LSP，不混入美术比例任务。
+1. 优先依据实际画面定稿海面纸纹强度和尾迹可读性，不再以测试通过代替视觉认可。
+2. 若需要完全贴近参考图，再单独确认船帆与岛山树的造型方案；保持现有视角、世界方向、真实高度和唯一World，不用侧视图直接屏幕旋转。
+3. 在真实Android／iOS及浏览器运行后，检查高DPR边缘、触摸移动与GPU帧率，再决定纹理分片优化。
+4. 全量回归、测试大小写、旧fixture及既存LSP问题另行处理，不混入本轮美术范围。
 
-**最终状态：素材生成、导入、正式接线和已列明的原生运行验证完成；严格透明边缘、最终比例/风格和跨平台性能尚未通过，因此整体美术闭环只能交付为部分通过。**
+**最终状态：6张素材替换与已列明的原生运行技术闭环完成；美术风格定稿和手机／浏览器全平台验收仍未完成。**

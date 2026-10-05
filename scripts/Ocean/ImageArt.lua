@@ -4,31 +4,47 @@ local Geometry = require("Ocean.ProjectedGeometry")
 local Config = require("Ocean.Config")
 local Art = {}
 local contexts = setmetatable({}, { __mode = "k" })
-local paths = {
-    boat = "image/OceanLoop/boat.png",
-    island = "image/OceanLoop/island.png",
-    barrel = "image/OceanLoop/barrel.png",
-    gull = "image/OceanLoop/gull.png",
-    ripple = "image/OceanLoop/ripple.png",
-    waterpaper = "image/OceanLoop/waterpaper.png",
-}
+local catalog = require("GeneratedData.OceanImageCatalog")
+
+-- 只返回规格副本，调用者不能改写共享目录或运行时图片句柄。
+function Art.GetSpec(name)
+    local spec = catalog[name]
+    if not spec then return nil end
+    return { path = spec.path, pixelWidth = spec.pixelWidth, pixelHeight = spec.pixelHeight,
+        contentWidth = spec.contentWidth, contentHeight = spec.contentHeight,
+        anchorX = spec.anchorX, anchorY = spec.anchorY,
+        preload = spec.preload, repeatTexture = spec.repeatTexture }
+end
+
+-- 库内候选按需显式加载，不随场景启动批量占用纹理或自动生成对象。
+---@param ctx NVGContextWrapper
+---@param name string
+function Art.LoadImage(ctx, name)
+    local spec = catalog[name]
+    if not spec or type(nvgCreateImage) ~= "function" then return false end
+    local images = contexts[ctx]
+    if not images then
+        images = {}
+        contexts[ctx] = images
+    end
+    if images[name] ~= nil then return images[name] > 0 end
+    local flags = spec.repeatTexture
+        and (NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY | NVG_IMAGE_GENERATE_MIPMAPS)
+        or NVG_IMAGE_GENERATE_MIPMAPS
+    local handle = nvgCreateImage(ctx, spec.path, flags) or -1
+    images[name] = handle
+    if handle > 0 then
+        print("[OceanArt] loaded " .. name .. " path=" .. spec.path)
+    else
+        print("[OceanArt] load failed " .. spec.path .. "; retaining vector fallback")
+    end
+    return handle > 0
+end
 
 ---@param ctx NVGContextWrapper
 function Art.Load(ctx)
-    if contexts[ctx] or type(nvgCreateImage) ~= "function" then return end
-    local images = {}
-    contexts[ctx] = images
-    for name, path in pairs(paths) do
-        local flags = name == "waterpaper"
-            and (NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY | NVG_IMAGE_GENERATE_MIPMAPS)
-            or NVG_IMAGE_GENERATE_MIPMAPS
-        local handle = nvgCreateImage(ctx, path, flags)
-        images[name] = handle
-        if handle and handle > 0 then
-            print("[OceanArt] loaded " .. name .. " path=" .. path)
-        else
-            print("[OceanArt] load failed " .. path .. "; retaining vector fallback")
-        end
+    for name, spec in pairs(catalog) do
+        if spec.preload then Art.LoadImage(ctx, name) end
     end
 end
 
@@ -142,6 +158,27 @@ function Art.Plane(ctx, name, movement, origin, length, width, heading, altitude
         end
     end
     return true
+end
+
+-- 按可见主体宽度适配透明留边；默认保持主体比例，尺寸仅用于绘制，不是碰撞范围。
+---@param ctx NVGContextWrapper
+---@param name string
+---@param movement table
+---@param origin table
+---@param contentLength number 可见主体沿 +X 的长度（米）。
+---@param heading number 世界朝向（弧度）。
+---@param altitude number?
+---@param alpha number?
+---@param contentWidth number? 省略时保持源图主体比例。
+---@param roll number?
+function Art.Sprite(ctx, name, movement, origin, contentLength, heading, altitude, alpha, contentWidth, roll)
+    local spec = catalog[name]
+    if not spec or not Art.IsLoaded(ctx, name) or contentLength <= 0 then return false end
+    local width = contentWidth or contentLength * spec.contentHeight / spec.contentWidth
+    if width <= 0 then return false end
+    local canvasLength = contentLength * spec.pixelWidth / spec.contentWidth
+    local canvasWidth = width * spec.pixelHeight / spec.contentHeight
+    return Art.Plane(ctx, name, movement, origin, canvasLength, canvasWidth, heading, altitude, alpha, roll)
 end
 
 -- 海面纸纹为画布材质层，只用一条海线遮罩；不作为世界地标或动态波浪。

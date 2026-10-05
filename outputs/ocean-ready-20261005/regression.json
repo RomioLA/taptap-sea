@@ -1,0 +1,472 @@
+[
+  {
+    "name": "OceanImageCatalogTests",
+    "kind": "run",
+    "file": "scripts/tests/OceanImageCatalogTests.lua",
+    "passed": true,
+    "subtestCount": 8,
+    "failures": [],
+    "returned": {
+      "results": [
+        {
+          "error": "",
+          "passed": true,
+          "name": "目录规格只返回副本且未知名称无效"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "正式启动仍只加载六张原图且重复调用幂等"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "新增候选显式加载且不影响另一上下文"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "失败只尝试一次并保留矢量回退"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "主体尺寸自动补偿留边且保持鱼体比例"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "无效尺寸和未加载图不提交绘制"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "停止释放仅当前上下文的成功句柄且幂等"
+        },
+        {
+          "error": "",
+          "passed": true,
+          "name": "停止后可重新加载候选与默认集"
+        }
+      ]
+    },
+    "stdout": "[OceanArt] loaded ripple path=image/OceanLoop/ripple.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded gull path=image/OceanLoop/gull.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded boat path=image/OceanLoop/boat.png\n[OceanArt] loaded island path=image/OceanLoop/island.png\n[OceanArt] loaded reef path=image/OceanReady/reef.png\n[OceanArt] loaded shrub path=image/OceanReady/shrub.png\n[OceanArt] loaded ripple path=image/OceanLoop/ripple.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded gull path=image/OceanLoop/gull.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded boat path=image/OceanLoop/boat.png\n[OceanArt] loaded island path=image/OceanLoop/island.png\n[OceanArt] load failed image/OceanReady/driftwood.png; retaining vector fallback\n[OceanArt] loaded sardine path=image/OceanReady/sardine.png\n[OceanArt] loaded driftwood path=image/OceanReady/driftwood.png\n[OceanArt] loaded ripple path=image/OceanLoop/ripple.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded gull path=image/OceanLoop/gull.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded boat path=image/OceanLoop/boat.png\n[OceanArt] loaded island path=image/OceanLoop/island.png",
+    "nvgCalls": {},
+    "nvgCallTotal": 0,
+    "durationMs": 116.483
+  },
+  {
+    "name": "SeaFusionRenderTests",
+    "kind": "run",
+    "file": "scripts/tests/SeaFusionRenderTests.lua",
+    "passed": true,
+    "subtestCount": 10,
+    "failures": [],
+    "returned": {
+      "tests": [
+        "draw_is_pure_for_runtime_state",
+        "original_sun_and_birds_reused",
+        "projected_sea_view_art_apis_reused",
+        "ordinary_fish_hidden_by_default",
+        "show_underwater_draws_both_fixture_fish",
+        "resize_preserves_projection_anchor_horizon_and_perspective_scale",
+        "curved_ground_clips_preserve_elevated_island_silhouettes_in_both_aspects",
+        "presentation_fixture_does_not_change_config_world",
+        "night_tint_precedes_boat_and_preserves_paused_gameplay_clock",
+        "daytime_removes_night_tint_and_nvg_state_stack_is_balanced"
+      ],
+      "status": "PASS",
+      "metrics": {
+        "landscape": {
+          "shipScreenY": 777.5999999999999,
+          "width": 1920,
+          "horizonY": 259.2,
+          "height": 1080,
+          "basePixelsPerMeter": 24.0,
+          "hiddenWorldFishCalls": 0,
+          "anchorX": 0.5,
+          "shipScreenX": 960.0,
+          "anchorY": 0.72
+        },
+        "previewFixtures": {
+          "sardine": "(-8,-8)",
+          "island": "(-14,-12)",
+          "tuna": "(8,-8)"
+        },
+        "originalFixedObjectCount": 2,
+        "originalConfiguredBirds": 2,
+        "portrait": {
+          "shipScreenY": 828.0,
+          "width": 1200,
+          "horizonY": 276.0,
+          "height": 1150,
+          "basePixelsPerMeter": 25.555555555555557,
+          "shipScreenX": 600.0,
+          "anchorX": 0.5,
+          "revealedWorldFishCalls": 2,
+          "anchorY": 0.72
+        }
+      }
+    },
+    "stdout": "",
+    "nvgCalls": {
+      "nvgBeginPath": 576,
+      "nvgBezierTo": 377,
+      "nvgCircle": 16,
+      "nvgClosePath": 1065,
+      "nvgEllipse": 9,
+      "nvgFill": 547,
+      "nvgFillColor": 531,
+      "nvgFillPaint": 16,
+      "nvgGlobalAlpha": 4,
+      "nvgIntersectScissor": 14,
+      "nvgLineTo": 4745,
+      "nvgLinearGradient": 2,
+      "nvgMoveTo": 1446,
+      "nvgRadialGradient": 14,
+      "nvgRect": 1,
+      "nvgRestore": 25,
+      "nvgSave": 25,
+      "nvgScale": 15,
+      "nvgStroke": 29,
+      "nvgStrokeColor": 29,
+      "nvgStrokeWidth": 29,
+      "nvgTranslate": 15
+    },
+    "nvgCallTotal": 9530,
+    "durationMs": 3459.203
+  },
+  {
+    "name": "SeaHorizonOcclusionTests",
+    "kind": "run",
+    "file": "scripts/tests/SeaHorizonOcclusionTests.lua",
+    "passed": true,
+    "subtestCount": 13,
+    "failures": [],
+    "returned": {
+      "results": [
+        {
+          "passed": true,
+          "name": "separated screen polygons retain their geometry across horizon extrema"
+        },
+        {
+          "passed": true,
+          "name": "horizon snapshots match the live formula and renew after viewport or config changes"
+        },
+        {
+          "passed": true,
+          "name": "scalar projection snapshots match live projection and renew after changes"
+        },
+        {
+          "passed": true,
+          "name": "world bounds reject complete screen-exterior geometry but retain crossing heights"
+        },
+        {
+          "passed": true,
+          "name": "clip planes renew after camera viewport config padding and height changes"
+        },
+        {
+          "passed": true,
+          "name": "intersecting and tangent screen polygons still clip against the curved horizon"
+        },
+        {
+          "passed": true,
+          "name": "the lowest raised vertices disappear before the top as the surface recedes"
+        },
+        {
+          "passed": true,
+          "name": "large footprints survive center crossings including lateral screen edges"
+        },
+        {
+          "passed": true,
+          "name": "raised directional vectors use the same altitude as finite difference samples"
+        },
+        {
+          "passed": true,
+          "name": "raised geometry at the tangent retains its real height"
+        },
+        {
+          "passed": true,
+          "name": "ground inverse remains unique at every lateral horizon and DPR scale"
+        },
+        {
+          "passed": true,
+          "name": "actual scene renders a new float with its center beyond the tangent"
+        },
+        {
+          "passed": true,
+          "name": "height broad phase is conservative and responds to configuration changes"
+        }
+      ]
+    },
+    "stdout": "",
+    "nvgCalls": {
+      "nvgBeginPath": 675,
+      "nvgBezierTo": 630,
+      "nvgCircle": 26,
+      "nvgClosePath": 1200,
+      "nvgEllipse": 9,
+      "nvgFill": 647,
+      "nvgFillColor": 621,
+      "nvgFillPaint": 26,
+      "nvgGlobalAlpha": 4,
+      "nvgIntersectScissor": 24,
+      "nvgLineTo": 4866,
+      "nvgLinearGradient": 2,
+      "nvgMoveTo": 1831,
+      "nvgRadialGradient": 24,
+      "nvgRect": 1,
+      "nvgRestore": 35,
+      "nvgSave": 35,
+      "nvgScale": 22,
+      "nvgStroke": 28,
+      "nvgStrokeColor": 28,
+      "nvgStrokeWidth": 28,
+      "nvgTranslate": 22
+    },
+    "nvgCallTotal": 10784,
+    "durationMs": 799.871
+  },
+  {
+    "name": "SeaFusedSceneTests",
+    "kind": "run",
+    "file": "scripts/tests/SeaFusedSceneTests.lua",
+    "passed": true,
+    "subtestCount": 9,
+    "failures": [],
+    "returned": {
+      "results": [
+        {
+          "error": "",
+          "name": "original HUD directional contract drives the real ship",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "original HUD pause and reset synchronize and preserve ship level",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "fused scene retains the original HUD root and appends hidden debug tools",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "sky clicks do not sail; sea clicks target world meters; UI blocks clicks",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "one event owner updates and renders the real simulation at mode-B DPR",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "keyboard pause reset and hidden debug visibility keep the HUD synchronized",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "shutdown is idempotent and releases only this event owner and UI",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "render receives the live external clock without advancing it",
+          "passed": true
+        },
+        {
+          "error": "",
+          "name": "B may supply a UI factory without replacing or initializing its UI",
+          "passed": true
+        }
+      ]
+    },
+    "stdout": "[海洋框架] 界面就绪：左右移动、暂停、重置；支持键盘和触摸\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] first frame rendered; underwater hidden=true\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] first frame rendered; underwater hidden=true\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped",
+    "nvgCalls": {},
+    "nvgCallTotal": 0,
+    "durationMs": 567.094
+  },
+  {
+    "name": "ArchitectureIntegrationTests",
+    "kind": "run",
+    "file": "scripts/tests/ArchitectureIntegrationTests.lua",
+    "passed": true,
+    "subtestCount": 12,
+    "failures": [],
+    "returned": {
+      "skipped_count": 0,
+      "results": [
+        {
+          "name": "shared registry and factory retain entity identity",
+          "passed": true
+        },
+        {
+          "name": "one automatic fish update per sea substep",
+          "passed": true
+        },
+        {
+          "name": "frozen and removed entities never receive FSM updates",
+          "passed": true
+        },
+        {
+          "name": "paused Game leaves sea and temporary lifetime unchanged",
+          "passed": true
+        },
+        {
+          "name": "Game uses reset runtime world rather than cached registry",
+          "passed": true
+        },
+        {
+          "name": "shared FSM calls enter exit and update once",
+          "passed": true
+        },
+        {
+          "name": "base skeleton retains numeric IDs and remove/clear interfaces",
+          "passed": true
+        },
+        {
+          "name": "Integration owns references while Gameplay owns transient action records",
+          "passed": true
+        },
+        {
+          "name": "registered frame System keeps raw clock dt separate from sea substeps",
+          "passed": true
+        },
+        {
+          "name": "runtime replacement rejects old tokens even when fish IDs are reused",
+          "passed": true
+        },
+        {
+          "name": "Ocean rollback restores removed fish identity and active FSM",
+          "passed": true
+        },
+        {
+          "name": "Bridge works through public Runtime APIs without sea internals",
+          "passed": true
+        }
+      ]
+    },
+    "stdout": "",
+    "nvgCalls": {},
+    "nvgCallTotal": 0,
+    "durationMs": 288.044
+  },
+  {
+    "name": "SeaMotionEffectsTests",
+    "kind": "run",
+    "file": "scripts/tests/SeaMotionEffectsTests.lua",
+    "passed": true,
+    "subtestCount": 7,
+    "failures": [],
+    "returned": {
+      "results": [
+        {
+          "passed": true,
+          "name": "near and far surface detail blend smoothly with complementary weights",
+          "error": ""
+        },
+        {
+          "passed": true,
+          "name": "surface lattice positions stay on fixed world cells while the view drifts",
+          "error": ""
+        },
+        {
+          "passed": true,
+          "name": "boat heave and roll are pure samples of voyage time and turn rate",
+          "error": ""
+        },
+        {
+          "passed": true,
+          "name": "shoreline foam arcs expand, fade, and repeat in world space",
+          "error": ""
+        },
+        {
+          "passed": true,
+          "name": "water mark budget is enforced even within a single row",
+          "error": ""
+        },
+        {
+          "passed": true,
+          "name": "meter-width foam clips once and returns the same projected edge endpoints",
+          "error": ""
+        },
+        {
+          "passed": true,
+          "name": "turn bank eases back when stopped and freezes while paused",
+          "error": ""
+        }
+      ]
+    },
+    "stdout": "",
+    "nvgCalls": {
+      "nvgBeginPath": 1,
+      "nvgClosePath": 240,
+      "nvgFill": 1,
+      "nvgFillColor": 1,
+      "nvgLineTo": 720,
+      "nvgMoveTo": 240
+    },
+    "nvgCallTotal": 1203,
+    "durationMs": 149.028
+  },
+  {
+    "name": "Circle1A2BarrelRenderTests",
+    "kind": "run",
+    "file": "scripts/tests/Circle1A2BarrelRenderTests.lua",
+    "passed": true,
+    "subtestCount": 3,
+    "failures": [],
+    "returned": {
+      "tests": [
+        {
+          "passed": true,
+          "name": "barrel_outline_and_recognition_boundaries_are_inclusive"
+        },
+        {
+          "passed": true,
+          "name": "barrel_screen_culling_keeps_partial_edges_and_skips_fully_offscreen"
+        },
+        {
+          "passed": true,
+          "name": "only_the_exact_barrel_gets_recognition_and_other_floats_keep_their_shape"
+        }
+      ],
+      "metrics": {
+        "offscreenCulling": "partial visible / full margin culled",
+        "recognitionDistance": 20,
+        "outlineDistance": 80,
+        "contentId": "driftwood_barrel"
+      },
+      "status": "PASS"
+    },
+    "stdout": "",
+    "nvgCalls": {
+      "nvgBeginPath": 768,
+      "nvgBezierTo": 1649,
+      "nvgCircle": 26,
+      "nvgClosePath": 1372,
+      "nvgEllipse": 9,
+      "nvgFill": 739,
+      "nvgFillColor": 713,
+      "nvgFillPaint": 26,
+      "nvgGlobalAlpha": 5,
+      "nvgIntersectScissor": 24,
+      "nvgLineTo": 5666,
+      "nvgLinearGradient": 2,
+      "nvgMoveTo": 3027,
+      "nvgRadialGradient": 24,
+      "nvgRect": 1,
+      "nvgRestore": 36,
+      "nvgSave": 36,
+      "nvgScale": 22,
+      "nvgStroke": 29,
+      "nvgStrokeColor": 29,
+      "nvgStrokeWidth": 29,
+      "nvgTranslate": 22
+    },
+    "nvgCallTotal": 14254,
+    "durationMs": 8330.961
+  }
+]

@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "style": "暖赭细描边、简化色块、轻水彩纸感",
+  "format": "RGBA PNG，直通 Alpha、透明边 RGB 扩边、主体保持比例",
+  "projection": "Ocean.Projection 世界平面分片投影；不作屏幕旋转",
+  "placement": "仅素材库候选，不创建实体、不修改生成或玩法",
+  "references": [
+    "assets/image/OceanStory_island_20261005114948.png",
+    "assets/image/OceanStory_boat_20261005114947.png",
+    "assets/image/OceanStory_gull_20261005114946.png"
+  ],
+  "assets": {
+    "reef": {
+      "path": "image/OceanReady/reef.png",
+      "source": "assets/image/OceanReady_reef_top_20261005123026.png",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        30,
+        41,
+        481,
+        470
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.4647865295410156,
+      "sha256": "14770a151386d151a9b8c110ee82757de67867b0e639687b62bcb2d4cfd0d6e6",
+      "source_sha256": "4f948c7f4b1b8e96ed77e4488f0b3b67b53e1b6d649c70a820678828fc07d3f5",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "view": "top_down",
+      "status": "ready_not_placed",
+      "heading": "none"
+    },
+    "shrub": {
+      "path": "image/OceanReady/shrub.png",
+      "source": "assets/image/OceanReady_shrub_top_20261005123049.png",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        46,
+        30,
+        465,
+        481
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.5266761779785156,
+      "sha256": "181fbbea322de1efd3fc41be787bf833b6cebcfa7e7f389acc1f4c9d40090b74",
+      "source_sha256": "ee27414b311ced483bbf86f70ef149b9652565ed6b3e9a8d17d13aca5673af71",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "view": "top_down",
+      "status": "ready_not_placed",
+      "heading": "none"
+    },
+    "driftwood": {
+      "path": "image/OceanReady/driftwood.png",
+      "source": "assets/image/OceanReady_driftwood_top_20261005123027.png",
+      "size": [
+        768,
+        512
+      ],
+      "content_bounds": [
+        46,
+        141,
+        722,
+        370
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.6607157389322916,
+      "sha256": "367a5b1948d5a8f39f106169514c3e0c8f0dabe5f1b7de2ce76f2e9f31475ed0",
+      "source_sha256": "14f6f83d044125d92c50ab3a9754c5b38b0762f4028729ad9104401c68669d91",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "view": "top_down",
+      "status": "ready_not_placed",
+      "heading": "+X"
+    },
+    "sardine": {
+      "path": "image/OceanReady/sardine.png",
+      "source": "assets/image/OceanReady_sardine_top_20261005123025.png",
+      "size": [
+        768,
+        512
+      ],
+      "content_bounds": [
+        46,
+        165,
+        722,
+        347
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.8174158732096354,
+      "sha256": "f13f43427b98ba4f2987b9cf43470f30275453340fd83f2c12635d706c3b4911",
+      "source_sha256": "bc5d060f2a90b31b2138ca09ff5896868521afa09f2b2ab585f76ce370b7bfbc",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "view": "top_down",
+      "status": "ready_not_placed",
+      "heading": "+X"
+    }
+  }
+}
