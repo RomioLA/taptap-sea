@@ -36,7 +36,7 @@ for _, case in ipairs({{1,5,10,300}, {2,10,15,600}, {3,15,20,900}}) do
         eq(l.player.money, 2000-case[4]); eq(#l.player.inventory:GetItems(), 2)
     end)
 end
-for _, case in ipairs({{1,6,8,350}, {2,8,10,750}}) do
+for _, case in ipairs({{1,9,12,350}, {2,12,16,750}}) do
     test("boat-speed-transition-" .. case[1], function()
         local l = newLoop(); l.player.money = 1100; l.player.boatSpeedLevel = case[1]
         eq(Config.upgrades.boatSpeed.metersPerSec[l.player.boatSpeedLevel], case[2])

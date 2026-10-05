@@ -16,7 +16,9 @@ function Tests.Run()
         local state = SceneState.New(runtime)
         state:MoveBy(1)
         assert(math.abs(runtime.movement.target.x - 80 * Config.boat.buttonStep) < 0.00001)
-        for _ = 1, 20 do runtime:Update(0.05) end
+        -- 0.5s 推进：任何船速等级（9/12/16 m/s）都不会驶入 1.5m 到达半径，
+        -- 保证 target 保持，下一次 MoveBy(-1) 才能精确归零（方向键契约）。
+        for _ = 1, 10 do runtime:Update(0.05) end
         assert(runtime.ship.position.x > 0)
         state:MoveBy(-1)
         assert(math.abs(runtime.movement.target.x) < 0.00001)

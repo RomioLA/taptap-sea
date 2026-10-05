@@ -276,14 +276,13 @@ local function infoLine(label)
     return line
 end
 
-local function makeButton(text, onClick, variant, width)
+local function makeButton(text, onClick, variant, width, minHeight)
     return UI.Button {
         text = text,
         variant = variant or "secondary",
         width = width or "auto",
-        -- 触控目标 ≥44px（设计方案 v1.0 尺寸 token）；主操作按钮的 88px 热区
-        -- 由 Scene 层的抛竿交互承担，此处为通用面板按钮。
-        minHeight = UI_SIZE.buttonMinHeight or 44,
+        -- 触控目标默认 ≥44px（设计方案 v1.0 尺寸 token）；紧凑面板可显式传小值。
+        minHeight = minHeight or UI_SIZE.buttonMinHeight or 44,
         fontSize = 13,
         onClick = function() onClick() end,
     }
@@ -366,8 +365,9 @@ function HUD.Create(loop, parent, debugTools)
         pointerEvents = "box-none",
     }
 
-    -- v2.0 零遮挡：header 保持 root 首子节点（测试契约 + Scene 左侧注入依赖），
-    -- 去掉纯色底板——每行一个 flexGrow label，固定在画面左上角。
+    -- v2.0 零遮挡：header 保持 root 首子节点（测试契约 + Scene 左侧注入依赖）。
+    -- 真机反馈（2026-10-05）：原 9 行信息堆叠严重，收敛为两层文字——
+    -- 第一行状态（天/昼夜/体力/钱/背包），第二行日志（暂停/反馈/存档/港口提示）。
     local header = UI.Panel {
         width = "100%",
         minHeight = 40,
@@ -375,108 +375,85 @@ function HUD.Create(loop, parent, debugTools)
         alignItems = "flex-start",
         gap = 2,
     }
-    -- UI 精简（2026-10-04）：顶部只保留"看"的信息（天/昼夜/金币），去掉常驻标题；
-    -- 详细提示按需显隐（见 refresh 内各 SetVisible），常态下海面占比最大化。
-    refs.day = makeInfoLabel("第 1 天", 14, nil, nil, INFO_FLEX)
-    refs.phase = makeInfoLabel("白天 · 剩余 -- 秒", 13, UI_PALETTE.textMuted, nil, INFO_FLEX)
-    refs.money = makeInfoLabel("钱：0", 14, UI_PALETTE.coinBright, "bold", INFO_FLEX)
-    header:AddChild(infoLine(refs.day))
-    header:AddChild(infoLine(refs.phase))
-    header:AddChild(infoLine(refs.money))
+    refs.status = makeInfoLabel("", 13, nil, nil, INFO_FLEX)
+    header:AddChild(infoLine(refs.status))
+    -- 日志槽：log 与 portAccessReason 互斥显示，同一时刻只占一行。
+    refs.log = makeInfoLabel("", 12, UI_PALETTE.textMuted, nil, INFO_FLEX)
+    header:AddChild(infoLine(refs.log))
+    refs.portAccessReason = makeInfoLabel("锚形标记=港口（交易中心）· 返港/交易需距港≤10米。", 12, UI_PALETTE.textMuted, nil, INFO_FLEX)
+    refs.portAccessReason:SetVisible(false)
+    header:AddChild(infoLine(refs.portAccessReason))
     refs.debugToggle = makeButton("开发调试", function()
         if refs.debugPanel then refs.debugPanel:SetVisible(not refs.debugPanel:IsVisible()) end
     end, "secondary", 92)
     if debugTools and debugTools.enabled == true then header:AddChild(refs.debugToggle) end
     root:AddChild(header)
 
-    -- v2.0 零遮挡：第二行信息同样去底板，纯描边文字（root 次子节点保留给
-    -- Scene 的 flexWrap 注入契约）。
-    -- v2.0 零遮挡：第二段信息同样去底板，逐行 flexGrow 防压缩
-    -- （root 次子节点保留给 Scene 的 flexWrap 注入契约）。
-    local stats = UI.Panel {
-        width = "100%",
-        minHeight = 36,
+    -- 真机反馈（2026-10-05）：捕鱼弹出框过大遮挡中心小船——压成左上角小卡
+    -- （宽 ≤216px、行高 ~11px、按钮 32px），面积约为原 1/4，只留必要提示；
+    -- 只在抛网/收网/结算过程中出现，入口仍走按钮坞"捕鱼"按钮。
+    refs.fishingPanel = UI.Panel {
+        id = "fishingCompactPanel",
+        width = "auto",
+        maxWidth = 216,
+        alignSelf = "flex-start",
+        padding = 6,
+        gap = 3,
         flexDirection = "column",
-        alignItems = "flex-start",
-        gap = 2,
+        backgroundColor = UI_PALETTE.cardDay,
+        borderColor = UI_PALETTE.border,
+        borderWidth = 1,
+        borderRadius = 8,
     }
-    refs.stamina = makeInfoLabel("体力：0/0", 14, nil, nil, INFO_FLEX)
-    refs.pauseReasons = makeInfoLabel("暂停：无", 12, UI_PALETTE.textMuted, nil, INFO_FLEX)
-    refs.save = makeInfoLabel("尚未保存", 12, UI_PALETTE.textMuted, nil, INFO_FLEX)
-    refs.save:SetVisible(false) -- 常态隐藏，仅读取中/保存中/失败时显示（见 refresh）
-    refs.inventorySummary = makeInfoLabel("背包 0 / 0 格", 12, nil, nil, INFO_FLEX)
-    stats:AddChild(infoLine(refs.stamina))
-    stats:AddChild(infoLine(refs.inventorySummary))
-    stats:AddChild(infoLine(refs.pauseReasons))
-    stats:AddChild(infoLine(refs.save))
-    root:AddChild(stats)
-
-    -- v2.0 零遮挡：消息条改为透明 toast 文字（描边），仅真实反馈出现时显示。
-    refs.message = makeInfoLabel("", 13, UI_PALETTE.textGold)
-    refs.messagePanel = UI.Panel {
-        width = "100%",
-        minHeight = 24,
-        justifyContent = "center",
-        children = { refs.message },
-    }
-    root:AddChild(refs.messagePanel)
-
-    refs.portAccessReason = makeInfoLabel("锚形标记=港口（交易中心）· 返港/交易需距港≤10米。", 12, UI_PALETTE.textMuted)
-    root:AddChild(refs.portAccessReason)
-
-    -- v2.0 零遮挡：捕鱼面板只在选择/收网/结算过程中出现（点击"捕鱼"入口后）；
-    -- 常驻入口按钮移至右下按钮坞（actionBar 段）。
-    refs.fishingPanel = card("捕鱼")
-    refs.fishingStatus = makeLabel("选择海面网心开始捕鱼。", 13)
-    refs.fishingProgress = makeLabel("动作进度：0%", 12, { 180, 203, 191, 255 })
-    refs.fishingResult = makeLabel("", 13, { 249, 211, 118, 255 }, "bold")
+    themedPanels[#themedPanels + 1] = { widget = refs.fishingPanel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight }
+    refs.fishingStatus = makeLabel("选择海面网心开始捕鱼。", 11)
+    refs.fishingProgress = makeLabel("动作进度：0%", 10, { 180, 203, 191, 255 })
+    refs.fishingResult = makeLabel("", 11, { 249, 211, 118, 255 }, "bold")
     refs.fishingPanel:AddChild(refs.fishingStatus)
     refs.fishingPanel:AddChild(refs.fishingProgress)
     refs.fishingPanel:AddChild(refs.fishingResult)
-    -- v1.1：捕鱼入口收敛为按钮坞的单个"捕鱼"按钮；引导文字走消息条（对话形式），
-    -- 本面板只在抛网/收网/结算过程中出现，承载 确认抛网/取消/重试清理。
     refs.beginFishing = makeButton("捕鱼", function()
         invokeLoop("BeginFishingSelection")
     end, "primary", 72)
     local fishingButtons = UI.Panel {
         width = "100%",
         flexDirection = "row",
-        flexWrap = "wrap",
-        alignItems = "center",
-        gap = 7,
+        gap = 5,
     }
     refs.confirmFishing = makeButton("确认抛网", function()
         invokeLoop("ConfirmFishing")
-    end, "primary", 96)
+    end, "primary", 76, 32)
     refs.cancelFishing = makeButton("取消捕鱼", function()
         invokeLoop("CancelFishingAction")
-    end, "danger", 88)
+    end, "danger", 76, 32)
     fishingButtons:AddChild(refs.confirmFishing)
     fishingButtons:AddChild(refs.cancelFishing)
     refs.fishingPanel:AddChild(fishingButtons)
     root:AddChild(refs.fishingPanel)
 
-    -- v2.0 零遮挡按钮坞：右下角拇指区常驻的"明确按钮"集合。容器透明 +
-    -- box-none——空白区域点击穿透海面，只有按钮本身接收点击。
+    -- 真机反馈（2026-10-05）：按钮坞由三行收敛为单行操作。容器透明 +
+    -- box-none——空白区域点击穿透海面，只有按钮本身接收点击；超出屏幕
+    -- 宽度时 flexWrap 兜底换行，常态保证一行。
     -- zIndex 低于抽屉(90/91)与模态(100)：抽屉/弹窗打开时自然盖住按钮坞。
     local actionBar = UI.Panel {
         position = "absolute",
         right = 0,
         bottom = 0,
         zIndex = 60,
-        padding = 10,
-        gap = 7,
-        flexDirection = "column",
+        padding = 8,
+        gap = 6,
+        flexDirection = "row",
+        justifyContent = "flex-end",
+        alignItems = "flex-end",
+        flexWrap = "wrap",
+        pointerEvents = "box-none",
+    }
+    local dock = UI.Panel {
+        flexDirection = "row",
+        gap = 6,
         alignItems = "flex-end",
         pointerEvents = "box-none",
     }
-    local function dockRow()
-        return UI.Panel {
-            flexDirection = "row",
-            gap = 7,
-            pointerEvents = "box-none",
-        }
-    end
     refs.depart = makeButton("出航", function() invokeLoop("Depart") end, "primary", 80)
     refs.returnToPort = makeButton("返港", function() invokeLoop("ReturnToPort") end, "secondary", 80)
     refs.endToday = makeButton("结束今日", function() invokeLoop("EndToday") end, "primary", 98)
@@ -498,22 +475,18 @@ function HUD.Create(loop, parent, debugTools)
         invokeLoop(loop.scopeSyncError and "DisableScope" or "ToggleScope")
     end, "secondary", 80)
     refs.scopeToggleBar:SetVisible(false)
-    local dockUtility = dockRow()
-    dockUtility:AddChild(refs.loadSaved)
-    dockUtility:AddChild(refs.newRun)
-    local dockContext = dockRow()
-    dockContext:AddChild(refs.barrelToggle)
-    dockContext:AddChild(refs.scopeToggleBar)
-    dockContext:AddChild(refs.inventoryToggle)
-    dockContext:AddChild(refs.elderToggle)
-    local dockMain = dockRow()
-    dockMain:AddChild(refs.depart)
-    dockMain:AddChild(refs.returnToPort)
-    dockMain:AddChild(refs.endToday)
-    dockMain:AddChild(refs.beginFishing)
-    actionBar:AddChild(dockUtility)
-    actionBar:AddChild(dockContext)
-    actionBar:AddChild(dockMain)
+    -- 单行顺序：低频工具 → 情境按钮 → 核心动作（出航/返港/结束今日/捕鱼）。
+    dock:AddChild(refs.loadSaved)
+    dock:AddChild(refs.newRun)
+    dock:AddChild(refs.barrelToggle)
+    dock:AddChild(refs.scopeToggleBar)
+    dock:AddChild(refs.inventoryToggle)
+    dock:AddChild(refs.elderToggle)
+    dock:AddChild(refs.depart)
+    dock:AddChild(refs.returnToPort)
+    dock:AddChild(refs.endToday)
+    dock:AddChild(refs.beginFishing)
+    actionBar:AddChild(dock)
     root:AddChild(actionBar)
 
     local contentScroll = UI.ScrollView {
@@ -1097,30 +1070,64 @@ function HUD.Create(loop, parent, debugTools)
         -- 昼夜主题（设计方案 v1.0）：面板明度与海面反向，夜晚更深；仅 phase 变化时写样式。
         applyTheme(clockState.phase == "night" and "night" or "day", themedPanels)
         local remaining = tonumber(clockState.remaining) or 0
-        setText(refs.day, "day", "第 " .. tostring(player.day or 1) .. " 天")
-        setText(refs.phase, "phase", string.format("%s · 剩余 %.0f 秒", phase, math.max(0, remaining)))
-        setText(refs.stamina, "stamina", string.format("体力：%s/%s", tostring(player.stamina or 0), tostring(player.maxStamina or 0)))
-        setText(refs.money, "money", "钱：" .. tostring(player.money or 0))
-
-        local reasons = clockState.pauseReasons or {}
-        local pauseText = #reasons > 0 and table.concat(reasons, "、") or "无"
-        if clockState.paused and #reasons == 0 then pauseText = "暂停中" end
-        setText(refs.pauseReasons, "pauseReasons", "暂停：" .. pauseText)
-        -- UI 精简：暂停原因/存档状态仅异常或有事发生时占位，常态让位给海面
-        refs.pauseReasons:SetVisible(clockState.paused == true or #reasons > 0)
-        setText(refs.save, "save", saveText(loop))
-        -- 仅"尚未保存/未保存"两个无信息量状态隐藏；读取/保存/已保存/失败均可见
-        local saveStatus = loop.saveStatus
-        refs.save:SetVisible(loop.loading == true or saveStatus == "loading"
-            or saveStatus == "saving" or saveStatus == "saved" or saveStatus == "error")
-
-        local message = state.localMessage ~= "" and state.localMessage or userMessage(loop.lastMessage)
-        if message == "" then message = "出海采集，返港交易与结算。" end
-        setText(refs.message, "message", message)
-        -- 默认引导语不占行；仅真实操作反馈出现时显示消息条
-        refs.messagePanel:SetVisible(message ~= "" and message ~= "出海采集，返港交易与结算。")
 
         local inPort = loop.inPort == true
+        local items = copyItems(loop)
+        local capacity = player.inventory and player.inventory:GetCapacity() or 0
+
+        -- 第一行（状态）：天 / 昼夜倒计时 / 体力 / 钱 / 背包；暂停态也属于状态，
+        -- 直接拼在状态行尾（暂停：port 等），日志行让给事件类信息。
+        local reasons = clockState.pauseReasons or {}
+        local statusText = string.format(
+            "第 %s 天 · %s 剩余 %.0f 秒 · 体力：%s/%s · 钱：%s · 背包 %d / %d 格",
+            tostring(player.day or 1), phase, math.max(0, remaining),
+            tostring(player.stamina or 0), tostring(player.maxStamina or 0),
+            tostring(player.money or 0), #items, capacity)
+        if clockState.paused == true or #reasons > 0 then
+            statusText = statusText .. " · 暂停："
+                .. (#reasons > 0 and table.concat(reasons, "、") or "暂停中")
+        end
+        setText(refs.status, "status", statusText)
+
+        -- 第二行（日志槽）：同一时刻只显示一条——
+        -- 存档失败 > 操作反馈 > 已自动保存 > 存档进行中 > 港口提示 > 默认引导。
+        local message = state.localMessage ~= "" and state.localMessage or userMessage(loop.lastMessage)
+        local saveStatus = loop.saveStatus
+        local portAccess, portReason, portDetails = loop:CanAccessPort()
+        local portDistance = portDetails and portDetails.distance
+        local portRadius = portDetails and portDetails.radius or 10
+        local portHintActive = (type(portDistance) == "number" and (not portAccess or portDistance <= 30))
+            or (type(portDistance) ~= "number" and not portAccess)
+        -- 港口提示文本每帧刷新（读数契约：包含实时距离与范围内/外结论）；
+        -- 是否占用日志行由 logSlot 决定。
+        local portInfo
+        if type(portDistance) == "number" then
+            local accessText = portAccess and "范围内，可返港/交易" or "范围外，需≤10米才可返港/交易"
+            portInfo = string.format("锚形标记=港口（交易中心）· 距港 %.3f/%.0f米（%s）；同日往返不恢复体力、不补充库存。",
+                portDistance, portRadius, accessText)
+        else
+            portInfo = "锚形标记=港口（交易中心）· 距离暂不可读；返港/交易需距港≤10米。"
+            if not portAccess and portReason then portInfo = portInfo .. " " .. userMessage(portReason) end
+        end
+        setText(refs.portAccessReason, "portInfo", portInfo)
+        local logSlot = "log"
+        local logText
+        if saveStatus == "error" then
+            logText = saveText(loop)
+        elseif saveStatus == "saved" then
+            logText = saveText(loop)
+        elseif message ~= "" and message ~= "出海采集，返港交易与结算。" then
+            logText = message
+        elseif loop.loading == true or saveStatus == "loading" or saveStatus == "saving" then
+            logText = saveText(loop)
+        elseif portHintActive then
+            logSlot = "port"
+        else
+            logText = "出海采集，返港交易与结算。"
+        end
+        refs.log:SetVisible(logSlot ~= "port")
+        refs.portAccessReason:SetVisible(logSlot == "port")
+        if logSlot ~= "port" then setText(refs.log, "log", logText or "") end
 
         local elderPresent = false
         if type(loop.IsElderPresent) == "function" then
@@ -1304,23 +1311,7 @@ function HUD.Create(loop, parent, debugTools)
         refs.inventoryClose:SetVisible(true)
         refs.inventoryClose:SetDisabled(busy or loop.loading == true)
         refs.portPanel:SetVisible(inPort)
-        local portAccess, portReason, portDetails = loop:CanAccessPort()
-        local portDistance = portDetails and portDetails.distance
-        local portRadius = portDetails and portDetails.radius or 10
-        local portInfo
-        if type(portDistance) == "number" then
-            local accessText = portAccess and "范围内，可返港/交易" or "范围外，需≤10米才可返港/交易"
-            portInfo = string.format("锚形标记=港口（交易中心）· 距港 %.3f/%.0f米（%s）；同日往返不恢复体力、不补充库存。",
-                portDistance, portRadius, accessText)
-        else
-            portInfo = "锚形标记=港口（交易中心）· 距离暂不可读；返港/交易需距港≤10米。"
-            if not portAccess and portReason then portInfo = portInfo .. " " .. userMessage(portReason) end
-        end
-        setText(refs.portAccessReason, "portInfo", portInfo)
-        -- 港口提示仅在有意义时占位：接近港口（≤30m）或范围外警示；远海航行时隐藏
-        local showPortHint = (type(portDistance) == "number" and (not portAccess or portDistance <= 30))
-            or (type(portDistance) ~= "number" and not portAccess)
-        refs.portAccessReason:SetVisible(showPortHint)
+        -- 港口提示已并入左上角日志槽（见 refresh 开头的 logSlot 逻辑），不再单独占行。
         refs.loadSaved:SetVisible(inPort)
         refs.loadSaved:SetText(loop.loadStatus == "error" and "重试读取" or "读取云存档")
         refs.loadSaved:SetDisabled(busy or loop.settlementPending == true or pendingCatch or fishingRestricted)
@@ -1412,8 +1403,7 @@ function HUD.Create(loop, parent, debugTools)
             refs.throwSelectionCancel:SetDisabled(false)
         end
 
-        local items = copyItems(loop)
-        local capacity = player.inventory and player.inventory:GetCapacity() or 0
+        -- items/capacity 已在 refresh 开头计算（状态行复用），此处直接使用。
         setText(refs.inventoryCount, "inventoryCount", string.format("%d / %d 格", #items, capacity))
         -- F2: 全部卖出——在港且背包有可售渔获时启用。
         local sellableCount = 0
@@ -1426,9 +1416,7 @@ function HUD.Create(loop, parent, debugTools)
         end
         refs.sellAll:SetText(sellableCount > 0 and ("全部卖出 · " .. tostring(sellableCount) .. " 件") or "全部卖出")
         refs.sellAll:SetDisabled(not inPort or not ready or busy or fishingRestricted or sellableCount == 0)
-        -- 背包摘要精简为纯计数（原物品清单文本移除，明细看背包卡）
-        setText(refs.inventorySummary, "inventorySummary",
-            string.format("背包 %d / %d 格", #items, capacity))
+        -- 背包摘要已并入左上角状态行（refs.status），不再单独维护。
         ---@type string[]
         local signatureParts = { tostring(loop:GetCargoRevision()), tostring(capacity), tostring(inPort), tostring(loop.elderOpen == true) }
         for _, itemId in ipairs(items) do signatureParts[#signatureParts + 1] = itemId end

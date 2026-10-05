@@ -43,17 +43,23 @@ local function fitHudToLeftSide(hud)
     local children = hud.root:GetChildren()
     -- HUD's final child is its full-screen modal overlay. Keep that full-screen.
     local visibleChildCount = math.max(0, #children - 1)
+    -- 紧凑捕鱼面板自带小尺寸（≤216px），不参与左侧栏等宽注入，避免重新被拉宽遮挡船心。
+    local fishingCompact = nil
+    if type(hud.root.FindById) == "function" then
+        fishingCompact = hud.root:FindById("fishingCompactPanel")
+    end
     local width = math.floor(math.min(620, logicalScreenWidth() * 0.62))
     for index = 1, visibleChildCount do
         local child = children[index]
-        setStyle(child, {
-            width = width,
-            maxWidth = width,
-            alignSelf = "flex-start",
-        })
+        if child ~= fishingCompact then
+            setStyle(child, {
+                width = width,
+                maxWidth = width,
+                alignSelf = "flex-start",
+            })
+        end
     end
     if children[1] then setStyle(children[1], { flexWrap = "wrap" }) end
-    if children[2] then setStyle(children[2], { flexWrap = "wrap" }) end
 
     -- A flexing ScrollView otherwise wins empty sea clicks across its viewport.
     local contentScroll = hud.root:FindById("gameplayContentScroll")

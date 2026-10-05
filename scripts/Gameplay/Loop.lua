@@ -1378,24 +1378,33 @@ function Loop:DisableScope()
     return self:SyncScope()
 end
 function Loop:SyncScope()
-    local function finish(ok, reason)
-        self.scopeSyncError = reason
-        return ok, reason
-    end
+    -- 每帧热路径（Game:Sync 逐帧调用）：不创建 finish 闭包，直接返回，
+    -- 消除逐帧闭包分配带来的 GC 抖动。
     if not self:HasLens() then self.scopeEnabled = false end
     local runtime = self.runtime
     if not runtime or type(runtime.SetScopeEnabled) ~= "function" or type(runtime.IsScopeEnabled) ~= "function" then
-        return finish(false, "scope_interface_unavailable")
+        self.scopeSyncError = "scope_interface_unavailable"
+        return false, "scope_interface_unavailable"
     end
     local readOk, enabled = pcall(runtime.IsScopeEnabled, runtime)
-    if not readOk then return finish(false, "scope_sync_failed") end
+    if not readOk then
+        self.scopeSyncError = "scope_sync_failed"
+        return false, "scope_sync_failed"
+    end
     if enabled ~= self.scopeEnabled then
         local setOk = pcall(runtime.SetScopeEnabled, runtime, self.scopeEnabled)
-        if not setOk then return finish(false, "scope_sync_failed") end
+        if not setOk then
+            self.scopeSyncError = "scope_sync_failed"
+            return false, "scope_sync_failed"
+        end
     end
     local verifyOk, observed = pcall(runtime.IsScopeEnabled, runtime)
-    if not verifyOk or observed ~= self.scopeEnabled then return finish(false, "scope_sync_failed") end
-    return finish(true)
+    if not verifyOk or observed ~= self.scopeEnabled then
+        self.scopeSyncError = "scope_sync_failed"
+        return false, "scope_sync_failed"
+    end
+    self.scopeSyncError = nil
+    return true
 end
 function Loop:ToggleScope()
     if not self:HasLens() then return false, "scope_not_owned" end

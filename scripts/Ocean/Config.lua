@@ -8,7 +8,9 @@ for _, row in ipairs(FishRows) do
         "fish AI ranges must match the shared world activity range")
 end
 ---@type number[]
-local shipSpeeds = { 6.0, 8.0, 10.0 }
+-- 真机反馈（2026-10-05）：6/8/10 m/s 体感过慢，整体上调 50%~60%；
+-- 地图尺寸随 maxSpeed 自动推导（16×180=2880m），边界/时序测试均按配置表取值。
+local shipSpeeds = { 9.0, 12.0, 16.0 }
 local Config = {
     units = { length = "meter", metersPerWorldUnit = 1, speed = "meter_per_second" },
     title = "海风小岛",

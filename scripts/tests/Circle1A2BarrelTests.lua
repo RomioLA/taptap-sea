@@ -43,7 +43,7 @@ local function pointToSegmentDistance(point, startPoint, endPoint)
     return Math.distance(point, closest)
 end
 
-local function trackShipRoute(runtime)
+local function trackShipRoute(runtime, barrelId, barrelPosition, barrelRadius)
     ---@type string?
     local closestBlockerId = nil
     local route = {
@@ -64,7 +64,13 @@ local function trackShipRoute(runtime)
         local endPoint = copyPoint(entity.position)
         route.shipSteps = route.shipSteps + 1
         route.traveledDistance = route.traveledDistance + Math.distance(startPoint, endPoint)
-        if collided then route.collisionSteps = route.collisionSteps + 1 end
+        if collided then
+            -- 木桶是教学碰撞体（真机反馈 #6，blocking=true）：贴桶停靠与原地
+            -- 调头扫到桶体属预期玩法；只有其它阻挡物的碰撞才算航线违规。
+            local barrelContact = pointToSegmentDistance(barrelPosition, startPoint, endPoint)
+                <= entity.radius + barrelRadius + 0.05
+            if not barrelContact then route.collisionSteps = route.collisionSteps + 1 end
+        end
 
         for _, blocker in ipairs(world.entities) do
             if blocker ~= entity and not blocker.removed and blocker.blocking then
@@ -72,11 +78,15 @@ local function trackShipRoute(runtime)
                     route.seenBlockerIds[blocker.id] = true
                     route.blockingObjects = route.blockingObjects + 1
                 end
-                local centerDistance = pointToSegmentDistance(blocker.position, startPoint, endPoint)
-                local clearance = centerDistance - entity.radius - blocker.radius
-                if clearance < route.minimumClearance then
-                    route.minimumClearance = clearance
-                    route.closestBlockerId = blocker.id
+                if blocker.id == barrelId then
+                    -- 木桶接触不计入最小净空（见上）。
+                else
+                    local centerDistance = pointToSegmentDistance(blocker.position, startPoint, endPoint)
+                    local clearance = centerDistance - entity.radius - blocker.radius
+                    if clearance < route.minimumClearance then
+                        route.minimumClearance = clearance
+                        route.closestBlockerId = blocker.id
+                    end
                 end
             end
         end
@@ -111,21 +121,31 @@ local function voyage(seed)
     local start = copyPoint(runtime.ship.position)
     assertNear(start.x, Config.ship.start.x)
     assertNear(start.y, Config.ship.start.y)
-    assertNear(runtime.movement.speed, 6)
+    assertNear(runtime.movement.speed, Config.ship.speedByLevel[1])
     local firstWaypoint = { x = 35, y = 5 }
     local theoreticalWaypointLength = Math.distance(start, firstWaypoint)
         + Math.distance(firstWaypoint, barrelPosition)
-    local route, originalMoveEntity = trackShipRoute(runtime)
+    local route, originalMoveEntity = trackShipRoute(runtime, barrel.id, barrelPosition, barrelEntity.radius)
     local fixedStep = 0.05
     local elapsedSteps = 0
     local visits = {}
+    -- 木桶现为碰撞实体（真机反馈 #6）：不能把桶心设为目标（船会被 hull 挡在
+    -- 半径和外），改为驶到桶旁。停靠点取 3.5m：船体最贴近 3.8m（半径和），
+    -- 到达判定半径 1.5m 内必然清目标，最终停点必落在操作距离 5m 内。
+    local barrelStandoff = 3.5
+    local function barrelApproach(fromPoint)
+        local dx, dy = barrelPosition.x - fromPoint.x, barrelPosition.y - fromPoint.y
+        local length = Math.distance(fromPoint, barrelPosition)
+        return { x = barrelPosition.x - dx / length * barrelStandoff,
+            y = barrelPosition.y - dy / length * barrelStandoff }
+    end
     local targets = {
         firstWaypoint,
-        barrelPosition,
-        { x = 85, y = 25 },
-        barrelPosition,
-        { x = 85, y = 25 },
-        barrelPosition,
+        barrelApproach(firstWaypoint),
+        { x = 85, y = 5 },
+        barrelApproach({ x = 85, y = 5 }),
+        { x = 85, y = 5 },
+        barrelApproach({ x = 85, y = 5 }),
     }
     for targetIndex, target in ipairs(targets) do
         elapsedSteps = elapsedSteps + sailTo(runtime, target, fixedStep)
@@ -219,8 +239,9 @@ function Tests.Run()
         assert(first.generation == runtime.world.fixedBarrelGeneration
             and second.generation == first.generation and third.generation == first.generation)
         assert(first.contentId == "driftwood_barrel" and entity.contentId == first.contentId)
-        assert(entity.kind == "fixed" and entity.entityType == "float" and not entity.blocking,
-            "barrel remains a fixed nonblocking float")
+        -- 真机反馈（2026-10-04 七项修复 #6）：木桶与岛屿一样拥有碰撞实体（blocking）。
+        assert(entity.kind == "fixed" and entity.entityType == "float" and entity.blocking == true,
+            "barrel is a fixed blocking float (tutorial collision)")
         assertNear(entity.radius, Config.world.fixedBarrel.radius)
         assertNear(first.position.x, Config.world.fixedBarrel.position.x)
         assertNear(first.position.y, Config.world.fixedBarrel.position.y)
@@ -416,8 +437,9 @@ function Tests.Run()
         for _, seed in ipairs({ Config.world.seed, 314159 }) do
             metrics.voyages[#metrics.voyages + 1] = voyage(seed)
         end
-        assertNear(metrics.voyages[1].theoreticalWaypointLength, 67.3709, 0.001)
-        assert(metrics.voyages[1].visits[1].traveledDistance >= 60
+        -- 桶位 (14,6)：dist(start,(35,5))=√1250 ≈ 35.3553，dist((35,5),(14,6))=√442 ≈ 21.0238。
+        assertNear(metrics.voyages[1].theoreticalWaypointLength, 56.3791, 0.001)
+        assert(metrics.voyages[1].visits[1].traveledDistance >= 45
             and metrics.voyages[1].visits[1].traveledDistance <= 100,
             "first physical visit should report a plausible actual voyage distance")
     end)

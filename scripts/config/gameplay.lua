@@ -41,7 +41,7 @@ return {
     upgrades = {
         stamina = { maxima = { 100, 160, 200 }, prices = { 400, 600 } },
         inventory = { prices = { 300, 600, 900 } },
-        boatSpeed = { metersPerSec = { 6.0, 8.0, 10.0 }, prices = { 350, 750 } },
+        boatSpeed = { metersPerSec = { 9.0, 12.0, 16.0 }, prices = { 350, 750 } },
     },
     drop = {
         lifetimeSec = 20,
