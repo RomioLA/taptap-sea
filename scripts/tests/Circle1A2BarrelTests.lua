@@ -260,9 +260,11 @@ function Tests.Run()
                 otherFixedCount = otherFixedCount + 1
             end
         end
-        assert(otherFloatCount > 0, "fixture should include the pre-existing generic float")
+        -- 演示漂浮物 float(10,0) 已按真机反馈删除；world 中不再有泛型 float。
+        assert(otherFloatCount == 0,
+            "the demo generic float was removed; only the barrel remains")
         assert(otherFixedCount == #Config.world.fixedObjects,
-            "the barrel should be added beside the three original fixed objects")
+            "the barrel should be added beside the original fixed objects")
 
         local writeSucceeded = pcall(function() first.id = "changed" end)
         assert(not writeSucceeded, "top-level snapshot writes must fail")
@@ -411,7 +413,8 @@ function Tests.Run()
         local barrel = runtime:GetFixedBarrel()
         assert(barrel ~= nil)
         assertNear(Config.interaction.operateDistance, 5)
-        assert(#Config.world.fixedObjects == 3, "the original fixed-object set should remain unchanged")
+        -- 真机反馈（2026-10-05）：演示漂浮物 float(10,0) 已删除，固定物只余两座岛。
+        assert(#Config.world.fixedObjects == 2, "the original fixed-object set should remain unchanged")
 
         for index, originalObject in ipairs(Config.world.fixedObjects) do
             ---@type SeaEntity

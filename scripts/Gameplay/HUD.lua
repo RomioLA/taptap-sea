@@ -231,8 +231,7 @@ function HUD.Create(loop, parent, debugTools)
     refs.depart = makeButton("出航", function() invokeLoop("Depart") end, "primary", 80)
     refs.returnToPort = makeButton("返港", function() invokeLoop("ReturnToPort") end, "secondary", 80)
     refs.endToday = makeButton("结束今日", function() invokeLoop("EndToday") end, "primary", 98)
-    refs.loadSaved = makeButton("读取云存档", function() invokeLoop("LoadSaved") end, "secondary", 110)
-    refs.newRun = makeButton("开始新周目", function() invokeLoop("NewRun") end, "secondary", 110)
+    -- 读取云存档/开始新周目移入信息滚动屏（低频港口操作，见 portPanel 段）。
     refs.inventoryToggle = makeButton("背包", function()
         invokeLoop("SetInventoryOpen", not (loop.inventoryOpen == true))
     end, "secondary", 80)
@@ -249,9 +248,14 @@ function HUD.Create(loop, parent, debugTools)
         invokeLoop(loop.scopeSyncError and "DisableScope" or "ToggleScope")
     end, "secondary", 80)
     refs.scopeToggleBar:SetVisible(false)
-    -- 单行顺序：低频工具 → 情境按钮 → 核心动作（出航/返港/结束今日/捕鱼）。
-    dock:AddChild(refs.loadSaved)
-    dock:AddChild(refs.newRun)
+    -- 信息滚动屏开合按钮（真机反馈 2026-10-05：屏幕只能打开不能收起）：
+    -- 按一下打开、再按一下或点击屏内空白处收起。
+    refs.infoToggle = makeButton("信息", function()
+        state.infoOpen = not (state.infoOpen == true)
+        refresh()
+    end, "secondary", 72)
+    -- 单行顺序：信息开合 → 情境按钮 → 核心动作（出航/返港/结束今日/捕鱼）。
+    dock:AddChild(refs.infoToggle)
     dock:AddChild(refs.barrelToggle)
     dock:AddChild(refs.scopeToggleBar)
     dock:AddChild(refs.inventoryToggle)
@@ -277,6 +281,42 @@ function HUD.Create(loop, parent, debugTools)
         flexDirection = "column",
     }
     contentScroll:AddChild(content)
+
+    -- 真机反馈（2026-10-05）：信息滚动屏改为开合式——"信息"按钮打开，
+    -- 点屏内空白处（或再按按钮）收起。closeCatcher 是铺满信息区的透明按钮，
+    -- 垫在 contentScroll 之下：scroll 保持 pointerEvents=box-none（AB 契约），
+    -- 空白点击穿透到 catcher 触发收起，面板内按钮不受影响。
+    local infoLayer = UI.Panel {
+        id = "gameplayInfoLayer",
+        width = "100%",
+        flexGrow = 1,
+        flexBasis = 0,
+        pointerEvents = "box-none",
+    }
+    refs.infoCloseCatcher = UI.Button {
+        id = "infoCloseCatcher",
+        text = "",
+        position = "absolute",
+        top = 0,
+        left = 0,
+        width = "100%",
+        height = "100%",
+        fontSize = 1,
+        backgroundColor = { 0, 0, 0, 0 },
+        borderColor = { 0, 0, 0, 0 },
+        borderWidth = 0,
+        onClick = function()
+            if state.infoOpen == true then
+                state.infoOpen = false
+                refresh()
+            end
+        end,
+    }
+    refs.infoCloseCatcher:SetVisible(false)
+    infoLayer:AddChild(refs.infoCloseCatcher)
+    refs.contentScroll = contentScroll
+    refs.contentScroll:SetVisible(false)
+    infoLayer:AddChild(contentScroll)
 
     -- 背包底部抽屉（设计方案 v1.0）：从底部滑入占屏 65%，背后场景压暗；
     -- 港口商店留在滚动区——抽屉若同时容纳商店会遮挡出航/结算等核心按钮。
@@ -340,6 +380,9 @@ function HUD.Create(loop, parent, debugTools)
     refs.drawerScroll:AddChild(drawerContent)
     refs.drawer:AddChild(refs.drawerScroll)
 
+    -- 真机反馈（2026-10-05）：投掷/木桶提示是"过程提示"，不进可开合的信息滚动屏，
+    -- 直接挂在根流（与捕鱼小卡同级），保证进行中流程始终可见。
+    -- 屏内不再放重复入口按钮：检查入口走按钮坞"检查木桶"。
     refs.throwSelectionPanel = card("投掷物品")
     refs.throwSelectionText = makeLabel("", 13, { 255, 236, 207, 255 }, "bold")
     refs.throwSelectionPanel:AddChild(refs.throwSelectionText)
@@ -348,24 +391,19 @@ function HUD.Create(loop, parent, debugTools)
     end, "secondary", 94)
     refs.throwSelectionPanel:AddChild(refs.throwSelectionCancel)
     refs.throwSelectionPanel:SetVisible(false)
-    content:AddChild(refs.throwSelectionPanel)
+    root:AddChild(refs.throwSelectionPanel)
 
     refs.barrelPanel = card("海岸木桶")
     refs.barrelStatus = makeLabel("木桶检查暂未开放。", 13)
     refs.barrelPanel:AddChild(refs.barrelStatus)
-    refs.barrelBegin = makeButton("检查木桶", function()
-        invokeLoop("BeginBarrelInspection")
-    end, "primary", 92)
     refs.barrelCancel = makeButton("取消检查", function()
         invokeLoop("CancelBarrelInspection")
     end, "secondary", 92)
-    refs.barrelPanel:AddChild(refs.barrelBegin)
     refs.barrelPanel:AddChild(refs.barrelCancel)
     refs.barrelPanel:SetVisible(false)
-    content:AddChild(refs.barrelPanel)
+    root:AddChild(refs.barrelPanel)
 
-    -- v2.0 零遮挡：望远镜条目去卡片底板，收为一行紧凑文字+按钮；
-    -- 测试契约要求"透镜未获得"按钮无透镜时可见且禁用，故保留常驻。
+    -- 望远镜状态行只读（信息滚动屏内）；开关入口收敛为按钮坞"望远镜"单按钮。
     refs.scopePanel = UI.Panel {
         width = "100%",
         flexDirection = "row",
@@ -375,10 +413,6 @@ function HUD.Create(loop, parent, debugTools)
     }
     refs.scopeStatus = makeInfoLabel("尚未获得透镜；无法查看或切换望远镜功能。", 12, UI_PALETTE.textMuted)
     refs.scopePanel:AddChild(refs.scopeStatus)
-    refs.scopeToggle = makeButton("切换望远镜", function()
-        invokeLoop(loop.scopeSyncError and "DisableScope" or "ToggleScope")
-    end, "secondary", 112)
-    refs.scopePanel:AddChild(refs.scopeToggle)
     content:AddChild(refs.scopePanel)
     -- 宝物是既有player.treasures状态，不占有限格inventory；开关复用既有望远镜入口。
     refs.treasurePanel = card("宝物 · 不占船舱格")
@@ -443,7 +477,12 @@ function HUD.Create(loop, parent, debugTools)
         if state.selectedItemIndex then invokeLoop("DropItem", state.selectedItemIndex) end
     end, "danger", 56)
     refs.itemThrow = makeButton("投掷", function()
-        if state.selectedItemIndex then invokeLoop("BeginThrowItem", state.selectedItemIndex) end
+        local itemIndex = state.selectedItemIndex
+        if not itemIndex then return end
+        -- 真机反馈（2026-10-05）：背包内点"投掷"直接以船当前位置投放并收起背包，
+        -- 不再要求点击海面（抽屉遮罩会挡住海面导致卡死在背包页）。
+        invokeLoop("SetInventoryOpen", false)
+        invokeLoop("ThrowItemAtShip", itemIndex)
     end, "secondary", 56)
     refs.itemMenuBack = makeButton("返回", function()
         state.selectedItemIndex = nil
@@ -489,6 +528,19 @@ function HUD.Create(loop, parent, debugTools)
     drawerContent:AddChild(refs.inventoryPanel)
 
     refs.portPanel = card("港口商店")
+    -- 低频港口操作（真机反馈 2026-10-05 精简按钮坞）：从按钮坞移入信息屏。
+    refs.loadSaved = makeButton("读取云存档", function() invokeLoop("LoadSaved") end, "secondary", 110)
+    refs.newRun = makeButton("开始新周目", function() invokeLoop("NewRun") end, "secondary", 110)
+    local portUtilityRow = UI.Panel {
+        width = "100%",
+        flexDirection = "row",
+        flexWrap = "wrap",
+        alignItems = "center",
+        gap = 6,
+    }
+    portUtilityRow:AddChild(refs.loadSaved)
+    portUtilityRow:AddChild(refs.newRun)
+    refs.portPanel:AddChild(portUtilityRow)
     refs.loadStatus = makeLabel("", 12)
     refs.portPanel:AddChild(refs.loadStatus)
     refs.portPanel:AddChild(makeLabel("新周目起始状态会在开始时保存；入口处可读取已有云存档。", 12))
@@ -591,12 +643,11 @@ function HUD.Create(loop, parent, debugTools)
         itemRow:AddChild(makeButton("暂停原因", function() invokeDebug("pauseReasons") end, "secondary", 86))
         refs.debugPanel:AddChild(itemRow)
 
-        content:AddChild(refs.debugPanel)
+        -- 调试面板挂根流（仅开发模式创建）：不随信息滚动屏开合，保证调试按钮常可用。
+        root:AddChild(refs.debugPanel)
     end
 
-    root:AddChild(contentScroll)
-    root:AddChild(refs.drawerBackdrop)
-    root:AddChild(refs.drawer)
+    root:AddChild(infoLayer)
 
     -- 统一遮罩承载强制返港、每日结算和拜访老人的反馈。
     refs.overlay = UI.Panel {
@@ -720,6 +771,40 @@ function HUD.Create(loop, parent, debugTools)
     refs.settlementBody:Hide()
     refs.elderBody:Hide()
     refs.storyBody:Hide()
+    -- 捕鱼结果气泡（真机反馈 2026-10-05）：收网后在屏幕中上部弹出结果提示，
+    -- 约 5 秒后自动消失；不接收点击（box-none），不遮挡按钮坞。
+    refs.catchBubble = UI.Panel {
+        id = "catchResultBubble",
+        position = "absolute",
+        top = 64,
+        left = 0,
+        width = "100%",
+        justifyContent = "center",
+        alignItems = "center",
+        zIndex = 70,
+        pointerEvents = "box-none",
+    }
+    local catchBubbleCard = UI.Panel {
+        maxWidth = 340,
+        padding = 9,
+        gap = 4,
+        flexDirection = "column",
+        alignItems = "center",
+        backgroundColor = { 24, 44, 40, 238 },
+        borderColor = { 159, 133, 88, 230 },
+        borderWidth = 1,
+        borderRadius = 12,
+    }
+    refs.catchBubbleText = makeLabel("", 13, { 255, 236, 207, 255 }, "bold")
+    catchBubbleCard:AddChild(refs.catchBubbleText)
+    refs.catchBubble:AddChild(catchBubbleCard)
+    refs.catchBubble:SetVisible(false)
+    -- 插在信息层之后、抽屉/模态之前：root 末两个子节点必须是
+    -- gameplayInventoryDrawer 与全屏 overlay（Circle1B3SceneUITests 契约）。
+    root:AddChild(refs.catchBubble)
+    root:AddChild(refs.drawerBackdrop)
+    root:AddChild(refs.drawer)
+    -- overlay 保持 root 最后一个子节点（fitHudToLeftSide 全屏豁免 + 测试契约）。
     root:AddChild(refs.overlay)
 
     invokeLoop = function(methodName, ...)
@@ -1041,6 +1126,28 @@ function HUD.Create(loop, parent, debugTools)
         end
         refs.fishingResult:SetVisible(fishingTerminal)
         setText(refs.fishingResult, "fishingResult", resultText)
+
+        -- 收网结果气泡：进入终态时记录文本并展示约 5 秒；离开终态后允许下次收网重弹。
+        -- （os.time 缺失的运行时静默禁用气泡，结果仍见捕鱼小卡的结果行。）
+        local nowStamp = os and type(os.time) == "function" and os.time() or nil
+        if nowStamp then
+            if fishingTerminal and resultText ~= "" then
+                local bubbleKey = fishingPhase .. "|" .. resultText
+                if state.bubbleKey ~= bubbleKey then
+                    state.bubbleKey = bubbleKey
+                    state.bubbleText = resultText
+                    state.bubbleUntil = nowStamp + 5
+                end
+            elseif not fishingTerminal and state.bubbleKey ~= nil then
+                state.bubbleKey = nil
+            end
+            local bubbleVisible = state.bubbleUntil ~= nil and nowStamp < state.bubbleUntil
+            refs.catchBubble:SetVisible(bubbleVisible)
+            if bubbleVisible then
+                setText(refs.catchBubbleText, "catchBubbleText", state.bubbleText or "")
+            end
+        end
+
         -- v2.0 零遮挡：捕鱼面板只在捕鱼过程（选择/收网/清理/结算）中出现；
         -- 待机状态的出海画面只保留左上信息文字与右下按钮坞。
         refs.fishingPanel:SetVisible(fishingRestricted or fishingTerminal)
@@ -1062,9 +1169,13 @@ function HUD.Create(loop, parent, debugTools)
         refs.barrelToggle:SetVisible(not inPort and (barrelNearForDock or barrelDockEngaged))
         refs.barrelToggle:SetDisabled(busy or fishingRestricted
             or (not barrelNearForDock and not barrelDockEngaged))
-        refs.scopeToggleBar:SetVisible(not inPort and (hasLens or barrelNearForDock))
-        refs.scopeToggleBar:SetText(hasLens and (scopeEnabled and "望远镜·开" or "望远镜·关") or "望远镜")
-        refs.scopeToggleBar:SetDisabled(busy or fishingRestricted)
+        -- 望远镜单入口（真机反馈 2026-10-05 精简：信息屏内只留状态文字）：
+        -- 海上常驻；无透镜时按 B 侧契约显示禁用的"透镜未获得"。
+        refs.scopeToggleBar:SetVisible(not inPort)
+        refs.scopeToggleBar:SetText(hasLens
+            and (scopeEnabled and "关闭望远镜" or "开启望远镜") or "透镜未获得")
+        refs.scopeToggleBar:SetDisabled(busy or fishingRestricted
+            or not hasLens or not scopeApiAvailable)
         refs.cancelFishing:SetVisible(fishingRestricted)
         refs.cancelFishing:SetText(fishingCleanupPending and "重试清理" or "取消捕鱼")
         refs.cancelFishing:SetDisabled(false)
@@ -1095,6 +1206,18 @@ function HUD.Create(loop, parent, debugTools)
         setText(refs.treasureSummary, "treasureSummary", hasLens
             and "望远镜透镜 ×1 · 永久保留，不占船舱格，不能出售或丢弃。"
             or "尚未获得宝物；取得的宝物单独保留，不占船舱格。")
+        -- 信息滚动屏开合（真机反馈 2026-10-05）：纯派生态，不写用户偏好——
+        -- · 需要点击海面的流程（捕鱼选点/投放选点）强制收起（流程结束自动恢复）；
+        -- · 用户未操作过（nil）时：在港默认展开（商店/读取可用），出海默认收起；
+        -- · 用户显式开/关后跟随其选择。"信息"按钮或屏内空白点击均可开合。
+        local seaClickFlow = fishingSelecting or throwSelection ~= nil
+        local infoOpen = not seaClickFlow
+            and ((state.infoOpen == nil and inPort) or state.infoOpen == true)
+        refs.contentScroll:SetVisible(infoOpen)
+        refs.infoCloseCatcher:SetVisible(infoOpen)
+        refs.infoToggle:SetText(infoOpen and "收起信息" or "信息")
+        refs.infoToggle:SetDisabled(busy or loop.loading == true)
+
         refs.depart:SetVisible(inPort)
         refs.returnToPort:SetVisible(not inPort)
         refs.endToday:SetVisible(inPort)
@@ -1116,7 +1239,7 @@ function HUD.Create(loop, parent, debugTools)
         refs.inventoryClose:SetDisabled(busy or loop.loading == true)
         refs.portPanel:SetVisible(inPort)
         -- 港口提示已并入左上角日志槽（见 refresh 开头的 logSlot 逻辑），不再单独占行。
-        refs.loadSaved:SetVisible(inPort)
+        -- loadSaved/newRun 已移入信息屏（portPanel 段），显隐随 infoOpen。
         refs.loadSaved:SetText(loop.loadStatus == "error" and "重试读取" or "读取云存档")
         refs.loadSaved:SetDisabled(busy or loop.settlementPending == true or pendingCatch or fishingRestricted)
         refs.newRun:SetDisabled(busy or loop.settlementPending == true or pendingCatch)
@@ -1160,46 +1283,33 @@ function HUD.Create(loop, parent, debugTools)
         local barrelPending = barrelState ~= nil and barrelState.pending == true
         if not barrelGatesAvailable then
             setText(refs.barrelStatus, "barrelStatus", "木桶检查暂未开放。")
-            refs.barrelBegin:SetVisible(false)
             refs.barrelCancel:SetVisible(false)
         elseif barrelPending then
             setText(refs.barrelStatus, "barrelStatus", "木桶补给等待领取，请先处理待领取奖励。")
-            refs.barrelBegin:SetVisible(false)
             refs.barrelCancel:SetVisible(false)
         elseif barrelFinished then
             setText(refs.barrelStatus, "barrelStatus", "木桶调查已完成。")
-            refs.barrelBegin:SetVisible(false)
             refs.barrelCancel:SetVisible(false)
         elseif barrelActive then
             local seconds = math.max(0, tonumber(barrelState.remaining) or 0)
             setText(refs.barrelStatus, "barrelStatus", string.format(
                 "木桶检查进行中，剩余 %.1f 秒；打开背包或对话会暂停计时，可以取消。", seconds))
-            refs.barrelBegin:SetVisible(false)
             refs.barrelCancel:SetVisible(true)
             refs.barrelCancel:SetDisabled(false)
         else
-            setText(refs.barrelStatus, "barrelStatus", "发现海岸边的木桶。")
-            refs.barrelBegin:SetVisible(true)
+            setText(refs.barrelStatus, "barrelStatus", "发现海岸边的木桶；靠近后点按钮坞「检查木桶」。")
             refs.barrelCancel:SetVisible(false)
-            refs.barrelBegin:SetDisabled(busy or fishingRestricted or not ready or pendingCatch)
         end
 
+        -- 望远镜状态行（信息屏内）只读；开关统一走按钮坞"望远镜"。
         if not hasLens then
             setText(refs.scopeStatus, "scopeStatus", "尚未获得透镜；无法查看或切换望远镜功能。")
-            refs.scopeToggle:SetText("透镜未获得")
-            refs.scopeToggle:SetDisabled(true)
         elseif not scopeApiAvailable or loop.scopeSyncError == "scope_interface_unavailable" then
             setText(refs.scopeStatus, "scopeStatus", "望远镜功能接口暂不可用。")
-            refs.scopeToggle:SetText("功能暂不可用")
-            refs.scopeToggle:SetDisabled(true)
         elseif loop.scopeSyncError then
             setText(refs.scopeStatus, "scopeStatus", "望远镜状态同步失败，请重试关闭。")
-            refs.scopeToggle:SetText("重试关闭望远镜")
-            refs.scopeToggle:SetDisabled(busy or fishingRestricted)
         else
             setText(refs.scopeStatus, "scopeStatus", scopeEnabled and "望远镜设置：开启。" or "望远镜设置：关闭。")
-            refs.scopeToggle:SetText(scopeEnabled and "关闭望远镜" or "开启望远镜")
-            refs.scopeToggle:SetDisabled(busy or fishingRestricted)
         end
 
         -- 注：scopePanel（望远镜条目）保留常驻——测试契约要求无透镜时显示

@@ -47,9 +47,10 @@ local Config = {
     fixedObjects = {
         { entityType = "island", position = { x = 35, y = 25 }, radius = 12, blocking = true },
         { entityType = "island", position = { x = -80, y = 90 }, radius = 20, blocking = true },
-        { entityType = "float", position = { x = 10, y = 0 }, radius = 2, blocking = false },
     },    -- 新手教程点位：出港点(0,0)右侧近海的固定木桶，出港即可见、抵达即教学。
     -- 非阻挡漂浮物，靠近 ≤ operateDistance(5m) 可检查（World:Init 注册）。
+    -- 真机反馈（2026-10-05）：原演示漂浮物 float(10,0) 无任何玩法功能，
+    -- 在返航点旁渲染为无意义圆形色块，已删除。
     fixedBarrel = { position = { x = 14, y = 6 }, radius = 2,
         tuningStatus = "TUTORIAL_PROVISIONAL_GEOMETRY" },
 },

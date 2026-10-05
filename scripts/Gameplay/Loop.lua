@@ -1430,6 +1430,30 @@ function Loop:GetThrowSelection()
     return selected and { index = selected.index, itemId = selected.itemId } or nil
 end
 function Loop:CancelThrowSelection() self.throwSelection = nil; return true end
+
+---背包内一键投掷：以船当前位置为投放点直接执行投放。
+---真机反馈（2026-10-05）：先 BeginThrowItem 再点海面的两段式流程会被背包
+---抽屉遮罩挡住海面点击，玩家卡死在背包页。此接口保持 BeginThrowItem /
+---HandleThrowPointer 海面选点流程不变，仅新增"船当前位置"快捷路径。
+---@param index integer
+---@return boolean, string?
+function Loop:ThrowItemAtShip(index)
+    if not self:CanManageInventory() or self.inPort then return false, "sea_required" end
+    local item = self.player.inventory:GetItems()[index]
+    local definition = item and Items.GetDefinition(item)
+    if not definition or definition.category == "treasure" then return false, "invalid_item" end
+    if not self.actions then return false, "fishing_runtime_interface_unavailable" end
+    local position = self.runtime and type(self.runtime.GetShipPosition) == "function"
+        and self.runtime:GetShipPosition() or nil
+    if type(position) ~= "table" or type(position.x) ~= "number" or type(position.y) ~= "number" then
+        return false, "invalid_drop_position"
+    end
+    -- 投放点=船当前位置（距离 0 ≤ maxThrowDistance），交接由 dropReceiver 同步确认。
+    self.actions:SetDropTarget({ x = position.x, y = position.y })
+    local ok, reason = self:DropItem(index)
+    if not ok then self.actions:SetDropTarget(nil) end
+    return ok, reason
+end
 function Loop:OpenDay7PaperBeforeEnding()
     if self.player.day ~= 7 then return false, "paper_day_required" end
     if Progress.IsPaperShown(self.player) then return false, "paper_already_shown" end

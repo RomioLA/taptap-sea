@@ -267,7 +267,12 @@ function Tests.Run()
         assert(r.world:isPositionFree(r.ship.position,r.ship.radius))
     end)
     check("small floats overlap without blocking", function()
-        local r=fresh(); local overlaps=0
+        local r=fresh()
+        -- 演示漂浮物已从固定物中删除（真机反馈 2026-10-05）；本契约验证的是
+        -- 漂浮物"可重叠、不阻挡"语义本身，故临时生成一个 float 再航行穿过。
+        r.world:spawn({ entityType="float", kind="fixed", layer="surface",
+            position={x=9,y=0}, radius=2 })
+        local overlaps=0
         r.world.onOverlap=function(e) if e.entityType=="float" then overlaps=overlaps+1 end end
         step(r,3,1,0); near(r.ship.position.x,Config.ship.speedByLevel[1]*3); assert(overlaps==1)
     end)

@@ -45,7 +45,12 @@ def main():
             captured.append(' '.join(str(v) for v in values)[:9000])
     def runtime():
         lua = LuaRuntime(unpack_returned_tuples=True)
-        lua.globals().package.path = (source / '?.lua').as_posix() + ';' + (source / '?/init.lua').as_posix() + ';' + lua.globals().package.path
+        # 引擎库位于仓库根的 urhox-libs/（被 .gitignore 排除，不进 scripts/）；
+        # Circle1HUDReviewTests 需要 require("urhox-libs/UI/Core/Transition")，
+        # 故把仓库根加入 package.path（require 会自动拼出 urhox-libs/... 前缀）。
+        repo_root = ROOT.as_posix()
+        lua.globals().package.path = (source / '?.lua').as_posix() + ';' + (source / '?/init.lua').as_posix() \
+            + ';' + repo_root + '/?.lua;' + repo_root + '/?/init.lua;' + lua.globals().package.path
         lua.globals().print = log
         return lua
 
