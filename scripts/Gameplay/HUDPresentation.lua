@@ -232,6 +232,9 @@ function Presentation.Create(UI, Config, Items)
     -- 白天/夜晚均可读。urhox Label 原生支持 textStroke/textShadow（测试桩
     -- 环境未知字段会被忽略，不影响断言）。
     -- extraProps：允许调用方补充布局属性（如 flexGrow/flexBasis 防压缩）。
+    -- 真机反馈（2026-10-05）：textStroke 引擎按 8 方向各画一份文本实现描边，
+    -- width=3 时偏移 ±3px，在 12~13px 中文字号上呈"多个重复文字叠影"。
+    -- 降到 width=1（±1px 贴边描边）+ 1px 阴影：保留海面可读性，消除重影。
     local function makeInfoLabel(text, size, color, weight, extraProps)
         local props = {
             text = text,
@@ -239,8 +242,8 @@ function Presentation.Create(UI, Config, Items)
             fontColor = color or UI_PALETTE.textOnDark,
             fontWeight = weight or "normal",
             whiteSpace = "normal",
-            textStroke = { width = 3, color = UI_PALETTE.infoStroke },
-            textShadow = { offsetX = 1, offsetY = 1, blur = 2, color = UI_PALETTE.infoShadow },
+            textStroke = { width = 1, color = UI_PALETTE.infoStroke },
+            textShadow = { offsetX = 1, offsetY = 1, blur = 1, color = UI_PALETTE.infoShadow },
         }
         if extraProps then
             for key, value in pairs(extraProps) do props[key] = value end

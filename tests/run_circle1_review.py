@@ -232,8 +232,12 @@ def run_one(
     lua = LuaRuntime(unpack_returned_tuples=True, encoding="utf-8")
     lua.globals().print = lambda *args: captured.append("\t".join(str(arg) for arg in args))
     scripts = (ROOT / "scripts").as_posix()
+    # 引擎库位于仓库根的 urhox-libs/（被 .gitignore 排除，不进 scripts/）；
+    # Circle1HUDReviewTests 需要 require("urhox-libs/UI/Core/Transition")，
+    # 模块名自带 urhox-libs 前缀，因此把仓库根加入搜索路径。
     lua.globals().package.path = (
-        f"{scripts}/?.lua;{scripts}/?/init.lua;" + lua.globals().package.path
+        f"{scripts}/?.lua;{scripts}/?/init.lua;{ROOT.as_posix()}/?.lua;{ROOT.as_posix()}/?/init.lua;"
+        + lua.globals().package.path
     )
     recorder_capture = capture_module.NVGCapture()
     recorder_table = recorder_capture.bind(lua)

@@ -1,0 +1,86 @@
+{
+  "name": "SeaViewUpgradeTests",
+  "kind": "run",
+  "file": "scripts/tests/SeaViewUpgradeTests.lua",
+  "passed": true,
+  "subtestCount": 10,
+  "failures": [],
+  "returned": {
+    "status": "PASS",
+    "metrics": {
+      "clippedFarCircleSamples": 21,
+      "projectedDepthsMeters": [
+        0,
+        20,
+        85,
+        109
+      ],
+      "headingCount": 8,
+      "viewportCases": 3,
+      "lensSectorSamples": 26,
+      "netCircleSamples": 32
+    },
+    "results": [
+      {
+        "passed": true,
+        "name": "camera_configuration_uses_the_confirmed_world_oblique_values",
+        "error": ""
+      },
+      {
+        "passed": true,
+        "name": "eight_heading_inputs_keep_the_same_meter_speed",
+        "error": ""
+      },
+      {
+        "passed": true,
+        "name": "camera_follows_continuously_and_returns_smoothly_when_the_ship_stops",
+        "error": ""
+      },
+      {
+        "passed": true,
+        "name": "projection_formula_and_inverse_hold_at_multiple_world_depths",
+        "error": ""
+      },
+      {
+        "passed": true,
+        "name": "logical_projection_resizes_correctly_across_aspect_and_dpr",
+        "error": ""
+      },
+      {
+        "passed": true,
+        "name": "horizon_far_depth_and_near_singularity_are_rejected",
+        "error": ""
+      },
+      {
+        "passed": true,
+        "name": "sampled_net_circles_and_lens_sectors_preserve_world_distance_and_angle",
+        "error": ""
+      },
+      {
+        "passed": true,
+        "name": "world_visibility_and_interaction_distances_do_not_change_with_camera",
+        "error": ""
+      },
+      {
+        "passed": true,
+        "name": "wake_uses_measured_displacement_and_expires_while_stationary",
+        "error": ""
+      },
+      {
+        "passed": true,
+        "name": "pause_resize_return_port_and_reset_preserve_or_clear_wake_as_required",
+        "error": ""
+      }
+    ],
+    "passed": true,
+    "evidence": {
+      "nativeEngineVisualAcceptance": "NOT_RUN",
+      "kind": "pure Lua logic suite using real project modules",
+      "NanoVGMockVisualAcceptance": false
+    }
+  },
+  "stdout": "",
+  "nvgCalls": {},
+  "nvgCallTotal": 0,
+  "durationMs": 363.223
+}

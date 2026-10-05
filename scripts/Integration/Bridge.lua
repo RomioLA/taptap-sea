@@ -70,6 +70,27 @@ local function refreshDynamicWorld(self, day, clearDropTarget)
     return true
 end
 
+-- Hoisted xpcall handler: no per-frame closure allocation.
+local function handleBarrelReadError(err)
+    return err
+end
+
+---@param self GameplayOceanBridge
+local function recognizeFixedBarrel(self)
+    local runtime = self.runtime
+    if type(runtime.GetFixedBarrel) ~= "function" then return end
+    local ok, barrel = xpcall(runtime.GetFixedBarrel, handleBarrelReadError, runtime)
+    if ok then
+        self._barrelReadErrorLogged = false
+    elseif not self._barrelReadErrorLogged then
+        self._barrelReadErrorLogged = true
+        Diagnostics.Exception("Integration", "barrel_read", barrel)
+    end
+    if ok and barrel and type(barrel.contentId) == "string" and barrel.position then
+        self:RecognizeLocation(barrel.contentId, barrel.position)
+    end
+end
+
 ---@param self GameplayOceanBridge
 ---@param day integer
 local function handleNewDay(self, day)
@@ -170,20 +191,9 @@ end
 function Bridge:Update(dt, axisX, axisY)
     if not isFiniteNumber(dt) or dt < 0 then return false, "invalid_dt" end
     self.game:Update(dt, axisX, axisY)
-    local runtime = self.runtime
-    if type(runtime.GetFixedBarrel) == "function" then
-        local ok, barrel = xpcall(runtime.GetFixedBarrel, function(err)
-            if not self._barrelReadErrorLogged then
-                self._barrelReadErrorLogged = true
-                Diagnostics.Exception("Integration", "barrel_read", err)
-            end
-            return err
-        end, runtime)
-        if ok then self._barrelReadErrorLogged = false end
-        if ok and barrel and type(barrel.contentId) == "string" and barrel.position then
-            self:RecognizeLocation(barrel.contentId, barrel.position)
-        end
-    end
+    -- 逐帧识别（契约：getter 异常只记一次直至恢复；快照必须每次新鲜）。
+    -- GC 优化只做无闭包化（handler 提升），不节流、不改快照语义。
+    recognizeFixedBarrel(self)
     return true, dt
 end
 

@@ -43,11 +43,17 @@ local function fitHudToLeftSide(hud)
     local children = hud.root:GetChildren()
     -- HUD's final child is its full-screen modal overlay. Keep that full-screen.
     local visibleChildCount = math.max(0, #children - 1)
+    -- 紧凑捕鱼面板自带小尺寸（≤216px），不参与左侧栏等宽注入，避免重新被拉宽遮挡船心。
+    local fishingCompact = nil
+    if type(hud.root.FindById) == "function" then
+        fishingCompact = hud.root:FindById("fishingCompactPanel")
+    end
     local width = math.floor(math.min(620, logicalScreenWidth() * 0.62))
     for index = 1, visibleChildCount do
         local child = children[index]
-        -- 左侧宽度只约束信息流；absolute操作坞、抽屉及遮罩由HUD自行定位。
-        if not child.props or child.props.position ~= "absolute" then
+        -- 左侧宽度只约束信息流；absolute操作坞、抽屉及遮罩由HUD自行定位；
+        -- 紧凑捕鱼面板自带小尺寸（≤216px），不参与左侧栏等宽注入，避免重新被拉宽遮挡船心。
+        if (not child.props or child.props.position ~= "absolute") and child ~= fishingCompact then
             setStyle(child, {
                 width = width,
                 maxWidth = width,
@@ -56,7 +62,6 @@ local function fitHudToLeftSide(hud)
         end
     end
     if children[1] then setStyle(children[1], { flexWrap = "wrap" }) end
-    if children[2] then setStyle(children[2], { flexWrap = "wrap" }) end
 
     -- A flexing ScrollView otherwise wins empty sea clicks across its viewport.
     local contentScroll = hud.root:FindById("gameplayContentScroll")
@@ -75,7 +80,12 @@ function Scene.Start(options)
     bridgeOptions.store = settings.store or Persistence.Dual(settings.cloud)
     bridgeOptions.loadSaved = false
 
-    UI.Init({ theme = uiTheme, scale = UI.Scale.DEFAULT })
+    UI.Init({ theme = uiTheme, scale = UI.Scale.DEFAULT,
+        -- 当前运行包不含主题默认圆体；复用包内 MiSans，避免开场按钮无文字。
+        fonts = { { family = "sans", weights = {
+            normal = "Fonts/MiSans-Regular.ttf", bold = "Fonts/MiSans-Bold.ttf",
+        } } },
+    })
     local root = UI.Panel {
         id = "seaIntegrationRoot",
         width = "100%",

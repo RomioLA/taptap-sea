@@ -410,7 +410,7 @@ function Tests.Run()
             currentFrameAdvances = frameLoop.calls }
     end)
 
-    check("ship levels 6, 8, and 10 use real configured speed, turning, and swept island collision", function()
+    check("ship levels 9, 12, and 16 use real configured speed, turning, and swept island collision", function()
         local reports = {}
         ---@type integer[]
         local levels = { 1, 2, 3 }
@@ -418,7 +418,7 @@ function Tests.Run()
             local runtime = Runtime.New({ initializeRegions = false,
                 departure = { x = 0, y = 25 }, shipLevel = level })
             local expectedSpeed = Config.ship.speedByLevel[level]
-            assert(expectedSpeed == ({ 6, 8, 10 })[level])
+            assert(expectedSpeed == ({ 9, 12, 16 })[level])
             near(runtime.movement.speed, expectedSpeed)
             local beforeX, beforeY = runtime.ship.position.x, runtime.ship.position.y
             runtime:Update(0.25, 1, 0)

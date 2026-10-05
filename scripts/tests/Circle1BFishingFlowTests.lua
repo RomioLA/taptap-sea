@@ -3,6 +3,7 @@ local GameplayConfig = require("config.gameplay")
 local OceanConfig = require("Ocean.Config")
 local GameWorld = require("Game.World")
 local Bridge = require("Integration.Bridge")
+local Progress = require("Gameplay.Circle1B2Progress")
 
 local Tests = {}
 local Runtime = {}
@@ -480,6 +481,91 @@ function Tests.Run()
         assert(f.bridge:CancelFishing(token2))
         assertEqual(f.loop.player.stamina, 100)
         assertItems(f.loop.player.inventory:GetItems(), before)
+    end)
+
+    -- A2（2026-10-05 用户裁决）：动作中再点捕鱼键=取消，免费且解除锁定，可立即重开。
+    test("A2 re-tapping the fishing dock button mid-action cancels for free", function()
+        local f = atSea()
+        local fish = f.runtime:spawnFish("sardine", { x = 1, y = 0 })
+        assert(f.bridge:BeginFishing({ x = 0, y = 0 }))
+        f.bridge:Update(0.2)
+        assertEqual(f.loop:GetFishingState().state, "casting")
+        -- 动作中再点捕鱼键 = 取消，而不是再次进入选点。
+        assert(f.loop:BeginFishingSelection())
+        assertEqual(f.loop:GetFishingState().state, "cancelled")
+        assert(not fish.captureLocked and not fish.removed)
+        assertEqual(f.loop.player.stamina, 100)
+        -- 取消后同一按钮立即可重新开始选点。
+        assert(f.loop:BeginFishingSelection())
+        assertEqual(f.loop:GetFishingState().state, "selecting")
+        assert(f.loop:CancelFishingAction())
+    end)
+
+    -- A1（2026-10-05 用户裁决）：白名单制——动作中透镜开关可用，对话/背包仍拒绝。
+    test("A1 whitelist: scope toggle stays available and dialogs stay blocked mid-action", function()
+        local f = atSea()
+        -- 最小透镜接口桩（同 Circle1B2ScopeTests.bindScope 的生产同步契约）。
+        local runtime = f.runtime
+        runtime.scopeEnabled = false
+        function runtime:SetScopeEnabled(enabled) self.scopeEnabled = enabled == true; return self.scopeEnabled end
+        function runtime:IsScopeEnabled() return runtime.scopeEnabled end
+        assert(Progress.GrantLens(f.loop.player))
+        assert(f.bridge:BeginFishing({ x = 0, y = 0 }))
+        f.bridge:Update(0.2)
+        assertEqual(f.loop:GetFishingState().state, "casting")
+        -- 白名单内：透镜开关可用且不暂停世界。
+        assert(f.loop:ToggleScope())
+        assert(not f.loop.clock:IsPaused())
+        assert(f.loop:ToggleScope())
+        -- 白名单外：背包与老人对话在动作中仍被拒绝。
+        assertEqual(f.loop:SetInventoryOpen(true), false)
+        assertEqual(f.loop:SetElderOpen(true), false)
+        assert(f.loop:CancelFishingAction())
+    end)
+
+    -- A9（S3）：protected=true 的关键物品不可丢弃/投掷/出售，整体出售自动跳过且不消耗。
+    -- v1 基准表暂无关键物品条目：测试内联注入受控定义并在结束时恢复，不污染 B 侧基准表。
+    test("A9 protected items cannot be dropped, thrown, or sold away", function()
+        local Items = require("data.items")
+        local originalGetDefinition = Items.GetDefinition
+        Items.GetDefinition = function(id)
+            if id == "test_relic" then
+                return { id = "test_relic", name = "旧护符", category = "fish",
+                    sellPrice = 999, heal = 0, canEat = false, canGive = false,
+                    protected = true, worldEffect = "NONE", lifetimeSec = 20 }
+            end
+            return originalGetDefinition(id)
+        end
+        local f = Tests.Fixture({ items = { "sardine" } })
+        local ok, err = pcall(function()
+            local inventory = f.loop.player.inventory
+            assert(inventory:Add("test_relic"), "patched definition must accept Add")
+            -- 在港：整体出售跳过关键物品，只卖普通鱼。
+            local moneyBefore = f.loop.player.money
+            assert(f.loop:SellAll())
+            assertEqual(f.loop.player.money, moneyBefore + 70, "only sardine income")
+            local function relicRetained()
+                for _, id in ipairs(inventory:GetItems()) do
+                    if id == "test_relic" then return true end
+                end
+                return false
+            end
+            assert(relicRetained(), "protected item must survive SellAll")
+            -- 出海：丢弃与投掷被拒且不消耗。
+            assert(f.loop:Depart())
+            local relicIndex
+            for index, id in ipairs(inventory:GetItems()) do
+                if id == "test_relic" then relicIndex = index end
+            end
+            assert(relicIndex, "relic index")
+            assertEqual(f.loop:DropItem(relicIndex), false, "drop blocked")
+            assertEqual(f.loop:BeginThrowItem(relicIndex), false, "throw selection blocked")
+            assertEqual(f.loop:ThrowItemAtShip(relicIndex), false, "ship-position throw blocked")
+            assertEqual(f.loop:GetThrowSelection(), nil, "no throw selection leaked")
+            assert(relicRetained(), "protected item must survive drop attempts")
+        end)
+        Items.GetDefinition = originalGetDefinition
+        if not ok then error(err, 0) end
     end)
 
     test("lock rejection is a free terminal failure and never selects a replacement", function()

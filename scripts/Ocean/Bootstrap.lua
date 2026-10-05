@@ -4,6 +4,7 @@ local Config = require("Ocean.Config")
 local Runtime = require("Ocean.SeaRuntime")
 local FishData = require("Ocean.FishData")
 local Draw = require("Ocean.SeaDraw")
+local ImageArt = require("Ocean.ImageArt")
 local Debug = require("Ocean.SeaDebug")
 local Bootstrap = {}
 Bootstrap.__index = Bootstrap
@@ -39,6 +40,7 @@ function Bootstrap:Init(options)
     self.context = nvgCreate(1)
     assert(self.context, "Sea NanoVG context unavailable")
     nvgSetRenderOrder(self.context, 0)
+    ImageArt.Load(self.context)
     if self.ownsUI then
         UI.Init({ theme = options.theme or "default-dark", scale = UI.Scale.DEFAULT })
     end
@@ -158,6 +160,7 @@ function Bootstrap:Stop()
     end
     self.eventObject:UnsubscribeFromAllEvents()
     self.eventNode:Remove()
+    ImageArt.Release(self.context)
     nvgDelete(self.context)
     if self.ownsUI then UI.Shutdown() end
     print("[SeaV1] bootstrap stopped")

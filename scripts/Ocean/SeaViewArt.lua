@@ -5,11 +5,16 @@ local Draw = require("Ocean.Draw")
 local Projection = require("Ocean.Projection")
 local Geometry = require("Ocean.ProjectedGeometry")
 local SurfaceEffects = require("Ocean.SeaSurfaceEffects")
+local ImageArt = require("Ocean.ImageArt")
 
 local SeaViewArt = {}
 local TWO_PI = math.pi * 2
 local VIEW_PADDING_METERS = 0.8
-local AIR_PERSPECTIVE_TINT = { 174, 209, 211 }
+local AIR_PERSPECTIVE_TINT = { 181, 212, 203 }
+-- Presentation palette only: do not rewrite shared world/config tuning.
+local PAPER_WAVE = { 233, 243, 223, 255 }
+local SAND_SHORE = { 226, 207, 158, 255 }
+local SAGE_LAND = { 149, 171, 133, 255 }
 local islandGeometry = setmetatable({}, {__mode="k"})
 
 local function finite(value)
@@ -321,9 +326,11 @@ local function surfaceMark(movement, position, settings, time, indexX, indexY,
     local minY = math.min(startY, middleY, endY)
     if maxX + strokePadding < -1 or minX - strokePadding > viewportWidth + 1
         or minY - strokePadding > viewportHeight + 1 then return nil end
-    local fragments = clipWaveToHorizon({
+    local points = {
         { x = startX, y = startY }, { x = middleX, y = middleY }, { x = endX, y = endY },
-    }, horizonAtX, math.max(0.55, strokePadding * 0.5), viewportWidth * 0.5)
+    }
+    local fragments = clipWaveToHorizon(points, horizonAtX,
+        math.max(0.55, strokePadding * 0.5), viewportWidth * 0.5)
     if #fragments == 0 then return nil end
     minX, maxX, minY = math.huge, -math.huge, math.huge
     for _, fragment in ipairs(fragments) do
@@ -338,7 +345,11 @@ local function surfaceMark(movement, position, settings, time, indexX, indexY,
         return nil
     end
 
-    return { fragments = fragments }, center.scale
+    -- Only the separated-horizon fast path returns the original points table.
+    -- Smooth inside that proven-safe convex hull; clipped fragments retain the
+    -- existing line samples/root solver and cannot curve back across the edge.
+    return { fragments = fragments, curved = #fragments == 1 and fragments[1] == points,
+        skew = 0.06 + ((indexX * 0.618033989 + indexY * 0.414213562) % 1) * 0.16 }, center.scale
 end
 
 local function drawSurfaceRow(ctx, marks, scale, settings, layerWeight, isFarLayer)
@@ -349,22 +360,29 @@ local function drawSurfaceRow(ctx, marks, scale, settings, layerWeight, isFarLay
     local lineWidth = isFarLayer
         and clamp(scale * widthMeters, 0.55, 1.15)
         or clamp(scale * widthMeters, 1.05, 3.2)
-    local haloWidth = lineWidth + (isFarLayer and 0.55 or 1.15)
-    local alpha = (color[4] or 145) * layerWeight
+    local alpha = (color[4] or 145) * layerWeight * 0.66
     nvgBeginPath(ctx)
     for _, mark in ipairs(marks) do
         for _, fragment in ipairs(mark.fragments) do
             nvgMoveTo(ctx, fragment[1].x, fragment[1].y)
-            for index = 2, #fragment do
-                nvgLineTo(ctx, fragment[index].x, fragment[index].y)
+            if mark.curved then
+                local a, b, c = fragment[1], fragment[2], fragment[3]
+                -- Unequal controls give a quiet, hand-drawn crest, still wholly
+                -- inside the old three-point envelope. No extra marks/samples.
+                nvgBezierTo(ctx, b.x + (a.x - b.x) * mark.skew,
+                    b.y + (a.y - b.y) * mark.skew,
+                    b.x + (c.x - b.x) * 0.04, b.y + (c.y - b.y) * 0.04,
+                    c.x, c.y)
+            else
+                for index = 2, #fragment do
+                    nvgLineTo(ctx, fragment[index].x, fragment[index].y)
+                end
             end
         end
     end
-    nvgStrokeColor(ctx, nvgRGBA(10, 87, 110, math.floor(math.min(68, alpha * 0.38) + 0.5)))
-    nvgStrokeWidth(ctx, haloWidth)
-    nvgStroke(ctx)
-    nvgStrokeColor(ctx, rgba(color, nil, alpha))
-    nvgStrokeWidth(ctx, lineWidth)
+    -- A single matte paper-light brush stroke, not a dark halo/neon core.
+    nvgStrokeColor(ctx, rgba(PAPER_WAVE, nil, alpha))
+    nvgStrokeWidth(ctx, lineWidth * 0.86)
     nvgStroke(ctx)
 end
 
@@ -468,8 +486,13 @@ function SeaViewArt.Surface(ctx, movement, time)
     nvgLineTo(ctx, 0, height)
     nvgClosePath(ctx)
     nvgFillPaint(ctx, nvgLinearGradient(ctx, 0, centerHorizon, 0, height,
-        nvgRGBA(54, 151, 165, 255), nvgRGBA(13, 73, 105, 255)))
+        nvgRGBA(86, 178, 180, 255), nvgRGBA(43, 148, 162, 255)))
     nvgFill(ctx)
+    -- Optional flat paper material supplied by ImageArt; world crests below
+    -- still own motion, fixed cell density and the bounded mark budget.
+    if type(ImageArt.WaterPaper) == "function" then
+        ImageArt.WaterPaper(ctx, movement, width, height)
+    end
 
     -- Draw the same sampled curve over the fill so the two edges stay aligned.
     nvgBeginPath(ctx)
@@ -477,8 +500,8 @@ function SeaViewArt.Surface(ctx, movement, time)
     for index = 2, #horizonPoints do
         nvgLineTo(ctx, horizonPoints[index].x, horizonPoints[index].y)
     end
-    nvgStrokeColor(ctx, nvgRGBA(242, 242, 213, 170))
-    nvgStrokeWidth(ctx, 1.5)
+    nvgStrokeColor(ctx, nvgRGBA(234, 235, 206, 145))
+    nvgStrokeWidth(ctx, 1.15)
     nvgStroke(ctx)
 
     local settings = getSurfaceSettings()
@@ -540,8 +563,8 @@ local function drawHill(ctx, movement, center, radius, bounds, airMix,shapes,fra
         if Geometry.WorldBoundsVisible(movement,worldPoints) then
             local projected = Geometry.ProjectPolygon(movement, worldPoints,nil,nil,frame)
             for _, point in ipairs(projected) do includeScreenPoint(bounds, point) end
-            fillPolygon(ctx, projected, rgba({102,143,91,255}, nil, nil, airMix))
-            strokeWorldPolygon(ctx,movement,worldPoints,rgba({77,118,83,210},nil,nil,airMix),1.1,bounds,nil,frame)
+            fillPolygon(ctx, projected, rgba({211,191,147,255}, nil, nil, airMix))
+            strokeWorldPolygon(ctx,movement,worldPoints,rgba({140,124,98,210},nil,nil,airMix),1.1,bounds,nil,frame)
         end
     end
 end
@@ -569,13 +592,13 @@ local function drawTree(ctx, movement, base, heightMeters, bounds, paletteShift,
     shape=shape or treeShape(base,heightMeters)
     if not Geometry.WorldBoundsVisible(movement,shape.envelope) then return end
     Geometry.StrokeWorldLine(ctx,movement,shape.stem[1],shape.stem[2],
-        rgba({111,72,47,255},nil,nil,airMix),1.3,nil,frame)
-    local leafColor = paletteShift == 1 and {57,123,91,255} or {72,141,93,255}
+        rgba({119,98,73,255},nil,nil,airMix),1.3,nil,frame)
+    local leafColor = paletteShift == 1 and {91,126,109,255} or {108,141,117,255}
     local projected=Geometry.ProjectPolygon(movement,shape.leaf,nil,nil,frame)
     for _,point in ipairs(projected) do includeScreenPoint(bounds,point) end
     fillPolygon(ctx,projected,rgba(leafColor,nil,nil,airMix))
     fillPolygon(ctx,Geometry.ProjectPolygon(movement,shape.highlight,nil,nil,frame),
-        rgba({91,163,102,245},nil,nil,airMix))
+        rgba({142,165,132,245},nil,nil,airMix))
 end
 
 local function drawShoreFoam(ctx, movement, center, shorelineRadius, time, bounds,frame)
@@ -634,10 +657,8 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
         end
         islandGeometry[entity]=geometry
     end
-    local shoreColor = rgba(Config.visual and Config.visual.shore,
-        { 209, 193, 137, 255 }, nil, airMix)
-    local landColor = rgba(Config.visual and Config.visual.island,
-        { 135, 171, 110, 255 }, nil, airMix)
+    local shoreColor = rgba(SAND_SHORE, nil, nil, airMix)
+    local landColor = rgba(SAGE_LAND, nil, nil, airMix)
     local bounds = newScreenBounds()
 
     -- Share projection constants only for this synchronous island draw. The
@@ -646,15 +667,23 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
         horizon=Projection.HorizonFunction(movement)}
 
     local outerWorld = geometry.outer
-    local outerScreen = fillWorldPolygon(ctx, movement, outerWorld, shoreColor, bounds,nil,frame)
-    if #outerScreen >= 3 then
-        strokeWorldPolygon(ctx,movement,outerWorld,rgba({167,154,112,190},nil,nil,airMix),1.25,bounds,0,frame)
-    end
-
     local landWorld = geometry.land
-    local landScreen = fillWorldPolygon(ctx, movement, landWorld, landColor, bounds,nil,frame)
-    if #landScreen >= 3 then
-        strokeWorldPolygon(ctx,movement,landWorld,rgba({105,145,92,170},nil,nil,airMix),1,bounds,0,frame)
+    -- 仅替换岛面纹理；保留原岛的高处几何、遮挡、弱键缓存和泡沫。
+    local hasImage = ImageArt.Plane(ctx, "island", movement, center,
+        radius * 2 / 0.88, radius * 2 / 0.88, 0, 0)
+    if not hasImage then
+        local outerScreen = fillWorldPolygon(ctx, movement, outerWorld, shoreColor, bounds, nil, frame)
+        if #outerScreen >= 3 then
+            strokeWorldPolygon(ctx, movement, outerWorld, rgba({160,139,105,190},nil,nil,airMix),1.25,bounds,0,frame)
+        end
+        local landScreen = fillWorldPolygon(ctx, movement, landWorld, landColor, bounds, nil, frame)
+        if #landScreen >= 3 then
+            strokeWorldPolygon(ctx,movement,landWorld,rgba({107,131,101,170},nil,nil,airMix),1,bounds,0,frame)
+        end
+    else
+        for _, point in ipairs(Geometry.ProjectPolygon(movement, outerWorld, 0, nil, frame)) do
+            includeScreenPoint(bounds, point)
+        end
     end
     drawShoreFoam(ctx, movement, center, radius, finite(time) and time or 0, bounds,frame)
 
@@ -775,7 +804,11 @@ function SeaViewArt.Boat(ctx, movement, ship, time)
     for _, point in ipairs(projectWorldPolygon(movement, clippedHull, bounds, 0)) do
         shadow[#shadow + 1] = { x = point.x + 1.5, y = point.y + 3, scale = point.scale }
     end
-    fillPolygon(ctx, shadow, nvgRGBA(9, 44, 62, 75))
+    fillPolygon(ctx, shadow, nvgRGBA(49, 99, 101, 65))
+    if ImageArt.Plane(ctx, "boat", movement, ship.position, length / 0.88, width / 0.88,
+        rotation, heave, 1, roll) then
+        return finishScreenBounds(bounds)
+    end
     fillPolygon(ctx, hullScreen, rgba(visual.ship, { 251, 222, 139, 255 }))
     strokePolygon(ctx, hullScreen, nvgRGBA(100, 67, 51, 245), 1.5)
 
@@ -824,17 +857,25 @@ function SeaViewArt.Wake(ctx, movement, wake)
             if center then
                 local fade = clamp(1 - age / lifetime, 0, 1)
                 local halfWidth = (baseWidth + spread * age) * 0.5
+                local forwardX, forwardY = math.cos(rotation) * halfWidth, math.sin(rotation) * halfWidth
                 local sideX, sideY = -math.sin(rotation) * halfWidth, math.cos(rotation) * halfWidth
                 local alpha = opacity * fade ^ 1.35
                 local strokeWidth = clamp(center.scale * 0.08, 0.7, 2.8)
-                local function wakeLine(fraction, tint, width)
+                local function wakeLine(fromAlong, fromSide, toAlong, toSide, tint, width)
                     Geometry.StrokeWorldLine(ctx,movement,
-                        addPoint(position.x-sideX*fraction,position.y-sideY*fraction),
-                        addPoint(position.x+sideX*fraction,position.y+sideY*fraction),
+                        addPoint(position.x + forwardX * fromAlong + sideX * fromSide,
+                            position.y + forwardY * fromAlong + sideY * fromSide),
+                        addPoint(position.x + forwardX * toAlong + sideX * toSide,
+                            position.y + forwardY * toAlong + sideY * toSide),
                         tint,width,0)
                 end
-                wakeLine(1,nvgRGBA(221,245,238,math.floor(alpha*.66)),strokeWidth*2.2)
-                wakeLine(.58,nvgRGBA(247,255,245,math.floor(alpha)),strokeWidth)
+                -- Two short, uneven water smudges along the recorded heading,
+                -- not a wide transverse ladder rung. Keep the same two clipped
+                -- world strokes per record and the existing lifetime/spread.
+                wakeLine(-.58,-.34,.28,-.16,
+                    nvgRGBA(223,239,222,math.floor(alpha*.43)),strokeWidth*1.2)
+                wakeLine(-.18,.21,.48,.29,
+                    nvgRGBA(246,244,222,math.floor(alpha*.72)),strokeWidth*.86)
             end
         end
     end

@@ -53,7 +53,7 @@ local function Cloud(ctx, x, y, scale)
     nvgBezierTo(ctx, -20, -41, 18, -44, 28, -18)
     nvgBezierTo(ctx, 52, -27, 74, -1, 56, 8)
     nvgClosePath(ctx)
-    Fill(ctx, { 249, 252, 235, 110 })
+    Fill(ctx, { 250, 245, 223, 182 })
     nvgRestore(ctx)
 end
 
@@ -62,14 +62,14 @@ local function Background(ctx, w, h, time)
     nvgBeginPath(ctx)
     nvgRect(ctx, 0, 0, w, h)
     nvgFillPaint(ctx, nvgLinearGradient(ctx, 0, 0, 0, h,
-        nvgRGBA(216, 239, 229, 255), nvgRGBA(46, 138, 150, 255)))
+        nvgRGBA(184, 224, 216, 255), nvgRGBA(221, 235, 215, 255)))
     nvgFill(ctx)
 
     local sunX, sunY = w * 0.76, h * 0.13
     local sunRadius = math.min(w * 0.055, h * 0.065)
-    Ellipse(ctx, sunX, sunY, sunRadius * 1.7, sunRadius * 1.7, { 255, 241, 177, 30 })
-    Ellipse(ctx, sunX, sunY, sunRadius * 1.28, sunRadius * 1.28, { 255, 241, 177, 55 })
-    Ellipse(ctx, sunX, sunY, sunRadius, sunRadius, { 255, 237, 177, 255 })
+    Ellipse(ctx, sunX, sunY, sunRadius * 1.7, sunRadius * 1.7, { 250, 229, 164, 18 })
+    Ellipse(ctx, sunX, sunY, sunRadius * 1.28, sunRadius * 1.28, { 250, 229, 164, 32 })
+    Ellipse(ctx, sunX, sunY, sunRadius, sunRadius, { 251, 221, 139, 255 })
 
     local cloudScale = math.min(w / 560, h / 680)
     Cloud(ctx, w * 0.2 + math.sin(time * 0.12) * 8, h * 0.15, cloudScale)
@@ -82,7 +82,7 @@ local function Background(ctx, w, h, time)
     nvgBezierTo(ctx, w * 0.23, h * 0.29, w * 0.25, h * 0.33, w * 0.3, h * 0.33)
     nvgLineTo(ctx, 0, h * 0.36)
     nvgClosePath(ctx)
-    Fill(ctx, { 105, 170, 156, 70 })
+    Fill(ctx, { 135, 170, 148, 55 })
 end
 
 ---@param ctx NVGContextWrapper
@@ -576,7 +576,9 @@ function Draw.SceneBackdrop(ctx, w, h, time, skyOnly)
     for _, bird in ipairs(Config.birds) do
         local x = w * bird.x + math.sin(time * 0.4 + bird.phase) * 15 * scale
         local y = h * Config.layers.birds + math.sin(time * 1.2 + bird.phase) * 5 * scale
-        Bird(ctx, x, y, scale * bird.scale, time, bird.phase)
+        -- Decorative sky birds stay small and subordinate to world fish cues.
+        -- Keep their original local paths/count; only their visual scale changes.
+        Bird(ctx, x, y, math.min(scale * bird.scale * 0.22, 0.15), time, bird.phase)
     end
 end
 

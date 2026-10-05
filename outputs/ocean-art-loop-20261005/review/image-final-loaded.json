@@ -1,0 +1,208 @@
+{
+  "sourceSHA256": "181f00dd954b15b977487cdedfd2ef5b28ee29b34e895aacc33700b68cd4b512",
+  "loaded": true,
+  "groundMetrics": [
+    {
+      "depth": 0,
+      "filledTriangles": 136,
+      "sharedEdges": 184,
+      "maxSharedEdgeUVDifferenceTexels": 2.073327203427713e-07,
+      "maxHorizonLeakPixels": 0
+    },
+    {
+      "depth": 25,
+      "filledTriangles": 128,
+      "sharedEdges": 176,
+      "maxSharedEdgeUVDifferenceTexels": 3.5929844353880175e-07,
+      "maxHorizonLeakPixels": 0
+    },
+    {
+      "depth": 85,
+      "filledTriangles": 128,
+      "sharedEdges": 176,
+      "maxSharedEdgeUVDifferenceTexels": 1.8075225686275408e-06,
+      "maxHorizonLeakPixels": 0
+    },
+    {
+      "depth": 105,
+      "filledTriangles": 104,
+      "sharedEdges": 191,
+      "maxSharedEdgeUVDifferenceTexels": 0.00011046222191895718,
+      "maxHorizonLeakPixels": 0
+    },
+    {
+      "depth": 109,
+      "filledTriangles": 88,
+      "sharedEdges": 186,
+      "maxSharedEdgeUVDifferenceTexels": 0.0002488945133047495,
+      "maxHorizonLeakPixels": 0
+    },
+    {
+      "depth": 110,
+      "filledTriangles": 64,
+      "sharedEdges": 110,
+      "maxSharedEdgeUVDifferenceTexels": 7.6137744286986055e-06,
+      "maxHorizonLeakPixels": 0
+    },
+    {
+      "depth": 125,
+      "filledTriangles": 0,
+      "sharedEdges": 0,
+      "maxSharedEdgeUVDifferenceTexels": 0,
+      "maxHorizonLeakPixels": 0
+    }
+  ],
+  "creates": 5,
+  "deletes": 5,
+  "note": "Actual final ImageArt with native Lua image-loading functions and primitive recorder; not GPU/raster acceptance.",
+  "previousBadSample": {
+    "worldPoint": [
+      8.863636363636363,
+      109.77272727272727
+    ],
+    "screenPoint": [
+      1009.432993471723,
+      259.33124586136285
+    ],
+    "expectedUV": [
+      0.825,
+      0.325
+    ],
+    "actualSamples": [
+      {
+        "sampleUV": [
+          0.825450233139862,
+          0.3175846373954853
+        ],
+        "sampleRGBA": [
+          244,
+          218,
+          172,
+          255
+        ]
+      }
+    ]
+  },
+  "headingLoadedSmoke": [
+    {
+      "name": "boat",
+      "headingIndex": 0,
+      "filledTriangles": 36
+    },
+    {
+      "name": "boat",
+      "headingIndex": 1,
+      "filledTriangles": 36
+    },
+    {
+      "name": "boat",
+      "headingIndex": 2,
+      "filledTriangles": 36
+    },
+    {
+      "name": "boat",
+      "headingIndex": 3,
+      "filledTriangles": 36
+    },
+    {
+      "name": "boat",
+      "headingIndex": 4,
+      "filledTriangles": 36
+    },
+    {
+      "name": "boat",
+      "headingIndex": 5,
+      "filledTriangles": 36
+    },
+    {
+      "name": "boat",
+      "headingIndex": 6,
+      "filledTriangles": 36
+    },
+    {
+      "name": "boat",
+      "headingIndex": 7,
+      "filledTriangles": 36
+    },
+    {
+      "name": "gull",
+      "headingIndex": 0,
+      "filledTriangles": 16
+    },
+    {
+      "name": "gull",
+      "headingIndex": 1,
+      "filledTriangles": 16
+    },
+    {
+      "name": "gull",
+      "headingIndex": 2,
+      "filledTriangles": 16
+    },
+    {
+      "name": "gull",
+      "headingIndex": 3,
+      "filledTriangles": 16
+    },
+    {
+      "name": "gull",
+      "headingIndex": 4,
+      "filledTriangles": 16
+    },
+    {
+      "name": "gull",
+      "headingIndex": 5,
+      "filledTriangles": 16
+    },
+    {
+      "name": "gull",
+      "headingIndex": 6,
+      "filledTriangles": 16
+    },
+    {
+      "name": "gull",
+      "headingIndex": 7,
+      "filledTriangles": 16
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 0,
+      "filledTriangles": 8
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 1,
+      "filledTriangles": 8
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 2,
+      "filledTriangles": 8
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 3,
+      "filledTriangles": 8
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 4,
+      "filledTriangles": 8
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 5,
+      "filledTriangles": 8
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 6,
+      "filledTriangles": 8
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 7,
+      "filledTriangles": 8
+    }
+  ]
+}

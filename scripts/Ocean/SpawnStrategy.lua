@@ -53,6 +53,17 @@ local function validDeparture(departure)
         and type(departure.y) == "number"
 end
 
+-- Soft preferred-distance band from the day's departure point (S1 distribution
+-- goal: small fish near the start, big fish farther out). Band hits are preferred,
+-- never required: when no in-band candidate exists the caller falls back to any
+-- valid position, so distant regions keep their populations (no dead zones).
+local function inBand(position, departure, band)
+    if not band then return false end
+    if not validDeparture(departure) then return false end
+    local distanceSquared = Math.distanceSquared(position, departure)
+    return distanceSquared >= band.min * band.min and distanceSquared <= band.max * band.max
+end
+
 local function inRegion(world, position, radius, departure, minSpawnDistance, shipPosition, minShipDistance)
     if not world:isPositionFree(position, radius) then return false end
     if minShipDistance > 0 and Math.distanceSquared(position, shipPosition) < minShipDistance^2 then return false end
@@ -117,6 +128,11 @@ function SpawnStrategy.GenerateRegion(world, daySeed, regionX, regionY, departur
         local radius = data.radius or 0
         local minSpawnDistance = data.minSpawnDistance
         local minShipDistance = data.minShipSpawnDistance or 0
+        local band = data.spawnBandFromDayStart
+        if band then
+            assert(type(band.min) == "number" and type(band.max) == "number" and band.min <= band.max,
+                "spawnBandFromDayStart must be a {min,max} table")
+        end
         assert(type(minShipDistance) == "number" and minShipDistance >= 0, "invalid minShipSpawnDistance")
         if minSpawnDistance == false then minSpawnDistance = nil end
         if minSpawnDistance ~= nil then
@@ -128,18 +144,26 @@ function SpawnStrategy.GenerateRegion(world, daySeed, regionX, regionY, departur
         end
 
         for _ = 1, count do
+            -- Phase 1 prefers an in-band candidate; phase 2 keeps the first valid
+            -- out-of-band candidate as fallback. Deterministic for a fixed seed.
             local chosenPosition = nil
+            local fallbackPosition = nil
             for _attempt = 1, maxAttempts do
                 local position = {
                     x = left + rng() * width,
                     y = bottom + rng() * height,
                 }
                 if inRegion(world, position, radius, departure, minSpawnDistance, shipPosition, minShipDistance) then
-                    chosenPosition = position
-                    break
+                    if inBand(position, departure, band) then
+                        chosenPosition = position
+                        break
+                    elseif not fallbackPosition then
+                        fallbackPosition = position
+                    end
                 end
             end
 
+            if not chosenPosition then chosenPosition = fallbackPosition end
             if not chosenPosition then
                 if speciesId == "tuna" or minShipDistance > 0 then
                     -- Some regions cannot satisfy the 200-meter departure

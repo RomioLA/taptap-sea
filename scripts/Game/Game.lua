@@ -21,6 +21,16 @@ function Game:Init(runtime, loop)
     self.loop = loop
     self.gameplaySystem = GameplayUpdateSystem.New(loop)
     self:GetWorld()
+    -- 每帧路径零闭包分配（真机卡顿优化）：advanceWorld 闭包只在 Init 创建一次，
+    -- 每帧仅刷新 _frameDt/_axisX/_axisY 三个字段，消除逐帧闭包+upvalue 的 GC 抖动。
+    self._advanceWorld = function(slice)
+        self:Sync()
+        local blocked = self.loop:IsMovementBlocked()
+        if blocked then self.runtime:ClearMovementTarget() end
+        local frameDt = self._frameDt
+        local seaSlice = frameDt > 0 and math.min(frameDt, OceanConfig.world.maxFrameSec) * (slice / frameDt) or 0
+        self.runtime:Update(seaSlice, blocked and 0 or self._axisX, blocked and 0 or self._axisY)
+    end
 end
 
 function Game:GetWorld()
@@ -47,21 +57,21 @@ end
 function Game:Update(dt, axisX, axisY)
     -- One frame System dispatch receives the full dt. Boundary slices share the
     -- original Runtime frame budget, so a large dt never increases sea simulation.
-    local seaBudget = math.min(dt, OceanConfig.world.maxFrameSec)
-    self.gameplaySystem.advanceWorld = function(slice)
-        self:Sync()
-        local blocked = self.loop:IsMovementBlocked()
-        if blocked then self.runtime:ClearMovementTarget() end
-        local seaSlice = dt > 0 and seaBudget * (slice / dt) or 0
-        self.runtime:Update(seaSlice, blocked and 0 or axisX, blocked and 0 or axisY)
-    end
-    local ok, reason = pcall(function() self:GetWorld():Update(dt, "frame") end)
+    self._frameDt, self._axisX, self._axisY = dt, axisX, axisY
+    self.gameplaySystem.advanceWorld = self._advanceWorld
+    local ok, reason = pcall(self.RunFrame, self, dt)
     self.gameplaySystem.advanceWorld = nil
     if not ok then
         if self.loop.actions then self.loop.actions:CancelActiveFishing("fishing_update_failed") end
         error(reason, 0)
     end
     self:Sync()
+end
+
+-- Split from Update so the per-frame pcall wraps a fixed method instead of a
+-- fresh closure (no per-frame function object allocation).
+function Game:RunFrame(dt)
+    self:GetWorld():Update(dt, "frame")
 end
 
 return Game

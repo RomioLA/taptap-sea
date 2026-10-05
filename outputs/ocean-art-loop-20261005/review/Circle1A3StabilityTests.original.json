@@ -1,0 +1,179 @@
+{
+  "name": "Circle1A3StabilityTests",
+  "kind": "run",
+  "file": "scripts/tests/Circle1A3StabilityTests.lua",
+  "passed": true,
+  "subtestCount": 6,
+  "failures": [],
+  "returned": {
+    "metrics": {
+      "new day clears ordinary fish and temporary items but keeps the exact fixed barrel": {
+        "newDayFishCount": 55,
+        "temporaryItemReason": "newDay",
+        "fixedBarrelId": "sea-3",
+        "seedAfter": 314160,
+        "seedBefore": 314159,
+        "oldFishRemoved": "sea-5"
+      },
+      "normal density multi-seed long out-and-back voyage never regenerates a visited region": {
+        "completedSeeds": 3,
+        "requestedSeeds": 3,
+        "totalUpdates": 4929
+      },
+      "repeated Runtime rebuilds retire old worlds and never reschedule a shared frame System": {
+        "eachCurrentWorldSystemCount": 3,
+        "retiredEntityArraysEmpty": true,
+        "currentFrameAdvances": 5,
+        "staleFrameAdvances": 0,
+        "rebuilds": 5
+      },
+      "configuredDensityTargets": {
+        "tuna": 4,
+        "sardine": 20
+      },
+      "ship levels 9, 12, and 16 use real configured speed, turning, and swept island collision": {
+        "speeds": [
+          9.0,
+          12.0,
+          16.0
+        ],
+        "levels": 3
+      },
+      "speedAndCollision": [
+        {
+          "finalTurnRadians": 1.916396243530806,
+          "expectedQuarterSecondTravel": 2.25,
+          "level": 1,
+          "speedMetersPerSecond": 9.0,
+          "collisionCalls": 32,
+          "islandClearance": 98.09813346889537
+        },
+        {
+          "finalTurnRadians": 1.9507833924474087,
+          "expectedQuarterSecondTravel": 3.0,
+          "level": 2,
+          "speedMetersPerSecond": 12.0,
+          "collisionCalls": 37,
+          "islandClearance": 98.3503324121078
+        },
+        {
+          "finalTurnRadians": 1.9615883111565489,
+          "expectedQuarterSecondTravel": 4.0,
+          "level": 3,
+          "speedMetersPerSecond": 16.0,
+          "collisionCalls": 39,
+          "islandClearance": 98.2242052194473
+        }
+      ],
+      "cancel, predation, catch removal, and reset leave no stale locks or signal cues": {
+        "caughtHintCount": 0,
+        "resetSignalsCleared": true,
+        "cancelUnlocked": true,
+        "eatenHintCount": 0
+      },
+      "longVoyageFailures": [],
+      "manual pause freezes ship, fish AI, bait lifetime, cooldowns, and surface signals": {
+        "pausedWallDelta": 2,
+        "worldDeltaWhilePaused": 0,
+        "baitAge": 1.1000000000000003,
+        "splashCount": 1,
+        "birdCount": 2,
+        "cooldownRemainingAtPause": 3.9499999999999993
+      },
+      "longVoyages": [
+        {
+          "maxGenerationCallsPerRegion": 1,
+          "totalSteps": 1643,
+          "seed": 271828,
+          "worldDaySeedMirror": 271828,
+          "peakFishCount": 141,
+          "initialFishCount": 55,
+          "barrelId": "sea-3",
+          "caughtFishStayedRemoved": true,
+          "removedFishId": "sea-5",
+          "initialSardines": 50,
+          "initialTuna": 5,
+          "regionsVisited": 20,
+          "simulatedSeconds": 82.14999999999748,
+          "barrelGeneration": 1,
+          "initialRegions": 8
+        },
+        {
+          "maxGenerationCallsPerRegion": 1,
+          "totalSteps": 1643,
+          "seed": 314159,
+          "worldDaySeedMirror": 271828,
+          "peakFishCount": 138,
+          "initialFishCount": 55,
+          "barrelId": "sea-3",
+          "caughtFishStayedRemoved": true,
+          "removedFishId": "sea-5",
+          "initialSardines": 51,
+          "initialTuna": 4,
+          "regionsVisited": 20,
+          "simulatedSeconds": 82.14999999999748,
+          "barrelGeneration": 2,
+          "initialRegions": 8
+        },
+        {
+          "maxGenerationCallsPerRegion": 1,
+          "totalSteps": 1643,
+          "seed": 161803,
+          "worldDaySeedMirror": 271828,
+          "peakFishCount": 141,
+          "initialFishCount": 59,
+          "barrelId": "sea-3",
+          "caughtFishStayedRemoved": true,
+          "removedFishId": "sea-5",
+          "initialSardines": 52,
+          "initialTuna": 7,
+          "regionsVisited": 20,
+          "simulatedSeconds": 82.14999999999748,
+          "barrelGeneration": 3,
+          "initialRegions": 8
+        }
+      ],
+      "normalRuntimeFishLimitRaised": false,
+      "repeatedRebuilds": 5
+    },
+    "results": [
+      {
+        "passed": true,
+        "error": "",
+        "name": "normal density multi-seed long out-and-back voyage never regenerates a visited region"
+      },
+      {
+        "passed": true,
+        "error": "",
+        "name": "new day clears ordinary fish and temporary items but keeps the exact fixed barrel"
+      },
+      {
+        "passed": true,
+        "error": "",
+        "name": "manual pause freezes ship, fish AI, bait lifetime, cooldowns, and surface signals"
+      },
+      {
+        "passed": true,
+        "error": "",
+        "name": "cancel, predation, catch removal, and reset leave no stale locks or signal cues"
+      },
+      {
+        "passed": true,
+        "error": "",
+        "name": "repeated Runtime rebuilds retire old worlds and never reschedule a shared frame System"
+      },
+      {
+        "passed": true,
+        "error": "",
+        "name": "ship levels 9, 12, and 16 use real configured speed, turning, and swept island collision"
+      }
+    ]
+  },
+  "stdout": "",
+  "nvgCalls": {},
+  "nvgCallTotal": 0,
+  "durationMs": 55802.471,
+  "reviewMode": "original",
+  "explicitSearcherAdaptations": [],
+  "imageArtRequireGuardEnabled": false
+}

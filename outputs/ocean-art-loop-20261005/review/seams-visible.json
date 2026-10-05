@@ -1,0 +1,142 @@
+[
+  {
+    "centerDepth": 0,
+    "maxVisibleOpaqueDiagonalMismatchTexels": 0.0024968793872284884,
+    "at": {
+      "row": 4,
+      "column": 1,
+      "fraction": 0.6,
+      "worldDepth": 1.3636363636363638,
+      "uvA": [
+        0.07203203367982638,
+        0.44700587704653316
+      ],
+      "uvB": [
+        0.0720295953527775,
+        0.4470058646076398
+      ],
+      "trueUV": [
+        0.075,
+        0.45
+      ],
+      "sourceRGBA": [
+        222,
+        191,
+        142,
+        254
+      ]
+    }
+  },
+  {
+    "centerDepth": 25,
+    "maxVisibleOpaqueDiagonalMismatchTexels": 0.003749386423400902,
+    "at": {
+      "row": 3,
+      "column": 2,
+      "fraction": 0.5,
+      "worldDepth": 30.113636363636367,
+      "uvA": [
+        0.18580950434523752,
+        0.3107397733602915
+      ],
+      "uvB": [
+        0.18580584308962686,
+        0.31073973018454504
+      ],
+      "trueUV": [
+        0.1875,
+        0.3125
+      ],
+      "sourceRGBA": [
+        152,
+        163,
+        103,
+        255
+      ]
+    }
+  },
+  {
+    "centerDepth": 85,
+    "maxVisibleOpaqueDiagonalMismatchTexels": 0.08432704242136005,
+    "at": {
+      "row": 1,
+      "column": 4,
+      "fraction": 0.6,
+      "worldDepth": 96.5909090909091,
+      "uvA": [
+        0.44921220609227297,
+        0.07102664593044901
+      ],
+      "uvB": [
+        0.4491298556191789,
+        0.07102680533097336
+      ],
+      "trueUV": [
+        0.45,
+        0.075
+      ],
+      "sourceRGBA": [
+        226,
+        197,
+        147,
+        255
+      ]
+    }
+  },
+  {
+    "centerDepth": 105,
+    "maxVisibleOpaqueDiagonalMismatchTexels": 17.971303518479633,
+    "at": {
+      "row": 3,
+      "column": 7,
+      "fraction": 0.6,
+      "worldDepth": 109.77272727272727,
+      "uvA": [
+        0.8451328539787066,
+        0.03555563965018554
+      ],
+      "uvB": [
+        0.8386229577614571,
+        0.01925756308915015
+      ],
+      "trueUV": [
+        0.825,
+        0.325
+      ],
+      "sourceRGBA": [
+        245,
+        218,
+        174,
+        255
+      ]
+    }
+  },
+  {
+    "centerDepth": 109,
+    "maxVisibleOpaqueDiagonalMismatchTexels": 4.035142430488905,
+    "at": {
+      "row": 4,
+      "column": 1,
+      "fraction": 0.8,
+      "worldDepth": 109.68181818181819,
+      "uvA": [
+        0.1060312124541368,
+        0.5650338964136589
+      ],
+      "uvB": [
+        0.10829923977131728,
+        0.5682563387167351
+      ],
+      "trueUV": [
+        0.1,
+        0.475
+      ],
+      "sourceRGBA": [
+        173,
+        170,
+        169,
+        255
+      ]
+    }
+  }
+]

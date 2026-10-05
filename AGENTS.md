@@ -1142,6 +1142,10 @@ workspace/
 - **入口大小写**：本项目入口是 `scripts/Main.lua`（大写 M）。Maker 远程构建默认找小写 `main.lua`，会静默失败（报"入口文件不存在"），导致 git push 后云端构建从未成功、Web 预览停留在旧构建。**调用 `maker_build_current_directory` 必须显式传 `entry="Main.lua"`、`scriptsPath="scripts"`。**
 - 构建成功会自动启动运行日志 watcher（写入 `.maker/logs/runtime/runtime.log`），验收优先读该日志而非人工观察画面。
 - 数据表位于 `scripts/data/`（曾为根目录 `data/`，因打包根=scripts/ 于 2026-10-02 迁入），运行时 `require("data.fish")` 直接可达。
+- **两种数据链（2026-10-05 澄清，回应 B 侧 Q-006 契约提问）**：
+  1. **纯内容单表链**（events、narrative）：B 直接编辑 `scripts/data/{events,narrative}.lua`，无基准副本、无 sync 生成；格式契约见 `docs/DATA_SCHEMA.md` 第 3/4 节。
+  2. **数值双表链**（fish、items）：B 编辑根 `data/` 基准表 → A 侧 `tests/sync_runtime_data.py` 生成 `scripts/GeneratedData/` 运行时副本；根 `data/` 仅此两表的"策划可编辑纯数据源"（`docs/ARCHITECTURE_LAYOUT.md` 所指即此链）。
+  判断标准：有数值生成/平衡需求的表走双表链；纯文案/结构表走单表链。新增表归属由 A 在 DATA_SCHEMA 登记契约时一并声明。
 
 ## AI 协作留言板（GitHub Issue，Codex × WorkBuddy 共用）
 

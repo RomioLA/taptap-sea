@@ -1,0 +1,118 @@
+{
+  "date": "2026-10-05",
+  "task": "主航海参考图风格替换与原生运行闭环",
+  "finalOnly": true,
+  "runtime": "UrhoXRuntime Linux GLES llvmpipe surfaceless",
+  "viewport": [1280, 720],
+  "phoneOrBrowserGPUValidated": false,
+  "build": {
+    "format": 1,
+    "version": "1.0.10",
+    "build": 8,
+    "client": "437cb8de",
+    "server": "044c5bac",
+    "generated_at": "2026-10-05T12:07:01.561697Z",
+    "engine": "ef9e23e2"
+  },
+  "totals": {"runs": 13, "assertions": 174, "passed": 174, "failed": 0, "runtimeErrors": 0},
+  "runDirectory": "outputs/ocean-story-loop-20261005/final",
+  "runFiles": "每项name对应最终目录内同名.json、.log、.png",
+  "runs": [
+    {"name": "direction-1", "result": "PASS", "frames": 150, "assertions": {"total": 15, "passed": 15, "failed": 0}, "totalErrors": 0},
+    {"name": "direction-2", "result": "PASS", "frames": 150, "assertions": {"total": 15, "passed": 15, "failed": 0}, "totalErrors": 0},
+    {"name": "direction-3", "result": "PASS", "frames": 150, "assertions": {"total": 15, "passed": 15, "failed": 0}, "totalErrors": 0},
+    {"name": "direction-4", "result": "PASS", "frames": 150, "assertions": {"total": 15, "passed": 15, "failed": 0}, "totalErrors": 0},
+    {"name": "direction-5", "result": "PASS", "frames": 150, "assertions": {"total": 15, "passed": 15, "failed": 0}, "totalErrors": 0},
+    {"name": "direction-6", "result": "PASS", "frames": 150, "assertions": {"total": 15, "passed": 15, "failed": 0}, "totalErrors": 0},
+    {"name": "direction-7", "result": "PASS", "frames": 150, "assertions": {"total": 15, "passed": 15, "failed": 0}, "totalErrors": 0},
+    {"name": "direction-8", "result": "PASS", "frames": 150, "assertions": {"total": 15, "passed": 15, "failed": 0}, "totalErrors": 0},
+    {"name": "dynamic-a", "result": "PASS", "frames": 150, "assertions": {"total": 15, "passed": 15, "failed": 0}, "totalErrors": 0},
+    {"name": "dynamic-b", "result": "PASS", "frames": 150, "assertions": {"total": 15, "passed": 15, "failed": 0}, "totalErrors": 0},
+    {"name": "horizon-105", "result": "PASS", "frames": 150, "assertions": {"total": 12, "passed": 12, "failed": 0}, "totalErrors": 0},
+    {"name": "horizon-125", "result": "PASS", "frames": 150, "assertions": {"total": 12, "passed": 12, "failed": 0}, "totalErrors": 0},
+    {"name": "entry-normal", "result": "PASS", "frames": 40, "assertions": {"total": 0, "passed": 0, "failed": 0}, "totalErrors": 0}
+  ],
+  "sourceSHA256": {
+    "scripts/Ocean/ImageArt.lua": "87e60f3cb8f37a4f66ea8380baedd9662f1cc71c44eee3e17da87cf817b4dde8",
+    "scripts/Ocean/SeaViewArt.lua": "09498ee44531d1592ff2254f6ae471de79f748c75eadb373ae839ecb2f1b898e",
+    "scripts/Ocean/Draw.lua": "dd8c80a08947aa1c08d3ba610f31b3ecd54d408c3e4c205b4f8ed9f40bf0c6e2",
+    "scripts/Ocean/SeaDraw.lua": "3e970b24d120b62ef238e7b12edd77471945264877a0831679e2988ea0497919",
+    "scripts/tests/OceanArtRuntimeValidate.lua": "23c11db2125c37599d5d63426db38c7adce39a4cb80832e3ee082b0dbc57d914",
+    "scripts/tests/OceanArtVisualValidate.lua": "f01edb20ca6edb1db8e47e44a334c02e12e453ae86eff56abd17241d1740be8f",
+    "tests/prepare_ocean_art.py": "a84e408aa838f3223aa6fdbe60cc6c06f5abf358fd011b42dda41cf54f820957"
+  },
+  "assets": {
+    "assets/image/OceanLoop/boat.png": "13675e16659d829d50dcdc2ffe01380378f557b75162d2bf3c1af5e5d905be0c",
+    "assets/image/OceanLoop/island.png": "6c68a9cc310d17e06cd0da7fd4e11c25a132ad4daab3542de4c8e16021c73f00",
+    "assets/image/OceanLoop/gull.png": "846a9f871ab82d6edd689406ea62d14592d1737d90bd1455845e2d6863331809",
+    "assets/image/OceanLoop/barrel.png": "4b68f151369c99b5eaaea794b3c486f35e819a0109b6aca9bd71952065a1c5aa",
+    "assets/image/OceanLoop/ripple.png": "7981764dcd6a3a85c9d0c7fc9e1ae4407e1d2ea487228747641ebe2afc16b8ed",
+    "assets/image/OceanLoop/waterpaper.png": "b83f348aee8a49d1a770b324eefae9ce987783bb513d189f0e2aab5e59ea0ccf"
+  },
+  "assetManifest": "assets/image/OceanLoop/manifest.json",
+  "regression": {
+    "attemptedSuites": 9,
+    "passedSuites": 8,
+    "passedChecks": 71,
+    "fullRepositoryRerun": false,
+    "sources": ["outputs/ocean-story-loop-20261005/visual-layer-checks.json", "outputs/ocean-story-loop-20261005/architecture-barrel-checks.json"],
+    "suites": [
+      {"name": "SeaMotionEffectsTests", "passed": true, "checks": 7},
+      {"name": "SeaFusionRenderTests", "passed": true, "checks": 10},
+      {"name": "SeaViewUpgradeTests", "passed": true, "checks": 10},
+      {"name": "SeaHorizonOcclusionTests", "passed": true, "checks": 13},
+      {"name": "SeaAtmosphereTests", "passed": true, "checks": 7},
+      {"name": "SeaFusedSceneTests", "passed": true, "checks": 9},
+      {"name": "ArchitectureIntegrationTests", "passed": true, "checks": 12},
+      {"name": "Circle1A2BarrelRenderTests", "passed": true, "checks": 3},
+      {"name": "SeaStabilityTests", "passed": false, "error": "30秒超时；未确定，不判通过"}
+    ]
+  },
+  "lsp": {"modifiedLuaFiles": 6, "eachFileErrorCount": 0, "workspace": {"files": 83, "errors": 27, "warnings": 880, "hints": 184}},
+  "visualInspection": {
+    "imagesRead": ["directions-sheet.png", "alpha-boat.png", "alpha-island.png", "dynamic-a.png", "dynamic-b.png", "horizon-105.png", "horizon-125.png", "entry-normal.png"],
+    "technicalConclusion": "已测方向、透明背景、真实鸟动态、远岸遮挡与正式入口通过",
+    "styleConclusion": "部分统一，未获得用户美术定稿认可",
+    "remaining": ["原矢量山树仍几何化", "纸纹较明显且屏幕固定，不是世界透视波浪", "尾迹偏淡", "俯视船为收拢帆表达，不是参考侧视三角帆", "手机GPU、高DPR硬件、触摸与浏览器未实际验收"]
+  },
+  "auxiliaryEvidence": {
+    "finalPNGPixelChecks": "outputs/ocean-story-loop-20261005/import-final-checks.json",
+    "loadedProbe": "outputs/ocean-story-loop-20261005/image-loaded-final-probes.json",
+    "loadedProbeNote": "彩点清理前PNG快照；仅不变Lua的生命周期与几何结论可沿用，不作最终像素验收",
+    "unchangedSceneEvidence": "Bootstrap与Integration.Scene对照前轮SHA确认未变；其他protected哈希仅为当前快照"
+  },
+  "report": "docs/OCEAN_ART_LOOP_REPORT_20261005.md",
+  "rollback": "outputs/ocean-story-loop-20261005/before",
+  "collaborationIssue": "已读取；无GitHub写入认证，未发布或解除远端冻结",
+  "exclusions": ["ReadingSeaWatercolor_v1独立包未接入，不计本次成果", "runtime/和中间导入图不作最终验收"],
+  "hashIndexNote": "源码与六图哈希已核验；运行报告、日志、截图的SHA256扩展索引已生成，见media-report-hashes.json",
+  "currentBuildAfterRecovery": {
+    "format": 1,
+    "version": "1.0.10",
+    "build": 9,
+    "client": "ab05c1df",
+    "server": "9b9a47fb",
+    "generated_at": "2026-10-05T12:31:03.246452Z",
+    "engine": "ef9e23e2"
+  },
+  "resourceRecovery": {
+    "observation": "完整13次实跑后OceanLoop目录一度不可见；生成源图和最终运行证据仍在",
+    "cause": "UNDETERMINED；未归因于其他会话",
+    "action": "现有prepare_ocean_art.py恢复六图，精确SHA256与本索引assets全部一致，官方重新构建build9",
+    "otherSessionAssetsRecovered": false,
+    "nativeSmokeAfterRecovery": {
+      "name": "recovery-smoke",
+      "result": "PASS",
+      "frames": 150,
+      "assertions": {"total": 15, "passed": 15, "failed": 0},
+      "totalErrors": 0,
+      "sha256": {
+        "recovery-smoke.json": "2b9cb9baddeee008d875e54897b9c592e66e5c567df8fa7a0449c67f22244b67",
+        "recovery-smoke.log": "16f11a2a33e69bbe1a5ae694db94423d14cf1cb3db66ad7ea549d8c7fa7d8ab0",
+        "recovery-smoke.png": "43287ab2943a1e063b352ccb905cadd4f84c657049288e9d93bd5ddb31fae81b"
+      },
+      "note": "build9与同哈希六图恢复后额外运行；不改写原13次的build8记录"
+    }
+  },
+  "cumulativeVerified": {"runs": 14, "assertions": 189, "passed": 189, "failed": 0, "runtimeErrors": 0}
+}

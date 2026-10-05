@@ -1,0 +1,162 @@
+{
+  "farIslandAt125mRadius12": {
+    "vector": {
+      "fillCount": 18,
+      "minY": 246.8829584815522
+    },
+    "loadedFlat": {
+      "fillCount": 18,
+      "patterns": 0
+    },
+    "horizonY": 259.2
+  },
+  "seams": [
+    {
+      "depth": 0,
+      "maxDiagonalTextureDiscontinuityTexels": 0.003505332157340272,
+      "at": {
+        "row": 1,
+        "column": 1,
+        "uvA": [
+          0.06012669844674812,
+          0.060079909042549985
+        ],
+        "uvB": [
+          0.06012327590088716,
+          0.06007984336674816
+        ]
+      }
+    },
+    {
+      "depth": 25,
+      "maxDiagonalTextureDiscontinuityTexels": 0.003827221171000765,
+      "at": {
+        "row": 1,
+        "column": 2,
+        "uvA": [
+          0.18597290813005074,
+          0.06089422843036004
+        ],
+        "uvB": [
+          0.18596917078100017,
+          0.06089419261320211
+        ]
+      }
+    },
+    {
+      "depth": 85,
+      "maxDiagonalTextureDiscontinuityTexels": 0.09766583499160449,
+      "at": {
+        "row": 1,
+        "column": 8,
+        "uvA": [
+          0.9370359189675439,
+          0.05834310162217423
+        ],
+        "uvB": [
+          0.9369405509691454,
+          0.05834180650417842
+        ]
+      }
+    },
+    {
+      "depth": 105,
+      "maxDiagonalTextureDiscontinuityTexels": 24.187502747753893,
+      "at": {
+        "row": 3,
+        "column": 8,
+        "uvA": [
+          0.9637547158947696,
+          0.03133148236744496
+        ],
+        "uvB": [
+          0.9581471919847199,
+          0.008386138502655417
+        ]
+      }
+    }
+  ],
+  "assetExtents": {
+    "boat": {
+      "canvas": [
+        1024,
+        512
+      ],
+      "alphaBounds": [
+        61,
+        30,
+        962,
+        481
+      ],
+      "normalizedExtent": [
+        0.8798828125,
+        0.880859375
+      ]
+    },
+    "island": {
+      "canvas": [
+        1024,
+        1024
+      ],
+      "alphaBounds": [
+        113,
+        143,
+        910,
+        881
+      ],
+      "normalizedExtent": [
+        0.7783203125,
+        0.720703125
+      ]
+    },
+    "barrel": {
+      "canvas": [
+        512,
+        512
+      ],
+      "alphaBounds": [
+        79,
+        77,
+        433,
+        435
+      ],
+      "normalizedExtent": [
+        0.69140625,
+        0.69921875
+      ]
+    },
+    "gull": {
+      "canvas": [
+        512,
+        512
+      ],
+      "alphaBounds": [
+        128,
+        30,
+        384,
+        481
+      ],
+      "normalizedExtent": [
+        0.5,
+        0.880859375
+      ]
+    },
+    "ripple": {
+      "canvas": [
+        512,
+        512
+      ],
+      "alphaBounds": [
+        29,
+        27,
+        483,
+        485
+      ],
+      "normalizedExtent": [
+        0.88671875,
+        0.89453125
+      ]
+    }
+  },
+  "note": "Instrumented image path + analytic UV discontinuity only; native visible seam acceptance not judged"
+}

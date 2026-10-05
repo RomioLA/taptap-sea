@@ -142,10 +142,12 @@ function World:Init()
     self.fixedBarrelGeneration = barrelGenerationCounter
     local barrel = Config.world.fixedBarrel
     assert(self:isPositionFree(barrel.position, barrel.radius), "fixed barrel must be in open sea")
-    -- v2.2：普通漂浮物不阻挡移动；固定身份和5米检查范围独立于碰撞。
+    -- 真机反馈 #6（2026-10-04 用户验收）：木桶应和岛屿一样拥有碰撞实体。
+    -- 固定身份与5米检查范围独立于碰撞；blocking 只影响航行阻挡。
+    -- 注：B 侧 v2.2 曾改回 blocking=false，此处按用户显式反馈恢复，已同步适配测试。
     self.fixedBarrel = self:spawn({ entityType = "float", kind = "fixed", layer = "surface",
         contentId = "driftwood_barrel", position = barrel.position, radius = barrel.radius,
-        blocking = false })
+        blocking = true })
 end
 
 ---@return SeaEntity

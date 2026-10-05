@@ -345,6 +345,52 @@ function Tests.Run()
         assert(fixture.runtime:GetFishingTarget(fish.id) == nil)
     end)
 
+    -- S6 教学（05 页 P6）：首次成功捕获 = "投饵→捕鱼→结果反馈" 闭环完成。
+    test("a successful catch completes the elder teaching marker (S6)", function()
+        local Progress = require("Gameplay.Circle1B2Progress")
+        local fixture = Flow.Fixture({})
+        assert(fixture.loop:Depart())
+        local player = fixture.loop.player
+        eq(Progress.IsTeachingDone(player), false)
+        eq(fixture.loop:IsTeachingDone(), false)
+        -- 非满舱主路径：收网直接入包即标记。
+        local fish = fixture.runtime:spawnFish("tuna", { x = 1, y = 0 })
+        local token = assert(fixture.bridge:BeginFishing({ x = 0, y = 0 }))
+        fixture.bridge:Update(4)
+        local ok, outcome = fixture.bridge:CompleteFishing(token)
+        assert(ok and outcome == "caught")
+        eq(Progress.IsTeachingDone(player), true)
+        eq(fixture.loop:IsTeachingDone(), true)
+        -- 幂等：重复标记不报错。
+        assert(Progress.MarkTeachingDone(player))
+        assert(fish.removed)
+    end)
+
+    test("full-hold catch marks the teaching only after the claim lands (S6)", function()
+        local Progress = require("Gameplay.Circle1B2Progress")
+        local fixture = fullFixture()
+        local player = fixture.loop.player
+        completeCatch(fixture, "tuna")
+        eq(Progress.IsTeachingDone(player), false)
+        -- 腾出一格后领取（满舱保留路径）。
+        assert(fixture.loop:UseItem(1))
+        assert(fixture.loop:ClaimPendingCatch())
+        eq(Progress.IsTeachingDone(player), true)
+    end)
+
+    test("teaching marker tolerates legacy saves without the field (S6)", function()
+        local Progress = require("Gameplay.Circle1B2Progress")
+        local fixture = Flow.Fixture({})
+        local player = fixture.loop.player
+        -- 模拟旧档：elder record 无 teachingDone 字段。
+        player.elder = { circle1B2 = { applesGiven = 1, decision = "pending" } }
+        assert(Progress.Validate(player))
+        eq(Progress.IsTeachingDone(player), false)
+        assert(Progress.MarkTeachingDone(player))
+        eq(Progress.IsTeachingDone(player), true)
+        assert(Progress.Validate(player))
+    end)
+
     return { results = results }
 end
 

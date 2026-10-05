@@ -1088,6 +1088,11 @@ function Loop:DropItem(index)
     local id = self.player.inventory:GetItems()[index]
     local definition = id and Items.GetDefinition(id)
     if not definition then return false, "invalid_item" end
+    -- A9（S3）：关键物品不可丢弃（05 页），给明确解释且不消耗。
+    if definition.protected then
+        self.lastMessage = definition.name .. "是关键物品，不能丢弃。"
+        return false, "protected_item"
+    end
     if not self.options.dropReceiver then return false, "drop_receiver_unavailable" end
     local payload = { itemId = id, category = definition.category,
         worldEffect = definition.worldEffect, lifetimeSec = definition.lifetimeSec }
@@ -1202,23 +1207,35 @@ function Loop:SellAll()
     return self:PortTransaction(function()
         local items = self.player.inventory:GetItems()
         local total, count = 0, 0
+        local keptProtected = 0
         -- 倒序移除，避免 Remove 造成的索引位移。
         for index = #items, 1, -1 do
             local id = items[index]
             local definition = id and Items.GetDefinition(id)
             if definition and definition.category == "fish"
                 and definition.sellPrice and definition.sellPrice > 0 then
-                local ok = self.player.inventory:Remove(index)
-                if ok then
-                    total = total + definition.sellPrice
-                    count = count + 1
+                -- A9（S3）：关键物品不可卖掉（05 页），整体出售时跳过并保留在船舱。
+                if definition.protected then
+                    keptProtected = keptProtected + 1
+                else
+                    local ok = self.player.inventory:Remove(index)
+                    if ok then
+                        total = total + definition.sellPrice
+                        count = count + 1
+                    end
                 end
             end
         end
-        if count == 0 then return false, "nothing_to_sell" end
+        if count == 0 then
+            if keptProtected > 0 then
+                self.lastMessage = "关键物品不能出售，已保留在船舱。"
+            end
+            return false, "nothing_to_sell"
+        end
         local paid, payReason = self.player:ChangeMoney(total)
         if not paid then return false, payReason end
         self.lastMessage = string.format("共出售 %d 件渔获，收入 ¥%d", count, total)
+        if keptProtected > 0 then self.lastMessage = self.lastMessage .. "；关键物品保留在船舱。" end
         return true
     end)
 end
@@ -1291,6 +1308,9 @@ end
 
 function Loop:BeginFishingSelection()
     if not self.actions then return false, "fishing_runtime_interface_unavailable" end
+    -- A2（2026-10-05 用户裁决）：捕鱼动作（选点/收网）进行中再点捕鱼键=取消（免费），
+    -- 不新增按钮；清理/结算 pending 态仍走 CancelFishingAction 的重试清理路径。
+    if self.actions:IsBusy() then return self:CancelFishingAction() end
     return self.actions:BeginSelection()
 end
 function Loop:SetFishingCenter(center)
@@ -1304,6 +1324,17 @@ end
 function Loop:CancelFishingAction()
     if not self.actions then return true end
     return self.actions:CancelActiveFishing("cancelled")
+end
+---S6 教学：首次成功捕获（含满舱 claim 入包）= "投饵→捕鱼→结果反馈" 闭环完成
+---（05 页 P6 口径），标记后老人对话面板的教学对白区收起。幂等。
+function Loop:NotifyCatchObtained()
+    local Progress = require("Gameplay.Circle1B2Progress")
+    return Progress.MarkTeachingDone(self.player)
+end
+function Loop:IsTeachingDone()
+    local Progress = require("Gameplay.Circle1B2Progress")
+    local done = Progress.IsTeachingDone(self.player)
+    return done == true
 end
 function Loop:GetFishingState()
     return self.actions and self.actions:GetFishingState() or { state = "idle", elapsed = 0, duration = Config.fishing.durationSec }
@@ -1378,24 +1409,33 @@ function Loop:DisableScope()
     return self:SyncScope()
 end
 function Loop:SyncScope()
-    local function finish(ok, reason)
-        self.scopeSyncError = reason
-        return ok, reason
-    end
+    -- 每帧热路径（Game:Sync 逐帧调用）：不创建 finish 闭包，直接返回，
+    -- 消除逐帧闭包分配带来的 GC 抖动。
     if not self:HasLens() then self.scopeEnabled = false end
     local runtime = self.runtime
     if not runtime or type(runtime.SetScopeEnabled) ~= "function" or type(runtime.IsScopeEnabled) ~= "function" then
-        return finish(false, "scope_interface_unavailable")
+        self.scopeSyncError = "scope_interface_unavailable"
+        return false, "scope_interface_unavailable"
     end
     local readOk, enabled = pcall(runtime.IsScopeEnabled, runtime)
-    if not readOk then return finish(false, "scope_sync_failed") end
+    if not readOk then
+        self.scopeSyncError = "scope_sync_failed"
+        return false, "scope_sync_failed"
+    end
     if enabled ~= self.scopeEnabled then
         local setOk = pcall(runtime.SetScopeEnabled, runtime, self.scopeEnabled)
-        if not setOk then return finish(false, "scope_sync_failed") end
+        if not setOk then
+            self.scopeSyncError = "scope_sync_failed"
+            return false, "scope_sync_failed"
+        end
     end
     local verifyOk, observed = pcall(runtime.IsScopeEnabled, runtime)
-    if not verifyOk or observed ~= self.scopeEnabled then return finish(false, "scope_sync_failed") end
-    return finish(true)
+    if not verifyOk or observed ~= self.scopeEnabled then
+        self.scopeSyncError = "scope_sync_failed"
+        return false, "scope_sync_failed"
+    end
+    self.scopeSyncError = nil
+    return true
 end
 function Loop:ToggleScope()
     if not self:HasLens() then return false, "scope_not_owned" end
@@ -1410,6 +1450,11 @@ function Loop:BeginThrowItem(index)
     local item = self.player.inventory:GetItems()[index]
     local definition = item and Items.GetDefinition(item)
     if not definition or definition.category == "treasure" then return false, "invalid_item" end
+    -- A9（S3）：关键物品不可投掷（等同丢弃路径），给明确解释且不消耗。
+    if definition.protected then
+        self.lastMessage = definition.name .. "是关键物品，不能投掷。"
+        return false, "protected_item"
+    end
     self.throwSelection = { index = index, itemId = item }
     if self.actions then self.actions:SetDropTarget(nil) end
     if self.runtime and type(self.runtime.ClearMovementTarget) == "function" then self.runtime:ClearMovementTarget() end
@@ -1421,6 +1466,34 @@ function Loop:GetThrowSelection()
     return selected and { index = selected.index, itemId = selected.itemId } or nil
 end
 function Loop:CancelThrowSelection() self.throwSelection = nil; return true end
+
+---背包内一键投掷：以船当前位置为投放点直接执行投放。
+---真机反馈（2026-10-05）：先 BeginThrowItem 再点海面的两段式流程会被背包
+---抽屉遮罩挡住海面点击，玩家卡死在背包页。此接口保持 BeginThrowItem /
+---HandleThrowPointer 海面选点流程不变，仅新增"船当前位置"快捷路径。
+---@param index integer
+---@return boolean, string?
+function Loop:ThrowItemAtShip(index)
+    if not self:CanManageInventory() or self.inPort then return false, "sea_required" end
+    local item = self.player.inventory:GetItems()[index]
+    local definition = item and Items.GetDefinition(item)
+    if not definition or definition.category == "treasure" then return false, "invalid_item" end
+    if definition.protected then
+        self.lastMessage = definition.name .. "是关键物品，不能投掷。"
+        return false, "protected_item"
+    end
+    if not self.actions then return false, "fishing_runtime_interface_unavailable" end
+    local position = self.runtime and type(self.runtime.GetShipPosition) == "function"
+        and self.runtime:GetShipPosition() or nil
+    if type(position) ~= "table" or type(position.x) ~= "number" or type(position.y) ~= "number" then
+        return false, "invalid_drop_position"
+    end
+    -- 投放点=船当前位置（距离 0 ≤ maxThrowDistance），交接由 dropReceiver 同步确认。
+    self.actions:SetDropTarget({ x = position.x, y = position.y })
+    local ok, reason = self:DropItem(index)
+    if not ok then self.actions:SetDropTarget(nil) end
+    return ok, reason
+end
 function Loop:OpenDay7PaperBeforeEnding()
     if self.player.day ~= 7 then return false, "paper_day_required" end
     if Progress.IsPaperShown(self.player) then return false, "paper_already_shown" end

@@ -15,6 +15,7 @@ Items.WorldEffects = { "ATTRACT_SMALL_FISH", "ATTRACT_BIG_FISH", "NONE" }
 ---@field heal number
 ---@field canEat boolean
 ---@field canGive boolean
+---@field protected boolean
 ---@field worldEffect string
 ---@field lifetimeSec number
 
@@ -33,6 +34,7 @@ for _, row in ipairs(ItemRows) do
         heal = row.heal or 0,
         canEat = row.heal ~= nil,
         canGive = giveable[row.id] == true,
+        protected = row.protected == true,
         worldEffect = row.worldEffect,
         lifetimeSec = row.worldDuration,
     }

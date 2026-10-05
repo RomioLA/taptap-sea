@@ -90,6 +90,42 @@ function Tests.Run()
             end
         end
     end)
+    check("S1 spawn distribution prefers sardine near day start and tuna in far band, soft fallback keeps far regions stocked", function()
+        assert(Data.sardine.spawnBandFromDayStart.min == 15 and Data.sardine.spawnBandFromDayStart.max == 150)
+        assert(Data.tuna.spawnBandFromDayStart.min == 200 and Data.tuna.spawnBandFromDayStart.max == 600)
+        assert(Data.sardine.bandStatus == "S1_BALANCE_PLACEHOLDER" and Data.tuna.bandStatus == "S1_BALANCE_PLACEHOLDER")
+        -- Near-departure region [0,120]^2: sardines should land inside the 150m band;
+        -- tuna can never pass the 200m hard constraint here and must stay absent.
+        local world=World.New();local departure={x=0,y=0};local boat={x=8,y=8}
+        local inBandSardine,outOfBandSardine=0,0
+        for seed=1,40 do
+            for _,p in ipairs(Strategy.GenerateRegion(world,seed,12,12,departure,Data,boat)) do
+                if p.species=="sardine" then
+                    assert(M.distance(p.position,boat)>=Data.sardine.minShipSpawnDistance)
+                    if M.distance(p.position,departure)<=Data.sardine.spawnBandFromDayStart.max then
+                        inBandSardine=inBandSardine+1
+                    else outOfBandSardine=outOfBandSardine+1 end
+                else assert(p.species=="tuna" and M.distance(p.position,departure)>=200) end
+            end
+        end
+        assert(inBandSardine>0 and outOfBandSardine*10<inBandSardine)
+        -- Far region x in [240,360]: sardines fall back to uniform placement (no dead
+        -- zones) while tuna land inside their 200-600m band.
+        local farSardine,farTuna=0,0
+        for seed=1,40 do
+            for _,p in ipairs(Strategy.GenerateRegion(world,seed,14,12,departure,Data,boat)) do
+                local dist=M.distance(p.position,departure)
+                if p.species=="sardine" then farSardine=farSardine+1
+                else assert(dist>=Data.tuna.spawnBandFromDayStart.min and dist<=Data.tuna.spawnBandFromDayStart.max);farTuna=farTuna+1 end
+            end
+        end
+        assert(farSardine>0 and farTuna>0)
+        -- Same seed reproduces the same placements after the two-phase change.
+        local a=Strategy.GenerateRegion(World.New(),77,12,12,departure,Data,boat)
+        local b=Strategy.GenerateRegion(World.New(),77,12,12,departure,Data,boat)
+        assert(#a==#b)
+        for i=1,#a do assert(a[i].species==b[i].species and M.distance(a[i].position,b[i].position)<1e-9) end
+    end)
     check("birth exclusion is not an AI barrier after generation", function()
         for _,spec in ipairs({{"sardine",18,"ATTRACT_SMALL_FISH"},{"tuna",31,"ATTRACT_BIG_FISH"}}) do
             local r=fresh();local fish=r:spawnFish(spec[1],{x=spec[2],y=0},math.pi)
@@ -128,21 +164,21 @@ function Tests.Run()
         assert(Data.tuna.chaseSpeed > Data.sardine.fleeSpeed)
         assert(Data.tuna.turnDegPerSec < Data.sardine.turnDegPerSec)
     end)
-    check("configured ship levels move at 6, 8, 10 meters per second", function()
-        for level, speed in ipairs({6,8,10}) do
+    check("configured ship levels move at the configured meters per second", function()
+        for level, speed in ipairs(Config.ship.speedByLevel) do
             local r = Runtime.New({initializeRegions=false,shipLevel=level})
             near(r.movement.speed,speed);assert(r.ship.level==level)
             step(r,1,1,0);near(r.ship.position.x,speed)
         end
-        local r=fresh();near(r:SetShipLevel(2),8);r:Reset()
-        assert(r.ship.level==2);near(r.movement.speed,8)
-        near(r:SetShipLevel(3),10);near(r:SetShipLevel(1),6)
+        local r=fresh();near(r:SetShipLevel(2),Config.ship.speedByLevel[2]);r:Reset()
+        assert(r.ship.level==2);near(r.movement.speed,Config.ship.speedByLevel[2])
+        near(r:SetShipLevel(3),Config.ship.speedByLevel[3]);near(r:SetShipLevel(1),Config.ship.speedByLevel[1])
     end)
     check("invalid ship level leaves capability unchanged", function()
         local r=fresh()
         for _,level in ipairs({0,4,1.5,-1}) do
             assert(not pcall(function() r:SetShipLevel(level) end))
-            near(r.movement.speed,6);assert(r.ship.level==1)
+            near(r.movement.speed,Config.ship.speedByLevel[1]);assert(r.ship.level==1)
         end
     end)
     check("camera framing changes without rescaling meter movement", function()
@@ -152,7 +188,7 @@ function Tests.Run()
             local r=fresh();r.movement:SetViewport(1000,600)
             local a=r.movement:ScreenToWorld(0,600*Config.camera.anchorY)
             local b=r.movement:ScreenToWorld(1000,600*Config.camera.anchorY);near(b.x-a.x,80)
-            step(r,1,1,0);near(r.ship.position.x,6)
+            step(r,1,1,0);near(r.ship.position.x,Config.ship.speedByLevel[1])
         end)
         Config.camera.viewHeight=original
         assert(ok,err)
@@ -196,12 +232,12 @@ function Tests.Run()
         end
     end)
     check("ship straight speed and max clamp", function()
-        local r = fresh(); step(r, 1, 1, 0); near(r.ship.position.x, 6)
-        near(r.movement:SetSpeed(20), 10); near(r.movement:SetSpeed(-1), 0)
+        local r = fresh(); step(r, 1, 1, 0); near(r.ship.position.x, Config.ship.speedByLevel[1])
+        near(r.movement:SetSpeed(20), Config.ship.maxSpeed); near(r.movement:SetSpeed(-1), 0)
     end)
     check("diagonal travel no speed boost", function()
         local r = fresh(); r.ship.rotation = math.pi/4
-        step(r, 1, 1, 1); near(M.distance(r.ship.position, Config.ship.start), 6)
+        step(r, 1, 1, 1); near(M.distance(r.ship.position, Config.ship.start), Config.ship.speedByLevel[1])
     end)
     check("keyboard cancels click target; opposite key axes stop", function()
         local r = fresh(); r.movement:SetTarget({x=40,y=0})
@@ -267,9 +303,14 @@ function Tests.Run()
         assert(r.world:isPositionFree(r.ship.position,r.ship.radius))
     end)
     check("small floats overlap without blocking", function()
-        local r=fresh(); local overlaps=0
+        local r=fresh()
+        -- 演示漂浮物已从固定物中删除（真机反馈 2026-10-05）；本契约验证的是
+        -- 漂浮物"可重叠、不阻挡"语义本身，故临时生成一个 float 再航行穿过。
+        r.world:spawn({ entityType="float", kind="fixed", layer="surface",
+            position={x=9,y=0}, radius=2 })
+        local overlaps=0
         r.world.onOverlap=function(e) if e.entityType=="float" then overlaps=overlaps+1 end end
-        step(r,3,1,0); near(r.ship.position.x,18); assert(overlaps==1)
+        step(r,3,1,0); near(r.ship.position.x,Config.ship.speedByLevel[1]*3); assert(overlaps==1)
     end)
     check("unique IDs and removed query exclusion", function()
         local r=fresh(); local a=r:spawnFish("sardine",{x=0,y=0})
