@@ -80,7 +80,12 @@ function Scene.Start(options)
     bridgeOptions.store = settings.store or Persistence.Dual(settings.cloud)
     bridgeOptions.loadSaved = false
 
-    UI.Init({ theme = uiTheme, scale = UI.Scale.DEFAULT })
+    UI.Init({ theme = uiTheme, scale = UI.Scale.DEFAULT,
+        -- 当前运行包不含主题默认圆体；复用包内 MiSans，避免开场按钮无文字。
+        fonts = { { family = "sans", weights = {
+            normal = "Fonts/MiSans-Regular.ttf", bold = "Fonts/MiSans-Bold.ttf",
+        } } },
+    })
     local root = UI.Panel {
         id = "seaIntegrationRoot",
         width = "100%",

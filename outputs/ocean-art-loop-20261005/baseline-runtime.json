@@ -1,0 +1,105 @@
+{
+    "version": 2,
+    "script": "Main.lua",
+    "result": "FAIL",
+    "duration_ms": 26987,
+    "frames_completed": 150,
+    "phases": {
+        "load": {
+            "result": "PASS",
+            "errors": []
+        },
+        "init": {
+            "result": "FAIL",
+            "errors": [
+                {
+                    "category": "resource",
+                    "message": "[2026-10-05 18_26_47_733][3] ERROR: Could not find resource Fonts/ResourceHanRoundedCN-Regular.ttf",
+                    "frame": 0
+                },
+                {
+                    "category": "engine",
+                    "message": "[2026-10-05 18_26_47_733][3] ERROR: nvgCreateFontUrho: Failed to load font: Fonts/ResourceHanRoundedCN-Regular.ttf",
+                    "frame": 0
+                },
+                {
+                    "category": "resource",
+                    "message": "[2026-10-05 18_26_47_733][3] ERROR: Could not find resource Fonts/ResourceHanRoundedCN-Bold.ttf",
+                    "frame": 0
+                },
+                {
+                    "category": "engine",
+                    "message": "[2026-10-05 18_26_47_733][3] ERROR: nvgCreateFontUrho: Failed to load font: Fonts/ResourceHanRoundedCN-Bold.ttf",
+                    "frame": 0
+                }
+            ]
+        },
+        "run": {
+            "result": "PASS",
+            "errors": []
+        },
+        "scene": {
+            "result": "PASS",
+            "errors": [],
+            "node_count": 0,
+            "component_count": 0,
+            "scene_exists": false
+        }
+    },
+    "state_snapshots": [
+        {
+            "frame": 1,
+            "phase": "init",
+            "nodes": 0,
+            "components": 0,
+            "hash": 0,
+            "frame_time_ms": 645.8560180664063
+        },
+        {
+            "frame": 10,
+            "phase": "run",
+            "nodes": 0,
+            "components": 0,
+            "hash": 0,
+            "frame_time_ms": 115.98999786376953
+        },
+        {
+            "frame": 75,
+            "phase": "run",
+            "nodes": 0,
+            "components": 0,
+            "hash": 0,
+            "frame_time_ms": 307.3389892578125
+        },
+        {
+            "frame": 150,
+            "phase": "run",
+            "nodes": 0,
+            "components": 0,
+            "hash": 0,
+            "frame_time_ms": 277.8919982910156
+        }
+    ],
+    "scene_stalled": true,
+    "max_frame_time_ms": 826.177001953125,
+    "update_defined": false,
+    "component_census": {},
+    "test_result": "NOT_RUN",
+    "test_assertions": {
+        "total": 0,
+        "passed": 0,
+        "failed": 0
+    },
+    "test_issues": [],
+    "missing_resources": [
+        "Fonts/ResourceHanRoundedCN-Regular.ttf",
+        "Fonts/ResourceHanRoundedCN-Bold.ttf"
+    ],
+    "missing_engine_resources": [],
+    "summary": {
+        "lua_errors": 0,
+        "resource_errors": 2,
+        "engine_errors": 2,
+        "total_errors": 4
+    }
+}

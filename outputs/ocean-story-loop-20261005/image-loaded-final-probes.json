@@ -1,0 +1,391 @@
+{
+  "status": "PASS",
+  "kind": "loaded branch actual Lua54 ImageArt with six actual Pillow decoded PNGs; primitive recorder, not GPU acceptance",
+  "sourceSHA256": "87e60f3cb8f37a4f66ea8380baedd9662f1cc71c44eee3e17da87cf817b4dde8",
+  "assets": [
+    {
+      "handle": 1,
+      "path": "image/OceanLoop/island.png",
+      "flags": 1,
+      "size": [
+        1024,
+        1024
+      ],
+      "sha256": "35264230d15c56511e0fe440f31620a76bc930ec533369d1a171c08079f4e5d5"
+    },
+    {
+      "handle": 2,
+      "path": "image/OceanLoop/waterpaper.png",
+      "flags": 7,
+      "size": [
+        1024,
+        1024
+      ],
+      "sha256": "b83f348aee8a49d1a770b324eefae9ce987783bb513d189f0e2aab5e59ea0ccf"
+    },
+    {
+      "handle": 3,
+      "path": "image/OceanLoop/ripple.png",
+      "flags": 1,
+      "size": [
+        512,
+        512
+      ],
+      "sha256": "7981764dcd6a3a85c9d0c7fc9e1ae4407e1d2ea487228747641ebe2afc16b8ed"
+    },
+    {
+      "handle": 4,
+      "path": "image/OceanLoop/boat.png",
+      "flags": 1,
+      "size": [
+        1024,
+        512
+      ],
+      "sha256": "8dcbf03106fa368741d039efa2cbe9f5f835ec150e57fc7fe2bb822252ae75ec"
+    },
+    {
+      "handle": 5,
+      "path": "image/OceanLoop/barrel.png",
+      "flags": 1,
+      "size": [
+        512,
+        512
+      ],
+      "sha256": "22e9f1052e09375b75d4a3b1dcac3d7813791728a993d27f1c3ed196622db529"
+    },
+    {
+      "handle": 6,
+      "path": "image/OceanLoop/gull.png",
+      "flags": 1,
+      "size": [
+        512,
+        512
+      ],
+      "sha256": "4741c60dc6f01ace54c6cced47c66c26b33c014d15995ee43454aee10b1e1c23"
+    }
+  ],
+  "lifecycle": {
+    "doubleLoadCreates": 6,
+    "doubleReleaseDeletes": 6,
+    "reloadTotalCreates": 12,
+    "reloadTotalDeletes": 12,
+    "unloadedWaterPaperFills": 0
+  },
+  "waterPaperCases": [
+    {
+      "width": 1280,
+      "height": 720,
+      "camera": [
+        0,
+        0
+      ],
+      "fills": 1,
+      "minimumHorizonGapPixels": 0.0,
+      "pattern": {
+        "handle": 2,
+        "alpha": 0.5,
+        "extent": [
+          1080.0,
+          1080.0
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "camera": [
+        137.1,
+        217.4
+      ],
+      "fills": 1,
+      "minimumHorizonGapPixels": 0.0,
+      "pattern": {
+        "handle": 2,
+        "alpha": 0.5,
+        "extent": [
+          1080.0,
+          1080.0
+        ]
+      }
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "camera": [
+        0,
+        0
+      ],
+      "fills": 1,
+      "minimumHorizonGapPixels": -5.684341886080802e-14,
+      "pattern": {
+        "handle": 2,
+        "alpha": 0.5,
+        "extent": [
+          1620.0,
+          1620.0
+        ]
+      }
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "camera": [
+        137.1,
+        217.4
+      ],
+      "fills": 1,
+      "minimumHorizonGapPixels": -5.684341886080802e-14,
+      "pattern": {
+        "handle": 2,
+        "alpha": 0.5,
+        "extent": [
+          1620.0,
+          1620.0
+        ]
+      }
+    },
+    {
+      "width": 900,
+      "height": 1200,
+      "camera": [
+        0,
+        0
+      ],
+      "fills": 1,
+      "minimumHorizonGapPixels": 0.0,
+      "pattern": {
+        "handle": 2,
+        "alpha": 0.5,
+        "extent": [
+          1800.0,
+          1800.0
+        ]
+      }
+    },
+    {
+      "width": 900,
+      "height": 1200,
+      "camera": [
+        137.1,
+        217.4
+      ],
+      "fills": 1,
+      "minimumHorizonGapPixels": 0.0,
+      "pattern": {
+        "handle": 2,
+        "alpha": 0.5,
+        "extent": [
+          1800.0,
+          1800.0
+        ]
+      }
+    }
+  ],
+  "planeMetrics": [
+    {
+      "depth": 0,
+      "filledTriangles": 136,
+      "sharedEdges": 184,
+      "maxSharedEdgeUVDifferenceTexels": 4.547473508864641e-13,
+      "minimumHorizonGapPixels": 319.5691753870309
+    },
+    {
+      "depth": 25,
+      "filledTriangles": 128,
+      "sharedEdges": 176,
+      "maxSharedEdgeUVDifferenceTexels": 4.547473508864641e-13,
+      "minimumHorizonGapPixels": 154.89451056689904
+    },
+    {
+      "depth": 85,
+      "filledTriangles": 128,
+      "sharedEdges": 176,
+      "maxSharedEdgeUVDifferenceTexels": 4.547473508864641e-13,
+      "minimumHorizonGapPixels": 6.103659736231975
+    },
+    {
+      "depth": 105,
+      "filledTriangles": 104,
+      "sharedEdges": 191,
+      "maxSharedEdgeUVDifferenceTexels": 2.8535396268125623e-11,
+      "minimumHorizonGapPixels": 0.0
+    },
+    {
+      "depth": 109,
+      "filledTriangles": 88,
+      "sharedEdges": 186,
+      "maxSharedEdgeUVDifferenceTexels": 4.956746124662459e-11,
+      "minimumHorizonGapPixels": 0.0
+    },
+    {
+      "depth": 110,
+      "filledTriangles": 64,
+      "sharedEdges": 110,
+      "maxSharedEdgeUVDifferenceTexels": 1.1368683772161603e-12,
+      "minimumHorizonGapPixels": 0.0
+    },
+    {
+      "depth": 125,
+      "filledTriangles": 0,
+      "sharedEdges": 0,
+      "maxSharedEdgeUVDifferenceTexels": 0,
+      "minimumHorizonGapPixels": null
+    }
+  ],
+  "previousBadSample": {
+    "islandCenter": [
+      0,
+      105
+    ],
+    "worldPoint": [
+      8.863636363636363,
+      109.77272727272727
+    ],
+    "screenPoint": [
+      1009.432993471723,
+      259.33124586136285
+    ],
+    "expectedUV": [
+      0.825,
+      0.325
+    ],
+    "actualNewSourceSamples": [
+      {
+        "uv": [
+          0.825450233139862,
+          0.3175846373954853
+        ],
+        "rgba": [
+          231,
+          199,
+          146,
+          255
+        ]
+      }
+    ]
+  },
+  "headingSmoke": [
+    {
+      "name": "boat",
+      "headingIndex": 0,
+      "filledTriangles": 8
+    },
+    {
+      "name": "boat",
+      "headingIndex": 1,
+      "filledTriangles": 8
+    },
+    {
+      "name": "boat",
+      "headingIndex": 2,
+      "filledTriangles": 8
+    },
+    {
+      "name": "boat",
+      "headingIndex": 3,
+      "filledTriangles": 8
+    },
+    {
+      "name": "boat",
+      "headingIndex": 4,
+      "filledTriangles": 8
+    },
+    {
+      "name": "boat",
+      "headingIndex": 5,
+      "filledTriangles": 8
+    },
+    {
+      "name": "boat",
+      "headingIndex": 6,
+      "filledTriangles": 8
+    },
+    {
+      "name": "boat",
+      "headingIndex": 7,
+      "filledTriangles": 8
+    },
+    {
+      "name": "gull",
+      "headingIndex": 0,
+      "filledTriangles": 16
+    },
+    {
+      "name": "gull",
+      "headingIndex": 1,
+      "filledTriangles": 16
+    },
+    {
+      "name": "gull",
+      "headingIndex": 2,
+      "filledTriangles": 16
+    },
+    {
+      "name": "gull",
+      "headingIndex": 3,
+      "filledTriangles": 16
+    },
+    {
+      "name": "gull",
+      "headingIndex": 4,
+      "filledTriangles": 16
+    },
+    {
+      "name": "gull",
+      "headingIndex": 5,
+      "filledTriangles": 16
+    },
+    {
+      "name": "gull",
+      "headingIndex": 6,
+      "filledTriangles": 16
+    },
+    {
+      "name": "gull",
+      "headingIndex": 7,
+      "filledTriangles": 16
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 0,
+      "filledTriangles": 8
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 1,
+      "filledTriangles": 8
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 2,
+      "filledTriangles": 8
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 3,
+      "filledTriangles": 8
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 4,
+      "filledTriangles": 8
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 5,
+      "filledTriangles": 8
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 6,
+      "filledTriangles": 8
+    },
+    {
+      "name": "barrel",
+      "headingIndex": 7,
+      "filledTriangles": 8
+    }
+  ],
+  "assetSnapshotNote": "Assets may be superseded by coordinator saturation cleanup after probe; hashes identify exact sampled files. Loaded geometry/lifecycle unaffected if Lua unchanged.",
+  "probeTiming": "before coordinator saturation cleanup"
+}

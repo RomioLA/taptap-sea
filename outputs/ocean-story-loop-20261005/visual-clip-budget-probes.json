@@ -1,0 +1,561 @@
+{
+  "status": "PASS",
+  "kind": "offline Lua54 + unchanged NVGCapture; no native-engine acceptance",
+  "surfaceCases": [
+    {
+      "width": 1280,
+      "height": 720,
+      "time": 0,
+      "camera": [
+        0,
+        0
+      ],
+      "marks": 622,
+      "curves": 614,
+      "sampledCubicStrokeMinimumWaterGapPixels": 0.9508477810950134,
+      "strokePasses": 22
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "time": 1.5,
+      "camera": [
+        0.2,
+        0.3
+      ],
+      "marks": 623,
+      "curves": 614,
+      "sampledCubicStrokeMinimumWaterGapPixels": 1.0598576261085166,
+      "strokePasses": 22
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "time": 8,
+      "camera": [
+        137.1,
+        217.4
+      ],
+      "marks": 631,
+      "curves": 609,
+      "sampledCubicStrokeMinimumWaterGapPixels": 0.44691792793697205,
+      "strokePasses": 23
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "time": 0,
+      "camera": [
+        0,
+        0
+      ],
+      "marks": 627,
+      "curves": 616,
+      "sampledCubicStrokeMinimumWaterGapPixels": 0.6649968401417354,
+      "strokePasses": 23
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "time": 1.5,
+      "camera": [
+        0.2,
+        0.3
+      ],
+      "marks": 632,
+      "curves": 617,
+      "sampledCubicStrokeMinimumWaterGapPixels": 0.1251488464435042,
+      "strokePasses": 23
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "time": 8,
+      "camera": [
+        137.1,
+        217.4
+      ],
+      "marks": 648,
+      "curves": 617,
+      "sampledCubicStrokeMinimumWaterGapPixels": 0.36094682322432026,
+      "strokePasses": 23
+    },
+    {
+      "width": 900,
+      "height": 1200,
+      "time": 0,
+      "camera": [
+        0,
+        0
+      ],
+      "marks": 271,
+      "curves": 258,
+      "sampledCubicStrokeMinimumWaterGapPixels": 0.31644683341617197,
+      "strokePasses": 23
+    },
+    {
+      "width": 900,
+      "height": 1200,
+      "time": 1.5,
+      "camera": [
+        0.2,
+        0.3
+      ],
+      "marks": 272,
+      "curves": 257,
+      "sampledCubicStrokeMinimumWaterGapPixels": 0.39375622518347286,
+      "strokePasses": 23
+    },
+    {
+      "width": 900,
+      "height": 1200,
+      "time": 8,
+      "camera": [
+        137.1,
+        217.4
+      ],
+      "marks": 278,
+      "curves": 260,
+      "sampledCubicStrokeMinimumWaterGapPixels": 0.5797724517791844,
+      "strokePasses": 23
+    }
+  ],
+  "wakeCases": [
+    {
+      "depth": 0,
+      "fraction": 0.01,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": 520.9305640708934
+    },
+    {
+      "depth": 0,
+      "fraction": 0.01,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": 519.01935903767
+    },
+    {
+      "depth": 0,
+      "fraction": 0.01,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": 518.7197151037471
+    },
+    {
+      "depth": 0,
+      "fraction": 0.5,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": 572.226764779333
+    },
+    {
+      "depth": 0,
+      "fraction": 0.5,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": 570.0368699074663
+    },
+    {
+      "depth": 0,
+      "fraction": 0.5,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": 571.1616842647154
+    },
+    {
+      "depth": 0,
+      "fraction": 0.99,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": 519.4769632802388
+    },
+    {
+      "depth": 0,
+      "fraction": 0.99,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": 519.0819597021721
+    },
+    {
+      "depth": 0,
+      "fraction": 0.99,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": 520.1518243989988
+    },
+    {
+      "depth": 109.99,
+      "fraction": 0.01,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 1,
+      "minimumWaterGapPixels": -2.2737367544323206e-13
+    },
+    {
+      "depth": 109.99,
+      "fraction": 0.01,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": -3.979039320256561e-13
+    },
+    {
+      "depth": 109.99,
+      "fraction": 0.01,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": -3.979039320256561e-13
+    },
+    {
+      "depth": 109.99,
+      "fraction": 0.5,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 1,
+      "minimumWaterGapPixels": -1.1368683772161603e-13
+    },
+    {
+      "depth": 109.99,
+      "fraction": 0.5,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": -3.979039320256561e-13
+    },
+    {
+      "depth": 109.99,
+      "fraction": 0.5,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": -3.979039320256561e-13
+    },
+    {
+      "depth": 109.99,
+      "fraction": 0.99,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 1,
+      "minimumWaterGapPixels": -2.2737367544323206e-13
+    },
+    {
+      "depth": 109.99,
+      "fraction": 0.99,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": -3.979039320256561e-13
+    },
+    {
+      "depth": 109.99,
+      "fraction": 0.99,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": -4.547473508864641e-13
+    },
+    {
+      "depth": 110,
+      "fraction": 0.01,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 1,
+      "minimumWaterGapPixels": 0.0
+    },
+    {
+      "depth": 110,
+      "fraction": 0.01,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 1,
+      "minimumWaterGapPixels": -4.547473508864641e-13
+    },
+    {
+      "depth": 110,
+      "fraction": 0.01,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": -3.979039320256561e-13
+    },
+    {
+      "depth": 110,
+      "fraction": 0.5,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 1,
+      "minimumWaterGapPixels": -5.684341886080802e-14
+    },
+    {
+      "depth": 110,
+      "fraction": 0.5,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 1,
+      "minimumWaterGapPixels": -3.979039320256561e-13
+    },
+    {
+      "depth": 110,
+      "fraction": 0.5,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": -3.979039320256561e-13
+    },
+    {
+      "depth": 110,
+      "fraction": 0.99,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 1,
+      "minimumWaterGapPixels": 0.0
+    },
+    {
+      "depth": 110,
+      "fraction": 0.99,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 1,
+      "minimumWaterGapPixels": -4.547473508864641e-13
+    },
+    {
+      "depth": 110,
+      "fraction": 0.99,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": -3.979039320256561e-13
+    },
+    {
+      "depth": 110.01,
+      "fraction": 0.01,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 1,
+      "minimumWaterGapPixels": 0.0
+    },
+    {
+      "depth": 110.01,
+      "fraction": 0.01,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 1,
+      "minimumWaterGapPixels": -3.979039320256561e-13
+    },
+    {
+      "depth": 110.01,
+      "fraction": 0.01,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": -4.547473508864641e-13
+    },
+    {
+      "depth": 110.01,
+      "fraction": 0.5,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 1,
+      "minimumWaterGapPixels": -3.410605131648481e-13
+    },
+    {
+      "depth": 110.01,
+      "fraction": 0.5,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 1,
+      "minimumWaterGapPixels": -3.979039320256561e-13
+    },
+    {
+      "depth": 110.01,
+      "fraction": 0.5,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": -3.979039320256561e-13
+    },
+    {
+      "depth": 110.01,
+      "fraction": 0.99,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 1,
+      "minimumWaterGapPixels": -1.7053025658242404e-13
+    },
+    {
+      "depth": 110.01,
+      "fraction": 0.99,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 1,
+      "minimumWaterGapPixels": -4.547473508864641e-13
+    },
+    {
+      "depth": 110.01,
+      "fraction": 0.99,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 2,
+      "minimumWaterGapPixels": -3.979039320256561e-13
+    },
+    {
+      "depth": 111,
+      "fraction": 0.01,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 111,
+      "fraction": 0.01,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 111,
+      "fraction": 0.01,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 111,
+      "fraction": 0.5,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 111,
+      "fraction": 0.5,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 111,
+      "fraction": 0.5,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 111,
+      "fraction": 0.99,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 111,
+      "fraction": 0.99,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 111,
+      "fraction": 0.99,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 113,
+      "fraction": 0.01,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 113,
+      "fraction": 0.01,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 113,
+      "fraction": 0.01,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 113,
+      "fraction": 0.5,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 113,
+      "fraction": 0.5,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 113,
+      "fraction": 0.5,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 113,
+      "fraction": 0.99,
+      "angle": 0,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 113,
+      "fraction": 0.99,
+      "angle": 0.7853981633974483,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    },
+    {
+      "depth": 113,
+      "fraction": 0.99,
+      "angle": 1.5707963267948966,
+      "worldStrokeCalls": 2,
+      "emittedFills": 0,
+      "minimumWaterGapPixels": null
+    }
+  ],
+  "sourceHashes": {
+    "/workspace/scripts/Ocean/SeaViewArt.lua": "09498ee44531d1592ff2254f6ae471de79f748c75eadb373ae839ecb2f1b898e",
+    "/workspace/scripts/Ocean/Draw.lua": "dd8c80a08947aa1c08d3ba610f31b3ecd54d408c3e4c205b4f8ed9f40bf0c6e2"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "name": "ArchitectureIntegrationTests",
+  "kind": "run",
+  "file": "scripts/tests/ArchitectureIntegrationTests.lua",
+  "passed": true,
+  "subtestCount": 12,
+  "failures": [],
+  "returned": {
+    "skipped_count": 0,
+    "results": [
+      {
+        "name": "shared registry and factory retain entity identity",
+        "passed": true
+      },
+      {
+        "name": "one automatic fish update per sea substep",
+        "passed": true
+      },
+      {
+        "name": "frozen and removed entities never receive FSM updates",
+        "passed": true
+      },
+      {
+        "name": "paused Game leaves sea and temporary lifetime unchanged",
+        "passed": true
+      },
+      {
+        "name": "Game uses reset runtime world rather than cached registry",
+        "passed": true
+      },
+      {
+        "name": "shared FSM calls enter exit and update once",
+        "passed": true
+      },
+      {
+        "name": "base skeleton retains numeric IDs and remove/clear interfaces",
+        "passed": true
+      },
+      {
+        "name": "Integration owns references while Gameplay owns transient action records",
+        "passed": true
+      },
+      {
+        "name": "registered frame System keeps raw clock dt separate from sea substeps",
+        "passed": true
+      },
+      {
+        "name": "runtime replacement rejects old tokens even when fish IDs are reused",
+        "passed": true
+      },
+      {
+        "name": "Ocean rollback restores removed fish identity and active FSM",
+        "passed": true
+      },
+      {
+        "name": "Bridge works through public Runtime APIs without sea internals",
+        "passed": true
+      }
+    ]
+  },
+  "stdout": "",
+  "nvgCalls": {},
+  "nvgCallTotal": 0,
+  "durationMs": 168.513
+}

@@ -1,0 +1,95 @@
+{
+  "assets": [
+    {
+      "name": "boat",
+      "size": [
+        1024,
+        512
+      ],
+      "shaMatch": true,
+      "alphaBounds": [
+        62,
+        30,
+        962,
+        481
+      ],
+      "transparentPixels": 239767
+    },
+    {
+      "name": "island",
+      "size": [
+        1024,
+        1024
+      ],
+      "shaMatch": true,
+      "alphaBounds": [
+        62,
+        61,
+        962,
+        962
+      ],
+      "transparentPixels": 458705
+    },
+    {
+      "name": "gull",
+      "size": [
+        512,
+        512
+      ],
+      "shaMatch": true,
+      "alphaBounds": [
+        138,
+        30,
+        374,
+        481
+      ],
+      "transparentPixels": 219780
+    },
+    {
+      "name": "barrel",
+      "size": [
+        512,
+        512
+      ],
+      "shaMatch": true,
+      "alphaBounds": [
+        30,
+        30,
+        481,
+        481
+      ],
+      "transparentPixels": 101732
+    },
+    {
+      "name": "ripple",
+      "size": [
+        512,
+        512
+      ],
+      "shaMatch": true,
+      "alphaBounds": [
+        39,
+        22,
+        483,
+        485
+      ],
+      "transparentPixels": 250837
+    },
+    {
+      "name": "waterpaper",
+      "size": [
+        1024,
+        1024
+      ],
+      "shaMatch": true,
+      "alphaBounds": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "transparentPixels": 0
+    }
+  ],
+  "tileEdgesIdentical": true
+}

@@ -1,0 +1,20 @@
+{
+  "name": "GameLoopUISpec",
+  "kind": "spec",
+  "file": "scripts/tests/GameLoopUISpec.lua",
+  "passed": true,
+  "subtestCount": 11,
+  "failures": [],
+  "stdout": "PASS HUD always visible information, host subtree and core button wiring\nPASS forced return modal and failed save retry through actual callbacks\nPASS failed save offers an explicit unsaved continuation through the HUD\nPASS skipping a pending save explains that the remote write may still finish\nPASS debug restricted to development, config steps and freeze during save\nPASS development HUD controls configure actions without production debug\nPASS port upgrade buttons use config prices and refresh after purchase\nPASS daily shop stock sold-out UI and next-day refresh\nPASS production fishing HUD casts on the sea pointer then pauses and cancels\nPASS pending cabin menu returns without closing then consumes and claims exactly once\nPASS pending cabin pointer chooses drop position while paused with mouse and touch\nGAME_LOOP_UI_MOCK_PASS 11",
+  "nvgCalls": {},
+  "nvgCallTotal": 0,
+  "durationMs": 159.494,
+  "reviewMode": "case-adapted",
+  "explicitSearcherAdaptations": [
+    {
+      "requested": "Tests.Circle1BFishingFlowTests",
+      "resolved": "tests.Circle1BFishingFlowTests"
+    }
+  ],
+  "imageArtRequireGuardEnabled": false
+}

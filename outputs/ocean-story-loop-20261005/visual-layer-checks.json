@@ -1,0 +1,434 @@
+{
+  "evidence": "existing isolated Lua54 suites, unchanged tests",
+  "nativeEngine": "NOT_RUN",
+  "files": [
+    "/workspace/scripts/Ocean/SeaViewArt.lua",
+    "/workspace/scripts/Ocean/Draw.lua"
+  ],
+  "suiteCount": 7,
+  "passedSuiteCount": 6,
+  "suites": [
+    {
+      "name": "SeaMotionEffectsTests",
+      "kind": "run",
+      "file": "scripts/tests/SeaMotionEffectsTests.lua",
+      "passed": true,
+      "subtestCount": 7,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "error": "",
+            "passed": true,
+            "name": "near and far surface detail blend smoothly with complementary weights"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "surface lattice positions stay on fixed world cells while the view drifts"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "boat heave and roll are pure samples of voyage time and turn rate"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "shoreline foam arcs expand, fade, and repeat in world space"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "water mark budget is enforced even within a single row"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "meter-width foam clips once and returns the same projected edge endpoints"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "turn bank eases back when stopped and freezes while paused"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 1,
+        "nvgClosePath": 240,
+        "nvgFill": 1,
+        "nvgFillColor": 1,
+        "nvgLineTo": 720,
+        "nvgMoveTo": 240
+      },
+      "nvgCallTotal": 1203,
+      "durationMs": 126.327,
+      "exitCode": 0
+    },
+    {
+      "name": "SeaFusionRenderTests",
+      "kind": "run",
+      "file": "scripts/tests/SeaFusionRenderTests.lua",
+      "passed": true,
+      "subtestCount": 10,
+      "failures": [],
+      "returned": {
+        "status": "PASS",
+        "tests": [
+          "draw_is_pure_for_runtime_state",
+          "original_sun_and_birds_reused",
+          "projected_sea_view_art_apis_reused",
+          "ordinary_fish_hidden_by_default",
+          "show_underwater_draws_both_fixture_fish",
+          "resize_preserves_projection_anchor_horizon_and_perspective_scale",
+          "curved_ground_clips_preserve_elevated_island_silhouettes_in_both_aspects",
+          "presentation_fixture_does_not_change_config_world",
+          "night_tint_precedes_boat_and_preserves_paused_gameplay_clock",
+          "daytime_removes_night_tint_and_nvg_state_stack_is_balanced"
+        ],
+        "metrics": {
+          "portrait": {
+            "height": 1150,
+            "revealedWorldFishCalls": 2,
+            "shipScreenY": 828.0,
+            "shipScreenX": 600.0,
+            "anchorY": 0.72,
+            "anchorX": 0.5,
+            "basePixelsPerMeter": 25.555555555555557,
+            "width": 1200,
+            "horizonY": 276.0
+          },
+          "landscape": {
+            "height": 1080,
+            "hiddenWorldFishCalls": 0,
+            "shipScreenY": 777.5999999999999,
+            "shipScreenX": 960.0,
+            "anchorY": 0.72,
+            "anchorX": 0.5,
+            "basePixelsPerMeter": 24.0,
+            "width": 1920,
+            "horizonY": 259.2
+          },
+          "previewFixtures": {
+            "island": "(-14,-12)",
+            "tuna": "(8,-8)",
+            "sardine": "(-8,-8)"
+          },
+          "originalFixedObjectCount": 2,
+          "originalConfiguredBirds": 2
+        }
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 576,
+        "nvgBezierTo": 377,
+        "nvgCircle": 16,
+        "nvgClosePath": 1065,
+        "nvgEllipse": 9,
+        "nvgFill": 547,
+        "nvgFillColor": 531,
+        "nvgFillPaint": 16,
+        "nvgGlobalAlpha": 4,
+        "nvgIntersectScissor": 14,
+        "nvgLineTo": 4745,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1446,
+        "nvgRadialGradient": 14,
+        "nvgRect": 1,
+        "nvgRestore": 25,
+        "nvgSave": 25,
+        "nvgScale": 15,
+        "nvgStroke": 29,
+        "nvgStrokeColor": 29,
+        "nvgStrokeWidth": 29,
+        "nvgTranslate": 15
+      },
+      "nvgCallTotal": 9530,
+      "durationMs": 1820.128,
+      "exitCode": 0
+    },
+    {
+      "name": "SeaViewUpgradeTests",
+      "kind": "run",
+      "file": "scripts/tests/SeaViewUpgradeTests.lua",
+      "passed": true,
+      "subtestCount": 10,
+      "failures": [],
+      "returned": {
+        "passed": true,
+        "evidence": {
+          "nativeEngineVisualAcceptance": "NOT_RUN",
+          "kind": "pure Lua logic suite using real project modules",
+          "NanoVGMockVisualAcceptance": false
+        },
+        "status": "PASS",
+        "metrics": {
+          "headingCount": 8,
+          "lensSectorSamples": 26,
+          "viewportCases": 3,
+          "netCircleSamples": 32,
+          "clippedFarCircleSamples": 21,
+          "projectedDepthsMeters": [
+            0,
+            20,
+            85,
+            109
+          ]
+        },
+        "results": [
+          {
+            "name": "camera_configuration_uses_the_confirmed_world_oblique_values",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "eight_heading_inputs_keep_the_same_meter_speed",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "camera_follows_continuously_and_returns_smoothly_when_the_ship_stops",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "projection_formula_and_inverse_hold_at_multiple_world_depths",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "logical_projection_resizes_correctly_across_aspect_and_dpr",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "horizon_far_depth_and_near_singularity_are_rejected",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "sampled_net_circles_and_lens_sectors_preserve_world_distance_and_angle",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "world_visibility_and_interaction_distances_do_not_change_with_camera",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "wake_uses_measured_displacement_and_expires_while_stationary",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "pause_resize_return_port_and_reset_preserve_or_clear_wake_as_required",
+            "error": "",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 123.505,
+      "exitCode": 0
+    },
+    {
+      "name": "SeaHorizonOcclusionTests",
+      "kind": "run",
+      "file": "scripts/tests/SeaHorizonOcclusionTests.lua",
+      "passed": true,
+      "subtestCount": 13,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "name": "separated screen polygons retain their geometry across horizon extrema"
+          },
+          {
+            "passed": true,
+            "name": "horizon snapshots match the live formula and renew after viewport or config changes"
+          },
+          {
+            "passed": true,
+            "name": "scalar projection snapshots match live projection and renew after changes"
+          },
+          {
+            "passed": true,
+            "name": "world bounds reject complete screen-exterior geometry but retain crossing heights"
+          },
+          {
+            "passed": true,
+            "name": "clip planes renew after camera viewport config padding and height changes"
+          },
+          {
+            "passed": true,
+            "name": "intersecting and tangent screen polygons still clip against the curved horizon"
+          },
+          {
+            "passed": true,
+            "name": "the lowest raised vertices disappear before the top as the surface recedes"
+          },
+          {
+            "passed": true,
+            "name": "large footprints survive center crossings including lateral screen edges"
+          },
+          {
+            "passed": true,
+            "name": "raised directional vectors use the same altitude as finite difference samples"
+          },
+          {
+            "passed": true,
+            "name": "raised geometry at the tangent retains its real height"
+          },
+          {
+            "passed": true,
+            "name": "ground inverse remains unique at every lateral horizon and DPR scale"
+          },
+          {
+            "passed": true,
+            "name": "actual scene renders a new float with its center beyond the tangent"
+          },
+          {
+            "passed": true,
+            "name": "height broad phase is conservative and responds to configuration changes"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 675,
+        "nvgBezierTo": 630,
+        "nvgCircle": 26,
+        "nvgClosePath": 1200,
+        "nvgEllipse": 9,
+        "nvgFill": 647,
+        "nvgFillColor": 621,
+        "nvgFillPaint": 26,
+        "nvgGlobalAlpha": 4,
+        "nvgIntersectScissor": 24,
+        "nvgLineTo": 4866,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1831,
+        "nvgRadialGradient": 24,
+        "nvgRect": 1,
+        "nvgRestore": 35,
+        "nvgSave": 35,
+        "nvgScale": 22,
+        "nvgStroke": 28,
+        "nvgStrokeColor": 28,
+        "nvgStrokeWidth": 28,
+        "nvgTranslate": 22
+      },
+      "nvgCallTotal": 10784,
+      "durationMs": 923.097,
+      "exitCode": 0
+    },
+    {
+      "name": "SeaAtmosphereTests",
+      "kind": "run",
+      "file": "scripts/tests/SeaAtmosphereTests.lua",
+      "passed": true,
+      "subtestCount": 7,
+      "failures": [],
+      "returned": {
+        "status": "PASS",
+        "tests": [
+          "cloud_shadows_are_repeatable_for_same_seed_and_time",
+          "cloud_shadows_drift_only_from_supplied_time",
+          "cloud_and_fog_world_cells_remain_stable_across_camera_cell_boundaries",
+          "fog_and_cloud_shadows_clip_to_curved_horizon_without_dropping_crossing_puffs",
+          "fog_is_sparse_and_near_ship_opacity_is_reduced",
+          "atmosphere_respects_expanded_puff_budgets_and_nvg_state_stack",
+          "atmosphere_does_not_change_movement_state"
+        ],
+        "metrics": {
+          "fogCrossesHorizon": true,
+          "cloudCrossesHorizon": true,
+          "cloudShadows": 3,
+          "maxCloudPuffsPerPass": 12,
+          "distantFogAlpha": 29.0,
+          "closeFogAlpha": 3.0,
+          "fog": 14,
+          "maxFogPuffsPerPass": 36
+        }
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 132.346,
+      "exitCode": 0
+    },
+    {
+      "name": "SeaFusedSceneTests",
+      "kind": "run",
+      "file": "scripts/tests/SeaFusedSceneTests.lua",
+      "passed": true,
+      "subtestCount": 9,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "original HUD directional contract drives the real ship",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "original HUD pause and reset synchronize and preserve ship level",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "fused scene retains the original HUD root and appends hidden debug tools",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "sky clicks do not sail; sea clicks target world meters; UI blocks clicks",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "one event owner updates and renders the real simulation at mode-B DPR",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "keyboard pause reset and hidden debug visibility keep the HUD synchronized",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "shutdown is idempotent and releases only this event owner and UI",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "render receives the live external clock without advancing it",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "B may supply a UI factory without replacing or initializing its UI",
+            "error": "",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "[海洋框架] 界面就绪：左右移动、暂停、重置；支持键盘和触摸\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] first frame rendered; underwater hidden=true\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] first frame rendered; underwater hidden=true\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 146.146,
+      "exitCode": 0
+    },
+    {
+      "name": "SeaStabilityTests",
+      "passed": false,
+      "error": "Command '['/usr/bin/python3', '/workspace/tests/run_ocean_art_checks.py', '--one', 'SeaStabilityTests']' timed out after 30 seconds"
+    }
+  ]
+}

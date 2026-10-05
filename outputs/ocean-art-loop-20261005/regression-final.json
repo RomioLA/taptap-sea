@@ -1,0 +1,3044 @@
+{
+  "suiteCount": 53,
+  "passedSuiteCount": 45,
+  "suites": [
+    {
+      "name": "ABIntegrationTests",
+      "kind": "run",
+      "file": "scripts/tests/ABIntegrationTests.lua",
+      "passed": true,
+      "subtestCount": 32,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "Bridge construction uses the real A runtime and starts paused at port",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "one bridge Update advances B's clock and A's world by the same delta",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "B clock keeps raw dt while A simulation applies its own frame clamp",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "large dt forces the B return pause before A can simulate that frame",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "multiple pause reasons stop both layers until the final reason resumes",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "manual pause is a named B clock reason and coexists with UI pauses",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "drop requires a selected copied position and spawns a 20-second world item",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "throwing farther than twelve meters rejects the handoff without losing the item",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "invalid drop selection clears the prior target and receiver reentry stays single-flight",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "all four B inventory items become real A drops with category, effect and TTL",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "exact thirty-meter fishing cast works and anything beyond it is rejected",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "net includes its eight-meter boundary and a single cast catches only one fish",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "hidden and frozen fish are selected at net landing by nearest current position",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "empty-water casts complete after four seconds for free and replay idempotently",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "fishing prechecks require sea access and forty stamina",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "a full hold allows a cast and does not select before net landing",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "B fishing failures run before the A fish selector",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "single-flight and cancellation leave fish, stamina and inventory untouched",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "fishing charge and partially failed delivery roll back player and fish state",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "stale targets and a pause at completion reject without partial costs",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "recognition accepts twenty meters, rejects farther points and reads immutable coordinates",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "moving A fish and ship state cannot alter the B-only save snapshot",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "new run resets B discovery and A temporary fish while preserving fixed objects and ship",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "new-day world refresh waits for save success and retry is idempotent",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "explicit unsaved continuation refreshes the sea once and releases settlement pause",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "successful load restores saved boat speed and refreshes A before one callback",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "offline load fails explicitly without calling a cloud adapter",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "Scene starts one B HUD over A renderer with explicit development tools",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "Scene ticks B once, gates pointer input immediately and consumes an explicit throw pointer",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "Scene with explicit missing cloud fails clearly without auto-loading or calling a late backend",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "formal missing-cloud entry stays paused with retry and new-run choices and no development tools",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "Scene Stop releases five subscriptions, renderer, HUD and UI exactly once",
+            "error": "",
+            "passed": true
+          }
+        ],
+        "skipped_count": 0
+      },
+      "stdout": "[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] first frame rendered; underwater hidden=true\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap stopped",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 556.983
+    },
+    {
+      "name": "ArchitectureIntegrationTests",
+      "kind": "run",
+      "file": "scripts/tests/ArchitectureIntegrationTests.lua",
+      "passed": true,
+      "subtestCount": 12,
+      "failures": [],
+      "returned": {
+        "skipped_count": 0,
+        "results": [
+          {
+            "passed": true,
+            "name": "shared registry and factory retain entity identity"
+          },
+          {
+            "passed": true,
+            "name": "one automatic fish update per sea substep"
+          },
+          {
+            "passed": true,
+            "name": "frozen and removed entities never receive FSM updates"
+          },
+          {
+            "passed": true,
+            "name": "paused Game leaves sea and temporary lifetime unchanged"
+          },
+          {
+            "passed": true,
+            "name": "Game uses reset runtime world rather than cached registry"
+          },
+          {
+            "passed": true,
+            "name": "shared FSM calls enter exit and update once"
+          },
+          {
+            "passed": true,
+            "name": "base skeleton retains numeric IDs and remove/clear interfaces"
+          },
+          {
+            "passed": true,
+            "name": "Integration owns references while Gameplay owns transient action records"
+          },
+          {
+            "passed": true,
+            "name": "registered frame System keeps raw clock dt separate from sea substeps"
+          },
+          {
+            "passed": true,
+            "name": "runtime replacement rejects old tokens even when fish IDs are reused"
+          },
+          {
+            "passed": true,
+            "name": "Ocean rollback restores removed fish identity and active FSM"
+          },
+          {
+            "passed": true,
+            "name": "Bridge works through public Runtime APIs without sea internals"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 225.855
+    },
+    {
+      "name": "Circle1A2BarrelRenderTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1A2BarrelRenderTests.lua",
+      "passed": true,
+      "subtestCount": 3,
+      "failures": [],
+      "returned": {
+        "status": "PASS",
+        "tests": [
+          {
+            "name": "barrel_outline_and_recognition_boundaries_are_inclusive",
+            "passed": true
+          },
+          {
+            "name": "barrel_screen_culling_keeps_partial_edges_and_skips_fully_offscreen",
+            "passed": true
+          },
+          {
+            "name": "only_the_exact_barrel_gets_recognition_and_other_floats_keep_their_shape",
+            "passed": true
+          }
+        ],
+        "metrics": {
+          "offscreenCulling": "partial visible / full margin culled",
+          "outlineDistance": 80,
+          "recognitionDistance": 20,
+          "contentId": "driftwood_barrel"
+        }
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 768,
+        "nvgBezierTo": 16,
+        "nvgCircle": 26,
+        "nvgClosePath": 1372,
+        "nvgEllipse": 9,
+        "nvgFill": 739,
+        "nvgFillColor": 713,
+        "nvgFillPaint": 26,
+        "nvgGlobalAlpha": 5,
+        "nvgIntersectScissor": 24,
+        "nvgLineTo": 8932,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 3027,
+        "nvgRadialGradient": 24,
+        "nvgRect": 1,
+        "nvgRestore": 36,
+        "nvgSave": 36,
+        "nvgScale": 22,
+        "nvgStroke": 51,
+        "nvgStrokeColor": 51,
+        "nvgStrokeWidth": 51,
+        "nvgTranslate": 22
+      },
+      "nvgCallTotal": 15953,
+      "durationMs": 4466.956
+    },
+    {
+      "name": "Circle1A2BarrelTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1A2BarrelTests.lua",
+      "passed": true,
+      "subtestCount": 9,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "error": "",
+            "name": "fixed barrel getter identifies one exact float and returns read-only snapshots"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "fish clearing and repeated day refreshes preserve the fixed barrel"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "reset and new runtimes reject stale barrel credentials after ID reuse"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "barrel interaction rejects wrong identity and generation"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "removed, dead, nonfinite, or registry-replaced barrels are unavailable"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "barrel interaction rejects invalid ship coordinates"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "barrel operation distance includes exactly five meters"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "blocking barrel stops the ship but keeps water actions and fish avoidance unchanged"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "default first-day voyages reach operation range without penetrating blockers"
+          }
+        ],
+        "metrics": {
+          "voyages": [
+            {
+              "elapsedSec": 38.45,
+              "seed": 271828,
+              "fixedStepSec": 0.05,
+              "endpointDistance": 4.632488799552993,
+              "blockingObjectsMeasured": 3,
+              "theoreticalWaypointLength": 56.37913510095602,
+              "endpoint": {
+                "x": 18.63238590422685,
+                "y": 6.030875755931056
+              },
+              "traveledDistance": 345.74558010306674,
+              "collisionSteps": 0,
+              "visits": [
+                {
+                  "traveledDistance": 57.60000000000011,
+                  "elapsedSec": 6.4,
+                  "endpointDistance": 4.832544411845107,
+                  "endpoint": {
+                    "x": 18.82664619646941,
+                    "y": 6.2386880528278095
+                  }
+                },
+                {
+                  "traveledDistance": 201.65123328479885,
+                  "elapsedSec": 22.400000000000002,
+                  "endpointDistance": 4.82936919326253,
+                  "endpoint": {
+                    "x": 18.82916029615275,
+                    "y": 6.0449181354806525
+                  }
+                },
+                {
+                  "traveledDistance": 345.74558010306674,
+                  "elapsedSec": 38.45,
+                  "endpointDistance": 4.632488799552993,
+                  "endpoint": {
+                    "x": 18.63238590422685,
+                    "y": 6.030875755931056
+                  }
+                }
+              ],
+              "initialFishCount": 55,
+              "shipSteps": 769,
+              "operationDistance": 5,
+              "minimumClearance": 0.7874700191265234,
+              "closestBlockerId": "sea-1"
+            },
+            {
+              "elapsedSec": 38.45,
+              "seed": 314159,
+              "fixedStepSec": 0.05,
+              "endpointDistance": 4.632488799552993,
+              "blockingObjectsMeasured": 3,
+              "theoreticalWaypointLength": 56.37913510095602,
+              "endpoint": {
+                "x": 18.63238590422685,
+                "y": 6.030875755931056
+              },
+              "traveledDistance": 345.74558010306674,
+              "collisionSteps": 0,
+              "visits": [
+                {
+                  "traveledDistance": 57.60000000000011,
+                  "elapsedSec": 6.4,
+                  "endpointDistance": 4.832544411845107,
+                  "endpoint": {
+                    "x": 18.82664619646941,
+                    "y": 6.2386880528278095
+                  }
+                },
+                {
+                  "traveledDistance": 201.65123328479885,
+                  "elapsedSec": 22.400000000000002,
+                  "endpointDistance": 4.82936919326253,
+                  "endpoint": {
+                    "x": 18.82916029615275,
+                    "y": 6.0449181354806525
+                  }
+                },
+                {
+                  "traveledDistance": 345.74558010306674,
+                  "elapsedSec": 38.45,
+                  "endpointDistance": 4.632488799552993,
+                  "endpoint": {
+                    "x": 18.63238590422685,
+                    "y": 6.030875755931056
+                  }
+                }
+              ],
+              "initialFishCount": 55,
+              "shipSteps": 769,
+              "operationDistance": 5,
+              "minimumClearance": 0.7874700191265234,
+              "closestBlockerId": "sea-1"
+            }
+          ]
+        }
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 8425.315
+    },
+    {
+      "name": "Circle1A2FishingTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1A2FishingTests.lua",
+      "passed": true,
+      "subtestCount": 5,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "fishing_phase_geometry_and_readonly_snapshot",
+            "passed": true
+          },
+          {
+            "name": "optional_sixth_argument_keeps_fifth_clock_and_absent_view",
+            "passed": true
+          },
+          {
+            "name": "projected_fish_culling_keeps_partial_edge_and_rejects_far_depth",
+            "passed": true
+          },
+          {
+            "name": "pointer_consumption_preserves_navigation_and_guards",
+            "passed": true
+          },
+          {
+            "name": "bootstrap_optional_callback_is_forwarded_without_mutation",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 1359,
+        "nvgBezierTo": 32,
+        "nvgCircle": 52,
+        "nvgClosePath": 2530,
+        "nvgEllipse": 18,
+        "nvgFill": 1301,
+        "nvgFillColor": 1249,
+        "nvgFillPaint": 52,
+        "nvgGlobalAlpha": 9,
+        "nvgIntersectScissor": 48,
+        "nvgLineTo": 13286,
+        "nvgLinearGradient": 4,
+        "nvgMoveTo": 3802,
+        "nvgRadialGradient": 48,
+        "nvgRect": 3,
+        "nvgRestore": 71,
+        "nvgSave": 71,
+        "nvgScale": 44,
+        "nvgStroke": 102,
+        "nvgStrokeColor": 102,
+        "nvgStrokeWidth": 102,
+        "nvgTranslate": 44
+      },
+      "nvgCallTotal": 24329,
+      "durationMs": 3662.865
+    },
+    {
+      "name": "Circle1A2ScopeTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1A2ScopeTests.lua",
+      "passed": true,
+      "subtestCount": 9,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "error": "",
+            "name": "persistent scope defaults off and accepts only explicit true"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "scope includes the 20m forward edge and inclusive 45 degree sides"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "scope follows ship movement and keeps its last heading while stopped"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "scope toggle changes visibility only and leaves fish eligible"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "scope does not change same-seed fish behavior"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "pause retains scope without advancing boat and reset disables it"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "legacy timed circular reveal remains independent and compatible"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "scope safely rejects invalid transforms and tight outside boundaries"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "transient water queries match full scans for every current blocker"
+          }
+        ],
+        "metrics": []
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 156.693
+    },
+    {
+      "name": "Circle1A2SignalsTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1A2SignalsTests.lua",
+      "passed": true,
+      "subtestCount": 7,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "Circle1A2 birds preserve confirmed geometry and legal water",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "Circle1A2 first bird dive lasts 1.5 seconds and getters are read-only",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "Circle1A2 getters reject stale or illegal current fish positions",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "Circle1A2 locked, frozen, inactive, invalid, and removed sources lose cues",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "Circle1A2 pause freezes splash timers and reset clears cues",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "Circle1A2 chase splashes follow the confirmed half-second cadence",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "Circle1A2 clearing cues does not advance or reset world time",
+            "error": "",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 151.207
+    },
+    {
+      "name": "Circle1A3ExperienceTests",
+      "passed": false,
+      "error": "逐套 12 秒超时，未判为通过"
+    },
+    {
+      "name": "Circle1A3InputTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1A3InputTests.lua",
+      "passed": true,
+      "subtestCount": 6,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "error": "",
+            "passed": true,
+            "name": "mouse and touch respect UI hits, callback consumption, and default sailing"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "DPR and screen dimension changes update viewport before mapping pointers"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "invalid coordinates, viewport, focus, or water cannot become sea targets"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "pointer bridge syncs stale pause state before sea guards"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "Render forwards the clock, fishing view, and seventh recognition callback"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "repeated Start/Stop owns one event set, cleans idempotently, and silences stale callbacks"
+          }
+        ]
+      },
+      "stdout": "[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] first frame rendered; underwater hidden=true\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 206.051
+    },
+    {
+      "name": "Circle1A3PortTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1A3PortTests.lua",
+      "passed": true,
+      "subtestCount": 5,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "port getter copies the authored Config anchor instead of departure",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "port reset reuses ship and world while preserving time, fish, signals and barrel",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "port reset preserves live region markers and temporary lifetime without resuming stale target",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "blocked or malformed port fails without clearing steering state",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "port reset honors the World's public water predicate",
+            "passed": true,
+            "error": ""
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 114.04
+    },
+    {
+      "name": "Circle1A3RecognitionTests",
+      "passed": false,
+      "error": "逐套 12 秒超时，未判为通过"
+    },
+    {
+      "name": "Circle1A3SignalsTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1A3SignalsTests.lua",
+      "passed": true,
+      "subtestCount": 3,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "error": "",
+            "name": "A3 scalar visitors match detached snapshots without exposing tables",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "A3 visitors revalidate freeze, removal, fish position, and old splash water",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "A3 reused water-query workspace refreshes blockers and keeps snapshots independent",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 33.382
+    },
+    {
+      "name": "Circle1A3StabilityTests",
+      "passed": false,
+      "error": "逐套 12 秒超时，未判为通过"
+    },
+    {
+      "name": "Circle1ABMergeFrameBudgetTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1ABMergeFrameBudgetTests.lua",
+      "passed": true,
+      "subtestCount": 5,
+      "failures": [],
+      "returned": {
+        "evidenceKind": "real modules with explicit offline fixtures",
+        "results": [
+          {
+            "name": "barrel completion slices share one original sea frame budget",
+            "passed": true
+          },
+          {
+            "name": "four game seconds keep ship locked and preserve fixed barrel identity",
+            "passed": true
+          },
+          {
+            "name": "inventory pause stops clock sea and barrel progress together",
+            "passed": true
+          },
+          {
+            "name": "rounded exact night tie settles completed barrel once before forcing port",
+            "passed": true
+          },
+          {
+            "name": "unfinished barrel at night end cancels without charging",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 137.382
+    },
+    {
+      "name": "Circle1AFishLocksTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1AFishLocksTests.lua",
+      "passed": true,
+      "subtestCount": 4,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "nearest target, empty net, hidden fish, and locked target exclusion",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "lock owner contract uses table identity and idempotent cleanup",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "captured sardine pauses AI and rise, clears birds, and resumes as the same entity",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "failed removal snapshot, owner replacement, day refresh, and reset generation",
+            "error": "",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 292.093
+    },
+    {
+      "name": "Circle1APredationCooldownTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1APredationCooldownTests.lua",
+      "passed": true,
+      "subtestCount": 4,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "error": "",
+            "name": "successful scheduled predation starts one five-second world-time cooldown",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "cooldown blocks retargeting and eating but permits attraction, avoidance, and expiry",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "pause stops cooldown time while capture lock and freeze stop only fish AI",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "failed prey removal leaves prey alive and does not start cooldown",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 376.414
+    },
+    {
+      "name": "Circle1B2BarrelTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1B2BarrelTests.lua",
+      "passed": true,
+      "subtestCount": 12,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "error": "",
+            "name": "built-in timer advances with the ocean, blocks steering, and pauses for UI"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "barrel completion at night end commits once, while unfinished work cancels free"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "full hold escrows both first rewards and advances only after an atomic two-slot claim"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "controlled barrel receipts charge each stage once and grant lens without cargo"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "the three barrel stages survive real day settlements and memory save restore"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "a rejected first-stage progression rolls back stamina and both appended rewards"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "lens grant rejection rolls back the final-stage charge and leaves stage two intact"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "claim stage failure restores cargo and keeps the receipt retryable without charging again"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "a partial claim rollback is retried on Tick without auto-claiming its pending receipt"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "executor failure before evidence is free, but a synchronous completed receipt returns its token"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "observer errors do not discard an escrowed result and reset cancels an active receipt"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "cancellation and a replaced barrel world invalidate late completions for free"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 564.544
+    },
+    {
+      "name": "Circle1B2ProgressTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1B2ProgressTests.lua",
+      "passed": true,
+      "subtestCount": 11,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "elder counts food apples, displays other offerings without consuming them, and saves after three days",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "elder who received fewer than three apples is marked dead once on day four",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "failed apple progress rolls back the removed apple, stamina, and prior count",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "three apples offered on day one are counted cumulatively until day-four decision",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "three apples offered on day three still save the elder on day four",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "zero apples leave the elder dead after the one-time day-four decision",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "memory save retries once without double-advancing and restores progress through day seven",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "progress validation rejects malformed and inconsistent saved states",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "legacy snapshots preserve unknown progress while filling missing circle records",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "snapshot failure keeps the applied day-four decision and retries without advancing twice",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "day-seven paper opens only explicitly, acknowledgement round-trips without auto-saving",
+            "passed": true,
+            "error": ""
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 472.379
+    },
+    {
+      "name": "Circle1B2ScopeTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1B2ScopeTests.lua",
+      "passed": true,
+      "subtestCount": 5,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "error": "",
+            "name": "scope requires lens ownership and toggling does not pause the voyage",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "new run and saved-load both synchronize A scope off",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "false is a valid disabled result while rejection and exceptions fail readback",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "scope readback mismatch is reported and a later close can recover",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "snapshot and restore reject inconsistent Circle 1B2 progress",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 97.355
+    },
+    {
+      "name": "Circle1B2ThrowTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1B2ThrowTests.lua",
+      "passed": true,
+      "subtestCount": 5,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "error": "",
+            "name": "selected inventory item is thrown at the inclusive twelve-meter boundary",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "out-of-range throw attempts consume the pointer without moving or losing the selection",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "receiver rejection rolls back cargo while consuming the throw pointer",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "ordinary sea pointers pass through without creating a drop target",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "all four item payloads preserve their configured world effect and twenty-second lifetime",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 91.884
+    },
+    {
+      "name": "Circle1B2UITests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1B2UITests.lua",
+      "passed": true,
+      "subtestCount": 4,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "name": "scope toggle stays disabled without a lens and toggles through A without pausing",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "bait use is disabled with a Chinese reason and bait and fish display without consumption",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "barrel uses its built-in timer and exposes cancel without an instant-finish control",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "paper is marked only after the HUD visibly renders exact text and close resumes the clock",
+            "error": ""
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 142.412
+    },
+    {
+      "name": "Circle1B3ClockAsyncTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1B3ClockAsyncTests.lua",
+      "passed": true,
+      "subtestCount": 17,
+      "failures": [],
+      "returned": {
+        "guiVerified": false,
+        "realCloudVerified": false,
+        "kind": "protocol",
+        "results": [
+          {
+            "passed": true,
+            "name": "late return formula keeps fractional seconds for every confirmed maximum"
+          },
+          {
+            "passed": true,
+            "name": "day-night warning uses the existing transition only"
+          },
+          {
+            "passed": true,
+            "name": "night boundary cancels locked cast and physically returns without refreshing fish"
+          },
+          {
+            "passed": true,
+            "name": "missing forced-return interface never grants port access"
+          },
+          {
+            "passed": true,
+            "name": "large frame preserves fishing completed before night end"
+          },
+          {
+            "passed": true,
+            "name": "fishing completion exactly at night end cancels without charging"
+          },
+          {
+            "passed": true,
+            "name": "saving rejects duplicate confirmation and explicit skip ignores late callbacks"
+          },
+          {
+            "passed": true,
+            "name": "timeout then retry ignores late old success"
+          },
+          {
+            "passed": true,
+            "name": "explicit abandon keeps old snapshot and next day still saves"
+          },
+          {
+            "passed": true,
+            "name": "many failed days do not duplicate dates stock or stamina"
+          },
+          {
+            "passed": true,
+            "name": "synchronous store rejection completes error rather than staying saving"
+          },
+          {
+            "passed": true,
+            "name": "close invalidates queued save and load callbacks"
+          },
+          {
+            "passed": true,
+            "name": "load states distinguish missing corrupt failure and retry"
+          },
+          {
+            "passed": true,
+            "name": "legitimate restored progress retains containers and rejects old reads"
+          },
+          {
+            "passed": true,
+            "name": "new run immediately writes a reset snapshot before releasing the entry pause"
+          },
+          {
+            "passed": true,
+            "name": "world preparation failure keeps port blocked and retries without saving again"
+          },
+          {
+            "passed": true,
+            "name": "closing one pause owner retains all the others"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 96.468
+    },
+    {
+      "name": "Circle1B3CloudTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1B3CloudTests.lua",
+      "passed": true,
+      "subtestCount": 10,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "Get reads the requested value from the values callback argument",
+            "passed": true
+          },
+          {
+            "name": "Get reports a missing key as an empty successful load",
+            "passed": true
+          },
+          {
+            "name": "Get rejects a non-table values response",
+            "passed": true
+          },
+          {
+            "name": "Set sends a copied snapshot and accepts only the first callback",
+            "passed": true
+          },
+          {
+            "name": "Timeout wins and late success cannot complete twice",
+            "passed": true
+          },
+          {
+            "name": "SDK error callback preserves code and reason",
+            "passed": true
+          },
+          {
+            "name": "Synchronous false return rejects both Get and Set",
+            "passed": true
+          },
+          {
+            "name": "SDK exceptions fail once and return an immediate error",
+            "passed": true
+          },
+          {
+            "name": "Missing backend completes as unavailable",
+            "passed": true
+          },
+          {
+            "name": "Completion callback exceptions do not escape the SDK callback",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 280.896
+    },
+    {
+      "name": "Circle1B3EconomyTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1B3EconomyTests.lua",
+      "passed": true,
+      "subtestCount": 19,
+      "failures": [],
+      "returned": {
+        "passed": 19,
+        "total": 19,
+        "results": [
+          {
+            "passed": true,
+            "name": "cargo revision changes with inventory mutations and is exposed by Loop",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "selling a rendered cargo row credits once and rejects its duplicate click",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "a moved inventory index or changed row identity cannot sell a stale item",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "a successful purchase changes cargo, money, and stock together",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "a rejected full-inventory purchase does not charge or consume stock",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "inventory can hold more than two apples",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "purchase rolls back after ChangeMoney mutates then false",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "sale rolls back after ChangeMoney mutates then false",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "inventory upgrade rolls back after ChangeMoney mutates then false",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "stamina upgrade rolls back after ChangeMoney mutates then false",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "boat-speed upgrade rolls back after ChangeMoney mutates then false",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "purchase rolls back after ChangeMoney mutates then throw",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "sale rolls back after ChangeMoney mutates then throw",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "inventory upgrade rolls back after ChangeMoney mutates then throw",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "stamina upgrade rolls back after ChangeMoney mutates then throw",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "boat-speed upgrade rolls back after ChangeMoney mutates then throw",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "failed speed rollback stays blocked and retries until the real movement speed is restored",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "boat-speed upgrade changes the real Ocean movement speed",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "zero stamina still allows same-day sailing and an ordinary return without restoring cargo",
+            "error": ""
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 139.057
+    },
+    {
+      "name": "Circle1B3SceneUITests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1B3SceneUITests.lua",
+      "passed": true,
+      "subtestCount": 10,
+      "failures": [],
+      "returned": {
+        "realCloudVerified": false,
+        "kind": "widget-tree and SDK protocol",
+        "results": [
+          {
+            "name": "formal scene defaults to clientCloud read and blocks entry until a choice",
+            "passed": true
+          },
+          {
+            "name": "new-run initial save can retry or explicitly continue without waiting",
+            "passed": true
+          },
+          {
+            "name": "formal cloud load failure retry restores a legal snapshot at the physical port",
+            "passed": true
+          },
+          {
+            "name": "missing port API does not turn empty cloud into a fake playable new run",
+            "passed": true
+          },
+          {
+            "name": "closing the scene during a real adapter read ignores the old callback",
+            "passed": true
+          },
+          {
+            "name": "scene Stop accepts A's false disabled result and closes the real scope",
+            "passed": true
+          },
+          {
+            "name": "HUD old sale callback cannot sell the next identical fish",
+            "passed": true
+          },
+          {
+            "name": "formal HUD save failure explicitly retries or abandons without double settlement",
+            "passed": true
+          },
+          {
+            "name": "ordinary mouse and touch adapter blocks UI and consumes net-center pointer once",
+            "passed": true
+          },
+          {
+            "name": "default scene hides sea cheats and recalculates HUD width on resize",
+            "passed": true
+          }
+        ],
+        "guiVerified": false
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 313.279
+    },
+    {
+      "name": "Circle1B3SevenDaysTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1B3SevenDaysTests.lua",
+      "passed": false,
+      "subtestCount": 0,
+      "failures": [],
+      "error": "LuaError: /workspace/scripts/tests/Circle1B3SevenDaysTests.lua:4: module 'Tests.Circle1BFishingFlowTests' not found:\n\tno field package.preload['Tests.Circle1BFishingFlowTests']\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file './Tests/Circle1BFishingFlowTests.lua'\n\tno file './Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/Tests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests.so'\nstack traceback:\n\t[C]: in function 'require'\n\t/workspace/scripts/tests/Circle1B3SevenDaysTests.lua:4: in main chunk\n\t[C]: in function 'require'\n\t[string \"<python>\"]:1: in function <[string \"<python>\"]:1>",
+      "traceback": "Traceback (most recent call last):\n  File \"/workspace/tests/run_circle1_review.py\", line 256, in run_one\n    module = lua.eval(\"function(name) local value = require(name); return value end\")(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"lupa/lua54.pyx\", line 921, in lupa.lua54._LuaObject.__call__\n  File \"lupa/lua54.pyx\", line 1886, in lupa.lua54.call_lua\n  File \"lupa/lua54.pyx\", line 1913, in lupa.lua54.execute_lua_call\n  File \"lupa/lua54.pyx\", line 1794, in lupa.lua54.raise_lua_error\nlupa.lua54.LuaError: /workspace/scripts/tests/Circle1B3SevenDaysTests.lua:4: module 'Tests.Circle1BFishingFlowTests' not found:\n\tno field package.preload['Tests.Circle1BFishingFlowTests']\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file './Tests/Circle1BFishingFlowTests.lua'\n\tno file './Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/Tests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests.so'\nstack traceback:\n\t[C]: in function 'require'\n\t/workspace/scripts/tests/Circle1B3SevenDaysTests.lua:4: in main chunk\n\t[C]: in function 'require'\n\t[string \"<python>\"]:1: in function <[string \"<python>\"]:1>\n",
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 8.327
+    },
+    {
+      "name": "Circle1B3SpatialTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1B3SpatialTests.lua",
+      "passed": true,
+      "subtestCount": 6,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "name": "standalone gameplay keeps port rules usable without a sea runtime",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "bound gameplay fails closed when the port position protocol is missing",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "ordinary return accepts exactly ten meters and never teleports",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "ordinary return rejects just beyond ten meters without moving the ship",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "shop and upgrade actions reject a ship outside the port radius atomically",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "port preparation requires reset support and verifies the resulting position",
+            "error": ""
+          }
+        ],
+        "total": 6,
+        "passed": 6
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 126.178
+    },
+    {
+      "name": "Circle1B5DiagnosticsIntegrationTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1B5DiagnosticsIntegrationTests.lua",
+      "passed": true,
+      "subtestCount": 7,
+      "failures": [],
+      "returned": {
+        "evidenceKind": "offline real Runtime/Movement/Bridge/Loop; print and store doubles; no native engine",
+        "results": [
+          {
+            "name": "diagnostics preserve nil return arity and original error object",
+            "passed": true
+          },
+          {
+            "name": "scalar allowlist and sensitive text redaction omit save contents",
+            "passed": true
+          },
+          {
+            "name": "formatter print and traceback failures cannot change operation results",
+            "passed": true
+          },
+          {
+            "name": "SDK failure details are preserved for callbacks but withheld from operation logs",
+            "passed": true
+          },
+          {
+            "name": "per-frame integration getter exception logs once until recovery",
+            "passed": true
+          },
+          {
+            "name": "actual normal-navigation return at target 0",
+            "passed": true
+          },
+          {
+            "name": "actual normal-navigation return at target 10",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 4292.608
+    },
+    {
+      "name": "Circle1B5GameplayTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1B5GameplayTests.lua",
+      "passed": true,
+      "subtestCount": 9,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "port boundary, HUD readout, and return gate agree at 9.999, 10, and 10.001 meters",
+            "passed": true
+          },
+          {
+            "name": "busy and pending-catch port gates retain position details; claim logs use the original action ID",
+            "passed": true
+          },
+          {
+            "name": "inventory rollback exception is logged once with stack and recovery is logged after success",
+            "passed": true
+          },
+          {
+            "name": "return-to-port performs one diagnosed position read after a transient exception",
+            "passed": true
+          },
+          {
+            "name": "selection cancellation is logged once and exhausted updates without a selection stay quiet",
+            "passed": true
+          },
+          {
+            "name": "false rollback and unlock steps log once, then emit a recovered rollback and terminal event",
+            "passed": true
+          },
+          {
+            "name": "save/load callback reasons remain raw to callers while Loop logs use fixed categories",
+            "passed": true
+          },
+          {
+            "name": "operation wrapper captures the original stack and output failures cannot change results",
+            "passed": true
+          },
+          {
+            "name": "new-day and new-run preparation log start, rejection, and success",
+            "passed": true
+          }
+        ],
+        "evidenceKind": "offline Lua 5.4 gameplay/Loop/HUD checks with local print, UI, cloud, and Runtime doubles"
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 87.71
+    },
+    {
+      "name": "Circle1B5PersistenceBarrelTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1B5PersistenceBarrelTests.lua",
+      "passed": true,
+      "subtestCount": 5,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "error": "",
+            "name": "barrel start, evidence rejection, completion and duplicate callback keep action identity"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "barrel cancellation and commit exception roll back without changing failure results"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "barrel rollback tick failures are logged once until recovery changes state"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "cloud save/load report only outcomes and ignore asynchronous failure replays"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "raw exception identity and failed diagnostic printing do not alter business outcomes"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 468.974
+    },
+    {
+      "name": "Circle1B5PortDrawTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1B5PortDrawTests.lua",
+      "passed": true,
+      "subtestCount": 4,
+      "failures": [],
+      "returned": {
+        "tests": [
+          {
+            "passed": true,
+            "name": "authored_port_uses_current_world_to_screen_projection"
+          },
+          {
+            "passed": true,
+            "name": "camera_motion_reprojects_the_marker_without_moving_the_world"
+          },
+          {
+            "passed": true,
+            "name": "resize_and_dpr_keep_the_marker_in_logical_screen_coordinates"
+          },
+          {
+            "passed": true,
+            "name": "offscreen_port_is_culled_without_edge_snapping_or_view_expansion"
+          }
+        ],
+        "status": "PASS",
+        "metrics": {
+          "markerRadius": 16,
+          "resolutionMode": "logical pixels with DPR scaling at NanoVG frame boundary",
+          "offscreenBehavior": "culled at original projection; no edge snapping",
+          "projection": "runtime:GetPortPosition() -> Movement:WorldToScreen()"
+        }
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 626,
+        "nvgBezierTo": 16,
+        "nvgCircle": 23,
+        "nvgClosePath": 1158,
+        "nvgEllipse": 9,
+        "nvgFill": 599,
+        "nvgFillColor": 574,
+        "nvgFillPaint": 25,
+        "nvgGlobalAlpha": 3,
+        "nvgIntersectScissor": 23,
+        "nvgLineTo": 6154,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1794,
+        "nvgRadialGradient": 23,
+        "nvgRect": 1,
+        "nvgRestore": 33,
+        "nvgSave": 33,
+        "nvgScale": 21,
+        "nvgStroke": 49,
+        "nvgStrokeColor": 49,
+        "nvgStrokeWidth": 49,
+        "nvgTranslate": 21
+      },
+      "nvgCallTotal": 11285,
+      "durationMs": 1567.904
+    },
+    {
+      "name": "Circle1BFishingFlowTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1BFishingFlowTests.lua",
+      "passed": true,
+      "subtestCount": 18,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "error": "",
+            "name": "confirmation does not select or charge and early completion is rejected",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "the 0.5 second landing selects the then-nearest fish and locks once",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "the locked result stays fixed through four seconds and a replay cannot charge twice",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "empty water completes for free",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "cancel before or after landing is free and releases the owned lock",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "lock rejection is a free terminal failure and never selects a replacement",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "39 stamina rejects while 40 starts and a successful catch consumes exactly 40",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "pause freezes progress and time scale advances action time without scaling sea budget",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "large dt uses the real frame World once and clamps aggregate Ocean advancement",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "night exhaustion on the completion boundary cancels first and unlocks for free",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "forced return waits until night-interrupted fishing cleanup releases its lock",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "new run clears the old lock before a reused fish ID enters the new generation",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "scene stop cancellation clears a landed lock without charging",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "reentrant fishing during the lock callback cannot create a second transaction",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "mutation then throw during removal restores the exact fish, inventory and stamina",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "failed unlock stays pending and retries through the next real frame dispatch",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "throwing inventory snapshot during commit fails free and releases the fish",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "world-bound CompleteAction cannot charge for fishing without a bridge token",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 169.265
+    },
+    {
+      "name": "Circle1BPendingCatchTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1BPendingCatchTests.lua",
+      "passed": true,
+      "subtestCount": 9,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "error": "",
+            "name": "full hold can cast and an empty net completes without fee or forced receive",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "full hold preserves a successful catch, charges once and requires the cargo panel",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "using or dropping cargo frees one slot and claims the retained catch exactly once",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "claim restores the full post-freeing inventory after Add mutates then throws",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "claim retries inventory rollback before Add and blocks inventory use while rollback is pending",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "UseItem and DropItem roll back a Remove that mutates then throws before freeing cargo",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "rejected drop receiver restores cargo and allows one later successful release and claim",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "world removal mutation followed by an exception restores fish, inventory and stamina",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "night settlement and NewRun cannot discard an already completed pending catch",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 125.49
+    },
+    {
+      "name": "Circle1HUDReviewTests",
+      "kind": "run",
+      "file": "scripts/tests/Circle1HUDReviewTests.lua",
+      "passed": false,
+      "subtestCount": 12,
+      "failures": [
+        {
+          "error": "/workspace/scripts/tests/Circle1HUDReviewTests.lua:151: module 'Tests.Circle1BFishingFlowTests' not found:\n\tno field package.preload['Tests.Circle1BFishingFlowTests']\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file './Tests/Circle1BFishingFlowTests.lua'\n\tno file './Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/Tests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests.so'\nstack traceback:\n\t[C]: in function 'require'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:151: in function </workspace/scripts/tests/Circle1HUDReviewTests.lua:150>\n\t[C]: in function 'xpcall'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:80: in local 'check'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:150: in function 'tests.Circle1HUDReviewTests.Run'",
+          "passed": false,
+          "name": "pending catch selects a sea drop point through the real drawer backdrop only"
+        },
+        {
+          "error": "/workspace/scripts/tests/Circle1HUDReviewTests.lua:202: module 'Tests.Circle1BFishingFlowTests' not found:\n\tno field package.preload['Tests.Circle1BFishingFlowTests']\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file './Tests/Circle1BFishingFlowTests.lua'\n\tno file './Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/Tests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests.so'\nstack traceback:\n\t[C]: in function 'require'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:202: in function </workspace/scripts/tests/Circle1HUDReviewTests.lua:201>\n\t[C]: in function 'xpcall'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:80: in local 'check'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:201: in function 'tests.Circle1HUDReviewTests.Run'",
+          "passed": false,
+          "name": "full cabin gift frees a slot and claims catch once while all dialogue pauses remain"
+        }
+      ],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "name": "stable visible and hidden modal opacity does not dirty layout on each refresh"
+          },
+          {
+            "passed": true,
+            "name": "fish rows and port sales show rarity without inventing weight"
+          },
+          {
+            "passed": true,
+            "name": "empty cabin and supply-only cabin explain disabled sell-all"
+          },
+          {
+            "passed": true,
+            "name": "catch at sea explains port requirement and sale becomes available on return"
+          },
+          {
+            "passed": true,
+            "name": "drawer and cards use native RGBA interpolation and stable phase writes"
+          },
+          {
+            "error": "/workspace/scripts/tests/Circle1HUDReviewTests.lua:151: module 'Tests.Circle1BFishingFlowTests' not found:\n\tno field package.preload['Tests.Circle1BFishingFlowTests']\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file './Tests/Circle1BFishingFlowTests.lua'\n\tno file './Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/Tests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests.so'\nstack traceback:\n\t[C]: in function 'require'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:151: in function </workspace/scripts/tests/Circle1HUDReviewTests.lua:150>\n\t[C]: in function 'xpcall'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:80: in local 'check'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:150: in function 'tests.Circle1HUDReviewTests.Run'",
+            "passed": false,
+            "name": "pending catch selects a sea drop point through the real drawer backdrop only"
+          },
+          {
+            "passed": true,
+            "name": "cabin gift opens actual elder dialogue and consumes food without healing player"
+          },
+          {
+            "passed": true,
+            "name": "elder absence remains clickable and explains reason without losing cargo"
+          },
+          {
+            "error": "/workspace/scripts/tests/Circle1HUDReviewTests.lua:202: module 'Tests.Circle1BFishingFlowTests' not found:\n\tno field package.preload['Tests.Circle1BFishingFlowTests']\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file './Tests/Circle1BFishingFlowTests.lua'\n\tno file './Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/Tests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests.so'\nstack traceback:\n\t[C]: in function 'require'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:202: in function </workspace/scripts/tests/Circle1HUDReviewTests.lua:201>\n\t[C]: in function 'xpcall'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:80: in local 'check'\n\t/workspace/scripts/tests/Circle1HUDReviewTests.lua:201: in function 'tests.Circle1HUDReviewTests.Run'",
+            "passed": false,
+            "name": "full cabin gift frees a slot and claims catch once while all dialogue pauses remain"
+          },
+          {
+            "passed": true,
+            "name": "shop shortages explain their cause and are re-enabled after restock"
+          },
+          {
+            "passed": true,
+            "name": "treasure ownership remains separate from cargo and mode follows real state"
+          },
+          {
+            "passed": true,
+            "name": "night HUD explains grace, precise penalty and exhaustion"
+          }
+        ],
+        "guiVerified": false
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 163.66
+    },
+    {
+      "name": "GameLoopSpec",
+      "kind": "spec",
+      "file": "scripts/tests/GameLoopSpec.lua",
+      "passed": true,
+      "subtestCount": 22,
+      "failures": [],
+      "stdout": "PASS configuration values and four authoritative item definitions\nPASS stamina guards, complete action cost and zero stamina return\nPASS special events pause time and prevent starting full actions\nPASS food use, cap and no elder stamina reward\nPASS inventory one item per slot, capacity upgrades and defensive copies\nPASS multi reason pauses and day night boundaries\nPASS port pauses preserve elapsed and repeat departure\nPASS normal return penalties at 0 30 30.9 40 55 59.9\nPASS night 60 forced modal, proportional stamina and one settlement\nPASS save failure retry freezes state and does not advance day twice\nPASS explicitly skipping a failed save releases one settlement without pretending to save\nPASS a save retry in flight can be explicitly skipped and ignores its late callback\nPASS transactions read item prices, reject invalid/full/sea without side effects\nPASS drop acceptance payloads and rejected/error receiver retains item\nPASS new run resets gameplay and immediately saves its starting snapshot\nPASS snapshot round trip and invalid saves leave state intact\nPASS cloud callback mapping, timeout and duplicate completion\nPASS load success failure pending lock and late callbacks\nPASS drop callback reentry and elder rejection have no extra side effects\nPASS new day hooks fire once after successful save, never on failed retry\nPASS clock debug bounds scales sorted reasons and invalid inputs\nPASS only confirmed daily settlement writes, no manual sea save API\nGAME_LOOP_SPEC_PASS 22",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 68.801
+    },
+    {
+      "name": "GameLoopUISpec",
+      "kind": "spec",
+      "file": "scripts/tests/GameLoopUISpec.lua",
+      "passed": false,
+      "subtestCount": 0,
+      "failures": [],
+      "error": "LuaError: [string \"<python>\"]:186: module 'Tests.Circle1BFishingFlowTests' not found:\n\tno field package.preload['Tests.Circle1BFishingFlowTests']\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file './Tests/Circle1BFishingFlowTests.lua'\n\tno file './Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/Tests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests.so'\nstack traceback:\n\t[string \"<python>\"]:186: in main chunk\n\t[C]: in function 'require'",
+      "traceback": "Traceback (most recent call last):\n  File \"/workspace/tests/run_circle1_review.py\", line 277, in run_one\n    lua.execute(source)\n  File \"lupa/lua54.pyx\", line 441, in lupa.lua54.LuaRuntime.execute\n  File \"lupa/lua54.pyx\", line 1872, in lupa.lua54.run_lua\n  File \"lupa/lua54.pyx\", line 1886, in lupa.lua54.call_lua\n  File \"lupa/lua54.pyx\", line 1913, in lupa.lua54.execute_lua_call\n  File \"lupa/lua54.pyx\", line 1794, in lupa.lua54.raise_lua_error\nlupa.lua54.LuaError: [string \"<python>\"]:186: module 'Tests.Circle1BFishingFlowTests' not found:\n\tno field package.preload['Tests.Circle1BFishingFlowTests']\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/scripts/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/workspace/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/share/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests/init.lua'\n\tno file './Tests/Circle1BFishingFlowTests.lua'\n\tno file './Tests/Circle1BFishingFlowTests/init.lua'\n\tno file '/usr/local/lib/lua/5.4/Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests/Circle1BFishingFlowTests.so'\n\tno file '/usr/local/lib/lua/5.4/Tests.so'\n\tno file '/usr/local/lib/lua/5.4/loadall.so'\n\tno file './Tests.so'\nstack traceback:\n\t[string \"<python>\"]:186: in main chunk\n\t[C]: in function 'require'\n",
+      "stdout": "PASS HUD always visible information, host subtree and core button wiring\nPASS forced return modal and failed save retry through actual callbacks\nPASS failed save offers an explicit unsaved continuation through the HUD\nPASS skipping a pending save explains that the remote write may still finish\nPASS debug restricted to development, config steps and freeze during save\nPASS development HUD controls configure actions without production debug\nPASS port upgrade buttons use config prices and refresh after purchase\nPASS daily shop stock sold-out UI and next-day refresh",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 358.918
+    },
+    {
+      "name": "LocalSaveLoopTests",
+      "kind": "run",
+      "file": "scripts/tests/LocalSaveLoopTests.lua",
+      "passed": true,
+      "subtestCount": 14,
+      "failures": [],
+      "returned": {
+        "metrics": [],
+        "results": [
+          {
+            "error": "",
+            "passed": true,
+            "name": "LocalSaveBackendRoundtrip"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "LocalSaveBackendEmptyAndCorrupt"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "LocalSaveBackendAvailableProbe"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "DualSaveLocalWinsCloudShadows"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "DualSaveFallsBackToCloudWhenLocalFails"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "DualSaveCloudUnavailableStillSucceeds"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "DualLoadPrefersLocal"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "DualLoadFallsBackToCloudAndCaches"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "DualLoadEmptyWhenNoSaveAnywhere"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "DualDegradesToCloudWithoutEngine"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "SellAllSellsOnlyFishAndSumsIncome"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "SellAllEmptyInventoryRejected"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "SellAllAtSeaRejected"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "ReturnToPortOutOfRangeGivesCompass"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 333.872
+    },
+    {
+      "name": "NumericEconomySpec",
+      "kind": "spec",
+      "file": "scripts/tests/NumericEconomySpec.lua",
+      "passed": true,
+      "subtestCount": 21,
+      "failures": [],
+      "stdout": "PASS numeric stamina100-to160-cost400\nPASS numeric stamina160-to200-cost600\nPASS numeric upgrade-preserves-missing-stamina\nPASS numeric inventory-transition-1\nPASS numeric inventory-transition-2\nPASS numeric inventory-transition-3\nPASS numeric boat-speed-transition-1\nPASS numeric boat-speed-transition-2\nPASS numeric item-values-apple\nPASS numeric item-values-bait\nPASS numeric item-values-sardine\nPASS numeric item-values-tuna\nPASS numeric standalone-empty-net-is-free-and-world-bound-direct-completion-is-rejected\nPASS numeric free-interactions-no-save-no-player-mutation\nPASS numeric event-operation-cost40-on-explicit-completion\nPASS numeric no-daily-fishing-limit-and-food-action-math\nPASS numeric single-config-prices-and-total-cost3900\nPASS numeric forced-night60-proportional160-and200\nPASS numeric upgrade-rejections-atomic-sea-busy-and-insufficient\nPASS numeric persistence-levels-legacy-validation-and-new-run-reset\nPASS numeric balance-model-references-not-runtime-quotas\nNUMERIC_ECONOMY_SPEC_PASS 21",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 199.074
+    },
+    {
+      "name": "PersistenceRegressionSpec",
+      "kind": "spec",
+      "file": "scripts/tests/PersistenceRegressionSpec.lua",
+      "passed": true,
+      "subtestCount": 0,
+      "failures": [],
+      "stdout": "PERSISTENCE_REGRESSION_PASS 84",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 208.399
+    },
+    {
+      "name": "SeaAtmosphereTests",
+      "kind": "run",
+      "file": "scripts/tests/SeaAtmosphereTests.lua",
+      "passed": true,
+      "subtestCount": 7,
+      "failures": [],
+      "returned": {
+        "status": "PASS",
+        "metrics": {
+          "fog": 14,
+          "maxFogPuffsPerPass": 36,
+          "cloudShadows": 3,
+          "distantFogAlpha": 29.0,
+          "closeFogAlpha": 3.0,
+          "fogCrossesHorizon": true,
+          "maxCloudPuffsPerPass": 12,
+          "cloudCrossesHorizon": true
+        },
+        "tests": [
+          "cloud_shadows_are_repeatable_for_same_seed_and_time",
+          "cloud_shadows_drift_only_from_supplied_time",
+          "cloud_and_fog_world_cells_remain_stable_across_camera_cell_boundaries",
+          "fog_and_cloud_shadows_clip_to_curved_horizon_without_dropping_crossing_puffs",
+          "fog_is_sparse_and_near_ship_opacity_is_reduced",
+          "atmosphere_respects_expanded_puff_budgets_and_nvg_state_stack",
+          "atmosphere_does_not_change_movement_state"
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 65.128
+    },
+    {
+      "name": "SeaCurvatureTests",
+      "kind": "run",
+      "file": "scripts/tests/SeaCurvatureTests.lua",
+      "passed": true,
+      "subtestCount": 4,
+      "failures": [],
+      "returned": {
+        "status": "PASS",
+        "results": [
+          {
+            "error": "",
+            "name": "formula and exact inverse across DPR and landscape/portrait viewports",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "screen-space horizon rejects sky according to its lateral curve",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "vector derivatives match the curved projection finite difference",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "finite ground plane reaches the horizon while elevated silhouettes pass it",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 32.923
+    },
+    {
+      "name": "SeaFusedSceneTests",
+      "kind": "run",
+      "file": "scripts/tests/SeaFusedSceneTests.lua",
+      "passed": true,
+      "subtestCount": 9,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "error": "",
+            "passed": true,
+            "name": "original HUD directional contract drives the real ship"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "original HUD pause and reset synchronize and preserve ship level"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "fused scene retains the original HUD root and appends hidden debug tools"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "sky clicks do not sail; sea clicks target world meters; UI blocks clicks"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "one event owner updates and renders the real simulation at mode-B DPR"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "keyboard pause reset and hidden debug visibility keep the HUD synchronized"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "shutdown is idempotent and releases only this event owner and UI"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "render receives the live external clock without advancing it"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "B may supply a UI factory without replacing or initializing its UI"
+          }
+        ]
+      },
+      "stdout": "[海洋框架] 界面就绪：左右移动、暂停、重置；支持键盘和触摸\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] first frame rendered; underwater hidden=true\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] first frame rendered; underwater hidden=true\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 314.041
+    },
+    {
+      "name": "SeaFusionRenderTests",
+      "kind": "run",
+      "file": "scripts/tests/SeaFusionRenderTests.lua",
+      "passed": true,
+      "subtestCount": 10,
+      "failures": [],
+      "returned": {
+        "metrics": {
+          "portrait": {
+            "revealedWorldFishCalls": 2,
+            "anchorX": 0.5,
+            "width": 1200,
+            "height": 1150,
+            "anchorY": 0.72,
+            "shipScreenX": 600.0,
+            "horizonY": 276.0,
+            "basePixelsPerMeter": 25.555555555555557,
+            "shipScreenY": 828.0
+          },
+          "originalConfiguredBirds": 2,
+          "previewFixtures": {
+            "sardine": "(-8,-8)",
+            "island": "(-14,-12)",
+            "tuna": "(8,-8)"
+          },
+          "originalFixedObjectCount": 2,
+          "landscape": {
+            "anchorX": 0.5,
+            "width": 1920,
+            "height": 1080,
+            "anchorY": 0.72,
+            "shipScreenX": 960.0,
+            "hiddenWorldFishCalls": 0,
+            "horizonY": 259.2,
+            "basePixelsPerMeter": 24.0,
+            "shipScreenY": 777.5999999999999
+          }
+        },
+        "status": "PASS",
+        "tests": [
+          "draw_is_pure_for_runtime_state",
+          "original_sun_and_birds_reused",
+          "projected_sea_view_art_apis_reused",
+          "ordinary_fish_hidden_by_default",
+          "show_underwater_draws_both_fixture_fish",
+          "resize_preserves_projection_anchor_horizon_and_perspective_scale",
+          "curved_ground_clips_preserve_elevated_island_silhouettes_in_both_aspects",
+          "presentation_fixture_does_not_change_config_world",
+          "night_tint_precedes_boat_and_preserves_paused_gameplay_clock",
+          "daytime_removes_night_tint_and_nvg_state_stack_is_balanced"
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 576,
+        "nvgBezierTo": 16,
+        "nvgCircle": 16,
+        "nvgClosePath": 1065,
+        "nvgEllipse": 9,
+        "nvgFill": 547,
+        "nvgFillColor": 531,
+        "nvgFillPaint": 16,
+        "nvgGlobalAlpha": 4,
+        "nvgIntersectScissor": 14,
+        "nvgLineTo": 5467,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1446,
+        "nvgRadialGradient": 14,
+        "nvgRect": 1,
+        "nvgRestore": 25,
+        "nvgSave": 25,
+        "nvgScale": 15,
+        "nvgStroke": 51,
+        "nvgStrokeColor": 51,
+        "nvgStrokeWidth": 51,
+        "nvgTranslate": 15
+      },
+      "nvgCallTotal": 9957,
+      "durationMs": 1923.344
+    },
+    {
+      "name": "SeaHorizonOcclusionTests",
+      "kind": "run",
+      "file": "scripts/tests/SeaHorizonOcclusionTests.lua",
+      "passed": true,
+      "subtestCount": 13,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "name": "separated screen polygons retain their geometry across horizon extrema"
+          },
+          {
+            "passed": true,
+            "name": "horizon snapshots match the live formula and renew after viewport or config changes"
+          },
+          {
+            "passed": true,
+            "name": "scalar projection snapshots match live projection and renew after changes"
+          },
+          {
+            "passed": true,
+            "name": "world bounds reject complete screen-exterior geometry but retain crossing heights"
+          },
+          {
+            "passed": true,
+            "name": "clip planes renew after camera viewport config padding and height changes"
+          },
+          {
+            "passed": true,
+            "name": "intersecting and tangent screen polygons still clip against the curved horizon"
+          },
+          {
+            "passed": true,
+            "name": "the lowest raised vertices disappear before the top as the surface recedes"
+          },
+          {
+            "passed": true,
+            "name": "large footprints survive center crossings including lateral screen edges"
+          },
+          {
+            "passed": true,
+            "name": "raised directional vectors use the same altitude as finite difference samples"
+          },
+          {
+            "passed": true,
+            "name": "raised geometry at the tangent retains its real height"
+          },
+          {
+            "passed": true,
+            "name": "ground inverse remains unique at every lateral horizon and DPR scale"
+          },
+          {
+            "passed": true,
+            "name": "actual scene renders a new float with its center beyond the tangent"
+          },
+          {
+            "passed": true,
+            "name": "height broad phase is conservative and responds to configuration changes"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 675,
+        "nvgBezierTo": 16,
+        "nvgCircle": 26,
+        "nvgClosePath": 1200,
+        "nvgEllipse": 9,
+        "nvgFill": 647,
+        "nvgFillColor": 621,
+        "nvgFillPaint": 26,
+        "nvgGlobalAlpha": 4,
+        "nvgIntersectScissor": 24,
+        "nvgLineTo": 6094,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1831,
+        "nvgRadialGradient": 24,
+        "nvgRect": 1,
+        "nvgRestore": 35,
+        "nvgSave": 35,
+        "nvgScale": 22,
+        "nvgStroke": 49,
+        "nvgStrokeColor": 49,
+        "nvgStrokeWidth": 49,
+        "nvgTranslate": 22
+      },
+      "nvgCallTotal": 11461,
+      "durationMs": 764.585
+    },
+    {
+      "name": "SeaMotionEffectsTests",
+      "kind": "run",
+      "file": "scripts/tests/SeaMotionEffectsTests.lua",
+      "passed": true,
+      "subtestCount": 7,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "near and far surface detail blend smoothly with complementary weights",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "surface lattice positions stay on fixed world cells while the view drifts",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "boat heave and roll are pure samples of voyage time and turn rate",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "shoreline foam arcs expand, fade, and repeat in world space",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "water mark budget is enforced even within a single row",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "meter-width foam clips once and returns the same projected edge endpoints",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "turn bank eases back when stopped and freezes while paused",
+            "passed": true,
+            "error": ""
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 1,
+        "nvgClosePath": 240,
+        "nvgFill": 1,
+        "nvgFillColor": 1,
+        "nvgLineTo": 720,
+        "nvgMoveTo": 240
+      },
+      "nvgCallTotal": 1203,
+      "durationMs": 177.655
+    },
+    {
+      "name": "SeaPresentationTests",
+      "kind": "run",
+      "file": "scripts/tests/SeaPresentationTests.lua",
+      "passed": true,
+      "subtestCount": 4,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "name": "fixed_island_height_crosses_the_horizon_without_vertical_art_motion"
+          },
+          {
+            "passed": true,
+            "name": "complete_footprint_bounds_replace_center_cutoff_and_opacity_emergence"
+          },
+          {
+            "passed": true,
+            "name": "presentation_preserves_world_coordinates_and_restores_drawing_state"
+          },
+          {
+            "passed": true,
+            "name": "paused_scene_keeps_hidden_and_beyond_horizon_fish_out_of_the_sky"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 658,
+        "nvgBezierTo": 16,
+        "nvgCircle": 26,
+        "nvgClosePath": 1183,
+        "nvgEllipse": 9,
+        "nvgFill": 630,
+        "nvgFillColor": 604,
+        "nvgFillPaint": 26,
+        "nvgGlobalAlpha": 3,
+        "nvgIntersectScissor": 24,
+        "nvgLineTo": 6022,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1814,
+        "nvgRadialGradient": 24,
+        "nvgRect": 1,
+        "nvgRestore": 34,
+        "nvgSave": 34,
+        "nvgScale": 22,
+        "nvgStroke": 49,
+        "nvgStrokeColor": 49,
+        "nvgStrokeWidth": 49,
+        "nvgTranslate": 22
+      },
+      "nvgCallTotal": 11301,
+      "durationMs": 1942.108
+    },
+    {
+      "name": "SeaRuntimeTests",
+      "kind": "run",
+      "file": "scripts/tests/SeaRuntimeTests.lua",
+      "passed": false,
+      "subtestCount": 53,
+      "failures": [
+        {
+          "passed": false,
+          "error": "/workspace/scripts/tests/SeaRuntimeTests.lua:323: assertion failed!",
+          "name": "predator sees prey before sardine senses danger"
+        },
+        {
+          "passed": false,
+          "error": "/workspace/scripts/tests/SeaRuntimeTests.lua:358: assertion failed!",
+          "name": "tuna chase tracks moved prey; loss grace >2 sec"
+        }
+      ],
+      "returned": {
+        "metrics": {
+          "startSardineIn120": 20.24,
+          "debugViewportSardine": 7.32,
+          "movingCaptureMeanSec": 10.046875,
+          "movingCaptureMinSec": 8.5,
+          "hiddenViewportFish": 0,
+          "sardineRunning": 19.89,
+          "startTunaIn120": 0.0,
+          "debugViewportTuna": 1.61,
+          "tunaRunning": 4.07,
+          "movingCaptureMaxSec": 11.600000000000001,
+          "tunaIn120": 4.07,
+          "sardineIn120": 19.89
+        },
+        "results": [
+          {
+            "passed": true,
+            "error": "",
+            "name": "supplement02 authoritative values and 16:9 full-height projection"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "cast confirms at30 meters, rejects beyond and uses radius8 single target"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "avoid prediction uses species4 and6 meter clearance before boundary"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "drop confirms at12 meters and rejection neither spawns nor changes payload"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "ordinary region spawn respects current boat exclusion plus day departure200"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "birth exclusion is not an AI barrier after generation"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "scope reveal uses20 and changes visibility only"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "four-second fishing contract never implicitly pauses world time"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "meter units, derived map and implementation values"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "configured ship levels move at the configured meters per second"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "invalid ship level leaves capability unchanged"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "camera framing changes without rescaling meter movement"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "fishing selects one nearest live hidden or frozen fish without removal"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "fishing respects validity filter and nearest distance to net center"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "empty net allows zero result including zero-radius queries"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "independent fishing selections have no daily three or six catch limit"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "ship straight speed and max clamp"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "diagonal travel no speed boost"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "keyboard cancels click target; opposite key axes stop"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "ship turn speed bound"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "click arrival and no movement within arrival radius"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "configured meter framing, anchor, inverse coordinates across aspects"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "camera continuously smooth follows and settles"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "all world edges block and outward intent produces feedback"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "held outward input still visibly pushes inward"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "swept island collision no tunnelling"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "small floats overlap without blocking"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "unique IDs and removed query exclusion"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "underwater hidden yet queryable; reveal changes visibility only"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "visibility switch does not change AI trajectory"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "sardine wander speed and timed direction choice"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "effect-based sardine attraction and priority over wander"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "NONE effect ignored; temporary TTL and payload copy"
+          },
+          {
+            "passed": false,
+            "error": "/workspace/scripts/tests/SeaRuntimeTests.lua:323: assertion failed!",
+            "name": "predator sees prey before sardine senses danger"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "danger outranks attraction; flee jitter remains away"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "avoid outranks danger and attraction"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "tuna true predation removes entity and query membership"
+          },
+          {
+            "passed": false,
+            "error": "/workspace/scripts/tests/SeaRuntimeTests.lua:358: assertion failed!",
+            "name": "tuna chase tracks moved prey; loss grace >2 sec"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "tuna displacement respects configured turn rate"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "moving predator and prey complete chase flee and real capture"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "confirmed big fish attraction uses centralized implementation values"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "supplement02 prey chase outranks big attraction"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "big attraction includes radius36 boundary and excludes outside"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "tuna attraction filters effects and respects turn rate"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "big attraction expiry restores available prey chase"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "tuna avoid outranks official big attraction and prey chase"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "activity hysteresis and frozen state retention"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "region seeds reproducible independent of exploration order"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "tuna first spawn exclusion on all initialized regions"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "same-day regions do not refill after catch/clear/return"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "daily refresh clears temps/fish preserves fixed objects/ship"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "local density measured across 100 day seeds away from departure"
+          },
+          {
+            "passed": true,
+            "error": "",
+            "name": "overlap callback removal leaves no stale entries after repeated collection"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 5777.234
+    },
+    {
+      "name": "SeaStabilityTests",
+      "passed": false,
+      "error": "逐套 12 秒超时，未判为通过"
+    },
+    {
+      "name": "SeaViewUpgradeTests",
+      "kind": "run",
+      "file": "scripts/tests/SeaViewUpgradeTests.lua",
+      "passed": true,
+      "subtestCount": 10,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "camera_configuration_uses_the_confirmed_world_oblique_values",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "eight_heading_inputs_keep_the_same_meter_speed",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "camera_follows_continuously_and_returns_smoothly_when_the_ship_stops",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "projection_formula_and_inverse_hold_at_multiple_world_depths",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "logical_projection_resizes_correctly_across_aspect_and_dpr",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "horizon_far_depth_and_near_singularity_are_rejected",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "sampled_net_circles_and_lens_sectors_preserve_world_distance_and_angle",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "world_visibility_and_interaction_distances_do_not_change_with_camera",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "wake_uses_measured_displacement_and_expires_while_stationary",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "pause_resize_return_port_and_reset_preserve_or_clear_wake_as_required",
+            "error": "",
+            "passed": true
+          }
+        ],
+        "passed": true,
+        "evidence": {
+          "kind": "pure Lua logic suite using real project modules",
+          "NanoVGMockVisualAcceptance": false,
+          "nativeEngineVisualAcceptance": "NOT_RUN"
+        },
+        "metrics": {
+          "viewportCases": 3,
+          "projectedDepthsMeters": [
+            0,
+            20,
+            85,
+            109
+          ],
+          "headingCount": 8,
+          "clippedFarCircleSamples": 21,
+          "lensSectorSamples": 26,
+          "netCircleSamples": 32
+        },
+        "status": "PASS"
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 87.83
+    },
+    {
+      "name": "ShipScareTests",
+      "kind": "run",
+      "file": "scripts/tests/ShipScareTests.lua",
+      "passed": true,
+      "subtestCount": 5,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "name": "actual movement frightens small fish; stopping immediately restores bait attraction"
+          },
+          {
+            "passed": true,
+            "name": "movement threat uses existing inclusive danger radius without frightening tuna"
+          },
+          {
+            "passed": true,
+            "name": "input without displacement is not a threat; reset clears movement state"
+          },
+          {
+            "passed": true,
+            "name": "pause freezes fish and translation; capture lock remains stronger than threats"
+          },
+          {
+            "passed": true,
+            "name": "new regions generate fish, revisits preserve depletion, next day regenerates"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 199.402
+    },
+    {
+      "name": "ShopStockSpec",
+      "kind": "spec",
+      "file": "scripts/tests/ShopStockSpec.lua",
+      "passed": true,
+      "subtestCount": 15,
+      "failures": [],
+      "stdout": "PASS stock apple-initial-stock2\nPASS stock apple-third-buy-rejected-without-charge\nPASS stock apple-new-day-restocks2\nPASS stock bait-initial-stock2\nPASS stock bait-third-buy-rejected-without-charge\nPASS stock bait-new-day-restocks2\nPASS stock full-inventory-no-money-or-stock-loss\nPASS stock insufficient-money-sea-and-busy-no-stock-loss\nPASS stock stock-does-not-reset-on-repeat-port-or-dialog\nPASS stock stock-independent-of-holding-and-apple-use\nPASS stock drop-world-rejection-keeps-inventory\nPASS stock fishing4sec-clock-runs-empty-catch-free\nPASS stock new-run-and-successful-day-snapshot-load-restock\nPASS stock invalid-load-keeps-current-stock\nPASS stock save-retry-does-not-repeat-day-or-restock\nSHOP_STOCK_SPEC_PASS 15",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 75.245
+    },
+    {
+      "name": "SurfaceRiseTests",
+      "kind": "run",
+      "file": "scripts/tests/SurfaceRiseTests.lua",
+      "passed": true,
+      "subtestCount": 4,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "Flee rise uses the configured two seconds and leaves fish movement active",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "leaving Flee clears rise fields and re-entry starts a fresh rise",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "inactive, frozen, removed, paused, and missing config do not advance rise",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "a rising Flee fish remains a valid tuna prey",
+            "error": "",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 80.959
+    },
+    {
+      "name": "SurfaceSignalsTests",
+      "kind": "run",
+      "file": "scripts/tests/SurfaceSignalsTests.lua",
+      "passed": true,
+      "subtestCount": 6,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "active sardines receive deterministic read-only bird groups",
+            "passed": true
+          },
+          {
+            "name": "bird polling is bounded and invalid sources disappear immediately",
+            "passed": true
+          },
+          {
+            "name": "normal tuna splash cadence snapshots position and expires after removal",
+            "passed": true
+          },
+          {
+            "name": "chasing tuna splash twice per second and zero dt never emits",
+            "passed": true
+          },
+          {
+            "name": "frozen tuna stops emitting while clear empties signal state",
+            "passed": true
+          },
+          {
+            "name": "missing signal config stays disabled for legacy worlds",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 33.773
+    }
+  ]
+}

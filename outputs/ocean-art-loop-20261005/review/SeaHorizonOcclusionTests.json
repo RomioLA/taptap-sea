@@ -1,0 +1,91 @@
+{
+  "name": "SeaHorizonOcclusionTests",
+  "kind": "run",
+  "file": "scripts/tests/SeaHorizonOcclusionTests.lua",
+  "passed": true,
+  "subtestCount": 13,
+  "failures": [],
+  "returned": {
+    "results": [
+      {
+        "name": "separated screen polygons retain their geometry across horizon extrema",
+        "passed": true
+      },
+      {
+        "name": "horizon snapshots match the live formula and renew after viewport or config changes",
+        "passed": true
+      },
+      {
+        "name": "scalar projection snapshots match live projection and renew after changes",
+        "passed": true
+      },
+      {
+        "name": "world bounds reject complete screen-exterior geometry but retain crossing heights",
+        "passed": true
+      },
+      {
+        "name": "clip planes renew after camera viewport config padding and height changes",
+        "passed": true
+      },
+      {
+        "name": "intersecting and tangent screen polygons still clip against the curved horizon",
+        "passed": true
+      },
+      {
+        "name": "the lowest raised vertices disappear before the top as the surface recedes",
+        "passed": true
+      },
+      {
+        "name": "large footprints survive center crossings including lateral screen edges",
+        "passed": true
+      },
+      {
+        "name": "raised directional vectors use the same altitude as finite difference samples",
+        "passed": true
+      },
+      {
+        "name": "raised geometry at the tangent retains its real height",
+        "passed": true
+      },
+      {
+        "name": "ground inverse remains unique at every lateral horizon and DPR scale",
+        "passed": true
+      },
+      {
+        "name": "actual scene renders a new float with its center beyond the tangent",
+        "passed": true
+      },
+      {
+        "name": "height broad phase is conservative and responds to configuration changes",
+        "passed": true
+      }
+    ]
+  },
+  "stdout": "",
+  "nvgCalls": {
+    "nvgBeginPath": 675,
+    "nvgBezierTo": 16,
+    "nvgCircle": 26,
+    "nvgClosePath": 1200,
+    "nvgEllipse": 9,
+    "nvgFill": 647,
+    "nvgFillColor": 621,
+    "nvgFillPaint": 26,
+    "nvgGlobalAlpha": 4,
+    "nvgIntersectScissor": 24,
+    "nvgLineTo": 6094,
+    "nvgLinearGradient": 2,
+    "nvgMoveTo": 1831,
+    "nvgRadialGradient": 24,
+    "nvgRect": 1,
+    "nvgRestore": 35,
+    "nvgSave": 35,
+    "nvgScale": 22,
+    "nvgStroke": 49,
+    "nvgStrokeColor": 49,
+    "nvgStrokeWidth": 49,
+    "nvgTranslate": 22
+  },
+  "nvgCallTotal": 11461,
+  "durationMs": 582.689
+}

@@ -1,0 +1,58 @@
+{
+  "name": "SeaMotionEffectsTests",
+  "kind": "run",
+  "file": "scripts/tests/SeaMotionEffectsTests.lua",
+  "passed": true,
+  "subtestCount": 7,
+  "failures": [],
+  "returned": {
+    "results": [
+      {
+        "error": "",
+        "name": "near and far surface detail blend smoothly with complementary weights",
+        "passed": true
+      },
+      {
+        "error": "",
+        "name": "surface lattice positions stay on fixed world cells while the view drifts",
+        "passed": true
+      },
+      {
+        "error": "",
+        "name": "boat heave and roll are pure samples of voyage time and turn rate",
+        "passed": true
+      },
+      {
+        "error": "",
+        "name": "shoreline foam arcs expand, fade, and repeat in world space",
+        "passed": true
+      },
+      {
+        "error": "",
+        "name": "water mark budget is enforced even within a single row",
+        "passed": true
+      },
+      {
+        "error": "",
+        "name": "meter-width foam clips once and returns the same projected edge endpoints",
+        "passed": true
+      },
+      {
+        "error": "",
+        "name": "turn bank eases back when stopped and freezes while paused",
+        "passed": true
+      }
+    ]
+  },
+  "stdout": "",
+  "nvgCalls": {
+    "nvgBeginPath": 1,
+    "nvgClosePath": 240,
+    "nvgFill": 1,
+    "nvgFillColor": 1,
+    "nvgLineTo": 720,
+    "nvgMoveTo": 240
+  },
+  "nvgCallTotal": 1203,
+  "durationMs": 124.835
+}
