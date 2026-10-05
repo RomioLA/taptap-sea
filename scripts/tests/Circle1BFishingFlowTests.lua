@@ -523,6 +523,51 @@ function Tests.Run()
         assert(f.loop:CancelFishingAction())
     end)
 
+    -- A9（S3）：protected=true 的关键物品不可丢弃/投掷/出售，整体出售自动跳过且不消耗。
+    -- v1 基准表暂无关键物品条目：测试内联注入受控定义并在结束时恢复，不污染 B 侧基准表。
+    test("A9 protected items cannot be dropped, thrown, or sold away", function()
+        local Items = require("data.items")
+        local originalGetDefinition = Items.GetDefinition
+        Items.GetDefinition = function(id)
+            if id == "test_relic" then
+                return { id = "test_relic", name = "旧护符", category = "fish",
+                    sellPrice = 999, heal = 0, canEat = false, canGive = false,
+                    protected = true, worldEffect = "NONE", lifetimeSec = 20 }
+            end
+            return originalGetDefinition(id)
+        end
+        local f = Tests.Fixture({ items = { "sardine" } })
+        local ok, err = pcall(function()
+            local inventory = f.loop.player.inventory
+            assert(inventory:Add("test_relic"), "patched definition must accept Add")
+            -- 在港：整体出售跳过关键物品，只卖普通鱼。
+            local moneyBefore = f.loop.player.money
+            assert(f.loop:SellAll())
+            assertEqual(f.loop.player.money, moneyBefore + 70, "only sardine income")
+            local function relicRetained()
+                for _, id in ipairs(inventory:GetItems()) do
+                    if id == "test_relic" then return true end
+                end
+                return false
+            end
+            assert(relicRetained(), "protected item must survive SellAll")
+            -- 出海：丢弃与投掷被拒且不消耗。
+            assert(f.loop:Depart())
+            local relicIndex
+            for index, id in ipairs(inventory:GetItems()) do
+                if id == "test_relic" then relicIndex = index end
+            end
+            assert(relicIndex, "relic index")
+            assertEqual(f.loop:DropItem(relicIndex), false, "drop blocked")
+            assertEqual(f.loop:BeginThrowItem(relicIndex), false, "throw selection blocked")
+            assertEqual(f.loop:ThrowItemAtShip(relicIndex), false, "ship-position throw blocked")
+            assertEqual(f.loop:GetThrowSelection(), nil, "no throw selection leaked")
+            assert(relicRetained(), "protected item must survive drop attempts")
+        end)
+        Items.GetDefinition = originalGetDefinition
+        if not ok then error(err, 0) end
+    end)
+
     test("lock rejection is a free terminal failure and never selects a replacement", function()
         local f = atSea()
         local fish = f.runtime:spawnFish("tuna", { x = 1, y = 0 })

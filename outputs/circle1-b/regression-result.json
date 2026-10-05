@@ -588,206 +588,216 @@
       "kind": "protocol",
       "tests": [
         {
+          "error": "",
           "name": "confirmation does not select or charge and early completion is rejected",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "the 0.5 second landing selects the then-nearest fish and locks once",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "the locked result stays fixed through four seconds and a replay cannot charge twice",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "empty water completes for free",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "cancel before or after landing is free and releases the owned lock",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "A2 re-tapping the fishing dock button mid-action cancels for free",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "A1 whitelist: scope toggle stays available and dialogs stay blocked mid-action",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
+          "name": "A9 protected items cannot be dropped, thrown, or sold away",
+          "passed": true
+        },
+        {
+          "error": "",
           "name": "lock rejection is a free terminal failure and never selects a replacement",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "39 stamina rejects while 40 starts and a successful catch consumes exactly 40",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "pause freezes progress and time scale advances action time without scaling sea budget",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "large dt uses the real frame World once and clamps aggregate Ocean advancement",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "night exhaustion on the completion boundary cancels first and unlocks for free",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "forced return waits until night-interrupted fishing cleanup releases its lock",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "new run clears the old lock before a reused fish ID enters the new generation",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "scene stop cancellation clears a landed lock without charging",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "reentrant fishing during the lock callback cannot create a second transaction",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "mutation then throw during removal restores the exact fish, inventory and stamina",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "failed unlock stays pending and retries through the next real frame dispatch",
-          "error": "",
           "passed": true
         },
         {
+          "error": "",
           "name": "throwing inventory snapshot during commit fails free and releases the fish",
-          "error": "",
           "passed": true
         },
         {
-          "name": "world-bound CompleteAction cannot charge for fishing without a bridge token",
           "error": "",
+          "name": "world-bound CompleteAction cannot charge for fishing without a bridge token",
           "passed": true
         }
       ],
       "report": {
         "results": [
           {
+            "error": "",
             "name": "confirmation does not select or charge and early completion is rejected",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "the 0.5 second landing selects the then-nearest fish and locks once",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "the locked result stays fixed through four seconds and a replay cannot charge twice",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "empty water completes for free",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "cancel before or after landing is free and releases the owned lock",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "A2 re-tapping the fishing dock button mid-action cancels for free",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "A1 whitelist: scope toggle stays available and dialogs stay blocked mid-action",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
+            "name": "A9 protected items cannot be dropped, thrown, or sold away",
+            "passed": true
+          },
+          {
+            "error": "",
             "name": "lock rejection is a free terminal failure and never selects a replacement",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "39 stamina rejects while 40 starts and a successful catch consumes exactly 40",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "pause freezes progress and time scale advances action time without scaling sea budget",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "large dt uses the real frame World once and clamps aggregate Ocean advancement",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "night exhaustion on the completion boundary cancels first and unlocks for free",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "forced return waits until night-interrupted fishing cleanup releases its lock",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "new run clears the old lock before a reused fish ID enters the new generation",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "scene stop cancellation clears a landed lock without charging",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "reentrant fishing during the lock callback cannot create a second transaction",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "mutation then throw during removal restores the exact fish, inventory and stamina",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "failed unlock stays pending and retries through the next real frame dispatch",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "throwing inventory snapshot during commit fails free and releases the fish",
-            "error": "",
             "passed": true
           },
           {
-            "name": "world-bound CompleteAction cannot charge for fishing without a bridge token",
             "error": "",
+            "name": "world-bound CompleteAction cannot charge for fishing without a bridge token",
             "passed": true
           }
         ]
@@ -802,96 +812,96 @@
       "tests": [
         {
           "error": "",
-          "passed": true,
-          "name": "full hold can cast and an empty net completes without fee or forced receive"
+          "name": "full hold can cast and an empty net completes without fee or forced receive",
+          "passed": true
         },
         {
           "error": "",
-          "passed": true,
-          "name": "full hold preserves a successful catch, charges once and requires the cargo panel"
+          "name": "full hold preserves a successful catch, charges once and requires the cargo panel",
+          "passed": true
         },
         {
           "error": "",
-          "passed": true,
-          "name": "using or dropping cargo frees one slot and claims the retained catch exactly once"
+          "name": "using or dropping cargo frees one slot and claims the retained catch exactly once",
+          "passed": true
         },
         {
           "error": "",
-          "passed": true,
-          "name": "claim restores the full post-freeing inventory after Add mutates then throws"
+          "name": "claim restores the full post-freeing inventory after Add mutates then throws",
+          "passed": true
         },
         {
           "error": "",
-          "passed": true,
-          "name": "claim retries inventory rollback before Add and blocks inventory use while rollback is pending"
+          "name": "claim retries inventory rollback before Add and blocks inventory use while rollback is pending",
+          "passed": true
         },
         {
           "error": "",
-          "passed": true,
-          "name": "UseItem and DropItem roll back a Remove that mutates then throws before freeing cargo"
+          "name": "UseItem and DropItem roll back a Remove that mutates then throws before freeing cargo",
+          "passed": true
         },
         {
           "error": "",
-          "passed": true,
-          "name": "rejected drop receiver restores cargo and allows one later successful release and claim"
+          "name": "rejected drop receiver restores cargo and allows one later successful release and claim",
+          "passed": true
         },
         {
           "error": "",
-          "passed": true,
-          "name": "world removal mutation followed by an exception restores fish, inventory and stamina"
+          "name": "world removal mutation followed by an exception restores fish, inventory and stamina",
+          "passed": true
         },
         {
           "error": "",
-          "passed": true,
-          "name": "night settlement and NewRun cannot discard an already completed pending catch"
+          "name": "night settlement and NewRun cannot discard an already completed pending catch",
+          "passed": true
         }
       ],
       "report": {
         "results": [
           {
             "error": "",
-            "passed": true,
-            "name": "full hold can cast and an empty net completes without fee or forced receive"
+            "name": "full hold can cast and an empty net completes without fee or forced receive",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "full hold preserves a successful catch, charges once and requires the cargo panel"
+            "name": "full hold preserves a successful catch, charges once and requires the cargo panel",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "using or dropping cargo frees one slot and claims the retained catch exactly once"
+            "name": "using or dropping cargo frees one slot and claims the retained catch exactly once",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "claim restores the full post-freeing inventory after Add mutates then throws"
+            "name": "claim restores the full post-freeing inventory after Add mutates then throws",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "claim retries inventory rollback before Add and blocks inventory use while rollback is pending"
+            "name": "claim retries inventory rollback before Add and blocks inventory use while rollback is pending",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "UseItem and DropItem roll back a Remove that mutates then throws before freeing cargo"
+            "name": "UseItem and DropItem roll back a Remove that mutates then throws before freeing cargo",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "rejected drop receiver restores cargo and allows one later successful release and claim"
+            "name": "rejected drop receiver restores cargo and allows one later successful release and claim",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "world removal mutation followed by an exception restores fish, inventory and stamina"
+            "name": "world removal mutation followed by an exception restores fish, inventory and stamina",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "night settlement and NewRun cannot discard an already completed pending catch"
+            "name": "night settlement and NewRun cannot discard an already completed pending catch",
+            "passed": true
           }
         ]
       },
@@ -904,148 +914,148 @@
       "kind": "regression",
       "tests": [
         {
-          "name": "LocalSaveBackendRoundtrip",
           "error": "",
-          "passed": true
+          "passed": true,
+          "name": "LocalSaveBackendRoundtrip"
         },
         {
-          "name": "LocalSaveBackendEmptyAndCorrupt",
           "error": "",
-          "passed": true
+          "passed": true,
+          "name": "LocalSaveBackendEmptyAndCorrupt"
         },
         {
-          "name": "LocalSaveBackendAvailableProbe",
           "error": "",
-          "passed": true
+          "passed": true,
+          "name": "LocalSaveBackendAvailableProbe"
         },
         {
-          "name": "DualSaveLocalWinsCloudShadows",
           "error": "",
-          "passed": true
+          "passed": true,
+          "name": "DualSaveLocalWinsCloudShadows"
         },
         {
-          "name": "DualSaveFallsBackToCloudWhenLocalFails",
           "error": "",
-          "passed": true
+          "passed": true,
+          "name": "DualSaveFallsBackToCloudWhenLocalFails"
         },
         {
-          "name": "DualSaveCloudUnavailableStillSucceeds",
           "error": "",
-          "passed": true
+          "passed": true,
+          "name": "DualSaveCloudUnavailableStillSucceeds"
         },
         {
-          "name": "DualLoadPrefersLocal",
           "error": "",
-          "passed": true
+          "passed": true,
+          "name": "DualLoadPrefersLocal"
         },
         {
-          "name": "DualLoadFallsBackToCloudAndCaches",
           "error": "",
-          "passed": true
+          "passed": true,
+          "name": "DualLoadFallsBackToCloudAndCaches"
         },
         {
-          "name": "DualLoadEmptyWhenNoSaveAnywhere",
           "error": "",
-          "passed": true
+          "passed": true,
+          "name": "DualLoadEmptyWhenNoSaveAnywhere"
         },
         {
-          "name": "DualDegradesToCloudWithoutEngine",
           "error": "",
-          "passed": true
+          "passed": true,
+          "name": "DualDegradesToCloudWithoutEngine"
         },
         {
-          "name": "SellAllSellsOnlyFishAndSumsIncome",
           "error": "",
-          "passed": true
+          "passed": true,
+          "name": "SellAllSellsOnlyFishAndSumsIncome"
         },
         {
-          "name": "SellAllEmptyInventoryRejected",
           "error": "",
-          "passed": true
+          "passed": true,
+          "name": "SellAllEmptyInventoryRejected"
         },
         {
-          "name": "SellAllAtSeaRejected",
           "error": "",
-          "passed": true
+          "passed": true,
+          "name": "SellAllAtSeaRejected"
         },
         {
-          "name": "ReturnToPortOutOfRangeGivesCompass",
           "error": "",
-          "passed": true
+          "passed": true,
+          "name": "ReturnToPortOutOfRangeGivesCompass"
         }
       ],
       "report": {
         "metrics": {},
         "results": [
           {
-            "name": "LocalSaveBackendRoundtrip",
             "error": "",
-            "passed": true
+            "passed": true,
+            "name": "LocalSaveBackendRoundtrip"
           },
           {
-            "name": "LocalSaveBackendEmptyAndCorrupt",
             "error": "",
-            "passed": true
+            "passed": true,
+            "name": "LocalSaveBackendEmptyAndCorrupt"
           },
           {
-            "name": "LocalSaveBackendAvailableProbe",
             "error": "",
-            "passed": true
+            "passed": true,
+            "name": "LocalSaveBackendAvailableProbe"
           },
           {
-            "name": "DualSaveLocalWinsCloudShadows",
             "error": "",
-            "passed": true
+            "passed": true,
+            "name": "DualSaveLocalWinsCloudShadows"
           },
           {
-            "name": "DualSaveFallsBackToCloudWhenLocalFails",
             "error": "",
-            "passed": true
+            "passed": true,
+            "name": "DualSaveFallsBackToCloudWhenLocalFails"
           },
           {
-            "name": "DualSaveCloudUnavailableStillSucceeds",
             "error": "",
-            "passed": true
+            "passed": true,
+            "name": "DualSaveCloudUnavailableStillSucceeds"
           },
           {
-            "name": "DualLoadPrefersLocal",
             "error": "",
-            "passed": true
+            "passed": true,
+            "name": "DualLoadPrefersLocal"
           },
           {
-            "name": "DualLoadFallsBackToCloudAndCaches",
             "error": "",
-            "passed": true
+            "passed": true,
+            "name": "DualLoadFallsBackToCloudAndCaches"
           },
           {
-            "name": "DualLoadEmptyWhenNoSaveAnywhere",
             "error": "",
-            "passed": true
+            "passed": true,
+            "name": "DualLoadEmptyWhenNoSaveAnywhere"
           },
           {
-            "name": "DualDegradesToCloudWithoutEngine",
             "error": "",
-            "passed": true
+            "passed": true,
+            "name": "DualDegradesToCloudWithoutEngine"
           },
           {
-            "name": "SellAllSellsOnlyFishAndSumsIncome",
             "error": "",
-            "passed": true
+            "passed": true,
+            "name": "SellAllSellsOnlyFishAndSumsIncome"
           },
           {
-            "name": "SellAllEmptyInventoryRejected",
             "error": "",
-            "passed": true
+            "passed": true,
+            "name": "SellAllEmptyInventoryRejected"
           },
           {
-            "name": "SellAllAtSeaRejected",
             "error": "",
-            "passed": true
+            "passed": true,
+            "name": "SellAllAtSeaRejected"
           },
           {
-            "name": "ReturnToPortOutOfRangeGivesCompass",
             "error": "",
-            "passed": true
+            "passed": true,
+            "name": "ReturnToPortOutOfRangeGivesCompass"
           }
         ]
       },
@@ -1219,7 +1229,6 @@
         }
       ],
       "report": {
-        "skipped_count": 0,
         "results": [
           {
             "error": "",
@@ -1381,7 +1390,8 @@
             "name": "Scene Stop releases five subscriptions, renderer, HUD and UI exactly once",
             "passed": true
           }
-        ]
+        ],
+        "skipped_count": 0
       },
       "passed": true,
       "skippedCount": 0,
@@ -1502,96 +1512,96 @@
       "kind": "regression",
       "tests": [
         {
+          "passed": true,
           "name": "original HUD directional contract drives the real ship",
-          "passed": true,
           "error": ""
         },
         {
+          "passed": true,
           "name": "original HUD pause and reset synchronize and preserve ship level",
-          "passed": true,
           "error": ""
         },
         {
+          "passed": true,
           "name": "fused scene retains the original HUD root and appends hidden debug tools",
-          "passed": true,
           "error": ""
         },
         {
+          "passed": true,
           "name": "sky clicks do not sail; sea clicks target world meters; UI blocks clicks",
-          "passed": true,
           "error": ""
         },
         {
+          "passed": true,
           "name": "one event owner updates and renders the real simulation at mode-B DPR",
-          "passed": true,
           "error": ""
         },
         {
+          "passed": true,
           "name": "keyboard pause reset and hidden debug visibility keep the HUD synchronized",
-          "passed": true,
           "error": ""
         },
         {
+          "passed": true,
           "name": "shutdown is idempotent and releases only this event owner and UI",
-          "passed": true,
           "error": ""
         },
         {
+          "passed": true,
           "name": "render receives the live external clock without advancing it",
-          "passed": true,
           "error": ""
         },
         {
-          "name": "B may supply a UI factory without replacing or initializing its UI",
           "passed": true,
+          "name": "B may supply a UI factory without replacing or initializing its UI",
           "error": ""
         }
       ],
       "report": {
         "results": [
           {
+            "passed": true,
             "name": "original HUD directional contract drives the real ship",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "original HUD pause and reset synchronize and preserve ship level",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "fused scene retains the original HUD root and appends hidden debug tools",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "sky clicks do not sail; sea clicks target world meters; UI blocks clicks",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "one event owner updates and renders the real simulation at mode-B DPR",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "keyboard pause reset and hidden debug visibility keep the HUD synchronized",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "shutdown is idempotent and releases only this event owner and UI",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "render receives the live external clock without advancing it",
-            "passed": true,
             "error": ""
           },
           {
-            "name": "B may supply a UI factory without replacing or initializing its UI",
             "passed": true,
+            "name": "B may supply a UI factory without replacing or initializing its UI",
             "error": ""
           }
         ]

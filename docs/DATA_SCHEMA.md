@@ -32,6 +32,7 @@
 | `worldEffect` | enum | ✅ | `ATTRACT_SMALL_FISH` / `ATTRACT_BIG_FISH` / `NONE` | 投海后的生态作用 |
 | `worldDuration` | number | ✅ | 投海后存在秒数 | v1 统一 20 |
 | `shopStockPerDay` | number | 商店物品 | 每日可购买数量，新一天补回 | 非商店物品省略 |
+| `protected` | boolean | 关键物品 | `true`=关键物品：**不可丢弃、不可投掷、不可出售**（整体出售自动跳过并保留在船舱，代码给明确解释、不消耗物品）；使用与交给在场老人是否允许由内容卡决定 | 省略=普通物品；v1 基准表暂无条目，圈2 事件内容卡新增关键剧情道具时置 `true`（依据 03 页关键物品保护规则、05 页"关键剧情物品暂不可卖掉或丢弃"） |
 | `description` | string | 建议 | 一句话描述（老人/弹窗用） | |
 
 ### 基准数据（已按参数表录入 `scripts/data/items.lua`，B 负责后续校对与扩充宝藏条目）

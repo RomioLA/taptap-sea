@@ -1088,6 +1088,11 @@ function Loop:DropItem(index)
     local id = self.player.inventory:GetItems()[index]
     local definition = id and Items.GetDefinition(id)
     if not definition then return false, "invalid_item" end
+    -- A9（S3）：关键物品不可丢弃（05 页），给明确解释且不消耗。
+    if definition.protected then
+        self.lastMessage = definition.name .. "是关键物品，不能丢弃。"
+        return false, "protected_item"
+    end
     if not self.options.dropReceiver then return false, "drop_receiver_unavailable" end
     local payload = { itemId = id, category = definition.category,
         worldEffect = definition.worldEffect, lifetimeSec = definition.lifetimeSec }
@@ -1202,23 +1207,35 @@ function Loop:SellAll()
     return self:PortTransaction(function()
         local items = self.player.inventory:GetItems()
         local total, count = 0, 0
+        local keptProtected = 0
         -- 倒序移除，避免 Remove 造成的索引位移。
         for index = #items, 1, -1 do
             local id = items[index]
             local definition = id and Items.GetDefinition(id)
             if definition and definition.category == "fish"
                 and definition.sellPrice and definition.sellPrice > 0 then
-                local ok = self.player.inventory:Remove(index)
-                if ok then
-                    total = total + definition.sellPrice
-                    count = count + 1
+                -- A9（S3）：关键物品不可卖掉（05 页），整体出售时跳过并保留在船舱。
+                if definition.protected then
+                    keptProtected = keptProtected + 1
+                else
+                    local ok = self.player.inventory:Remove(index)
+                    if ok then
+                        total = total + definition.sellPrice
+                        count = count + 1
+                    end
                 end
             end
         end
-        if count == 0 then return false, "nothing_to_sell" end
+        if count == 0 then
+            if keptProtected > 0 then
+                self.lastMessage = "关键物品不能出售，已保留在船舱。"
+            end
+            return false, "nothing_to_sell"
+        end
         local paid, payReason = self.player:ChangeMoney(total)
         if not paid then return false, payReason end
         self.lastMessage = string.format("共出售 %d 件渔获，收入 ¥%d", count, total)
+        if keptProtected > 0 then self.lastMessage = self.lastMessage .. "；关键物品保留在船舱。" end
         return true
     end)
 end
@@ -1422,6 +1439,11 @@ function Loop:BeginThrowItem(index)
     local item = self.player.inventory:GetItems()[index]
     local definition = item and Items.GetDefinition(item)
     if not definition or definition.category == "treasure" then return false, "invalid_item" end
+    -- A9（S3）：关键物品不可投掷（等同丢弃路径），给明确解释且不消耗。
+    if definition.protected then
+        self.lastMessage = definition.name .. "是关键物品，不能投掷。"
+        return false, "protected_item"
+    end
     self.throwSelection = { index = index, itemId = item }
     if self.actions then self.actions:SetDropTarget(nil) end
     if self.runtime and type(self.runtime.ClearMovementTarget) == "function" then self.runtime:ClearMovementTarget() end
@@ -1445,6 +1467,10 @@ function Loop:ThrowItemAtShip(index)
     local item = self.player.inventory:GetItems()[index]
     local definition = item and Items.GetDefinition(item)
     if not definition or definition.category == "treasure" then return false, "invalid_item" end
+    if definition.protected then
+        self.lastMessage = definition.name .. "是关键物品，不能投掷。"
+        return false, "protected_item"
+    end
     if not self.actions then return false, "fishing_runtime_interface_unavailable" end
     local position = self.runtime and type(self.runtime.GetShipPosition) == "function"
         and self.runtime:GetShipPosition() or nil
