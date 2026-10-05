@@ -585,288 +585,288 @@
   "tests": [
     {
       "name": "supplement02 authoritative values and 16:9 full-height projection",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "cast confirms at30 meters, rejects beyond and uses radius8 single target",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "avoid prediction uses species4 and6 meter clearance before boundary",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "drop confirms at12 meters and rejection neither spawns nor changes payload",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "ordinary region spawn respects current boat exclusion plus day departure200",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "S1 spawn distribution prefers sardine near day start and tuna in far band, soft fallback keeps far regions stocked",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "birth exclusion is not an AI barrier after generation",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "scope reveal uses20 and changes visibility only",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "four-second fishing contract never implicitly pauses world time",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "meter units, derived map and implementation values",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "configured ship levels move at the configured meters per second",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "invalid ship level leaves capability unchanged",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "camera framing changes without rescaling meter movement",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "fishing selects one nearest live hidden or frozen fish without removal",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "fishing respects validity filter and nearest distance to net center",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "empty net allows zero result including zero-radius queries",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "independent fishing selections have no daily three or six catch limit",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "ship straight speed and max clamp",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "diagonal travel no speed boost",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "keyboard cancels click target; opposite key axes stop",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "ship turn speed bound",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "click arrival and no movement within arrival radius",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "configured meter framing, anchor, inverse coordinates across aspects",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "camera continuously smooth follows and settles",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "all world edges block and outward intent produces feedback",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "held outward input still visibly pushes inward",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "swept island collision no tunnelling",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "small floats overlap without blocking",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "unique IDs and removed query exclusion",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "underwater hidden yet queryable; reveal changes visibility only",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "visibility switch does not change AI trajectory",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "sardine wander speed and timed direction choice",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "effect-based sardine attraction and priority over wander",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "NONE effect ignored; temporary TTL and payload copy",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "predator sees prey before sardine senses danger",
-      "error": "...ishing/fisherman-drift/scripts/tests\\SeaRuntimeTests.lua:359: assertion failed!",
-      "passed": false
+      "passed": false,
+      "error": "...ishing/fisherman-drift/scripts/tests\\SeaRuntimeTests.lua:359: assertion failed!"
     },
     {
       "name": "danger outranks attraction; flee jitter remains away",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "avoid outranks danger and attraction",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "tuna true predation removes entity and query membership",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "tuna chase tracks moved prey; loss grace >2 sec",
-      "error": "...ishing/fisherman-drift/scripts/tests\\SeaRuntimeTests.lua:394: assertion failed!",
-      "passed": false
+      "passed": false,
+      "error": "...ishing/fisherman-drift/scripts/tests\\SeaRuntimeTests.lua:394: assertion failed!"
     },
     {
       "name": "tuna displacement respects configured turn rate",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "moving predator and prey complete chase flee and real capture",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "confirmed big fish attraction uses centralized implementation values",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "supplement02 prey chase outranks big attraction",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "big attraction includes radius36 boundary and excludes outside",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "tuna attraction filters effects and respects turn rate",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "big attraction expiry restores available prey chase",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "tuna avoid outranks official big attraction and prey chase",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "activity hysteresis and frozen state retention",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "region seeds reproducible independent of exploration order",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "tuna first spawn exclusion on all initialized regions",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "same-day regions do not refill after catch/clear/return",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "daily refresh clears temps/fish preserves fixed objects/ship",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "local density measured across 100 day seeds away from departure",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     },
     {
       "name": "overlap callback removal leaves no stale entries after repeated collection",
-      "error": "",
-      "passed": true
+      "passed": true,
+      "error": ""
     }
   ],
   "metrics": {
-    "movingCaptureMeanSec": 10.046875,
     "startSardineIn120": 20.8,
-    "hiddenViewportFish": 0,
-    "movingCaptureMinSec": 8.5,
-    "startTunaIn120": 0.0,
-    "tunaRunning": 4.15,
-    "debugViewportTuna": 1.46,
-    "debugViewportSardine": 8.11,
-    "tunaIn120": 4.15,
-    "sardineIn120": 19.57,
     "movingCaptureMaxSec": 11.600000000000001,
-    "sardineRunning": 19.57
+    "tunaIn120": 4.15,
+    "debugViewportSardine": 8.11,
+    "sardineRunning": 19.57,
+    "movingCaptureMinSec": 8.5,
+    "hiddenViewportFish": 0,
+    "movingCaptureMeanSec": 10.046875,
+    "debugViewportTuna": 1.46,
+    "tunaRunning": 4.15,
+    "sardineIn120": 19.57,
+    "startTunaIn120": 0.0
   },
   "passed": false
 }

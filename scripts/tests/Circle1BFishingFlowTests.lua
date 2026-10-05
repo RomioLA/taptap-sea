@@ -3,6 +3,7 @@ local GameplayConfig = require("config.gameplay")
 local OceanConfig = require("Ocean.Config")
 local GameWorld = require("Game.World")
 local Bridge = require("Integration.Bridge")
+local Progress = require("Gameplay.Circle1B2Progress")
 
 local Tests = {}
 local Runtime = {}
@@ -480,6 +481,46 @@ function Tests.Run()
         assert(f.bridge:CancelFishing(token2))
         assertEqual(f.loop.player.stamina, 100)
         assertItems(f.loop.player.inventory:GetItems(), before)
+    end)
+
+    -- A2（2026-10-05 用户裁决）：动作中再点捕鱼键=取消，免费且解除锁定，可立即重开。
+    test("A2 re-tapping the fishing dock button mid-action cancels for free", function()
+        local f = atSea()
+        local fish = f.runtime:spawnFish("sardine", { x = 1, y = 0 })
+        assert(f.bridge:BeginFishing({ x = 0, y = 0 }))
+        f.bridge:Update(0.2)
+        assertEqual(f.loop:GetFishingState().state, "casting")
+        -- 动作中再点捕鱼键 = 取消，而不是再次进入选点。
+        assert(f.loop:BeginFishingSelection())
+        assertEqual(f.loop:GetFishingState().state, "cancelled")
+        assert(not fish.captureLocked and not fish.removed)
+        assertEqual(f.loop.player.stamina, 100)
+        -- 取消后同一按钮立即可重新开始选点。
+        assert(f.loop:BeginFishingSelection())
+        assertEqual(f.loop:GetFishingState().state, "selecting")
+        assert(f.loop:CancelFishingAction())
+    end)
+
+    -- A1（2026-10-05 用户裁决）：白名单制——动作中透镜开关可用，对话/背包仍拒绝。
+    test("A1 whitelist: scope toggle stays available and dialogs stay blocked mid-action", function()
+        local f = atSea()
+        -- 最小透镜接口桩（同 Circle1B2ScopeTests.bindScope 的生产同步契约）。
+        local runtime = f.runtime
+        runtime.scopeEnabled = false
+        function runtime:SetScopeEnabled(enabled) self.scopeEnabled = enabled == true; return self.scopeEnabled end
+        function runtime:IsScopeEnabled() return runtime.scopeEnabled end
+        assert(Progress.GrantLens(f.loop.player))
+        assert(f.bridge:BeginFishing({ x = 0, y = 0 }))
+        f.bridge:Update(0.2)
+        assertEqual(f.loop:GetFishingState().state, "casting")
+        -- 白名单内：透镜开关可用且不暂停世界。
+        assert(f.loop:ToggleScope())
+        assert(not f.loop.clock:IsPaused())
+        assert(f.loop:ToggleScope())
+        -- 白名单外：背包与老人对话在动作中仍被拒绝。
+        assertEqual(f.loop:SetInventoryOpen(true), false)
+        assertEqual(f.loop:SetElderOpen(true), false)
+        assert(f.loop:CancelFishingAction())
     end)
 
     test("lock rejection is a free terminal failure and never selects a replacement", function()

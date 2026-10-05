@@ -1151,9 +1151,13 @@ function HUD.Create(loop, parent, debugTools)
         -- v2.0 零遮挡：捕鱼面板只在捕鱼过程（选择/收网/清理/结算）中出现；
         -- 待机状态的出海画面只保留左上信息文字与右下按钮坞。
         refs.fishingPanel:SetVisible(fishingRestricted or fishingTerminal)
-        refs.beginFishing:SetVisible(not inPort and not fishingSelecting and not fishingActive)
-        refs.beginFishing:SetDisabled(not ready or busy or inPort or loop.inventoryOpen == true
-            or loop.elderOpen == true or fishingRestricted)
+        -- A2（2026-10-05 用户裁决）：动作中再点捕鱼键=取消——按钮坞"捕鱼"在选点/收网期间
+        -- 保持可见可点（点击经 Loop:BeginFishingSelection 转为取消）；清理/结算 pending 态
+        -- 仍由捕鱼小卡内的"取消捕鱼/重试清理"按钮承担。
+        local fishingCancellable = fishingSelecting or fishingPhase == "casting" or fishingPhase == "landed"
+        refs.beginFishing:SetVisible(not inPort and (not fishingRestricted or fishingCancellable))
+        refs.beginFishing:SetDisabled((not ready and not fishingCancellable) or busy or inPort
+            or loop.inventoryOpen == true or loop.elderOpen == true)
         -- 新手教程点位：靠近出港点右侧木桶（≤操作距离+3m 余量）时出现 检查木桶/望远镜；
         -- 望远镜获得后常驻（设定集：窥视镜=看海面下）。
         local barrelNearForDock, barrelDistanceForDock = false, nil
@@ -1174,7 +1178,9 @@ function HUD.Create(loop, parent, debugTools)
         refs.scopeToggleBar:SetVisible(not inPort)
         refs.scopeToggleBar:SetText(hasLens
             and (scopeEnabled and "关闭望远镜" or "开启望远镜") or "透镜未获得")
-        refs.scopeToggleBar:SetDisabled(busy or fishingRestricted
+        -- A1（2026-10-05 用户裁决）：白名单制——捕鱼动作期间允许透镜开关
+        -- （ToggleScope 不暂停世界、不触碰捕获锁定），只禁移动/背包/投放/打捞/交谈/进港。
+        refs.scopeToggleBar:SetDisabled(busy
             or not hasLens or not scopeApiAvailable)
         refs.cancelFishing:SetVisible(fishingRestricted)
         refs.cancelFishing:SetText(fishingCleanupPending and "重试清理" or "取消捕鱼")

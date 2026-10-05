@@ -1291,6 +1291,9 @@ end
 
 function Loop:BeginFishingSelection()
     if not self.actions then return false, "fishing_runtime_interface_unavailable" end
+    -- A2（2026-10-05 用户裁决）：捕鱼动作（选点/收网）进行中再点捕鱼键=取消（免费），
+    -- 不新增按钮；清理/结算 pending 态仍走 CancelFishingAction 的重试清理路径。
+    if self.actions:IsBusy() then return self:CancelFishingAction() end
     return self.actions:BeginSelection()
 end
 function Loop:SetFishingCenter(center)
