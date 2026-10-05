@@ -145,13 +145,67 @@
 
 ---
 
-## 4. 变更流程
+## 4. `scripts/data/narrative.lua` — 剧情叙事表（Q-006 命运链，2026-10-05 新增）
+
+- **数据链口径**：与 events 同款**单表链**——B 直接编辑本文件，无根 `data/` 基准、无 sync 生成（纯文案无数值生成逻辑，不走 fish/items 双表链）。
+- **加载代码由 A 维护**（剧情接入时提供）；B1 阶段 B 只录数据。
+
+### 分组结构（顶层四组，勿改名）
+
+| 组 | 内容 | 对应策划 |
+|---|---|---|
+| `hints` | 苹果条件的玩家感知线索（老人或环境提示，引导玩家注意到"给苹果"这件事） | 05 页 §苹果条件 |
+| `symptoms` | 老人病征线索（第 4 天判定前的状态描写） | 05 页 §病征 |
+| `branchDialogues` | 第 4~7 天按 applesGiven/decision 分支的老人对白 | 05 页 §分支对白 |
+| `endings` | 两种结局正文（`saved` / `dead`），多段 lines | 05 页 §两种结局 |
+
+### 字段定义（按组）
+
+```lua
+return {
+  hints = {
+    { id = "hint_apple_1", day = 1, speaker = "elder",
+      text = "……" },
+  },
+  symptoms = {
+    { id = "symptom_1", day = 4, speaker = "elder",
+      text = "……" },
+  },
+  branchDialogues = {
+    { id = "branch_d4_low", day = 4, applesGiven = 1, speaker = "elder",
+      text = "……" },
+  },
+  endings = {
+    saved = { lines = { "段1", "段2" } },
+    dead  = { lines = { "段1", "段2" } },
+  },
+}
+```
+
+| 字段 | 类型 | 必填 | 说明 |
+|---|---|---|---|
+| `id` | string | ✅ | 组内唯一，全小写下划线 |
+| `day` | number | hints/symptoms/branch ✅ | 关联天数 1~7 |
+| `applesGiven` | number | branchDialogues ✅ | 该分支对应的累计苹果数（0~3） |
+| `speaker` | string | ✅ | v1 仅 `elder`，预留扩展 |
+| `text` | string | 除 endings 外 ✅ | 单段正文 |
+| `lines` | table | endings ✅ | 结局多段正文，按序展示 |
+
+### 硬性设计约束（来自策划案与用户裁决，验收会检查）
+
+1. **病因不得擅加**：病征只写状态描写，不得出现病名、药物或其他救援因果（Q-006 边界）。
+2. **纸条不录本表**：第 7 天纸条已有定稿（05 页原文），由既有 storyDialog 通道承载，避免双源。
+3. 苹果判定硬约束（3 苹果、第 4 天判定）由代码保证，文案不得改写数值口径。
+4. 文案给玩家"可倒推的因果"：线索要能让玩家在二周目凭知识改变行为。
+5. 每条数据带来源注释（同总规则）。
+
+## 5. 变更流程
 
 1. B 发现缺字段/缺表 → 在群里说明「哪张表、哪个字段、为什么、来源哪条设计」。
 2. A 修改本文件与加载代码 → 发布新版本号。
 3. B 再填数据。**B 不得通过改 `scripts/` 来"适配"自己的数据。**
 
-## 5. B 提交前自检清单
+## 6. B 提交前自检清单
 
 - [ ] 只改了 `scripts/data/` 和 `docs/` 下的文件（`git diff --stat` 确认）
 - [ ] 字段名与本文档逐字一致；没有新增字段
@@ -159,4 +213,5 @@
 - [ ] 枚举值拼写正确（`ATTRACT_SMALL_FISH` 不是 `attract_small_fish`）
 - [ ] Lua 表能通过 `lua -e "loadfile('scripts/data/items.lua')"` 类语法检查（或让 Codex 做语法自检）
 - [ ] 事件 reward 非空；实操选项 staminaCost 已填
+- [ ] narrative 表四组键齐全（hints/symptoms/branchDialogues/endings），endings 含 saved 与 dead 两键
 - [ ] 提交信息写明：改了哪张表、动了几条数据
