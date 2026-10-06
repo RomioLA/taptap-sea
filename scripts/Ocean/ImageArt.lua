@@ -14,6 +14,14 @@ local LOD_TINY_PX, LOD_SMALL_PX, LOD_MID_PX = 2, 64, 256
 -- 岛屿类图片：最低细分档 2×2（远景单四边形会压平岸线曲率）。
 local MIN_GRID_2 = { island = true, island_story = true }
 
+-- P0：nvgFill 计数（SeaDebug 性能行读数）。无条件累计，读取即清零。
+local fillCounter = 0
+function Art.FillsSnapshotAndReset()
+    local count = fillCounter
+    fillCounter = 0
+    return count
+end
+
 -- 只返回规格副本，调用者不能改写共享目录或运行时图片句柄。
 function Art.GetSpec(name)
     local spec = catalog[name]
@@ -124,6 +132,7 @@ local function triangle(ctx, movement, image, a, b, c, alpha, frame)
                     end
                     nvgClosePath(ctx)
                     nvgFillPaint(ctx, nvgImagePattern(ctx, 0, 0, 1, 1, 0, image, alpha))
+                    fillCounter = fillCounter + 1
                     nvgFill(ctx)
                     nvgRestore(ctx)
                 end
@@ -234,6 +243,7 @@ function Art.WaterPaper(ctx, movement, width, height)
     nvgClosePath(ctx)
     local size = height * 1.5
     nvgFillPaint(ctx, nvgImagePattern(ctx, 0, 0, size, size, 0, image, 0.5))
+    fillCounter = fillCounter + 1
     nvgFill(ctx)
     nvgRestore(ctx)
     return true

@@ -6,6 +6,7 @@ local FishData = require("Ocean.FishData")
 local Draw = require("Ocean.SeaDraw")
 local ImageArt = require("Ocean.ImageArt")
 local Debug = require("Ocean.SeaDebug")
+local FramePerf = require("Ocean.FramePerf")
 local Bootstrap = {}
 Bootstrap.__index = Bootstrap
 
@@ -116,6 +117,7 @@ end
 
 function Bootstrap:Update(dt)
     if self.stopped then return end
+    FramePerf.BeginUpdate()
     self:SyncViewport()
     local x, y = 0, 0
     if not uiHasTextInputFocus() then
@@ -130,10 +132,12 @@ function Bootstrap:Update(dt)
         self.runtime:Update(dt, x, y)
     end
     if self.tools and type(self.tools.refresh) == "function" then self.tools.refresh(dt) end
+    FramePerf.EndUpdate()
 end
 
 function Bootstrap:Render()
     if self.stopped or not self:SyncViewport() then return end
+    FramePerf.BeginDraw()
     local w, h = self.physicalWidth/self.dpr, self.physicalHeight/self.dpr
     -- Mode B: logical pixels; the movement adapter projects the meter-based world.
     nvgBeginFrame(self.context, w, h, self.dpr)
@@ -145,6 +149,7 @@ function Bootstrap:Render()
     if type(self.options.getFishingView) == "function" then fishingView = self.options.getFishingView() end
     Draw.Scene(self.context, w, h, self.runtime, clock, fishingView, self.options.isLocationRecognized)
     nvgEndFrame(self.context)
+    FramePerf.EndDraw()
     if self.firstFrame then
         self.firstFrame = false
         print("[SeaV1] first frame rendered; underwater hidden=" .. tostring(not self.runtime.world.showUnderwater))

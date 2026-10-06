@@ -5,6 +5,8 @@
 local UI = require("urhox-libs/UI")
 local Config = require("Ocean.Config")
 local FishData = require("Ocean.FishData")
+local FramePerf = require("Ocean.FramePerf")
+local ImageArt = require("Ocean.ImageArt")
 
 local SeaDebug = {}
 
@@ -316,6 +318,7 @@ function SeaDebug.Create(runtime, options)
             UI.Label { id = "seaDebugPopulation", text = countsText(runtime), fontSize = 10, fontColor = { 220, 237, 239, 255 } },
             UI.Label { id = "seaDebugWorldCounts", text = "World 0  |  dropped 0", fontSize = 10, fontColor = { 180, 207, 216, 255 } },
             UI.Label { id = "seaDebugActivityCounts", text = "World active 0  |  frozen 0", fontSize = 10, fontColor = { 180, 207, 216, 255 } },
+            UI.Label { id = "seaDebugPerf", text = "Perf: --", fontSize = 10, fontColor = { 255, 214, 140, 255 } },
             row({
                 buildButton("seaDebugUnderwater", "Underwater OFF", function() toggle("showUnderwater") end),
                 buildButton("seaDebugStates", "States OFF", function() toggle("showStates") end),
@@ -405,9 +408,13 @@ function SeaDebug.Create(runtime, options)
     panel:SetVisible(state.panelVisible)
     if options.parent then options.parent:AddChild(root) else UI.SetRoot(root) end
 
+    -- P0：面板存活期间开启帧级采样（os.clock 不可用时 FramePerf 内部降级）。
+    FramePerf.SetEnabled(true)
+
     local populationLabel = toolContents:FindById("seaDebugPopulation") --[[@as Label?]]
     local worldCountsLabel = toolContents:FindById("seaDebugWorldCounts") --[[@as Label?]]
     local activityCountsLabel = toolContents:FindById("seaDebugActivityCounts") --[[@as Label?]]
+    local perfLabel = toolContents:FindById("seaDebugPerf") --[[@as Label?]]
 
     local controller = {}
     controller.refresh = function(dt)
@@ -420,6 +427,18 @@ function SeaDebug.Create(runtime, options)
         if populationLabel and populationLabel:GetText() ~= populationText then populationLabel:SetText(populationText) end
         if worldCountsLabel and worldCountsLabel:GetText() ~= worldText then worldCountsLabel:SetText(worldText) end
         if activityCountsLabel and activityCountsLabel:GetText() ~= activityText then activityCountsLabel:SetText(activityText) end
+
+        if perfLabel then
+            local snapshot = FramePerf.SnapshotAndReset()
+            local perfText = "Perf: waiting first frame"
+            if snapshot then
+                local fillsPerFrame = snapshot.frames > 0
+                    and ImageArt.FillsSnapshotAndReset() / snapshot.frames or 0
+                perfText = string.format("Upd %.1f | Draw %.1f | Fill %d/f | Lua %dKB",
+                    snapshot.updateMs, snapshot.drawMs, math.floor(fillsPerFrame + 0.5), snapshot.luaKB)
+            end
+            if perfLabel:GetText() ~= perfText then perfLabel:SetText(perfText) end
+        end
 
         updateButtonText(buttons.seaDebugUnderwater, "Underwater " .. (flagValue(runtime, "showUnderwater") and "ON" or "OFF"))
         updateButtonText(buttons.seaDebugStates, "States " .. (flagValue(runtime, "showStates") and "ON" or "OFF"))
