@@ -183,7 +183,7 @@ function HUD.Create(loop, parent, debugTools)
     themedPanels[#themedPanels + 1] = { widget = refs.fishingPanel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight }
     refs.fishingStatus = makeLabel("选择海面网心开始捕鱼。", 11)
     refs.fishingProgress = makeLabel("动作进度：0%", 10, { 180, 203, 191, 255 })
-    refs.fishingResult = makeLabel("", 11, { 249, 211, 118, 255 }, "bold")
+    refs.fishingResult = makeLabel("", 11, { 249, 211, 118, 255 })
     refs.fishingPanel:AddChild(refs.fishingStatus)
     refs.fishingPanel:AddChild(refs.fishingProgress)
     refs.fishingPanel:AddChild(refs.fishingResult)
@@ -643,6 +643,13 @@ function HUD.Create(loop, parent, debugTools)
         itemRow:AddChild(makeButton("暂停原因", function() invokeDebug("pauseReasons") end, "secondary", 86))
         refs.debugPanel:AddChild(itemRow)
 
+        -- S0 音频验证桩：试听 UI 点击音与白天声床循环（验收标准见设计方案 §9 S0）。
+        local audioRow = UI.Panel { width = "100%", flexDirection = "row", flexWrap = "wrap", gap = 5 }
+        audioRow:AddChild(makeLabel("音频S0", 12))
+        audioRow:AddChild(makeButton("试听点击", function() invokeDebug("audioClick") end, "secondary", 86))
+        audioRow:AddChild(makeButton("声床开关", function() invokeDebug("audioAmb") end, "secondary", 86))
+        refs.debugPanel:AddChild(audioRow)
+
         -- 调试面板挂根流（仅开发模式创建）：不随信息滚动屏开合，保证调试按钮常可用。
         root:AddChild(refs.debugPanel)
     end
@@ -714,6 +721,14 @@ function HUD.Create(loop, parent, debugTools)
     refs.settlementBody:AddChild(refs.settlementSkip)
     refs.modalCard:AddChild(refs.settlementBody)
 
+    -- T1（2026-10-06）：第 7 天结局模态；文案占位，正式版按 Q-006 由 B 侧替换。
+    refs.endingBody = UI.Panel { width = "100%", flexGrow = 1, gap = 12 }
+    refs.endingText = makeLabel("", 14)
+    refs.endingBody:AddChild(refs.endingText)
+    refs.endingNewRun = makeButton("开始新周目", function() invokeLoop("NewRun") end, "primary", 130)
+    refs.endingBody:AddChild(refs.endingNewRun)
+    refs.modalCard:AddChild(refs.endingBody)
+
     refs.elderBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 8 }
     refs.elderMessage = makeLabel("食物可给予老人；鱼和鱼饵可向老人展示。", 13)
     refs.elderBody:AddChild(refs.elderMessage)
@@ -772,6 +787,7 @@ function HUD.Create(loop, parent, debugTools)
     fadeOpacity(refs.modalCard, 0) -- 隐藏期间保持全透明；显示时由 transition 淡入
     refs.forcedBody:Hide()
     refs.settlementBody:Hide()
+    refs.endingBody:Hide()
     refs.elderBody:Hide()
     refs.storyBody:Hide()
     -- 捕鱼结果气泡（真机反馈 2026-10-05）：收网后在屏幕中上部弹出结果提示，
@@ -798,7 +814,9 @@ function HUD.Create(loop, parent, debugTools)
         borderWidth = 1,
         borderRadius = 12,
     }
-    refs.catchBubbleText = makeLabel("", 13, { 255, 236, 207, 255 }, "bold")
+    -- T2（2026-10-06）：真机反馈气泡只见边框无文字，嫌疑"bold"字重在该运行环境
+    -- 渲染为空；两个结果标签统一降为常规字重（信息无损，排除变量）。
+    refs.catchBubbleText = makeLabel("", 13, { 255, 236, 207, 255 })
     catchBubbleCard:AddChild(refs.catchBubbleText)
     refs.catchBubble:AddChild(catchBubbleCard)
     refs.catchBubble:SetVisible(false)
@@ -1118,8 +1136,26 @@ function HUD.Create(loop, parent, debugTools)
         local resultText = ""
         if fishingTerminal then
             if fishingPhase == "complete" then
-                local detail = loop.lastMessage
-                resultText = "收网完成。" .. (detail and detail ~= "" and (" " .. userMessage(detail)) or "")
+                -- T2（2026-10-06 真机反馈）：文案按结算结果生成，不再依赖滞后的
+                -- lastMessage（旧逻辑在成功时也只显示"收网完成。"且常带过期消息）。
+                local outcome = fishingState and fishingState.outcome
+                local caughtItemId = fishingState and fishingState.itemId
+                if (outcome == "caught" or outcome == "pending_catch") and caughtItemId then
+                    local definition = Items.GetDefinition(caughtItemId)
+                    local fishName = definition and definition.name or "鱼获"
+                    if outcome == "pending_catch" then
+                        resultText = "本次捞到 1 条" .. fishName .. "；船舱已满，请整理背包接收鱼获。"
+                    else
+                        local sellPrice = definition and definition.sellPrice
+                        resultText = "本次捞到 1 条" .. fishName
+                            .. (sellPrice and sellPrice > 0 and string.format("，返港可卖 %d 币", sellPrice) or "")
+                    end
+                elseif outcome == "empty" then
+                    resultText = "没有捞到。试试停船投饵，等鱼群聚过来再下网。"
+                else
+                    local detail = loop.lastMessage
+                    resultText = "收网完成。" .. (detail and detail ~= "" and (" " .. userMessage(detail)) or "")
+                end
             elseif fishingPhase == "cancelled" then
                 resultText = "已取消，未消耗体力。"
             else
@@ -1411,25 +1447,28 @@ function HUD.Create(loop, parent, debugTools)
         local showEntry = loop.entryPending == true
         local showForced = not showEntry and not pendingCatch and loop.forcedReturnPending == true
         local showSettlement = not showEntry and not pendingCatch and not showForced and loop.settlementPending == true
+        -- T1：结局模态在结算保存流程结束后显示（settlementPending 清除后）。
+        local showEnding = not showEntry and not pendingCatch and not showForced and not showSettlement
+            and loop.endingPending == true
         local showStory = not showEntry and not pendingCatch and not showForced and not showSettlement
-            and storyDialog ~= nil
-        local showElder = not showForced and not showSettlement and not showStory
+            and not showEnding and storyDialog ~= nil
+        local showElder = not showForced and not showSettlement and not showEnding
             and loop.elderOpen == true and elderPresent
         -- 开场教学（演出层，见 OPENING_ELDER_TEXT）：模态独占，优先级低于存档/结算弹窗。
         local showOpening = player.day == 1 and inPort == true
             and state.openingDismissedGeneration ~= loop.generation
             and not showEntry and not pendingCatch and not showForced and not showSettlement
-            and not showStory and not showElder and loop.inventoryOpen ~= true
+            and not showEnding and not showStory and not showElder and loop.inventoryOpen ~= true
         state.openingActive = showOpening
         if showOpening then state.openingGeneration = loop.generation end
         local overlayShown = showEntry or showForced or showSettlement or showStory or showElder
-            or showOpening
+            or showEnding or showOpening
         refs.overlay:SetVisible(overlayShown)
         fadeOpacity(refs.modalCard, overlayShown and 1 or 0)
         local storyTitle = storyDialog and storyDialog.kind == "elder" and "海岸边的老人" or "纸条"
         local overlayTitle = showEntry and "云存档" or showForced and "夜晚返港"
             or (showSettlement and "每日结算" or (showOpening and "海岸边的老人")
-            or (showStory and storyTitle or (showElder and "拜访老人" or "")))
+            or (showEnding and "第 7 天 · 结局" or (showStory and storyTitle or (showElder and "拜访老人" or ""))))
         setText(refs.modalTitle, "modalTitle", overlayTitle)
         refs.entryBody:SetVisible(showEntry)
         if showEntry then
@@ -1452,8 +1491,18 @@ function HUD.Create(loop, parent, debugTools)
         end
         refs.forcedBody:SetVisible(showForced)
         refs.settlementBody:SetVisible(showSettlement)
+        refs.endingBody:SetVisible(showEnding)
         refs.storyBody:SetVisible(showStory or showOpening)
         refs.elderBody:SetVisible(showElder)
+
+        if showEnding then
+            -- [PLACEHOLDER] 结局占位文案；正式版按 Q-006 由 B 侧内容生产替换。
+            local endingCopy = loop.endingKind == "changed"
+                and "老人活了下来。你们约好，明天继续出海。"
+                or "七天过去，风平浪静，无事发生。日子还得继续。"
+            setText(refs.endingText, "endingText", endingCopy)
+            refs.endingNewRun:SetDisabled(busy)
+        end
 
         if showSettlement then
             local confirmed = loop.settlementApplied == true

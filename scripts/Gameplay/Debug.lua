@@ -1,6 +1,7 @@
 -- 开发模式下使用的受限调试命令；不负责写入任何额外存档。
 local Config = require("config.gameplay")
 local Items = require("data.items")
+local AudioDirector = require("Gameplay.AudioDirector")
 
 ---@class GameplayDebug
 ---@field loop GameplayLoop
@@ -137,6 +138,7 @@ function Debug:Execute(command, argument)
 
     local loop = self.loop
     if command ~= "pauseReasons" and command ~= "settleDay"
+        and command ~= "audioClick" and command ~= "audioAmb"
         and (loop.busy or loop.loading or loop.settlementPending
             or loop.forcedReturnPending or loop.dropInFlight) then
         return false, "busy"
@@ -155,6 +157,16 @@ function Debug:Execute(command, argument)
     if command == "pauseReasons" then
         local reasons = loop.clock:GetPauseReasons()
         return true, #reasons > 0 and table.concat(reasons, "、") or "当前没有暂停原因"
+    end
+    if command == "audioClick" then
+        -- S0 音频验证桩：试听 UI 点击音，附带能力状态行（屏幕通道验收）。
+        local ok, message = AudioDirector.Play("ui.button_click")
+        return ok, ok and (message .. "｜" .. AudioDirector.Status()) or message
+    end
+    if command == "audioAmb" then
+        -- S0 音频验证桩：白天声床循环开关，附带能力状态行。
+        local ok, message = AudioDirector.ToggleBed("amb.calm_sea")
+        return ok, ok and (message .. "｜" .. AudioDirector.Status()) or message
     end
     return false, "unknown_debug_command"
 end

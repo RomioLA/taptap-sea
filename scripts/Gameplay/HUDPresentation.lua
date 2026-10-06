@@ -212,6 +212,7 @@ function Presentation.Create(UI, Config, Items)
     local function modeText(loop, fishingPhase, pendingCatch, throwSelection)
         if loop.loading or loop.entryPending then return "读取／选择存档" end
         if loop.forcedReturnPending then return "夜尽返港" end
+        if loop.endingPending then return "本周目结局" end
         if loop.settlementPending then return "每日结算" end
         if loop.elderOpen then return "老人对话" end
         if loop.storyDialog then return "剧情对话" end
