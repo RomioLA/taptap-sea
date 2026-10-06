@@ -183,7 +183,8 @@ function HUD.Create(loop, parent, debugTools)
     themedPanels[#themedPanels + 1] = { widget = refs.fishingPanel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight }
     refs.fishingStatus = makeLabel("选择海面网心开始捕鱼。", 11)
     refs.fishingProgress = makeLabel("动作进度：0%", 10, { 180, 203, 191, 255 })
-    refs.fishingResult = makeLabel("", 11, { 249, 211, 118, 255 })
+    -- T2b：同气泡根因的保险——显式宽度，避免任何父布局变化导致零宽不渲染。
+    refs.fishingResult = makeLabel("", 11, { 249, 211, 118, 255 }, nil, { width = "100%" })
     refs.fishingPanel:AddChild(refs.fishingStatus)
     refs.fishingPanel:AddChild(refs.fishingProgress)
     refs.fishingPanel:AddChild(refs.fishingResult)
@@ -804,6 +805,12 @@ function HUD.Create(loop, parent, debugTools)
         pointerEvents = "box-none",
     }
     local catchBubbleCard = UI.Panel {
+        -- T2b（2026-10-06 真机复检）：宽度必须显式固定。此前卡片随内容收缩且
+        -- alignItems=center 使空文本 label 测量宽度为 0；Label 对 multiline
+        -- (whiteSpace=normal) 的 SetText 不重算宽度（urhox-libs Label.lua:1241
+        -- 提前 return），Render 在 contentW≈0 时提前 return 只画背景——
+        -- 即真机"黑胶囊无文字"的根因。
+        width = 320,
         maxWidth = 340,
         padding = 9,
         gap = 4,
@@ -816,7 +823,8 @@ function HUD.Create(loop, parent, debugTools)
     }
     -- T2（2026-10-06）：真机反馈气泡只见边框无文字，嫌疑"bold"字重在该运行环境
     -- 渲染为空；两个结果标签统一降为常规字重（信息无损，排除变量）。
-    refs.catchBubbleText = makeLabel("", 13, { 255, 236, 207, 255 })
+    -- T2b：显式 width 让 multiline label 拿到真实排版宽度（见卡片注释的根因分析）。
+    refs.catchBubbleText = makeLabel("", 13, { 255, 236, 207, 255 }, nil, { width = "100%", textAlign = "center" })
     catchBubbleCard:AddChild(refs.catchBubbleText)
     refs.catchBubble:AddChild(catchBubbleCard)
     refs.catchBubble:SetVisible(false)
