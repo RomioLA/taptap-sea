@@ -13,7 +13,8 @@ function Art.GetSpec(name)
     return { path = spec.path, pixelWidth = spec.pixelWidth, pixelHeight = spec.pixelHeight,
         contentWidth = spec.contentWidth, contentHeight = spec.contentHeight,
         anchorX = spec.anchorX, anchorY = spec.anchorY,
-        preload = spec.preload, repeatTexture = spec.repeatTexture }
+        preload = spec.preload, repeatTexture = spec.repeatTexture,
+        completeIsland = spec.completeIsland }
 end
 
 -- 库内候选按需显式加载，不随场景启动批量占用纹理或自动生成对象。

@@ -273,9 +273,6 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
     local horizon = movement:GetHorizonY()
     Art.Backdrop(ctx, width, height, time)
     Art.Surface(ctx, movement, time)
-    -- Tint the water/sky before projected objects; depth ordering, ship and UI
-    -- stay legible. Rendering only reads the authoritative clock.
-    if clock and clock.phase == "night" then Draw.NightOverlay(ctx, width, height, clock) end
     nvgSave(ctx)
     Atmosphere.CloudShadows(ctx, movement, time, runtime.daySeed)
     local flags, entities = runtime.debug or Config.debug, nearbyEntities(runtime)
@@ -318,14 +315,29 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
                         function(scale, api) Draw.WorldRise(ctx, 0, 0, scale, entity, time, api) end,
                         (FishData[entity.species].renderLength or 1) * 1.5)
                 elseif entry.kind == "splash" then
-                    groundFrame(ctx, movement, point, 0, function(scale, api)
-                        Draw.WorldSplash(ctx, 0, 0, scale, entry.remaining, entry.lifetime, entry.heading, entry.length, api)
-                    end, math.max(3, entry.length))
+                    local alpha = math.max(0, math.min(1, entry.remaining / entry.lifetime))
+                    if not ImageArt.Sprite(ctx, "splash", movement, point, math.max(2, entry.length),
+                        entry.heading, 0, alpha) then
+                        groundFrame(ctx, movement, point, 0, function(scale, api)
+                            Draw.WorldSplash(ctx, 0, 0, scale, entry.remaining, entry.lifetime, entry.heading, entry.length, api)
+                        end, math.max(3, entry.length))
+                    end
+                    -- Keep the directional trace: its position/heading/lifetime
+                    -- comes from the existing live fish signal, not a new effect timer.
+                    if ImageArt.IsLoaded(ctx, "splash") then
+                        worldLine(ctx, movement, point,
+                            { x = point.x - math.cos(entry.heading) * entry.length,
+                              y = point.y - math.sin(entry.heading) * entry.length },
+                            { 221, 239, 235, math.floor(alpha * 150) }, 1.2)
+                    end
                 elseif entry.kind == "bird" then
                     local birdAltitude = Config.visual.projection.birdAltitude * (1 - (entry.dive or 0))
                     local flapScale = 1 + math.sin(time * 3.2) * 0.035
-                    if not ImageArt.Plane(ctx, "gull", movement, point, 3.2,
-                        3.2 * (1 - 0.62 * (entry.dive or 0)) * flapScale, entry.heading, birdAltitude) then
+                    local name = (entry.dive or 0) > 0.05 and ImageArt.IsLoaded(ctx, "gull_dive")
+                        and "gull_dive" or "gull"
+                    if not ImageArt.Sprite(ctx, name, movement, point, 3.2,
+                        entry.heading, birdAltitude, 1,
+                        3.2 * (1 - 0.62 * (entry.dive or 0)) * flapScale) then
                         groundFrame(ctx, movement, point, birdAltitude, function(scale, api)
                             Draw.WorldSeabird(ctx, 0, 0, scale, entry.heading, entry.dive, api)
                         end)
@@ -335,13 +347,17 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
         end
     end
     Atmosphere.Fog(ctx, movement, time, runtime.daySeed)
+    drawFishing(ctx, runtime, fishingView)
+    -- Grade all world content, including PNG ship/islands, fish in the scope,
+    -- signal VFX and fog. Port/navigation marks and the separately rendered UI
+    -- remain readable. No clock, simulation or pause state is changed here.
+    if clock and clock.phase == "night" then Draw.NightOverlay(ctx, width, height, clock) end
     drawPortMark(ctx, runtime, width, height, horizon)
     if flags.showPerception then
         for _, entity in ipairs(entities) do
             if not entity.removed and entity.species and isVisible(world, entity) then drawPerception(ctx, movement, entity) end
         end
     end
-    drawFishing(ctx, runtime, fishingView)
     drawTarget(ctx, movement)
     if flags.showBounds then
         local half = Config.world.halfSize

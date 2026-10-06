@@ -633,6 +633,25 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     end
     local center = entity.position
     local radius = math.max(0.5, finite(entity.radius) and entity.radius or 4)
+    -- A complete top-down PNG contains beach, hills, vegetation and static shore
+    -- decoration. Skip only their draw cost, before constructing vector geometry.
+    -- The world entity/radius still owns collision and location rules. Failed image
+    -- loading takes the original cached/culled vector path below, unchanged.
+    local imageSpec = ImageArt.GetSpec("island")
+    if imageSpec and imageSpec.completeIsland and ImageArt.Sprite(ctx, "island", movement,
+        center, radius * 2, 0, 0, 1, radius * 2) then
+        local imageBounds = newScreenBounds()
+        local corners = {
+            { x = center.x - radius, y = center.y - radius },
+            { x = center.x + radius, y = center.y - radius },
+            { x = center.x + radius, y = center.y + radius },
+            { x = center.x - radius, y = center.y + radius },
+        }
+        for _, point in ipairs(Geometry.ProjectPolygon(movement, corners)) do
+            includeScreenPoint(imageBounds, point)
+        end
+        return finishScreenBounds(imageBounds)
+    end
     local settings = Config.visual and Config.visual.projection or {}
     local segmentCount = math.max(16, math.floor(settings.circleSegments or 48))
     ---@type table
@@ -805,8 +824,8 @@ function SeaViewArt.Boat(ctx, movement, ship, time)
         shadow[#shadow + 1] = { x = point.x + 1.5, y = point.y + 3, scale = point.scale }
     end
     fillPolygon(ctx, shadow, nvgRGBA(49, 99, 101, 65))
-    if ImageArt.Plane(ctx, "boat", movement, ship.position, length / 0.88, width / 0.88,
-        rotation, heave, 1, roll) then
+    if ImageArt.Sprite(ctx, "boat", movement, ship.position, length,
+        rotation, heave, 1, width, roll) then
         return finishScreenBounds(bounds)
     end
     fillPolygon(ctx, hullScreen, rgba(visual.ship, { 251, 222, 139, 255 }))

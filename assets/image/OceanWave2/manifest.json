@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "status": "CURRENT_RUNTIME_CANDIDATE",
+  "assets": {
+    "boat": {
+      "path": "image/OceanWave2/boat.png",
+      "source": "outputs/art-wave1/ART-W1-01/candidates/ship_fishing_sloop_A.png",
+      "size": [
+        640,
+        427
+      ],
+      "content_bounds": [
+        38,
+        101,
+        601,
+        325
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.6667996194379391,
+      "sha256": "bb2bcd90ec47a61f00a252d02dd18060516a349f9c5547806a3f257c0289b655",
+      "source_sha256": "1351762edb9348052025a24d5b35d3866f8d27a32f4df9675cbe6b7371585649",
+      "preload": true,
+      "complete_island": false,
+      "status": "CURRENT_RUNTIME_CANDIDATE",
+      "task": "ART-W1-01",
+      "source_bytes": 395307,
+      "runtime_bytes": 235532
+    },
+    "island": {
+      "path": "image/OceanWave2/island.png",
+      "source": "outputs/art-wave1/ART-W1-01/candidates/island_sandy_green_cove.png",
+      "size": [
+        768,
+        768
+      ],
+      "content_bounds": [
+        46,
+        73,
+        722,
+        695
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.5022667778862847,
+      "sha256": "658c7ba3ced66d2e8ea38df36603e6732209a9eb656af80954fb4ca12a5fa5bb",
+      "source_sha256": "0283a432fffbd203509a9b5b76e5b51d6541ea83f3b1ddd26a9d7f6278318ff3",
+      "preload": true,
+      "complete_island": true,
+      "status": "CURRENT_RUNTIME_CANDIDATE",
+      "task": "ART-W1-01",
+      "source_bytes": 1567197,
+      "runtime_bytes": 769917
+    },
+    "gull": {
+      "path": "image/OceanWave2/gull.png",
+      "source": "outputs/art-wave1/ART-W1-02/candidates/seabird_glide.png",
+      "size": [
+        384,
+        384
+      ],
+      "content_bounds": [
+        23,
+        89,
+        361,
+        294
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.8141208224826388,
+      "sha256": "95b12f31dc59b3d0211a3a65253a6a03262e588021000261e926471ccac85e61",
+      "source_sha256": "d965595ad73a17fb58b7a51f94b3a9b7868ac500f17ab438cabdeabd703da40f",
+      "preload": true,
+      "complete_island": false,
+      "status": "CURRENT_RUNTIME_CANDIDATE",
+      "task": "ART-W1-02",
+      "source_bytes": 158795,
+      "runtime_bytes": 73017
+    },
+    "gull_dive": {
+      "path": "image/OceanWave2/gull_dive.png",
+      "source": "outputs/art-wave1/ART-W1-02/candidates/seabird_dive.png",
+      "size": [
+        384,
+        384
+      ],
+      "content_bounds": [
+        23,
+        52,
+        361,
+        331
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7394680447048612,
+      "sha256": "442e745afb8fadeef1a3b58b9fa485c66fa976407b37d393e951cf4507909574",
+      "source_sha256": "e9e217be0cf038d915bec5038fcd153c5fdb6076d63653d6d252a23b04dae63a",
+      "preload": true,
+      "complete_island": false,
+      "status": "CURRENT_RUNTIME_CANDIDATE",
+      "task": "ART-W1-02",
+      "source_bytes": 181304,
+      "runtime_bytes": 92628
+    },
+    "ripple": {
+      "path": "image/OceanWave2/ripple.png",
+      "source": "outputs/art-wave1/ART-W1-02/candidates/ripple_small.png",
+      "size": [
+        256,
+        256
+      ],
+      "content_bounds": [
+        25,
+        56,
+        230,
+        199
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.679351806640625,
+      "sha256": "ca8c1a34201ff5a52c46f62ce6831e4c3dfadb80508fecf5a2277e0e227762ab",
+      "source_sha256": "9f1fd4ac7b4da52abca53bede6a507f83ae5c8a392f883835173c0ec0578550a",
+      "preload": true,
+      "complete_island": false,
+      "status": "CURRENT_RUNTIME_CANDIDATE",
+      "task": "ART-W1-02",
+      "source_bytes": 51872,
+      "runtime_bytes": 49072
+    },
+    "splash": {
+      "path": "image/OceanWave2/splash.png",
+      "source": "outputs/art-wave1/ART-W1-02/candidates/bigfish_splash_roaming.png",
+      "size": [
+        256,
+        256
+      ],
+      "content_bounds": [
+        39,
+        79,
+        217,
+        176
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.8236846923828125,
+      "sha256": "d08cabd1f2d2fcaa77f2687be32503167eb1e4efed6598f30c08cbccbfa34488",
+      "source_sha256": "993f60a9ccbeadc148096a74f8aacc70c8203a440030a1a935713a241e21f274",
+      "preload": true,
+      "complete_island": false,
+      "status": "CURRENT_RUNTIME_CANDIDATE",
+      "task": "ART-W1-02",
+      "source_bytes": 30823,
+      "runtime_bytes": 29480
+    }
+  }
+}

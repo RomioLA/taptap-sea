@@ -78,7 +78,7 @@ local function wrapArtMethod(calls, originals, name, key, recorder)
         calls[key] = (calls[key] or 0) + 1
         if name == "Boat" and calls.expectedBoatTint ~= nil then
             assert(recorder.countFillColor(table.unpack(Config.visual.nightOverlay)) == calls.expectedBoatTint,
-                "night tint must be drawn before the boat, and removed in daytime")
+                "world night grade must wait until after the boat is drawn")
         end
         return original(...)
     end
@@ -201,7 +201,7 @@ function Tests.Run(recorder)
         local elapsed = clock.elapsed
         local nightColor = Config.visual.nightOverlay
         local expectedTintCount = 1
-        calls.expectedBoatTint = expectedTintCount
+        calls.expectedBoatTint = 0
         recorder.reset()
         local beforeNight = snapshot(runtime)
         SeaDraw.Scene({}, 1200, 1150, runtime, clock)
@@ -209,6 +209,8 @@ function Tests.Run(recorder)
         assert(clock.elapsed == elapsed and clock.phase == "night" and clock:IsPaused(),
             "rendering mutated the existing gameplay clock")
         assert(calls.nightOverlay == 1, "night rendering must tint the scene exactly once")
+        assert(recorder.countFillColor(table.unpack(nightColor)) == expectedTintCount,
+            "world night grade must be applied once after world objects")
         assert(recorder.callCount("nvgSave") == recorder.callCount("nvgRestore"),
             "night tint left the NanoVG state stack unbalanced")
         expectedTintCount = 0

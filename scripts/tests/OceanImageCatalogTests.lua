@@ -12,6 +12,8 @@ function Tests.Run()
     local oldMipmap, oldRepeatX, oldRepeatY = NVG_IMAGE_GENERATE_MIPMAPS, NVG_IMAGE_REPEATX, NVG_IMAGE_REPEATY
     local oldPlane = Art.Plane
     local created, deleted, failedPath = {}, {}, ""
+    local startupNames = { "boat", "island", "barrel", "gull", "ripple", "waterpaper", "gull_dive", "splash" }
+    local startupCount = #startupNames
     local a, b = {}, {}
     NVG_IMAGE_GENERATE_MIPMAPS, NVG_IMAGE_REPEATX, NVG_IMAGE_REPEATY = 1, 2, 4
     nvgCreateImage = function(ctx, path, flags)
@@ -29,11 +31,11 @@ function Tests.Run()
         assert(Art.GetSpec("missing") == nil and not Art.LoadImage(a, "missing"))
         assert(#created == 0)
     end)
-    check("正式启动仍只加载六张原图且重复调用幂等", function()
+    check("正式启动只加载已接入世界素材且重复调用幂等", function()
         Art.Load(a)
         Art.Load(a)
-        assert(#created == 6)
-        for _, name in ipairs({ "boat", "island", "barrel", "gull", "ripple", "waterpaper" }) do
+        assert(#created == startupCount)
+        for _, name in ipairs(startupNames) do
             assert(Art.IsLoaded(a, name))
         end
         assert(not Art.IsLoaded(a, "reef") and not Art.IsLoaded(a, "sardine"))
@@ -43,15 +45,15 @@ function Tests.Run()
     end)
     check("新增候选显式加载且不影响另一上下文", function()
         assert(Art.LoadImage(a, "reef") and Art.LoadImage(a, "reef"))
-        assert(#created == 7 and Art.IsLoaded(a, "reef") and not Art.IsLoaded(b, "reef"))
+        assert(#created == startupCount + 1 and Art.IsLoaded(a, "reef") and not Art.IsLoaded(b, "reef"))
         assert(Art.LoadImage(b, "shrub"))
         Art.Load(b)
-        assert(#created == 14 and Art.IsLoaded(b, "boat"))
+        assert(#created == startupCount * 2 + 2 and Art.IsLoaded(b, "boat"))
     end)
     check("失败只尝试一次并保留矢量回退", function()
         failedPath = Art.GetSpec("driftwood").path
         assert(not Art.LoadImage(a, "driftwood") and not Art.LoadImage(a, "driftwood"))
-        assert(#created == 15 and not Art.IsLoaded(a, "driftwood"))
+        assert(#created == startupCount * 2 + 3 and not Art.IsLoaded(a, "driftwood"))
         assert(not Art.Sprite(a, "driftwood", {}, { x = 0, y = 0 }, 2, 0))
         failedPath = ""
     end)
@@ -82,16 +84,16 @@ function Tests.Run()
     check("停止释放仅当前上下文的成功句柄且幂等", function()
         Art.Release(a)
         Art.Release(a)
-        assert(#deleted == 8 and not Art.IsLoaded(a, "boat") and Art.IsLoaded(b, "boat"))
+        assert(#deleted == startupCount + 2 and not Art.IsLoaded(a, "boat") and Art.IsLoaded(b, "boat"))
         Art.Release(b)
-        assert(#deleted == 15 and not Art.IsLoaded(b, "shrub"))
+        assert(#deleted == startupCount * 2 + 3 and not Art.IsLoaded(b, "shrub"))
     end)
     check("停止后可重新加载候选与默认集", function()
         assert(Art.LoadImage(a, "driftwood"))
         Art.Load(a)
         assert(Art.IsLoaded(a, "driftwood") and Art.IsLoaded(a, "boat"))
         Art.Release(a)
-        assert(#deleted == 22)
+        assert(#deleted == startupCount * 3 + 4)
     end)
     Art.Plane = oldPlane
     Art.Release(a)
