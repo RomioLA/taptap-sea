@@ -1,0 +1,1055 @@
+{
+  "phase": "new",
+  "source": "E:\\workbath\\Fishing\\fisherman-drift\\scripts",
+  "luaVersion": "Lua 5.4",
+  "syntax": [
+    {
+      "file": "config/gameplay.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "data/events.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "data/fish.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "data/items.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Entities/EntityFactory.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "FSM/StateMachine.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Game/Game.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Game/World.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Actions.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/AudioDirector.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Bootstrap.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Circle1B2Barrel.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Circle1B2Progress.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Debug.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Diagnostics.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/GameClock.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/HUD.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/HUDPresentation.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Inventory.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/LocalSaveBackend.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Loop.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/Persistence.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/PlayerState.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Gameplay/UpdateSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "GeneratedData/Fish.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "GeneratedData/Items.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "GeneratedData/OceanImageCatalog.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Integration/Bridge.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Integration/Circle1BInput.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Integration/Scene.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Main.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Bootstrap.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Camera.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Config.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Draw.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/EntityDraw.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Fish.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/FishData.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/FusedScene.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/HUD.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/ImageArt.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Math.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Movement.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/ProjectedGeometry.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Projection.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SceneState.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SeaAtmosphere.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SeaDebug.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SeaDraw.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SeaPresentation.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SeaRuntime.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SeaSurfaceEffects.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SeaViewArt.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SpawnStrategy.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/State.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/SurfaceSignals.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/Wake.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Ocean/World.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "SeaPreviewEntry.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Systems/BirdSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Systems/ClockSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Systems/EntityStateSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "Systems/FishSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/ABIntegrationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/ArchitectureIntegrationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A2BarrelRenderTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A2BarrelTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A2FishingTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A2ScopeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A2SignalsTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A3ExperienceTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A3InputTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A3PortTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A3RecognitionTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A3SignalsTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1A3StabilityTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1ABMergeFrameBudgetTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1AFishLocksTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1APredationCooldownTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1AudioTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B2BarrelTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B2ProgressTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B2ScopeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B2ThrowTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B2UITests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B3ClockAsyncTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B3CloudTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B3EconomyTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B3SceneUITests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B3SevenDaysTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B3SpatialTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B5DiagnosticsIntegrationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B5GameplayTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B5PersistenceBarrelTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B5PortDrawTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1B6EndingTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1BFishingFlowTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1BPendingCatchTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/Circle1HUDReviewTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/GameLoopSpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/GameLoopUISpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/LocalSaveLoopTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/NumericEconomySpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/OceanArtRuntimeValidate.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/OceanArtVisualValidate.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/OceanImageCatalogTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/OceanImageReadyValidate.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/PersistenceRegressionSpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaAtmosphereTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaCurvatureTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaEngineSmoke.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaFusedSceneTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaFusionRenderTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaHorizonOcclusionTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaMotionEffectsTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaNativeVoyage.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaNativeVoyageEntry.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaPresentationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaRuntimeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaStabilityTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SeaViewUpgradeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/ShipScareTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/ShopStockSpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SurfaceRiseTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "tests/SurfaceSignalsTests.lua",
+      "passed": true,
+      "error": null
+    }
+  ],
+  "suites": [
+    {
+      "name": "Circle1B5DiagnosticsIntegrationTests",
+      "evidence": "offline Lua modules; engine/UI/cloud bindings are test doubles",
+      "report": {
+        "evidenceKind": "offline real Runtime/Movement/Bridge/Loop; print and store doubles; no native engine",
+        "results": [
+          {
+            "name": "diagnostics preserve nil return arity and original error object",
+            "passed": true
+          },
+          {
+            "name": "scalar allowlist and sensitive text redaction omit save contents",
+            "passed": true
+          },
+          {
+            "name": "formatter print and traceback failures cannot change operation results",
+            "passed": true
+          },
+          {
+            "name": "SDK failure details are preserved for callbacks but withheld from operation logs",
+            "passed": true
+          },
+          {
+            "name": "per-frame integration getter exception logs once until recovery",
+            "passed": true
+          },
+          {
+            "name": "actual normal-navigation return at target 0",
+            "passed": true
+          },
+          {
+            "name": "actual normal-navigation return at target 10",
+            "passed": true
+          }
+        ]
+      },
+      "tests": [
+        {
+          "name": "diagnostics preserve nil return arity and original error object",
+          "passed": true
+        },
+        {
+          "name": "scalar allowlist and sensitive text redaction omit save contents",
+          "passed": true
+        },
+        {
+          "name": "formatter print and traceback failures cannot change operation results",
+          "passed": true
+        },
+        {
+          "name": "SDK failure details are preserved for callbacks but withheld from operation logs",
+          "passed": true
+        },
+        {
+          "name": "per-frame integration getter exception logs once until recovery",
+          "passed": true
+        },
+        {
+          "name": "actual normal-navigation return at target 0",
+          "passed": true
+        },
+        {
+          "name": "actual normal-navigation return at target 10",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "skippedCount": 0,
+      "nvgCalls": 0,
+      "elapsedSeconds": 3.4893130000018573,
+      "log": ""
+    },
+    {
+      "name": "Circle1B5GameplayTests",
+      "evidence": "offline Lua modules; engine/UI/cloud bindings are test doubles",
+      "report": {
+        "results": [
+          {
+            "passed": true,
+            "name": "port boundary, HUD readout, and return gate agree at 9.999, 10, and 10.001 meters"
+          },
+          {
+            "passed": true,
+            "name": "busy and pending-catch port gates retain position details; claim logs use the original action ID"
+          },
+          {
+            "passed": true,
+            "name": "inventory rollback exception is logged once with stack and recovery is logged after success"
+          },
+          {
+            "passed": true,
+            "name": "return-to-port performs one diagnosed position read after a transient exception"
+          },
+          {
+            "passed": true,
+            "name": "selection cancellation is logged once and exhausted updates without a selection stay quiet"
+          },
+          {
+            "passed": true,
+            "name": "false rollback and unlock steps log once, then emit a recovered rollback and terminal event"
+          },
+          {
+            "passed": true,
+            "name": "save/load callback reasons remain raw to callers while Loop logs use fixed categories"
+          },
+          {
+            "passed": true,
+            "name": "operation wrapper captures the original stack and output failures cannot change results"
+          },
+          {
+            "passed": true,
+            "name": "new-day and new-run preparation log start, rejection, and success"
+          }
+        ],
+        "evidenceKind": "offline Lua 5.4 gameplay/Loop/HUD checks with local print, UI, cloud, and Runtime doubles"
+      },
+      "tests": [
+        {
+          "passed": true,
+          "name": "port boundary, HUD readout, and return gate agree at 9.999, 10, and 10.001 meters"
+        },
+        {
+          "passed": true,
+          "name": "busy and pending-catch port gates retain position details; claim logs use the original action ID"
+        },
+        {
+          "passed": true,
+          "name": "inventory rollback exception is logged once with stack and recovery is logged after success"
+        },
+        {
+          "passed": true,
+          "name": "return-to-port performs one diagnosed position read after a transient exception"
+        },
+        {
+          "passed": true,
+          "name": "selection cancellation is logged once and exhausted updates without a selection stay quiet"
+        },
+        {
+          "passed": true,
+          "name": "false rollback and unlock steps log once, then emit a recovered rollback and terminal event"
+        },
+        {
+          "passed": true,
+          "name": "save/load callback reasons remain raw to callers while Loop logs use fixed categories"
+        },
+        {
+          "passed": true,
+          "name": "operation wrapper captures the original stack and output failures cannot change results"
+        },
+        {
+          "passed": true,
+          "name": "new-day and new-run preparation log start, rejection, and success"
+        }
+      ],
+      "passed": true,
+      "skippedCount": 0,
+      "nvgCalls": 0,
+      "elapsedSeconds": 0.03007910000087577,
+      "log": ""
+    },
+    {
+      "name": "Circle1B5PersistenceBarrelTests",
+      "evidence": "offline Lua modules; engine/UI/cloud bindings are test doubles",
+      "report": {
+        "results": [
+          {
+            "name": "barrel start, evidence rejection, completion and duplicate callback keep action identity",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "barrel cancellation and commit exception roll back without changing failure results",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "barrel rollback tick failures are logged once until recovery changes state",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "cloud save/load report only outcomes and ignore asynchronous failure replays",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "raw exception identity and failed diagnostic printing do not alter business outcomes",
+            "passed": true,
+            "error": ""
+          }
+        ]
+      },
+      "tests": [
+        {
+          "name": "barrel start, evidence rejection, completion and duplicate callback keep action identity",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "barrel cancellation and commit exception roll back without changing failure results",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "barrel rollback tick failures are logged once until recovery changes state",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "cloud save/load report only outcomes and ignore asynchronous failure replays",
+          "passed": true,
+          "error": ""
+        },
+        {
+          "name": "raw exception identity and failed diagnostic printing do not alter business outcomes",
+          "passed": true,
+          "error": ""
+        }
+      ],
+      "passed": true,
+      "skippedCount": 0,
+      "nvgCalls": 0,
+      "elapsedSeconds": 0.030446299999312032,
+      "log": ""
+    },
+    {
+      "name": "Circle1B5PortDrawTests",
+      "evidence": "offline Lua modules; engine/UI/cloud bindings are test doubles",
+      "report": {
+        "tests": [
+          {
+            "error": "...fisherman-drift/scripts/tests\\Circle1B5PortDrawTests.lua:105: .../Fishing/fisherman-drift/scripts/Ocean\\SeaAtmosphere.lua:160: attempt to call a nil value (global 'nvgIntersectScissor')",
+            "passed": false,
+            "name": "authored_port_uses_current_world_to_screen_projection"
+          },
+          {
+            "error": "...fisherman-drift/scripts/tests\\Circle1B5PortDrawTests.lua:105: .../Fishing/fisherman-drift/scripts/Ocean\\SeaAtmosphere.lua:160: attempt to call a nil value (global 'nvgIntersectScissor')",
+            "passed": false,
+            "name": "camera_motion_reprojects_the_marker_without_moving_the_world"
+          },
+          {
+            "error": "...fisherman-drift/scripts/tests\\Circle1B5PortDrawTests.lua:105: .../Fishing/fisherman-drift/scripts/Ocean\\SeaAtmosphere.lua:160: attempt to call a nil value (global 'nvgIntersectScissor')",
+            "passed": false,
+            "name": "resize_and_dpr_keep_the_marker_in_logical_screen_coordinates"
+          },
+          {
+            "error": "...fisherman-drift/scripts/tests\\Circle1B5PortDrawTests.lua:105: .../Fishing/fisherman-drift/scripts/Ocean\\SeaAtmosphere.lua:160: attempt to call a nil value (global 'nvgIntersectScissor')",
+            "passed": false,
+            "name": "offscreen_port_is_culled_without_edge_snapping_or_view_expansion"
+          }
+        ],
+        "status": "FAIL",
+        "metrics": {
+          "offscreenBehavior": "culled at original projection; no edge snapping",
+          "resolutionMode": "logical pixels with DPR scaling at NanoVG frame boundary",
+          "projection": "runtime:GetPortPosition() -> Movement:WorldToScreen()",
+          "markerRadius": 16
+        }
+      },
+      "tests": [
+        {
+          "error": "...fisherman-drift/scripts/tests\\Circle1B5PortDrawTests.lua:105: .../Fishing/fisherman-drift/scripts/Ocean\\SeaAtmosphere.lua:160: attempt to call a nil value (global 'nvgIntersectScissor')",
+          "passed": false,
+          "name": "authored_port_uses_current_world_to_screen_projection"
+        },
+        {
+          "error": "...fisherman-drift/scripts/tests\\Circle1B5PortDrawTests.lua:105: .../Fishing/fisherman-drift/scripts/Ocean\\SeaAtmosphere.lua:160: attempt to call a nil value (global 'nvgIntersectScissor')",
+          "passed": false,
+          "name": "camera_motion_reprojects_the_marker_without_moving_the_world"
+        },
+        {
+          "error": "...fisherman-drift/scripts/tests\\Circle1B5PortDrawTests.lua:105: .../Fishing/fisherman-drift/scripts/Ocean\\SeaAtmosphere.lua:160: attempt to call a nil value (global 'nvgIntersectScissor')",
+          "passed": false,
+          "name": "resize_and_dpr_keep_the_marker_in_logical_screen_coordinates"
+        },
+        {
+          "error": "...fisherman-drift/scripts/tests\\Circle1B5PortDrawTests.lua:105: .../Fishing/fisherman-drift/scripts/Ocean\\SeaAtmosphere.lua:160: attempt to call a nil value (global 'nvgIntersectScissor')",
+          "passed": false,
+          "name": "offscreen_port_is_culled_without_edge_snapping_or_view_expansion"
+        }
+      ],
+      "passed": false,
+      "skippedCount": 0,
+      "nvgCalls": 1557,
+      "elapsedSeconds": 0.20068840000021737,
+      "log": ""
+    }
+  ],
+  "failureCount": 1,
+  "skippedCount": 0,
+  "allExecutedPassed": false,
+  "allRequestedVerified": false,
+  "nativeEngineVerified": false,
+  "nativeUIVerified": false,
+  "realCloudVerified": false,
+  "sourceHashes": {
+    "config/gameplay.lua": "fd86da66151cbcc77f969547aec2bd161aca5d78737c728fa6afb76ec89a0e68",
+    "data/events.lua": "8d1de381011a1058094f5dbb58c4470ecfe76252e56a85d8c0a09a5c8467fff7",
+    "data/fish.lua": "f6563e4cfc32c55adbd471118c43658e1c59d27fffc8d752dffc4c688bdd7a21",
+    "data/items.lua": "d1129d62e5296844356c5b182ff778fb3791b02dcdc7a9f1308b1df3d31ce4bd",
+    "Entities/EntityFactory.lua": "9397282c899e038bd7b172c837feec62f971689a42cca70c92b9448f4d04694f",
+    "FSM/StateMachine.lua": "911dec4d4c78796c30a4674e3a7008c1c04905ae248d733af2996193faf5060d",
+    "Game/Game.lua": "ffdd8a6f1a5a9c105fd87af1aaa9b7b1d628b2e62b27bb18aea390506e0180f6",
+    "Game/World.lua": "1bf3442e0bf73898d63799b2eb31449f429a5761215bc5dc541d502a44ad600f",
+    "Gameplay/Actions.lua": "2e3d71c62140cd40c1d6d280d5af3a7afe5f757c5cf53c5084467f518b29a766",
+    "Gameplay/AudioDirector.lua": "3fbfcd988a5593b42229a25898853c7a63db053d1b53fe08827143a091d7fe0d",
+    "Gameplay/Bootstrap.lua": "5a0c834d34787edce71d244c7f63c51e8f1e0fd8d3d52e4e1c13918d3591208b",
+    "Gameplay/Circle1B2Barrel.lua": "b3b641cef48678fd3518ceebf11afe38c28f6313da628f697d3aaffff4c14566",
+    "Gameplay/Circle1B2Progress.lua": "6580739dcafa29e91c0d521199bbc8614650a0bb24710c5f30f4c5d545b7b4ab",
+    "Gameplay/Debug.lua": "fb0f558a7dce23115783ad7e2ffa3633252953b8cb207b06cfca068ae430c6aa",
+    "Gameplay/Diagnostics.lua": "13b68e08240ee04beea890ab7ba32d114b7e3d799a17ccfef643a144f56507bc",
+    "Gameplay/GameClock.lua": "76e5a617c5d6dc18b1634b2d6799ea1c983bf9af569031cb09c042727a48285b",
+    "Gameplay/HUD.lua": "cc8ebbb0391a9a15250b005cfdcf5b6c909bc426eaed7169a2bf2bd11aa76b51",
+    "Gameplay/HUDPresentation.lua": "a2690763f0ee554b28e20679506f7c8295f6d6ec8235f5e332e1b265c80a70ed",
+    "Gameplay/Inventory.lua": "63fd5e5deff4874823e29f9eaf5f96906a207bcaac81a83ea5c970d39ecaee97",
+    "Gameplay/LocalSaveBackend.lua": "7f3ac761f85debcac2c458e23078616b12e9728a60ee8fff64a32a407378d49a",
+    "Gameplay/Loop.lua": "a4764d3c6cb85b73326c8cfc2d19a1c8ad9621abd046874bfd313982b8bf7a93",
+    "Gameplay/Persistence.lua": "8bb88f34728a0367e5263aca047da11156a1e99a95683df7081386b7e639fa43",
+    "Gameplay/PlayerState.lua": "34e770dba6dde61a4f778455b96f193898d2dd8151422b184c3c5394e02b0a7c",
+    "Gameplay/UpdateSystem.lua": "f96bd324cd6ade84edf8c119e40261d569c06a8a7011df9c58349a21bbbe562e",
+    "GeneratedData/Fish.lua": "c7cfa04df130baf3c73d34759c15099f6365f95ca84b7940eb58ed0543459ba9",
+    "GeneratedData/Items.lua": "2d6b202c7f8439d2531513400a8da6ef87a461d34e9a2e4aaf2f019738104c5a",
+    "GeneratedData/OceanImageCatalog.lua": "425245b5ab40d06de4403901da4d7ac0c40b215a93c7640276509c9a2a71f240",
+    "Integration/Bridge.lua": "59e78b2d036b08bea2836444d26b678ac7a2815d42414a829cf686f9024f68ba",
+    "Integration/Circle1BInput.lua": "cdc80f1394033768d0e4fb334847ccb20a80b8ae20fb9b018f80c827456d2673",
+    "Integration/Scene.lua": "cf3a66eff2e69a0fd996552891200d5237c1b61ba7c4913b4b936c793470f7b2",
+    "Main.lua": "aacd7359f01c9e6f4f0fff60a29ba6a949acbe60fd5d23f7d5ce048c82e52ae3",
+    "Ocean/Bootstrap.lua": "0675a5766c70d1dcf7bc40fafeb46c5633ee73cf4d01190280682d7baf82d05f",
+    "Ocean/Camera.lua": "75532512629f2f33681d00cb58d9bea60248c8030d6cb218117e152c888b4197",
+    "Ocean/Config.lua": "8561be43620f8596eb94e1d11a758e35d2dcb92ba8e10fe74482a42a4f199776",
+    "Ocean/Draw.lua": "0c4a1431532fbb75a55d24d88166e7fb7deed7134b1736796de0486839c3afa9",
+    "Ocean/EntityDraw.lua": "d82eae40d93fe4d0bf019e3bd80fc9f49a6ea375376a944df0f0e9db14f7f322",
+    "Ocean/Fish.lua": "d1fab12ac63e0f144e8497acd74affee622fe2066fed2616c68f178915662d03",
+    "Ocean/FishData.lua": "10baf08cce01067d7f814808ede43fa52279fb2f6d3c33101922f0e1e8fbb60e",
+    "Ocean/FusedScene.lua": "e2f563954fb4894314496cdf482dfb0c537f42cb9f22751b57ffbf1c67653c1a",
+    "Ocean/HUD.lua": "3e54576096a956becc6890a9aae91d1c1b2a781e62afd366658500cc31fff625",
+    "Ocean/ImageArt.lua": "17678734a765098b5477e83409cc5edea6e40d6bcfebfa4b0d2ae2ae2fc34e73",
+    "Ocean/Math.lua": "66d2d3cc13b4e97ac6efb62168a6dc30a6ea1a7c4f2e929413160c8c3629486c",
+    "Ocean/Movement.lua": "6a757e2a8de9841c478447f4db7367f95da7b3d182a9c9a13fdf8036befe2269",
+    "Ocean/ProjectedGeometry.lua": "e016377573b19e6459bf8e24b72ca1780d8400b9df650e91c084a949065fc88a",
+    "Ocean/Projection.lua": "60c02bd9261b645f2a58208591fe83df91272c5d55b9e5bc80bf1da01cbf69e9",
+    "Ocean/SceneState.lua": "5db3c000d403de80d20447a284519983cbfcdc31e4d6596a8fad47ceaa1f7c6c",
+    "Ocean/SeaAtmosphere.lua": "81643b3e7a1035b245e3f1c14d0e1ed3b2ba06e4fddb2c53c68def70ce458a0b",
+    "Ocean/SeaDebug.lua": "9645d0673d933bdb9e3b50ac0dd0d3be436fed113875bbef23ba9c20fb4a0c31",
+    "Ocean/SeaDraw.lua": "26083b7b4357aebb963eeaadb8a5e1965c38897ab29cd31f0e5d652fc1b6d4ea",
+    "Ocean/SeaPresentation.lua": "b9a6c1ad234c34c0ffb4eb76bec49471f677172918977bf14d0c2b8eca83e432",
+    "Ocean/SeaRuntime.lua": "b897ca107506f084077573243b07f9d997bd7e1cec18e8d1a256ca21880804c7",
+    "Ocean/SeaSurfaceEffects.lua": "bf4d83e51219e5acc3f53e3f3b47ba67ccacd37dafd23a5d5d3e921446ad2837",
+    "Ocean/SeaViewArt.lua": "118815f590e62a5c790c4a55cfae74c5f1d9905413893412092be5d9e9c51da2",
+    "Ocean/SpawnStrategy.lua": "de4253b86a5952ad23f80c26104234ed58d705a7d1cb0e5f441d1e4730fe009e",
+    "Ocean/State.lua": "cb95df6447bd3ba046a1d4f1b25d84ec6014756422b9bc7abc46dc0a8ad1db52",
+    "Ocean/SurfaceSignals.lua": "deedcfa005f51f8a3aef0d5a73bea4fcc99f540748a73adde0aea13758dc2c9c",
+    "Ocean/Wake.lua": "fcd5f4981ca7f4cb226c1a15198d433e4c91c2c2eca8fe4274d48a1ac380db15",
+    "Ocean/World.lua": "0621131afac679ba31b797506999c2f421f5aa7ee281581890420ba9eaeb10c1",
+    "SeaPreviewEntry.lua": "6bd8f0140b149d75628424806f3eaf2950f7bfe40d8e9b95614d1b77ce6553fa",
+    "Systems/BirdSystem.lua": "e8482b4bac7e0d4b905bf8c2a63059a5b9b0b473066fa8976513c7049e300406",
+    "Systems/ClockSystem.lua": "5839ce5f971f6ee66f9b82f61fab30cc1b73e3fa5b3533c78a5534d2d570827a",
+    "Systems/EntityStateSystem.lua": "571ac526dfba085970a7babd3e0048bf6724aa92ad54118e3714967bcb81cde3",
+    "Systems/FishSystem.lua": "92bb1b556c4548535166c7fae466046faaa3b5e2206546bf9529b9fae89fa59a",
+    "tests/ABIntegrationTests.lua": "0231ac859462dec97586135d5bc7d7491fa83ee97b0dcc4b33fc1699b506365a",
+    "tests/ArchitectureIntegrationTests.lua": "a39e1b26bd3e8aba30d2cc2417c49aaa958e934b44aa0d74151cad2c1d3425f4",
+    "tests/Circle1A2BarrelRenderTests.lua": "530ee6564029afad3f0eb80d4319488e1a88729286485592c1b46efebe9c91fc",
+    "tests/Circle1A2BarrelTests.lua": "c54f72c153bef47e498925c7aa360d7ee4df825114721709e77e39b7aafe2132",
+    "tests/Circle1A2FishingTests.lua": "4a219cfcc3830a5bea8bde05902da03313be8fec7db3ee8d151767bff9027837",
+    "tests/Circle1A2ScopeTests.lua": "24d4b92d232bff85bd4f093c06214f786231c7b1c8059c88a5847b36e1ffc3ce",
+    "tests/Circle1A2SignalsTests.lua": "22a8fddc4f68a31e6354f58113218f563b06dbfad82801aa6b56b0f1f96b76b5",
+    "tests/Circle1A3ExperienceTests.lua": "8c7481aeb09c84ef6cd286e0f14a01206df55f5f1fecfe837edb9a88e2504061",
+    "tests/Circle1A3InputTests.lua": "f7df75a4794c9c058b4a4c2d98f484a54c1bee99617c110ce762d3161d2e209f",
+    "tests/Circle1A3PortTests.lua": "9b103905a8df16c4adca87997de9c65598d1450f8a0d5d318cb23e2744473f7e",
+    "tests/Circle1A3RecognitionTests.lua": "3477c6265cd97c71b59c8d6bd69b88a344f8f5b43bd234299d6e02af0fad4908",
+    "tests/Circle1A3SignalsTests.lua": "e3e6380ce246cb512f466cf0b46873d05180b5c17238d782681f8ecd635f0700",
+    "tests/Circle1A3StabilityTests.lua": "4435f07b8485bd881a27cacc8aac940f266a545f4e14115991d8c799cdb24a04",
+    "tests/Circle1ABMergeFrameBudgetTests.lua": "81ed541f21f537871ec5fc27ce6f16268e3704ab2c5f4ae694cf7d73479eaf1c",
+    "tests/Circle1AFishLocksTests.lua": "504ad28b0bf7e945ee58a9b00a9ffa4e43157fea281bc7be1e59891fb088e016",
+    "tests/Circle1APredationCooldownTests.lua": "fbae1e48b96b7c60f30747fe078692ab3c0bf38bc48a4e641547a7aadd4fc811",
+    "tests/Circle1AudioTests.lua": "f794e80fb5c00eb543d377c8e98edd5b343f3a8b05b6b2641a0c7e53f87f6be6",
+    "tests/Circle1B2BarrelTests.lua": "154525cd16f3c49d9d99c7b827c90acefb00e0c893c4fa6c690ab773010566ce",
+    "tests/Circle1B2ProgressTests.lua": "23f2e4d623bf9289d8ca010c461f940c1d01d3b40c8bfe05163172cae600722c",
+    "tests/Circle1B2ScopeTests.lua": "48e190d33e8e87f3be0797dfe1c71e0475a578c3eb923f97adb586fd68c9b3b1",
+    "tests/Circle1B2ThrowTests.lua": "8f8db560c41ca189715224537c871ced81602530856637a915bb820a0217e303",
+    "tests/Circle1B2UITests.lua": "fe5018dbf340c97a459145c2b69cbe2ab96c879f0b934eda6b9f347b6b7e8d29",
+    "tests/Circle1B3ClockAsyncTests.lua": "c3a6037f6a44b666a34aaf7244288c2ffac6a61659de9b3d2f69028ebb5df3e4",
+    "tests/Circle1B3CloudTests.lua": "9c4b049724965f3a8ec26d7930b7a245adc65d815f48c10f372aa6f816a18b30",
+    "tests/Circle1B3EconomyTests.lua": "47dda794a6e29b98457f06dd5615b36a1a983c2833ded5c2bae9b5da8ce84fec",
+    "tests/Circle1B3SceneUITests.lua": "0514b8521941aea7bada4fba72c387e94818d683b55ea3248737cc5b60c861ec",
+    "tests/Circle1B3SevenDaysTests.lua": "c0c96662c89f4de910ce0c1877520d90f094ab2d6070241aefc7435b4daf7ba5",
+    "tests/Circle1B3SpatialTests.lua": "de4a029c22f67e3ac053a74d2a3ae0be76d86007597c8a54f888283cc9789639",
+    "tests/Circle1B5DiagnosticsIntegrationTests.lua": "0ffa35d888e84cf5ecbd265578e0e9bb27f38c233b5824a0b1c038c8162c26a1",
+    "tests/Circle1B5GameplayTests.lua": "109629128c7de4d29b9b0d4d78a2ce2fda5f4afb974e5724f1a6b79faaf3aef7",
+    "tests/Circle1B5PersistenceBarrelTests.lua": "dc2974023771df0ea5b9b0400c03593d6f9c1d66dd90c0debd455e491011b5a7",
+    "tests/Circle1B5PortDrawTests.lua": "1894c648fddb0337fa2ccc6187430f89d7467464ba20d13bba0e27ca369aa30e",
+    "tests/Circle1B6EndingTests.lua": "6607fe20c19c25fa5ff0366be06600081d3a42b3b50190f889a4178977511403",
+    "tests/Circle1BFishingFlowTests.lua": "72968eb4db7e0c5e3a54f4c62e41c456e8a0e3f0e8a7e6515a697f547f9dc8bf",
+    "tests/Circle1BPendingCatchTests.lua": "ed9f6a945118fa34db8e55e88c1b9d682e03e976777ee88daeaf59217559daae",
+    "tests/Circle1HUDReviewTests.lua": "5efc4f0a24722331f341b5e19ed0cf1631be6e6edc8e13a88319ff1eebabe099",
+    "tests/GameLoopSpec.lua": "ed4274f139197245d83ab87e19efb0413fa85bb98b6dad7c4541e676cb0c27f3",
+    "tests/GameLoopUISpec.lua": "69c67b8b74b54bfed2d098c62f0044785675bc4dc294be429c90b7a6399bf198",
+    "tests/LocalSaveLoopTests.lua": "540fd6e06bbca03e1e12fb9d75ce8c62e1bb27fdecf160224180ee3d3a6c74e0",
+    "tests/NumericEconomySpec.lua": "8151aef8b0c0c21962411cab1f4648cd6d8d03d1ae031d82eb4987ea597626c3",
+    "tests/OceanArtRuntimeValidate.lua": "f6c645cde2a85b96d79f488219ebcc3633c0f390e6200e81e2ba850b7528259e",
+    "tests/OceanArtVisualValidate.lua": "2833d7739242d094589cd6eb7266c8b84b256dfaea1b507a4dbc130845473cf7",
+    "tests/OceanImageCatalogTests.lua": "04c14ff71816e78d90b7c9ee73a72665ec7a52e758bdb658145706cfa92457c0",
+    "tests/OceanImageReadyValidate.lua": "5ee2361a233273151dc3a7b091ec4fc4bb505002c7a4732e114be0f2702055c3",
+    "tests/PersistenceRegressionSpec.lua": "c00ac6a308fd06fbf2eb59f4d53199c34f3b67ace2e51b8dddb90b7474bde1c9",
+    "tests/SeaAtmosphereTests.lua": "bd997cd9a954fe708c4199db6f6517c3aea41943d38ce83fcda3dfcd6e9470d5",
+    "tests/SeaCurvatureTests.lua": "d3481e5aa261a583d7d05e250f1d6f9260fee5dcca5050def0660a250c56b808",
+    "tests/SeaEngineSmoke.lua": "700bdf37e55a805b33eb1950ff73f4110c611637e6dae42a0f85b74efdee6be7",
+    "tests/SeaFusedSceneTests.lua": "2ace4266a7be6a1750b6a9855d16a0bc581d5f931f1a5b3e27014ac30e74d02b",
+    "tests/SeaFusionRenderTests.lua": "b5f08558ca857340dfcdc08c91ea27344ac15d9d2d945ce8597e34cec83ddc06",
+    "tests/SeaHorizonOcclusionTests.lua": "3975642fb8f4738ebee7e133b7edf8778e227b4872aff001cc54752b4f074868",
+    "tests/SeaMotionEffectsTests.lua": "60798ef1345b8c2bc819e36d3ff3e41c006a4f3da0af837e786346f621fc307a",
+    "tests/SeaNativeVoyage.lua": "4b62871e1a031347fd6b16a1bebc3a356304b6f9d5f4867b805fd7555d6837f4",
+    "tests/SeaNativeVoyageEntry.lua": "e84d273e3617549ee3668e686975b5285e56df02bfc183979ea65a4a735ad895",
+    "tests/SeaPresentationTests.lua": "971745213b57bcef68969377815bc22527722309947143f01dcdd61ccad8fde0",
+    "tests/SeaRuntimeTests.lua": "8a675bbd856cd1b313625816bf1c569cb8ebe7395e46431f750d3240147f891c",
+    "tests/SeaStabilityTests.lua": "57bbdb816cfaeef529d8833508f2ee73180bb07afbf115c6b16b16cfc483d6a2",
+    "tests/SeaViewUpgradeTests.lua": "bbad02eefaa3af0c73c8b5758c256ac8ce894be65d6331fa2db8812731a6f474",
+    "tests/ShipScareTests.lua": "d369bcb9e4296812460effae56f5d5956696b43c309ca145f2adffda5166e1ea",
+    "tests/ShopStockSpec.lua": "b4398c05e73d3932ec73e3171ea03c48d0bc331edf6232a86a0b358c19a93723",
+    "tests/SurfaceRiseTests.lua": "ed4528e0f27f411c4130fad4a6fb2ec92d349c558ecd3555ad70482b66751d14",
+    "tests/SurfaceSignalsTests.lua": "8b5a38e02354f84d92d6e3ebf061e2fe0608ae3d992904c09c7ff6d754b18cf0"
+  }
+}
