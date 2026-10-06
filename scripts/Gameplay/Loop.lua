@@ -96,6 +96,8 @@ function Loop:ResetState()
     self.portNightElapsed = 0
     self.settlementForced = false
     self.settlementSnapshot = {}
+    -- T1：第 7 天结算进入结局；NewRun/读档重置。
+    self.endingPending, self.endingKind = false, nil
     self.throwSelection, self.storyDialog, self.scopeEnabled = nil, nil, false
     self.scopeSyncError = nil
     self.closed = false
@@ -616,6 +618,31 @@ function Loop:BeginNewDay()
         end
         self.portPreparedForSettlement = true
     end
+    -- T1（2026-10-06 用户裁决）：第 7 天结算即本周目结局，不推进到第 8 天。
+    -- 两支结局：3 苹果救活（elder.decision=="saved"）=改变结局，否则普通结局。
+    -- 结局文案为占位，正式文本按 Q-006 由 B 侧内容生产替换后仅改 HUD 文案。
+    if self.player.day >= Config.clock.maxDay then
+        local elderRecord = self.player.elder and self.player.elder.circle1B2
+        self.endingKind = elderRecord and elderRecord.decision == "saved" and "changed" or "normal"
+        self.endingPending = true
+        self.settlementApplied = true
+        local snapshotOk, snapshot = Diagnostics.Call(
+            "Loop", "new_day_snapshot", Persistence.Snapshot, self.player)
+        if not snapshotOk then
+            self.settlementSnapshot, self.saveStatus = nil, "error"
+            self:SetMessage("结局快照暂未生成，可重试；本次出海进度已保留。")
+            emit(self, "new_day_preparation", {
+                kind = "failure", result = "failed", reason = "ending_snapshot_failed", day = self.player.day,
+            })
+            return false, "ending_snapshot_failed"
+        end
+        self.settlementSnapshot = snapshot
+        self:SetMessage("第 7 天结束，本次出海迎来了结局。")
+        emit(self, "new_day_preparation", {
+            kind = "operation", result = "ending", endingKind = self.endingKind, day = self.player.day,
+        })
+        return true
+    end
     local stamina = self:GetNextDayStamina(self.settlementForced)
     self.player.day = self.player.day + 1
     Progress.OnDayStarted(self.player)
@@ -670,7 +697,10 @@ local function finishSettlement(self, saved)
     self.portPreparedForSettlement = false
     self.saveStatus = saved and "saved" or "skipped"
     self.clock:Resume("settlement")
-    self.lastMessage = saved and "每日结算已保存，下一天已就绪"
+    -- T1：第 7 天结局结算的提示语不提"下一天"。
+    self.lastMessage = saved and (self.endingPending
+            and "本次出海已结束，进度已保存。"
+            or "每日结算已保存，下一天已就绪")
         or "已跳过本次保存等待，下一天已就绪；未保存进度可能在退出后丢失，已发出的保存请求仍可能稍后写入。"
     emit(self, "new_day_preparation", {
         kind = "operation", result = "ready", reason = saved and "saved" or "explicitly_skipped",

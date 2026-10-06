@@ -31,6 +31,8 @@ return {
         graceSec = 30,
         penaltyPerSec = 1,
         forcedStaminaRatio = 0.5,
+        -- T1（2026-10-06）：每轮 7 天；第 7 天结算即结局，不进入第 8 天。
+        maxDay = 7,
     },
     inventory = {
         capacities = { 5, 10, 15, 20 },

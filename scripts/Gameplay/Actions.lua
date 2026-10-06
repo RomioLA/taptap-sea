@@ -404,7 +404,9 @@ function Actions:GetFishingState()
     local record=self._pendingFishing or self._lastFishing
     if not record then return {state='idle',elapsed=0,duration=Config.fishing.durationSec} end
     return {state=record.state,center=copyPoint(record.center),elapsed=record.elapsed,duration=Config.fishing.durationSec,
-        reason=record.reason,outcome=record.result and record.result[2] or nil}
+        reason=record.reason,outcome=record.result and record.result[2] or nil,
+        -- T2：结局/气泡文案需要鱼种明细；result[3]=itemId（'caught'/'pending_catch' 时存在）。
+        itemId=record.result and record.result[3] or nil}
 end
 function Actions:GetPendingCatch()
     local pending=self._pendingCatch

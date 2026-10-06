@@ -43,7 +43,8 @@ def main():
 
     suites = []
     for module in ("Circle1BFishingFlowTests", "Circle1BPendingCatchTests", "LocalSaveLoopTests",
-                   "ABIntegrationTests", "ArchitectureIntegrationTests", "SeaFusedSceneTests"):
+                   "ABIntegrationTests", "ArchitectureIntegrationTests", "SeaFusedSceneTests",
+                   "Circle1B6EndingTests"):
         log = []
         lua = runtime(log)
         suite = {"name": module, "kind": "protocol" if module.startswith("Circle1B") else "regression"}
