@@ -14,11 +14,25 @@ DEPS = OUT / "deps"
 sys.dont_write_bytecode = True
 
 
+def _pick_lupa_root():
+    """DEPS 可能被云端 Linux 同步污染（.so 而非 .pyd），探测失败则回退本地 Windows 版。"""
+    for candidate in (DEPS, ROOT / ".tmp/sea-test-deps"):
+        lupa_dir = candidate / "lupa"
+        if lupa_dir.is_dir() and any(
+            p.name.startswith("lua54") and p.suffix == ".pyd" for p in lupa_dir.iterdir()
+        ):
+            return candidate
+    return DEPS
+
+
+LUPA_DEPS = _pick_lupa_root()
+
+
 def one(name):
     spec = importlib.util.spec_from_file_location("existing_review", ROOT / "tests/run_circle1_review.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    module.LUPA_ROOT = DEPS
+    module.LUPA_ROOT = LUPA_DEPS
     lua, lua_type, recorder = module.prepare_runtime()
     path = ROOT / "scripts/tests" / (name + ".lua")
     suite = {"name": name, "kind": "spec" if name.endswith("Spec") else "run", "file": path.relative_to(ROOT).as_posix()}
