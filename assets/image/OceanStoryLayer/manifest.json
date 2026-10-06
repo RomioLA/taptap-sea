@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "style": "OceanStory 重绘版 + reading_sea ocean_tile 备选",
+  "format": "调色板 P（tRNS 直通 Alpha）或 RGBA PNG，经 slim_ocean_art 量化",
+  "placement": "仅素材库候选；ArtVariants 开关解析 *_story 变体，默认关闭",
+  "references": [
+    "tests/slim_ocean_art.py",
+    "scripts/Ocean/ArtVariants.lua"
+  ],
+  "assets": {
+    "island_story": {
+      "path": "image/OceanStory_island_20261005114948.png",
+      "source": "image/OceanStory_island_20261005114948.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        151,
+        143,
+        881,
+        882
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.628143310546875,
+      "sha256": "ee7073a5c5235f640884afabc1a9eef089a32bc6af9df55297940b4dce59e570",
+      "source_sha256": "ee7073a5c5235f640884afabc1a9eef089a32bc6af9df55297940b4dce59e570",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "story",
+      "status": "variant_not_wired_default_off"
+    },
+    "boat_story": {
+      "path": "image/OceanStory_boat_20261005114947.png",
+      "source": "image/OceanStory_boat_20261005114947.png",
+      "size": [
+        768,
+        1536
+      ],
+      "content_bounds": [
+        155,
+        82,
+        614,
+        1437
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.6324801974826388,
+      "sha256": "9eca06ac3431916d72e411c99c80ab7c2e8dd71c00062769fc826d46dcd2c348",
+      "source_sha256": "9eca06ac3431916d72e411c99c80ab7c2e8dd71c00062769fc826d46dcd2c348",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "story",
+      "status": "variant_not_wired_default_off"
+    },
+    "barrel_story": {
+      "path": "image/OceanStory_barrel_20261005115009.png",
+      "source": "image/OceanStory_barrel_20261005115009.png",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        77,
+        62,
+        436,
+        440
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.5943222045898438,
+      "sha256": "e0209077e779f4e41f9bf5429a91378986ece9f616569805d9a427da25599e2c",
+      "source_sha256": "e0209077e779f4e41f9bf5429a91378986ece9f616569805d9a427da25599e2c",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "story",
+      "status": "variant_not_wired_default_off"
+    },
+    "gull_story": {
+      "path": "image/OceanStory_gull_20261005114946.png",
+      "source": "image/OceanStory_gull_20261005114946.png",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        4,
+        117,
+        509,
+        380
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.8038406372070312,
+      "sha256": "e880348e606de58a120a9af00ca8a37d412aa052c2a6eec6349b7395324b9628",
+      "source_sha256": "e880348e606de58a120a9af00ca8a37d412aa052c2a6eec6349b7395324b9628",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "story",
+      "status": "variant_not_wired_default_off"
+    },
+    "waterpaper_story": {
+      "path": "image/OceanStory_waterpaper_20261005114940.png",
+      "source": "image/OceanStory_waterpaper_20261005114940.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "alpha_range": [
+        254,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "9d2de78709f917f0db3ac7104636b0fc6ab9ba383e3d3ee7eeb2a7483e7963ee",
+      "source_sha256": "9d2de78709f917f0db3ac7104636b0fc6ab9ba383e3d3ee7eeb2a7483e7963ee",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "story",
+      "status": "variant_not_wired_default_off"
+    },
+    "ocean_tile": {
+      "path": "image/reading_sea_watercolor_ocean_tile_20261005115327.png",
+      "source": "image/reading_sea_watercolor_ocean_tile_20261005115327.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "bff8efe96f00bbe2c104be037ab2e32c5c214855802a1315772714f2ea2e96f3",
+      "source_sha256": "bff8efe96f00bbe2c104be037ab2e32c5c214855802a1315772714f2ea2e96f3",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "story",
+      "status": "variant_not_wired_default_off"
+    }
+  }
+}

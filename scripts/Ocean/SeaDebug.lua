@@ -7,6 +7,7 @@ local Config = require("Ocean.Config")
 local FishData = require("Ocean.FishData")
 local FramePerf = require("Ocean.FramePerf")
 local ImageArt = require("Ocean.ImageArt")
+local ArtVariants = require("Ocean.ArtVariants")
 
 local SeaDebug = {}
 
@@ -347,6 +348,11 @@ function SeaDebug.Create(runtime, options)
                     elseif type(runtime.Reset) == "function" then runtime:Reset() end
                 end),
             }),
+            row({
+                buildButton("seaDebugStoryArt", "StoryArt OFF", function()
+                    ArtVariants.SetEnabled(not ArtVariants.IsEnabled())
+                end),
+            }),
             UI.Label { text = "F3 panel | U underwater | H states | P perception", fontSize = 9, fontColor = { 156, 185, 195, 255 } },
             UI.Label { text = "J activity | 1 sardine | 2 tuna | C clear | B lure", fontSize = 9, fontColor = { 156, 185, 195, 255 } },
             UI.Label { text = "Space pause | R reset", fontSize = 9, fontColor = { 156, 185, 195, 255 } },
@@ -444,6 +450,7 @@ function SeaDebug.Create(runtime, options)
         updateButtonText(buttons.seaDebugStates, "States " .. (flagValue(runtime, "showStates") and "ON" or "OFF"))
         updateButtonText(buttons.seaDebugPerception, "Perception " .. (flagValue(runtime, "showPerception") and "ON" or "OFF"))
         updateButtonText(buttons.seaDebugActivity, "Activity " .. (flagValue(runtime, "showActivity") and "ON" or "OFF"))
+        updateButtonText(buttons.seaDebugStoryArt, "StoryArt " .. (ArtVariants.IsEnabled() and "ON" or "OFF"))
         updateFishLabels(runtime, labelPool)
     end
 

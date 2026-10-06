@@ -26,9 +26,10 @@ def importer():
 
 def catalog_text(manifest):
     existing = json.loads((ROOT / "assets/image/OceanLoop/manifest.json").read_text(encoding="utf-8"))
+    story = json.loads((ROOT / "assets/image/OceanStoryLayer/manifest.json").read_text(encoding="utf-8"))
     lines = ["-- 自动生成：python3 tests/prepare_ocean_ready_art.py；禁止手工编辑。",
              "-- 只含图片规格，不含实体、玩法数值或更新逻辑。", "return {"]
-    for collection, preload in ((existing["assets"], True), (manifest["assets"], False)):
+    for collection, preload in ((existing["assets"], True), (manifest["assets"], False), (story["assets"], False)):
         for name, entry in sorted(collection.items()):
             size, bounds = entry["size"], entry["content_bounds"]
             lines.extend([
@@ -38,7 +39,7 @@ def catalog_text(manifest):
                 f"        contentWidth = {bounds[2] - bounds[0]}, contentHeight = {bounds[3] - bounds[1]},",
                 "        anchorX = 0.5, anchorY = 0.5,",
                 "        preload = " + str(preload).lower() + ",",
-                "        repeatTexture = " + str(name == "waterpaper").lower() + ",",
+                "        repeatTexture = " + str(name in ("waterpaper", "waterpaper_story", "ocean_tile")).lower() + ",",
                 "    },",
             ])
     lines.append("}")
@@ -116,7 +117,9 @@ def check():
     module = importer()
     manifest = json.loads((OUT / "manifest.json").read_text(encoding="utf-8"))
     existing = json.loads((ROOT / "assets/image/OceanLoop/manifest.json").read_text(encoding="utf-8"))
-    for name, entry in {**existing["assets"], **manifest["assets"]}.items():
+    story = json.loads((ROOT / "assets/image/OceanStoryLayer/manifest.json").read_text(encoding="utf-8"))
+    full_bleed = ("waterpaper", "waterpaper_story", "ocean_tile")  # 整幅材质，无透明留边契约
+    for name, entry in {**existing["assets"], **manifest["assets"], **story["assets"]}.items():
         path = ROOT / "assets" / entry["path"]
         if path.is_absolute() and not path.resolve().is_relative_to((ROOT / "assets").resolve()):
             raise ValueError("素材路径越界")
@@ -127,7 +130,7 @@ def check():
         actual = module.describe(path, entry["source"])
         for key in ("size", "content_bounds", "alpha_range", "sha256"):
             assert actual[key] == entry[key], f"{name} 的 {key} 与清单不一致"
-        if name != "waterpaper":
+        if name not in full_bleed:
             assert actual["alpha_range"][0] == 0 and actual["transparent_ratio"] > 0.1, f"{name} 缺少透明留边"
         if name in manifest["assets"]:
             source = ROOT / entry["source"]
@@ -137,7 +140,8 @@ def check():
             assert bounds[0] > 0 and bounds[1] > 0 and bounds[2] < image.width and bounds[3] < image.height
     assert CATALOG.read_text(encoding="utf-8") == catalog_text(manifest), "运行目录与素材清单不同步"
     print(json.dumps({"passed": True, "existing_assets": len(existing["assets"]),
-                      "new_assets": len(manifest["assets"]), "catalog": CATALOG.relative_to(ROOT).as_posix()}, ensure_ascii=False))
+                      "new_assets": len(manifest["assets"]), "story_assets": len(story["assets"]),
+                      "catalog": CATALOG.relative_to(ROOT).as_posix()}, ensure_ascii=False))
 
 
 if __name__ == "__main__":

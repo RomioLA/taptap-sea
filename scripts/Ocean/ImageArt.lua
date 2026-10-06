@@ -5,6 +5,7 @@ local Config = require("Ocean.Config")
 local Art = {}
 local contexts = setmetatable({}, { __mode = "k" })
 local catalog = require("GeneratedData.OceanImageCatalog")
+local ArtVariants = require("Ocean.ArtVariants")
 
 -- 绘制 LOD（P1，2026-10-06）：按四角投影后的屏幕包围盒选细分档位。
 -- 旧实现固定 ceil(length/3) 细分（上限 8×8=128 三角片、每片一次独立 nvgFill），
@@ -153,6 +154,7 @@ end
 ---@param alpha number?
 ---@param roll number?
 function Art.Plane(ctx, name, movement, origin, length, width, heading, altitude, alpha, roll)
+    name = ArtVariants.Resolve(name)
     local images = contexts[ctx]
     local image = images and images[name] or 0
     if image <= 0 then return false end
@@ -214,6 +216,7 @@ end
 ---@param contentWidth number? 省略时保持源图主体比例。
 ---@param roll number?
 function Art.Sprite(ctx, name, movement, origin, contentLength, heading, altitude, alpha, contentWidth, roll)
+    name = ArtVariants.Resolve(name)
     local spec = catalog[name]
     if not spec or not Art.IsLoaded(ctx, name) or contentLength <= 0 then return false end
     local width = contentWidth or contentLength * spec.contentHeight / spec.contentWidth
@@ -226,8 +229,9 @@ end
 -- 海面纸纹为画布材质层，只用一条海线遮罩；不作为世界地标或动态波浪。
 ---@param ctx NVGContextWrapper
 function Art.WaterPaper(ctx, movement, width, height)
+    local name = ArtVariants.Resolve("waterpaper")
     local images = contexts[ctx]
-    local image = images and images.waterpaper or 0
+    local image = images and images[name] or 0
     if image <= 0 then return false end
     local horizon = Projection.HorizonFunction(movement)
     if not horizon then return false end
