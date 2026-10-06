@@ -1,0 +1,764 @@
+{
+  "schema_version": 1,
+  "style": "reading_sea_watercolor 离线切分",
+  "format": "256 色调色板 PNG（tRNS 直通 Alpha），中心锚点，未接运行时",
+  "naming": "序号_中心坐标；语义命名待接入时人工标定",
+  "assets": {
+    "characters_000": {
+      "file": "image/WatercolorUI/characters/001_812-390.png",
+      "sheet": "characters",
+      "bboxInSheet": [
+        626,
+        79,
+        998,
+        702
+      ],
+      "size": [
+        372,
+        623
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "characters_001": {
+      "file": "image/WatercolorUI/characters/002_292-395.png",
+      "sheet": "characters",
+      "bboxInSheet": [
+        156,
+        87,
+        429,
+        704
+      ],
+      "size": [
+        273,
+        617
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "marine_life_000": {
+      "file": "image/WatercolorUI/marine_life/001_1001-200.png",
+      "sheet": "marine_life",
+      "bboxInSheet": [
+        860,
+        120,
+        1143,
+        280
+      ],
+      "size": [
+        283,
+        160
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "marine_life_001": {
+      "file": "image/WatercolorUI/marine_life/002_714-198.png",
+      "sheet": "marine_life",
+      "bboxInSheet": [
+        575,
+        123,
+        853,
+        273
+      ],
+      "size": [
+        278,
+        150
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "marine_life_002": {
+      "file": "image/WatercolorUI/marine_life/003_416-200.png",
+      "sheet": "marine_life",
+      "bboxInSheet": [
+        284,
+        124,
+        549,
+        277
+      ],
+      "size": [
+        265,
+        153
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "marine_life_003": {
+      "file": "image/WatercolorUI/marine_life/004_139-204.png",
+      "sheet": "marine_life",
+      "bboxInSheet": [
+        17,
+        156,
+        261,
+        253
+      ],
+      "size": [
+        244,
+        97
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "marine_life_004": {
+      "file": "image/WatercolorUI/marine_life/005_426-500.png",
+      "sheet": "marine_life",
+      "bboxInSheet": [
+        295,
+        358,
+        557,
+        642
+      ],
+      "size": [
+        262,
+        284
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "marine_life_005": {
+      "file": "image/WatercolorUI/marine_life/006_715-501.png",
+      "sheet": "marine_life",
+      "bboxInSheet": [
+        587,
+        372,
+        843,
+        630
+      ],
+      "size": [
+        256,
+        258
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "marine_life_006": {
+      "file": "image/WatercolorUI/marine_life/007_147-502.png",
+      "sheet": "marine_life",
+      "bboxInSheet": [
+        22,
+        376,
+        273,
+        629
+      ],
+      "size": [
+        251,
+        253
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "marine_life_007": {
+      "file": "image/WatercolorUI/marine_life/008_1008-507.png",
+      "sheet": "marine_life",
+      "bboxInSheet": [
+        885,
+        379,
+        1131,
+        635
+      ],
+      "size": [
+        246,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_000": {
+      "file": "image/WatercolorUI/resource_icons/001_639-129.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        549,
+        44,
+        730,
+        215
+      ],
+      "size": [
+        181,
+        171
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_001": {
+      "file": "image/WatercolorUI/resource_icons/002_386-130.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        293,
+        48,
+        480,
+        213
+      ],
+      "size": [
+        187,
+        165
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_002": {
+      "file": "image/WatercolorUI/resource_icons/003_895-130.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        811,
+        51,
+        980,
+        210
+      ],
+      "size": [
+        169,
+        159
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_003": {
+      "file": "image/WatercolorUI/resource_icons/004_127-132.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        33,
+        62,
+        222,
+        203
+      ],
+      "size": [
+        189,
+        141
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_004": {
+      "file": "image/WatercolorUI/resource_icons/005_894-383.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        808,
+        287,
+        980,
+        480
+      ],
+      "size": [
+        172,
+        193
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_005": {
+      "file": "image/WatercolorUI/resource_icons/006_640-386.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        558,
+        291,
+        722,
+        482
+      ],
+      "size": [
+        164,
+        191
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_006": {
+      "file": "image/WatercolorUI/resource_icons/007_384-383.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        292,
+        301,
+        477,
+        466
+      ],
+      "size": [
+        185,
+        165
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_007": {
+      "file": "image/WatercolorUI/resource_icons/008_128-381.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        36,
+        305,
+        220,
+        458
+      ],
+      "size": [
+        184,
+        153
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_008": {
+      "file": "image/WatercolorUI/resource_icons/009_129-640.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        45,
+        550,
+        213,
+        731
+      ],
+      "size": [
+        168,
+        181
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_009": {
+      "file": "image/WatercolorUI/resource_icons/010_894-642.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        814,
+        561,
+        975,
+        724
+      ],
+      "size": [
+        161,
+        163
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_010": {
+      "file": "image/WatercolorUI/resource_icons/011_642-639.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        573,
+        567,
+        712,
+        712
+      ],
+      "size": [
+        139,
+        145
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_011": {
+      "file": "image/WatercolorUI/resource_icons/012_398-627.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        321,
+        575,
+        475,
+        680
+      ],
+      "size": [
+        154,
+        105
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_012": {
+      "file": "image/WatercolorUI/resource_icons/013_323-679.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        297,
+        660,
+        350,
+        698
+      ],
+      "size": [
+        53,
+        38
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_013": {
+      "file": "image/WatercolorUI/resource_icons/014_441-693.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        413,
+        676,
+        470,
+        711
+      ],
+      "size": [
+        57,
+        35
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_014": {
+      "file": "image/WatercolorUI/resource_icons/015_649-889.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        571,
+        799,
+        727,
+        980
+      ],
+      "size": [
+        156,
+        181
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_015": {
+      "file": "image/WatercolorUI/resource_icons/016_131-889.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        68,
+        811,
+        194,
+        967
+      ],
+      "size": [
+        126,
+        156
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_016": {
+      "file": "image/WatercolorUI/resource_icons/017_384-891.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        300,
+        819,
+        469,
+        963
+      ],
+      "size": [
+        169,
+        144
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "resource_icons_017": {
+      "file": "image/WatercolorUI/resource_icons/018_899-891.png",
+      "sheet": "resource_icons",
+      "bboxInSheet": [
+        844,
+        840,
+        955,
+        943
+      ],
+      "size": [
+        111,
+        103
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "button_states_000": {
+      "file": "image/WatercolorUI/button_states/001_1001-136.png",
+      "sheet": "button_states",
+      "bboxInSheet": [
+        899,
+        38,
+        1103,
+        235
+      ],
+      "size": [
+        204,
+        197
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "button_states_001": {
+      "file": "image/WatercolorUI/button_states/002_446-137.png",
+      "sheet": "button_states",
+      "bboxInSheet": [
+        50,
+        43,
+        842,
+        232
+      ],
+      "size": [
+        792,
+        189
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "button_states_002": {
+      "file": "image/WatercolorUI/button_states/003_1001-383.png",
+      "sheet": "button_states",
+      "bboxInSheet": [
+        900,
+        283,
+        1103,
+        484
+      ],
+      "size": [
+        203,
+        201
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "button_states_003": {
+      "file": "image/WatercolorUI/button_states/004_444-384.png",
+      "sheet": "button_states",
+      "bboxInSheet": [
+        50,
+        290,
+        839,
+        479
+      ],
+      "size": [
+        789,
+        189
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "button_states_004": {
+      "file": "image/WatercolorUI/button_states/005_1001-632.png",
+      "sheet": "button_states",
+      "bboxInSheet": [
+        900,
+        533,
+        1102,
+        731
+      ],
+      "size": [
+        202,
+        198
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "button_states_005": {
+      "file": "image/WatercolorUI/button_states/006_447-631.png",
+      "sheet": "button_states",
+      "bboxInSheet": [
+        53,
+        536,
+        842,
+        727
+      ],
+      "size": [
+        789,
+        191
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "navigation_000": {
+      "file": "image/WatercolorUI/navigation/001_143-222.png",
+      "sheet": "navigation",
+      "bboxInSheet": [
+        42,
+        97,
+        245,
+        348
+      ],
+      "size": [
+        203,
+        251
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "navigation_001": {
+      "file": "image/WatercolorUI/navigation/002_730-230.png",
+      "sheet": "navigation",
+      "bboxInSheet": [
+        608,
+        105,
+        852,
+        356
+      ],
+      "size": [
+        244,
+        251
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "navigation_002": {
+      "file": "image/WatercolorUI/navigation/003_430-243.png",
+      "sheet": "navigation",
+      "bboxInSheet": [
+        329,
+        111,
+        531,
+        376
+      ],
+      "size": [
+        202,
+        265
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "navigation_003": {
+      "file": "image/WatercolorUI/navigation/004_1011-238.png",
+      "sheet": "navigation",
+      "bboxInSheet": [
+        890,
+        160,
+        1133,
+        317
+      ],
+      "size": [
+        243,
+        157
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "navigation_004": {
+      "file": "image/WatercolorUI/navigation/005_125-547.png",
+      "sheet": "navigation",
+      "bboxInSheet": [
+        21,
+        427,
+        229,
+        668
+      ],
+      "size": [
+        208,
+        241
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "navigation_005": {
+      "file": "image/WatercolorUI/navigation/006_1002-555.png",
+      "sheet": "navigation",
+      "bboxInSheet": [
+        878,
+        429,
+        1126,
+        681
+      ],
+      "size": [
+        248,
+        252
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "navigation_006": {
+      "file": "image/WatercolorUI/navigation/007_416-543.png",
+      "sheet": "navigation",
+      "bboxInSheet": [
+        302,
+        439,
+        530,
+        647
+      ],
+      "size": [
+        228,
+        208
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "navigation_007": {
+      "file": "image/WatercolorUI/navigation/008_709-556.png",
+      "sheet": "navigation",
+      "bboxInSheet": [
+        615,
+        480,
+        803,
+        632
+      ],
+      "size": [
+        188,
+        152
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    }
+  }
+}
