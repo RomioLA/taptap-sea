@@ -651,6 +651,13 @@ function HUD.Create(loop, parent, debugTools)
         audioRow:AddChild(makeButton("声床开关", function() invokeDebug("audioAmb") end, "secondary", 86))
         refs.debugPanel:AddChild(audioRow)
 
+        -- T3 海岛性能探针：开探针→绕岛航行数秒→读数（每帧均值快照，屏幕通道）。
+        local perfRow = UI.Panel { width = "100%", flexDirection = "row", flexWrap = "wrap", gap = 5 }
+        perfRow:AddChild(makeLabel("性能T3", 12))
+        perfRow:AddChild(makeButton("探针开关", function() invokeDebug("perfToggle") end, "secondary", 86))
+        perfRow:AddChild(makeButton("性能读数", function() invokeDebug("perfRead") end, "secondary", 86))
+        refs.debugPanel:AddChild(perfRow)
+
         -- 调试面板挂根流（仅开发模式创建）：不随信息滚动屏开合，保证调试按钮常可用。
         root:AddChild(refs.debugPanel)
     end

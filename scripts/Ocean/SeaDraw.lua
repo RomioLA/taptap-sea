@@ -7,6 +7,7 @@ local Geometry = require("Ocean.ProjectedGeometry")
 local Presentation = require("Ocean.SeaPresentation")
 local Atmosphere = require("Ocean.SeaAtmosphere")
 local ImageArt = require("Ocean.ImageArt")
+local PerfProbe = require("Ocean.PerfProbe")
 local SeaDraw = {}
 local FIXED_BARREL_CONTENT_ID = "driftwood_barrel"
 local PORT_MARK_RADIUS = 16
@@ -270,6 +271,9 @@ end
 function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocationRecognized)
     if not ctx or width <= 0 or height <= 0 or not runtime or not runtime.movement then return end
     local movement, world, time = runtime.movement, runtime.world, runtime.time or 0
+    -- T3 帧耗时探针：全帧对照基准（岛分项见 SeaViewArt）。
+    local probeSceneStop = PerfProbe.Timer()
+    PerfProbe.Frame()
     local horizon = movement:GetHorizonY()
     Art.Backdrop(ctx, width, height, time)
     Art.Surface(ctx, movement, time)
@@ -354,6 +358,7 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
         end
     end
     nvgRestore(ctx)
+    PerfProbe.Sample("scene", probeSceneStop())
 end
 
 return SeaDraw

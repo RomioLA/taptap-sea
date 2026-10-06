@@ -6,6 +6,7 @@ local Projection = require("Ocean.Projection")
 local Geometry = require("Ocean.ProjectedGeometry")
 local SurfaceEffects = require("Ocean.SeaSurfaceEffects")
 local ImageArt = require("Ocean.ImageArt")
+local PerfProbe = require("Ocean.PerfProbe")
 
 local SeaViewArt = {}
 local TWO_PI = math.pi * 2
@@ -633,6 +634,7 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     end
     local center = entity.position
     local radius = math.max(0.5, finite(entity.radius) and entity.radius or 4)
+    local probeTotalStop = PerfProbe.Timer()
     local settings = Config.visual and Config.visual.projection or {}
     local segmentCount = math.max(16, math.floor(settings.circleSegments or 48))
     ---@type table
@@ -669,8 +671,11 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     local outerWorld = geometry.outer
     local landWorld = geometry.land
     -- 仅替换岛面纹理；保留原岛的高处几何、遮挡、弱键缓存和泡沫。
+    local probePngStop = PerfProbe.Timer()
     local hasImage = ImageArt.Plane(ctx, "island", movement, center,
         radius * 2 / 0.88, radius * 2 / 0.88, 0, 0)
+    PerfProbe.Sample("islandPng", probePngStop())
+    local probeVectorStop = PerfProbe.Timer()
     if not hasImage then
         local outerScreen = fillWorldPolygon(ctx, movement, outerWorld, shoreColor, bounds, nil, frame)
         if #outerScreen >= 3 then
@@ -691,6 +696,8 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     for _,tree in ipairs(geometry.trees) do
         drawTree(ctx,movement,tree.base,tree.height,bounds,tree.palette,airMix,tree.shape,frame)
     end
+    PerfProbe.Sample("islandVector", probeVectorStop())
+    PerfProbe.Sample("islandTotal", probeTotalStop())
     return finishScreenBounds(bounds)
 end
 

@@ -2,6 +2,7 @@
 local Config = require("config.gameplay")
 local Items = require("data.items")
 local AudioDirector = require("Gameplay.AudioDirector")
+local PerfProbe = require("Ocean.PerfProbe")
 
 ---@class GameplayDebug
 ---@field loop GameplayLoop
@@ -139,6 +140,7 @@ function Debug:Execute(command, argument)
     local loop = self.loop
     if command ~= "pauseReasons" and command ~= "settleDay"
         and command ~= "audioClick" and command ~= "audioAmb"
+        and command ~= "perfToggle" and command ~= "perfRead"
         and (loop.busy or loop.loading or loop.settlementPending
             or loop.forcedReturnPending or loop.dropInFlight) then
         return false, "busy"
@@ -167,6 +169,15 @@ function Debug:Execute(command, argument)
         -- S0 音频验证桩：白天声床循环开关，附带能力状态行。
         local ok, message = AudioDirector.ToggleBed("amb.calm_sea")
         return ok, ok and (message .. "｜" .. AudioDirector.Status()) or message
+    end
+    if command == "perfToggle" then
+        -- T3 海岛帧耗时探针开关；开启后绕岛航行数秒再按"性能读数"。
+        PerfProbe.SetEnabled(not PerfProbe.IsEnabled())
+        return true, PerfProbe.IsEnabled() and "探针已开启：绕岛航行数秒后按性能读数"
+            or "探针已关闭"
+    end
+    if command == "perfRead" then
+        return true, PerfProbe.SnapshotAndReset()
     end
     return false, "unknown_debug_command"
 end
