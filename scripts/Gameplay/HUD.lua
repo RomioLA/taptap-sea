@@ -643,6 +643,13 @@ function HUD.Create(loop, parent, debugTools)
         itemRow:AddChild(makeButton("暂停原因", function() invokeDebug("pauseReasons") end, "secondary", 86))
         refs.debugPanel:AddChild(itemRow)
 
+        -- S0 音频验证桩：试听 UI 点击音与白天声床循环（验收标准见设计方案 §9 S0）。
+        local audioRow = UI.Panel { width = "100%", flexDirection = "row", flexWrap = "wrap", gap = 5 }
+        audioRow:AddChild(makeLabel("音频S0", 12))
+        audioRow:AddChild(makeButton("试听点击", function() invokeDebug("audioClick") end, "secondary", 86))
+        audioRow:AddChild(makeButton("声床开关", function() invokeDebug("audioAmb") end, "secondary", 86))
+        refs.debugPanel:AddChild(audioRow)
+
         -- 调试面板挂根流（仅开发模式创建）：不随信息滚动屏开合，保证调试按钮常可用。
         root:AddChild(refs.debugPanel)
     end
