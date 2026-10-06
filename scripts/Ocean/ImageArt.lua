@@ -6,6 +6,14 @@ local Art = {}
 local contexts = setmetatable({}, { __mode = "k" })
 local catalog = require("GeneratedData.OceanImageCatalog")
 
+-- 绘制 LOD（P1，2026-10-06）：按四角投影后的屏幕包围盒选细分档位。
+-- 旧实现固定 ceil(length/3) 细分（上限 8×8=128 三角片、每片一次独立 nvgFill），
+-- 移动端扇出过大。现在：≥256px 用 4×4、≥64px 用 2×2、更小用单四边形、
+-- <2px 直接剔除；岛屿跨地平线，最低保持 2×2 防岸线仿射畸变。
+local LOD_TINY_PX, LOD_SMALL_PX, LOD_MID_PX = 2, 64, 256
+-- 岛屿类图片：最低细分档 2×2（远景单四边形会压平岸线曲率）。
+local MIN_GRID_2 = { island = true, island_story = true }
+
 -- 只返回规格副本，调用者不能改写共享目录或运行时图片句柄。
 function Art.GetSpec(name)
     local spec = catalog[name]
@@ -65,6 +73,8 @@ end
 
 -- 每个三角片用三个实际投影点计算 UV→屏幕仿射矩阵。
 -- 大岛分片，小船分片；不能整张斜视图片做屏幕旋转，也不修改摄像机。
+-- projected 走模块级 scratch 复用（同帧同步消费，无跨帧别名），削减每帧 GC 压力。
+local projectedScratch = {}
 local function triangle(ctx, movement, image, a, b, c, alpha, frame)
     -- 先在世界平面裁剪，再为裁剪顶点恢复 UV。不能用曲线中点配原端点
     -- 仿射矩阵，否则跨地平线的片会把岸线采样成透明留白。
@@ -73,18 +83,21 @@ local function triangle(ctx, movement, image, a, b, c, alpha, frame)
     local dx1, dy1, dx2, dy2 = b.x - a.x, b.y - a.y, c.x - a.x, c.y - a.y
     local worldDet = dx1 * dy2 - dx2 * dy1
     if math.abs(worldDet) < 1e-12 then return false end
-    local projected = {}
+    local projectedCount = 0
     for _, point in ipairs(clipped) do
         local dx, dy = point.x - a.x, point.y - a.y
         local s, t = (dx * dy2 - dy * dx2) / worldDet, (dx1 * dy - dy1 * dx) / worldDet
         local x, y = frame.project(point.x, point.y, point.altitude)
         if not x then return false end
-        projected[#projected + 1] = { x = x, y = y,
-            u = a.u + (b.u - a.u) * s + (c.u - a.u) * t,
-            v = a.v + (b.v - a.v) * s + (c.v - a.v) * t }
+        projectedCount = projectedCount + 1
+        local entry = projectedScratch[projectedCount]
+        if not entry then entry = {}; projectedScratch[projectedCount] = entry end
+        entry.x, entry.y = x, y
+        entry.u = a.u + (b.u - a.u) * s + (c.u - a.u) * t
+        entry.v = a.v + (b.v - a.v) * s + (c.v - a.v) * t
     end
-    for index = 2, #projected - 1 do
-        local p, q, r = projected[1], projected[index], projected[index + 1]
+    for index = 2, projectedCount - 1 do
+        local p, q, r = projectedScratch[1], projectedScratch[index], projectedScratch[index + 1]
         local du1, dv1, du2, dv2 = q.u - p.u, q.v - p.v, r.u - p.u, r.v - p.v
         local uvDet = du1 * dv2 - du2 * dv1
         if math.abs(uvDet) > 1e-12 then
@@ -146,8 +159,28 @@ function Art.Plane(ctx, name, movement, origin, length, width, heading, altitude
     if not Geometry.WorldBoundsVisible(movement, corners) then return true end
     local frame = { project = Projection.ProjectFunction(movement), horizon = Projection.HorizonFunction(movement) }
     if not frame.project then return true end
-    local columns = math.max(2, math.min(8, math.ceil(length / 3)))
-    local rows = math.max(2, math.min(8, math.ceil(width / 3)))
+    -- LOD 选档：四角投影求屏幕包围盒，取代旧的固定 length/3 细分。
+    local minX, minY, maxX, maxY
+    for index = 1, 4 do
+        local corner = corners[index]
+        local x, y = frame.project(corner.x, corner.y, corner.altitude)
+        if not x then return true end
+        if not minX or x < minX then minX = x end
+        if not maxX or x > maxX then maxX = x end
+        if not minY or y < minY then minY = y end
+        if not maxY or y > maxY then maxY = y end
+    end
+    local extent = math.max(maxX - minX, maxY - minY)
+    if extent < LOD_TINY_PX then return true end
+    local minGrid = MIN_GRID_2[name] and 2 or 1
+    local columns, rows
+    if extent < LOD_SMALL_PX then
+        columns, rows = minGrid, minGrid
+    elseif extent < LOD_MID_PX then
+        columns, rows = math.max(minGrid, 2), math.max(minGrid, 2)
+    else
+        columns, rows = 4, 4
+    end
     for row = 1, rows do
         for column = 1, columns do
             local u0, u1 = (column - 1) / columns, column / columns
