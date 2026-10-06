@@ -121,7 +121,9 @@ def check():
         if path.is_absolute() and not path.resolve().is_relative_to((ROOT / "assets").resolve()):
             raise ValueError("素材路径越界")
         with Image.open(path) as image:
-            assert image.mode == "RGBA", f"{name} 非 RGBA"
+            # P3 瘦身（tests/slim_ocean_art.py）产出 256 色调色板 PNG + tRNS，
+            # 语义仍为直通 Alpha（非预乘），与 RGBA 同一契约，允许两种模式。
+            assert image.mode in ("RGBA", "P"), f"{name} 非 RGBA/调色板直通 Alpha"
         actual = module.describe(path, entry["source"])
         for key in ("size", "content_bounds", "alpha_range", "sha256"):
             assert actual[key] == entry[key], f"{name} 的 {key} 与清单不一致"

@@ -43,8 +43,8 @@ return {
     },
     waterpaper = {
         path = "image/OceanLoop/waterpaper.png",
-        pixelWidth = 1024, pixelHeight = 1024,
-        contentWidth = 1024, contentHeight = 1024,
+        pixelWidth = 512, pixelHeight = 512,
+        contentWidth = 512, contentHeight = 512,
         anchorX = 0.5, anchorY = 0.5,
         preload = true,
         repeatTexture = true,
@@ -52,7 +52,7 @@ return {
     driftwood = {
         path = "image/OceanReady/driftwood.png",
         pixelWidth = 768, pixelHeight = 512,
-        contentWidth = 676, contentHeight = 229,
+        contentWidth = 675, contentHeight = 228,
         anchorX = 0.5, anchorY = 0.5,
         preload = false,
         repeatTexture = false,
@@ -60,7 +60,7 @@ return {
     reef = {
         path = "image/OceanReady/reef.png",
         pixelWidth = 512, pixelHeight = 512,
-        contentWidth = 451, contentHeight = 429,
+        contentWidth = 451, contentHeight = 428,
         anchorX = 0.5, anchorY = 0.5,
         preload = false,
         repeatTexture = false,
@@ -68,7 +68,7 @@ return {
     sardine = {
         path = "image/OceanReady/sardine.png",
         pixelWidth = 768, pixelHeight = 512,
-        contentWidth = 676, contentHeight = 182,
+        contentWidth = 675, contentHeight = 181,
         anchorX = 0.5, anchorY = 0.5,
         preload = false,
         repeatTexture = false,
@@ -76,7 +76,7 @@ return {
     shrub = {
         path = "image/OceanReady/shrub.png",
         pixelWidth = 512, pixelHeight = 512,
-        contentWidth = 419, contentHeight = 451,
+        contentWidth = 418, contentHeight = 450,
         anchorX = 0.5, anchorY = 0.5,
         preload = false,
         repeatTexture = false,

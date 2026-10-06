@@ -27,8 +27,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.4573192596435547,
-      "sha256": "13675e16659d829d50dcdc2ffe01380378f557b75162d2bf3c1af5e5d905be0c"
+      "transparent_ratio": 0.45902061462402344,
+      "sha256": "88da791c1b911c724307b1c773ce9bcc854d1e6257579bc03862fea370a5122c"
     },
     "island": {
       "path": "image/OceanLoop/island.png",
@@ -47,8 +47,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.4374551773071289,
-      "sha256": "6c68a9cc310d17e06cd0da7fd4e11c25a132ad4daab3542de4c8e16021c73f00"
+      "transparent_ratio": 0.4375619888305664,
+      "sha256": "930556670fda2ee561bdce24dcd45594f16f2ace9c614af85611b0c3f96c9329"
     },
     "gull": {
       "path": "image/OceanLoop/gull.png",
@@ -67,8 +67,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.8383941650390625,
-      "sha256": "846a9f871ab82d6edd689406ea62d14592d1737d90bd1455845e2d6863331809"
+      "transparent_ratio": 0.839080810546875,
+      "sha256": "817811d3c18121e30a8049445c516f26357393f209a13d03c12a9c275b264ad5"
     },
     "barrel": {
       "path": "image/OceanLoop/barrel.png",
@@ -87,8 +87,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.3880767822265625,
-      "sha256": "4b68f151369c99b5eaaea794b3c486f35e819a0109b6aca9bd71952065a1c5aa"
+      "transparent_ratio": 0.389312744140625,
+      "sha256": "7932942c4b7564b4530f9cf771fe3f2d96a1b6c761c5c3a94742cd8ecb510a9d"
     },
     "ripple": {
       "path": "image/OceanLoop/ripple.png",
@@ -105,30 +105,30 @@
       ],
       "alpha_range": [
         0,
-        230
+        225
       ],
-      "transparent_ratio": 0.9568672180175781,
-      "sha256": "7981764dcd6a3a85c9d0c7fc9e1ae4407e1d2ea487228747641ebe2afc16b8ed"
+      "transparent_ratio": 0.9571418762207031,
+      "sha256": "0fa4846e0a1153ef7c1b02fafe8760b7cbe834669af03889b60caacc03715496"
     },
     "waterpaper": {
       "path": "image/OceanLoop/waterpaper.png",
       "source": "assets/image/OceanStory_waterpaper_20261005114940.png",
       "size": [
-        1024,
-        1024
+        512,
+        512
       ],
       "content_bounds": [
         0,
         0,
-        1024,
-        1024
+        512,
+        512
       ],
       "alpha_range": [
         255,
         255
       ],
       "transparent_ratio": 0.0,
-      "sha256": "b83f348aee8a49d1a770b324eefae9ce987783bb513d189f0e2aab5e59ea0ccf"
+      "sha256": "e057a15d490a05d6efdb0621103d84e56d3b802cfe25882a3c46df0c99aee679"
     }
   }
 }

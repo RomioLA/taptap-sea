@@ -19,7 +19,7 @@
       ],
       "content_bounds": [
         30,
-        41,
+        42,
         481,
         470
       ],
@@ -27,8 +27,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.4647865295410156,
-      "sha256": "14770a151386d151a9b8c110ee82757de67867b0e639687b62bcb2d4cfd0d6e6",
+      "transparent_ratio": 0.4714012145996094,
+      "sha256": "f297918fdfe88f5289e2ceb4b82bc170f4c9b2a9895f2786df7fa38779630621",
       "source_sha256": "4f948c7f4b1b8e96ed77e4488f0b3b67b53e1b6d649c70a820678828fc07d3f5",
       "anchor": [
         0.5,
@@ -47,16 +47,16 @@
       ],
       "content_bounds": [
         46,
-        30,
-        465,
+        31,
+        464,
         481
       ],
       "alpha_range": [
         0,
         255
       ],
-      "transparent_ratio": 0.5266761779785156,
-      "sha256": "181fbbea322de1efd3fc41be787bf833b6cebcfa7e7f389acc1f4c9d40090b74",
+      "transparent_ratio": 0.5334587097167969,
+      "sha256": "80c3e706e775ace38e40ae1d859e4ed886fb1d0ce0c1526f231331866954539f",
       "source_sha256": "ee27414b311ced483bbf86f70ef149b9652565ed6b3e9a8d17d13aca5673af71",
       "anchor": [
         0.5,
@@ -74,8 +74,8 @@
         512
       ],
       "content_bounds": [
-        46,
-        141,
+        47,
+        142,
         722,
         370
       ],
@@ -83,8 +83,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.6607157389322916,
-      "sha256": "367a5b1948d5a8f39f106169514c3e0c8f0dabe5f1b7de2ce76f2e9f31475ed0",
+      "transparent_ratio": 0.6651204427083334,
+      "sha256": "e4028a5449713b0c5979c6ae6462469dc9a9f1a6671f862a0766e63d0366c78b",
       "source_sha256": "14f6f83d044125d92c50ab3a9754c5b38b0762f4028729ad9104401c68669d91",
       "anchor": [
         0.5,
@@ -104,15 +104,15 @@
       "content_bounds": [
         46,
         165,
-        722,
-        347
+        721,
+        346
       ],
       "alpha_range": [
         0,
         255
       ],
-      "transparent_ratio": 0.8174158732096354,
-      "sha256": "f13f43427b98ba4f2987b9cf43470f30275453340fd83f2c12635d706c3b4911",
+      "transparent_ratio": 0.8216679890950521,
+      "sha256": "808fe568d6709f3efad0edf31a3c8f5237878e71e08d9ec1b985d189e536f15b",
       "source_sha256": "bc5d060f2a90b31b2138ca09ff5896868521afa09f2b2ab585f76ce370b7bfbc",
       "anchor": [
         0.5,
