@@ -89,14 +89,25 @@ local UiKit = {
 
 -- 卡片水彩底板皮肤（批B）：ui_panels 切片（tests/slice_ui_panels.py 产物），
 -- sliced 九宫格拉伸；slice 取值需大于各面板的绘画边宽。
---   panel     = 圆角茶棕卡（通用：背包/港口/木桶/投掷/捕鱼/调试）
---   parchment = 羊皮纸粗边框（剧情卡：模态对白/结局/强制返港）
---   plain     = 素面纸卡（轻量浮层：成就 toast/捕鱼结果气泡/渔获待领）
+-- v2.1 批B-D（真机 10-07 反馈"按钮在海面场景界面最花"）：分级用皮。
+-- 原设计 3 档不够——把繁复的圆角茶棕卡（002，四角卷草纹+双线边框+纸纹
+-- 噪点三层装饰）同时给了剧情卡和操作卡，导致海面场景里按钮坞/浮层/
+-- 捕鱼小卡全是花纹，视觉噪声压过内容。D 案拆成 4 档：
+--   parchment = 羊皮纸粗边框 → 剧情卡（模态对白/结局/宝物），保留仪式感
+--   panel     = 圆角茶棕卡   → 抽屉内面板（背包/港口），中频、信息量大
+--   panelLite = 素面纸卡     → 海面高频操作区（捕鱼小卡/调试/物品操作/更多浮层）
+--   plain     = 素面纸卡     → 轻量浮层（成就 toast/捕鱼气泡/渔获待领）
 local CARD_SKINS = {
     panel = {
         image = "image/WatercolorUI/ui_panels/002_865-190.png",
         slice = 40,
         padding = 10,
+    },
+    -- D 案新增：与 plain 同图（004 素面纸），独立档位以便语义化调 padding/slice。
+    panelLite = {
+        image = "image/WatercolorUI/ui_panels/004_865-577.png",
+        slice = 28,
+        padding = 8,
     },
     parchment = {
         image = "image/WatercolorUI/ui_panels/001_297-191.png",

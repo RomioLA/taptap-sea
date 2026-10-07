@@ -130,8 +130,11 @@ function HUD.Create(loop, parent, debugTools)
     -- 皮肤/文字色全部来自 Gameplay.UiKit 单一令牌源，本函数不再内嵌样式。
     -- 昼夜：底板图不变，靠 themedPanels 的 day/night 衬色压暗
     -- （palette.cardDay/cardNight），makeThemer 逐通道插值 —— 换图后仍保留昼夜氛围。
-    local function card(title, extra)
-        local panel = UI.Panel(UiKit.cardProps("panel", extra))
+    -- card() 通用卡工厂。skin 选底板档位（v2.1 批B-D 分级）：
+    --   抽屉内面板（背包/港口）用默认 panel（繁复茶棕，信息量大需要框感）；
+    --   海面高频操作区传 "panelLite"（素面纸，去掉卷草纹/双线边框）。
+    local function card(title, extra, skin)
+        local panel = UI.Panel(UiKit.cardProps(skin or "panel", extra))
         themedPanels[#themedPanels + 1] = {
             widget = panel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
         }
@@ -214,7 +217,7 @@ function HUD.Create(loop, parent, debugTools)
     -- 真机反馈（2026-10-05）：捕鱼弹出框过大遮挡中心小船——压成左上角小卡
     -- （宽 ≤216px、行高 ~11px、按钮 32px），面积约为原 1/4，只留必要提示；
     -- 只在抛网/收网/结算过程中出现，入口仍走按钮坞"捕鱼"按钮。
-    refs.fishingPanel = UI.Panel(UiKit.cardProps("panel", {
+    refs.fishingPanel = UI.Panel(UiKit.cardProps("panelLite", {
         id = "fishingCompactPanel",
         width = "auto",
         maxWidth = 216,
@@ -257,6 +260,12 @@ function HUD.Create(loop, parent, debugTools)
         position = "absolute",
         right = 0,
         bottom = 0,
+        -- v2.1 批B 修复（真机 10-07 图1-3）：绝对定位元素若不设 width，
+        -- 百分比宽度基准为 0，导致内层 dock 的 maxWidth="100%" 形同虚设、
+        -- 按钮互相压盖并压在岛面上。显式给 left:0 让它撑满屏幕宽度，
+        -- 再由 justifyContent=flex-end 靠右对齐，换行仍生效。
+        left = 0,
+        width = "100%",
         zIndex = 60,
         padding = 8,
         gap = 6,
@@ -267,9 +276,15 @@ function HUD.Create(loop, parent, debugTools)
         pointerEvents = "box-none",
     }
     local dock = UI.Panel {
+        id = "gameplayActionDockRow",
         flexDirection = "row",
+        -- v2.1 批B：显式允许换行 + 限宽。超宽时按钮折行而非互相压盖
+        -- （真机 10-07 图1-3 压盖在岛面上不可读）。justifyContent 保持
+        -- flex-end，折行后仍靠右下对齐。
+        flexWrap = "wrap",
         gap = 6,
         alignItems = "flex-end",
+        justifyContent = "flex-end",
         maxWidth = "100%",
         pointerEvents = "box-none",
     }
@@ -307,6 +322,14 @@ function HUD.Create(loop, parent, debugTools)
     end, "secondary", 72)
     refs.compendiumToggle:SetVisible(false)
     -- 单行顺序：信息开合 → 情境按钮 → 核心动作（出航/返港/结束今日/捕鱼）。
+    -- v2.1 批B 修复（真机 10-07 图1-3）：按钮互相压盖、压在岛面上不可读。
+    -- 先试"收进更多浮层"被回归拦下（Circle1B2/B3 断言背包/拜访老人/
+    -- 透镜未获得等按钮在 HUD 树中**可见**，折叠即 hidden → 契约不允许）。
+    -- 改为：全部按钮保持可见，靠两层约束消除压盖——
+    --   ① dock 允许换行（flexWrap）且限制最大宽度，超出自动折行不重叠；
+    --   ② D 案把海面操作区底板换成素面纸（panelLite），去掉卷草纹与
+    --      双线边框，视觉噪声下降后可读性提升。
+    -- 按钮宽度已在 10-05 收敛过一轮（80~98px），此处不再压缩触控尺寸。
     dock:AddChild(refs.infoToggle)
     dock:AddChild(refs.compendiumToggle)
     dock:AddChild(refs.barrelToggle)
@@ -500,7 +523,7 @@ function HUD.Create(loop, parent, debugTools)
     refs.inventoryPanel:AddChild(inventoryHeader)
     refs.inventoryHint = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.dim)
     refs.inventoryPanel:AddChild(refs.inventoryHint)
-    refs.itemMenu = UI.Panel(UiKit.cardProps("panel", {
+    refs.itemMenu = UI.Panel(UiKit.cardProps("panelLite", {
         width = "100%",
         padding = 8,
         gap = 6,
@@ -657,10 +680,35 @@ function HUD.Create(loop, parent, debugTools)
     content:AddChild(refs.portPanel)
 
     if debugTools and debugTools.enabled == true then
-        refs.debugPanel = card("开发调试")
+        -- v2.1 批B 修复（真机 10-07 图1-3）：调试面板直挂 root，内部多行
+    -- flexWrap="wrap" 的按钮行总宽远超屏幕，导致按钮左截断堆叠
+    -- （"derwater C" / "eception OA" / "pawn sardine" 溢出面板外）。
+    -- 按 §7.3 规则一：面板落区④居中卡，宽 ≤70%，内容超出则卡内滚动。
+    refs.debugPanel = card("开发调试", {
+        width = "86%",
+        maxWidth = 520,
+        maxHeight = "72%",
+    }, "panelLite")
+    -- 内容统一挂 debugBody（卡内滚动容器），面板本身只承担标题 + 滚动。
+    local debugBody = UI.Panel {
+        width = "100%",
+        flexGrow = 1,
+        flexBasis = 0,
+        gap = 7,
+        flexDirection = "column",
+    }
+    local debugScroll = UI.ScrollView {
+        width = "100%",
+        flexGrow = 1,
+        flexBasis = 0,
+        scrollY = true,
+        showScrollbar = true,
+        children = { debugBody },
+    }
+    refs.debugPanel:AddChild(debugScroll)
         refs.debugPanel:SetVisible(false)
         refs.debugStatus = makeLabel("调试命令仅在开发模式启用", 12, { 189, 211, 190, 255 })
-        refs.debugPanel:AddChild(refs.debugStatus)
+        debugBody:AddChild(refs.debugStatus)
 
         -- UI 树 dump（UI 定位诊断）：递归可见节点 → 诊断日志逐行输出；
         -- 深色窄条（w≤40 且 h≥40 且带背景）直接摘要在 debugStatus。
@@ -711,7 +759,7 @@ function HUD.Create(loop, parent, debugTools)
                 invokeDebug("timeScale", configuredScale)
             end, "secondary", 54))
         end
-        refs.debugPanel:AddChild(scaleRow)
+        debugBody:AddChild(scaleRow)
 
         local staminaRow = UI.Panel { width = "100%", flexDirection = "row", flexWrap = "wrap", gap = 5 }
         staminaRow:AddChild(makeButton("体力 +", function() invokeDebug("staminaPlus") end, "secondary", 82))
@@ -726,10 +774,10 @@ function HUD.Create(loop, parent, debugTools)
         end, "primary", 112)
         staminaRow:AddChild(refs.debugFishing)
         staminaRow:AddChild(refs.debugSalvage)
-        refs.debugPanel:AddChild(staminaRow)
+        debugBody:AddChild(staminaRow)
 
         -- 成就桩试水（v2.0 §7.4）：真机验证 toast 展示/淡出与层级，不碰判定逻辑。
-        refs.debugPanel:AddChild(makeButton("模拟成就解锁", function()
+        debugBody:AddChild(makeButton("模拟成就解锁", function()
             Achievements.Unlock("zero_skunk")
             refresh()
         end, "secondary", 140))
@@ -746,7 +794,7 @@ function HUD.Create(loop, parent, debugTools)
         seekRow:AddChild(refs.seekField)
         seekRow:AddChild(makeButton("白天", function() invokeDebug("seekDay", state.seekText) end, "secondary", 58))
         seekRow:AddChild(makeButton("夜晚", function() invokeDebug("seekNight", state.seekText) end, "secondary", 58))
-        refs.debugPanel:AddChild(seekRow)
+        debugBody:AddChild(seekRow)
 
         local itemRow = UI.Panel { width = "100%", flexDirection = "row", flexWrap = "wrap", alignItems = "center", gap = 5 }
         refs.addItemField = UI.TextField {
@@ -760,27 +808,27 @@ function HUD.Create(loop, parent, debugTools)
         itemRow:AddChild(makeButton("加入物品", function() invokeDebug("addItem", state.addItemText) end, "secondary", 86))
         itemRow:AddChild(makeButton("结算今日", function() invokeDebug("settleDay") end, "primary", 86))
         itemRow:AddChild(makeButton("暂停原因", function() invokeDebug("pauseReasons") end, "secondary", 86))
-        refs.debugPanel:AddChild(itemRow)
+        debugBody:AddChild(itemRow)
 
         -- S0 音频验证桩：试听 UI 点击音与白天声床循环（验收标准见设计方案 §9 S0）。
         local audioRow = UI.Panel { width = "100%", flexDirection = "row", flexWrap = "wrap", gap = 5 }
         audioRow:AddChild(makeLabel("音频S0", 12))
         audioRow:AddChild(makeButton("试听点击", function() invokeDebug("audioClick") end, "secondary", 86))
         audioRow:AddChild(makeButton("声床开关", function() invokeDebug("audioAmb") end, "secondary", 86))
-        refs.debugPanel:AddChild(audioRow)
+        debugBody:AddChild(audioRow)
 
         -- T3 海岛性能探针：开探针→绕岛航行数秒→读数（每帧均值快照，屏幕通道）。
         local perfRow = UI.Panel { width = "100%", flexDirection = "row", flexWrap = "wrap", gap = 5 }
         perfRow:AddChild(makeLabel("性能T3", 12))
         perfRow:AddChild(makeButton("探针开关", function() invokeDebug("perfToggle") end, "secondary", 86))
         perfRow:AddChild(makeButton("性能读数", function() invokeDebug("perfRead") end, "secondary", 86))
-        refs.debugPanel:AddChild(perfRow)
+        debugBody:AddChild(perfRow)
 
         -- UI 定位诊断：复现占位现象时点一次，整棵可见树进诊断日志。
         local uiDiagRow = UI.Panel { width = "100%", flexDirection = "row", flexWrap = "wrap", gap = 5 }
         uiDiagRow:AddChild(makeLabel("UI诊断", 12))
         uiDiagRow:AddChild(makeButton("UI树dump", function() invokeDebug("uiDump") end, "secondary", 96))
-        refs.debugPanel:AddChild(uiDiagRow)
+        debugBody:AddChild(uiDiagRow)
 
         -- 调试面板挂根流（仅开发模式创建）：不随信息滚动屏开合，保证调试按钮常可用。
         root:AddChild(refs.debugPanel)
