@@ -133,37 +133,23 @@ function Presentation.Create(UI, Config, Items)
         return ITEM_NAME_FALLBACK[itemId] or tostring(itemId)
     end
 
-    -- 玩家界面设计方案 v1.0（2026-10-04）：所有取色来自 config.ui.palette；
-    -- 未配置时回退到本表，保证旧存档/测试桩环境可运行。
-    local FALLBACK_PALETTE = {
-        seaDeep = { 12, 68, 124, 242 },
-        seaNight = { 4, 32, 62, 248 },
-        seaMid = { 24, 95, 165, 235 },
-        actionPrimary = { 15, 110, 86, 255 },
-        actionPressed = { 8, 80, 65, 255 },
-        coinBright = { 250, 199, 117, 255 },
-        coinDeep = { 133, 79, 11, 255 },
-        warnCoral = { 216, 90, 48, 255 },
-        textOnDark = { 230, 241, 251, 255 },
-        textMuted = { 159, 225, 203, 255 },
-        textGold = { 250, 213, 130, 255 },
-        cardDay = { 20, 52, 92, 240 },
-        cardNight = { 6, 26, 50, 246 },
-        border = { 55, 138, 221, 150 },
-        backdrop = { 4, 20, 40, 150 },
-        disabledBg = { 96, 116, 138, 210 },
-        disabledText = { 190, 204, 216, 220 },
-        infoStroke = { 10, 28, 46, 225 },
-        infoShadow = { 6, 16, 28, 150 },
-    }
+    -- UI 套件重设计（v2.1 批A）：色板/尺寸/墨色统一来自 Gameplay.UiKit
+    -- 单一令牌源；config.ui.palette / config.ui.size 仍可逐键覆盖
+    -- （老存档/测试桩兼容）。本表不再内嵌样式。
+    local UiKit = require("Gameplay.UiKit")
     local UI_PALETTE = {}
-    local UI_SIZE = { touchMajor = 88, touchMinor = 64, touchGap = 12, buttonMinHeight = 44, radiusCard = 10 }
+    local UI_SIZE = {}
     do
         local cfg = Config.ui or {}
-        for key, value in pairs(FALLBACK_PALETTE) do
-            UI_PALETTE[key] = (cfg.palette and cfg.palette[key]) or value
+        local paletteCfg = cfg.palette or {}
+        for key, value in pairs(UiKit.palette) do
+            UI_PALETTE[key] = paletteCfg[key] or value
         end
-        for key, value in pairs(cfg.size or {}) do UI_SIZE[key] = value end
+        local sizeCfg = cfg.size or {}
+        for key, value in pairs(UiKit.size) do UI_SIZE[key] = sizeCfg[key] or value end
+        for key, value in pairs(sizeCfg) do
+            if UI_SIZE[key] == nil then UI_SIZE[key] = value end
+        end
     end
 
     -- 安全应用背景色：真机 Widget 支持 SetBackgroundColor；测试桩缺失时静默跳过。
@@ -188,11 +174,14 @@ function Presentation.Create(UI, Config, Items)
         end
     end
 
+    -- v2.1 批B：卡内默认文字色改为墨棕（UiKit.ink.body）—— 卡片已换水彩
+    -- 浅纸底板，原冷白 textOnDark 在浅底上不可读。信息层（海面上纯文字+
+    -- 描边）走 makeInfoLabel，仍用 textOnDark，两者互不影响。
     local function makeLabel(text, size, color, weight, extraProps)
         local props = {
             text = text,
-            fontSize = size or 14,
-            fontColor = color or UI_PALETTE.textOnDark,
+            fontSize = size or UiKit.fontSize.body,
+            fontColor = color or UiKit.ink.body,
             fontWeight = weight or "normal",
             whiteSpace = "normal",
         }

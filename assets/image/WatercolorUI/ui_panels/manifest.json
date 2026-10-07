@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "style": "reading_sea_watercolor 离线切分（ui_panels）",
+  "format": "256 色调色板 PNG（FASTOCTREE），九宫格消费（backgroundFit=sliced）",
+  "assets": [
+    {
+      "file": "image/WatercolorUI/ui_panels/001_297-191.png",
+      "semantic": "panel_parchment",
+      "bboxInSheet": [
+        51,
+        35,
+        543,
+        348
+      ],
+      "size": [
+        492,
+        313
+      ]
+    },
+    {
+      "file": "image/WatercolorUI/ui_panels/002_865-190.png",
+      "semantic": "panel_rounded",
+      "bboxInSheet": [
+        633,
+        45,
+        1098,
+        336
+      ],
+      "size": [
+        465,
+        291
+      ]
+    },
+    {
+      "file": "image/WatercolorUI/ui_panels/003_296-570.png",
+      "semantic": "panel_scroll",
+      "bboxInSheet": [
+        53,
+        419,
+        539,
+        721
+      ],
+      "size": [
+        486,
+        302
+      ]
+    },
+    {
+      "file": "image/WatercolorUI/ui_panels/004_865-577.png",
+      "semantic": "panel_plain",
+      "bboxInSheet": [
+        624,
+        456,
+        1107,
+        699
+      ],
+      "size": [
+        483,
+        243
+      ]
+    }
+  ]
+}

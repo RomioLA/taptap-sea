@@ -5,6 +5,7 @@ local Items = require("data.items")
 local Diagnostics = require("Gameplay.Diagnostics")
 local ArtVariants = require("Ocean.ArtVariants")
 local DialogueStyle = require("Gameplay.DialogueStyle")
+local UiKit = require("Gameplay.UiKit")
 local Achievements = require("Gameplay.Achievements")
 
 local HUD = {}
@@ -125,20 +126,19 @@ function HUD.Create(loop, parent, debugTools)
     local themedPanels = {} -- 昼夜主题注册表：{widget=, day=, night=}
     local applyTheme = makeThemer()
 
+    -- v2.1 批B：通用卡工厂换水彩底板（roundcard=圆角茶棕卡）。
+    -- 皮肤/文字色全部来自 Gameplay.UiKit 单一令牌源，本函数不再内嵌样式。
+    -- 昼夜：底板图不变，靠 themedPanels 的 day/night 衬色压暗
+    -- （palette.cardDay/cardNight），makeThemer 逐通道插值 —— 换图后仍保留昼夜氛围。
     local function card(title)
-        local panel = UI.Panel {
+        local panel = UI.Panel(UiKit.cardProps("panel", {
             width = "100%",
-            padding = 10,
-            gap = 7,
-            flexDirection = "column",
-            backgroundColor = UI_PALETTE.cardDay,
-            transition = (Config.ui or {}).themeTransition or "backgroundColor 0.8s easeInOut",
-            borderColor = UI_PALETTE.border,
-            borderWidth = 1,
-            borderRadius = UI_SIZE.radiusCard or 10,
+            borderWidth = 0,
+        }))
+        themedPanels[#themedPanels + 1] = {
+            widget = panel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
         }
-        themedPanels[#themedPanels + 1] = { widget = panel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight }
-        panel:AddChild(makeLabel(title, 16, UI_PALETTE.textGold, "bold"))
+        panel:AddChild(makeLabel(title, UiKit.fontSize.title, UiKit.ink.title, "bold"))
         return panel
     end
 
@@ -217,24 +217,21 @@ function HUD.Create(loop, parent, debugTools)
     -- 真机反馈（2026-10-05）：捕鱼弹出框过大遮挡中心小船——压成左上角小卡
     -- （宽 ≤216px、行高 ~11px、按钮 32px），面积约为原 1/4，只留必要提示；
     -- 只在抛网/收网/结算过程中出现，入口仍走按钮坞"捕鱼"按钮。
-    refs.fishingPanel = UI.Panel {
+    refs.fishingPanel = UI.Panel(UiKit.cardProps("panel", {
         id = "fishingCompactPanel",
         width = "auto",
         maxWidth = 216,
         alignSelf = "flex-start",
         padding = 6,
         gap = 3,
-        flexDirection = "column",
-        backgroundColor = UI_PALETTE.cardDay,
-        borderColor = UI_PALETTE.border,
-        borderWidth = 1,
-        borderRadius = 8,
+    }))
+    themedPanels[#themedPanels + 1] = {
+        widget = refs.fishingPanel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
     }
-    themedPanels[#themedPanels + 1] = { widget = refs.fishingPanel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight }
-    refs.fishingStatus = makeLabel("选择海面网心开始捕鱼。", 11)
-    refs.fishingProgress = makeLabel("动作进度：0%", 10, { 180, 203, 191, 255 })
+    refs.fishingStatus = makeLabel("选择海面网心开始捕鱼。", UiKit.fontSize.teaching)
+    refs.fishingProgress = makeLabel("动作进度：0%", UiKit.fontSize.teaching, UiKit.ink.dim)
     -- T2b：同气泡根因的保险——显式宽度，避免任何父布局变化导致零宽不渲染。
-    refs.fishingResult = makeLabel("", 11, { 249, 211, 118, 255 }, nil, { width = "100%" })
+    refs.fishingResult = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching, nil, { width = "100%" })
     refs.fishingPanel:AddChild(refs.fishingStatus)
     refs.fishingPanel:AddChild(refs.fishingProgress)
     refs.fishingPanel:AddChild(refs.fishingResult)
@@ -391,6 +388,9 @@ function HUD.Create(loop, parent, debugTools)
         pointerEvents = "auto",
     }
     refs.drawerBackdrop:Hide()
+    -- 抽屉是"容器层"不是"卡片"：保持 seaDeep/seaNight 冷色容器契约
+    -- （Circle1HUDReviewTests 断言其昼夜 RGBA 插值走 palette.seaDeep/seaNight），
+    -- 卡内子卡（背包/宝物/物品操作）各自换水彩底板，形成"冷容器 + 暖卡片"的层级对比。
     refs.drawer = UI.Panel {
         id = "gameplayInventoryDrawer",
         position = "absolute",
@@ -443,7 +443,7 @@ function HUD.Create(loop, parent, debugTools)
     -- 直接挂在根流（与捕鱼小卡同级），保证进行中流程始终可见。
     -- 屏内不再放重复入口按钮：检查入口走按钮坞"检查木桶"。
     refs.throwSelectionPanel = card("投掷物品")
-    refs.throwSelectionText = makeLabel("", 13, { 255, 236, 207, 255 }, "bold")
+    refs.throwSelectionText = makeLabel("", UiKit.fontSize.body, UiKit.ink.title, "bold")
     refs.throwSelectionPanel:AddChild(refs.throwSelectionText)
     refs.throwSelectionCancel = makeButton("取消投掷", function()
         invokeLoop("CancelThrowSelection")
@@ -503,17 +503,17 @@ function HUD.Create(loop, parent, debugTools)
     refs.inventoryPanel:AddChild(inventoryHeader)
     refs.inventoryHint = makeLabel("", 12, UI_PALETTE.textMuted)
     refs.inventoryPanel:AddChild(refs.inventoryHint)
-    refs.itemMenu = UI.Panel {
+    refs.itemMenu = UI.Panel(UiKit.cardProps("panel", {
         width = "100%",
         padding = 8,
         gap = 6,
-        flexDirection = "column",
-        backgroundColor = { 45, 64, 61, 220 },
-        borderRadius = 5,
+    }))
+    themedPanels[#themedPanels + 1] = {
+        widget = refs.itemMenu, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
     }
-    refs.itemMenuTitle = makeLabel("物品操作", 12, { 237, 213, 159, 255 }, "bold")
+    refs.itemMenuTitle = makeLabel("物品操作", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
     refs.itemMenu:AddChild(refs.itemMenuTitle)
-    refs.itemUseReason = makeLabel("", 12, { 213, 193, 161, 255 })
+    refs.itemUseReason = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.dim)
     refs.itemMenu:AddChild(refs.itemUseReason)
     local itemMenuActions = UI.Panel {
         width = "100%",
@@ -555,17 +555,15 @@ function HUD.Create(loop, parent, debugTools)
     refs.itemMenu:AddChild(itemMenuActions)
     refs.itemMenu:SetVisible(false)
     refs.inventoryPanel:AddChild(refs.itemMenu)
-    refs.pendingCatchPanel = UI.Panel {
+    refs.pendingCatchPanel = UI.Panel(UiKit.cardProps("plain", {
         width = "100%",
         padding = 8,
         gap = 6,
-        flexDirection = "column",
-        backgroundColor = { 72, 61, 42, 235 },
-        borderColor = { 159, 133, 88, 230 },
-        borderWidth = 1,
-        borderRadius = 6,
+    }))
+    themedPanels[#themedPanels + 1] = {
+        widget = refs.pendingCatchPanel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
     }
-    refs.pendingCatchText = makeLabel("有渔获等待接收。", 13, { 255, 236, 207, 255 }, "bold")
+    refs.pendingCatchText = makeLabel("有渔获等待接收。", UiKit.fontSize.info, UiKit.ink.title, "bold")
     refs.pendingCatchPanel:AddChild(makeLabel("需要丢弃时，先点击海面选择投放点；船舱保持打开，世界仍暂停。", 12))
     refs.pendingCatchClaim = makeButton("领取渔获", function()
         invokeLoop("ClaimPendingCatch")
@@ -789,21 +787,19 @@ function HUD.Create(loop, parent, debugTools)
         backgroundColor = { 8, 16, 18, 190 },
         pointerEvents = "auto",
     }
-    refs.modalCard = UI.Panel {
+    -- v2.1 批B 剧情档：模态主卡换羊皮纸底板（parchment）。开场剧情/每日结算/
+    -- 第7天结局/老人对话/强制返港/图鉴成就 6 个模态页共用此卡。
+    refs.modalCard = UI.Panel(UiKit.cardProps("parchment", {
         width = 380,
         maxWidth = "94%",
         height = "90%",
         maxHeight = 430,
-        padding = 14,
-        gap = 9,
-        flexDirection = "column",
-        backgroundColor = { 33, 51, 52, 255 },
-        borderColor = { 159, 133, 88, 255 },
-        borderWidth = 2,
-        borderRadius = 10,
         transition = "opacity 0.25s easeOut", -- 模态出现时淡入，替代硬切
+    }))
+    themedPanels[#themedPanels + 1] = {
+        widget = refs.modalCard, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
     }
-    refs.modalTitle = makeLabel("", 18, { 246, 223, 171, 255 }, "bold")
+    refs.modalTitle = makeLabel("", UiKit.fontSize.title + 1, UiKit.ink.title, "bold")
     refs.modalCard:AddChild(refs.modalTitle)
 
     refs.entryBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 12 }
@@ -823,7 +819,7 @@ function HUD.Create(loop, parent, debugTools)
     refs.modalCard:AddChild(refs.entryBody)
 
     refs.forcedBody = UI.Panel { width = "100%", flexGrow = 1, justifyContent = "center", gap = 12 }
-    refs.forcedText = makeLabel("夜深了，你必须返港。", DialogueStyle.fontSize.title, DialogueStyle.color.body, "bold")
+    refs.forcedText = makeLabel("夜深了，你必须返港。", UiKit.fontSize.title, UiKit.ink.title, "bold")
     refs.forcedBody:AddChild(refs.forcedText)
     refs.forcedBody:AddChild(makeLabel("返港后会自动完成今日结算并保存。", 13))
     refs.forcedConfirm = makeButton("确认返港", function() invokeLoop("ConfirmForcedReturn") end, "primary", 130)
@@ -849,19 +845,20 @@ function HUD.Create(loop, parent, debugTools)
     refs.modalCard:AddChild(refs.endingBody)
 
     refs.elderBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 8 }
-    refs.elderMessage = makeLabel("食物可给予老人；鱼和鱼饵可向老人展示。", DialogueStyle.fontSize.body)
+    refs.elderMessage = makeLabel("食物可给予老人；鱼和鱼饵可向老人展示。", UiKit.fontSize.body)
     refs.elderBody:AddChild(refs.elderMessage)
     -- S6 教学（05 页 P6）：前 3 天且未完成首次捕鱼领取时，展示两条看海对白。
-    -- 批3a（v2.0 §7.2）：教学行统一令牌金色 + ※ 前缀。
-    refs.elderTeaching = makeLabel("", DialogueStyle.fontSize.teaching, DialogueStyle.color.teaching)
+    -- v2.1 批B：卡内教学行改墨棕 teaching（羊皮纸底），※ 前缀由 UiKit 统一。
+    refs.elderTeaching = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching)
     refs.elderBody:AddChild(refs.elderTeaching)
-    refs.elderStatus = makeLabel("", DialogueStyle.fontSize.teaching, DialogueStyle.color.teaching, "bold")
+    refs.elderStatus = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
     refs.elderBody:AddChild(refs.elderStatus)
-    refs.elderTreasure = UI.Panel {
-        width = "100%", padding = 7, gap = 5, flexDirection = "column",
-        backgroundColor = { 45, 64, 61, 220 }, borderRadius = 5,
+    -- 宝物小卡（卡内卡）：用 plain 素面纸档，padding 更紧。
+    refs.elderTreasure = UI.Panel(UiKit.cardProps("plain", { padding = 7, gap = 5 }))
+    themedPanels[#themedPanels + 1] = {
+        widget = refs.elderTreasure, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
     }
-    refs.elderTreasure:AddChild(makeLabel("宝物", 12, { 237, 213, 159, 255 }, "bold"))
+    refs.elderTreasure:AddChild(makeLabel("宝物", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold"))
     refs.elderLensStatus = makeLabel("尚未获得透镜。", 12)
     refs.elderTreasure:AddChild(refs.elderLensStatus)
     refs.elderLensGive = makeButton("展示透镜", function()
@@ -918,8 +915,9 @@ function HUD.Create(loop, parent, debugTools)
     refs.storyText = UI.Label {
         id = "storyDialogText",
         text = "",
-        fontSize = DialogueStyle.fontSize.body,
-        fontColor = DialogueStyle.color.body,
+        fontSize = UiKit.fontSize.body,
+        -- v2.1 批B：羊皮纸底板上的正文用墨棕（原浅米白在浅纸上不可读）。
+        fontColor = UiKit.ink.body,
         whiteSpace = "normal",
     }
     refs.storyBody:AddChild(refs.storyText)
@@ -945,22 +943,20 @@ function HUD.Create(loop, parent, debugTools)
     -- 成就解锁 toast（v2.0 §7.4，D6=A：圈1 先行试水）：落区① 顶带右上，
     -- zIndex 30（低于小卡 50/气泡 70/模态 100），出现时不遮按钮坞与模态。
     -- 显示由 refresh 驱动：PollToast 取一条 → 展示 3 秒后淡出。
-    refs.achievementToast = UI.Panel {
+    refs.achievementToast = UI.Panel(UiKit.cardProps("plain", {
         id = "achievementToast",
         position = "absolute",
         top = 8,
         right = 10,
         width = 252,
-        padding = 8,
         gap = 6,
         flexDirection = "row",
         alignItems = "center",
-        backgroundColor = DialogueStyle.card.backgroundColor,
-        borderColor = { 159, 133, 88, 230 },
-        borderWidth = 1,
-        borderRadius = DialogueStyle.card.borderRadius,
         zIndex = 30,
         pointerEvents = "box-none",
+    }))
+    themedPanels[#themedPanels + 1] = {
+        widget = refs.achievementToast, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
     }
     if type(UI.Sprite) == "function" then
         -- 与水彩图标条同源：resource_icons 图集（宝箱暂代徽章，正式图标待批3b）。
@@ -969,7 +965,7 @@ function HUD.Create(loop, parent, debugTools)
             frame = "chest", width = 22, height = 22,
         })
     end
-    refs.achievementToastText = makeLabel("", DialogueStyle.fontSize.teaching, DialogueStyle.color.teaching, "bold")
+    refs.achievementToastText = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
     refs.achievementToast:AddChild(refs.achievementToastText)
     refs.achievementToast:SetVisible(false)
 
@@ -986,7 +982,7 @@ function HUD.Create(loop, parent, debugTools)
         zIndex = 70,
         pointerEvents = "box-none",
     }
-    local catchBubbleCard = UI.Panel {
+    local catchBubbleCard = UI.Panel(UiKit.cardProps("plain", {
         -- T2b（2026-10-06 真机复检）：宽度必须显式固定。此前卡片随内容收缩且
         -- alignItems=center 使空文本 label 测量宽度为 0；Label 对 multiline
         -- (whiteSpace=normal) 的 SetText 不重算宽度（urhox-libs Label.lua:1241
@@ -994,19 +990,16 @@ function HUD.Create(loop, parent, debugTools)
         -- 即真机"黑胶囊无文字"的根因。
         width = 320,
         maxWidth = 340,
-        padding = 9,
         gap = 4,
-        flexDirection = "column",
         alignItems = "center",
-        backgroundColor = { 24, 44, 40, 238 },
-        borderColor = { 159, 133, 88, 230 },
-        borderWidth = 1,
-        borderRadius = 12,
+    }))
+    themedPanels[#themedPanels + 1] = {
+        widget = catchBubbleCard, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
     }
     -- T2（2026-10-06）：真机反馈气泡只见边框无文字，嫌疑"bold"字重在该运行环境
     -- 渲染为空；两个结果标签统一降为常规字重（信息无损，排除变量）。
     -- T2b：显式 width 让 multiline label 拿到真实排版宽度（见卡片注释的根因分析）。
-    refs.catchBubbleText = makeLabel("", DialogueStyle.fontSize.body, DialogueStyle.color.body, nil, { width = "100%", textAlign = "center" })
+    refs.catchBubbleText = makeLabel("", UiKit.fontSize.body, UiKit.ink.body, nil, { width = "100%", textAlign = "center" })
     catchBubbleCard:AddChild(refs.catchBubbleText)
     refs.catchBubble:AddChild(catchBubbleCard)
     refs.catchBubble:SetVisible(false)
@@ -1168,8 +1161,8 @@ function HUD.Create(loop, parent, debugTools)
                     })
                 end
                 local info = UI.Panel { width = "auto", flexDirection = "column", gap = 2 }
-                info:AddChild(makeLabel(MARINE_NAMES[frame] or frame, DialogueStyle.fontSize.body))
-                info:AddChild(makeLabel("发现记录待接入（圈2 知识层）", DialogueStyle.fontSize.teaching, DialogueStyle.color.dim))
+                info:AddChild(makeLabel(MARINE_NAMES[frame] or frame, UiKit.fontSize.body, UiKit.ink.body))
+                info:AddChild(makeLabel("发现记录待接入（圈2 知识层）", UiKit.fontSize.teaching, UiKit.ink.dim))
                 row:AddChild(info)
                 refs.compList:AddChild(row)
             end
@@ -1187,9 +1180,9 @@ function HUD.Create(loop, parent, debugTools)
                 local info = UI.Panel { width = "auto", flexDirection = "column", gap = 2 }
                 info:AddChild(makeLabel(
                     def.name .. (isUnlocked and " · 已解锁" or ""),
-                    DialogueStyle.fontSize.body,
-                    isUnlocked and DialogueStyle.color.teaching or DialogueStyle.color.body))
-                info:AddChild(makeLabel(def.desc, DialogueStyle.fontSize.teaching, DialogueStyle.color.dim))
+                    UiKit.fontSize.body,
+                    isUnlocked and UiKit.ink.teaching or UiKit.ink.body))
+                info:AddChild(makeLabel(def.desc, UiKit.fontSize.teaching, UiKit.ink.dim))
                 row:AddChild(info)
                 refs.compList:AddChild(row)
             end
