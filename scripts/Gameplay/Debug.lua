@@ -29,6 +29,12 @@ end
 function Debug:init(loop, enabled)
     self.loop = loop
     self.enabled = enabled == true
+    self.uiDumper = nil
+end
+
+--- T3/UI 诊断：由 HUD 注入的 UI 树 dump 函数（闭包持有 root）。
+function Debug:SetUiDumper(dumper)
+    self.uiDumper = type(dumper) == "function" and dumper or nil
 end
 
 local function executeTimeScale(loop, argument)
@@ -178,6 +184,12 @@ function Debug:Execute(command, argument)
     end
     if command == "perfRead" then
         return true, PerfProbe.SnapshotAndReset()
+    end
+    if command == "uiDump" then
+        -- UI 定位：把可见 widget 树打进诊断日志（本地 watcher 可读），返回可疑窄条摘要。
+        if not self.uiDumper then return false, "ui_dumper_unavailable" end
+        local summary = self.uiDumper()
+        return true, summary or "UI 树已输出到诊断日志"
     end
     return false, "unknown_debug_command"
 end

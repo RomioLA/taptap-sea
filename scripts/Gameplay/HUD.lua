@@ -627,6 +627,47 @@ function HUD.Create(loop, parent, debugTools)
         refs.debugStatus = makeLabel("调试命令仅在开发模式启用", 12, { 189, 211, 190, 255 })
         refs.debugPanel:AddChild(refs.debugStatus)
 
+        -- UI 树 dump（UI 定位诊断）：递归可见节点 → 诊断日志逐行输出；
+        -- 深色窄条（w≤40 且 h≥40 且带背景）直接摘要在 debugStatus。
+        if debugTools.SetUiDumper then
+            debugTools:SetUiDumper(function()
+                local lines, suspects = {}, {}
+                local function dumpWidget(widget, depth, path)
+                    if depth > 6 or #lines >= 150 then return end
+                    local okLayout, layout = pcall(widget.GetAbsoluteLayout, widget)
+                    if not okLayout or type(layout) ~= "table" then return end
+                    local props = widget.props or {}
+                    if props.visible == false then return end
+                    local w, h = layout.w or 0, layout.h or 0
+                    if w <= 0 or h <= 0 then return end
+                    local id = props.id or "?"
+                    local bg = props.backgroundColor
+                    local bgText = ""
+                    if type(bg) == "table" and (bg[4] or 0) > 0 then
+                        bgText = string.format(" bg=%d,%d,%d,%d", bg[1], bg[2], bg[3], bg[4])
+                        if w <= 40 and h >= 40 then
+                            suspects[#suspects + 1] = string.format(
+                                "可疑窄条 %s %dx%d @(%d,%d)%s", id, w, h, layout.x or 0, layout.y or 0, bgText)
+                        end
+                    end
+                    lines[#lines + 1] = string.format("%s%s %s %.0fx%.0f @(%d,%d)%s",
+                        string.rep("  ", depth), id, tostring(widget.__class and widget.__class.__name or "W"),
+                        w, h, layout.x or 0, layout.y or 0, bgText)
+                    for _, child in ipairs(widget.children or {}) do
+                        dumpWidget(child, depth + 1, path)
+                    end
+                end
+                dumpWidget(root, 0, "")
+                for _, line in ipairs(lines) do
+                    Diagnostics.Event("ui_dump", { text = line })
+                end
+                if #suspects == 0 then
+                    return "UI 树 " .. #lines .. " 行已入日志；无深色窄条可疑项"
+                end
+                return table.concat(suspects, "；") .. "（全树 " .. #lines .. " 行已入日志）"
+            end)
+        end
+
         local scaleRow = UI.Panel { width = "100%", flexDirection = "row", flexWrap = "wrap", gap = 5 }
         scaleRow:AddChild(makeLabel("时间倍率", 12))
         for _, scale in ipairs(Config.debug.timeScales or {}) do
@@ -693,6 +734,12 @@ function HUD.Create(loop, parent, debugTools)
         perfRow:AddChild(makeButton("探针开关", function() invokeDebug("perfToggle") end, "secondary", 86))
         perfRow:AddChild(makeButton("性能读数", function() invokeDebug("perfRead") end, "secondary", 86))
         refs.debugPanel:AddChild(perfRow)
+
+        -- UI 定位诊断：复现占位现象时点一次，整棵可见树进诊断日志。
+        local uiDiagRow = UI.Panel { width = "100%", flexDirection = "row", flexWrap = "wrap", gap = 5 }
+        uiDiagRow:AddChild(makeLabel("UI诊断", 12))
+        uiDiagRow:AddChild(makeButton("UI树dump", function() invokeDebug("uiDump") end, "secondary", 96))
+        refs.debugPanel:AddChild(uiDiagRow)
 
         -- 调试面板挂根流（仅开发模式创建）：不随信息滚动屏开合，保证调试按钮常可用。
         root:AddChild(refs.debugPanel)
