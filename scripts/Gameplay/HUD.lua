@@ -130,11 +130,8 @@ function HUD.Create(loop, parent, debugTools)
     -- 皮肤/文字色全部来自 Gameplay.UiKit 单一令牌源，本函数不再内嵌样式。
     -- 昼夜：底板图不变，靠 themedPanels 的 day/night 衬色压暗
     -- （palette.cardDay/cardNight），makeThemer 逐通道插值 —— 换图后仍保留昼夜氛围。
-    local function card(title)
-        local panel = UI.Panel(UiKit.cardProps("panel", {
-            width = "100%",
-            borderWidth = 0,
-        }))
+    local function card(title, extra)
+        local panel = UI.Panel(UiKit.cardProps("panel", extra))
         themedPanels[#themedPanels + 1] = {
             widget = panel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
         }
@@ -584,7 +581,28 @@ function HUD.Create(loop, parent, debugTools)
     refs.inventoryPanel:SetVisible(false)
     drawerContent:AddChild(refs.inventoryPanel)
 
-    refs.portPanel = card("港口商店")
+    -- v2.1 批B 修复（真机 10-07 图4）：港口商店内容多，card() 走 width=100%
+    -- 无高度约束，内容把卡片撑出抽屉、压到底部按钮坞（苹果·¥30 与
+    -- 出航/结束今日 重叠）。按设计方案 v2.1 §7.3 规则一，改为
+    -- "卡片有高度上限 + 卡内滚动"，不撑破抽屉、不侵占底坞落区⑤。
+    refs.portPanel = card("港口商店", { maxHeight = "58%" })
+    -- 内容全部挂进 portBody（滚动容器），portPanel 自身只承担标题+滚动。
+    local portBody = UI.Panel {
+        width = "100%",
+        flexGrow = 1,
+        flexBasis = 0,
+        gap = 6,
+        flexDirection = "column",
+    }
+    local portScroll = UI.ScrollView {
+        width = "100%",
+        flexGrow = 1,
+        flexBasis = 0,
+        scrollY = true,
+        showScrollbar = true,
+        children = { portBody },
+    }
+    refs.portPanel:AddChild(portScroll)
     -- 低频港口操作（真机反馈 2026-10-05 精简按钮坞）：从按钮坞移入信息屏。
     refs.loadSaved = makeButton("读取云存档", function() invokeLoop("LoadSaved") end, "secondary", 110)
     refs.newRun = makeButton("开始新周目", function() invokeLoop("NewRun") end, "secondary", 110)
@@ -597,15 +615,15 @@ function HUD.Create(loop, parent, debugTools)
     }
     portUtilityRow:AddChild(refs.loadSaved)
     portUtilityRow:AddChild(refs.newRun)
-    refs.portPanel:AddChild(portUtilityRow)
+    portBody:AddChild(portUtilityRow)
     refs.loadStatus = makeLabel("", 12)
-    refs.portPanel:AddChild(refs.loadStatus)
-    refs.portPanel:AddChild(makeLabel("新周目起始状态会在开始时保存；入口处可读取已有云存档。", 12))
+    portBody:AddChild(refs.loadStatus)
+    portBody:AddChild(makeLabel("新周目起始状态会在开始时保存；入口处可读取已有云存档。", 12))
     refs.staminaUpgrade = makeButton("升级体力", function() invokeLoop("UpgradeStamina") end, "secondary", 180)
     refs.speedUpgrade = makeButton("升级航速", function() invokeLoop("UpgradeBoatSpeed") end, "secondary", 180)
-    refs.portPanel:AddChild(refs.staminaUpgrade)
-    refs.portPanel:AddChild(refs.speedUpgrade)
-    refs.portPanel:AddChild(makeLabel("购买补给", UiKit.fontSize.info, UiKit.ink.teaching, "bold"))
+    portBody:AddChild(refs.staminaUpgrade)
+    portBody:AddChild(refs.speedUpgrade)
+    portBody:AddChild(makeLabel("购买补给", UiKit.fontSize.info, UiKit.ink.teaching, "bold"))
     local buyRow = UI.Panel {
         width = "100%",
         flexDirection = "row",
@@ -627,17 +645,14 @@ function HUD.Create(loop, parent, debugTools)
         buyRow:AddChild(refs.shopStockLabels[buyId])
         buyRow:AddChild(shopButton)
     end
-    refs.portPanel:AddChild(buyRow)
-    refs.portPanel:AddChild(makeLabel("出售渔获", UiKit.fontSize.info, UiKit.ink.teaching, "bold"))
+    portBody:AddChild(buyRow)
+    portBody:AddChild(makeLabel("出售渔获", UiKit.fontSize.info, UiKit.ink.teaching, "bold"))
     refs.portSales = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
-    refs.portSalesScroll = UI.ScrollView {
+    refs.portSalesScroll = UI.Panel {
         width = "100%",
-        height = 150,
-        scrollY = true,
-        showScrollbar = true,
         children = { refs.portSales },
     }
-    refs.portPanel:AddChild(refs.portSalesScroll)
+    portBody:AddChild(refs.portSalesScroll)
     refs.portPanel:SetVisible(false)
     content:AddChild(refs.portPanel)
 

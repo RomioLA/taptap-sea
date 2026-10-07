@@ -115,6 +115,7 @@ local CARD_SKINS = {
 function UiKit.cardProps(kind, extra)
     local skin = CARD_SKINS[kind] or CARD_SKINS.panel
     local props = {
+        width = "100%",
         backgroundImage = skin.image,
         backgroundFit = "sliced",
         backgroundSlice = { skin.slice, skin.slice, skin.slice, skin.slice },
