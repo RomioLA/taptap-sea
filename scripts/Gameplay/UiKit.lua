@@ -138,27 +138,37 @@ local UiKit = {
 --   panel     = 圆角茶棕卡   → 抽屉内面板（背包/港口），中频、信息量大
 --   panelLite = 素面纸卡     → 海面高频操作区（捕鱼小卡/调试/物品操作/更多浮层）
 --   plain     = 素面纸卡     → 轻量浮层（成就 toast/捕鱼气泡/渔获待领）
+--
+-- v2.1 §7.9（真机 21:10 反馈"UI 边框会和字重叠，有花纹处不显示字"）：
+-- 实测三张切片的装饰带**紧贴 slice 边界**（内容自边缘 2~3px 即出现，
+-- 非"边缘窄带"而是横向铺满），九宫格拉伸后左右/上下边框几乎贴在 slice 上。
+-- 因此规则必须是 **padding ≥ slice + 呼吸位(6)**，否则文字必然压在花纹上。
+-- 统一抬到 46/54/34（对应 slice 40/48/28）。
 local CARD_SKINS = {
     panel = {
         image = "image/WatercolorUI/ui_panels/002_865-190.png",
         slice = 40,
-        padding = 10,
+        -- 原 10 → 46：实测切片内容从边缘 2px 即开始（装饰紧贴 slice 边界），
+        -- 故 padding 必须 ≥ slice 才留得住空白（slice=40 + 6 呼吸位）。
+        padding = 46,
     },
     -- D 案新增：与 plain 同图（004 素面纸），独立档位以便语义化调 padding/slice。
     panelLite = {
         image = "image/WatercolorUI/ui_panels/004_865-577.png",
         slice = 28,
-        padding = 8,
+        -- 原 8 → 34：slice=28 + 6 呼吸位（实测装饰紧贴边界）。
+        padding = 34,
     },
     parchment = {
         image = "image/WatercolorUI/ui_panels/001_297-191.png",
         slice = 48,
-        padding = 14,
+        -- 原 14 → 54：slice=48 + 6 呼吸位，粗边框需要更大留白。
+        padding = 54,
     },
     plain = {
         image = "image/WatercolorUI/ui_panels/004_865-577.png",
         slice = 28,
-        padding = 8,
+        padding = 34,
     },
 }
 

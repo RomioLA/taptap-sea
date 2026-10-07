@@ -220,10 +220,13 @@ function HUD.Create(loop, parent, debugTools)
     refs.fishingPanel = UI.Panel(UiKit.cardProps("panelLite", {
         id = "fishingCompactPanel",
         width = "auto",
-        maxWidth = 216,
+        -- v2.1 §7.9：padding 抬到 34（避免文字压边框花纹）后，216px 宽只剩
+        -- 148px 文字区（12 字/行），24 字文案要 2 行、卡片长高 60px 重新压船。
+        -- 加宽到 300 换回单行，宽度仍远小于半屏（落区②上限 25%×30%）。
+        maxWidth = 300,
         alignSelf = "flex-start",
-        padding = 6,
-        gap = 3,
+        -- 不再显式给 padding，继承 panelLite 档位的 34。
+        gap = 5,
     }))
     themedPanels[#themedPanels + 1] = {
         widget = refs.fishingPanel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
@@ -303,26 +306,30 @@ function HUD.Create(loop, parent, debugTools)
             state.infoOpen = true
             state.focusInventory = true
         end
-    end, "secondary", 80)
+    end, "secondary", 128)
     refs.elderToggle = makeButton("拜访老人", function()
         invokeLoop("SetElderOpen", not (loop.elderOpen == true))
-    end, "secondary", 98)
+    -- v2.1 §7.9：文案会变"结束对话"/"老人不在"等，98 → 112
+    end, "secondary", 112)
     -- 与捕鱼同级的上下文按钮：靠近出港点右侧木桶（新手教程点位）后出现；
     -- 望远镜（窥视镜）在获得后常驻、未获得时靠近木桶作为线索入口。
     refs.barrelToggle = makeButton("检查木桶", function()
         invokeLoop("BeginBarrelInspection")
     end, "secondary", 96)
     refs.barrelToggle:SetVisible(false)
+    -- v2.1 §7.9（真机 21:10"镇模未获得"被截断）：文案会变
+    -- "透镜未获得"/"关闭望远镜"（5~6 字），固定 80px 装不下 → 放宽到 104。
     refs.scopeToggleBar = makeButton("望远镜", function()
         invokeLoop(loop.scopeSyncError and "DisableScope" or "ToggleScope")
-    end, "secondary", 80)
+    end, "secondary", 104)
     refs.scopeToggleBar:SetVisible(false)
     -- 信息滚动屏开合按钮（真机反馈 2026-10-05：屏幕只能打开不能收起）：
     -- 按一下打开、再按一下或点击屏内空白处收起。
+    -- v2.1 §7.9：文案会变"收起信息"（4 字），72px 偏窄 → 92
     refs.infoToggle = makeButton("信息", function()
         state.infoOpen = not (state.infoOpen == true)
         refresh()
-    end, "secondary", 72)
+    end, "secondary", 92)
     -- 图鉴/成就入口（v2.0 §7.4）：仅暂停态可见（refresh 控制），页壳走模态层。
     refs.compendiumToggle = makeButton("图鉴", function()
         state.compendiumOpen = not (state.compendiumOpen == true)
