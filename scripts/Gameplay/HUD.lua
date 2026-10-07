@@ -4,6 +4,8 @@ local Config = require("config.gameplay")
 local Items = require("data.items")
 local Diagnostics = require("Gameplay.Diagnostics")
 local ArtVariants = require("Ocean.ArtVariants")
+local DialogueStyle = require("Gameplay.DialogueStyle")
+local Achievements = require("Gameplay.Achievements")
 
 local HUD = {}
 
@@ -693,6 +695,12 @@ function HUD.Create(loop, parent, debugTools)
         staminaRow:AddChild(refs.debugSalvage)
         refs.debugPanel:AddChild(staminaRow)
 
+        -- 成就桩试水（v2.0 §7.4）：真机验证 toast 展示/淡出与层级，不碰判定逻辑。
+        refs.debugPanel:AddChild(makeButton("模拟成就解锁", function()
+            Achievements.Unlock("zero_skunk")
+            refresh()
+        end, "secondary", 140))
+
         local seekRow = UI.Panel { width = "100%", flexDirection = "row", flexWrap = "wrap", alignItems = "center", gap = 5 }
         seekRow:AddChild(makeLabel("跳转秒数", 12))
         refs.seekField = UI.TextField {
@@ -795,7 +803,7 @@ function HUD.Create(loop, parent, debugTools)
     refs.modalCard:AddChild(refs.entryBody)
 
     refs.forcedBody = UI.Panel { width = "100%", flexGrow = 1, justifyContent = "center", gap = 12 }
-    refs.forcedText = makeLabel("夜深了，你必须返港。", 16, { 255, 236, 207, 255 }, "bold")
+    refs.forcedText = makeLabel("夜深了，你必须返港。", DialogueStyle.fontSize.title, DialogueStyle.color.body, "bold")
     refs.forcedBody:AddChild(refs.forcedText)
     refs.forcedBody:AddChild(makeLabel("返港后会自动完成今日结算并保存。", 13))
     refs.forcedConfirm = makeButton("确认返港", function() invokeLoop("ConfirmForcedReturn") end, "primary", 130)
@@ -821,12 +829,13 @@ function HUD.Create(loop, parent, debugTools)
     refs.modalCard:AddChild(refs.endingBody)
 
     refs.elderBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 8 }
-    refs.elderMessage = makeLabel("食物可给予老人；鱼和鱼饵可向老人展示。", 13)
+    refs.elderMessage = makeLabel("食物可给予老人；鱼和鱼饵可向老人展示。", DialogueStyle.fontSize.body)
     refs.elderBody:AddChild(refs.elderMessage)
     -- S6 教学（05 页 P6）：前 3 天且未完成首次捕鱼领取时，展示两条看海对白。
-    refs.elderTeaching = makeLabel("", 12, { 237, 213, 159, 255 })
+    -- 批3a（v2.0 §7.2）：教学行统一令牌金色 + ※ 前缀。
+    refs.elderTeaching = makeLabel("", DialogueStyle.fontSize.teaching, DialogueStyle.color.teaching)
     refs.elderBody:AddChild(refs.elderTeaching)
-    refs.elderStatus = makeLabel("", 12, { 237, 213, 159, 255 }, "bold")
+    refs.elderStatus = makeLabel("", DialogueStyle.fontSize.teaching, DialogueStyle.color.teaching, "bold")
     refs.elderBody:AddChild(refs.elderStatus)
     refs.elderTreasure = UI.Panel {
         width = "100%", padding = 7, gap = 5, flexDirection = "column",
@@ -857,8 +866,8 @@ function HUD.Create(loop, parent, debugTools)
     refs.storyText = UI.Label {
         id = "storyDialogText",
         text = "",
-        fontSize = 15,
-        fontColor = { 255, 236, 207, 255 },
+        fontSize = DialogueStyle.fontSize.body,
+        fontColor = DialogueStyle.color.body,
         whiteSpace = "normal",
     }
     refs.storyBody:AddChild(refs.storyText)
@@ -881,6 +890,37 @@ function HUD.Create(loop, parent, debugTools)
     refs.endingBody:Hide()
     refs.elderBody:Hide()
     refs.storyBody:Hide()
+    -- 成就解锁 toast（v2.0 §7.4，D6=A：圈1 先行试水）：落区① 顶带右上，
+    -- zIndex 30（低于小卡 50/气泡 70/模态 100），出现时不遮按钮坞与模态。
+    -- 显示由 refresh 驱动：PollToast 取一条 → 展示 3 秒后淡出。
+    refs.achievementToast = UI.Panel {
+        id = "achievementToast",
+        position = "absolute",
+        top = 8,
+        right = 10,
+        width = 252,
+        padding = 8,
+        gap = 6,
+        flexDirection = "row",
+        alignItems = "center",
+        backgroundColor = DialogueStyle.card.backgroundColor,
+        borderColor = { 159, 133, 88, 230 },
+        borderWidth = 1,
+        borderRadius = DialogueStyle.card.borderRadius,
+        zIndex = 30,
+        pointerEvents = "box-none",
+    }
+    if type(UI.Sprite) == "function" then
+        -- 与水彩图标条同源：resource_icons 图集（宝箱暂代徽章，正式图标待批3b）。
+        refs.achievementToast:AddChild(UI.Sprite {
+            src = "image/WatercolorUI/resource_icons.json",
+            frame = "chest", width = 22, height = 22,
+        })
+    end
+    refs.achievementToastText = makeLabel("", DialogueStyle.fontSize.teaching, DialogueStyle.color.teaching, "bold")
+    refs.achievementToast:AddChild(refs.achievementToastText)
+    refs.achievementToast:SetVisible(false)
+
     -- 捕鱼结果气泡（真机反馈 2026-10-05）：收网后在屏幕中上部弹出结果提示，
     -- 约 5 秒后自动消失；不接收点击（box-none），不遮挡按钮坞。
     refs.catchBubble = UI.Panel {
@@ -914,12 +954,14 @@ function HUD.Create(loop, parent, debugTools)
     -- T2（2026-10-06）：真机反馈气泡只见边框无文字，嫌疑"bold"字重在该运行环境
     -- 渲染为空；两个结果标签统一降为常规字重（信息无损，排除变量）。
     -- T2b：显式 width 让 multiline label 拿到真实排版宽度（见卡片注释的根因分析）。
-    refs.catchBubbleText = makeLabel("", 13, { 255, 236, 207, 255 }, nil, { width = "100%", textAlign = "center" })
+    refs.catchBubbleText = makeLabel("", DialogueStyle.fontSize.body, DialogueStyle.color.body, nil, { width = "100%", textAlign = "center" })
     catchBubbleCard:AddChild(refs.catchBubbleText)
     refs.catchBubble:AddChild(catchBubbleCard)
     refs.catchBubble:SetVisible(false)
     -- 插在信息层之后、抽屉/模态之前：root 末两个子节点必须是
     -- gameplayInventoryDrawer 与全屏 overlay（Circle1B3SceneUITests 契约）。
+    -- 成就 toast 在 catchBubble 之前入树，同受该契约保护（§7.3 规则一）。
+    root:AddChild(refs.achievementToast)
     root:AddChild(refs.catchBubble)
     root:AddChild(refs.drawerBackdrop)
     root:AddChild(refs.drawer)
@@ -1177,6 +1219,23 @@ function HUD.Create(loop, parent, debugTools)
         end
         scopeApiAvailable = type(loop.HasLens) == "function"
             and type(loop.IsScopeEnabled) == "function" and type(loop.ToggleScope) == "function"
+
+        -- 成就桩判定（§7.4，D6=A）：判定条件待 B 侧定稿，当前仅首日透镜试水。
+        Achievements.Evaluate({ day = tonumber(player.day) or 1, hasLens = hasLens })
+        -- 成就 toast 驱动：3 秒展示后淡出；同屏只一条（§7.3 规则二）。
+        local now = os.clock()
+        if state.achievementToastUntil and now >= state.achievementToastUntil then
+            refs.achievementToast:SetVisible(false)
+            state.achievementToastUntil = nil
+        end
+        if not state.achievementToastUntil then
+            local toast = Achievements.PollToast()
+            if toast then
+                refs.achievementToastText:SetText("成就解锁：" .. toast.name)
+                refs.achievementToast:SetVisible(true)
+                state.achievementToastUntil = now + 3
+            end
+        end
 
         ---@type HUDStoryDialog|nil
         local storyDialog
@@ -1657,9 +1716,10 @@ function HUD.Create(loop, parent, debugTools)
             refs.elderTeaching:SetVisible(showTeaching)
             if showTeaching then
                 setText(refs.elderTeaching, "elderTeaching",
-                    "「鸟在那边盘旋，附近应该有小鱼，投点饵试试。」\n"
-                    .. "「留意水花留下的方向，那是大鱼经过的痕迹。」\n"
-                    .. "船开动会惊散鱼群，停船再投；饵不保证成功，多试几次。")
+                    DialogueStyle.teachingText(
+                        "「鸟在那边盘旋，附近应该有小鱼，投点饵试试。」\n"
+                        .. "「留意水花留下的方向，那是大鱼经过的痕迹。」\n"
+                        .. "船开动会惊散鱼群，停船再投；饵不保证成功，多试几次。"))
             end
         end
         if loop.elderOpen == true then
