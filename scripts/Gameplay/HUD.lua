@@ -130,6 +130,13 @@ function HUD.Create(loop, parent, debugTools)
     -- 皮肤/文字色全部来自 Gameplay.UiKit 单一令牌源，本函数不再内嵌样式。
     -- 昼夜：底板图不变，靠 themedPanels 的 day/night 衬色压暗
     -- （palette.cardDay/cardNight），makeThemer 逐通道插值 —— 换图后仍保留昼夜氛围。
+    -- v2.1 §7.12（用户 23:34「拜访老人显示不全 / 港口商店高度和背包同高」）：
+    -- 滚动屏三卡（背包/商店/老人）统一高度上限。之前老人卡无 maxHeight →
+    -- 内容约 576px 超出屏幕底边（"结束对话"被裁）；商店 58% 过紧 → 只显示到
+    -- "升级体力"。现统一 68% 屏高，礼物区改 flexGrow 自适应让位。
+    -- 必须定义在所有 card() 调用之前，故放在 card() 工厂处。
+    local HUD_CARD_MAXH = "68%"
+
     -- card() 通用卡工厂。skin 选底板档位（v2.1 批B-D 分级）：
     --   抽屉内面板（背包/港口）用默认 panel（繁复茶棕，信息量大需要框感）；
     --   海面高频操作区传 "panelLite"（素面纸，去掉卷草纹/双线边框）。
@@ -518,7 +525,7 @@ function HUD.Create(loop, parent, debugTools)
     -- v2.1 §7.10：背包改挂 infoLayer（常驻层，不受 infoOpen 牵连）。
     -- 保持 card() 默认布局（width=100% + 纵向流），与 content 内的卡片一致，
     -- 不引入绝对定位——避免测试桩下百分比宽度/绝对定位组合算错尺寸。
-    refs.inventoryPanel = card("背包")
+    refs.inventoryPanel = card("背包", { maxHeight = HUD_CARD_MAXH })
     refs.inventoryCount = makeLabel("0 / 0 格", UiKit.fontSize.teaching, UiKit.ink.dim)
     refs.upgrade = makeButton("扩容", function() invokeLoop("UpgradeInventory") end, "secondary", 148)
     refs.sellAll = makeButton("全部卖出", function() invokeLoop("SellAll") end, "primary", 108)
@@ -639,7 +646,7 @@ function HUD.Create(loop, parent, debugTools)
     -- 无高度约束，内容把卡片撑出抽屉、压到底部按钮坞（苹果·¥30 与
     -- 出航/结束今日 重叠）。按设计方案 v2.1 §7.3 规则一，改为
     -- "卡片有高度上限 + 卡内滚动"，不撑破抽屉、不侵占底坞落区⑤。
-    refs.portPanel = card("港口商店", { maxHeight = "58%" })
+    refs.portPanel = card("港口商店", { maxHeight = HUD_CARD_MAXH })
     -- 内容全部挂进 portBody（滚动容器），portPanel 自身只承担标题+滚动。
     local portBody = UI.Panel {
         width = "100%",
@@ -957,8 +964,11 @@ function HUD.Create(loop, parent, debugTools)
     --      卡片不遮挡背包行（同层并列）；
     --   ③ elderGiftScroll 是既有子树，保留不改结构（多包 ScrollView 会
     --      改变 UI 树导致 isVisible 沿父链判定失效，教训见 §7.9）。
-    refs.elderPanel = card("拜访老人")
-    refs.elderBody = UI.Panel { width = "100%", gap = 8 }
+    refs.elderPanel = card("拜访老人", { maxHeight = HUD_CARD_MAXH })
+    -- v2.1 §7.12：flexGrow=1 + flexBasis=0 让 elderBody 填满 elderPanel 的
+    -- maxHeight 剩余空间，礼物区（flexGrow=1）才能自动收缩让位给
+    -- "结束对话"按钮——否则内容仍会溢出屏幕底边。
+    refs.elderBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 8 }
     refs.elderMessage = makeLabel("食物可给予老人；鱼和鱼饵可向老人展示。", UiKit.fontSize.body)
     refs.elderBody:AddChild(refs.elderMessage)
     -- S6 教学（05 页 P6）：前 3 天且未完成首次捕鱼领取时，展示两条看海对白。
@@ -987,7 +997,12 @@ function HUD.Create(loop, parent, debugTools)
     refs.elderGiftRows = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
     refs.elderGiftScroll = UI.ScrollView {
         width = "100%",
-        height = 150,
+        -- v2.1 §7.12：原 height=150 固定高，内容合计约 576px 超出屏幕底边
+        -- （真机 23:34"结束对话"被裁）。改为 flexGrow 自适应：卡片有
+        -- maxHeight 上限，礼物区自动收缩让位给下方"结束对话"按钮。
+        flexGrow = 1,
+        flexBasis = 0,
+        minHeight = 60,
         scrollY = true,
         showScrollbar = true,
         children = { refs.elderGiftRows },
