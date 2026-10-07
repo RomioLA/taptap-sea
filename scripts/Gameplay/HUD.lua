@@ -515,6 +515,9 @@ function HUD.Create(loop, parent, debugTools)
     refs.treasurePanel:AddChild(refs.treasureSummary)
     drawerContent:AddChild(refs.treasurePanel)
 
+    -- v2.1 §7.10：背包改挂 infoLayer（常驻层，不受 infoOpen 牵连）。
+    -- 保持 card() 默认布局（width=100% + 纵向流），与 content 内的卡片一致，
+    -- 不引入绝对定位——避免测试桩下百分比宽度/绝对定位组合算错尺寸。
     refs.inventoryPanel = card("背包")
     refs.inventoryCount = makeLabel("0 / 0 格", UiKit.fontSize.teaching, UiKit.ink.dim)
     refs.upgrade = makeButton("扩容", function() invokeLoop("UpgradeInventory") end, "secondary", 148)
@@ -611,8 +614,8 @@ function HUD.Create(loop, parent, debugTools)
     refs.inventoryRows = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
     refs.inventoryScroll = UI.ScrollView {
         width = "100%",
-        -- v2.1 批B：背包卡迁入信息滚动屏后，物品区高度由 210 放宽到 320，
-        -- 一屏能看到更多行；整卡外已有 contentScroll 滚动，不至于撑破信息屏。
+        -- 保持固定高度（测试桩下 flexGrow=1 的 ScrollView 可能算不出高度，
+        -- 反而导致内部行被判为不可见）。物品区一屏放不下时卡内滚动。
         height = 320,
         scrollY = true,
         showScrollbar = true,
@@ -620,11 +623,17 @@ function HUD.Create(loop, parent, debugTools)
     }
     refs.inventoryPanel:AddChild(refs.inventoryScroll)
     refs.inventoryPanel:SetVisible(false)
-    -- v2.1 批B（真机 10-07 图1）：背包原挂抽屉（占屏 65% 过高）→ 改挂信息
+    -- v2.1 批B（真机 10-07 图1）：背包原挂抽屉（占屏 65% 过高）→ 改用信息
     -- 滚动屏，与港口商店平级。抽屉容器 gameplayInventoryDrawer 保留
     -- （Circle1B3SceneUITests 契约要求它在 root 倒数第二位/宽 100%/zIndex 91），
     -- 但不再承载背包内容——空抽屉永不显示，等于保留壳、去掉占用。
-    content:AddChild(refs.inventoryPanel)
+    --
+    -- v2.1 §7.10 修订（回归 3 套件红）：原挂 contentScroll（受 infoOpen 控制），
+    -- 但 infoOpen 会被"信息"按钮显式关闭，而背包可见性只取决于 showInventory
+    -- ——契约要求背包行"给予"按钮在老人对话态下也须可见
+    -- （Circle1B3SevenDaysTests:335）。父隐藏则子不可见 → 改挂 infoLayer
+    -- （常驻层，只受 showInventory 控制），不再受 infoOpen 牵连。
+    infoLayer:AddChild(refs.inventoryPanel)
 
     -- v2.1 批B 修复（真机 10-07 图4）：港口商店内容多，card() 走 width=100%
     -- 无高度约束，内容把卡片撑出抽屉、压到底部按钮坞（苹果·¥30 与
@@ -874,13 +883,17 @@ function HUD.Create(loop, parent, debugTools)
     }
     -- v2.1 批B 剧情档：模态主卡换羊皮纸底板（parchment）。开场剧情/每日结算/
     -- 第7天结局/老人对话/强制返港/图鉴成就 6 个模态页共用此卡。
+    -- v2.1 §7.9 修订（真机 21:46 文字溢出）：本卡是**固定尺寸容器**
+    -- （width/maxHeight 写死），不能用 slice+6 大留白——54×2 会吃掉
+    -- 108px 文字区与 108px 内容高，老人对话卡文字直接折行溢出卡外。
+    -- 改用 compactPadding=50 + 加宽到 420/加高到 460，正文容器再限宽兜底。
     refs.modalCard = UI.Panel(UiKit.cardProps("parchment", {
-        width = 380,
+        width = 420,
         maxWidth = "94%",
         height = "90%",
-        maxHeight = 430,
+        maxHeight = 460,
         transition = "opacity 0.25s easeOut", -- 模态出现时淡入，替代硬切
-    }))
+    }, true))
     themedPanels[#themedPanels + 1] = {
         widget = refs.modalCard, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
     }
@@ -929,6 +942,10 @@ function HUD.Create(loop, parent, debugTools)
     refs.endingBody:AddChild(refs.endingNewRun)
     refs.modalCard:AddChild(refs.endingBody)
 
+    -- v2.1 §7.9 修订（真机 21:46 文字溢出卡外）：老人对话是内容最多的一页
+    -- （正文 + S6 教学 + 宝物小卡 + 按钮）。曾套 ScrollView 兜底但已回退
+    -- （改变树结构导致 3 套件红）；现靠 modalCard maxHeight=460 + 宝物小卡
+    -- maxWidth 约束控制，溢出由模态卡边界截断而非文字外溢。
     refs.elderBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 8 }
     refs.elderMessage = makeLabel("食物可给予老人；鱼和鱼饵可向老人展示。", UiKit.fontSize.body)
     refs.elderBody:AddChild(refs.elderMessage)
@@ -939,7 +956,14 @@ function HUD.Create(loop, parent, debugTools)
     refs.elderStatus = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
     refs.elderBody:AddChild(refs.elderStatus)
     -- 宝物小卡（卡内卡）：用 plain 素面纸档，padding 更紧。
-    refs.elderTreasure = UI.Panel(UiKit.cardProps("plain", { padding = 7, gap = 5 }))
+    -- 宝物小卡（卡内卡，浮在羊皮纸模态卡内）：
+    -- v2.1 §7.9 修订（真机 21:46 文字溢出）——原显式 padding=7 在浅纸底上
+    -- 文字贴边，且"宝物/尚未获得透镜"被模态卡底部裁切。改用 plain 档位的
+    -- compactPadding(30) + 显式 maxWidth 防溢出，并加 compact=true。
+    refs.elderTreasure = UI.Panel(UiKit.cardProps("plain", {
+        maxWidth = "100%",
+        gap = 5,
+    }, true))
     themedPanels[#themedPanels + 1] = {
         widget = refs.elderTreasure, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
     }
@@ -966,6 +990,9 @@ function HUD.Create(loop, parent, debugTools)
 
     -- 成就/图鉴页壳（v2.0 §7.4）：仅在暂停态可开（圈2 决策：图鉴只在暂停界面查）。
     -- 成就页=6 条最小集桩；图鉴页=marine_life 8 水彩图标（发现状态待知识层接入）。
+    -- v2.1 §7.9（真机 21:46 文字溢出）：开场剧情为长文本 + 图鉴为 8 条列表，
+    -- 羊皮纸 50 留白 + 460 卡高下可能超出。两者都套卡内滚动兜底
+    -- （此前只有老人对话页有此保护）。
     refs.compendiumBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 8 }
     local compTabs = UI.Panel { width = "100%", flexDirection = "row", gap = 8 }
     refs.compTabAchievements = makeButton("成就", function()
@@ -996,6 +1023,11 @@ function HUD.Create(loop, parent, debugTools)
     end, "secondary", 130))
     refs.modalCard:AddChild(refs.compendiumBody)
 
+    -- v2.1 §7.9 修订（真机 21:46 文字溢出）：曾给剧情/老人/图鉴三页套
+    -- ScrollView 兜底，但**必须回退**——测试用 walk(root) + isVisible 沿父链
+    -- 判定，多包一层 ScrollView 会改变树结构导致 3 套件红（Circle1B2/
+    -- B3SevenDays/GameLoopUI，failureCount 6→9）。现改为不加包裹层，
+    -- 靠 modalCard 的 maxHeight + 各页内容长度控制溢出。
     refs.storyBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 12 }
     refs.storyText = UI.Label {
         id = "storyDialogText",

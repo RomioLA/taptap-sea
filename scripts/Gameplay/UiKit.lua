@@ -142,47 +142,61 @@ local UiKit = {
 -- v2.1 §7.9（真机 21:10 反馈"UI 边框会和字重叠，有花纹处不显示字"）：
 -- 实测三张切片的装饰带**紧贴 slice 边界**（内容自边缘 2~3px 即出现，
 -- 非"边缘窄带"而是横向铺满），九宫格拉伸后左右/上下边框几乎贴在 slice 上。
--- 因此规则必须是 **padding ≥ slice + 呼吸位(6)**，否则文字必然压在花纹上。
--- 统一抬到 46/54/34（对应 slice 40/48/28）。
+-- 因此规则是 **padding ≥ slice + 呼吸位(6)**，否则文字必然压在花纹上。
+--
+-- ⚠️ 该规则只适用于**宽度自适应**的卡片（padding 会挤占文字区，但卡片
+-- 随之变宽）。固定尺寸容器（模态卡 width=380/maxHeight=430 等）不适用：
+-- 54×2=108 的留白会吃掉 108px 文字区 + 108px 内容高，导致文字折行、
+-- 内容溢出卡外（真机 21:46 老人对话卡溢出）。固定尺寸容器用
+-- compactPadding（slice+2 的折中），并在 HUD 侧给模态正文容器
+-- 加 maxWidth 上限兜底。
 local CARD_SKINS = {
     panel = {
         image = "image/WatercolorUI/ui_panels/002_865-190.png",
         slice = 40,
-        -- 原 10 → 46：实测切片内容从边缘 2px 即开始（装饰紧贴 slice 边界），
-        -- 故 padding 必须 ≥ slice 才留得住空白（slice=40 + 6 呼吸位）。
+        -- 原 10 → 46：slice=40 + 6 呼吸位。宽度自适应卡（背包/港口）专用。
         padding = 46,
+        -- 固定尺寸容器用（slice+2）：留白够避开花纹，又少占 40px 文字区。
+        compactPadding = 42,
     },
     -- D 案新增：与 plain 同图（004 素面纸），独立档位以便语义化调 padding/slice。
     panelLite = {
         image = "image/WatercolorUI/ui_panels/004_865-577.png",
         slice = 28,
-        -- 原 8 → 34：slice=28 + 6 呼吸位（实测装饰紧贴边界）。
+        -- 原 8 → 34：slice=28 + 6 呼吸位。
         padding = 34,
+        compactPadding = 30,
     },
     parchment = {
         image = "image/WatercolorUI/ui_panels/001_297-191.png",
         slice = 48,
-        -- 原 14 → 54：slice=48 + 6 呼吸位，粗边框需要更大留白。
+        -- 原 14 → 54：slice=48 + 6 呼吸位。**仅用于宽度自适应卡**。
         padding = 54,
+        -- 固定尺寸模态卡用 50：粗边框最宽，50 已能避开花纹。
+        compactPadding = 50,
     },
     plain = {
         image = "image/WatercolorUI/ui_panels/004_865-577.png",
         slice = 28,
         padding = 34,
+        compactPadding = 30,
     },
 }
 
 -- 卡片 Panel props 生成（背景图 + 昼夜衬色兜底 + 纵向布局默认值）。
 -- extra：调用方覆盖/追加布局属性（id/width/position 等），后到者胜。
-function UiKit.cardProps(kind, extra)
+-- compact=true 时用该档的 compactPadding（给固定尺寸容器用，见 CARD_SKINS 注释：
+-- 54 的大留白在 width=380 的模态卡里会吃掉 108px 文字区导致溢出）。
+function UiKit.cardProps(kind, extra, compact)
     local skin = CARD_SKINS[kind] or CARD_SKINS.panel
+    local padding = (compact and skin.compactPadding) or skin.padding
     local props = {
         width = "100%",
         backgroundImage = skin.image,
         backgroundFit = "sliced",
         backgroundSlice = { skin.slice, skin.slice, skin.slice, skin.slice },
         backgroundColor = UiKit.palette.cardDay,
-        padding = skin.padding,
+        padding = padding,
         gap = 7,
         flexDirection = "column",
         borderWidth = 0,
