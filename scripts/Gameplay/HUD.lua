@@ -3,6 +3,7 @@ local UI = require("urhox-libs/UI")
 local Config = require("config.gameplay")
 local Items = require("data.items")
 local Diagnostics = require("Gameplay.Diagnostics")
+local ArtVariants = require("Ocean.ArtVariants")
 
 local HUD = {}
 
@@ -162,6 +163,41 @@ function HUD.Create(loop, parent, debugTools)
         if refs.debugPanel then refs.debugPanel:SetVisible(not refs.debugPanel:IsVisible()) end
     end, "secondary", 92)
     if debugTools and debugTools.enabled == true then header:AddChild(refs.debugToggle) end
+    -- 批2 水彩 HUD（2026-10-07）：状态图标条——体力(苹果)/钱(金币堆)/背包(鱼)。
+    -- 文本状态行原样保留（B 侧 Circle1HUDReviewTests 契约），图标条是增量层；
+    -- 显隐随 ArtVariants（StoryArt 开关）在 refresh 中同步，A/B 一键切换。
+    -- 能力探测：测试桩的 UI 门面无 Sprite 字段时跳过整条（离线回归红基线不变）。
+    if type(UI.Sprite) == "function" then
+        refs.watercolorStrip = UI.Panel {
+            id = "watercolorIconStrip",
+            width = "auto",
+            flexDirection = "row",
+            alignItems = "center",
+            gap = 12,
+            pointerEvents = "box-none",
+        }
+        refs.watercolorValues = {}
+        for _, def in ipairs({
+            { key = "wcStamina", frame = "apple" },
+            { key = "wcMoney", frame = "coins_pile" },
+            { key = "wcBag", frame = "fish" },
+        }) do
+            local slot = UI.Panel {
+                width = "auto", flexDirection = "row", alignItems = "center",
+                gap = 4, pointerEvents = "box-none",
+            }
+            slot:AddChild(UI.Sprite {
+                src = "image/WatercolorUI/resource_icons.json",
+                frame = def.frame, width = 22, height = 22,
+            })
+            local valueLabel = makeLabel("", 12)
+            slot:AddChild(valueLabel)
+            refs.watercolorValues[def.key] = valueLabel
+            refs.watercolorStrip:AddChild(slot)
+        end
+        refs.watercolorStrip:SetVisible(ArtVariants.IsEnabled())
+        header:InsertChild(refs.watercolorStrip, 1)
+    end
     root:AddChild(header)
 
     -- 真机反馈（2026-10-05）：捕鱼弹出框过大遮挡中心小船——压成左上角小卡
@@ -985,6 +1021,21 @@ function HUD.Create(loop, parent, debugTools)
         local inPort = loop.inPort == true
         local items = copyItems(loop)
         local capacity = player.inventory and player.inventory:GetCapacity() or 0
+
+        -- 批2 水彩图标条：显隐随 StoryArt 开关（SeaDebug 面板可切），数值与状态行同源；
+        -- setText 走 lastTexts 去重，静态时零开销。
+        if refs.watercolorStrip then
+            local stripVisible = ArtVariants.IsEnabled()
+            if refs.watercolorStrip:IsVisible() ~= stripVisible then
+                refs.watercolorStrip:SetVisible(stripVisible)
+            end
+            if stripVisible then
+                setText(refs.watercolorValues.wcStamina, "wcStamina",
+                    tostring(player.stamina or 0) .. "/" .. tostring(player.maxStamina or 0))
+                setText(refs.watercolorValues.wcMoney, "wcMoney", tostring(player.money or 0))
+                setText(refs.watercolorValues.wcBag, "wcBag", #items .. "/" .. tostring(capacity))
+            end
+        end
 
         -- 第一行（状态）：天 / 昼夜倒计时 / 体力 / 钱 / 背包 / 模式；暂停态也属于状态，
         -- 直接拼在状态行尾（暂停：port 等），日志行让给事件类信息。
