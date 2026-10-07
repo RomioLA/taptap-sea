@@ -1697,14 +1697,19 @@ function HUD.Create(loop, parent, debugTools)
         -- 本身，不再强制 infoOpen —— 因为"待领渔获"路径可能由逻辑直接置
         -- inventoryOpen（不经背包按钮、没开信息屏），此时仍须能看到提示与
         -- "领取渔获"按钮（GameLoopUISpec 契约）。按钮路径会顺带打开信息屏。
-        refs.inventoryPanel:SetVisible(showInventory)
+        -- v2.1 §7.13：三卡互斥——老人对话优先于背包。
+        -- 注意：showElder 在下方（约 1879 行）才定义，此处不能引用（取到 nil）。
+        -- 用同源条件就地计算 elderActive，避免定义顺序依赖。
+        local elderActive = loop.elderOpen == true
+        refs.inventoryPanel:SetVisible(showInventory and not elderActive)
         -- 抽屉壳（gameplayInventoryDrawer + 压暗层）保留但不再显示：
         -- 契约要求该节点存在于 root 倒数第二位，见 Circle1B3SceneUITests。
         refs.drawer:SetVisible(false)
         refs.drawerBackdrop:SetVisible(false)
         refs.inventoryClose:SetVisible(true)
         refs.inventoryClose:SetDisabled(busy or loop.loading == true)
-        refs.portPanel:SetVisible(inPort)
+        -- v2.1 §7.13：三卡互斥——老人 > 背包 > 商店。
+        refs.portPanel:SetVisible(inPort and not elderActive and not showInventory)
         -- 港口提示已并入左上角日志槽（见 refresh 开头的 logSlot 逻辑），不再单独占行。
         -- loadSaved/newRun 已移入信息屏（portPanel 段），显隐随 infoOpen。
         refs.loadSaved:SetText(loop.loadStatus == "error" and "重试读取" or "读取云存档")
@@ -1933,6 +1938,15 @@ function HUD.Create(loop, parent, debugTools)
         refs.settlementBody:SetVisible(showSettlement)
         refs.endingBody:SetVisible(showEnding)
         refs.storyBody:SetVisible(showStory or showOpening)
+        -- v2.1 §7.13（用户 23:48「三个显示均独占，滚动屏不一起显示」）：
+        -- 滚动屏三卡改为互斥，同一时刻只显示一张，避免并排挤占海面视野。
+        -- 优先级：老人 > 背包 > 商店（后两者由下面的赋值再压制）。
+        -- 契约核对（互斥后仍成立）：
+        --  ① Circle1B2UITests:244-247 老人态找"展示"×2 → 由 elderGiftRows
+        --    独立构建的礼物行提供（每行 Label "01 · 名" + Button 展示/给予）；
+        --  ② Circle1B3SevenDaysTests:334 clickInventoryRowButton 找
+        --    "01 · "前缀行 + "给予" → 同样匹配礼物行格式。
+        --  ③ GameLoopUISpec:82-84 "结束对话"在老人卡内，不受影响。
         refs.elderPanel:SetVisible(showElder)
         refs.compendiumBody:SetVisible(showCompendium)
         -- 图鉴入口只在暂停态出现（避免海上误触打断操作）；页打开后入口隐藏。
