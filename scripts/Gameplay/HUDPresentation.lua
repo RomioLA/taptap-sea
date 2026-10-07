@@ -266,8 +266,8 @@ function Presentation.Create(UI, Config, Items)
         return line
     end
 
-    local function makeButton(text, onClick, variant, width)
-        return UI.Button {
+    local function makeButton(text, onClick, variant, width, extraProps)
+        local props = {
             text = text,
             variant = variant or "secondary",
             width = width or "auto",
@@ -277,6 +277,12 @@ function Presentation.Create(UI, Config, Items)
             fontSize = 13,
             onClick = function() onClick() end,
         }
+        -- 批3b 水彩底板换肤（v2.0 §7.2）：extraProps 由宿主注入（皮肤令牌来自
+        -- DialogueStyle），本模块保持无依赖设计；缺省时完全等价原行为。
+        if extraProps then
+            for key, value in pairs(extraProps) do props[key] = value end
+        end
+        return UI.Button(props)
     end
 
     -- 淡入辅助：真机 urhox Widget 支持 SetOpacity（transition 驱动），

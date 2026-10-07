@@ -19,7 +19,36 @@ local Style = {
     card = { backgroundColor = { 45, 64, 61, 220 }, borderRadius = 8, padding = 10 },
     -- 教学/引导行统一前缀：一眼可辨"这是教学不是剧情"（圈2 决策 A6 配套）。
     teachMark = "※ ",
+    -- 批3b 按钮水彩底板（v2.0 §7.2/§7.5 D5）：button_states 药丸底板三态，
+    -- sliced 九宫格拉伸（源图约 789×191，四边 40px 圆头）；浅底深棕字。
+    button = {
+        slice = { 40, 40, 40, 40 },
+        textColor = { 74, 54, 32, 255 },
+        primary = {
+            normal = "image/WatercolorUI/button_states/006_447-631.png",  -- pill_gold
+            pressed = "image/WatercolorUI/button_states/002_446-137.png", -- pill_cream
+        },
+        secondary = {
+            normal = "image/WatercolorUI/button_states/002_446-137.png",  -- pill_cream
+            pressed = "image/WatercolorUI/button_states/004_444-384.png", -- pill_gray
+            disabled = "image/WatercolorUI/button_states/004_444-384.png",
+        },
+    },
 }
+
+-- 按钮皮肤 props 生成；无皮肤定义时返回 nil（调用方回退默认样式）。
+function Style.buttonProps(variant)
+    local skin = Style.button and (Style.button[variant] or Style.button.secondary)
+    if not skin then return nil end
+    return {
+        textColor = Style.button.textColor,
+        backgroundFit = "sliced",
+        backgroundSlice = Style.button.slice,
+        backgroundImage = skin.normal,
+        pressedBackgroundImage = skin.pressed,
+        disabledBackgroundImage = skin.disabled,
+    }
+end
 
 -- 教学行统一前缀处理；多行文本每行都加前缀。
 function Style.teachingText(text)

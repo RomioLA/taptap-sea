@@ -62,6 +62,12 @@ local modeText = presentation.modeText
 local makeInfoLabel = presentation.makeInfoLabel
 local infoLine = presentation.infoLine
 local makeButton = presentation.makeButton
+-- 批3b 水彩按钮底板（v2.0 §7.2）：外包一层注入皮肤 props，不改 presentation
+-- 的无依赖设计；DialogueStyle 无皮肤定义时 buttonProps 返回 nil，等价原行为。
+local plainMakeButton = makeButton
+makeButton = function(text, onClick, variant, width)
+    return plainMakeButton(text, onClick, variant, width, DialogueStyle.buttonProps(variant))
+end
 local fadeOpacity = presentation.fadeOpacity
 local OPENING_ELDER_TEXT = presentation.OPENING_ELDER_TEXT
 local INFO_FLEX = presentation.INFO_FLEX
@@ -94,6 +100,12 @@ function HUD.Create(loop, parent, debugTools)
         openingDismissedGeneration = nil,
         openingActive = false,
         openingGeneration = nil,
+        -- 图鉴/成就页（v2.0 §7.4）：暂停态才可开；tab="achievements"|"marine"。
+        compendiumOpen = false,
+        compendiumTab = "achievements",
+        compendiumBuiltTab = nil,
+        compendiumRowsDirty = false,
+        achievementToastUntil = nil,
     }
     ---@type table<string, any>
     local refs = {}
@@ -293,8 +305,16 @@ function HUD.Create(loop, parent, debugTools)
         state.infoOpen = not (state.infoOpen == true)
         refresh()
     end, "secondary", 72)
+    -- 图鉴/成就入口（v2.0 §7.4）：仅暂停态可见（refresh 控制），页壳走模态层。
+    refs.compendiumToggle = makeButton("图鉴", function()
+        state.compendiumOpen = not (state.compendiumOpen == true)
+        state.compendiumRowsDirty = true
+        refresh()
+    end, "secondary", 72)
+    refs.compendiumToggle:SetVisible(false)
     -- 单行顺序：信息开合 → 情境按钮 → 核心动作（出航/返港/结束今日/捕鱼）。
     dock:AddChild(refs.infoToggle)
+    dock:AddChild(refs.compendiumToggle)
     dock:AddChild(refs.barrelToggle)
     dock:AddChild(refs.scopeToggleBar)
     dock:AddChild(refs.inventoryToggle)
@@ -862,6 +882,38 @@ function HUD.Create(loop, parent, debugTools)
     refs.elderBody:AddChild(makeButton("结束对话", function() invokeLoop("SetElderOpen", false) end, "secondary", 104))
     refs.modalCard:AddChild(refs.elderBody)
 
+    -- 成就/图鉴页壳（v2.0 §7.4）：仅在暂停态可开（圈2 决策：图鉴只在暂停界面查）。
+    -- 成就页=6 条最小集桩；图鉴页=marine_life 8 水彩图标（发现状态待知识层接入）。
+    refs.compendiumBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 8 }
+    local compTabs = UI.Panel { width = "100%", flexDirection = "row", gap = 8 }
+    refs.compTabAchievements = makeButton("成就", function()
+        if state.compendiumTab ~= "achievements" then
+            state.compendiumTab = "achievements"
+            state.compendiumRowsDirty = true
+            refresh()
+        end
+    end, "secondary", 84)
+    refs.compTabMarine = makeButton("图鉴", function()
+        if state.compendiumTab ~= "marine" then
+            state.compendiumTab = "marine"
+            state.compendiumRowsDirty = true
+            refresh()
+        end
+    end, "secondary", 84)
+    compTabs:AddChild(refs.compTabAchievements)
+    compTabs:AddChild(refs.compTabMarine)
+    refs.compendiumBody:AddChild(compTabs)
+    refs.compList = UI.Panel { width = "100%", flexDirection = "column", gap = 6 }
+    refs.compendiumBody:AddChild(UI.ScrollView {
+        width = "100%", flexGrow = 1, flexBasis = 0, scrollY = true, showScrollbar = true,
+        children = { refs.compList },
+    })
+    refs.compendiumBody:AddChild(makeButton("返回游戏", function()
+        state.compendiumOpen = false
+        refresh()
+    end, "secondary", 130))
+    refs.modalCard:AddChild(refs.compendiumBody)
+
     refs.storyBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 12 }
     refs.storyText = UI.Label {
         id = "storyDialogText",
@@ -1096,6 +1148,52 @@ function HUD.Create(loop, parent, debugTools)
         end
         if saleCount == 0 then addEmptyMessage(refs.portSales, "没有可出售的鱼。先去捕点鱼，再返港出售。") end
         if giftCount == 0 then addEmptyMessage(refs.elderGiftRows, "没有可给予或展示的物品。") end
+    end
+
+    -- 图鉴/成就页行构建（v2.0 §7.4）：开页或切 tab 时重建一次，不在每帧执行。
+    local MARINE_NAMES = {
+        ray = "鳐鱼", octopus = "章鱼", jellyfish = "水母", turtle = "海龟",
+        shark = "鲨鱼", tuna = "金枪鱼", dolphin = "海豚", mackerel = "鲭鱼",
+    }
+    local function buildCompendiumRows(tab)
+        if not refs.compList then return end
+        destroyChildren(refs.compList)
+        if tab == "marine" then
+            for _, frame in ipairs({ "ray", "octopus", "jellyfish", "turtle", "shark", "tuna", "dolphin", "mackerel" }) do
+                local row = UI.Panel { width = "100%", flexDirection = "row", alignItems = "center", gap = 8 }
+                if type(UI.Sprite) == "function" then
+                    row:AddChild(UI.Sprite {
+                        src = "image/WatercolorUI/marine_life.json",
+                        frame = frame, width = 26, height = 26,
+                    })
+                end
+                local info = UI.Panel { width = "auto", flexDirection = "column", gap = 2 }
+                info:AddChild(makeLabel(MARINE_NAMES[frame] or frame, DialogueStyle.fontSize.body))
+                info:AddChild(makeLabel("发现记录待接入（圈2 知识层）", DialogueStyle.fontSize.teaching, DialogueStyle.color.dim))
+                row:AddChild(info)
+                refs.compList:AddChild(row)
+            end
+        else
+            for _, def in ipairs(Achievements.Definitions()) do
+                local isUnlocked = Achievements.IsUnlocked(def.id)
+                local row = UI.Panel { width = "100%", flexDirection = "row", alignItems = "center", gap = 8 }
+                if type(UI.Sprite) == "function" then
+                    row:AddChild(UI.Sprite {
+                        src = "image/WatercolorUI/button_states.json",
+                        frame = isUnlocked and "circle_gold" or "circle_gray",
+                        width = 26, height = 26,
+                    })
+                end
+                local info = UI.Panel { width = "auto", flexDirection = "column", gap = 2 }
+                info:AddChild(makeLabel(
+                    def.name .. (isUnlocked and " · 已解锁" or ""),
+                    DialogueStyle.fontSize.body,
+                    isUnlocked and DialogueStyle.color.teaching or DialogueStyle.color.body))
+                info:AddChild(makeLabel(def.desc, DialogueStyle.fontSize.teaching, DialogueStyle.color.dim))
+                row:AddChild(info)
+                refs.compList:AddChild(row)
+            end
+        end
     end
 
     refresh = function()
@@ -1636,14 +1734,23 @@ function HUD.Create(loop, parent, debugTools)
             and not showEnding and not showStory and not showElder and loop.inventoryOpen ~= true
         state.openingActive = showOpening
         if showOpening then state.openingGeneration = loop.generation end
+        -- 图鉴/成就页（§7.4）：暂停态才可开；任何玩法模态优先；未暂停自动收起。
+        local worldPaused = clockState.paused == true or #reasons > 0
+        local showCompendium = state.compendiumOpen == true and worldPaused
+            and not showEntry and not pendingCatch and not showForced and not showSettlement
+            and not showEnding and not showStory and not showElder and not showOpening
+        if state.compendiumOpen == true and not showCompendium then
+            state.compendiumOpen = false
+        end
         local overlayShown = showEntry or showForced or showSettlement or showStory or showElder
-            or showEnding or showOpening
+            or showEnding or showOpening or showCompendium
         refs.overlay:SetVisible(overlayShown)
         fadeOpacity(refs.modalCard, overlayShown and 1 or 0)
         local storyTitle = storyDialog and storyDialog.kind == "elder" and "海岸边的老人" or "纸条"
         local overlayTitle = showEntry and "云存档" or showForced and "夜晚返港"
             or (showSettlement and "每日结算" or (showOpening and "海岸边的老人")
-            or (showEnding and "第 7 天 · 结局" or (showStory and storyTitle or (showElder and "拜访老人" or ""))))
+            or (showEnding and "第 7 天 · 结局" or (showStory and storyTitle
+            or (showElder and "拜访老人" or (showCompendium and "图鉴 · 成就" or "")))))
         setText(refs.modalTitle, "modalTitle", overlayTitle)
         refs.entryBody:SetVisible(showEntry)
         if showEntry then
@@ -1669,6 +1776,19 @@ function HUD.Create(loop, parent, debugTools)
         refs.endingBody:SetVisible(showEnding)
         refs.storyBody:SetVisible(showStory or showOpening)
         refs.elderBody:SetVisible(showElder)
+        refs.compendiumBody:SetVisible(showCompendium)
+        -- 图鉴入口只在暂停态出现（避免海上误触打断操作）；页打开后入口隐藏。
+        refs.compendiumToggle:SetVisible(worldPaused and not overlayShown and not pendingCatch)
+        if showCompendium then
+            local activeTab = state.compendiumTab or "achievements"
+            refs.compTabAchievements:SetText(activeTab == "achievements" and "成就 ●" or "成就")
+            refs.compTabMarine:SetText(activeTab == "marine" and "图鉴 ●" or "图鉴")
+            if state.compendiumBuiltTab ~= activeTab or state.compendiumRowsDirty == true then
+                buildCompendiumRows(activeTab)
+                state.compendiumBuiltTab = activeTab
+                state.compendiumRowsDirty = false
+            end
+        end
 
         if showEnding then
             -- [PLACEHOLDER] 结局占位文案；正式版按 Q-006 由 B 侧内容生产替换。
