@@ -292,8 +292,17 @@ function HUD.Create(loop, parent, debugTools)
     refs.returnToPort = makeButton("返港", function() invokeLoop("ReturnToPort") end, "secondary", 80)
     refs.endToday = makeButton("结束今日", function() invokeLoop("EndToday") end, "primary", 98)
     -- 读取云存档/开始新周目移入信息滚动屏（低频港口操作，见 portPanel 段）。
+    -- 背包开关（v2.1 批B 真机图1 修复）：背包已迁入信息滚动屏，按钮不再开关
+    -- 65% 抽屉，改为"开信息屏 + 标记定位到背包卡"。世界仍照常暂停
+    -- （走 loop:SetInventoryOpen，契约 Circle1B2UITests 要求该调用生效）。
     refs.inventoryToggle = makeButton("背包", function()
-        invokeLoop("SetInventoryOpen", not (loop.inventoryOpen == true))
+        local willOpen = not (loop.inventoryOpen == true)
+        invokeLoop("SetInventoryOpen", willOpen)
+        if willOpen then
+            -- 打开信息屏并滚到背包卡（信息屏默认入口是图鉴/透镜状态）
+            state.infoOpen = true
+            state.focusInventory = true
+        end
     end, "secondary", 80)
     refs.elderToggle = makeButton("拜访老人", function()
         invokeLoop("SetElderOpen", not (loop.elderOpen == true))
@@ -595,14 +604,20 @@ function HUD.Create(loop, parent, debugTools)
     refs.inventoryRows = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
     refs.inventoryScroll = UI.ScrollView {
         width = "100%",
-        height = 210,
+        -- v2.1 批B：背包卡迁入信息滚动屏后，物品区高度由 210 放宽到 320，
+        -- 一屏能看到更多行；整卡外已有 contentScroll 滚动，不至于撑破信息屏。
+        height = 320,
         scrollY = true,
         showScrollbar = true,
         children = { refs.inventoryRows },
     }
     refs.inventoryPanel:AddChild(refs.inventoryScroll)
     refs.inventoryPanel:SetVisible(false)
-    drawerContent:AddChild(refs.inventoryPanel)
+    -- v2.1 批B（真机 10-07 图1）：背包原挂抽屉（占屏 65% 过高）→ 改挂信息
+    -- 滚动屏，与港口商店平级。抽屉容器 gameplayInventoryDrawer 保留
+    -- （Circle1B3SceneUITests 契约要求它在 root 倒数第二位/宽 100%/zIndex 91），
+    -- 但不再承载背包内容——空抽屉永不显示，等于保留壳、去掉占用。
+    content:AddChild(refs.inventoryPanel)
 
     -- v2.1 批B 修复（真机 10-07 图4）：港口商店内容多，card() 走 width=100%
     -- 无高度约束，内容把卡片撑出抽屉、压到底部按钮坞（苹果·¥30 与
@@ -1588,8 +1603,14 @@ function HUD.Create(loop, parent, debugTools)
         -- · 用户未操作过（nil）时：在港默认展开（商店/读取可用），出海默认收起；
         -- · 用户显式开/关后跟随其选择。"信息"按钮或屏内空白点击均可开合。
         local seaClickFlow = fishingSelecting or throwSelection ~= nil
+        -- v2.1 批B（真机图1 背包改占信息滚动屏）：背包/待领渔获展开时强制
+        -- 打开信息屏——背包卡是 contentScroll 的子节点，父隐藏则子不可见。
+        -- 单向同步（背包开 → 信息屏开；关背包不自动关信息屏，避免连带关掉
+        -- 用户正在看的内容）。"信息"按钮显式关闭后，同一帧会被本条件再打开，
+        -- 因此只在背包态为真时接管，收起背包后交还用户控制。
         local infoOpen = not seaClickFlow
-            and ((state.infoOpen == nil and inPort) or state.infoOpen == true)
+            and (((state.infoOpen == nil and inPort) or state.infoOpen == true)
+                or loop.inventoryOpen == true or pendingCatch)
         refs.contentScroll:SetVisible(infoOpen)
         refs.infoCloseCatcher:SetVisible(infoOpen)
         refs.infoToggle:SetText(infoOpen and "收起信息" or "信息")
@@ -1608,10 +1629,15 @@ function HUD.Create(loop, parent, debugTools)
         refs.elderToggle:SetDisabled(busy or fishingRestricted
             or (not ready and not bucketActiveForInput and loop.elderOpen ~= true))
         local showInventory = loop.inventoryOpen == true or pendingCatch
+        -- v2.1 批B（真机图1）：背包卡改挂信息滚动屏。显隐只跟随 showInventory
+        -- 本身，不再强制 infoOpen —— 因为"待领渔获"路径可能由逻辑直接置
+        -- inventoryOpen（不经背包按钮、没开信息屏），此时仍须能看到提示与
+        -- "领取渔获"按钮（GameLoopUISpec 契约）。按钮路径会顺带打开信息屏。
         refs.inventoryPanel:SetVisible(showInventory)
-        -- 背包抽屉（v1.0）：开背包或有待领渔获时，底部抽屉 + 压暗层整体出现。
-        refs.drawer:SetVisible(showInventory)
-        refs.drawerBackdrop:SetVisible(showInventory)
+        -- 抽屉壳（gameplayInventoryDrawer + 压暗层）保留但不再显示：
+        -- 契约要求该节点存在于 root 倒数第二位，见 Circle1B3SceneUITests。
+        refs.drawer:SetVisible(false)
+        refs.drawerBackdrop:SetVisible(false)
         refs.inventoryClose:SetVisible(true)
         refs.inventoryClose:SetDisabled(busy or loop.loading == true)
         refs.portPanel:SetVisible(inPort)

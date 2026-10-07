@@ -67,20 +67,61 @@ local UiKit = {
     -- 教学行统一前缀：一眼可辨"这是教学不是剧情"（圈2 决策 A6 配套）。
     teachMark = "※ ",
 
-    -- 批3b 按钮水彩底板（v2.0 §7.2/§7.5 D5）：button_states 药丸底板三态，
-    -- sliced 九宫格拉伸（源图约 789×191，四边 40px 圆头）；浅底深棕字。
+    -- 按钮皮肤（v2.1 批B 全面重绘，真机 10-07 图2 反馈"按钮在海面场景最花"）：
+    -- 旧版用 button_states 药丸贴图（米白纸纹 + 棕细描边 + 边缘毛糙），在
+    -- 60~90px 宽的小按钮上毛边被压变形、多个按钮挤在一起时糊成一团
+    -- （"成就 ●"/"图鉴 ●"/"返回游戏" 不可读）。根因是贴图九宫格拉伸后
+    -- 描边不均匀、无法在任意尺寸保持精致。
+    -- 新方案（A 案）：改为 NanoVG 直接绘制的**清透纯色底 + 1px 精致边框**，
+    -- 任意尺寸不变形、任意底色都干净、零素材成本。保留水彩手作感的方式：
+    -- textGlow/底色留出极淡纸纹叠加（paperOverlay，可关）。
+    -- 配色语义：primary=主操作青绿 / secondary=清透米白 / danger=警示珊瑚 /
+    -- success=成功青 / warning=警示金；disabled 统一降透明度。
     button = {
-        slice = { 40, 40, 40, 40 },
-        textColor = { 74, 54, 32, 255 },
+        -- 统一描边：1px 墨棕半透明，细而均匀（贴图描边做不到这一点）
+        borderColor = { 74, 54, 32, 72 },
+        borderWidth = 1,
+        -- 药丸圆角（与旧贴图观感一致），高度由 size 令牌兜底 ≥44px
+        radius = 20,
+        -- 主操作：青绿实底 + 白字
         primary = {
-            normal = "image/WatercolorUI/button_states/006_447-631.png",  -- pill_gold
-            pressed = "image/WatercolorUI/button_states/002_446-137.png", -- pill_cream
+            normal = { 15, 110, 86, 205 },
+            pressed = { 8, 80, 65, 225 },
+            text = { 255, 255, 255, 255 },
         },
+        -- 次操作：清透米白 + 墨棕字（海面上最清爽的一档）
         secondary = {
-            normal = "image/WatercolorUI/button_states/002_446-137.png",  -- pill_cream
-            pressed = "image/WatercolorUI/button_states/004_444-384.png", -- pill_gray
-            disabled = "image/WatercolorUI/button_states/004_444-384.png",
+            normal = { 255, 252, 244, 168 },
+            pressed = { 246, 233, 208, 210 },
+            text = { 74, 54, 32, 255 },
         },
+        -- 危险/取消：珊瑚
+        danger = {
+            normal = { 190, 78, 40, 205 },
+            pressed = { 153, 60, 29, 225 },
+            text = { 255, 255, 255, 255 },
+        },
+        -- 成功：深青（比 primary 略亮，用于"领取/确认"类正向反馈）
+        success = {
+            normal = { 29, 158, 117, 205 },
+            pressed = { 15, 110, 86, 225 },
+            text = { 255, 255, 255, 255 },
+        },
+        -- 警告：暖金（"缺少图纸"类提示）
+        warning = {
+            normal = { 186, 117, 23, 205 },
+            pressed = { 133, 79, 11, 225 },
+            text = { 255, 252, 244, 255 },
+        },
+        disabled = {
+            normal = { 160, 152, 140, 120 },
+            text = { 240, 236, 228, 190 },
+        },
+        -- 极淡水彩纸纹叠加（保留手作感）：用 panelLite 素面纸当 overlay，
+        -- alpha 极低（~28/255）只留纸纹不显花纹；不想要可设 paperOverlay=false。
+        paperOverlay = "image/WatercolorUI/ui_panels/004_865-577.png",
+        paperOverlayAlpha = 28,
+        paperOverlaySlice = 28,
     },
 
     -- 旧对白卡纯色参数（兼容 DialogueStyle.card 旧引用；新代码用 cardProps）。
@@ -163,18 +204,34 @@ function UiKit.text(kind, role, phase)
 end
 
 -- 按钮皮肤 props 生成；无皮肤定义时返回 nil（调用方回退默认样式）。
+-- v2.1 批B：已从"贴图三态"改为"纯色 + 1px 边框"（见 button 令牌注释）。
+-- 属性名以 urhox-libs/UI/Widgets/Button.lua 的 ButtonProps 为准：
+--   三态背景色 = backgroundColor / pressedBackgroundColor / disabledBackgroundColor
+--   边框 = 通用 borderColor + borderWidth / pressedBorderWidth
+--   （引擎从 pressedBackgroundColor 自动派生 hover，故不必显式给 hover）。
 -- 兼容 DialogueStyle.buttonProps 旧签名（primary/secondary/其他→secondary）。
 function UiKit.buttonProps(variant)
-    local skin = UiKit.button and (UiKit.button[variant] or UiKit.button.secondary)
-    if not skin then return nil end
-    return {
-        textColor = UiKit.button.textColor,
-        backgroundFit = "sliced",
-        backgroundSlice = UiKit.button.slice,
-        backgroundImage = skin.normal,
-        pressedBackgroundImage = skin.pressed,
-        disabledBackgroundImage = skin.disabled,
+    local b = UiKit.button
+    if not b then return nil end
+    local skin = b[variant] or b.secondary
+    if not skin or not skin.normal then return nil end
+    local bw = b.borderWidth or 1
+    local props = {
+        backgroundColor = skin.normal,
+        pressedBackgroundColor = skin.pressed or skin.normal,
+        borderColor = b.borderColor,
+        borderWidth = bw,
+        pressedBorderWidth = bw,
+        borderRadius = b.radius or 20,
+        textColor = skin.text or b.secondary.text,
+        pressedTextColor = skin.text or b.secondary.text,
     }
+    -- 禁用态：引擎按 disabledBackgroundColor / disabledTextColor 键
+    if b.disabled then
+        props.disabledBackgroundColor = b.disabled.normal
+        props.disabledTextColor = b.disabled.text
+    end
+    return props
 end
 
 -- 教学行统一前缀处理；多行文本每行都加前缀。
