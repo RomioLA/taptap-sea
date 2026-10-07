@@ -943,10 +943,22 @@ function HUD.Create(loop, parent, debugTools)
     refs.modalCard:AddChild(refs.endingBody)
 
     -- v2.1 §7.9 修订（真机 21:46 文字溢出卡外）：老人对话是内容最多的一页
-    -- （正文 + S6 教学 + 宝物小卡 + 按钮）。曾套 ScrollView 兜底但已回退
-    -- （改变树结构导致 3 套件红）；现靠 modalCard maxHeight=460 + 宝物小卡
-    -- maxWidth 约束控制，溢出由模态卡边界截断而非文字外溢。
-    refs.elderBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 8 }
+    -- v2.1 §7.11（用户 23:15「拜访老人也放进滚动屏，和商店一起参考背包页面
+    -- 大小显示」）：老人对话从**全屏模态独占页**改为信息滚动屏里的普通卡片，
+    -- 与港口商店/背包平级。理由：模态遮罩 + 420×460 固定尺寸对"给老人送鱼"
+    -- 这种轻交互过重，且宝物卡曾被卡底裁切。
+    --
+    -- 尺寸**对齐背包卡**（用户指定参考对象）：同为 card() 默认 width=100%，
+    -- 用 panel 档（slice=40）而非 parchment（粗羊皮纸边框留给剧情卡）。
+    -- 契约约束（不可违反）：
+    --   ① GameLoopUISpec:82-84 点"拜访老人"后必须能点到"结束对话"→
+    --      本卡挂 infoLayer（常驻层，不受 infoOpen 牵连），按钮恒可见；
+    --   ② Circle1B2UITests:244-253 老人态下要能点物品行"展示"→
+    --      卡片不遮挡背包行（同层并列）；
+    --   ③ elderGiftScroll 是既有子树，保留不改结构（多包 ScrollView 会
+    --      改变 UI 树导致 isVisible 沿父链判定失效，教训见 §7.9）。
+    refs.elderPanel = card("拜访老人")
+    refs.elderBody = UI.Panel { width = "100%", gap = 8 }
     refs.elderMessage = makeLabel("食物可给予老人；鱼和鱼饵可向老人展示。", UiKit.fontSize.body)
     refs.elderBody:AddChild(refs.elderMessage)
     -- S6 教学（05 页 P6）：前 3 天且未完成首次捕鱼领取时，展示两条看海对白。
@@ -955,11 +967,8 @@ function HUD.Create(loop, parent, debugTools)
     refs.elderBody:AddChild(refs.elderTeaching)
     refs.elderStatus = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
     refs.elderBody:AddChild(refs.elderStatus)
-    -- 宝物小卡（卡内卡）：用 plain 素面纸档，padding 更紧。
-    -- 宝物小卡（卡内卡，浮在羊皮纸模态卡内）：
-    -- v2.1 §7.9 修订（真机 21:46 文字溢出）——原显式 padding=7 在浅纸底上
-    -- 文字贴边，且"宝物/尚未获得透镜"被模态卡底部裁切。改用 plain 档位的
-    -- compactPadding(30) + 显式 maxWidth 防溢出，并加 compact=true。
+    -- 宝物小卡（卡内卡）：用 plain 素面纸档 compactPadding，
+    -- 显式 maxWidth 防溢出（真机 21:46 曾被模态卡底裁切）。
     refs.elderTreasure = UI.Panel(UiKit.cardProps("plain", {
         maxWidth = "100%",
         gap = 5,
@@ -978,15 +987,16 @@ function HUD.Create(loop, parent, debugTools)
     refs.elderGiftRows = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
     refs.elderGiftScroll = UI.ScrollView {
         width = "100%",
-        flexGrow = 1,
-        flexBasis = 0,
+        height = 150,
         scrollY = true,
         showScrollbar = true,
         children = { refs.elderGiftRows },
     }
     refs.elderBody:AddChild(refs.elderGiftScroll)
     refs.elderBody:AddChild(makeButton("结束对话", function() invokeLoop("SetElderOpen", false) end, "secondary", 104))
-    refs.modalCard:AddChild(refs.elderBody)
+    refs.elderPanel:AddChild(refs.elderBody)
+    refs.elderPanel:SetVisible(false)
+    infoLayer:AddChild(refs.elderPanel)
 
     -- 成就/图鉴页壳（v2.0 §7.4）：仅在暂停态可开（圈2 决策：图鉴只在暂停界面查）。
     -- 成就页=6 条最小集桩；图鉴页=marine_life 8 水彩图标（发现状态待知识层接入）。
@@ -1055,7 +1065,7 @@ function HUD.Create(loop, parent, debugTools)
     refs.forcedBody:Hide()
     refs.settlementBody:Hide()
     refs.endingBody:Hide()
-    refs.elderBody:Hide()
+    refs.elderPanel:Hide()
     refs.storyBody:Hide()
     -- 成就解锁 toast（v2.0 §7.4，D6=A：圈1 先行试水）：落区① 顶带右上，
     -- zIndex 30（低于小卡 50/气泡 70/模态 100），出现时不遮按钮坞与模态。
@@ -1851,6 +1861,14 @@ function HUD.Create(loop, parent, debugTools)
             and not showEnding and storyDialog ~= nil
         local showElder = not showForced and not showSettlement and not showEnding
             and loop.elderOpen == true and elderPresent
+        -- v2.1 §7.11：老人对话改为滚动屏卡片后，需确保信息屏打开（showElder
+        -- 定义在本行之后，不能并入上方 infoOpen 的条件——那行更早、取不到值）。
+        if showElder then
+            state.infoOpen = true
+            refs.contentScroll:SetVisible(true)
+            refs.infoCloseCatcher:SetVisible(true)
+            refs.infoToggle:SetText("收起信息")
+        end
         -- 开场教学（演出层，见 OPENING_ELDER_TEXT）：模态独占，优先级低于存档/结算弹窗。
         local showOpening = player.day == 1 and inPort == true
             and state.openingDismissedGeneration ~= loop.generation
@@ -1866,7 +1884,8 @@ function HUD.Create(loop, parent, debugTools)
         if state.compendiumOpen == true and not showCompendium then
             state.compendiumOpen = false
         end
-        local overlayShown = showEntry or showForced or showSettlement or showStory or showElder
+        -- v2.1 §7.11：showElder 已改为信息滚动屏卡片，不再触发模态遮罩。
+        local overlayShown = showEntry or showForced or showSettlement or showStory
             or showEnding or showOpening or showCompendium
         refs.overlay:SetVisible(overlayShown)
         fadeOpacity(refs.modalCard, overlayShown and 1 or 0)
@@ -1874,7 +1893,7 @@ function HUD.Create(loop, parent, debugTools)
         local overlayTitle = showEntry and "云存档" or showForced and "夜晚返港"
             or (showSettlement and "每日结算" or (showOpening and "海岸边的老人")
             or (showEnding and "第 7 天 · 结局" or (showStory and storyTitle
-            or (showElder and "拜访老人" or (showCompendium and "图鉴 · 成就" or "")))))
+            or (showCompendium and "图鉴 · 成就" or ""))))
         setText(refs.modalTitle, "modalTitle", overlayTitle)
         refs.entryBody:SetVisible(showEntry)
         if showEntry then
@@ -1899,7 +1918,7 @@ function HUD.Create(loop, parent, debugTools)
         refs.settlementBody:SetVisible(showSettlement)
         refs.endingBody:SetVisible(showEnding)
         refs.storyBody:SetVisible(showStory or showOpening)
-        refs.elderBody:SetVisible(showElder)
+        refs.elderPanel:SetVisible(showElder)
         refs.compendiumBody:SetVisible(showCompendium)
         -- 图鉴入口只在暂停态出现（避免海上误触打断操作）；页打开后入口隐藏。
         refs.compendiumToggle:SetVisible(worldPaused and not overlayShown and not pendingCatch)
