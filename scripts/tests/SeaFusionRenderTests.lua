@@ -77,8 +77,9 @@ local function wrapArtMethod(calls, originals, name, key, recorder)
     Art[name] = function(...)
         calls[key] = (calls[key] or 0) + 1
         if name == "Boat" and calls.expectedBoatTint ~= nil then
+            -- T5：夜罩在世界实体（含船）之后统一染色——画船时夜罩必须还未出现。
             assert(recorder.countFillColor(table.unpack(Config.visual.nightOverlay)) == calls.expectedBoatTint,
-                "night tint must be drawn before the boat, and removed in daytime")
+                "night tint must be drawn after the boat, and removed in daytime")
         end
         return original(...)
     end
@@ -200,7 +201,8 @@ function Tests.Run(recorder)
         clock:Pause("inventory")
         local elapsed = clock.elapsed
         local nightColor = Config.visual.nightOverlay
-        local expectedTintCount = 1
+        -- T5：夜罩在船后 → 画船时夜罩色尚未出现（0 次）。
+        local expectedTintCount = 0
         calls.expectedBoatTint = expectedTintCount
         recorder.reset()
         local beforeNight = snapshot(runtime)

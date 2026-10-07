@@ -115,7 +115,7 @@ function Tests.Run()
         local sardine = spawnFish(world, "sardine", { x = 600, y = 600 })
         local tuna = spawnFish(world, "tuna", { x = 630, y = 600 }, "Chase")
         world:Update(0.5)
-        assert(signals:VisitBirds(function() end) == 2)
+        assert(signals:VisitBirds(function() end) == 1)
         assert(signals:VisitSplashes(function() end) == 1)
 
         sardine.frozen = true

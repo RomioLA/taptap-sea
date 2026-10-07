@@ -277,9 +277,9 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
     local horizon = movement:GetHorizonY()
     Art.Backdrop(ctx, width, height, time)
     Art.Surface(ctx, movement, time)
-    -- Tint the water/sky before projected objects; depth ordering, ship and UI
-    -- stay legible. Rendering only reads the authoritative clock.
-    if clock and clock.phase == "night" then Draw.NightOverlay(ctx, width, height, clock) end
+    -- T5（2026-10-06 美术审核确认）：昼夜色罩移到世界实体之后统一染色——
+    -- 旧层级（实体前）导致 PNG 船/岛/木桶等贴图实体夜间不被染暗。
+    -- 层级：天空海面 → 世界实体 → 昼夜罩 → 雾/港口标记/功能信号（保持可读）。
     nvgSave(ctx)
     Atmosphere.CloudShadows(ctx, movement, time, runtime.daySeed)
     local flags, entities = runtime.debug or Config.debug, nearbyEntities(runtime)
@@ -338,6 +338,8 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
             end)
         end
     end
+    -- T5：世界实体（岛/船/木桶/浮标/海鸟）绘制完毕后统一染夜色。
+    if clock and clock.phase == "night" then Draw.NightOverlay(ctx, width, height, clock) end
     Atmosphere.Fog(ctx, movement, time, runtime.daySeed)
     drawPortMark(ctx, runtime, width, height, horizon)
     if flags.showPerception then
