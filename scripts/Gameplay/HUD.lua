@@ -1146,8 +1146,11 @@ function HUD.Create(loop, parent, debugTools)
         local actionElapsed = math.max(0, tonumber(fishingState and fishingState.elapsed) or 0)
         local progress = fishingPhase == "complete" and 100
             or math.floor(math.min(1, actionElapsed / actionDuration) * 100 + 0.5)
+        -- 真机反馈 2026-10-07：%.1f 秒使文本每帧变化 → SetText 每帧触发 UI 重排，
+        -- 收网期间成为卡顿源。改整数秒后文本变化率 ~10Hz→1Hz。
         setText(refs.fishingProgress, "fishingProgress",
-            string.format("动作进度：%d%% · %.1f / %.1f 秒", progress, math.min(actionElapsed, actionDuration), actionDuration))
+            string.format("动作进度：%d%% · %d / %d 秒", progress,
+                math.floor(math.min(actionElapsed, actionDuration) + 0.5), math.floor(actionDuration + 0.5)))
         local resultText = ""
         if fishingTerminal then
             if fishingPhase == "complete" then

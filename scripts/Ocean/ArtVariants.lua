@@ -5,7 +5,9 @@
 -- （D3 裁决：待真机 A/B 数据）。供 SeaDebug 面板切换与真机 A/B 对比。
 local ArtVariants = {}
 
-local enabled = false
+-- 真机反馈 2026-10-07：默认关闭导致真机看不到水彩世界层（调试入口当时也缺失），
+-- 故默认开启——重绘版即本批美术验收主体；仍可经 SeaDebug 面板 StoryArt 按钮切回原版对比。
+local enabled = true
 
 local STORY_NAMES = {
     island = "island_story",
