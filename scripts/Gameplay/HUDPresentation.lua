@@ -191,6 +191,10 @@ function Presentation.Create(UI, Config, Items)
         return UI.Label(props)
     end
 
+    -- 鱼获标签色：取色来源仍是 config.ui.fishDisplay[].paletteKey（契约不变，
+    -- Circle1HUDReviewTests 断言行色 == config.ui.palette[paletteKey]）。
+    -- v2.1 批B：卡片已换水彩浅纸底，冷色在浅底上不可读（真机 10-07 反馈），
+    -- 故把 config 侧 textMuted/textGold 调为墨棕系，代码侧不动取色逻辑。
     local function fishDisplay(itemId, definition)
         if not definition or definition.category ~= "fish" then return "", nil end
         local entry = (Config.ui and Config.ui.fishDisplay or {})[itemId]

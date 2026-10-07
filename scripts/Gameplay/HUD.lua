@@ -164,13 +164,13 @@ function HUD.Create(loop, parent, debugTools)
     refs.status = makeInfoLabel("", 13, nil, nil, INFO_FLEX)
     header:AddChild(infoLine(refs.status))
     -- 日志槽：log 与 portAccessReason 互斥显示，同一时刻只占一行。
-    refs.log = makeInfoLabel("", 12, UI_PALETTE.textMuted, nil, INFO_FLEX)
+    refs.log = makeInfoLabel("", 12, UI_PALETTE.seaTextMuted, nil, INFO_FLEX)
     header:AddChild(infoLine(refs.log))
     -- 夜航警示行：默认隐藏，仅"夜+海上+未耗尽"出现（B 侧 review 契约的安全提示）。
-    refs.nightRisk = makeInfoLabel("", 12, UI_PALETTE.textGold, nil, INFO_FLEX)
+    refs.nightRisk = makeInfoLabel("", 12, UI_PALETTE.seaTextGold, nil, INFO_FLEX)
     refs.nightRisk:SetVisible(false)
     header:AddChild(infoLine(refs.nightRisk))
-    refs.portAccessReason = makeInfoLabel("锚形标记=港口（交易中心）· 返港/交易需距港≤10米。", 12, UI_PALETTE.textMuted, nil, INFO_FLEX)
+    refs.portAccessReason = makeInfoLabel("锚形标记=港口（交易中心）· 返港/交易需距港≤10米。", 12, UI_PALETTE.seaTextMuted, nil, INFO_FLEX)
     refs.portAccessReason:SetVisible(false)
     header:AddChild(infoLine(refs.portAccessReason))
     refs.debugToggle = makeButton("开发调试", function()
@@ -470,17 +470,17 @@ function HUD.Create(loop, parent, debugTools)
         alignItems = "center",
         gap = 7,
     }
-    refs.scopeStatus = makeInfoLabel("尚未获得透镜；无法查看或切换望远镜功能。", 12, UI_PALETTE.textMuted)
+    refs.scopeStatus = makeInfoLabel("尚未获得透镜；无法查看或切换望远镜功能。", 12, UI_PALETTE.seaTextMuted)
     refs.scopePanel:AddChild(refs.scopeStatus)
     content:AddChild(refs.scopePanel)
     -- 宝物是既有player.treasures状态，不占有限格inventory；开关复用既有望远镜入口。
     refs.treasurePanel = card("宝物 · 不占船舱格")
-    refs.treasureSummary = makeLabel("尚未获得宝物。", 12, UI_PALETTE.textMuted)
+    refs.treasureSummary = makeLabel("尚未获得宝物。", UiKit.fontSize.teaching, UiKit.ink.dim)
     refs.treasurePanel:AddChild(refs.treasureSummary)
     drawerContent:AddChild(refs.treasurePanel)
 
     refs.inventoryPanel = card("背包")
-    refs.inventoryCount = makeLabel("0 / 0 格", 12, UI_PALETTE.textMuted)
+    refs.inventoryCount = makeLabel("0 / 0 格", UiKit.fontSize.teaching, UiKit.ink.dim)
     refs.upgrade = makeButton("扩容", function() invokeLoop("UpgradeInventory") end, "secondary", 148)
     refs.sellAll = makeButton("全部卖出", function() invokeLoop("SellAll") end, "primary", 108)
     refs.inventoryClose = makeButton("收起", function()
@@ -501,7 +501,7 @@ function HUD.Create(loop, parent, debugTools)
         },
     }
     refs.inventoryPanel:AddChild(inventoryHeader)
-    refs.inventoryHint = makeLabel("", 12, UI_PALETTE.textMuted)
+    refs.inventoryHint = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.dim)
     refs.inventoryPanel:AddChild(refs.inventoryHint)
     refs.itemMenu = UI.Panel(UiKit.cardProps("panel", {
         width = "100%",
@@ -605,7 +605,7 @@ function HUD.Create(loop, parent, debugTools)
     refs.speedUpgrade = makeButton("升级航速", function() invokeLoop("UpgradeBoatSpeed") end, "secondary", 180)
     refs.portPanel:AddChild(refs.staminaUpgrade)
     refs.portPanel:AddChild(refs.speedUpgrade)
-    refs.portPanel:AddChild(makeLabel("购买补给", 13, { 203, 218, 202, 255 }))
+    refs.portPanel:AddChild(makeLabel("购买补给", UiKit.fontSize.info, UiKit.ink.teaching, "bold"))
     local buyRow = UI.Panel {
         width = "100%",
         flexDirection = "row",
@@ -628,7 +628,7 @@ function HUD.Create(loop, parent, debugTools)
         buyRow:AddChild(shopButton)
     end
     refs.portPanel:AddChild(buyRow)
-    refs.portPanel:AddChild(makeLabel("出售渔获", 13, { 203, 218, 202, 255 }))
+    refs.portPanel:AddChild(makeLabel("出售渔获", UiKit.fontSize.info, UiKit.ink.teaching, "bold"))
     refs.portSales = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
     refs.portSalesScroll = UI.ScrollView {
         width = "100%",
@@ -1079,7 +1079,10 @@ function HUD.Create(loop, parent, debugTools)
                 alignItems = "center",
                 gap = 4,
                 paddingHorizontal = 4,
-                backgroundColor = { 45, 64, 61, 220 },
+                -- v2.1 批B 修复（真机 10-07 反馈）：物品行原为深绿底 {45,64,61}，
+                -- 放在暖色羊皮纸卡内形成深色条 + 亮色字，与卡片风格割裂。
+                -- 改为半透明墨色浅底（卡片纸纹透出），行内文字用墨棕。
+                backgroundColor = { 92, 70, 46, 34 },
                 borderRadius = 5,
             }
             -- 名称标签必须占满剩余宽度：row 布局下无宽度约束的 label 会被压缩为不可见。

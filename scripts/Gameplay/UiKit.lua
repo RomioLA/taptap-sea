@@ -29,10 +29,14 @@ local UiKit = {
         coinBright = { 250, 199, 117, 255 },
         coinDeep = { 133, 79, 11, 255 },
         warnCoral = { 216, 90, 48, 255 },
-        -- 文字（信息层不变；卡内文字用 ink 墨棕系）。
+        -- 文字：textMuted/textGold 现为**卡内墨色**（鱼获行标签在卡片内，
+        -- 键名受 Circle1HUDReviewTests 契约保护不可改；色值即卡内色）。
+        -- 海面信息层（零底板叠海面）必须用 seaTextMuted/seaTextGold 冷色。
         textOnDark = { 230, 241, 251, 255 },
-        textMuted = { 159, 225, 203, 255 },
-        textGold = { 250, 213, 130, 255 },
+        textMuted = { 92, 70, 46, 255 },       -- == ink.body 卡内正文墨棕
+        textGold = { 146, 96, 38, 255 },       -- == ink.teaching 卡内深金棕
+        seaTextMuted = { 159, 225, 203, 255 }, -- #9FE1CB 海面信息层注释（冷色）
+        seaTextGold = { 250, 213, 130, 255 },  -- #FAD582 海面信息层警示金（冷色）
         -- 卡片层：暖色收敛（v2.1）。卡片已换水彩纸底板，底板图昼夜不变，
         -- 白天衬色全透明（= 原纸色），夜间叠冷蓝墨压暗（= 同一张纸变深），
         -- 由 themer 注册表逐通道插值过渡。改这两个值即改全站卡片昼夜氛围。
@@ -47,10 +51,13 @@ local UiKit = {
     },
 
     -- 卡内墨棕文字系（浅色水彩纸上使用；换底板时只调本表）。
+    -- body/teaching 与 palette.inkBody/inkGold 同值——后者是给
+    -- "config 驱动取色"路径（config.ui.fishDisplay[].paletteKey）用的，
+    -- 契约要求行色 == Config.ui.palette[paletteKey]；两处必须同步改。
     ink = {
         title = { 74, 54, 32, 255 },
-        body = { 92, 70, 46, 255 },
-        teaching = { 146, 96, 38, 255 },
+        body = { 92, 70, 46, 255 },        -- == palette.inkBody
+        teaching = { 146, 96, 38, 255 },   -- == palette.inkGold
         dim = { 128, 104, 76, 255 },
     },
 

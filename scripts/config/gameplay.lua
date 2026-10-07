@@ -64,6 +64,10 @@ return {
     -- 玩家界面设计方案 v1.0（2026-10-04）：海洋主题 token，HUD 表现层唯一取色来源。
     ui = {
         -- 圈1鱼获识别标签，仅用于展示，不改变捕获概率/价格或存档结构。
+        -- 键名 textMuted/textGold 是 B 侧测试契约（Circle1HUDReviewTests 断言
+        -- 行色 == palette[paletteKey]），键名不可改；v2.1 批B 把这两个键的
+        -- **色值**改为墨棕（卡片已换水彩浅纸底，冷色不可读）。
+        -- 海面信息层改用下方 seaTextMuted/seaTextGold 冷色，二者互不影响。
         fishDisplay = {
             sardine = { rarity = "普通", paletteKey = "textMuted" },
             tuna = { rarity = "稀有", paletteKey = "textGold" },
@@ -79,8 +83,13 @@ return {
             coinDeep = { 133, 79, 11, 255 },        -- #854F0B 金币深色（浅底上用）
             warnCoral = { 216, 90, 48, 255 },       -- #D85A30 警示珊瑚
             textOnDark = { 230, 241, 251, 255 },    -- #E6F1FB 深面板正文
-            textMuted = { 159, 225, 203, 255 },     -- #9FE1CB 深面板注释
-            textGold = { 250, 213, 130, 255 },      -- #FAD582 面板标题金
+            -- 卡内墨色（v2.1 批B）：水彩浅纸底板上的文字，暖墨体系。
+            -- textMuted/textGold 现为卡内色（鱼获行标签在卡片内，键名受测试契约保护）。
+            textMuted = { 92, 70, 46, 255 },        -- #5C462E 卡内正文墨棕
+            textGold = { 146, 96, 38, 255 },        -- #926026 卡内稀有/强调深金棕
+            -- 海面信息层专用冷色（零底板叠在海面上，需冷色对比；勿用于卡内）。
+            seaTextMuted = { 159, 225, 203, 255 },  -- #9FE1CB 信息层注释
+            seaTextGold = { 250, 213, 130, 255 },   -- #FAD582 信息层警示金
             -- v2.1 批B：卡片层向水彩暖色收敛（Gameplay.UiKit.palette 同值）。
             -- 卡片已换水彩纸底板（image/WatercolorUI/ui_panels/），底板图本身
             -- 昼夜不变，夜间由 cardNight 衬色叠加压暗实现"同一张纸变深"。
