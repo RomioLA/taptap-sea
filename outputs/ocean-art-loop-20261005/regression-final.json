@@ -1,6 +1,6 @@
 {
   "suiteCount": 56,
-  "passedSuiteCount": 51,
+  "passedSuiteCount": 52,
   "suites": [
     {
       "name": "ABIntegrationTests",
@@ -10,174 +10,174 @@
       "subtestCount": 32,
       "failures": [],
       "returned": {
+        "skipped_count": 0,
         "results": [
           {
-            "passed": true,
+            "name": "Bridge construction uses the real A runtime and starts paused at port",
             "error": "",
-            "name": "Bridge construction uses the real A runtime and starts paused at port"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "one bridge Update advances B's clock and A's world by the same delta",
             "error": "",
-            "name": "one bridge Update advances B's clock and A's world by the same delta"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "B clock keeps raw dt while A simulation applies its own frame clamp",
             "error": "",
-            "name": "B clock keeps raw dt while A simulation applies its own frame clamp"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "large dt forces the B return pause before A can simulate that frame",
             "error": "",
-            "name": "large dt forces the B return pause before A can simulate that frame"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "multiple pause reasons stop both layers until the final reason resumes",
             "error": "",
-            "name": "multiple pause reasons stop both layers until the final reason resumes"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "manual pause is a named B clock reason and coexists with UI pauses",
             "error": "",
-            "name": "manual pause is a named B clock reason and coexists with UI pauses"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "drop requires a selected copied position and spawns a 20-second world item",
             "error": "",
-            "name": "drop requires a selected copied position and spawns a 20-second world item"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "throwing farther than twelve meters rejects the handoff without losing the item",
             "error": "",
-            "name": "throwing farther than twelve meters rejects the handoff without losing the item"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "invalid drop selection clears the prior target and receiver reentry stays single-flight",
             "error": "",
-            "name": "invalid drop selection clears the prior target and receiver reentry stays single-flight"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "all four B inventory items become real A drops with category, effect and TTL",
             "error": "",
-            "name": "all four B inventory items become real A drops with category, effect and TTL"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "exact thirty-meter fishing cast works and anything beyond it is rejected",
             "error": "",
-            "name": "exact thirty-meter fishing cast works and anything beyond it is rejected"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "net includes its eight-meter boundary and a single cast catches only one fish",
             "error": "",
-            "name": "net includes its eight-meter boundary and a single cast catches only one fish"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "hidden and frozen fish are selected at net landing by nearest current position",
             "error": "",
-            "name": "hidden and frozen fish are selected at net landing by nearest current position"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "empty-water casts complete after four seconds for free and replay idempotently",
             "error": "",
-            "name": "empty-water casts complete after four seconds for free and replay idempotently"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "fishing prechecks require sea access and forty stamina",
             "error": "",
-            "name": "fishing prechecks require sea access and forty stamina"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "a full hold allows a cast and does not select before net landing",
             "error": "",
-            "name": "a full hold allows a cast and does not select before net landing"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "B fishing failures run before the A fish selector",
             "error": "",
-            "name": "B fishing failures run before the A fish selector"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "single-flight and cancellation leave fish, stamina and inventory untouched",
             "error": "",
-            "name": "single-flight and cancellation leave fish, stamina and inventory untouched"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "fishing charge and partially failed delivery roll back player and fish state",
             "error": "",
-            "name": "fishing charge and partially failed delivery roll back player and fish state"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "stale targets and a pause at completion reject without partial costs",
             "error": "",
-            "name": "stale targets and a pause at completion reject without partial costs"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "recognition accepts twenty meters, rejects farther points and reads immutable coordinates",
             "error": "",
-            "name": "recognition accepts twenty meters, rejects farther points and reads immutable coordinates"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "moving A fish and ship state cannot alter the B-only save snapshot",
             "error": "",
-            "name": "moving A fish and ship state cannot alter the B-only save snapshot"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "new run resets B discovery and A temporary fish while preserving fixed objects and ship",
             "error": "",
-            "name": "new run resets B discovery and A temporary fish while preserving fixed objects and ship"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "new-day world refresh waits for save success and retry is idempotent",
             "error": "",
-            "name": "new-day world refresh waits for save success and retry is idempotent"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "explicit unsaved continuation refreshes the sea once and releases settlement pause",
             "error": "",
-            "name": "explicit unsaved continuation refreshes the sea once and releases settlement pause"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "successful load restores saved boat speed and refreshes A before one callback",
             "error": "",
-            "name": "successful load restores saved boat speed and refreshes A before one callback"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "offline load fails explicitly without calling a cloud adapter",
             "error": "",
-            "name": "offline load fails explicitly without calling a cloud adapter"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "Scene starts one B HUD over A renderer with explicit development tools",
             "error": "",
-            "name": "Scene starts one B HUD over A renderer with explicit development tools"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "Scene ticks B once, gates pointer input immediately and consumes an explicit throw pointer",
             "error": "",
-            "name": "Scene ticks B once, gates pointer input immediately and consumes an explicit throw pointer"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "Scene with explicit missing cloud fails clearly without auto-loading or calling a late backend",
             "error": "",
-            "name": "Scene with explicit missing cloud fails clearly without auto-loading or calling a late backend"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "formal missing-cloud entry stays paused with retry and new-run choices and no development tools",
             "error": "",
-            "name": "formal missing-cloud entry stays paused with retry and new-run choices and no development tools"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "Scene Stop releases five subscriptions, renderer, HUD and UI exactly once",
             "error": "",
-            "name": "Scene Stop releases five subscriptions, renderer, HUD and UI exactly once"
+            "passed": true
           }
-        ],
-        "skipped_count": 0
+        ]
       },
       "stdout": "[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] first frame rendered; underwater hidden=true\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap stopped",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 327.074
+      "durationMs": 259.436
     },
     {
       "name": "ArchitectureIntegrationTests",
@@ -187,62 +187,62 @@
       "subtestCount": 12,
       "failures": [],
       "returned": {
-        "skipped_count": 0,
         "results": [
           {
-            "name": "shared registry and factory retain entity identity",
-            "passed": true
+            "passed": true,
+            "name": "shared registry and factory retain entity identity"
           },
           {
-            "name": "one automatic fish update per sea substep",
-            "passed": true
+            "passed": true,
+            "name": "one automatic fish update per sea substep"
           },
           {
-            "name": "frozen and removed entities never receive FSM updates",
-            "passed": true
+            "passed": true,
+            "name": "frozen and removed entities never receive FSM updates"
           },
           {
-            "name": "paused Game leaves sea and temporary lifetime unchanged",
-            "passed": true
+            "passed": true,
+            "name": "paused Game leaves sea and temporary lifetime unchanged"
           },
           {
-            "name": "Game uses reset runtime world rather than cached registry",
-            "passed": true
+            "passed": true,
+            "name": "Game uses reset runtime world rather than cached registry"
           },
           {
-            "name": "shared FSM calls enter exit and update once",
-            "passed": true
+            "passed": true,
+            "name": "shared FSM calls enter exit and update once"
           },
           {
-            "name": "base skeleton retains numeric IDs and remove/clear interfaces",
-            "passed": true
+            "passed": true,
+            "name": "base skeleton retains numeric IDs and remove/clear interfaces"
           },
           {
-            "name": "Integration owns references while Gameplay owns transient action records",
-            "passed": true
+            "passed": true,
+            "name": "Integration owns references while Gameplay owns transient action records"
           },
           {
-            "name": "registered frame System keeps raw clock dt separate from sea substeps",
-            "passed": true
+            "passed": true,
+            "name": "registered frame System keeps raw clock dt separate from sea substeps"
           },
           {
-            "name": "runtime replacement rejects old tokens even when fish IDs are reused",
-            "passed": true
+            "passed": true,
+            "name": "runtime replacement rejects old tokens even when fish IDs are reused"
           },
           {
-            "name": "Ocean rollback restores removed fish identity and active FSM",
-            "passed": true
+            "passed": true,
+            "name": "Ocean rollback restores removed fish identity and active FSM"
           },
           {
-            "name": "Bridge works through public Runtime APIs without sea internals",
-            "passed": true
+            "passed": true,
+            "name": "Bridge works through public Runtime APIs without sea internals"
           }
-        ]
+        ],
+        "skipped_count": 0
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 66.284
+      "durationMs": 46.543
     },
     {
       "name": "Circle1A2BarrelRenderTests",
@@ -254,24 +254,24 @@
       "returned": {
         "tests": [
           {
-            "name": "barrel_outline_and_recognition_boundaries_are_inclusive",
-            "passed": true
+            "passed": true,
+            "name": "barrel_outline_and_recognition_boundaries_are_inclusive"
           },
           {
-            "name": "barrel_screen_culling_keeps_partial_edges_and_skips_fully_offscreen",
-            "passed": true
+            "passed": true,
+            "name": "barrel_screen_culling_keeps_partial_edges_and_skips_fully_offscreen"
           },
           {
-            "name": "only_the_exact_barrel_gets_recognition_and_other_floats_keep_their_shape",
-            "passed": true
+            "passed": true,
+            "name": "only_the_exact_barrel_gets_recognition_and_other_floats_keep_their_shape"
           }
         ],
         "status": "PASS",
         "metrics": {
-          "recognitionDistance": 20,
-          "contentId": "driftwood_barrel",
+          "outlineDistance": 80,
           "offscreenCulling": "partial visible / full margin culled",
-          "outlineDistance": 80
+          "contentId": "driftwood_barrel",
+          "recognitionDistance": 20
         }
       },
       "stdout": "",
@@ -300,7 +300,7 @@
         "nvgTranslate": 22
       },
       "nvgCallTotal": 14254,
-      "durationMs": 1775.244
+      "durationMs": 1476.766
     },
     {
       "name": "Circle1A2BarrelTests",
@@ -310,158 +310,158 @@
       "subtestCount": 9,
       "failures": [],
       "returned": {
+        "results": [
+          {
+            "name": "fixed barrel getter identifies one exact float and returns read-only snapshots",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "fish clearing and repeated day refreshes preserve the fixed barrel",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "reset and new runtimes reject stale barrel credentials after ID reuse",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "barrel interaction rejects wrong identity and generation",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "removed, dead, nonfinite, or registry-replaced barrels are unavailable",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "barrel interaction rejects invalid ship coordinates",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "barrel operation distance includes exactly five meters",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "blocking barrel stops the ship but keeps water actions and fish avoidance unchanged",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "default first-day voyages reach operation range without penetrating blockers",
+            "passed": true,
+            "error": ""
+          }
+        ],
         "metrics": {
           "voyages": [
             {
-              "minimumClearance": 0.7874700191265234,
+              "elapsedSec": 38.45,
+              "initialFishCount": 55,
+              "theoreticalWaypointLength": 56.37913510095602,
+              "operationDistance": 5,
+              "endpoint": {
+                "x": 18.63238590422685,
+                "y": 6.030875755931056
+              },
+              "fixedStepSec": 0.05,
+              "closestBlockerId": "sea-1",
               "seed": 271828,
               "collisionSteps": 0,
-              "theoreticalWaypointLength": 56.37913510095602,
-              "initialFishCount": 55,
-              "operationDistance": 5,
-              "endpointDistance": 4.632488799552993,
               "visits": [
                 {
+                  "endpointDistance": 4.832544411845107,
+                  "endpoint": {
+                    "x": 18.82664619646941,
+                    "y": 6.2386880528278095
+                  },
                   "traveledDistance": 57.60000000000011,
-                  "elapsedSec": 6.4,
-                  "endpoint": {
-                    "y": 6.2386880528278095,
-                    "x": 18.82664619646941
-                  },
-                  "endpointDistance": 4.832544411845107
+                  "elapsedSec": 6.4
                 },
                 {
+                  "endpointDistance": 4.82936919326253,
+                  "endpoint": {
+                    "x": 18.82916029615275,
+                    "y": 6.0449181354806525
+                  },
                   "traveledDistance": 201.65123328479885,
-                  "elapsedSec": 22.400000000000002,
-                  "endpoint": {
-                    "y": 6.0449181354806525,
-                    "x": 18.82916029615275
-                  },
-                  "endpointDistance": 4.82936919326253
+                  "elapsedSec": 22.400000000000002
                 },
                 {
-                  "traveledDistance": 345.74558010306674,
-                  "elapsedSec": 38.45,
+                  "endpointDistance": 4.632488799552993,
                   "endpoint": {
-                    "y": 6.030875755931056,
-                    "x": 18.63238590422685
+                    "x": 18.63238590422685,
+                    "y": 6.030875755931056
                   },
-                  "endpointDistance": 4.632488799552993
+                  "traveledDistance": 345.74558010306674,
+                  "elapsedSec": 38.45
                 }
               ],
-              "endpoint": {
-                "y": 6.030875755931056,
-                "x": 18.63238590422685
-              },
+              "minimumClearance": 0.7874700191265234,
+              "endpointDistance": 4.632488799552993,
               "traveledDistance": 345.74558010306674,
-              "blockingObjectsMeasured": 3,
-              "closestBlockerId": "sea-1",
-              "elapsedSec": 38.45,
-              "fixedStepSec": 0.05,
-              "shipSteps": 769
+              "shipSteps": 769,
+              "blockingObjectsMeasured": 3
             },
             {
-              "minimumClearance": 0.7874700191265234,
+              "elapsedSec": 38.45,
+              "initialFishCount": 55,
+              "theoreticalWaypointLength": 56.37913510095602,
+              "operationDistance": 5,
+              "endpoint": {
+                "x": 18.63238590422685,
+                "y": 6.030875755931056
+              },
+              "fixedStepSec": 0.05,
+              "closestBlockerId": "sea-1",
               "seed": 314159,
               "collisionSteps": 0,
-              "theoreticalWaypointLength": 56.37913510095602,
-              "initialFishCount": 55,
-              "operationDistance": 5,
-              "endpointDistance": 4.632488799552993,
               "visits": [
                 {
+                  "endpointDistance": 4.832544411845107,
+                  "endpoint": {
+                    "x": 18.82664619646941,
+                    "y": 6.2386880528278095
+                  },
                   "traveledDistance": 57.60000000000011,
-                  "elapsedSec": 6.4,
-                  "endpoint": {
-                    "y": 6.2386880528278095,
-                    "x": 18.82664619646941
-                  },
-                  "endpointDistance": 4.832544411845107
+                  "elapsedSec": 6.4
                 },
                 {
+                  "endpointDistance": 4.82936919326253,
+                  "endpoint": {
+                    "x": 18.82916029615275,
+                    "y": 6.0449181354806525
+                  },
                   "traveledDistance": 201.65123328479885,
-                  "elapsedSec": 22.400000000000002,
-                  "endpoint": {
-                    "y": 6.0449181354806525,
-                    "x": 18.82916029615275
-                  },
-                  "endpointDistance": 4.82936919326253
+                  "elapsedSec": 22.400000000000002
                 },
                 {
-                  "traveledDistance": 345.74558010306674,
-                  "elapsedSec": 38.45,
+                  "endpointDistance": 4.632488799552993,
                   "endpoint": {
-                    "y": 6.030875755931056,
-                    "x": 18.63238590422685
+                    "x": 18.63238590422685,
+                    "y": 6.030875755931056
                   },
-                  "endpointDistance": 4.632488799552993
+                  "traveledDistance": 345.74558010306674,
+                  "elapsedSec": 38.45
                 }
               ],
-              "endpoint": {
-                "y": 6.030875755931056,
-                "x": 18.63238590422685
-              },
+              "minimumClearance": 0.7874700191265234,
+              "endpointDistance": 4.632488799552993,
               "traveledDistance": 345.74558010306674,
-              "blockingObjectsMeasured": 3,
-              "closestBlockerId": "sea-1",
-              "elapsedSec": 38.45,
-              "fixedStepSec": 0.05,
-              "shipSteps": 769
+              "shipSteps": 769,
+              "blockingObjectsMeasured": 3
             }
           ]
-        },
-        "results": [
-          {
-            "error": "",
-            "passed": true,
-            "name": "fixed barrel getter identifies one exact float and returns read-only snapshots"
-          },
-          {
-            "error": "",
-            "passed": true,
-            "name": "fish clearing and repeated day refreshes preserve the fixed barrel"
-          },
-          {
-            "error": "",
-            "passed": true,
-            "name": "reset and new runtimes reject stale barrel credentials after ID reuse"
-          },
-          {
-            "error": "",
-            "passed": true,
-            "name": "barrel interaction rejects wrong identity and generation"
-          },
-          {
-            "error": "",
-            "passed": true,
-            "name": "removed, dead, nonfinite, or registry-replaced barrels are unavailable"
-          },
-          {
-            "error": "",
-            "passed": true,
-            "name": "barrel interaction rejects invalid ship coordinates"
-          },
-          {
-            "error": "",
-            "passed": true,
-            "name": "barrel operation distance includes exactly five meters"
-          },
-          {
-            "error": "",
-            "passed": true,
-            "name": "blocking barrel stops the ship but keeps water actions and fish avoidance unchanged"
-          },
-          {
-            "error": "",
-            "passed": true,
-            "name": "default first-day voyages reach operation range without penetrating blockers"
-          }
-        ]
+        }
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 5055.278
+      "durationMs": 4409.677
     },
     {
       "name": "Circle1A2FishingTests",
@@ -520,7 +520,7 @@
         "nvgTranslate": 44
       },
       "nvgCallTotal": 22965,
-      "durationMs": 2151.693
+      "durationMs": 1773.986
     },
     {
       "name": "Circle1A2ScopeTests",
@@ -532,49 +532,49 @@
       "returned": {
         "results": [
           {
-            "error": "",
+            "name": "persistent scope defaults off and accepts only explicit true",
             "passed": true,
-            "name": "persistent scope defaults off and accepts only explicit true"
+            "error": ""
           },
           {
-            "error": "",
+            "name": "scope includes the 20m forward edge and inclusive 45 degree sides",
             "passed": true,
-            "name": "scope includes the 20m forward edge and inclusive 45 degree sides"
+            "error": ""
           },
           {
-            "error": "",
+            "name": "scope follows ship movement and keeps its last heading while stopped",
             "passed": true,
-            "name": "scope follows ship movement and keeps its last heading while stopped"
+            "error": ""
           },
           {
-            "error": "",
+            "name": "scope toggle changes visibility only and leaves fish eligible",
             "passed": true,
-            "name": "scope toggle changes visibility only and leaves fish eligible"
+            "error": ""
           },
           {
-            "error": "",
+            "name": "scope does not change same-seed fish behavior",
             "passed": true,
-            "name": "scope does not change same-seed fish behavior"
+            "error": ""
           },
           {
-            "error": "",
+            "name": "pause retains scope without advancing boat and reset disables it",
             "passed": true,
-            "name": "pause retains scope without advancing boat and reset disables it"
+            "error": ""
           },
           {
-            "error": "",
+            "name": "legacy timed circular reveal remains independent and compatible",
             "passed": true,
-            "name": "legacy timed circular reveal remains independent and compatible"
+            "error": ""
           },
           {
-            "error": "",
+            "name": "scope safely rejects invalid transforms and tight outside boundaries",
             "passed": true,
-            "name": "scope safely rejects invalid transforms and tight outside boundaries"
+            "error": ""
           },
           {
-            "error": "",
+            "name": "transient water queries match full scans for every current blocker",
             "passed": true,
-            "name": "transient water queries match full scans for every current blocker"
+            "error": ""
           }
         ],
         "metrics": []
@@ -582,7 +582,7 @@
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 36.709
+      "durationMs": 31.86
     },
     {
       "name": "Circle1A2SignalsTests",
@@ -633,7 +633,7 @@
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 44.75
+      "durationMs": 21.711
     },
     {
       "name": "Circle1A3ExperienceTests",
@@ -650,41 +650,41 @@
       "returned": {
         "results": [
           {
+            "passed": true,
             "name": "mouse and touch respect UI hits, callback consumption, and default sailing",
-            "error": "",
-            "passed": true
+            "error": ""
           },
           {
+            "passed": true,
             "name": "DPR and screen dimension changes update viewport before mapping pointers",
-            "error": "",
-            "passed": true
+            "error": ""
           },
           {
+            "passed": true,
             "name": "invalid coordinates, viewport, focus, or water cannot become sea targets",
-            "error": "",
-            "passed": true
+            "error": ""
           },
           {
+            "passed": true,
             "name": "pointer bridge syncs stale pause state before sea guards",
-            "error": "",
-            "passed": true
+            "error": ""
           },
           {
+            "passed": true,
             "name": "Render forwards the clock, fishing view, and seventh recognition callback",
-            "error": "",
-            "passed": true
+            "error": ""
           },
           {
+            "passed": true,
             "name": "repeated Start/Stop owns one event set, cleans idempotently, and silences stale callbacks",
-            "error": "",
-            "passed": true
+            "error": ""
           }
         ]
       },
       "stdout": "[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] first frame rendered; underwater hidden=true\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 71.922
+      "durationMs": 51.406
     },
     {
       "name": "Circle1A3PortTests",
@@ -696,28 +696,28 @@
       "returned": {
         "results": [
           {
+            "passed": true,
             "name": "port getter copies the authored Config anchor instead of departure",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "port reset reuses ship and world while preserving time, fish, signals and barrel",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "port reset preserves live region markers and temporary lifetime without resuming stale target",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "blocked or malformed port fails without clearing steering state",
-            "passed": true,
             "error": ""
           },
           {
-            "name": "port reset honors the World's public water predicate",
             "passed": true,
+            "name": "port reset honors the World's public water predicate",
             "error": ""
           }
         ]
@@ -725,7 +725,7 @@
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 52.655
+      "durationMs": 43.529
     },
     {
       "name": "Circle1A3RecognitionTests",
@@ -739,29 +739,29 @@
           "recognitionOwner": "real Gameplay.PlayerState",
           "recognitionMeters": 20,
           "outlineMeters": 80,
-          "restore": "real Persistence.Restore (offline)",
-          "evidenceKind": "NanoVG recorder / render fixtures, not native gameplay"
+          "evidenceKind": "NanoVG recorder / render fixtures, not native gameplay",
+          "restore": "real Persistence.Restore (offline)"
         },
         "results": [
           {
-            "passed": true,
-            "name": "first_approach_then_depart_and_return_reads_existing_player_progress"
+            "name": "first_approach_then_depart_and_return_reads_existing_player_progress",
+            "passed": true
           },
           {
-            "passed": true,
-            "name": "restore_and_new_game_are_read_live_without_ocean_progress_copy"
+            "name": "restore_and_new_game_are_read_live_without_ocean_progress_copy",
+            "passed": true
           },
           {
-            "passed": true,
-            "name": "missing_false_nil_and_nonboolean_queries_preserve_unknown_behavior"
+            "name": "missing_false_nil_and_nonboolean_queries_preserve_unknown_behavior",
+            "passed": true
           },
           {
-            "passed": true,
-            "name": "recognized_offscreen_and_content_decoys_do_not_bypass_existing_filters"
+            "name": "recognized_offscreen_and_content_decoys_do_not_bypass_existing_filters",
+            "passed": true
           },
           {
-            "passed": true,
-            "name": "repeated_draw_is_readonly_for_world_ship_signals_and_player"
+            "name": "repeated_draw_is_readonly_for_world_ship_signals_and_player",
+            "passed": true
           }
         ]
       },
@@ -791,36 +791,30 @@
         "nvgTranslate": 22
       },
       "nvgCallTotal": 13389,
-      "durationMs": 8814.39
+      "durationMs": 7568.918
     },
     {
       "name": "Circle1A3SignalsTests",
       "kind": "run",
       "file": "scripts/tests/Circle1A3SignalsTests.lua",
-      "passed": false,
+      "passed": true,
       "subtestCount": 3,
-      "failures": [
-        {
-          "name": "A3 visitors revalidate freeze, removal, fish position, and old splash water",
-          "passed": false,
-          "error": ".../fisherman-drift/scripts/tests\\Circle1A3SignalsTests.lua:118: assertion failed!"
-        }
-      ],
+      "failures": [],
       "returned": {
         "results": [
           {
-            "name": "A3 scalar visitors match detached snapshots without exposing tables",
             "passed": true,
+            "name": "A3 scalar visitors match detached snapshots without exposing tables",
             "error": ""
           },
           {
+            "passed": true,
             "name": "A3 visitors revalidate freeze, removal, fish position, and old splash water",
-            "passed": false,
-            "error": ".../fisherman-drift/scripts/tests\\Circle1A3SignalsTests.lua:118: assertion failed!"
+            "error": ""
           },
           {
-            "name": "A3 reused water-query workspace refreshes blockers and keeps snapshots independent",
             "passed": true,
+            "name": "A3 reused water-query workspace refreshes blockers and keeps snapshots independent",
             "error": ""
           }
         ]
@@ -828,7 +822,7 @@
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 13.265
+      "durationMs": 9.898
     },
     {
       "name": "Circle1A3StabilityTests",
@@ -870,7 +864,7 @@
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 53.605
+      "durationMs": 39.423
     },
     {
       "name": "Circle1AFishLocksTests",
@@ -882,31 +876,31 @@
       "returned": {
         "results": [
           {
-            "error": "",
+            "name": "nearest target, empty net, hidden fish, and locked target exclusion",
             "passed": true,
-            "name": "nearest target, empty net, hidden fish, and locked target exclusion"
+            "error": ""
           },
           {
-            "error": "",
+            "name": "lock owner contract uses table identity and idempotent cleanup",
             "passed": true,
-            "name": "lock owner contract uses table identity and idempotent cleanup"
+            "error": ""
           },
           {
-            "error": "",
+            "name": "captured sardine pauses AI and rise, clears birds, and resumes as the same entity",
             "passed": true,
-            "name": "captured sardine pauses AI and rise, clears birds, and resumes as the same entity"
+            "error": ""
           },
           {
-            "error": "",
+            "name": "failed removal snapshot, owner replacement, day refresh, and reset generation",
             "passed": true,
-            "name": "failed removal snapshot, owner replacement, day refresh, and reset generation"
+            "error": ""
           }
         ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 25.429
+      "durationMs": 20.152
     },
     {
       "name": "Circle1APredationCooldownTests",
@@ -918,31 +912,31 @@
       "returned": {
         "results": [
           {
+            "passed": true,
             "name": "successful scheduled predation starts one five-second world-time cooldown",
-            "error": "",
-            "passed": true
+            "error": ""
           },
           {
+            "passed": true,
             "name": "cooldown blocks retargeting and eating but permits attraction, avoidance, and expiry",
-            "error": "",
-            "passed": true
+            "error": ""
           },
           {
+            "passed": true,
             "name": "pause stops cooldown time while capture lock and freeze stop only fish AI",
-            "error": "",
-            "passed": true
+            "error": ""
           },
           {
+            "passed": true,
             "name": "failed prey removal leaves prey alive and does not start cooldown",
-            "error": "",
-            "passed": true
+            "error": ""
           }
         ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 45.749
+      "durationMs": 32.733
     },
     {
       "name": "Circle1AudioTests",
@@ -952,64 +946,64 @@
       "subtestCount": 10,
       "failures": [],
       "returned": {
-        "evidenceKind": "offline Lua 5.4 audio registry checks; engine globals absent by design",
         "results": [
           {
-            "error": "",
             "name": "12条注册键齐全且无多余",
-            "passed": true
+            "passed": true,
+            "error": ""
           },
           {
-            "error": "",
             "name": "每条规格路径总线音量抖动声像合法",
-            "passed": true
+            "passed": true,
+            "error": ""
           },
           {
-            "error": "",
             "name": "仅两个声床且全部走amb总线",
-            "passed": true
+            "passed": true,
+            "error": ""
           },
           {
-            "error": "",
             "name": "确认选择与失败提示不变调以保音阶完整",
-            "passed": true
+            "passed": true,
+            "error": ""
           },
           {
-            "error": "",
             "name": "GetSpec返回副本不泄露内部表",
-            "passed": true
+            "passed": true,
+            "error": ""
           },
           {
-            "error": "",
             "name": "headless下Play优雅降级不崩溃",
-            "passed": true
+            "passed": true,
+            "error": ""
           },
           {
-            "error": "",
             "name": "未知键先于能力探针返回unknown_audio_key",
-            "passed": true
+            "passed": true,
+            "error": ""
           },
           {
-            "error": "",
             "name": "循环键拒绝走one-shot通道",
-            "passed": true
+            "passed": true,
+            "error": ""
           },
           {
-            "error": "",
             "name": "Status可读且非空",
-            "passed": true
+            "passed": true,
+            "error": ""
           },
           {
-            "error": "",
             "name": "暂停与停止接口headless下可安全调用",
-            "passed": true
+            "passed": true,
+            "error": ""
           }
-        ]
+        ],
+        "evidenceKind": "offline Lua 5.4 audio registry checks; engine globals absent by design"
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 9.491
+      "durationMs": 3.444
     },
     {
       "name": "Circle1B2BarrelTests",
@@ -1021,71 +1015,71 @@
       "returned": {
         "results": [
           {
-            "passed": true,
+            "name": "built-in timer advances with the ocean, blocks steering, and pauses for UI",
             "error": "",
-            "name": "built-in timer advances with the ocean, blocks steering, and pauses for UI"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "barrel completion at night end commits once, while unfinished work cancels free",
             "error": "",
-            "name": "barrel completion at night end commits once, while unfinished work cancels free"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "full hold escrows both first rewards and advances only after an atomic two-slot claim",
             "error": "",
-            "name": "full hold escrows both first rewards and advances only after an atomic two-slot claim"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "controlled barrel receipts charge each stage once and grant lens without cargo",
             "error": "",
-            "name": "controlled barrel receipts charge each stage once and grant lens without cargo"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "the three barrel stages survive real day settlements and memory save restore",
             "error": "",
-            "name": "the three barrel stages survive real day settlements and memory save restore"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "a rejected first-stage progression rolls back stamina and both appended rewards",
             "error": "",
-            "name": "a rejected first-stage progression rolls back stamina and both appended rewards"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "lens grant rejection rolls back the final-stage charge and leaves stage two intact",
             "error": "",
-            "name": "lens grant rejection rolls back the final-stage charge and leaves stage two intact"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "claim stage failure restores cargo and keeps the receipt retryable without charging again",
             "error": "",
-            "name": "claim stage failure restores cargo and keeps the receipt retryable without charging again"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "a partial claim rollback is retried on Tick without auto-claiming its pending receipt",
             "error": "",
-            "name": "a partial claim rollback is retried on Tick without auto-claiming its pending receipt"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "executor failure before evidence is free, but a synchronous completed receipt returns its token",
             "error": "",
-            "name": "executor failure before evidence is free, but a synchronous completed receipt returns its token"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "observer errors do not discard an escrowed result and reset cancels an active receipt",
             "error": "",
-            "name": "observer errors do not discard an escrowed result and reset cancels an active receipt"
+            "passed": true
           },
           {
-            "passed": true,
+            "name": "cancellation and a replaced barrel world invalidate late completions for free",
             "error": "",
-            "name": "cancellation and a replaced barrel world invalidate late completions for free"
+            "passed": true
           }
         ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 40.394
+      "durationMs": 34.63
     },
     {
       "name": "Circle1B2ProgressTests",
@@ -1156,7 +1150,7 @@
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 45.692
+      "durationMs": 32.897
     },
     {
       "name": "Circle1B2ScopeTests",
@@ -1168,36 +1162,36 @@
       "returned": {
         "results": [
           {
-            "passed": true,
             "error": "",
-            "name": "scope requires lens ownership and toggling does not pause the voyage"
+            "name": "scope requires lens ownership and toggling does not pause the voyage",
+            "passed": true
           },
           {
-            "passed": true,
             "error": "",
-            "name": "new run and saved-load both synchronize A scope off"
+            "name": "new run and saved-load both synchronize A scope off",
+            "passed": true
           },
           {
-            "passed": true,
             "error": "",
-            "name": "false is a valid disabled result while rejection and exceptions fail readback"
+            "name": "false is a valid disabled result while rejection and exceptions fail readback",
+            "passed": true
           },
           {
-            "passed": true,
             "error": "",
-            "name": "scope readback mismatch is reported and a later close can recover"
+            "name": "scope readback mismatch is reported and a later close can recover",
+            "passed": true
           },
           {
-            "passed": true,
             "error": "",
-            "name": "snapshot and restore reject inconsistent Circle 1B2 progress"
+            "name": "snapshot and restore reject inconsistent Circle 1B2 progress",
+            "passed": true
           }
         ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 47.122
+      "durationMs": 28.242
     },
     {
       "name": "Circle1B2ThrowTests",
@@ -1238,7 +1232,7 @@
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 38.725
+      "durationMs": 28.251
     },
     {
       "name": "Circle1B2UITests",
@@ -1251,30 +1245,30 @@
         "results": [
           {
             "name": "scope toggle stays disabled without a lens and toggles through A without pausing",
-            "error": "",
-            "passed": true
+            "passed": true,
+            "error": ""
           },
           {
             "name": "bait use is disabled with a Chinese reason and bait and fish display without consumption",
-            "error": "",
-            "passed": true
+            "passed": true,
+            "error": ""
           },
           {
             "name": "barrel uses its built-in timer and exposes cancel without an instant-finish control",
-            "error": "",
-            "passed": true
+            "passed": true,
+            "error": ""
           },
           {
             "name": "paper is marked only after the HUD visibly renders exact text and close resumes the clock",
-            "error": "",
-            "passed": true
+            "passed": true,
+            "error": ""
           }
         ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 67.786
+      "durationMs": 53.9
     },
     {
       "name": "Circle1B3ClockAsyncTests",
@@ -1284,84 +1278,84 @@
       "subtestCount": 17,
       "failures": [],
       "returned": {
+        "realCloudVerified": false,
         "kind": "protocol",
         "guiVerified": false,
         "results": [
           {
-            "name": "late return formula keeps fractional seconds for every confirmed maximum",
-            "passed": true
+            "passed": true,
+            "name": "late return formula keeps fractional seconds for every confirmed maximum"
           },
           {
-            "name": "day-night warning uses the existing transition only",
-            "passed": true
+            "passed": true,
+            "name": "day-night warning uses the existing transition only"
           },
           {
-            "name": "night boundary cancels locked cast and physically returns without refreshing fish",
-            "passed": true
+            "passed": true,
+            "name": "night boundary cancels locked cast and physically returns without refreshing fish"
           },
           {
-            "name": "missing forced-return interface never grants port access",
-            "passed": true
+            "passed": true,
+            "name": "missing forced-return interface never grants port access"
           },
           {
-            "name": "large frame preserves fishing completed before night end",
-            "passed": true
+            "passed": true,
+            "name": "large frame preserves fishing completed before night end"
           },
           {
-            "name": "fishing completion exactly at night end cancels without charging",
-            "passed": true
+            "passed": true,
+            "name": "fishing completion exactly at night end cancels without charging"
           },
           {
-            "name": "saving rejects duplicate confirmation and explicit skip ignores late callbacks",
-            "passed": true
+            "passed": true,
+            "name": "saving rejects duplicate confirmation and explicit skip ignores late callbacks"
           },
           {
-            "name": "timeout then retry ignores late old success",
-            "passed": true
+            "passed": true,
+            "name": "timeout then retry ignores late old success"
           },
           {
-            "name": "explicit abandon keeps old snapshot and next day still saves",
-            "passed": true
+            "passed": true,
+            "name": "explicit abandon keeps old snapshot and next day still saves"
           },
           {
-            "name": "many failed days do not duplicate dates stock or stamina",
-            "passed": true
+            "passed": true,
+            "name": "many failed days do not duplicate dates stock or stamina"
           },
           {
-            "name": "synchronous store rejection completes error rather than staying saving",
-            "passed": true
+            "passed": true,
+            "name": "synchronous store rejection completes error rather than staying saving"
           },
           {
-            "name": "close invalidates queued save and load callbacks",
-            "passed": true
+            "passed": true,
+            "name": "close invalidates queued save and load callbacks"
           },
           {
-            "name": "load states distinguish missing corrupt failure and retry",
-            "passed": true
+            "passed": true,
+            "name": "load states distinguish missing corrupt failure and retry"
           },
           {
-            "name": "legitimate restored progress retains containers and rejects old reads",
-            "passed": true
+            "passed": true,
+            "name": "legitimate restored progress retains containers and rejects old reads"
           },
           {
-            "name": "new run immediately writes a reset snapshot before releasing the entry pause",
-            "passed": true
+            "passed": true,
+            "name": "new run immediately writes a reset snapshot before releasing the entry pause"
           },
           {
-            "name": "world preparation failure keeps port blocked and retries without saving again",
-            "passed": true
+            "passed": true,
+            "name": "world preparation failure keeps port blocked and retries without saving again"
           },
           {
-            "name": "closing one pause owner retains all the others",
-            "passed": true
+            "passed": true,
+            "name": "closing one pause owner retains all the others"
           }
-        ],
-        "realCloudVerified": false
+        ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 47.438
+      "durationMs": 37.352
     },
     {
       "name": "Circle1B3CloudTests",
@@ -1417,7 +1411,7 @@
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 17.656
+      "durationMs": 11.13
     },
     {
       "name": "Circle1B3EconomyTests",
@@ -1427,110 +1421,110 @@
       "subtestCount": 19,
       "failures": [],
       "returned": {
+        "passed": 19,
         "results": [
           {
+            "passed": true,
             "name": "cargo revision changes with inventory mutations and is exposed by Loop",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "selling a rendered cargo row credits once and rejects its duplicate click",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "a moved inventory index or changed row identity cannot sell a stale item",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "a successful purchase changes cargo, money, and stock together",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "a rejected full-inventory purchase does not charge or consume stock",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "inventory can hold more than two apples",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "purchase rolls back after ChangeMoney mutates then false",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "sale rolls back after ChangeMoney mutates then false",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "inventory upgrade rolls back after ChangeMoney mutates then false",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "stamina upgrade rolls back after ChangeMoney mutates then false",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "boat-speed upgrade rolls back after ChangeMoney mutates then false",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "purchase rolls back after ChangeMoney mutates then throw",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "sale rolls back after ChangeMoney mutates then throw",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "inventory upgrade rolls back after ChangeMoney mutates then throw",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "stamina upgrade rolls back after ChangeMoney mutates then throw",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "boat-speed upgrade rolls back after ChangeMoney mutates then throw",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "failed speed rollback stays blocked and retries until the real movement speed is restored",
-            "passed": true,
             "error": ""
           },
           {
+            "passed": true,
             "name": "boat-speed upgrade changes the real Ocean movement speed",
-            "passed": true,
             "error": ""
           },
           {
-            "name": "zero stamina still allows same-day sailing and an ordinary return without restoring cargo",
             "passed": true,
+            "name": "zero stamina still allows same-day sailing and an ordinary return without restoring cargo",
             "error": ""
           }
         ],
-        "total": 19,
-        "passed": 19
+        "total": 19
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 67.201
+      "durationMs": 61.998
     },
     {
       "name": "Circle1B3SceneUITests",
@@ -1541,55 +1535,55 @@
       "failures": [],
       "returned": {
         "guiVerified": false,
-        "kind": "widget-tree and SDK protocol",
         "realCloudVerified": false,
+        "kind": "widget-tree and SDK protocol",
         "results": [
           {
-            "name": "formal scene defaults to clientCloud read and blocks entry until a choice",
-            "passed": true
+            "passed": true,
+            "name": "formal scene defaults to clientCloud read and blocks entry until a choice"
           },
           {
-            "name": "new-run initial save can retry or explicitly continue without waiting",
-            "passed": true
+            "passed": true,
+            "name": "new-run initial save can retry or explicitly continue without waiting"
           },
           {
-            "name": "formal cloud load failure retry restores a legal snapshot at the physical port",
-            "passed": true
+            "passed": true,
+            "name": "formal cloud load failure retry restores a legal snapshot at the physical port"
           },
           {
-            "name": "missing port API does not turn empty cloud into a fake playable new run",
-            "passed": true
+            "passed": true,
+            "name": "missing port API does not turn empty cloud into a fake playable new run"
           },
           {
-            "name": "closing the scene during a real adapter read ignores the old callback",
-            "passed": true
+            "passed": true,
+            "name": "closing the scene during a real adapter read ignores the old callback"
           },
           {
-            "name": "scene Stop accepts A's false disabled result and closes the real scope",
-            "passed": true
+            "passed": true,
+            "name": "scene Stop accepts A's false disabled result and closes the real scope"
           },
           {
-            "name": "HUD old sale callback cannot sell the next identical fish",
-            "passed": true
+            "passed": true,
+            "name": "HUD old sale callback cannot sell the next identical fish"
           },
           {
-            "name": "formal HUD save failure explicitly retries or abandons without double settlement",
-            "passed": true
+            "passed": true,
+            "name": "formal HUD save failure explicitly retries or abandons without double settlement"
           },
           {
-            "name": "ordinary mouse and touch adapter blocks UI and consumes net-center pointer once",
-            "passed": true
+            "passed": true,
+            "name": "ordinary mouse and touch adapter blocks UI and consumes net-center pointer once"
           },
           {
-            "name": "default scene hides sea cheats and recalculates HUD width on resize",
-            "passed": true
+            "passed": true,
+            "name": "default scene hides sea cheats and recalculates HUD width on resize"
           }
         ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 216.305
+      "durationMs": 135.784
     },
     {
       "name": "Circle1B3SevenDaysTests",
@@ -1599,1158 +1593,1158 @@
       "subtestCount": 2,
       "failures": [],
       "returned": {
+        "constraints": {
+          "debugResourceCommandsUsed": false,
+          "clockSeekUsed": false,
+          "seaFish": "deterministic simulated environment fish spawned by the protocol fixture",
+          "portProtocol": "test double around the B1 flow runtime; not evidence of production Ocean support",
+          "ending": "day-seven paper entry only; no ending has been designed or invoked",
+          "realReaderTime": "unmeasured",
+          "directDayOrPlayerResourceWrites": false,
+          "source": "official Gameplay.HUD callbacks plus Bridge.Update and public loop/paper entry",
+          "updateOnlyClockProgress": true
+        },
         "results": [
           {
-            "route": {
-              "days": [
-                {
-                  "saveStatusAfterSettlement": "saved",
-                  "saleAction": "出售 ¥70",
-                  "nextDay": 2,
-                  "day": 1,
-                  "fishingSeconds": 4.0,
-                  "nextDayElder": {
-                    "decision": "pending",
-                    "applesGiven": 1,
-                    "present": true
-                  },
-                  "afterTrade": {
-                    "stamina": 60,
-                    "saveStatus": "saved",
-                    "stock": {
-                      "bait": 2,
-                      "apple": 2
-                    },
-                    "day": 1,
-                    "money": 170,
-                    "inventory": [
-                      "bait"
-                    ],
-                    "elder": {
-                      "decision": "pending",
-                      "applesGiven": 1,
-                      "present": true
-                    }
-                  }
-                },
-                {
-                  "saveStatusAfterSettlement": "saved",
-                  "saleAction": "出售 ¥70",
-                  "nextDay": 3,
-                  "day": 2,
-                  "fishingSeconds": 4.0,
-                  "nextDayElder": {
-                    "decision": "pending",
-                    "applesGiven": 2,
-                    "present": true
-                  },
-                  "afterTrade": {
-                    "stamina": 60,
-                    "saveStatus": "saved",
-                    "stock": {
-                      "bait": 2,
-                      "apple": 1
-                    },
-                    "day": 2,
-                    "money": 210,
-                    "inventory": [
-                      "bait"
-                    ],
-                    "elder": {
-                      "decision": "pending",
-                      "applesGiven": 2,
-                      "present": true
-                    }
-                  }
-                },
-                {
-                  "saveStatusAfterSettlement": "saved",
-                  "saleAction": "出售 ¥70",
-                  "nextDay": 4,
-                  "day": 3,
-                  "fishingSeconds": 4.0,
-                  "nextDayElder": {
-                    "decision": "dead",
-                    "applesGiven": 2,
-                    "present": false
-                  },
-                  "afterTrade": {
-                    "stamina": 60,
-                    "saveStatus": "saved",
-                    "stock": {
-                      "bait": 2,
-                      "apple": 2
-                    },
-                    "day": 3,
-                    "money": 280,
-                    "inventory": [
-                      "bait"
-                    ],
-                    "elder": {
-                      "decision": "pending",
-                      "applesGiven": 2,
-                      "present": true
-                    }
-                  }
-                },
-                {
-                  "saveStatusAfterSettlement": "saved",
-                  "saleAction": "出售 ¥70",
-                  "nextDay": 5,
-                  "day": 4,
-                  "fishingSeconds": 4.0,
-                  "nextDayElder": {
-                    "decision": "dead",
-                    "applesGiven": 2,
-                    "present": false
-                  },
-                  "afterTrade": {
-                    "stamina": 60,
-                    "saveStatus": "saved",
-                    "stock": {
-                      "bait": 2,
-                      "apple": 2
-                    },
-                    "day": 4,
-                    "money": 350,
-                    "inventory": [
-                      "bait"
-                    ],
-                    "elder": {
-                      "decision": "dead",
-                      "applesGiven": 2,
-                      "present": false
-                    }
-                  }
-                },
-                {
-                  "saveStatusAfterSettlement": "saved",
-                  "saleAction": "出售 ¥70",
-                  "nextDay": 6,
-                  "day": 5,
-                  "fishingSeconds": 4.0,
-                  "nextDayElder": {
-                    "decision": "dead",
-                    "applesGiven": 2,
-                    "present": false
-                  },
-                  "afterTrade": {
-                    "stamina": 60,
-                    "saveStatus": "saved",
-                    "stock": {
-                      "bait": 2,
-                      "apple": 2
-                    },
-                    "day": 5,
-                    "money": 420,
-                    "inventory": [
-                      "bait"
-                    ],
-                    "elder": {
-                      "decision": "dead",
-                      "applesGiven": 2,
-                      "present": false
-                    }
-                  }
-                },
-                {
-                  "saveStatusAfterSettlement": "saved",
-                  "saleAction": "出售 ¥70",
-                  "nextDay": 7,
-                  "day": 6,
-                  "fishingSeconds": 4.0,
-                  "nextDayElder": {
-                    "decision": "dead",
-                    "applesGiven": 2,
-                    "present": false
-                  },
-                  "afterTrade": {
-                    "stamina": 60,
-                    "saveStatus": "saved",
-                    "stock": {
-                      "bait": 2,
-                      "apple": 2
-                    },
-                    "day": 6,
-                    "money": 490,
-                    "inventory": [
-                      "bait"
-                    ],
-                    "elder": {
-                      "decision": "dead",
-                      "applesGiven": 2,
-                      "present": false
-                    }
-                  }
-                },
-                {
-                  "day": 7,
-                  "fishingSeconds": 4.0,
-                  "saleAction": "出售 ¥70",
-                  "afterTrade": {
-                    "stamina": 60,
-                    "saveStatus": "saved",
-                    "stock": {
-                      "bait": 2,
-                      "apple": 2
-                    },
-                    "day": 7,
-                    "money": 560,
-                    "inventory": [
-                      "bait"
-                    ],
-                    "elder": {
-                      "decision": "dead",
-                      "applesGiven": 2,
-                      "present": false
-                    }
-                  }
-                }
-              ],
-              "fishingSeconds": 28.0,
-              "directDayWrites": 0,
-              "seekCalls": 0,
-              "updateCalls": 136,
-              "pauseCategorySeconds": {
-                "story": 0.5,
-                "settlement": 1.5,
-                "entry": 0.5,
-                "port": 7.0,
-                "elder": 1.0
-              },
-              "portAdapter": {
-                "resetCalls": 7,
-                "kind": "test-only ocean/port adapter",
-                "getCalls": 135
-              },
-              "usesDebugTools": false,
-              "activeClockUpdateSeconds": 56.0,
-              "portApiProductionVerified": false,
-              "directPlayerResourceWrites": 0,
-              "giftDays": [
-                true,
-                true
-              ],
-              "realOceanRuntimeVerified": false,
-              "simulationTime": 63.0,
-              "endingDesignStatus": "not specified; no ending is invoked or inferred",
-              "terminalEndingTriggered": false,
-              "day7State": {
-                "stamina": 60,
-                "saveStatus": "saved",
-                "stock": {
-                  "bait": 2,
-                  "apple": 2
-                },
-                "day": 7,
-                "money": 560,
-                "inventory": [
-                  "bait"
-                ],
-                "elder": {
-                  "decision": "dead",
-                  "applesGiven": 2,
-                  "present": false
-                }
-              },
-              "paperShown": true,
-              "paperClosed": true,
-              "day4ElderAccess": {
-                "visible": true,
-                "explanation": "老人不在",
-                "enabled": true,
-                "label": "老人不在"
-              },
-              "pauseRealReadingTime": "not measured; pauseCategorySeconds contains injected test dt and overlapping reasons must not be added",
-              "navigationSeconds": 28.0,
-              "day4Elder": {
-                "decision": "dead",
-                "applesGiven": 2,
-                "present": false
-              }
-            },
-            "terminalEndingTriggered": false,
-            "day4Decision": "dead",
-            "error": "",
-            "simulationTime": 63.0,
-            "passed": true,
-            "pauseCategorySeconds": {
-              "story": 0.5,
-              "settlement": 1.5,
-              "entry": 0.5,
-              "port": 7.0,
-              "elder": 1.0
-            },
-            "fishingSeconds": 28.0,
-            "paperShown": true,
             "name": "two apples remain below the day-four save threshold",
+            "fishingSeconds": 28.0,
+            "applesGiven": 2,
+            "paperShown": true,
             "day4ElderAccess": {
-              "visible": true,
               "explanation": "老人不在",
+              "visible": true,
               "enabled": true,
               "label": "老人不在"
             },
-            "applesGiven": 2,
-            "navigationSeconds": 28.0,
-            "day7": 7
-          },
-          {
             "route": {
               "days": [
                 {
-                  "saveStatusAfterSettlement": "saved",
-                  "saleAction": "出售 ¥70",
-                  "nextDay": 2,
+                  "fishingSeconds": 4.0,
                   "day": 1,
-                  "fishingSeconds": 4.0,
+                  "saleAction": "出售 ¥70",
                   "nextDayElder": {
-                    "decision": "pending",
+                    "present": true,
                     "applesGiven": 1,
-                    "present": true
+                    "decision": "pending"
                   },
                   "afterTrade": {
                     "stamina": 60,
-                    "saveStatus": "saved",
-                    "stock": {
-                      "bait": 2,
-                      "apple": 2
-                    },
+                    "inventory": [
+                      "bait"
+                    ],
                     "day": 1,
-                    "money": 170,
-                    "inventory": [
-                      "bait"
-                    ],
                     "elder": {
-                      "decision": "pending",
+                      "present": true,
                       "applesGiven": 1,
-                      "present": true
+                      "decision": "pending"
+                    },
+                    "money": 170,
+                    "saveStatus": "saved",
+                    "stock": {
+                      "apple": 2,
+                      "bait": 2
                     }
-                  }
+                  },
+                  "saveStatusAfterSettlement": "saved",
+                  "nextDay": 2
                 },
                 {
-                  "saveStatusAfterSettlement": "saved",
-                  "saleAction": "出售 ¥70",
-                  "nextDay": 3,
+                  "fishingSeconds": 4.0,
                   "day": 2,
-                  "fishingSeconds": 4.0,
+                  "saleAction": "出售 ¥70",
                   "nextDayElder": {
-                    "decision": "pending",
+                    "present": true,
                     "applesGiven": 2,
-                    "present": true
+                    "decision": "pending"
                   },
                   "afterTrade": {
                     "stamina": 60,
-                    "saveStatus": "saved",
-                    "stock": {
-                      "bait": 2,
-                      "apple": 1
-                    },
+                    "inventory": [
+                      "bait"
+                    ],
                     "day": 2,
-                    "money": 210,
-                    "inventory": [
-                      "bait"
-                    ],
                     "elder": {
-                      "decision": "pending",
+                      "present": true,
                       "applesGiven": 2,
-                      "present": true
+                      "decision": "pending"
+                    },
+                    "money": 210,
+                    "saveStatus": "saved",
+                    "stock": {
+                      "apple": 1,
+                      "bait": 2
                     }
-                  }
+                  },
+                  "saveStatusAfterSettlement": "saved",
+                  "nextDay": 3
                 },
                 {
-                  "saveStatusAfterSettlement": "saved",
-                  "saleAction": "出售 ¥70",
-                  "nextDay": 4,
+                  "fishingSeconds": 4.0,
                   "day": 3,
-                  "fishingSeconds": 4.0,
+                  "saleAction": "出售 ¥70",
                   "nextDayElder": {
-                    "decision": "saved",
-                    "applesGiven": 3,
-                    "present": true
+                    "present": false,
+                    "applesGiven": 2,
+                    "decision": "dead"
                   },
                   "afterTrade": {
                     "stamina": 60,
-                    "saveStatus": "saved",
-                    "stock": {
-                      "bait": 2,
-                      "apple": 1
-                    },
+                    "inventory": [
+                      "bait"
+                    ],
                     "day": 3,
-                    "money": 250,
-                    "inventory": [
-                      "bait"
-                    ],
                     "elder": {
-                      "decision": "pending",
-                      "applesGiven": 3,
-                      "present": true
+                      "present": true,
+                      "applesGiven": 2,
+                      "decision": "pending"
+                    },
+                    "money": 280,
+                    "saveStatus": "saved",
+                    "stock": {
+                      "apple": 2,
+                      "bait": 2
                     }
-                  }
+                  },
+                  "saveStatusAfterSettlement": "saved",
+                  "nextDay": 4
                 },
                 {
-                  "saveStatusAfterSettlement": "saved",
-                  "saleAction": "出售 ¥70",
-                  "nextDay": 5,
+                  "fishingSeconds": 4.0,
                   "day": 4,
-                  "fishingSeconds": 4.0,
+                  "saleAction": "出售 ¥70",
                   "nextDayElder": {
-                    "decision": "saved",
-                    "applesGiven": 3,
-                    "present": true
+                    "present": false,
+                    "applesGiven": 2,
+                    "decision": "dead"
                   },
                   "afterTrade": {
                     "stamina": 60,
-                    "saveStatus": "saved",
-                    "stock": {
-                      "bait": 2,
-                      "apple": 2
-                    },
+                    "inventory": [
+                      "bait"
+                    ],
                     "day": 4,
-                    "money": 320,
-                    "inventory": [
-                      "bait"
-                    ],
                     "elder": {
-                      "decision": "saved",
-                      "applesGiven": 3,
-                      "present": true
+                      "present": false,
+                      "applesGiven": 2,
+                      "decision": "dead"
+                    },
+                    "money": 350,
+                    "saveStatus": "saved",
+                    "stock": {
+                      "apple": 2,
+                      "bait": 2
                     }
-                  }
+                  },
+                  "saveStatusAfterSettlement": "saved",
+                  "nextDay": 5
                 },
                 {
-                  "saveStatusAfterSettlement": "saved",
-                  "saleAction": "出售 ¥70",
-                  "nextDay": 6,
+                  "fishingSeconds": 4.0,
                   "day": 5,
-                  "fishingSeconds": 4.0,
+                  "saleAction": "出售 ¥70",
                   "nextDayElder": {
-                    "decision": "saved",
-                    "applesGiven": 3,
-                    "present": true
+                    "present": false,
+                    "applesGiven": 2,
+                    "decision": "dead"
                   },
                   "afterTrade": {
                     "stamina": 60,
-                    "saveStatus": "saved",
-                    "stock": {
-                      "bait": 2,
-                      "apple": 2
-                    },
+                    "inventory": [
+                      "bait"
+                    ],
                     "day": 5,
-                    "money": 390,
-                    "inventory": [
-                      "bait"
-                    ],
                     "elder": {
-                      "decision": "saved",
-                      "applesGiven": 3,
-                      "present": true
+                      "present": false,
+                      "applesGiven": 2,
+                      "decision": "dead"
+                    },
+                    "money": 420,
+                    "saveStatus": "saved",
+                    "stock": {
+                      "apple": 2,
+                      "bait": 2
                     }
-                  }
+                  },
+                  "saveStatusAfterSettlement": "saved",
+                  "nextDay": 6
                 },
                 {
-                  "saveStatusAfterSettlement": "saved",
-                  "saleAction": "出售 ¥70",
-                  "nextDay": 7,
-                  "day": 6,
                   "fishingSeconds": 4.0,
+                  "day": 6,
+                  "saleAction": "出售 ¥70",
                   "nextDayElder": {
-                    "decision": "saved",
-                    "applesGiven": 3,
-                    "present": true
+                    "present": false,
+                    "applesGiven": 2,
+                    "decision": "dead"
                   },
                   "afterTrade": {
                     "stamina": 60,
-                    "saveStatus": "saved",
-                    "stock": {
-                      "bait": 2,
-                      "apple": 2
-                    },
-                    "day": 6,
-                    "money": 460,
                     "inventory": [
                       "bait"
                     ],
+                    "day": 6,
                     "elder": {
-                      "decision": "saved",
-                      "applesGiven": 3,
-                      "present": true
+                      "present": false,
+                      "applesGiven": 2,
+                      "decision": "dead"
+                    },
+                    "money": 490,
+                    "saveStatus": "saved",
+                    "stock": {
+                      "apple": 2,
+                      "bait": 2
                     }
-                  }
+                  },
+                  "saveStatusAfterSettlement": "saved",
+                  "nextDay": 7
                 },
                 {
-                  "day": 7,
-                  "fishingSeconds": 4.0,
-                  "saleAction": "出售 ¥70",
                   "afterTrade": {
                     "stamina": 60,
-                    "saveStatus": "saved",
-                    "stock": {
-                      "bait": 2,
-                      "apple": 2
-                    },
-                    "day": 7,
-                    "money": 530,
                     "inventory": [
                       "bait"
                     ],
+                    "day": 7,
                     "elder": {
-                      "decision": "saved",
-                      "applesGiven": 3,
-                      "present": true
+                      "present": false,
+                      "applesGiven": 2,
+                      "decision": "dead"
+                    },
+                    "money": 560,
+                    "saveStatus": "saved",
+                    "stock": {
+                      "apple": 2,
+                      "bait": 2
                     }
-                  }
+                  },
+                  "fishingSeconds": 4.0,
+                  "day": 7,
+                  "saleAction": "出售 ¥70"
                 }
               ],
               "fishingSeconds": 28.0,
-              "directDayWrites": 0,
-              "seekCalls": 0,
-              "updateCalls": 138,
+              "day4ElderAccess": {
+                "explanation": "老人不在",
+                "visible": true,
+                "enabled": true,
+                "label": "老人不在"
+              },
+              "giftDays": [
+                true,
+                true
+              ],
+              "day4Elder": {
+                "present": false,
+                "applesGiven": 2,
+                "decision": "dead"
+              },
+              "realOceanRuntimeVerified": false,
               "pauseCategorySeconds": {
-                "story": 0.5,
-                "settlement": 1.5,
+                "elder": 1.0,
                 "entry": 0.5,
-                "port": 8.0,
-                "elder": 2.0
+                "story": 0.5,
+                "port": 7.0,
+                "settlement": 1.5
+              },
+              "pauseRealReadingTime": "not measured; pauseCategorySeconds contains injected test dt and overlapping reasons must not be added",
+              "updateCalls": 136,
+              "paperClosed": true,
+              "seekCalls": 0,
+              "activeClockUpdateSeconds": 56.0,
+              "usesDebugTools": false,
+              "paperShown": true,
+              "terminalEndingTriggered": false,
+              "simulationTime": 63.0,
+              "endingDesignStatus": "not specified; no ending is invoked or inferred",
+              "portApiProductionVerified": false,
+              "day7State": {
+                "stamina": 60,
+                "inventory": [
+                  "bait"
+                ],
+                "day": 7,
+                "elder": {
+                  "present": false,
+                  "applesGiven": 2,
+                  "decision": "dead"
+                },
+                "money": 560,
+                "saveStatus": "saved",
+                "stock": {
+                  "apple": 2,
+                  "bait": 2
+                }
               },
               "portAdapter": {
                 "resetCalls": 7,
-                "kind": "test-only ocean/port adapter",
-                "getCalls": 143
+                "getCalls": 135,
+                "kind": "test-only ocean/port adapter"
               },
-              "usesDebugTools": false,
-              "activeClockUpdateSeconds": 56.0,
-              "portApiProductionVerified": false,
               "directPlayerResourceWrites": 0,
+              "navigationSeconds": 28.0,
+              "directDayWrites": 0
+            },
+            "day7": 7,
+            "simulationTime": 63.0,
+            "navigationSeconds": 28.0,
+            "day4Decision": "dead",
+            "error": "",
+            "passed": true,
+            "terminalEndingTriggered": false,
+            "pauseCategorySeconds": {
+              "elder": 1.0,
+              "entry": 0.5,
+              "story": 0.5,
+              "port": 7.0,
+              "settlement": 1.5
+            }
+          },
+          {
+            "name": "one apple on each of days one through three saves by day four",
+            "fishingSeconds": 28.0,
+            "applesGiven": 3,
+            "paperShown": true,
+            "day4ElderAccess": {
+              "visible": true,
+              "label": "拜访老人",
+              "closed": true,
+              "enabled": true,
+              "dialogStateShown": "老人获救",
+              "opened": true
+            },
+            "route": {
+              "days": [
+                {
+                  "fishingSeconds": 4.0,
+                  "day": 1,
+                  "saleAction": "出售 ¥70",
+                  "nextDayElder": {
+                    "present": true,
+                    "applesGiven": 1,
+                    "decision": "pending"
+                  },
+                  "afterTrade": {
+                    "stamina": 60,
+                    "inventory": [
+                      "bait"
+                    ],
+                    "day": 1,
+                    "elder": {
+                      "present": true,
+                      "applesGiven": 1,
+                      "decision": "pending"
+                    },
+                    "money": 170,
+                    "saveStatus": "saved",
+                    "stock": {
+                      "apple": 2,
+                      "bait": 2
+                    }
+                  },
+                  "saveStatusAfterSettlement": "saved",
+                  "nextDay": 2
+                },
+                {
+                  "fishingSeconds": 4.0,
+                  "day": 2,
+                  "saleAction": "出售 ¥70",
+                  "nextDayElder": {
+                    "present": true,
+                    "applesGiven": 2,
+                    "decision": "pending"
+                  },
+                  "afterTrade": {
+                    "stamina": 60,
+                    "inventory": [
+                      "bait"
+                    ],
+                    "day": 2,
+                    "elder": {
+                      "present": true,
+                      "applesGiven": 2,
+                      "decision": "pending"
+                    },
+                    "money": 210,
+                    "saveStatus": "saved",
+                    "stock": {
+                      "apple": 1,
+                      "bait": 2
+                    }
+                  },
+                  "saveStatusAfterSettlement": "saved",
+                  "nextDay": 3
+                },
+                {
+                  "fishingSeconds": 4.0,
+                  "day": 3,
+                  "saleAction": "出售 ¥70",
+                  "nextDayElder": {
+                    "present": true,
+                    "applesGiven": 3,
+                    "decision": "saved"
+                  },
+                  "afterTrade": {
+                    "stamina": 60,
+                    "inventory": [
+                      "bait"
+                    ],
+                    "day": 3,
+                    "elder": {
+                      "present": true,
+                      "applesGiven": 3,
+                      "decision": "pending"
+                    },
+                    "money": 250,
+                    "saveStatus": "saved",
+                    "stock": {
+                      "apple": 1,
+                      "bait": 2
+                    }
+                  },
+                  "saveStatusAfterSettlement": "saved",
+                  "nextDay": 4
+                },
+                {
+                  "fishingSeconds": 4.0,
+                  "day": 4,
+                  "saleAction": "出售 ¥70",
+                  "nextDayElder": {
+                    "present": true,
+                    "applesGiven": 3,
+                    "decision": "saved"
+                  },
+                  "afterTrade": {
+                    "stamina": 60,
+                    "inventory": [
+                      "bait"
+                    ],
+                    "day": 4,
+                    "elder": {
+                      "present": true,
+                      "applesGiven": 3,
+                      "decision": "saved"
+                    },
+                    "money": 320,
+                    "saveStatus": "saved",
+                    "stock": {
+                      "apple": 2,
+                      "bait": 2
+                    }
+                  },
+                  "saveStatusAfterSettlement": "saved",
+                  "nextDay": 5
+                },
+                {
+                  "fishingSeconds": 4.0,
+                  "day": 5,
+                  "saleAction": "出售 ¥70",
+                  "nextDayElder": {
+                    "present": true,
+                    "applesGiven": 3,
+                    "decision": "saved"
+                  },
+                  "afterTrade": {
+                    "stamina": 60,
+                    "inventory": [
+                      "bait"
+                    ],
+                    "day": 5,
+                    "elder": {
+                      "present": true,
+                      "applesGiven": 3,
+                      "decision": "saved"
+                    },
+                    "money": 390,
+                    "saveStatus": "saved",
+                    "stock": {
+                      "apple": 2,
+                      "bait": 2
+                    }
+                  },
+                  "saveStatusAfterSettlement": "saved",
+                  "nextDay": 6
+                },
+                {
+                  "fishingSeconds": 4.0,
+                  "day": 6,
+                  "saleAction": "出售 ¥70",
+                  "nextDayElder": {
+                    "present": true,
+                    "applesGiven": 3,
+                    "decision": "saved"
+                  },
+                  "afterTrade": {
+                    "stamina": 60,
+                    "inventory": [
+                      "bait"
+                    ],
+                    "day": 6,
+                    "elder": {
+                      "present": true,
+                      "applesGiven": 3,
+                      "decision": "saved"
+                    },
+                    "money": 460,
+                    "saveStatus": "saved",
+                    "stock": {
+                      "apple": 2,
+                      "bait": 2
+                    }
+                  },
+                  "saveStatusAfterSettlement": "saved",
+                  "nextDay": 7
+                },
+                {
+                  "afterTrade": {
+                    "stamina": 60,
+                    "inventory": [
+                      "bait"
+                    ],
+                    "day": 7,
+                    "elder": {
+                      "present": true,
+                      "applesGiven": 3,
+                      "decision": "saved"
+                    },
+                    "money": 530,
+                    "saveStatus": "saved",
+                    "stock": {
+                      "apple": 2,
+                      "bait": 2
+                    }
+                  },
+                  "fishingSeconds": 4.0,
+                  "day": 7,
+                  "saleAction": "出售 ¥70"
+                }
+              ],
+              "fishingSeconds": 28.0,
+              "day4ElderAccess": {
+                "visible": true,
+                "label": "拜访老人",
+                "closed": true,
+                "enabled": true,
+                "dialogStateShown": "老人获救",
+                "opened": true
+              },
               "giftDays": [
                 true,
                 true,
                 true
               ],
+              "day4Elder": {
+                "present": true,
+                "applesGiven": 3,
+                "decision": "saved"
+              },
               "realOceanRuntimeVerified": false,
+              "pauseCategorySeconds": {
+                "elder": 2.0,
+                "entry": 0.5,
+                "story": 0.5,
+                "port": 8.0,
+                "settlement": 1.5
+              },
+              "pauseRealReadingTime": "not measured; pauseCategorySeconds contains injected test dt and overlapping reasons must not be added",
+              "updateCalls": 138,
+              "paperClosed": true,
+              "seekCalls": 0,
+              "activeClockUpdateSeconds": 56.0,
+              "usesDebugTools": false,
+              "paperShown": true,
+              "terminalEndingTriggered": false,
               "simulationTime": 64.0,
               "endingDesignStatus": "not specified; no ending is invoked or inferred",
-              "terminalEndingTriggered": false,
+              "portApiProductionVerified": false,
               "day7State": {
                 "stamina": 60,
-                "saveStatus": "saved",
-                "stock": {
-                  "bait": 2,
-                  "apple": 2
-                },
-                "day": 7,
-                "money": 530,
                 "inventory": [
                   "bait"
                 ],
+                "day": 7,
                 "elder": {
-                  "decision": "saved",
+                  "present": true,
                   "applesGiven": 3,
-                  "present": true
+                  "decision": "saved"
+                },
+                "money": 530,
+                "saveStatus": "saved",
+                "stock": {
+                  "apple": 2,
+                  "bait": 2
                 }
               },
-              "paperShown": true,
-              "paperClosed": true,
-              "day4ElderAccess": {
-                "visible": true,
-                "enabled": true,
-                "closed": true,
-                "dialogStateShown": "老人获救",
-                "label": "拜访老人",
-                "opened": true
+              "portAdapter": {
+                "resetCalls": 7,
+                "getCalls": 143,
+                "kind": "test-only ocean/port adapter"
               },
-              "pauseRealReadingTime": "not measured; pauseCategorySeconds contains injected test dt and overlapping reasons must not be added",
+              "directPlayerResourceWrites": 0,
               "navigationSeconds": 28.0,
-              "day4Elder": {
-                "decision": "saved",
-                "applesGiven": 3,
-                "present": true
-              }
+              "directDayWrites": 0
             },
-            "terminalEndingTriggered": false,
+            "day7": 7,
+            "simulationTime": 64.0,
+            "navigationSeconds": 28.0,
             "day4Decision": "saved",
             "error": "",
-            "simulationTime": 64.0,
             "passed": true,
+            "terminalEndingTriggered": false,
             "pauseCategorySeconds": {
-              "story": 0.5,
-              "settlement": 1.5,
+              "elder": 2.0,
               "entry": 0.5,
+              "story": 0.5,
               "port": 8.0,
-              "elder": 2.0
-            },
-            "fishingSeconds": 28.0,
-            "paperShown": true,
-            "name": "one apple on each of days one through three saves by day four",
-            "day4ElderAccess": {
-              "visible": true,
-              "enabled": true,
-              "closed": true,
-              "dialogStateShown": "老人获救",
-              "label": "拜访老人",
-              "opened": true
-            },
-            "applesGiven": 3,
-            "navigationSeconds": 28.0,
-            "day7": 7
+              "settlement": 1.5
+            }
           }
         ],
-        "constraints": {
-          "ending": "day-seven paper entry only; no ending has been designed or invoked",
-          "source": "official Gameplay.HUD callbacks plus Bridge.Update and public loop/paper entry",
-          "updateOnlyClockProgress": true,
-          "seaFish": "deterministic simulated environment fish spawned by the protocol fixture",
-          "realReaderTime": "unmeasured",
-          "directDayOrPlayerResourceWrites": false,
-          "clockSeekUsed": false,
-          "portProtocol": "test double around the B1 flow runtime; not evidence of production Ocean support",
-          "debugResourceCommandsUsed": false
-        },
         "routes": [
           {
             "days": [
               {
-                "saveStatusAfterSettlement": "saved",
-                "saleAction": "出售 ¥70",
-                "nextDay": 2,
+                "fishingSeconds": 4.0,
                 "day": 1,
-                "fishingSeconds": 4.0,
+                "saleAction": "出售 ¥70",
                 "nextDayElder": {
-                  "decision": "pending",
+                  "present": true,
                   "applesGiven": 1,
-                  "present": true
+                  "decision": "pending"
                 },
                 "afterTrade": {
                   "stamina": 60,
-                  "saveStatus": "saved",
-                  "stock": {
-                    "bait": 2,
-                    "apple": 2
-                  },
+                  "inventory": [
+                    "bait"
+                  ],
                   "day": 1,
-                  "money": 170,
-                  "inventory": [
-                    "bait"
-                  ],
                   "elder": {
-                    "decision": "pending",
+                    "present": true,
                     "applesGiven": 1,
-                    "present": true
+                    "decision": "pending"
+                  },
+                  "money": 170,
+                  "saveStatus": "saved",
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
                   }
-                }
+                },
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 2
               },
               {
-                "saveStatusAfterSettlement": "saved",
-                "saleAction": "出售 ¥70",
-                "nextDay": 3,
+                "fishingSeconds": 4.0,
                 "day": 2,
-                "fishingSeconds": 4.0,
+                "saleAction": "出售 ¥70",
                 "nextDayElder": {
-                  "decision": "pending",
+                  "present": true,
                   "applesGiven": 2,
-                  "present": true
+                  "decision": "pending"
                 },
                 "afterTrade": {
                   "stamina": 60,
-                  "saveStatus": "saved",
-                  "stock": {
-                    "bait": 2,
-                    "apple": 1
-                  },
+                  "inventory": [
+                    "bait"
+                  ],
                   "day": 2,
+                  "elder": {
+                    "present": true,
+                    "applesGiven": 2,
+                    "decision": "pending"
+                  },
                   "money": 210,
-                  "inventory": [
-                    "bait"
-                  ],
-                  "elder": {
-                    "decision": "pending",
-                    "applesGiven": 2,
-                    "present": true
+                  "saveStatus": "saved",
+                  "stock": {
+                    "apple": 1,
+                    "bait": 2
                   }
-                }
+                },
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 3
               },
               {
-                "saveStatusAfterSettlement": "saved",
-                "saleAction": "出售 ¥70",
-                "nextDay": 4,
+                "fishingSeconds": 4.0,
                 "day": 3,
-                "fishingSeconds": 4.0,
+                "saleAction": "出售 ¥70",
                 "nextDayElder": {
-                  "decision": "dead",
+                  "present": false,
                   "applesGiven": 2,
-                  "present": false
+                  "decision": "dead"
                 },
                 "afterTrade": {
                   "stamina": 60,
-                  "saveStatus": "saved",
-                  "stock": {
-                    "bait": 2,
-                    "apple": 2
-                  },
+                  "inventory": [
+                    "bait"
+                  ],
                   "day": 3,
+                  "elder": {
+                    "present": true,
+                    "applesGiven": 2,
+                    "decision": "pending"
+                  },
                   "money": 280,
-                  "inventory": [
-                    "bait"
-                  ],
-                  "elder": {
-                    "decision": "pending",
-                    "applesGiven": 2,
-                    "present": true
+                  "saveStatus": "saved",
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
                   }
-                }
+                },
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 4
               },
               {
-                "saveStatusAfterSettlement": "saved",
-                "saleAction": "出售 ¥70",
-                "nextDay": 5,
+                "fishingSeconds": 4.0,
                 "day": 4,
-                "fishingSeconds": 4.0,
+                "saleAction": "出售 ¥70",
                 "nextDayElder": {
-                  "decision": "dead",
+                  "present": false,
                   "applesGiven": 2,
-                  "present": false
+                  "decision": "dead"
                 },
                 "afterTrade": {
                   "stamina": 60,
-                  "saveStatus": "saved",
-                  "stock": {
-                    "bait": 2,
-                    "apple": 2
-                  },
+                  "inventory": [
+                    "bait"
+                  ],
                   "day": 4,
+                  "elder": {
+                    "present": false,
+                    "applesGiven": 2,
+                    "decision": "dead"
+                  },
                   "money": 350,
-                  "inventory": [
-                    "bait"
-                  ],
-                  "elder": {
-                    "decision": "dead",
-                    "applesGiven": 2,
-                    "present": false
+                  "saveStatus": "saved",
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
                   }
-                }
+                },
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 5
               },
               {
-                "saveStatusAfterSettlement": "saved",
-                "saleAction": "出售 ¥70",
-                "nextDay": 6,
+                "fishingSeconds": 4.0,
                 "day": 5,
-                "fishingSeconds": 4.0,
+                "saleAction": "出售 ¥70",
                 "nextDayElder": {
-                  "decision": "dead",
+                  "present": false,
                   "applesGiven": 2,
-                  "present": false
+                  "decision": "dead"
                 },
                 "afterTrade": {
                   "stamina": 60,
-                  "saveStatus": "saved",
-                  "stock": {
-                    "bait": 2,
-                    "apple": 2
-                  },
+                  "inventory": [
+                    "bait"
+                  ],
                   "day": 5,
-                  "money": 420,
-                  "inventory": [
-                    "bait"
-                  ],
                   "elder": {
-                    "decision": "dead",
+                    "present": false,
                     "applesGiven": 2,
-                    "present": false
+                    "decision": "dead"
+                  },
+                  "money": 420,
+                  "saveStatus": "saved",
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
                   }
-                }
+                },
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 6
               },
               {
-                "saveStatusAfterSettlement": "saved",
-                "saleAction": "出售 ¥70",
-                "nextDay": 7,
-                "day": 6,
                 "fishingSeconds": 4.0,
+                "day": 6,
+                "saleAction": "出售 ¥70",
                 "nextDayElder": {
-                  "decision": "dead",
+                  "present": false,
                   "applesGiven": 2,
-                  "present": false
+                  "decision": "dead"
                 },
                 "afterTrade": {
                   "stamina": 60,
-                  "saveStatus": "saved",
-                  "stock": {
-                    "bait": 2,
-                    "apple": 2
-                  },
-                  "day": 6,
-                  "money": 490,
                   "inventory": [
                     "bait"
                   ],
+                  "day": 6,
                   "elder": {
-                    "decision": "dead",
+                    "present": false,
                     "applesGiven": 2,
-                    "present": false
+                    "decision": "dead"
+                  },
+                  "money": 490,
+                  "saveStatus": "saved",
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
                   }
-                }
+                },
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 7
               },
               {
-                "day": 7,
-                "fishingSeconds": 4.0,
-                "saleAction": "出售 ¥70",
                 "afterTrade": {
                   "stamina": 60,
-                  "saveStatus": "saved",
-                  "stock": {
-                    "bait": 2,
-                    "apple": 2
-                  },
-                  "day": 7,
-                  "money": 560,
                   "inventory": [
                     "bait"
                   ],
+                  "day": 7,
                   "elder": {
-                    "decision": "dead",
+                    "present": false,
                     "applesGiven": 2,
-                    "present": false
+                    "decision": "dead"
+                  },
+                  "money": 560,
+                  "saveStatus": "saved",
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
                   }
-                }
+                },
+                "fishingSeconds": 4.0,
+                "day": 7,
+                "saleAction": "出售 ¥70"
               }
             ],
             "fishingSeconds": 28.0,
-            "directDayWrites": 0,
-            "seekCalls": 0,
-            "updateCalls": 136,
-            "pauseCategorySeconds": {
-              "story": 0.5,
-              "settlement": 1.5,
-              "entry": 0.5,
-              "port": 7.0,
-              "elder": 1.0
+            "day4ElderAccess": {
+              "explanation": "老人不在",
+              "visible": true,
+              "enabled": true,
+              "label": "老人不在"
             },
-            "portAdapter": {
-              "resetCalls": 7,
-              "kind": "test-only ocean/port adapter",
-              "getCalls": 135
-            },
-            "usesDebugTools": false,
-            "activeClockUpdateSeconds": 56.0,
-            "portApiProductionVerified": false,
-            "directPlayerResourceWrites": 0,
             "giftDays": [
               true,
               true
             ],
+            "day4Elder": {
+              "present": false,
+              "applesGiven": 2,
+              "decision": "dead"
+            },
             "realOceanRuntimeVerified": false,
+            "pauseCategorySeconds": {
+              "elder": 1.0,
+              "entry": 0.5,
+              "story": 0.5,
+              "port": 7.0,
+              "settlement": 1.5
+            },
+            "pauseRealReadingTime": "not measured; pauseCategorySeconds contains injected test dt and overlapping reasons must not be added",
+            "updateCalls": 136,
+            "paperClosed": true,
+            "seekCalls": 0,
+            "activeClockUpdateSeconds": 56.0,
+            "usesDebugTools": false,
+            "paperShown": true,
+            "terminalEndingTriggered": false,
             "simulationTime": 63.0,
             "endingDesignStatus": "not specified; no ending is invoked or inferred",
-            "terminalEndingTriggered": false,
+            "portApiProductionVerified": false,
             "day7State": {
               "stamina": 60,
-              "saveStatus": "saved",
-              "stock": {
-                "bait": 2,
-                "apple": 2
-              },
-              "day": 7,
-              "money": 560,
               "inventory": [
                 "bait"
               ],
+              "day": 7,
               "elder": {
-                "decision": "dead",
+                "present": false,
                 "applesGiven": 2,
-                "present": false
+                "decision": "dead"
+              },
+              "money": 560,
+              "saveStatus": "saved",
+              "stock": {
+                "apple": 2,
+                "bait": 2
               }
             },
-            "paperShown": true,
-            "paperClosed": true,
-            "day4ElderAccess": {
-              "visible": true,
-              "explanation": "老人不在",
-              "enabled": true,
-              "label": "老人不在"
+            "portAdapter": {
+              "resetCalls": 7,
+              "getCalls": 135,
+              "kind": "test-only ocean/port adapter"
             },
-            "pauseRealReadingTime": "not measured; pauseCategorySeconds contains injected test dt and overlapping reasons must not be added",
+            "directPlayerResourceWrites": 0,
             "navigationSeconds": 28.0,
-            "day4Elder": {
-              "decision": "dead",
-              "applesGiven": 2,
-              "present": false
-            }
+            "directDayWrites": 0
           },
           {
             "days": [
               {
-                "saveStatusAfterSettlement": "saved",
-                "saleAction": "出售 ¥70",
-                "nextDay": 2,
+                "fishingSeconds": 4.0,
                 "day": 1,
-                "fishingSeconds": 4.0,
+                "saleAction": "出售 ¥70",
                 "nextDayElder": {
-                  "decision": "pending",
+                  "present": true,
                   "applesGiven": 1,
-                  "present": true
+                  "decision": "pending"
                 },
                 "afterTrade": {
                   "stamina": 60,
-                  "saveStatus": "saved",
-                  "stock": {
-                    "bait": 2,
-                    "apple": 2
-                  },
+                  "inventory": [
+                    "bait"
+                  ],
                   "day": 1,
-                  "money": 170,
-                  "inventory": [
-                    "bait"
-                  ],
                   "elder": {
-                    "decision": "pending",
+                    "present": true,
                     "applesGiven": 1,
-                    "present": true
+                    "decision": "pending"
+                  },
+                  "money": 170,
+                  "saveStatus": "saved",
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
                   }
-                }
+                },
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 2
               },
               {
-                "saveStatusAfterSettlement": "saved",
-                "saleAction": "出售 ¥70",
-                "nextDay": 3,
+                "fishingSeconds": 4.0,
                 "day": 2,
-                "fishingSeconds": 4.0,
+                "saleAction": "出售 ¥70",
                 "nextDayElder": {
-                  "decision": "pending",
+                  "present": true,
                   "applesGiven": 2,
-                  "present": true
+                  "decision": "pending"
                 },
                 "afterTrade": {
                   "stamina": 60,
-                  "saveStatus": "saved",
-                  "stock": {
-                    "bait": 2,
-                    "apple": 1
-                  },
+                  "inventory": [
+                    "bait"
+                  ],
                   "day": 2,
-                  "money": 210,
-                  "inventory": [
-                    "bait"
-                  ],
                   "elder": {
-                    "decision": "pending",
+                    "present": true,
                     "applesGiven": 2,
-                    "present": true
+                    "decision": "pending"
+                  },
+                  "money": 210,
+                  "saveStatus": "saved",
+                  "stock": {
+                    "apple": 1,
+                    "bait": 2
                   }
-                }
+                },
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 3
               },
               {
-                "saveStatusAfterSettlement": "saved",
-                "saleAction": "出售 ¥70",
-                "nextDay": 4,
+                "fishingSeconds": 4.0,
                 "day": 3,
-                "fishingSeconds": 4.0,
+                "saleAction": "出售 ¥70",
                 "nextDayElder": {
-                  "decision": "saved",
+                  "present": true,
                   "applesGiven": 3,
-                  "present": true
+                  "decision": "saved"
                 },
                 "afterTrade": {
                   "stamina": 60,
-                  "saveStatus": "saved",
-                  "stock": {
-                    "bait": 2,
-                    "apple": 1
-                  },
+                  "inventory": [
+                    "bait"
+                  ],
                   "day": 3,
+                  "elder": {
+                    "present": true,
+                    "applesGiven": 3,
+                    "decision": "pending"
+                  },
                   "money": 250,
-                  "inventory": [
-                    "bait"
-                  ],
-                  "elder": {
-                    "decision": "pending",
-                    "applesGiven": 3,
-                    "present": true
+                  "saveStatus": "saved",
+                  "stock": {
+                    "apple": 1,
+                    "bait": 2
                   }
-                }
+                },
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 4
               },
               {
-                "saveStatusAfterSettlement": "saved",
-                "saleAction": "出售 ¥70",
-                "nextDay": 5,
+                "fishingSeconds": 4.0,
                 "day": 4,
-                "fishingSeconds": 4.0,
+                "saleAction": "出售 ¥70",
                 "nextDayElder": {
-                  "decision": "saved",
+                  "present": true,
                   "applesGiven": 3,
-                  "present": true
+                  "decision": "saved"
                 },
                 "afterTrade": {
                   "stamina": 60,
-                  "saveStatus": "saved",
-                  "stock": {
-                    "bait": 2,
-                    "apple": 2
-                  },
+                  "inventory": [
+                    "bait"
+                  ],
                   "day": 4,
+                  "elder": {
+                    "present": true,
+                    "applesGiven": 3,
+                    "decision": "saved"
+                  },
                   "money": 320,
-                  "inventory": [
-                    "bait"
-                  ],
-                  "elder": {
-                    "decision": "saved",
-                    "applesGiven": 3,
-                    "present": true
+                  "saveStatus": "saved",
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
                   }
-                }
+                },
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 5
               },
               {
-                "saveStatusAfterSettlement": "saved",
-                "saleAction": "出售 ¥70",
-                "nextDay": 6,
+                "fishingSeconds": 4.0,
                 "day": 5,
-                "fishingSeconds": 4.0,
+                "saleAction": "出售 ¥70",
                 "nextDayElder": {
-                  "decision": "saved",
+                  "present": true,
                   "applesGiven": 3,
-                  "present": true
+                  "decision": "saved"
                 },
                 "afterTrade": {
                   "stamina": 60,
-                  "saveStatus": "saved",
-                  "stock": {
-                    "bait": 2,
-                    "apple": 2
-                  },
+                  "inventory": [
+                    "bait"
+                  ],
                   "day": 5,
-                  "money": 390,
-                  "inventory": [
-                    "bait"
-                  ],
                   "elder": {
-                    "decision": "saved",
+                    "present": true,
                     "applesGiven": 3,
-                    "present": true
+                    "decision": "saved"
+                  },
+                  "money": 390,
+                  "saveStatus": "saved",
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
                   }
-                }
+                },
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 6
               },
               {
-                "saveStatusAfterSettlement": "saved",
-                "saleAction": "出售 ¥70",
-                "nextDay": 7,
-                "day": 6,
                 "fishingSeconds": 4.0,
+                "day": 6,
+                "saleAction": "出售 ¥70",
                 "nextDayElder": {
-                  "decision": "saved",
+                  "present": true,
                   "applesGiven": 3,
-                  "present": true
+                  "decision": "saved"
                 },
                 "afterTrade": {
                   "stamina": 60,
-                  "saveStatus": "saved",
-                  "stock": {
-                    "bait": 2,
-                    "apple": 2
-                  },
-                  "day": 6,
-                  "money": 460,
                   "inventory": [
                     "bait"
                   ],
+                  "day": 6,
                   "elder": {
-                    "decision": "saved",
+                    "present": true,
                     "applesGiven": 3,
-                    "present": true
+                    "decision": "saved"
+                  },
+                  "money": 460,
+                  "saveStatus": "saved",
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
                   }
-                }
+                },
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 7
               },
               {
-                "day": 7,
-                "fishingSeconds": 4.0,
-                "saleAction": "出售 ¥70",
                 "afterTrade": {
                   "stamina": 60,
-                  "saveStatus": "saved",
-                  "stock": {
-                    "bait": 2,
-                    "apple": 2
-                  },
-                  "day": 7,
-                  "money": 530,
                   "inventory": [
                     "bait"
                   ],
+                  "day": 7,
                   "elder": {
-                    "decision": "saved",
+                    "present": true,
                     "applesGiven": 3,
-                    "present": true
+                    "decision": "saved"
+                  },
+                  "money": 530,
+                  "saveStatus": "saved",
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
                   }
-                }
+                },
+                "fishingSeconds": 4.0,
+                "day": 7,
+                "saleAction": "出售 ¥70"
               }
             ],
             "fishingSeconds": 28.0,
-            "directDayWrites": 0,
-            "seekCalls": 0,
-            "updateCalls": 138,
-            "pauseCategorySeconds": {
-              "story": 0.5,
-              "settlement": 1.5,
-              "entry": 0.5,
-              "port": 8.0,
-              "elder": 2.0
+            "day4ElderAccess": {
+              "visible": true,
+              "label": "拜访老人",
+              "closed": true,
+              "enabled": true,
+              "dialogStateShown": "老人获救",
+              "opened": true
             },
-            "portAdapter": {
-              "resetCalls": 7,
-              "kind": "test-only ocean/port adapter",
-              "getCalls": 143
-            },
-            "usesDebugTools": false,
-            "activeClockUpdateSeconds": 56.0,
-            "portApiProductionVerified": false,
-            "directPlayerResourceWrites": 0,
             "giftDays": [
               true,
               true,
               true
             ],
+            "day4Elder": {
+              "present": true,
+              "applesGiven": 3,
+              "decision": "saved"
+            },
             "realOceanRuntimeVerified": false,
+            "pauseCategorySeconds": {
+              "elder": 2.0,
+              "entry": 0.5,
+              "story": 0.5,
+              "port": 8.0,
+              "settlement": 1.5
+            },
+            "pauseRealReadingTime": "not measured; pauseCategorySeconds contains injected test dt and overlapping reasons must not be added",
+            "updateCalls": 138,
+            "paperClosed": true,
+            "seekCalls": 0,
+            "activeClockUpdateSeconds": 56.0,
+            "usesDebugTools": false,
+            "paperShown": true,
+            "terminalEndingTriggered": false,
             "simulationTime": 64.0,
             "endingDesignStatus": "not specified; no ending is invoked or inferred",
-            "terminalEndingTriggered": false,
+            "portApiProductionVerified": false,
             "day7State": {
               "stamina": 60,
-              "saveStatus": "saved",
-              "stock": {
-                "bait": 2,
-                "apple": 2
-              },
-              "day": 7,
-              "money": 530,
               "inventory": [
                 "bait"
               ],
+              "day": 7,
               "elder": {
-                "decision": "saved",
+                "present": true,
                 "applesGiven": 3,
-                "present": true
+                "decision": "saved"
+              },
+              "money": 530,
+              "saveStatus": "saved",
+              "stock": {
+                "apple": 2,
+                "bait": 2
               }
             },
-            "paperShown": true,
-            "paperClosed": true,
-            "day4ElderAccess": {
-              "visible": true,
-              "enabled": true,
-              "closed": true,
-              "dialogStateShown": "老人获救",
-              "label": "拜访老人",
-              "opened": true
+            "portAdapter": {
+              "resetCalls": 7,
+              "getCalls": 143,
+              "kind": "test-only ocean/port adapter"
             },
-            "pauseRealReadingTime": "not measured; pauseCategorySeconds contains injected test dt and overlapping reasons must not be added",
+            "directPlayerResourceWrites": 0,
             "navigationSeconds": 28.0,
-            "day4Elder": {
-              "decision": "saved",
-              "applesGiven": 3,
-              "present": true
-            }
+            "directDayWrites": 0
           }
         ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 117.47
+      "durationMs": 90.158
     },
     {
       "name": "Circle1B3SpatialTests",
@@ -2760,45 +2754,45 @@
       "subtestCount": 6,
       "failures": [],
       "returned": {
+        "passed": 6,
         "total": 6,
         "results": [
           {
             "name": "standalone gameplay keeps port rules usable without a sea runtime",
-            "passed": true,
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
             "name": "bound gameplay fails closed when the port position protocol is missing",
-            "passed": true,
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
             "name": "ordinary return accepts exactly ten meters and never teleports",
-            "passed": true,
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
             "name": "ordinary return rejects just beyond ten meters without moving the ship",
-            "passed": true,
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
             "name": "shop and upgrade actions reject a ship outside the port radius atomically",
-            "passed": true,
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
             "name": "port preparation requires reset support and verifies the resulting position",
-            "passed": true,
-            "error": ""
+            "error": "",
+            "passed": true
           }
-        ],
-        "passed": 6
+        ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 26.992
+      "durationMs": 27.127
     },
     {
       "name": "Circle1B5DiagnosticsIntegrationTests",
@@ -2810,32 +2804,32 @@
       "returned": {
         "results": [
           {
-            "name": "diagnostics preserve nil return arity and original error object",
-            "passed": true
+            "passed": true,
+            "name": "diagnostics preserve nil return arity and original error object"
           },
           {
-            "name": "scalar allowlist and sensitive text redaction omit save contents",
-            "passed": true
+            "passed": true,
+            "name": "scalar allowlist and sensitive text redaction omit save contents"
           },
           {
-            "name": "formatter print and traceback failures cannot change operation results",
-            "passed": true
+            "passed": true,
+            "name": "formatter print and traceback failures cannot change operation results"
           },
           {
-            "name": "SDK failure details are preserved for callbacks but withheld from operation logs",
-            "passed": true
+            "passed": true,
+            "name": "SDK failure details are preserved for callbacks but withheld from operation logs"
           },
           {
-            "name": "per-frame integration getter exception logs once until recovery",
-            "passed": true
+            "passed": true,
+            "name": "per-frame integration getter exception logs once until recovery"
           },
           {
-            "name": "actual normal-navigation return at target 0",
-            "passed": true
+            "passed": true,
+            "name": "actual normal-navigation return at target 0"
           },
           {
-            "name": "actual normal-navigation return at target 10",
-            "passed": true
+            "passed": true,
+            "name": "actual normal-navigation return at target 10"
           }
         ],
         "evidenceKind": "offline real Runtime/Movement/Bridge/Loop; print and store doubles; no native engine"
@@ -2843,7 +2837,7 @@
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 3944.467
+      "durationMs": 3397.976
     },
     {
       "name": "Circle1B5GameplayTests",
@@ -2853,7 +2847,6 @@
       "subtestCount": 9,
       "failures": [],
       "returned": {
-        "evidenceKind": "offline Lua 5.4 gameplay/Loop/HUD checks with local print, UI, cloud, and Runtime doubles",
         "results": [
           {
             "passed": true,
@@ -2891,12 +2884,13 @@
             "passed": true,
             "name": "new-day and new-run preparation log start, rejection, and success"
           }
-        ]
+        ],
+        "evidenceKind": "offline Lua 5.4 gameplay/Loop/HUD checks with local print, UI, cloud, and Runtime doubles"
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 57.171
+      "durationMs": 41.881
     },
     {
       "name": "Circle1B5PersistenceBarrelTests",
@@ -2908,36 +2902,36 @@
       "returned": {
         "results": [
           {
-            "error": "",
+            "passed": true,
             "name": "barrel start, evidence rejection, completion and duplicate callback keep action identity",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "barrel cancellation and commit exception roll back without changing failure results",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "barrel rollback tick failures are logged once until recovery changes state",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "cloud save/load report only outcomes and ignore asynchronous failure replays",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "raw exception identity and failed diagnostic printing do not alter business outcomes",
-            "passed": true
+            "error": ""
           }
         ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 57.967
+      "durationMs": 51.293
     },
     {
       "name": "Circle1B5PortDrawTests",
@@ -2947,31 +2941,31 @@
       "subtestCount": 4,
       "failures": [],
       "returned": {
+        "status": "PASS",
         "tests": [
           {
-            "name": "authored_port_uses_current_world_to_screen_projection",
-            "passed": true
+            "passed": true,
+            "name": "authored_port_uses_current_world_to_screen_projection"
           },
           {
-            "name": "camera_motion_reprojects_the_marker_without_moving_the_world",
-            "passed": true
+            "passed": true,
+            "name": "camera_motion_reprojects_the_marker_without_moving_the_world"
           },
           {
-            "name": "resize_and_dpr_keep_the_marker_in_logical_screen_coordinates",
-            "passed": true
+            "passed": true,
+            "name": "resize_and_dpr_keep_the_marker_in_logical_screen_coordinates"
           },
           {
-            "name": "offscreen_port_is_culled_without_edge_snapping_or_view_expansion",
-            "passed": true
+            "passed": true,
+            "name": "offscreen_port_is_culled_without_edge_snapping_or_view_expansion"
           }
         ],
         "metrics": {
-          "projection": "runtime:GetPortPosition() -> Movement:WorldToScreen()",
+          "markerRadius": 16,
           "offscreenBehavior": "culled at original projection; no edge snapping",
           "resolutionMode": "logical pixels with DPR scaling at NanoVG frame boundary",
-          "markerRadius": 16
-        },
-        "status": "PASS"
+          "projection": "runtime:GetPortPosition() -> Movement:WorldToScreen()"
+        }
       },
       "stdout": "",
       "nvgCalls": {
@@ -2999,7 +2993,7 @@
         "nvgTranslate": 21
       },
       "nvgCallTotal": 10601,
-      "durationMs": 750.442
+      "durationMs": 634.583
     },
     {
       "name": "Circle1B6EndingTests",
@@ -3009,44 +3003,44 @@
       "subtestCount": 6,
       "failures": [],
       "returned": {
+        "metrics": [],
         "results": [
           {
-            "error": "",
+            "passed": true,
             "name": "config declares maxDay = 7",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "day 1-6 settlement still advances the day without ending",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "day 7 settlement enters normal ending and keeps day = 7",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "3-apple saved elder produces the changed ending",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "day 7 forced-return settlement also ends the run",
-            "passed": true
+            "error": ""
           },
           {
-            "error": "",
+            "passed": true,
             "name": "NewRun resets the ending state for a fresh run",
-            "passed": true
+            "error": ""
           }
-        ],
-        "metrics": []
+        ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 40.34
+      "durationMs": 30.083
     },
     {
       "name": "Circle1BFishingFlowTests",
@@ -3058,116 +3052,116 @@
       "returned": {
         "results": [
           {
-            "name": "confirmation does not select or charge and early completion is rejected",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "confirmation does not select or charge and early completion is rejected"
           },
           {
-            "name": "the 0.5 second landing selects the then-nearest fish and locks once",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "the 0.5 second landing selects the then-nearest fish and locks once"
           },
           {
-            "name": "the locked result stays fixed through four seconds and a replay cannot charge twice",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "the locked result stays fixed through four seconds and a replay cannot charge twice"
           },
           {
-            "name": "empty water completes for free",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "empty water completes for free"
           },
           {
-            "name": "cancel before or after landing is free and releases the owned lock",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "cancel before or after landing is free and releases the owned lock"
           },
           {
-            "name": "A2 re-tapping the fishing dock button mid-action cancels for free",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "A2 re-tapping the fishing dock button mid-action cancels for free"
           },
           {
-            "name": "A1 whitelist: scope toggle stays available and dialogs stay blocked mid-action",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "A1 whitelist: scope toggle stays available and dialogs stay blocked mid-action"
           },
           {
-            "name": "A9 protected items cannot be dropped, thrown, or sold away",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "A9 protected items cannot be dropped, thrown, or sold away"
           },
           {
-            "name": "lock rejection is a free terminal failure and never selects a replacement",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "lock rejection is a free terminal failure and never selects a replacement"
           },
           {
-            "name": "39 stamina rejects while 40 starts and a successful catch consumes exactly 40",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "39 stamina rejects while 40 starts and a successful catch consumes exactly 40"
           },
           {
-            "name": "pause freezes progress and time scale advances action time without scaling sea budget",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "pause freezes progress and time scale advances action time without scaling sea budget"
           },
           {
-            "name": "large dt uses the real frame World once and clamps aggregate Ocean advancement",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "large dt uses the real frame World once and clamps aggregate Ocean advancement"
           },
           {
-            "name": "night exhaustion on the completion boundary cancels first and unlocks for free",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "night exhaustion on the completion boundary cancels first and unlocks for free"
           },
           {
-            "name": "forced return waits until night-interrupted fishing cleanup releases its lock",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "forced return waits until night-interrupted fishing cleanup releases its lock"
           },
           {
-            "name": "new run clears the old lock before a reused fish ID enters the new generation",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "new run clears the old lock before a reused fish ID enters the new generation"
           },
           {
-            "name": "scene stop cancellation clears a landed lock without charging",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "scene stop cancellation clears a landed lock without charging"
           },
           {
-            "name": "reentrant fishing during the lock callback cannot create a second transaction",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "reentrant fishing during the lock callback cannot create a second transaction"
           },
           {
-            "name": "mutation then throw during removal restores the exact fish, inventory and stamina",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "mutation then throw during removal restores the exact fish, inventory and stamina"
           },
           {
-            "name": "failed unlock stays pending and retries through the next real frame dispatch",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "failed unlock stays pending and retries through the next real frame dispatch"
           },
           {
-            "name": "throwing inventory snapshot during commit fails free and releases the fish",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "throwing inventory snapshot during commit fails free and releases the fish"
           },
           {
-            "name": "world-bound CompleteAction cannot charge for fishing without a bridge token",
+            "passed": true,
             "error": "",
-            "passed": true
+            "name": "world-bound CompleteAction cannot charge for fishing without a bridge token"
           }
         ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 45.342
+      "durationMs": 30.158
     },
     {
       "name": "Circle1BPendingCatchTests",
@@ -3179,63 +3173,63 @@
       "returned": {
         "results": [
           {
+            "error": "",
             "name": "full hold can cast and an empty net completes without fee or forced receive",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "full hold preserves a successful catch, charges once and requires the cargo panel",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "using or dropping cargo frees one slot and claims the retained catch exactly once",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "claim restores the full post-freeing inventory after Add mutates then throws",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "claim retries inventory rollback before Add and blocks inventory use while rollback is pending",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "UseItem and DropItem roll back a Remove that mutates then throws before freeing cargo",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "rejected drop receiver restores cargo and allows one later successful release and claim",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "world removal mutation followed by an exception restores fish, inventory and stamina",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "night settlement and NewRun cannot discard an already completed pending catch",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "a successful catch completes the elder teaching marker (S6)",
-            "error": "",
             "passed": true
           },
           {
+            "error": "",
             "name": "full-hold catch marks the teaching only after the claim lands (S6)",
-            "error": "",
             "passed": true
           },
           {
-            "name": "teaching marker tolerates legacy saves without the field (S6)",
             "error": "",
+            "name": "teaching marker tolerates legacy saves without the field (S6)",
             "passed": true
           }
         ]
@@ -3243,7 +3237,7 @@
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 48.718
+      "durationMs": 33.111
     },
     {
       "name": "Circle1HUDReviewTests",
@@ -3256,59 +3250,59 @@
         "guiVerified": false,
         "results": [
           {
-            "passed": true,
-            "name": "stable visible and hidden modal opacity does not dirty layout on each refresh"
+            "name": "stable visible and hidden modal opacity does not dirty layout on each refresh",
+            "passed": true
           },
           {
-            "passed": true,
-            "name": "fish rows and port sales show rarity without inventing weight"
+            "name": "fish rows and port sales show rarity without inventing weight",
+            "passed": true
           },
           {
-            "passed": true,
-            "name": "empty cabin and supply-only cabin explain disabled sell-all"
+            "name": "empty cabin and supply-only cabin explain disabled sell-all",
+            "passed": true
           },
           {
-            "passed": true,
-            "name": "catch at sea explains port requirement and sale becomes available on return"
+            "name": "catch at sea explains port requirement and sale becomes available on return",
+            "passed": true
           },
           {
-            "passed": true,
-            "name": "drawer and cards use native RGBA interpolation and stable phase writes"
+            "name": "drawer and cards use native RGBA interpolation and stable phase writes",
+            "passed": true
           },
           {
-            "passed": true,
-            "name": "pending catch selects a sea drop point through the real drawer backdrop only"
+            "name": "pending catch selects a sea drop point through the real drawer backdrop only",
+            "passed": true
           },
           {
-            "passed": true,
-            "name": "cabin gift opens actual elder dialogue and consumes food without healing player"
+            "name": "cabin gift opens actual elder dialogue and consumes food without healing player",
+            "passed": true
           },
           {
-            "passed": true,
-            "name": "elder absence remains clickable and explains reason without losing cargo"
+            "name": "elder absence remains clickable and explains reason without losing cargo",
+            "passed": true
           },
           {
-            "passed": true,
-            "name": "full cabin gift frees a slot and claims catch once while all dialogue pauses remain"
+            "name": "full cabin gift frees a slot and claims catch once while all dialogue pauses remain",
+            "passed": true
           },
           {
-            "passed": true,
-            "name": "shop shortages explain their cause and are re-enabled after restock"
+            "name": "shop shortages explain their cause and are re-enabled after restock",
+            "passed": true
           },
           {
-            "passed": true,
-            "name": "treasure ownership remains separate from cargo and mode follows real state"
+            "name": "treasure ownership remains separate from cargo and mode follows real state",
+            "passed": true
           },
           {
-            "passed": true,
-            "name": "night HUD explains grace, precise penalty and exhaustion"
+            "name": "night HUD explains grace, precise penalty and exhaustion",
+            "passed": true
           }
         ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 135.955
+      "durationMs": 190.777
     },
     {
       "name": "GameLoopSpec",
@@ -3320,7 +3314,7 @@
       "stdout": "PASS configuration values and four authoritative item definitions\nPASS stamina guards, complete action cost and zero stamina return\nPASS special events pause time and prevent starting full actions\nPASS food use, cap and no elder stamina reward\nPASS inventory one item per slot, capacity upgrades and defensive copies\nPASS multi reason pauses and day night boundaries\nPASS port pauses preserve elapsed and repeat departure\nPASS normal return penalties at 0 30 30.9 40 55 59.9\nPASS night 60 forced modal, proportional stamina and one settlement\nPASS save failure retry freezes state and does not advance day twice\nPASS explicitly skipping a failed save releases one settlement without pretending to save\nPASS a save retry in flight can be explicitly skipped and ignores its late callback\nPASS transactions read item prices, reject invalid/full/sea without side effects\nPASS drop acceptance payloads and rejected/error receiver retains item\nPASS new run resets gameplay and immediately saves its starting snapshot\nPASS snapshot round trip and invalid saves leave state intact\nPASS cloud callback mapping, timeout and duplicate completion\nPASS load success failure pending lock and late callbacks\nPASS drop callback reentry and elder rejection have no extra side effects\nPASS new day hooks fire once after successful save, never on failed retry\nPASS clock debug bounds scales sorted reasons and invalid inputs\nPASS only confirmed daily settlement writes, no manual sea save API\nGAME_LOOP_SPEC_PASS 22",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 35.921
+      "durationMs": 28.931
     },
     {
       "name": "GameLoopUISpec",
@@ -3332,7 +3326,7 @@
       "stdout": "PASS HUD always visible information, host subtree and core button wiring\nPASS forced return modal and failed save retry through actual callbacks\nPASS failed save offers an explicit unsaved continuation through the HUD\nPASS skipping a pending save explains that the remote write may still finish\nPASS debug restricted to development, config steps and freeze during save\nPASS development HUD controls configure actions without production debug\nPASS port upgrade buttons use config prices and refresh after purchase\nPASS daily shop stock sold-out UI and next-day refresh\nPASS production fishing HUD casts on the sea pointer then pauses and cancels\nPASS pending cabin menu returns without closing then consumes and claims exactly once\nPASS pending cabin pointer chooses drop position while paused with mouse and touch\nGAME_LOOP_UI_MOCK_PASS 11",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 97.61
+      "durationMs": 67.003
     },
     {
       "name": "LocalSaveLoopTests",
@@ -3346,80 +3340,80 @@
         "results": [
           {
             "error": "",
-            "passed": true,
-            "name": "LocalSaveBackendRoundtrip"
+            "name": "LocalSaveBackendRoundtrip",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "LocalSaveBackendEmptyAndCorrupt"
+            "name": "LocalSaveBackendEmptyAndCorrupt",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "LocalSaveBackendAvailableProbe"
+            "name": "LocalSaveBackendAvailableProbe",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "DualSaveLocalWinsCloudShadows"
+            "name": "DualSaveLocalWinsCloudShadows",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "DualSaveFallsBackToCloudWhenLocalFails"
+            "name": "DualSaveFallsBackToCloudWhenLocalFails",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "DualSaveCloudUnavailableStillSucceeds"
+            "name": "DualSaveCloudUnavailableStillSucceeds",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "DualLoadPrefersLocal"
+            "name": "DualLoadPrefersLocal",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "DualLoadFallsBackToCloudAndCaches"
+            "name": "DualLoadFallsBackToCloudAndCaches",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "DualLoadEmptyWhenNoSaveAnywhere"
+            "name": "DualLoadEmptyWhenNoSaveAnywhere",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "DualDegradesToCloudWithoutEngine"
+            "name": "DualDegradesToCloudWithoutEngine",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "SellAllSellsOnlyFishAndSumsIncome"
+            "name": "SellAllSellsOnlyFishAndSumsIncome",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "SellAllEmptyInventoryRejected"
+            "name": "SellAllEmptyInventoryRejected",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "SellAllAtSeaRejected"
+            "name": "SellAllAtSeaRejected",
+            "passed": true
           },
           {
             "error": "",
-            "passed": true,
-            "name": "ReturnToPortOutOfRangeGivesCompass"
+            "name": "ReturnToPortOutOfRangeGivesCompass",
+            "passed": true
           }
         ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 45.89
+      "durationMs": 29.642
     },
     {
       "name": "NumericEconomySpec",
@@ -3431,7 +3425,7 @@
       "stdout": "PASS numeric stamina100-to160-cost400\nPASS numeric stamina160-to200-cost600\nPASS numeric upgrade-preserves-missing-stamina\nPASS numeric inventory-transition-1\nPASS numeric inventory-transition-2\nPASS numeric inventory-transition-3\nPASS numeric boat-speed-transition-1\nPASS numeric boat-speed-transition-2\nPASS numeric item-values-apple\nPASS numeric item-values-bait\nPASS numeric item-values-sardine\nPASS numeric item-values-tuna\nPASS numeric standalone-empty-net-is-free-and-world-bound-direct-completion-is-rejected\nPASS numeric free-interactions-no-save-no-player-mutation\nPASS numeric event-operation-cost40-on-explicit-completion\nPASS numeric no-daily-fishing-limit-and-food-action-math\nPASS numeric single-config-prices-and-total-cost3900\nPASS numeric forced-night60-proportional160-and200\nPASS numeric upgrade-rejections-atomic-sea-busy-and-insufficient\nPASS numeric persistence-levels-legacy-validation-and-new-run-reset\nPASS numeric balance-model-references-not-runtime-quotas\nNUMERIC_ECONOMY_SPEC_PASS 21",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 36.199
+      "durationMs": 24.349
     },
     {
       "name": "OceanImageCatalogTests",
@@ -3484,10 +3478,10 @@
           }
         ]
       },
-      "stdout": "[OceanArt] loaded island path=image/OceanLoop/island.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded ripple path=image/OceanLoop/ripple.png\n[OceanArt] loaded boat path=image/OceanLoop/boat.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded gull path=image/OceanLoop/gull.png\n[OceanArt] loaded reef path=image/OceanReady/reef.png\n[OceanArt] loaded shrub path=image/OceanReady/shrub.png\n[OceanArt] loaded island path=image/OceanLoop/island.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded ripple path=image/OceanLoop/ripple.png\n[OceanArt] loaded boat path=image/OceanLoop/boat.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded gull path=image/OceanLoop/gull.png\n[OceanArt] load failed image/OceanReady/driftwood.png; retaining vector fallback\n[OceanArt] loaded sardine path=image/OceanReady/sardine.png\n[OceanArt] loaded driftwood path=image/OceanReady/driftwood.png\n[OceanArt] loaded island path=image/OceanLoop/island.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded ripple path=image/OceanLoop/ripple.png\n[OceanArt] loaded boat path=image/OceanLoop/boat.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded gull path=image/OceanLoop/gull.png",
+      "stdout": "[OceanArt] loaded gull path=image/OceanLoop/gull.png\n[OceanArt] loaded island path=image/OceanLoop/island.png\n[OceanArt] loaded ripple path=image/OceanLoop/ripple.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded boat path=image/OceanLoop/boat.png\n[OceanArt] loaded reef path=image/OceanReady/reef.png\n[OceanArt] loaded shrub path=image/OceanReady/shrub.png\n[OceanArt] loaded gull path=image/OceanLoop/gull.png\n[OceanArt] loaded island path=image/OceanLoop/island.png\n[OceanArt] loaded ripple path=image/OceanLoop/ripple.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded boat path=image/OceanLoop/boat.png\n[OceanArt] load failed image/OceanReady/driftwood.png; retaining vector fallback\n[OceanArt] loaded sardine path=image/OceanReady/sardine.png\n[OceanArt] loaded driftwood path=image/OceanReady/driftwood.png\n[OceanArt] loaded gull path=image/OceanLoop/gull.png\n[OceanArt] loaded island path=image/OceanLoop/island.png\n[OceanArt] loaded ripple path=image/OceanLoop/ripple.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded boat path=image/OceanLoop/boat.png",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 15.219
+      "durationMs": 14.406
     },
     {
       "name": "PersistenceRegressionSpec",
@@ -3499,7 +3493,7 @@
       "stdout": "PERSISTENCE_REGRESSION_PASS 84",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 45.153
+      "durationMs": 33.246
     },
     {
       "name": "SeaAtmosphereTests",
@@ -3510,14 +3504,14 @@
       "failures": [],
       "returned": {
         "metrics": {
+          "fog": 14,
+          "maxFogPuffsPerPass": 36,
           "distantFogAlpha": 29.0,
-          "cloudShadows": 3,
           "fogCrossesHorizon": true,
           "maxCloudPuffsPerPass": 12,
-          "maxFogPuffsPerPass": 36,
           "closeFogAlpha": 3.0,
-          "cloudCrossesHorizon": true,
-          "fog": 14
+          "cloudShadows": 3,
+          "cloudCrossesHorizon": true
         },
         "tests": [
           "cloud_shadows_are_repeatable_for_same_seed_and_time",
@@ -3533,7 +3527,7 @@
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 43.565
+      "durationMs": 25.123
     },
     {
       "name": "SeaCurvatureTests",
@@ -3543,34 +3537,34 @@
       "subtestCount": 4,
       "failures": [],
       "returned": {
-        "status": "PASS",
         "results": [
           {
-            "name": "formula and exact inverse across DPR and landscape/portrait viewports",
+            "error": "",
             "passed": true,
-            "error": ""
+            "name": "formula and exact inverse across DPR and landscape/portrait viewports"
           },
           {
-            "name": "screen-space horizon rejects sky according to its lateral curve",
+            "error": "",
             "passed": true,
-            "error": ""
+            "name": "screen-space horizon rejects sky according to its lateral curve"
           },
           {
-            "name": "vector derivatives match the curved projection finite difference",
+            "error": "",
             "passed": true,
-            "error": ""
+            "name": "vector derivatives match the curved projection finite difference"
           },
           {
-            "name": "finite ground plane reaches the horizon while elevated silhouettes pass it",
+            "error": "",
             "passed": true,
-            "error": ""
+            "name": "finite ground plane reaches the horizon while elevated silhouettes pass it"
           }
-        ]
+        ],
+        "status": "PASS"
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 14.573
+      "durationMs": 10.594
     },
     {
       "name": "SeaFusedSceneTests",
@@ -3583,55 +3577,55 @@
         "results": [
           {
             "name": "original HUD directional contract drives the real ship",
-            "passed": true,
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
             "name": "original HUD pause and reset synchronize and preserve ship level",
-            "passed": true,
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
             "name": "fused scene retains the original HUD root and appends hidden debug tools",
-            "passed": true,
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
             "name": "sky clicks do not sail; sea clicks target world meters; UI blocks clicks",
-            "passed": true,
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
             "name": "one event owner updates and renders the real simulation at mode-B DPR",
-            "passed": true,
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
             "name": "keyboard pause reset and hidden debug visibility keep the HUD synchronized",
-            "passed": true,
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
             "name": "shutdown is idempotent and releases only this event owner and UI",
-            "passed": true,
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
             "name": "render receives the live external clock without advancing it",
-            "passed": true,
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
             "name": "B may supply a UI factory without replacing or initializing its UI",
-            "passed": true,
-            "error": ""
+            "error": "",
+            "passed": true
           }
         ]
       },
       "stdout": "[海洋框架] 界面就绪：左右移动、暂停、重置；支持键盘和触摸\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] first frame rendered; underwater hidden=true\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] first frame rendered; underwater hidden=true\n[SeaV1] bootstrap stopped\n[SeaV1] bootstrap ready; world height=45; local density=20/4\n[SeaV1] bootstrap stopped",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 54.508
+      "durationMs": 54.83
     },
     {
       "name": "SeaFusionRenderTests",
@@ -3641,38 +3635,6 @@
       "subtestCount": 10,
       "failures": [],
       "returned": {
-        "status": "PASS",
-        "metrics": {
-          "landscape": {
-            "shipScreenY": 777.5999999999999,
-            "basePixelsPerMeter": 24.0,
-            "width": 1920,
-            "shipScreenX": 960.0,
-            "hiddenWorldFishCalls": 0,
-            "horizonY": 259.2,
-            "height": 1080,
-            "anchorY": 0.72,
-            "anchorX": 0.5
-          },
-          "portrait": {
-            "shipScreenY": 828.0,
-            "basePixelsPerMeter": 25.555555555555557,
-            "width": 1200,
-            "shipScreenX": 600.0,
-            "revealedWorldFishCalls": 2,
-            "horizonY": 276.0,
-            "height": 1150,
-            "anchorY": 0.72,
-            "anchorX": 0.5
-          },
-          "previewFixtures": {
-            "island": "(-14,-12)",
-            "tuna": "(8,-8)",
-            "sardine": "(-8,-8)"
-          },
-          "originalFixedObjectCount": 2,
-          "originalConfiguredBirds": 2
-        },
         "tests": [
           "draw_is_pure_for_runtime_state",
           "original_sun_and_birds_reused",
@@ -3684,7 +3646,39 @@
           "presentation_fixture_does_not_change_config_world",
           "night_tint_precedes_boat_and_preserves_paused_gameplay_clock",
           "daytime_removes_night_tint_and_nvg_state_stack_is_balanced"
-        ]
+        ],
+        "status": "PASS",
+        "metrics": {
+          "originalFixedObjectCount": 2,
+          "originalConfiguredBirds": 2,
+          "portrait": {
+            "basePixelsPerMeter": 25.555555555555557,
+            "anchorX": 0.5,
+            "width": 1200,
+            "anchorY": 0.72,
+            "shipScreenX": 600.0,
+            "height": 1150,
+            "shipScreenY": 828.0,
+            "revealedWorldFishCalls": 2,
+            "horizonY": 276.0
+          },
+          "landscape": {
+            "basePixelsPerMeter": 24.0,
+            "anchorX": 0.5,
+            "width": 1920,
+            "anchorY": 0.72,
+            "shipScreenX": 960.0,
+            "height": 1080,
+            "shipScreenY": 777.5999999999999,
+            "hiddenWorldFishCalls": 0,
+            "horizonY": 259.2
+          },
+          "previewFixtures": {
+            "tuna": "(8,-8)",
+            "sardine": "(-8,-8)",
+            "island": "(-14,-12)"
+          }
+        }
       },
       "stdout": "",
       "nvgCalls": {
@@ -3712,7 +3706,7 @@
         "nvgTranslate": 15
       },
       "nvgCallTotal": 9530,
-      "durationMs": 859.915
+      "durationMs": 711.629
     },
     {
       "name": "SeaHorizonOcclusionTests",
@@ -3803,7 +3797,7 @@
         "nvgTranslate": 22
       },
       "nvgCallTotal": 10784,
-      "durationMs": 357.349
+      "durationMs": 297.648
     },
     {
       "name": "SeaMotionEffectsTests",
@@ -3815,39 +3809,39 @@
       "returned": {
         "results": [
           {
-            "passed": true,
             "name": "near and far surface detail blend smoothly with complementary weights",
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
-            "passed": true,
             "name": "surface lattice positions stay on fixed world cells while the view drifts",
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
-            "passed": true,
             "name": "boat heave and roll are pure samples of voyage time and turn rate",
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
-            "passed": true,
             "name": "shoreline foam arcs expand, fade, and repeat in world space",
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
-            "passed": true,
             "name": "water mark budget is enforced even within a single row",
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
-            "passed": true,
             "name": "meter-width foam clips once and returns the same projected edge endpoints",
-            "error": ""
+            "error": "",
+            "passed": true
           },
           {
-            "passed": true,
             "name": "turn bank eases back when stopped and freezes while paused",
-            "error": ""
+            "error": "",
+            "passed": true
           }
         ]
       },
@@ -3861,7 +3855,7 @@
         "nvgMoveTo": 240
       },
       "nvgCallTotal": 1203,
-      "durationMs": 69.075
+      "durationMs": 46.183
     },
     {
       "name": "SeaPresentationTests",
@@ -3916,7 +3910,7 @@
         "nvgTranslate": 22
       },
       "nvgCallTotal": 10624,
-      "durationMs": 870.282
+      "durationMs": 690.567
     },
     {
       "name": "SeaRuntimeTests",
@@ -3936,6 +3930,7 @@
       "subtestCount": 10,
       "failures": [],
       "returned": {
+        "status": "PASS",
         "results": [
           {
             "passed": true,
@@ -3989,30 +3984,29 @@
           }
         ],
         "passed": true,
-        "status": "PASS",
         "evidence": {
+          "kind": "pure Lua logic suite using real project modules",
           "NanoVGMockVisualAcceptance": false,
-          "nativeEngineVisualAcceptance": "NOT_RUN",
-          "kind": "pure Lua logic suite using real project modules"
+          "nativeEngineVisualAcceptance": "NOT_RUN"
         },
         "metrics": {
-          "clippedFarCircleSamples": 21,
-          "viewportCases": 3,
-          "headingCount": 8,
-          "lensSectorSamples": 26,
-          "netCircleSamples": 32,
           "projectedDepthsMeters": [
             0,
             20,
             85,
             109
-          ]
+          ],
+          "viewportCases": 3,
+          "clippedFarCircleSamples": 21,
+          "lensSectorSamples": 26,
+          "netCircleSamples": 32,
+          "headingCount": 8
         }
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 40.322
+      "durationMs": 28.514
     },
     {
       "name": "ShipScareTests",
@@ -4024,31 +4018,31 @@
       "returned": {
         "results": [
           {
-            "name": "actual movement frightens small fish; stopping immediately restores bait attraction",
-            "passed": true
+            "passed": true,
+            "name": "actual movement frightens small fish; stopping immediately restores bait attraction"
           },
           {
-            "name": "movement threat uses existing inclusive danger radius without frightening tuna",
-            "passed": true
+            "passed": true,
+            "name": "movement threat uses existing inclusive danger radius without frightening tuna"
           },
           {
-            "name": "input without displacement is not a threat; reset clears movement state",
-            "passed": true
+            "passed": true,
+            "name": "input without displacement is not a threat; reset clears movement state"
           },
           {
-            "name": "pause freezes fish and translation; capture lock remains stronger than threats",
-            "passed": true
+            "passed": true,
+            "name": "pause freezes fish and translation; capture lock remains stronger than threats"
           },
           {
-            "name": "new regions generate fish, revisits preserve depletion, next day regenerates",
-            "passed": true
+            "passed": true,
+            "name": "new regions generate fish, revisits preserve depletion, next day regenerates"
           }
         ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 1191.494
+      "durationMs": 1107.707
     },
     {
       "name": "ShopStockSpec",
@@ -4060,7 +4054,7 @@
       "stdout": "PASS stock apple-initial-stock2\nPASS stock apple-third-buy-rejected-without-charge\nPASS stock apple-new-day-restocks2\nPASS stock bait-initial-stock2\nPASS stock bait-third-buy-rejected-without-charge\nPASS stock bait-new-day-restocks2\nPASS stock full-inventory-no-money-or-stock-loss\nPASS stock insufficient-money-sea-and-busy-no-stock-loss\nPASS stock stock-does-not-reset-on-repeat-port-or-dialog\nPASS stock stock-independent-of-holding-and-apple-use\nPASS stock drop-world-rejection-keeps-inventory\nPASS stock fishing4sec-clock-runs-empty-catch-free\nPASS stock new-run-and-successful-day-snapshot-load-restock\nPASS stock invalid-load-keeps-current-stock\nPASS stock save-retry-does-not-repeat-day-or-restock\nSHOP_STOCK_SPEC_PASS 15",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 35.82
+      "durationMs": 25.381
     },
     {
       "name": "SurfaceRiseTests",
@@ -4072,31 +4066,31 @@
       "returned": {
         "results": [
           {
-            "error": "",
+            "name": "Flee rise uses the configured two seconds and leaves fish movement active",
             "passed": true,
-            "name": "Flee rise uses the configured two seconds and leaves fish movement active"
+            "error": ""
           },
           {
-            "error": "",
+            "name": "leaving Flee clears rise fields and re-entry starts a fresh rise",
             "passed": true,
-            "name": "leaving Flee clears rise fields and re-entry starts a fresh rise"
+            "error": ""
           },
           {
-            "error": "",
+            "name": "inactive, frozen, removed, paused, and missing config do not advance rise",
             "passed": true,
-            "name": "inactive, frozen, removed, paused, and missing config do not advance rise"
+            "error": ""
           },
           {
-            "error": "",
+            "name": "a rising Flee fish remains a valid tuna prey",
             "passed": true,
-            "name": "a rising Flee fish remains a valid tuna prey"
+            "error": ""
           }
         ]
       },
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 28.885
+      "durationMs": 28.19
     },
     {
       "name": "SurfaceSignalsTests",
@@ -4136,7 +4130,7 @@
       "stdout": "",
       "nvgCalls": {},
       "nvgCallTotal": 0,
-      "durationMs": 11.781
+      "durationMs": 10.27
     }
   ]
 }
