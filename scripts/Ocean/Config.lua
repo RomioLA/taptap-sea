@@ -101,7 +101,7 @@ local Config = {
     -- User-approved playtest values; this table does not amend planning documents.
     surfaceSignals = {
         enabled = true, riseSeconds = 2, riseTuningStatus = "USER_APPROVED_TEST_VALUE",
-        birdOffset = 9, birdRadius = 3, birdsPerGroup = 2, birdPollSeconds = 0.25,
+        birdOffset = 9, birdRadius = 3, birdsPerGroup = 1, birdPollSeconds = 0.25,
         birdDiveSeconds = 1.5, birdAngularSpeed = 1.8, birdAnimationStatus = "VISUAL_TEST_VALUE",
         splashInterval = 1, chaseSplashInterval = 0.5, splashLifetime = 0.6, trailLength = 2,
     },

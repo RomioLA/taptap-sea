@@ -212,7 +212,7 @@ function SurfaceSignals:Init(world)
     self.birdOffset = positive(type(settings) == "table" and settings.birdOffset, 9)
     self.birdRadius = nonnegative(type(settings) == "table" and settings.birdRadius, 3)
     self.birdsPerGroup = math.max(1, math.floor(positive(
-        type(settings) == "table" and settings.birdsPerGroup, 2)))
+        type(settings) == "table" and settings.birdsPerGroup, 1)))
     self.birdPollSeconds = positive(type(settings) == "table" and settings.birdPollSeconds, 0.25)
     self.birdDiveSeconds = nonnegative(type(settings) == "table" and settings.birdDiveSeconds, 1.5)
     self.birdAngularSpeed = positive(type(settings) == "table" and settings.birdAngularSpeed, 1.8)

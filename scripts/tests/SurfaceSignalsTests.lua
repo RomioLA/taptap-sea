@@ -61,10 +61,13 @@ function Tests.Run()
 
         world:Update(0.05)
         local birds = signals:GetBirds()
-        assert(#birds == 2 and countBySource(birds, fish.id) == 2)
-        local centerX = (birds[1].position.x + birds[2].position.x) * 0.5
-        local centerY = (birds[1].position.y + birds[2].position.y) * 0.5
-        near(math.sqrt((centerX - fish.position.x)^2 + (centerY - fish.position.y)^2), 9)
+        assert(#birds == 1 and countBySource(birds, fish.id) == 1)
+        local centerX = birds[1].position.x
+        local centerY = birds[1].position.y
+        -- 单鸟：巡游圆区间断言（同 Circle1A2 2026-10-06 用户裁决）。
+        local birdDistance = math.sqrt((centerX - fish.position.x)^2 + (centerY - fish.position.y)^2)
+        assert(birdDistance > 6 and birdDistance < 12,
+            "single bird stays on the cruise ring around the fish")
         for _, bird in ipairs(birds) do
             local distance = math.sqrt((bird.position.x - fish.position.x)^2
                 + (bird.position.y - fish.position.y)^2)
@@ -89,14 +92,14 @@ function Tests.Run()
         local world, signals = newWorldWithSignals()
         local first = spawnFish(world, "sardine", { x = 600, y = 600 })
         world:Update(0.05)
-        assert(#signals:GetBirds() == 2)
+        assert(#signals:GetBirds() == 1)
 
         local second = spawnFish(world, "sardine", { x = 650, y = 650 })
         world:Update(0.10)
         assert(countBySource(signals:GetBirds(), second.id) == 0,
             "new groups wait for the quarter-second association poll")
         world:Update(0.15)
-        assert(#signals:GetBirds() == 4)
+        assert(#signals:GetBirds() == 2)
 
         second.active = false
         world:Update(0)
@@ -112,7 +115,7 @@ function Tests.Run()
 
         first.captureLocked = nil
         world:Update(0.25)
-        assert(#signals:GetBirds() == 2)
+        assert(#signals:GetBirds() == 1)
         assert(world:remove(first.id, "removed"))
         assert(#signals:GetBirds() == 0,
             "standard removal immediately revokes the source cue")

@@ -36,7 +36,7 @@ V.atFrame(70, function()
     Test.birds = birds(scene)
     Test.time = scene.runtime.time
     if depth == 0 then
-        V.assert(#Test.birds == 2, "现有 SurfaceSignals 实际生成两只海鸟")
+        V.assert(#Test.birds == 1, "现有 SurfaceSignals 实际生成一只海鸟（2026-10-06 用户裁决：每处 2 只改 1 只）")
     else
         local movement = scene.runtime.movement
         local point = { x = 35, y = 25 }

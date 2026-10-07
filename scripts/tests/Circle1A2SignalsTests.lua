@@ -49,14 +49,20 @@ function Tests.Run()
 
         world:Update(0.05)
         local birds = signals:GetBirds()
-        assert(#birds == 2, "one live sardine receives the confirmed pair of birds")
+        assert(#birds == 1, "one live sardine receives one bird (2026-10-06 用户裁决：每处 2 只改 1 只)")
         near(Config.surfaceSignals.birdOffset, 9)
         near(Config.surfaceSignals.birdRadius, 3)
         near(Config.surfaceSignals.birdDiveSeconds, 1.5)
 
-        local centerX = (birds[1].position.x + birds[2].position.x) * 0.5
-        local centerY = (birds[1].position.y + birds[2].position.y) * 0.5
-        near(math.sqrt((centerX - fish.position.x)^2 + (centerY - fish.position.y)^2), 9)
+        local centerX = birds[1].position.x
+        local centerY = birds[1].position.y
+        -- 单鸟（2026-10-06 用户裁决）：鸟在巡游圆（半径 birdRadius=3）上随机角度，
+        -- 到鱼距离在 [birdOffset−birdRadius, birdOffset+birdRadius] = 6~12m 区间。
+        local birdDistance = math.sqrt((centerX - fish.position.x)^2 + (centerY - fish.position.y)^2)
+        near(Config.surfaceSignals.birdOffset, 9)
+        assert(birdDistance > Config.surfaceSignals.birdOffset - Config.surfaceSignals.birdRadius
+            and birdDistance < Config.surfaceSignals.birdOffset + Config.surfaceSignals.birdRadius,
+            "single bird stays on the cruise ring around the fish")
         for _, bird in ipairs(birds) do
             local dx = bird.position.x - fish.position.x
             local dy = bird.position.y - fish.position.y
@@ -98,7 +104,7 @@ function Tests.Run()
         local sardine = spawnFish(world, "sardine", { x = 600, y = 600 })
         local tuna = spawnFish(world, "tuna", { x = 630, y = 600 })
         world:Update(1)
-        assert(#signals:GetBirds() == 2 and #signals:GetSplashes() == 1)
+        assert(#signals:GetBirds() == 1 and #signals:GetSplashes() == 1)
 
         sardine.position = { x = 700, y = 600 }
         assert(#signals:GetBirds() == 0,
@@ -118,7 +124,7 @@ function Tests.Run()
         local sardine = spawnFish(world, "sardine", { x = 600, y = 600 })
         local tuna = spawnFish(world, "tuna", { x = 630, y = 600 })
         world:Update(1)
-        assert(#signals:GetBirds() == 2 and #signals:GetSplashes() == 1,
+        assert(#signals:GetBirds() == 1 and #signals:GetSplashes() == 1,
             "fixture needs both surface cue types")
 
         sardine.active = false
@@ -128,7 +134,7 @@ function Tests.Run()
         world:Update(0)
         sardine.active, tuna.frozen = true, false
         world:Update(0.25)
-        assert(#signals:GetBirds() == 2)
+        assert(#signals:GetBirds() == 1)
 
         sardine.captureLocked = true
         tuna.captureLocked = true
@@ -139,7 +145,7 @@ function Tests.Run()
         world:Update(0)
         sardine.captureLocked, tuna.captureLocked = false, false
         world:Update(1)
-        assert(#signals:GetBirds() == 2 and #signals:GetSplashes() == 1)
+        assert(#signals:GetBirds() == 1 and #signals:GetSplashes() == 1)
 
         sardine.position = { x = 0 / 0, y = 600 }
         tuna.position = { x = 0 / 0, y = 600 }
@@ -150,7 +156,7 @@ function Tests.Run()
 
         sardine.position, tuna.position = { x = 600, y = 600 }, { x = 630, y = 600 }
         world:Update(0.25)
-        assert(#signals:GetBirds() == 2)
+        assert(#signals:GetBirds() == 1)
         assert(world:remove(sardine.id, "caught"))
         assert(world:remove(tuna.id, "eaten"))
         assert(#signals:GetBirds() == 0 and #signals:GetSplashes() == 0,
