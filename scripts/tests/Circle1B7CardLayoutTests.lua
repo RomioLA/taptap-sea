@@ -452,6 +452,48 @@ function Tests.Run()
             hud.Refresh()
             assert(loop.inventoryOpen ~= true, "collapsing the backpack must close it")
             eq(table.concat(visibleCardTitles(host), "/"), "港口商店", "port shop returns when nothing else is open")
+
+            -- v2.3.1 总开合：点「收起信息」= 左侧整块收起（三卡+滚动屏一起走），
+            -- 再点「信息」恢复。真机反馈原话："点击就收起左侧不管是商店、
+            -- 背包还是老人对话UI"。
+            click_first(findButton(hud.root, "收起信息", true))
+            hud.Refresh()
+            eq(host.visible, false, "collapsing info must hide the whole card host")
+            click_first(findButton(hud.root, "信息", true))
+            hud.Refresh()
+            eq(host.visible, true, "tapping info again must restore the card host")
+            eq(table.concat(visibleCardTitles(host), "/"), "港口商店",
+                "restoring shows the card that should be open")
+        end)
+    end)
+
+    test("elder question buttons survive per-frame refreshes so real taps land", function()
+        withHUD(function(HUD)
+            -- 真机修复回归（2026-10-08 反馈"问题选项显示但点不了"）：
+            -- Bootstrap.Update 每帧 hud.Refresh()；若问题按钮每帧销毁重建，
+            -- 真机手指从按下到抬起之间 widget 已被替换，click 丢失。
+            -- 断言：连续两次 refresh 后问题按钮必须是**同一个实例**。
+            local fixture = Flow.Fixture({ items = { "apple" } })
+            local loop = fixture.loop
+            assert(loop:Depart())
+            assert(loop:ReturnToPort())
+            local hud = HUD.Create(loop)
+            click_first(findButton(hud.root, "拜访老人", true))
+            hud.Refresh()
+            click_first(findButton(hud.root, "提问 ▸", true))
+            hud.Refresh()
+            local first = findButtonPrefix(hud.root, "※ ")
+            assert(first, "teaching question must be listed")
+            hud.Refresh()
+            hud.Refresh()
+            local second = findButtonPrefix(hud.root, "※ ")
+            assert(second == first,
+                "question buttons must not be rebuilt on every refresh frame")
+            -- 点击后仍可用（重建一次是允许的：已问集合变化）
+            first.props.onClick()
+            hud.Refresh()
+            assert(findLabelContaining(hud.root, "先看水鸟"),
+                "the elder answer must appear after tapping a question")
         end)
     end)
 

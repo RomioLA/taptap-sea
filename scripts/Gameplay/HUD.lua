@@ -92,6 +92,9 @@ function HUD.Create(loop, parent, debugTools)
     local state = {
         destroyed = false,
         localMessage = "",
+        -- v2.3.1 总开合：infoCollapsed=true 表示用户点了「信息」显式收起左侧
+        -- 整块（cardHost 三卡 + 滚动屏）；任何打开动作会清除该意图。
+        infoCollapsed = false,
         inventorySignature = "",
         -- v2.1 §7.14 对话式形态：老人对话记录（气泡序列）。
         -- transcript 每项 {who="elder"|"player", text=..., teach=bool}。
@@ -102,6 +105,7 @@ function HUD.Create(loop, parent, debugTools)
         elderReviewOpen = false,
         elderOptionsExpanded = false,
         elderWasOpen = false,
+        elderQuestionsBuiltKey = nil,
         elderAsked = {},
         elderOpenedGeneration = nil,
         lastTexts = {},
@@ -449,12 +453,16 @@ local header = UI.Panel {
         local willOpen = not (loop.inventoryOpen == true)
         invokeLoop("SetInventoryOpen", willOpen)
         if willOpen then
-            -- 打开信息屏并滚到背包卡（信息屏默认入口是图鉴/透镜状态）
+            -- 打开信息屏并滚到背包卡（信息屏默认入口是图鉴/透镜状态）；
+            -- v2.3.1：打开动作清除"总收起"意图，否则卡片看不到
             state.infoOpen = true
+            state.infoCollapsed = false
             state.focusInventory = true
         end
     end, "secondary", 128)
     refs.elderToggle = makeButton("拜访老人", function()
+        -- v2.3.1：打开对话是明确的卡片诉求，清除"总收起"意图
+        if loop.elderOpen ~= true then state.infoCollapsed = false end
         invokeLoop("SetElderOpen", not (loop.elderOpen == true))
     -- v2.1 §7.9：文案会变"结束对话"/"老人不在"等，98 → 112
     end, "secondary", 112)
@@ -470,11 +478,18 @@ local header = UI.Panel {
         invokeLoop(loop.scopeSyncError and "DisableScope" or "ToggleScope")
     end, "secondary", 104)
     refs.scopeToggleBar:SetVisible(false)
-    -- 信息滚动屏开合按钮（真机反馈 2026-10-05：屏幕只能打开不能收起）：
-    -- 按一下打开、再按一下或点击屏内空白处收起。
-    -- v2.1 §7.9：文案会变"收起信息"（4 字），72px 偏窄 → 92
+    -- 信息/卡片总开合按钮（真机反馈 2026-10-05：屏幕只能打开不能收起）：
+    -- v2.3.1（真机反馈"收起信息按钮无效"）语义升级为**左侧整块总开合**——
+    -- 三卡已迁 cardHost，"信息"点击即收起/恢复 cardHost（商店/背包/老人）
+    -- 与信息滚动屏。infoCollapsed 记录显式收起意图（见 refresh 推导处）。
     refs.infoToggle = makeButton("信息", function()
-        state.infoOpen = not (state.infoOpen == true)
+        if state.infoCollapsed == true then
+            state.infoCollapsed = false
+            state.infoOpen = true
+        else
+            state.infoCollapsed = true
+            state.infoOpen = false
+        end
         refresh()
     end, "secondary", 92)
     -- 图鉴/成就入口（v2.0 §7.4）：仅暂停态可见（refresh 控制），页壳走模态层。
@@ -584,6 +599,8 @@ local header = UI.Panel {
         onClick = function()
             if state.infoOpen == true then
                 state.infoOpen = false
+                -- v2.3.1 总开合：点空白同样收起左侧整块（与「信息」按钮一致）
+                state.infoCollapsed = true
                 refresh()
             end
         end,
@@ -2309,11 +2326,20 @@ local header = UI.Panel {
         -- 单向同步（背包开 → 信息屏开；关背包不自动关信息屏，避免连带关掉
         -- 用户正在看的内容）。"信息"按钮显式关闭后，同一帧会被本条件再打开，
         -- 因此只在背包态为真时接管，收起背包后交还用户控制。
-        local infoOpen = not seaClickFlow
+        -- v2.3.1（真机反馈"收起信息按钮无效"）：三卡已迁 cardHost 后，
+        -- infoOpen 只控制 contentScroll（内容很少），"收起信息"看起来没反应。
+        -- 按用户建议改为**总开合**：收起左侧整块（cardHost 含三卡 + 滚动屏）。
+        -- infoCollapsed 是显式收起意图：点「信息」收起后置 true，任何打开
+        -- 动作（点背包/拜访老人/待领渔获）都会清除，恢复卡片显示。
+        local elderActiveForCards = loop.elderOpen == true
+        local infoOpen = not seaClickFlow and not (state.infoCollapsed == true)
             and (((state.infoOpen == nil and inPort) or state.infoOpen == true)
-                or loop.inventoryOpen == true or pendingCatch)
+                or loop.inventoryOpen == true or pendingCatch or elderActiveForCards)
         refs.contentScroll:SetVisible(infoOpen)
         refs.infoCloseCatcher:SetVisible(infoOpen)
+        -- 总开合落在 cardHost：三卡（商店/背包/老人）一并收起/恢复，
+        -- 各卡自身的互斥显隐逻辑不变（恢复时仍显示当前应显示的那张）。
+        cardHost:SetVisible(infoOpen)
         refs.infoToggle:SetText(infoOpen and "收起信息" or "信息")
         refs.infoToggle:SetDisabled(busy or loop.loading == true)
 
@@ -2681,7 +2707,25 @@ local header = UI.Panel {
             refs.elderShowRows:SetVisible(elderLevel == "show")
             refs.elderLensRow:SetVisible(elderLevel == "show")
             if elderLevel == "questions" then
-                buildElderQuestions(elderDay, teachingDoneNow)
+                -- ⚠️ 真机修复（2026-10-08 反馈"问题选项显示但点不了"）：
+                -- Bootstrap.Update 每帧调 hud.Refresh()，此处若无条件重建，
+                -- 问题按钮每帧销毁重建——真机手指从按下到抬起之间按钮已被
+                -- 替换，click 事件丢失（表现即"看得到点不动"）。离线测试
+                -- 不跑帧循环，故测不出。加 key 缓存：仅当阶段/教学完成/
+                -- 已问集合变化时才重建，其余帧 widget 引用稳定可点。
+                local stage = (elderDay <= 3) and 1 or (elderDay <= 6 and 2 or 3)
+                local askedInStage = {}
+                for _, q in ipairs(ELDER_QUESTIONS) do
+                    if q.stage == stage and state.elderAsked[q.id] == true then
+                        askedInStage[#askedInStage + 1] = q.id
+                    end
+                end
+                local questionsKey = stage .. "|" .. tostring(teachingDoneNow == true)
+                    .. "|" .. table.concat(askedInStage, ",")
+                if state.elderQuestionsBuiltKey ~= questionsKey then
+                    buildElderQuestions(elderDay, teachingDoneNow)
+                    state.elderQuestionsBuiltKey = questionsKey
+                end
             end
         end
         refs.compendiumBody:SetVisible(showCompendium)
