@@ -5,7 +5,7 @@
     "id": "340992998"
   },
   "entry": "Main.lua",
-  "version": "1.0.40",
+  "version": "1.0.41",
   "taptap_publish": {
     "title": "渔夫漂流记",
     "description": "",
@@ -24,10 +24,10 @@
     "promotional_image": ""
   },
   "metadata": {
-    "updated_at": "2026-10-08T14:10:59.503Z"
+    "updated_at": "2026-10-08T14:11:46.471Z"
   },
   "test_qrcode": {
-    "url": "https://tapcode-sce.spark.xd.com/qrcode/m_009f_1791468659409.png",
-    "generated_at": "2026-10-08T14:10:59.503Z"
+    "url": "https://tapcode-sce.spark.xd.com/qrcode/m_009f_1791468706326.png",
+    "generated_at": "2026-10-08T14:11:46.471Z"
   }
 }
