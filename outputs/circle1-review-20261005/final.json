@@ -1,0 +1,59 @@
+{
+  "phase": "final",
+  "generatedAt": "2026-10-08T07:05:05.183436+00:00",
+  "project": "E:\\workbath\\Fishing\\fisherman-drift",
+  "runtimePath": "E:\\workbath\\Fishing\\fisherman-drift\\.tmp\\circle1-review-runtime",
+  "suiteCount": 1,
+  "suites": [
+    {
+      "name": "Circle1B7CardLayoutTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\Circle1B7CardLayoutTests.lua",
+      "passed": true,
+      "subtestCount": 6,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "card host is anchored on four edges and carries all three cards",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "info layer is attached to root so the cards are reachable",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "port shop shows every section with complete figures and a fixed action bar",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "backpack separates the item list from a fixed action bar",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "elder card keeps every option reachable no matter how long the conversation runs",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "the three cards stay mutually exclusive",
+            "passed": true,
+            "error": ""
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 72.011
+    }
+  ],
+  "luaVersion": "Lua 5.4",
+  "passedSuiteCount": 1,
+  "failedSuiteCount": 0,
+  "passed": true
+}

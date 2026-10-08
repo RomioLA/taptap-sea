@@ -241,8 +241,16 @@ function Tests.Run()
             assert(not sea.tools.handleKey(KEY_U))
             assert(not sea.tools.handleKey(KEY_R))
             dimensions.w,dimensions.h=500,360; sea.tools.refresh(0)
+            -- v2.1 §7.15 契约更新（用户 13:03）：header 改为测试期单行浮层
+            --（absolute + 不占布局 + 可被覆盖，发布时删除）。旧断言
+            -- maxWidth==310 且 flexWrap=="wrap" 针对"左侧半屏注入式"布局，
+            -- 与新形态冲突（单行需约 420px，310 会裁剪文字）。改为校验
+            -- 新语义：绝对定位、不抢点击、单行高度。
             local header=sea.hud.root:GetChildren()[1]
-            assert(header.props.maxWidth==310 and header.props.flexWrap=="wrap")
+            assert(header.props.position=="absolute"
+                and header.props.pointerEvents=="box-none"
+                and header.props.height<=40,
+                "status bar must be a single-line non-blocking overlay")
             for _, id in ipairs({"gameplayActionDock","gameplayDrawerBackdrop","gameplayInventoryDrawer"}) do
                 local positioned=sea.hud.root:FindById(id)
                 assert(positioned and positioned.props.position=="absolute"

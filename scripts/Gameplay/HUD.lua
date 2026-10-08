@@ -141,6 +141,11 @@ function HUD.Create(loop, parent, debugTools)
     -- 内容约 576px 超出屏幕底边（"结束对话"被裁）；商店 58% 过紧 → 只显示到
     -- "升级体力"。现统一 68% 屏高，礼物区改 flexGrow 自适应让位。
     -- 必须定义在所有 card() 调用之前，故放在 card() 工厂处。
+    -- v2.1 §7.12 曾用统一 68% 屏高限制三卡高度。v2.2 起该令牌作废：
+    -- cardHost 改用 top/bottom 四边锚定后，卡片高度由宿主决定，
+    -- 卡内再由 sectionCard 的「主体 flexGrow + 操作条 flexShrink=0」
+    -- 自行分配空间，不再需要百分比高度上限。
+    -- 保留定义仅为兼容历史注释引用，实际不再被任何卡片使用。
     local HUD_CARD_MAXH = "68%"
 
     -- v2.1 §7.14 对话式形态：老人问答链（方案 v2.0 §4）。
@@ -178,6 +183,82 @@ function HUD.Create(loop, parent, debugTools)
         return panel
     end
 
+    -- v2.2 结构化卡工厂 sectionCard()：三段式骨架，把"选项不被遮挡"变成
+    -- 结构保证而不是靠调 maxHeight 碰运气。
+    --
+    -- 骨架（自上而下）：
+    --   ① header  标题 + 摘要文字（flexShrink=0，永不参与压缩）
+    --   ② body    flexGrow=1 的 ScrollView（唯一允许滚动的区）
+    --   ③ footer  flexShrink=0 的固定操作条（不滚动、不压缩、不被遮挡）
+    --
+    -- 为什么必须拆出 footer：v2.1 三卡都是"一列到底 + maxHeight 68%"，
+    -- 底部按钮（结束对话 / 全部卖出 / 读取存档）与主体内容抢同一列空间，
+    -- 内容一多就把按钮推出屏幕（真机 21:46 / 23:34 两次反馈的同一根因）。
+    -- 拆开后主体再长也只在自己那格内滚，操作条恒在卡内底部可见可点。
+    --
+    -- 契约：
+    -- · footer 与 body 是 card() 的**直属子节点**（中间不套 ScrollView），
+    --   保持 isVisible 沿父链判定语义（§7.9 教训）。
+    -- · 滚动只发生在 body 内部的 ScrollView 里；对话流等"不能包 ScrollView"
+    --   的子树仍放在 body 的普通 Panel 中（见拜访老人卡）。
+    local function sectionCard(title, opts)
+        opts = opts or {}
+        local panel = UI.Panel(UiKit.cardProps(opts.skin or "panel", {
+            flexGrow = 1,
+            flexBasis = 0,
+            gap = 6,
+        }))
+        themedPanels[#themedPanels + 1] = {
+            widget = panel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
+        }
+
+        -- ① 头部：标题行 + 可选摘要行
+        panel:AddChild(makeLabel(title, UiKit.fontSize.title, UiKit.ink.title, "bold"))
+        local header = UI.Panel {
+            width = "100%",
+            gap = 2,
+            flexShrink = 0,
+            flexDirection = "column",
+        }
+        if opts.summary then
+            header:AddChild(makeLabel(opts.summary, UiKit.fontSize.teaching, UiKit.ink.dim))
+        end
+        if #header.children > 0 then panel:AddChild(header) end
+
+        -- ② 主体：唯一可滚动区
+        local body = UI.Panel {
+            width = "100%",
+            flexGrow = 1,
+            flexBasis = 0,
+            minHeight = 0,
+            gap = 6,
+            flexDirection = "column",
+        }
+        local scroll = UI.ScrollView {
+            width = "100%",
+            flexGrow = 1,
+            flexBasis = 0,
+            minHeight = 0,
+            scrollY = true,
+            showScrollbar = true,
+            children = { body },
+        }
+        panel:AddChild(scroll)
+
+        -- ③ 固定操作条：flexShrink=0 保证任何内容压力下都不被压缩
+        local footer = UI.Panel {
+            width = "100%",
+            gap = 5,
+            flexShrink = 0,
+            flexDirection = "row",
+            flexWrap = "wrap",
+            alignItems = "center",
+        }
+        if opts.footer ~= false then panel:AddChild(footer) end
+
+        return panel, body, footer
+    end
+
     local root = UI.SafeAreaView {
         width = "100%",
         height = "100%",
@@ -190,25 +271,50 @@ function HUD.Create(loop, parent, debugTools)
     -- v2.0 零遮挡：header 保持 root 首子节点（测试契约 + Scene 左侧注入依赖）。
     -- 真机反馈（2026-10-05）：原 9 行信息堆叠严重，收敛为两层文字——
     -- 第一行状态（天/昼夜/体力/钱/背包），第二行日志（暂停/反馈/存档/港口提示）。
-    local header = UI.Panel {
+    -- v2.1 §7.15（用户 13:03「仅留顶部一行状态栏」）：header 由 4~5 行纵向堆叠
+    -- 收敛为**单行左右分栏**——
+    --   左：第几天 / 昼夜 / 剩余时间 / 暂停态 / 距港距离（日志与夜航警示折叠进其尾）
+    --   右：体力 + 钱 + 背包格
+    -- 定位为**测试期状态查看**（发布时整块删除），故：
+    --   · 不参与布局（absolute + pointerEvents=box-none），不挤占任何 UI 位
+    --   · 任何卡片/按钮坞都可覆盖它，不影响操作
+local header = UI.Panel {
+        id = "gameplayStatusBar",
+        -- v2.1 §7.15（用户 13:03）：测试期单行状态浮层——absolute 不占布局、
+        -- pointerEvents=box-none 不抢点击、任何卡片都可覆盖，发布时整块删除。
+        -- 左右分栏：左=天数/昼夜/时间/暂停/距港，右=体力/钱/背包格。
+        position = "absolute",
+        left = 0,
+        top = 0,
         width = "100%",
-        minHeight = 40,
-        flexDirection = "column",
-        alignItems = "flex-start",
-        gap = 2,
+        maxWidth = "100%",
+        height = 30,
+        padding = { 4, 10, 2, 10 },
+        flexDirection = "row",
+        alignItems = "center",
+        justifyContent = "space-between",
+        gap = 12,
+        pointerEvents = "box-none",
+        zIndex = 40,
     }
-    refs.status = makeInfoLabel("", 13, nil, nil, INFO_FLEX)
+    refs.status = makeInfoLabel("", 12, nil, nil, INFO_FLEX)
+    refs.statusRight = makeInfoLabel("", 12, nil, nil, nil)
     header:AddChild(infoLine(refs.status))
-    -- 日志槽：log 与 portAccessReason 互斥显示，同一时刻只占一行。
+    header:AddChild(infoLine(refs.statusRight))
+    -- 日志槽：暂停/反馈/存档/港口提示折叠到状态行尾部（不再单独占行）。
     refs.log = makeInfoLabel("", 12, UI_PALETTE.seaTextMuted, nil, INFO_FLEX)
-    header:AddChild(infoLine(refs.log))
-    -- 夜航警示行：默认隐藏，仅"夜+海上+未耗尽"出现（B 侧 review 契约的安全提示）。
+    -- 夜航警示行：条件显隐（夜+海上+未耗尽才出现），折叠进状态行尾。
     refs.nightRisk = makeInfoLabel("", 12, UI_PALETTE.seaTextGold, nil, INFO_FLEX)
     refs.nightRisk:SetVisible(false)
-    header:AddChild(infoLine(refs.nightRisk))
     refs.portAccessReason = makeInfoLabel("锚形标记=港口（交易中心）· 返港/交易需距港≤10米。", 12, UI_PALETTE.seaTextMuted, nil, INFO_FLEX)
     refs.portAccessReason:SetVisible(false)
-    header:AddChild(infoLine(refs.portAccessReason))
+    -- v2.1 §7.15：三控件（日志槽/夜航警示/港口说明）不再单独占行，但必须
+    -- **直接挂在 header 上**——曾试过包一层零高隐藏容器，结果它们的子树
+    -- 被判为不可见，Circle1HUDReviewTests 的 visibleOnly 查找全部落空
+    -- （12 红的真凶）。视觉上它们默认 SetVisible(false)，不占位。
+    header:AddChild(refs.log)
+    header:AddChild(refs.nightRisk)
+    header:AddChild(refs.portAccessReason)
     refs.debugToggle = makeButton("开发调试", function()
         if refs.debugPanel then refs.debugPanel:SetVisible(not refs.debugPanel:IsVisible()) end
     end, "secondary", 92)
@@ -402,6 +508,10 @@ function HUD.Create(loop, parent, debugTools)
         flexBasis = 0,
         scrollY = true,
         showScrollbar = true,
+        -- 契约（ABIntegrationTests:1011 / Circle1B3SceneUITests:261）：
+        -- 信息滚动屏必须 box-none——空白海面点击要穿透到捕鱼/投掷选点，
+        -- 不能被滚动容器吞掉。§7.15 重排时丢失，此处补回。
+        pointerEvents = "box-none",
     }
     local content = UI.Panel {
         width = "100%",
@@ -414,6 +524,39 @@ function HUD.Create(loop, parent, debugTools)
     -- 点屏内空白处（或再按按钮）收起。closeCatcher 是铺满信息区的透明按钮，
     -- 垫在 contentScroll 之下：scroll 保持 pointerEvents=box-none（AB 契约），
     -- 空白点击穿透到 catcher 触发收起，面板内按钮不受影响。
+    -- v2.2（三卡信息完整化重构）：
+    -- 宿主改为**全宽 + bottom 锚定**。v2.1 的 52% 半屏 + top:34 + height:72%
+    -- 有三个结构性问题：
+    -- ① 半屏宽度下商店/背包的分区标签与数值折行，"信息完整呈现"无法成立；
+    -- ② 只有 top + height 百分比，没有 bottom 锚点 —— 屏幕高度变化时卡片
+    --    下沿会漂移，底部按钮坞（absolute bottom 0）会被压盖或留缝；
+    -- ③ 卡片内部只能靠 maxHeight 百分比自管高度，与按钮坞落区无关联。
+    -- 改为 left/right/top/bottom 四边锚定后，卡片下沿恒定停在按钮坞上方
+    -- 92px 处（按钮坞 padding 8 + 单行按钮 44 + 双行换行余量），任何屏幕上
+    -- 都保证"卡片不压坞、坞不被遮"。
+    --
+    -- 契约约束（保持不变）：
+    -- · 宿主内部不用 ScrollView（§7.9 教训，会让 isVisible 沿父链判定失效）；
+    -- · 三卡互斥，同一时刻只显示一张（§7.13），显隐不影响兄弟节点位置；
+    -- · pointerEvents=box-none，宿主空白区点击穿透到海面。
+    local CARD_HOST_TOP = 40        -- 让开顶部单行状态栏（height 30 + 间距）
+    local CARD_HOST_BOTTOM = 92     -- 让开底部按钮坞（padding 8 + 按钮 44 + 余量）
+    local cardHost = UI.Panel {
+        id = "gameplayCardHost",
+        position = "absolute",
+        left = 0,
+        right = 0,
+        top = CARD_HOST_TOP,
+        bottom = CARD_HOST_BOTTOM,
+        gap = 8,
+        padding = 10,
+        flexDirection = "column",
+        pointerEvents = "box-none",
+    }
+
+    -- ⚠️ 保持流式容器（flexGrow/flexBasis）——试过改absolute 后，测试桩对
+    -- absolute 容器的子节点可见性判定与流式不同，导致 contentScroll/三卡
+    -- 整棵子树被判hidden（12 红的真正元凶）。此处不动。
     local infoLayer = UI.Panel {
         id = "gameplayInfoLayer",
         width = "100%",
@@ -551,37 +694,76 @@ function HUD.Create(loop, parent, debugTools)
     refs.treasurePanel:AddChild(refs.treasureSummary)
     drawerContent:AddChild(refs.treasurePanel)
 
-    -- v2.1 §7.10：背包改挂 infoLayer（常驻层，不受 infoOpen 牵连）。
-    -- 保持 card() 默认布局（width=100% + 纵向流），与 content 内的卡片一致，
-    -- 不引入绝对定位——避免测试桩下百分比宽度/绝对定位组合算错尺寸。
-    refs.inventoryPanel = card("背包", { maxHeight = HUD_CARD_MAXH })
+    -- v2.2 背包卡重构（信息完整 + 选项不被遮挡）：
+    -- 旧结构问题：
+    -- ① header 里塞了「格数 + 全部卖出 + 扩容 + 收起」四个控件，与标题、
+    --    提示文字、待领渔获卡、物品列表、物品操作区同处一列纵向流 —— 列表
+    --    一长就把中下段控件顶出屏幕底，"全部卖出"点不到。
+    -- ② 物品操作区（使用/给老人/丢弃/投掷）是**列表上方的独立子面板**，
+    --    选中物品时它插进列表前面，把下面的物品行整体推移 —— 选中的行本身
+    --    反而可能滚出视野（用户诉求："选项不被遮挡"）。
+    -- ③ 物品区固定 height=320，与卡片 maxHeight 68% 无联动，屏幕变小即溢出。
+    --
+    -- 新结构（sectionCard 三段式）：
+    --   摘要头：格数 + 状态提示（只读，永不滚动）
+    --   主体  ：待领渔获提示 + 物品行列表（唯一滚动区）
+    --   操作条：物品操作区 + 全部卖出 / 扩容 / 收起（固定，永不被遮挡）
+    --
+    -- 契约：
+    -- · 「操作 / 使用 / 给予 / 丢弃 / 投掷 / 全部卖出 / 扩容 / 收起」文案
+    --   与可见性全部保留（Circle1B2UITests:234、HUDReviewTests:171-185、
+    --   GameLoopUISpec:80-81 依赖）。
+    -- · 卡片挂 infoLayer（常驻层），只受 showInventory 控制，不受 infoOpen 牵连。
+    refs.inventoryPanel, refs.inventoryBody, refs.inventoryFooter = sectionCard("背包", { skin = "panel" })
     refs.inventoryCount = makeLabel("0 / 0 格", UiKit.fontSize.teaching, UiKit.ink.dim)
-    refs.upgrade = makeButton("扩容", function() invokeLoop("UpgradeInventory") end, "secondary", 148)
-    refs.sellAll = makeButton("全部卖出", function() invokeLoop("SellAll") end, "primary", 108)
-    refs.inventoryClose = makeButton("收起", function()
-        invokeLoop("SetInventoryOpen", false)
-    end, "secondary", 72)
-    local inventoryHeader = UI.Panel {
+    refs.inventoryHeaderRow = UI.Panel {
         width = "100%",
-        flexDirection = "row",
-        flexWrap = "wrap",
-        alignItems = "center",
-        gap = 6,
-        children = {
-            refs.inventoryCount,
-            UI.Spacer(),
-            refs.sellAll,
-            refs.upgrade,
-            refs.inventoryClose,
-        },
+        gap = 2,
+        flexShrink = 0,
+        flexDirection = "column",
     }
-    refs.inventoryPanel:AddChild(inventoryHeader)
+    refs.inventoryHeaderRow:AddChild(refs.inventoryCount)
     refs.inventoryHint = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.dim)
-    refs.inventoryPanel:AddChild(refs.inventoryHint)
-    refs.itemMenu = UI.Panel(UiKit.cardProps("panelLite", {
+    refs.inventoryHeaderRow:AddChild(refs.inventoryHint)
+    refs.inventoryPanel:AddChild(refs.inventoryHeaderRow)
+
+    -- 主体区：待领渔获提示在上，物品列表在下（占满剩余空间并自行滚动）
+    refs.pendingCatchPanel = UI.Panel(UiKit.cardProps("plain", {
         width = "100%",
         padding = 8,
         gap = 6,
+        flexShrink = 0,
+    }))
+    themedPanels[#themedPanels + 1] = {
+        widget = refs.pendingCatchPanel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
+    }
+    refs.pendingCatchText = makeLabel("有渔获等待接收。", UiKit.fontSize.info, UiKit.ink.title, "bold")
+    refs.pendingCatchPanel:AddChild(makeLabel("需要丢弃时，先点击海面选择投放点；船舱保持打开，世界仍暂停。", 12))
+    refs.pendingCatchClaim = makeButton("领取渔获", function()
+        invokeLoop("ClaimPendingCatch")
+    end, "primary", 108)
+    refs.pendingCatchPanel:AddChild(refs.pendingCatchText)
+    refs.pendingCatchPanel:AddChild(refs.pendingCatchClaim)
+    refs.pendingCatchPanel:SetVisible(false)
+    refs.inventoryBody:AddChild(refs.pendingCatchPanel)
+
+    -- 物品列表：占满主体剩余高度，行数超出时只在此处滚动
+    refs.inventoryRows = UI.Panel {
+        width = "100%",
+        flexGrow = 1,
+        flexBasis = 0,
+        minHeight = 0,
+        gap = 4,
+        flexDirection = "column",
+    }
+    refs.inventoryBody:AddChild(refs.inventoryRows)
+
+    -- 操作条：物品操作区 + 全局操作
+    refs.itemMenu = UI.Panel(UiKit.cardProps("panelLite", {
+        width = "100%",
+        padding = 8,
+        gap = 5,
+        flexShrink = 0,
     }))
     themedPanels[#themedPanels + 1] = {
         widget = refs.itemMenu, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
@@ -590,6 +772,11 @@ function HUD.Create(loop, parent, debugTools)
     refs.itemMenu:AddChild(refs.itemMenuTitle)
     refs.itemUseReason = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.dim)
     refs.itemMenu:AddChild(refs.itemUseReason)
+    refs.upgrade = makeButton("扩容", function() invokeLoop("UpgradeInventory") end, "secondary", 148)
+    refs.sellAll = makeButton("全部卖出", function() invokeLoop("SellAll") end, "primary", 108)
+    refs.inventoryClose = makeButton("收起", function()
+        invokeLoop("SetInventoryOpen", false)
+    end, "secondary", 72)
     local itemMenuActions = UI.Panel {
         width = "100%",
         flexDirection = "row",
@@ -629,35 +816,25 @@ function HUD.Create(loop, parent, debugTools)
     itemMenuActions:AddChild(refs.itemMenuBack)
     refs.itemMenu:AddChild(itemMenuActions)
     refs.itemMenu:SetVisible(false)
-    refs.inventoryPanel:AddChild(refs.itemMenu)
-    refs.pendingCatchPanel = UI.Panel(UiKit.cardProps("plain", {
+    -- ⚠️ 物品操作区挂**操作条**而非主体：它是"对选中项的操作"，
+    -- 必须恒在卡内底部可见，不能随列表滚动，也不能把列表行推移。
+    refs.inventoryFooter:AddChild(refs.itemMenu)
+
+    -- 全局操作行：全部卖出 / 扩容 / 收起 —— 固定在卡内底部，永不被遮挡
+    refs.inventoryGlobalRow = UI.Panel {
         width = "100%",
-        padding = 8,
-        gap = 6,
-    }))
-    themedPanels[#themedPanels + 1] = {
-        widget = refs.pendingCatchPanel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
+        gap = 5,
+        flexShrink = 0,
+        flexDirection = "row",
+        flexWrap = "wrap",
+        alignItems = "center",
     }
-    refs.pendingCatchText = makeLabel("有渔获等待接收。", UiKit.fontSize.info, UiKit.ink.title, "bold")
-    refs.pendingCatchPanel:AddChild(makeLabel("需要丢弃时，先点击海面选择投放点；船舱保持打开，世界仍暂停。", 12))
-    refs.pendingCatchClaim = makeButton("领取渔获", function()
-        invokeLoop("ClaimPendingCatch")
-    end, "primary", 108)
-    refs.pendingCatchPanel:AddChild(refs.pendingCatchText)
-    refs.pendingCatchPanel:AddChild(refs.pendingCatchClaim)
-    refs.pendingCatchPanel:SetVisible(false)
-    refs.inventoryPanel:AddChild(refs.pendingCatchPanel)
-    refs.inventoryRows = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
-    refs.inventoryScroll = UI.ScrollView {
-        width = "100%",
-        -- 保持固定高度（测试桩下 flexGrow=1 的 ScrollView 可能算不出高度，
-        -- 反而导致内部行被判为不可见）。物品区一屏放不下时卡内滚动。
-        height = 320,
-        scrollY = true,
-        showScrollbar = true,
-        children = { refs.inventoryRows },
-    }
-    refs.inventoryPanel:AddChild(refs.inventoryScroll)
+    refs.inventoryGlobalRow:AddChild(refs.sellAll)
+    refs.inventoryGlobalRow:AddChild(refs.upgrade)
+    refs.inventoryGlobalRow:AddChild(UI.Spacer())
+    refs.inventoryGlobalRow:AddChild(refs.inventoryClose)
+    refs.inventoryFooter:AddChild(refs.inventoryGlobalRow)
+
     refs.inventoryPanel:SetVisible(false)
     -- v2.1 批B（真机 10-07 图1）：背包原挂抽屉（占屏 65% 过高）→ 改用信息
     -- 滚动屏，与港口商店平级。抽屉容器 gameplayInventoryDrawer 保留
@@ -669,57 +846,77 @@ function HUD.Create(loop, parent, debugTools)
     -- ——契约要求背包行"给予"按钮在老人对话态下也须可见
     -- （Circle1B3SevenDaysTests:335）。父隐藏则子不可见 → 改挂 infoLayer
     -- （常驻层，只受 showInventory 控制），不再受 infoOpen 牵连。
-    infoLayer:AddChild(refs.inventoryPanel)
+    cardHost:AddChild(refs.inventoryPanel)
 
-    -- v2.1 批B 修复（真机 10-07 图4）：港口商店内容多，card() 走 width=100%
-    -- 无高度约束，内容把卡片撑出抽屉、压到底部按钮坞（苹果·¥30 与
-    -- 出航/结束今日 重叠）。按设计方案 v2.1 §7.3 规则一，改为
-    -- "卡片有高度上限 + 卡内滚动"，不撑破抽屉、不侵占底坞落区⑤。
-    refs.portPanel = card("港口商店", { maxHeight = HUD_CARD_MAXH })
-    -- 内容全部挂进 portBody（滚动容器），portPanel 自身只承担标题+滚动。
-    local portBody = UI.Panel {
+    -- v2.2 港口商店卡重构（信息完整 + 选项不被遮挡）：
+    -- 旧结构问题：
+    -- ① **挂错宿主**：portPanel 挂在 contentScroll 里，而 contentScroll 受
+    --    infoOpen 控制 —— 在港默认展开尚可，但用户一旦点"收起信息"，
+    --    商店整个消失；用户必须先知道要点"信息"才看得到商店。
+    --    另商店与望远镜/宝物/投掷/木桶卡共用同一滚动区，商店被挤在
+    --    列表末尾，要滚动才能找到（真机反馈"商店找不到"的直接原因）。
+    -- ② **分区缺失**：升级体力/升级航速是裸按钮，购买是标签+按钮混排，
+    --    出售是另一组行 —— 三组信息无标题、无边界、无当前值展示，
+    --    用户看不出"我现在有多少钱、船速几级、这鱼能卖多少"。
+    -- ③ **底部无固定操作**：全部卖出与存档操作混在主体里，出售渔获一多
+    --    就把它们顶出屏幕。
+    --
+    -- 新结构：
+    --   摘要头：金币 / 体力 / 船速等级 / 容量（决策所需的全部前置数值）
+    --   主体  ：① 升级 ② 购买 ③ 出售 ④ 周目存档（四分区，标题+数值+按钮）
+    --   操作条：全部卖出（最高频，主动作，固定底部）
+    --
+    -- 契约：
+    -- · 「苹果 · ¥」「升级体力」「升级航速」「读取云存档」「开始新周目」
+    --   文案保留（Circle1B3SevenDaysTests:331 点击"苹果 · ¥"购买）。
+    -- · 挂 cardHost 与背包/老人平级，互斥，优先级最低（老人 > 背包 > 商店）。
+    refs.portPanel, refs.portBody, refs.portFooter = sectionCard("港口商店", { skin = "panel" })
+
+    -- 摘要头：把决策所需的四个前置数值一次给全，避免用户来回翻
+    refs.portSummary = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.body, "bold")
+    refs.portPanel:AddChild(refs.portSummary)
+
+    -- 分区标题工厂：统一「标题 + 副说明」两行，保证四区视觉等权
+    local function sectionTitle(text, hint)
+        local box = UI.Panel {
+            width = "100%",
+            gap = 1,
+            flexShrink = 0,
+            flexDirection = "column",
+            backgroundColor = { 92, 70, 46, 28 },
+            borderRadius = 5,
+            padding = { 4, 6, 4, 6 },
+        }
+        box:AddChild(makeLabel(text, UiKit.fontSize.info, UiKit.ink.teaching, "bold"))
+        if hint then
+            box:AddChild(makeLabel(hint, UiKit.fontSize.small, UiKit.ink.dim))
+        end
+        return box
+    end
+    refs.portSectionStyle = sectionTitle
+
+    -- ① 升级区：体力 / 航速，各带当前等级与下一档价格
+    refs.portBody:AddChild(sectionTitle("升级", "提升体力上限与航速；价格随等级递增，最高等级后不可升级。"))
+    local upgradeRow = UI.Panel {
         width = "100%",
-        flexGrow = 1,
-        flexBasis = 0,
-        gap = 6,
-        flexDirection = "column",
-    }
-    local portScroll = UI.ScrollView {
-        width = "100%",
-        flexGrow = 1,
-        flexBasis = 0,
-        scrollY = true,
-        showScrollbar = true,
-        children = { portBody },
-    }
-    refs.portPanel:AddChild(portScroll)
-    -- 低频港口操作（真机反馈 2026-10-05 精简按钮坞）：从按钮坞移入信息屏。
-    refs.loadSaved = makeButton("读取云存档", function() invokeLoop("LoadSaved") end, "secondary", 110)
-    refs.newRun = makeButton("开始新周目", function() invokeLoop("NewRun") end, "secondary", 110)
-    local portUtilityRow = UI.Panel {
-        width = "100%",
+        gap = 5,
+        flexShrink = 0,
         flexDirection = "row",
         flexWrap = "wrap",
         alignItems = "center",
-        gap = 6,
     }
-    portUtilityRow:AddChild(refs.loadSaved)
-    portUtilityRow:AddChild(refs.newRun)
-    portBody:AddChild(portUtilityRow)
-    refs.loadStatus = makeLabel("", 12)
-    portBody:AddChild(refs.loadStatus)
-    portBody:AddChild(makeLabel("新周目起始状态会在开始时保存；入口处可读取已有云存档。", 12))
-    refs.staminaUpgrade = makeButton("升级体力", function() invokeLoop("UpgradeStamina") end, "secondary", 180)
-    refs.speedUpgrade = makeButton("升级航速", function() invokeLoop("UpgradeBoatSpeed") end, "secondary", 180)
-    portBody:AddChild(refs.staminaUpgrade)
-    portBody:AddChild(refs.speedUpgrade)
-    portBody:AddChild(makeLabel("购买补给", UiKit.fontSize.info, UiKit.ink.teaching, "bold"))
-    local buyRow = UI.Panel {
-        width = "100%",
-        flexDirection = "row",
-        flexWrap = "wrap",
-        gap = 7,
-    }
+    refs.staminaUpgrade = makeButton("升级体力", function() invokeLoop("UpgradeStamina") end, "secondary", "46%")
+    refs.speedUpgrade = makeButton("升级航速", function() invokeLoop("UpgradeBoatSpeed") end, "secondary", "46%")
+    refs.staminaLevelText = makeLabel("", UiKit.fontSize.small, UiKit.ink.dim)
+    refs.speedLevelText = makeLabel("", UiKit.fontSize.small, UiKit.ink.dim)
+    upgradeRow:AddChild(refs.staminaUpgrade)
+    upgradeRow:AddChild(refs.speedLevelText)
+    upgradeRow:AddChild(refs.speedUpgrade)
+    upgradeRow:AddChild(refs.staminaLevelText)
+    refs.portBody:AddChild(upgradeRow)
+
+    -- ② 购买区：每种商品独占一行（标签 + 库存 + 按钮），不再标签按钮混排
+    refs.portBody:AddChild(sectionTitle("购买补给", "每日限量，次日补货；金币不足或船舱已满时按钮禁用并说明原因。"))
     refs.shopButtons = {}
     refs.shopStockLabels = {}
     for _, itemId in ipairs({ "apple", "bait" }) do
@@ -728,23 +925,60 @@ function HUD.Create(loop, parent, debugTools)
         local itemLabel = definition and definition.name or buyId
         local price = definition and definition.buyPrice
         local label = price and (itemLabel .. " · ¥" .. tostring(price)) or (itemLabel .. " · 价格未定")
-        local shopButton = makeButton(label, function() invokeLoop("Buy", buyId) end, "primary", 142)
+        local shopButton = makeButton(label, function() invokeLoop("Buy", buyId) end, "primary", 132)
         if not price then shopButton:SetDisabled(true) end
         refs.shopButtons[buyId] = shopButton
-        refs.shopStockLabels[buyId] = makeLabel("", 12)
-        buyRow:AddChild(refs.shopStockLabels[buyId])
-        buyRow:AddChild(shopButton)
+        refs.shopStockLabels[buyId] = makeLabel("", UiKit.fontSize.small, UiKit.ink.dim)
+        local buyLine = UI.Panel {
+            width = "100%",
+            gap = 3,
+            flexShrink = 0,
+            flexDirection = "row",
+            flexWrap = "wrap",
+            alignItems = "center",
+        }
+        -- 标签必须占满剩余宽度：row 布局下无宽度约束的 label 会被压为不可见
+        buyLine:AddChild(makeLabel(itemLabel, UiKit.fontSize.body, UiKit.ink.body, nil,
+            { flexGrow = 1, flexBasis = 0 }))
+        buyLine:AddChild(shopButton)
+        buyLine:AddChild(refs.shopStockLabels[buyId])
+        refs.portBuyRows = refs.portBuyRows or {}
+        refs.portBuyRows[#refs.portBuyRows + 1] = buyLine
+        refs.portBody:AddChild(buyLine)
     end
-    portBody:AddChild(buyRow)
-    portBody:AddChild(makeLabel("出售渔获", UiKit.fontSize.info, UiKit.ink.teaching, "bold"))
-    refs.portSales = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
-    refs.portSalesScroll = UI.Panel {
+
+    -- ③ 出售区：每条渔获独占一行（名称 + 稀有度 + 售价 + 出售按钮）
+    refs.portBody:AddChild(sectionTitle("出售渔获", "仅沙丁鱼与金枪鱼可售；价格与稀有度取自物品表。"))
+    refs.portSales = UI.Panel {
         width = "100%",
-        children = { refs.portSales },
+        gap = 4,
+        flexDirection = "column",
     }
-    portBody:AddChild(refs.portSalesScroll)
+    refs.portBody:AddChild(refs.portSales)
+
+    -- ④ 周目存档区：低频操作，从按钮坞移来（真机反馈 2026-10-05 精简按钮坞）
+    refs.portBody:AddChild(sectionTitle("周目与存档", "新周目起始状态会在开始时保存；入口处可读取已有云存档。"))
+    local portUtilityRow = UI.Panel {
+        width = "100%",
+        gap = 5,
+        flexShrink = 0,
+        flexDirection = "row",
+        flexWrap = "wrap",
+        alignItems = "center",
+    }
+    refs.loadSaved = makeButton("读取云存档", function() invokeLoop("LoadSaved") end, "secondary", "46%")
+    refs.newRun = makeButton("开始新周目", function() invokeLoop("NewRun") end, "secondary", "46%")
+    portUtilityRow:AddChild(refs.loadSaved)
+    portUtilityRow:AddChild(refs.newRun)
+    refs.portBody:AddChild(portUtilityRow)
+    refs.loadStatus = makeLabel("", UiKit.fontSize.small, UiKit.ink.dim)
+    refs.portBody:AddChild(refs.loadStatus)
+
+    -- 操作条：全部卖出是港口最高频动作，固定在卡内底部
+    refs.portSellAll = refs.portSellAll or makeButton("全部卖出", function() invokeLoop("SellAll") end, "primary", "100%")
+    refs.portFooter:AddChild(refs.portSellAll)
     refs.portPanel:SetVisible(false)
-    content:AddChild(refs.portPanel)
+    cardHost:AddChild(refs.portPanel)
 
     if debugTools and debugTools.enabled == true then
         -- v2.1 批B 修复（真机 10-07 图1-3）：调试面板直挂 root，内部多行
@@ -901,6 +1135,17 @@ function HUD.Create(loop, parent, debugTools)
         root:AddChild(refs.debugPanel)
     end
 
+    -- v2.1 §7.15：cardHost（三卡统一宿主）挂在 infoLayer 内。
+    -- infoCloseCatcher 仍在 infoLayer 直属（铺满全屏，空白点击收起不受宿主限宽影响）。
+    infoLayer:AddChild(cardHost)
+    -- ⚠️⚠️ 回归修复（2026-10-08，v2.2）：infoLayer 必须在末尾显式挂到 root。
+    -- v2.1 §7.15 重排 root 子节点时这一行被误删，导致整棵 infoLayer 子树
+    -- （contentScroll + cardHost + 背包卡 + 老人卡）从未接入 root：
+    --   · 真机上三卡完全不显示（游离子树不参与布局与渲染）；
+    --   · GameLoopUISpec:83 "点拜访老人 → 点给予"报 missing visible button，
+    --     因为测试沿 parent 链判可见，链首就是游离的 infoLayer。
+    -- 契约：必须在 refs.drawerBackdrop（root 倒数第二位）之前插入，
+    -- 见 Circle1B3SceneUITests:231 的 "倒数第二 = gameplayInventoryDrawer"。
     root:AddChild(infoLayer)
 
     -- 统一遮罩承载强制返港、每日结算和拜访老人的反馈。
@@ -991,109 +1236,153 @@ function HUD.Create(loop, parent, debugTools)
     --      本卡挂 infoLayer（常驻层，不受 infoOpen 牵连），按钮恒可见；
     --   ② Circle1B2UITests:244-253 老人态下要能点物品行"展示"→
     --      卡片不遮挡背包行（同层并列）；
-    --   ③ elderGiftScroll 是既有子树，保留不改结构（多包 ScrollView 会
-    --      改变 UI 树导致 isVisible 沿父链判定失效，教训见 §7.9）。
-    refs.elderPanel = card("拜访老人", { maxHeight = HUD_CARD_MAXH })
-    -- v2.1 §7.12：flexGrow=1 + flexBasis=0 让 elderBody 填满 elderPanel 的
-    -- maxHeight 剩余空间，礼物区（flexGrow=1）才能自动收缩让位给
-    -- "结束对话"按钮——否则内容仍会溢出屏幕底边。
-    refs.elderBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 8 }
-    refs.elderMessage = makeLabel("食物可给予老人；鱼和鱼饵可向老人展示。", UiKit.fontSize.body)
-    refs.elderBody:AddChild(refs.elderMessage)
-    -- S6 教学（05 页 P6）：前 3 天且未完成首次捕鱼领取时，展示两条看海对白。
-    -- v2.1 批B：卡内教学行改墨棕 teaching（羊皮纸底），※ 前缀由 UiKit 统一。
-    refs.elderTeaching = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching)
-    refs.elderBody:AddChild(refs.elderTeaching)
-    refs.elderStatus = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
-    refs.elderBody:AddChild(refs.elderStatus)
-    -- 宝物小卡（卡内卡）：用 plain 素面纸档 compactPadding，
-    -- 显式 maxWidth 防溢出（真机 21:46 曾被模态卡底裁切）。
-    refs.elderTreasure = UI.Panel(UiKit.cardProps("plain", {
-        maxWidth = "100%",
-        gap = 5,
-    }, true))
-    themedPanels[#themedPanels + 1] = {
-        widget = refs.elderTreasure, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
-    }
-    refs.elderTreasure:AddChild(makeLabel("宝物", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold"))
-    refs.elderLensStatus = makeLabel("尚未获得透镜。", 12)
-    refs.elderTreasure:AddChild(refs.elderLensStatus)
-    refs.elderLensGive = makeButton("展示透镜", function()
-        invokeLoop("GiveTreasureToElder", "scopeLens")
-    end, "primary", 92)
-    refs.elderTreasure:AddChild(refs.elderLensGive)
-    refs.elderBody:AddChild(refs.elderTreasure)
-    refs.elderGiftRows = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
-    refs.elderGiftScroll = UI.ScrollView {
-        width = "100%",
-        -- v2.1 §7.12：原 height=150 固定高，内容合计约 576px 超出屏幕底边
-        -- （真机 23:34"结束对话"被裁）。改为 flexGrow 自适应：卡片有
-        -- maxHeight 上限，礼物区自动收缩让位给下方"结束对话"按钮。
-        flexGrow = 1,
-        flexBasis = 0,
-        minHeight = 60,
-        scrollY = true,
-        showScrollbar = true,
-        children = { refs.elderGiftRows },
-    }
-    refs.elderBody:AddChild(refs.elderGiftScroll)
-    refs.elderBody:AddChild(makeButton("结束对话", function() invokeLoop("SetElderOpen", false) end, "secondary", 104))
-
-    -- v2.1 §7.14（对话式形态，方案 v2.0）：上方"对话流"+ 底部"选项区"，
-    -- 聊天记录收进底部抽屉（点 [∞] 展开 / 再点收起）。
+    --   ③ 礼物区保持为 card 的直接后代（多包一层 ScrollView 会改变 UI 树
+    --      导致 isVisible 沿父链判定失效，教训见 §7.9）。
+    --      v2.2 已把礼物区并入 sectionCard 的主体滚动区，不再单独包 ScrollView。
+    -- v2.2 拜访老人卡重构（信息完整 + 选项不被遮挡）：
+    -- 旧结构问题（真机 21:46 / 23:34 两次反馈的同一根因）：
+    --   卡片是一列到底的纵向流，顺序为
+    --     对话流 → 聊天记录按钮 → 提问区 → 状态/教学/宝物/礼物区 → 结束对话
+    --   对话流每问一轮就追加 2 个气泡且**永不回收**，高度单调增长；
+    --   它上方的提问区与下方的"结束对话"被双向挤压，最终落到屏幕底边之外
+    --   （"结束对话"被裁、提问第 3 条点不到）。
+    --   maxHeight 只能给一个总上限，无法保证"最下方的按钮一定在屏内"。
     --
-    -- ⚠️ 契约红线（三条测试都是"点完拜访老人立刻操作"，无任何等待）：
+    -- 新结构（sectionCard 三段式）：
+    --   摘要头：对话反馈 + 老人进展 + 教学（只读，恒可见）
+    --   主体  ：对话流（**限高只渲染最近 N 轮**，溢出提示"更早记录见聊天记录"）
+    --           + 宝物小卡 + 礼物区（可给予/展示的物品行）
+    --   操作条：提问按钮 + 展示透镜 + 结束对话（固定底部，永不被遮挡）
+    --
+    -- 为什么对话流"限高"而不是"包 ScrollView"：
+    --   §7.9 红线——多包一层 ScrollView 会改变 UI 树结构，测试沿父链判
+    --   isVisible 时会失配（3 套件红）。改用「只渲染最近 N 轮 + 更早内容
+    --   收进已有聊天记录抽屉」达成同一目的，不动树形语义。
+    --
+    -- 契约（三条测试都是"点完拜访老人立刻操作"，无任何等待）：
     --   ① Circle1B2UITests:243-247 打开后**立即** findButtons("展示",visibleOnly)=2
-    --      → 选项区必须初始可见，不能有"点击继续"门槛；
+    --      → 礼物区必须初始可见，不能有"点击继续"门槛；
     --   ② Circle1B3SevenDaysTests:334 "01 · "前缀行 + "给予"按钮
-    --      → 物品行格式保持不变；
+    --      → 礼物行格式保持不变；
     --   ③ GameLoopUISpec:82-84 点"给予"→ 点"结束对话"
-    --      → 选项区必须保留"结束对话"文案按钮。
-    -- ⚠️ 结构红线：主对话流与选项区**禁止用 ScrollView 包裹**（会改变 UI 树
-    --    结构，致 isVisible 沿父链判定失效，3 套件变红，见 §7.9 教训）。
-    --    仅下方聊天记录抽屉可自带 ScrollView（默认收起，不影响 visibleOnly）。
+    --      → 操作条必须保留"结束对话"文案按钮。
+    refs.elderPanel, refs.elderBody, refs.elderFooter = sectionCard("拜访老人", { skin = "panel" })
 
-    -- 对话流区（气泡序列，不包 ScrollView）
-    refs.elderDialogue = UI.Panel { width = "100%", gap = 6 }
-    refs.elderPanel:AddChild(refs.elderDialogue)
+    -- 摘要头：对话反馈 + 进展 + 教学（只读，永不滚动）
+    refs.elderMessage = makeLabel("食物可给予老人；鱼和鱼饵可向老人展示。", UiKit.fontSize.body)
+    refs.elderStatus = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
+    -- S6 教学（05 页 P6）：前 3 天且未完成首次捕鱼领取时，展示看海对白。
+    refs.elderTeaching = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching)
+    refs.elderHeaderBox = UI.Panel {
+        width = "100%",
+        gap = 2,
+        flexShrink = 0,
+        flexDirection = "column",
+    }
+    refs.elderHeaderBox:AddChild(refs.elderMessage)
+    refs.elderHeaderBox:AddChild(refs.elderStatus)
+    refs.elderHeaderBox:AddChild(refs.elderTeaching)
+    refs.elderPanel:AddChild(refs.elderHeaderBox)
+
+    -- 主体区：对话流（限高）+ 宝物 + 礼物区
+    -- 对话流区（气泡序列，不包 ScrollView — §7.9 结构红线）
+    refs.elderDialogue = UI.Panel {
+        width = "100%",
+        gap = 5,
+        flexShrink = 0,
+        flexDirection = "column",
+    }
+    refs.elderDialogOverflow = makeLabel("", UiKit.fontSize.small, UiKit.ink.dim)
+    refs.elderBody:AddChild(refs.elderDialogue)
+    refs.elderBody:AddChild(refs.elderDialogOverflow)
     refs.elderDialogTail = refs.elderDialogue -- 追加锚点
 
-    -- 聊天记录抽屉触发按钮（点一次展开、再点收起）
-    refs.elderLogToggle = makeButton("聊天记录 ∞", function()
-        state.elderLogOpen = not (state.elderLogOpen == true)
-        refresh()
-    end, "secondary", 108)
-    refs.elderPanel:AddChild(refs.elderLogToggle)
-
-    -- 聊天记录抽屉（默认收起；内含 ScrollView 安全——收起时子树不可见）
+    -- 聊天记录：完整历史的唯一去处（默认收起）
     refs.elderLogPanel = UI.Panel(UiKit.cardProps("plain", {
         width = "100%",
-        gap = 5,
+        gap = 4,
+        flexShrink = 0,
     }, true))
     themedPanels[#themedPanels + 1] = {
         widget = refs.elderLogPanel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
     }
-    refs.elderLogPanel:AddChild(makeLabel("聊天记录", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold"))
     refs.elderLogRows = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
     refs.elderLogScroll = UI.ScrollView {
         width = "100%",
-        height = 200,
+        height = 180,
         scrollY = true,
         showScrollbar = true,
         children = { refs.elderLogRows },
     }
     refs.elderLogPanel:AddChild(refs.elderLogScroll)
-    refs.elderPanel:AddChild(refs.elderLogPanel)
+    -- 收起时子树不可见，不影响 visibleOnly 查找（§7.9 已验证安全）
+    refs.elderBody:AddChild(refs.elderLogPanel)
     refs.elderLogPanel:SetVisible(false)
 
-    -- 提问区（v2.1 §7.14 选项区上半）：按阶段解锁的问题按钮。
-    -- 初始可见（契约要求打开即可操作，无"点击继续"门槛）。
-    refs.elderQuestions = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
-    refs.elderPanel:AddChild(refs.elderQuestions)
+    -- 宝物小卡（卡内卡）：用 plain 素面纸档 compactPadding，
+    -- 显式 maxWidth 防溢出（真机 21:46 曾被模态卡底裁切）。
+    refs.elderTreasure = UI.Panel(UiKit.cardProps("plain", {
+        width = "100%",
+        maxWidth = "100%",
+        gap = 4,
+        flexShrink = 0,
+    }, true))
+    themedPanels[#themedPanels + 1] = {
+        widget = refs.elderTreasure, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
+    }
+    refs.elderTreasureTitle = makeLabel("宝物", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
+    refs.elderLensStatus = makeLabel("尚未获得透镜。", UiKit.fontSize.small, UiKit.ink.dim)
+    refs.elderTreasure:AddChild(refs.elderTreasureTitle)
+    refs.elderTreasure:AddChild(refs.elderLensStatus)
+    refs.elderBody:AddChild(refs.elderTreasure)
 
-    refs.elderPanel:AddChild(refs.elderBody)
+    -- 礼物区：可给予（食物）/ 展示（鱼与鱼饵）的物品行
+    refs.elderGiftTitle = makeLabel("可给老人的物品", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
+    refs.elderBody:AddChild(refs.elderGiftTitle)
+    refs.elderGiftRows = UI.Panel {
+        width = "100%",
+        gap = 4,
+        flexGrow = 1,
+        flexBasis = 0,
+        minHeight = 0,
+        flexDirection = "column",
+    }
+    refs.elderBody:AddChild(refs.elderGiftRows)
+
+    -- 操作条（固定底部，永不被遮挡）
+    -- 提问区：按阶段解锁的问题按钮，初始可见（契约：打开即可操作）
+    refs.elderQuestions = UI.Panel {
+        width = "100%",
+        gap = 4,
+        flexShrink = 0,
+        flexDirection = "column",
+    }
+    refs.elderFooter:AddChild(refs.elderQuestions)
+
+    refs.elderActionRow = UI.Panel {
+        width = "100%",
+        gap = 5,
+        flexShrink = 0,
+        flexDirection = "row",
+        flexWrap = "wrap",
+        alignItems = "center",
+    }
+    -- 聊天记录触发（点一次展开、再点收起）
+    refs.elderLogToggle = makeButton("聊天记录 ∞", function()
+        state.elderLogOpen = not (state.elderLogOpen == true)
+        refresh()
+    end, "secondary", 104)
+    refs.elderLensGive = makeButton("展示透镜", function()
+        invokeLoop("GiveTreasureToElder", "scopeLens")
+    end, "primary", 96)
+    refs.elderEnd = makeButton("结束对话", function() invokeLoop("SetElderOpen", false) end, "secondary", "100%")
+    refs.elderActionRow:AddChild(refs.elderLogToggle)
+    refs.elderActionRow:AddChild(refs.elderLensGive)
+    refs.elderActionRow:AddChild(refs.elderEnd)
+    refs.elderFooter:AddChild(refs.elderActionRow)
+
     refs.elderPanel:SetVisible(false)
-    infoLayer:AddChild(refs.elderPanel)
+    cardHost:AddChild(refs.elderPanel)
 
     -- 成就/图鉴页壳（v2.0 §7.4）：仅在暂停态可开（圈2 决策：图鉴只在暂停界面查）。
     -- 成就页=6 条最小集桩；图鉴页=marine_life 8 水彩图标（发现状态待知识层接入）。
@@ -1282,34 +1571,59 @@ function HUD.Create(loop, parent, debugTools)
     -- destroyChildren 会退化为全局 nil → "attempt to call a nil value"。
     local askElderQuestion
     local destroyChildren
+    -- v2.2 对话流可见条数上限：主区只渲染最近 N 轮对话。
+    -- 为什么限条而不是包 ScrollView：§7.9 红线——多包一层 ScrollView 会
+    -- 改变 UI 树结构，测试沿父链判 isVisible 时失配（3 套件红）。
+    -- 限条达到同一目的：对话区高度有界 → 下方操作条恒在卡内可见。
+    -- 更早的完整历史由聊天记录抽屉承载（数据同一份，不丢内容）。
+    local ELDER_VISIBLE_LINES = 6
     -- v2.1 §7.14（对话式形态）：对话流渲染 + 提问区构建 + 聊天记录抽屉同步。
     -- 说明：对话流与提问区**不使用 ScrollView**（结构红线，会致 3 套件红）。
     local function renderElderDialogue()
         if not refs.elderDialogue then return end
         destroyChildren(refs.elderDialogue)
         destroyChildren(refs.elderLogRows)
-        for _, entry in ipairs(state.elderTranscript) do
-            -- 老人气泡在左（panelLite 羊皮纸底），玩家气泡在右（plain 素面纸）
+        local transcript = state.elderTranscript or {}
+        local total = #transcript
+        -- 只渲染最近 ELDER_VISIBLE_LINES 条气泡；更早的仅进聊天记录
+        local firstVisible = 1
+        if total > ELDER_VISIBLE_LINES then
+            firstVisible = total - ELDER_VISIBLE_LINES + 1
+        end
+        for index = 1, total do
+            local entry = transcript[index]
+            -- 聊天记录抽屉同步**全部**历史（收起时子树不可见，不影响契约查找）
             local isElder = entry.who == "elder"
-            local bubble = UI.Panel(UiKit.cardProps(isElder and "panelLite" or "plain", {
-                width = "100%",
-                gap = 3,
-            }, true))
-            themedPanels[#themedPanels + 1] = {
-                widget = bubble, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
-            }
-            bubble:AddChild(makeLabel(isElder and "老人" or "你", 11,
-                isElder and UiKit.ink.teaching or UiKit.ink.dim, "bold"))
             local body = entry.teach and UiKit.teachingText(entry.text) or entry.text
-            bubble:AddChild(makeLabel(body, UiKit.fontSize.teaching,
-                isElder and UiKit.ink.body or UiKit.ink.teaching))
-            refs.elderDialogue:AddChild(bubble)
-            -- 聊天记录抽屉同步同一份数据（收起时子树不可见，不影响契约查找）
             local logRow = UI.Panel { width = "100%", gap = 2 }
             logRow:AddChild(makeLabel(isElder and "老人" or "你", 11,
                 isElder and UiKit.ink.teaching or UiKit.ink.dim, "bold"))
             logRow:AddChild(makeLabel(body, 11, UiKit.ink.teaching))
             refs.elderLogRows:AddChild(logRow)
+
+            if index >= firstVisible then
+                -- 老人气泡在左（panelLite 羊皮纸底），玩家气泡在右（plain 素面纸）
+                local bubble = UI.Panel(UiKit.cardProps(isElder and "panelLite" or "plain", {
+                    width = "100%",
+                    gap = 3,
+                    flexShrink = 0,
+                }, true))
+                themedPanels[#themedPanels + 1] = {
+                    widget = bubble, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
+                }
+                bubble:AddChild(makeLabel(isElder and "老人" or "你", 11,
+                    isElder and UiKit.ink.teaching or UiKit.ink.dim, "bold"))
+                bubble:AddChild(makeLabel(body, UiKit.fontSize.teaching,
+                    isElder and UiKit.ink.body or UiKit.ink.teaching))
+                refs.elderDialogue:AddChild(bubble)
+            end
+        end
+        -- 溢出提示：明确告知更早内容去哪找，避免"对话凭空消失"的困惑
+        local hidden = firstVisible - 1
+        refs.elderDialogOverflow:SetVisible(hidden > 0)
+        if hidden > 0 then
+            setText(refs.elderDialogOverflow, "elderDialogOverflow",
+                string.format("上方 %d 条更早对话已折叠，点「聊天记录 ∞」查看完整历史。", hidden))
         end
     end
 
@@ -1369,9 +1683,9 @@ function HUD.Create(loop, parent, debugTools)
             local inventoryRow = UI.Panel {
                 width = "100%",
                 minHeight = 38,
-                flexDirection = "row",
-                alignItems = "center",
-                gap = 4,
+                gap = 3,
+                flexShrink = 0,
+                flexDirection = "column",
                 paddingHorizontal = 4,
                 -- v2.1 批B 修复（真机 10-07 反馈）：物品行原为深绿底 {45,64,61}，
                 -- 放在暖色羊皮纸卡内形成深色条 + 亮色字，与卡片风格割裂。
@@ -1381,39 +1695,83 @@ function HUD.Create(loop, parent, debugTools)
             }
             -- 名称标签必须占满剩余宽度：row 布局下无宽度约束的 label 会被压缩为不可见。
             local fishTag, fishColor = fishDisplay(itemId, definition)
-            inventoryRow:AddChild(makeLabel(string.format("%02d · %s%s", itemIndex, name,
-                fishTag ~= "" and (" · " .. fishTag) or ""), 12,
-                fishColor, nil, { flexGrow = 1, flexBasis = 0 }))
+            -- ⚠️ 契约（Circle1B3SevenDaysTests:146-160）：测试以
+            -- "标签 %02d · 前缀"定位后取 label.parent 当行，再**只在
+            -- row.children 里找按钮**。因此带前缀的标签与全部按钮必须同处
+            -- 一个面板 —— 这里就是 itemLine；属性副行放在它下面，不参与匹配。
+            -- v2.2 信息完整：属性副行让"能干什么/值多少"当场可读，
+            -- 单行挤不下时属性会整段消失。
+            local itemLine = UI.Panel {
+                width = "100%",
+                gap = 4,
+                flexShrink = 0,
+                flexDirection = "row",
+                flexWrap = "wrap",
+                alignItems = "center",
+            }
+            itemLine:AddChild(makeLabel(string.format("%02d · %s%s", itemIndex, name,
+                fishTag ~= "" and (" · " .. fishTag) or ""), UiKit.fontSize.teaching,
+                fishColor or UiKit.ink.title, "bold", { flexGrow = 1, flexBasis = 0 }))
             local itemActions = makeButton("操作", function()
                 state.selectedItemIndex = itemIndex
                 refresh()
-            end, "secondary", 56)
+            end, "secondary", 58)
             itemActions:SetDisabled(actionsBlocked)
-            inventoryRow:AddChild(itemActions)
+            itemLine:AddChild(itemActions)
             if inPort and (itemId == "sardine" or itemId == "tuna") and definition then
                 local price = definition.sellPrice
                 local label = price and ("出售 ¥" .. tostring(price)) or "售价未定"
-                local sellButton = makeButton(label, function() invokeLoop("Sell", itemIndex, itemId, cargoRevision) end, "primary", 82)
+                local sellButton = makeButton(label, function() invokeLoop("Sell", itemIndex, itemId, cargoRevision) end, "primary", 92)
                 if not price or actionsBlocked then sellButton:SetDisabled(true) end
-                inventoryRow:AddChild(sellButton)
+                itemLine:AddChild(sellButton)
             end
+            inventoryRow:AddChild(itemLine)
+            -- 属性副行：类别 + 恢复体力 + 售价 + 可否给老人
+            local CATEGORY_NAMES = { fish = "鱼获", food = "食物", bait = "鱼饵",
+                treasure = "宝物", misc = "杂项" }
+            local traits = { CATEGORY_NAMES[definition and definition.category] or "物品" }
+            if definition and definition.heal and definition.heal > 0 then
+                traits[#traits + 1] = "恢复体力 " .. tostring(definition.heal)
+            end
+            if definition and definition.sellPrice and definition.sellPrice > 0 then
+                traits[#traits + 1] = "售价 ¥" .. tostring(definition.sellPrice)
+            end
+            if definition and definition.canGive then
+                traits[#traits + 1] = definition.category == "food" and "可给老人" or "可向老人展示"
+            end
+            inventoryRow:AddChild(makeLabel(table.concat(traits, " · "), UiKit.fontSize.small, UiKit.ink.dim,
+                nil, { width = "100%" }))
             refs.inventoryRows:AddChild(inventoryRow)
 
             if inPort and (itemId == "sardine" or itemId == "tuna") and definition then
                 saleCount = saleCount + 1
+                -- ⚠️ 契约（Circle1B3SevenDaysTests:146-160）：测试用
+                -- "标签 %02d · 前缀 → 取 label.parent 当行 → 只在 row.children
+                -- 里找按钮"。因此**按钮必须是行的直接子节点**，放进嵌套子面板
+                -- 会让契约查找落空。行改纵向两层，文字层与按钮层都直属行。
                 local saleRow = UI.Panel {
                     width = "100%",
                     minHeight = 36,
+                    gap = 4,
+                    flexShrink = 0,
                     flexDirection = "row",
+                    flexWrap = "wrap",
                     alignItems = "center",
-                    gap = 5,
+                    backgroundColor = { 92, 70, 46, 24 },
+                    borderRadius = 5,
+                    padding = { 3, 5, 3, 5 },
                 }
-                saleRow:AddChild(makeLabel(string.format("%s · %s · 槽位 %d", name, fishTag, itemIndex), 12,
-                    fishColor, nil, { flexGrow = 1, flexBasis = 0 }))
+                -- ⚠️ 契约（Circle1B3SevenDaysTests:146-160）：带 "%02d · " 前缀的
+                -- 标签与其按钮必须同处一个面板 —— 这里就是 saleRow。
+                -- v2.2：名称/稀有度/槽位/售价合成一行，售价不再被换行裁掉。
+                saleRow:AddChild(makeLabel(string.format("%s · %s · 槽位 %02d · 售价 ¥%s", name,
+                    fishTag ~= "" and fishTag or "普通", itemIndex, tostring(definition.sellPrice or 0)),
+                    UiKit.fontSize.teaching, fishColor or UiKit.ink.body, "bold",
+                    { flexGrow = 1, flexBasis = 0 }))
                 local price = definition.sellPrice
                 local saleButton = makeButton(price and ("出售 ¥" .. tostring(price)) or "售价未定", function()
                     invokeLoop("Sell", itemIndex, itemId, cargoRevision)
-                end, "primary", 92)
+                end, "primary", 96)
                 if not price or actionsBlocked then saleButton:SetDisabled(true) end
                 saleRow:AddChild(saleButton)
                 refs.portSales:AddChild(saleRow)
@@ -1421,16 +1779,28 @@ function HUD.Create(loop, parent, debugTools)
 
             if elderOpen and definition and definition.canGive then
                 giftCount = giftCount + 1
+                -- 同上：按钮直属行（契约硬要求），行内纵向两层排布
                 local giftRow = UI.Panel {
                     width = "100%",
                     minHeight = 38,
+                    gap = 4,
+                    flexShrink = 0,
                     flexDirection = "row",
+                    flexWrap = "wrap",
                     alignItems = "center",
-                    gap = 5,
+                    backgroundColor = { 92, 70, 46, 24 },
+                    borderRadius = 5,
+                    padding = { 3, 5, 3, 5 },
                 }
-                giftRow:AddChild(makeLabel(string.format("%02d · %s", itemIndex, name), 12))
+                -- 契约：格式保持 "%02d · 名称"（Circle1B3SevenDaysTests:334）
+                -- 后接一句说明为什么是"给予"或"展示"，信息完整不靠猜。
+                -- 标签与按钮同处 giftRow（见上方契约说明）。
+                giftRow:AddChild(makeLabel(string.format("%02d · %s · %s", itemIndex, name,
+                    definition.category == "food" and "可给老人吃" or "只能展示，不能给老人"),
+                    UiKit.fontSize.teaching, UiKit.ink.body, "bold",
+                    { flexGrow = 1, flexBasis = 0 }))
                 local giftAction = definition.category == "food" and "给予" or "展示"
-                local giftButton = makeButton(giftAction, function() invokeLoop("GiveToElder", itemIndex) end, "primary", 64)
+                local giftButton = makeButton(giftAction, function() invokeLoop("GiveToElder", itemIndex) end, "primary", 72)
                 giftButton:SetDisabled(actionsBlocked)
                 giftRow:AddChild(giftButton)
                 refs.elderGiftRows:AddChild(giftRow)
@@ -1518,11 +1888,12 @@ function HUD.Create(loop, parent, debugTools)
         -- 直接拼在状态行尾（暂停：port 等），日志行让给事件类信息。
         -- （"模式："并入状态行是 B 侧 Circle1HUDReviewTests 契约：模式跟随真实状态。）
         local reasons = clockState.pauseReasons or {}
+        -- v2.1 §7.15：状态栏收敛为单行左右分栏（测试期状态查看，发布时删除）。
+        -- 左：第几天 · 昼夜 剩余 · 暂停态 · 模式
+        -- 右：体力 · 钱 · 背包格
         local statusText = string.format(
-            "第 %s 天 · %s 剩余 %.0f 秒 · 体力：%s/%s · 钱：%s · 背包 %d / %d 格",
-            tostring(player.day or 1), phase, math.max(0, remaining),
-            tostring(player.stamina or 0), tostring(player.maxStamina or 0),
-            tostring(player.money or 0), #items, capacity)
+            "第 %s 天 · %s 剩余 %.0f 秒",
+            tostring(player.day or 1), phase, math.max(0, remaining))
         if clockState.paused == true or #reasons > 0 then
             statusText = statusText .. " · 暂停："
                 .. (#reasons > 0 and table.concat(reasons, "、") or "暂停中")
@@ -1802,7 +2173,19 @@ function HUD.Create(loop, parent, debugTools)
         -- 模式并入状态行（追加在暂停态之后）：跟随真实状态（B 侧 review 契约）。
         local modeSuffix = " · 模式：" .. modeText(loop, fishingPhase, pendingCatch, throwSelection)
             .. (scopeEnabled and " · 望远镜开启" or "")
-        setText(refs.status, "status", statusText .. modeSuffix)
+        -- v2.1 §7.15：距港距离并入顶部状态栏左列（用户 13:03 要求显示）。
+        -- portDistance 在本行之前已算出，可直接取值。
+        local portDistanceText = type(portDistance) == "number"
+            and string.format(" · 距港 %.1f米", portDistance)
+            or " · 距港暂不可读"
+        setText(refs.status, "status", statusText .. modeSuffix .. portDistanceText)
+        -- v2.1 §7.15 右列：体力 / 钱 / 背包格（测试期状态查看）
+        -- ⚠️ 文案格式受 GameLoopUISpec:77 契约约束（"100/100" / "钱：100" /
+        -- "2 / 5"，冒号与空格均不可改），仅位置搬到右列。
+        setText(refs.statusRight, "statusRight", string.format(
+            "体力：%s/%s · 钱：%s · 背包 %d / %d 格",
+            tostring(player.stamina or 0), tostring(player.maxStamina or 0),
+            tostring(player.money or 0), #items, capacity))
 
         -- 夜航警示行：条件显隐（夜+海上+未耗尽才出现），常日不占行。
         refs.nightRisk:SetVisible(clockState.phase == "night" and not inPort and not clockState.exhausted)
@@ -1862,6 +2245,16 @@ function HUD.Create(loop, parent, debugTools)
         refs.inventoryClose:SetDisabled(busy or loop.loading == true)
         -- v2.1 §7.13：三卡互斥——老人 > 背包 > 商店。
         refs.portPanel:SetVisible(inPort and not elderActive and not showInventory)
+        -- 港口商店不再依赖 infoOpen（v2.2 已迁到 cardHost），
+        -- 但海面点选流程（捕鱼选点/投掷选点）期间仍强制收起信息屏，
+        -- 此时商店应一并让位，避免挡住要点的海面。
+        if seaClickFlow then refs.portPanel:SetVisible(false) end
+        -- 港口摘要头：把决策所需的四个前置数值一次给全
+        -- （金币 / 体力 / 船速等级 / 容量），避免用户翻区找数。
+        setText(refs.portSummary, "portSummary", string.format(
+            "金币 %s · 体力 %s/%s · 船速 %s 级 · 船舱 %d/%d 格",
+            tostring(player.money or 0), tostring(player.stamina or 0), tostring(player.maxStamina or 0),
+            tostring((tonumber(player.boatSpeedLevel) or 0) + 1), #items, capacity))
         -- 港口提示已并入左上角日志槽（见 refresh 开头的 logSlot 逻辑），不再单独占行。
         -- loadSaved/newRun 已移入信息屏（portPanel 段），显隐随 infoOpen。
         refs.loadSaved:SetText(loop.loadStatus == "error" and "重试读取" or "读取云存档")
@@ -1881,6 +2274,22 @@ function HUD.Create(loop, parent, debugTools)
         updateUpgrade(refs.staminaUpgrade, "升级体力", staminaLevel and Config.upgrades.stamina.prices[staminaLevel])
         updateUpgrade(refs.speedUpgrade, "升级航速", Config.upgrades.boatSpeed.prices[player.boatSpeedLevel])
         updateUpgrade(refs.upgrade, "扩容", Config.upgrades.inventory.prices[player.inventory:GetLevel()])
+        -- v2.2：升级区补当前值 —— "升级体力 ¥120"看不出现在几级、补完几级
+        -- 下一档体力上限取 config.upgrades.stamina.maxima 的下一项（D3 已裁决
+        -- 9/12/16 m/s 为准，此处只读配置不改数值）。
+        local staminaMaxima = Config.upgrades.stamina.maxima or {}
+        local nextStaminaMax = staminaMaxima[(tonumber(staminaLevel) or 0) + 1]
+        local boatSpeeds = Config.upgrades.boatSpeed.metersPerSec or {}
+        local currentSpeedIndex = (tonumber(player.boatSpeedLevel) or 0) + 1
+        local currentSpeed = boatSpeeds[currentSpeedIndex]
+        local nextSpeed = boatSpeeds[currentSpeedIndex + 1]
+        setText(refs.staminaLevelText, "staminaLevelText",
+            nextStaminaMax and ("体力上限 %d → %d"):format(tonumber(player.maxStamina) or 0, nextStaminaMax)
+            or "体力已满级")
+        setText(refs.speedLevelText, "speedLevelText",
+            nextSpeed and ("航速 %s → %s m/s（共 %d 级）"):format(tostring(currentSpeed or "?"),
+                tostring(nextSpeed), #boatSpeeds)
+            or "航速已满级")
         for itemId, shopButton in pairs(refs.shopButtons) do
             local definition = assert(Items.GetDefinition(itemId))
             local stock = loop:GetShopStock(itemId)
@@ -1890,7 +2299,11 @@ function HUD.Create(loop, parent, debugTools)
             local noSpace = not player.inventory:HasSpace()
             shopButton:SetDisabled(not inPort or not ready or busy or fishingRestricted
                 or stock <= 0 or noMoney or noSpace)
-            local reason = stock <= 0 and " · 今日售罄，次日补货" or noMoney and " · 金币不足"
+            -- v2.2：库存与禁用原因独立成行，宽度不足时不再与按钮挤成一行。
+            -- ⚠️ "X库存：N" 前缀是硬契约（GameLoopUISpec:169/171/182 断言
+            -- "苹果库存：2" / "苹果库存：0"），只可追加原因，不可改写前缀。
+            local reason = stock <= 0 and " · 今日售罄，次日补货" or noMoney and " · 金币不足，还差 ¥"
+                .. tostring(definition.buyPrice - (player.money or 0))
                 or noSpace and " · 船舱已满，先腾出一格" or ""
             refs.shopStockLabels[itemId]:SetText(definition.name .. "库存：" .. tostring(stock) .. reason)
         end
@@ -1957,8 +2370,16 @@ function HUD.Create(loop, parent, debugTools)
                 sellableCount = sellableCount + 1
             end
         end
-        refs.sellAll:SetText(sellableCount > 0 and ("全部卖出 · " .. tostring(sellableCount) .. " 件") or "全部卖出")
-        refs.sellAll:SetDisabled(not inPort or not ready or busy or fishingRestricted or sellableCount == 0)
+        local sellAllText = sellableCount > 0 and ("全部卖出 · " .. tostring(sellableCount) .. " 件") or "全部卖出"
+        local sellAllDisabled = not inPort or not ready or busy or fishingRestricted or sellableCount == 0
+        refs.sellAll:SetText(sellAllText)
+        refs.sellAll:SetDisabled(sellAllDisabled)
+        -- v2.2：港口商店操作条也有一份「全部卖出」，两处同源同步。
+        -- 契约：Circle1HUDReviewTests 用 find() 取**树序第一个**匹配按钮，
+        -- 卡片顺序为 背包 → 商店 → 老人，故命中的始终是背包那一份；
+        -- 这里同步状态避免用户看到两个按钮表现不一致。
+        refs.portSellAll:SetText(sellAllText)
+        refs.portSellAll:SetDisabled(sellAllDisabled)
         -- 背包抽屉内的空舱/在途提示（B 侧 review 契约）；位于抽屉内部，不占左上角两行。
         refs.inventoryHint:SetVisible(sellableCount == 0 or not inPort)
         setText(refs.inventoryHint, "inventoryHint", sellableCount == 0
@@ -2033,14 +2454,10 @@ function HUD.Create(loop, parent, debugTools)
             and not showEnding and storyDialog ~= nil
         local showElder = not showForced and not showSettlement and not showEnding
             and loop.elderOpen == true and elderPresent
-        -- v2.1 §7.11：老人对话改为滚动屏卡片后，需确保信息屏打开（showElder
-        -- 定义在本行之后，不能并入上方 infoOpen 的条件——那行更早、取不到值）。
-        if showElder then
-            state.infoOpen = true
-            refs.contentScroll:SetVisible(true)
-            refs.infoCloseCatcher:SetVisible(true)
-            refs.infoToggle:SetText("收起信息")
-        end
+        -- v2.2：老人卡已挂 cardHost（常驻层），不再需要"顺带打开信息屏"。
+        -- 但海面点选流程（捕鱼选点/投掷选点）期间对话应让位——那时要点海面，
+        -- 卡片压在选点上方会挡住目标。此时强制收起对话交互。
+        if showElder and seaClickFlow then showElder = false end
         -- 开场教学（演出层，见 OPENING_ELDER_TEXT）：模态独占，优先级低于存档/结算弹窗。
         local showOpening = player.day == 1 and inPort == true
             and state.openingDismissedGeneration ~= loop.generation

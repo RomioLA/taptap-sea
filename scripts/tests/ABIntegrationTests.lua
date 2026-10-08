@@ -996,7 +996,17 @@ function Tests.Run()
         assert(sea.uiRoot:FindById("seaDebugRoot"), "original sea debug tools should share the root")
         assert(not sea.uiRoot:FindById("seaDebugPanel").visible, "the debug panel starts hidden")
         local hudChildren = sea.hud.root:GetChildren()
-        assert(hudChildren[1].props.width <= 620 and hudChildren[1].props.maxWidth <= 620)
+        -- v2.1 §7.15 契约更新（用户 13:03「仅留顶部一行状态栏」）：状态栏改为
+        -- **测试期浮层**——absolute 定位、不占布局、可被任意卡片覆盖，发布时删除。
+        -- 旧断言（width<=620 且 maxWidth<=620）针对"左侧半屏注入式header"，
+        -- 与新形态冲突：单行状态栏约需 420px 宽，而旧 maxWidth=310 会裁剪。
+        -- 新契约：状态栏为 absolute、pointerEvents=box-none（不抢点击）、
+        -- 高度为单行（<=40），并保留 root 首子节点身份（Scene 注入依赖）。
+        local statusBar = hudChildren[1]
+        assert(statusBar.props.position == "absolute"
+            and statusBar.props.pointerEvents == "box-none"
+            and statusBar.props.height <= 40,
+            "status bar must stay a single-line non-blocking overlay")
         local contentScroll = sea.hud.root:FindById("gameplayContentScroll")
         assert(contentScroll and contentScroll.props.pointerEvents == "box-none",
             "empty sea clicks must pass through the content scroll")
