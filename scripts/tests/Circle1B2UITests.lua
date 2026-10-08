@@ -242,12 +242,15 @@ function Tests.Run()
 
             click(button(hud.root, "背包", true))
             click(button(hud.root, "拜访老人", true))
+            -- v2.3 二级化：先点「展示 ▸」分类键展开物品列表，再找物品行的「展示」
+            click(button(hud.root, "展示 ▸", true))
             local displays = findButtons(hud.root, "展示", true)
             eq(#displays, 2)
             local before = f.loop.player.inventory:GetItems()
             click(displays[1])
             items(f.loop.player.inventory:GetItems(), before, "displayed bait remains in cargo")
 
+            -- v2.3：二级操作后不自动返回一级，可连续展示
             displays = findButtons(hud.root, "展示", true)
             eq(#displays, 2)
             click(displays[2])

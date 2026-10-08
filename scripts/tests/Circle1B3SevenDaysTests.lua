@@ -332,6 +332,8 @@ local function route(appleGiftDays)
                 clickButton(root, "拜访老人")
                 assert(loop.elderOpen, "HUD elder button did not open the elder dialogue")
                 advance(0.5) -- elderly conversation uses the real clock pause reason
+                -- v2.3 二级化：先点「给予 ▸」分类键展开物品列表，再点苹果行的「给予」
+                clickButton(root, "给予 ▸")
                 clickInventoryRowButton(root, loop.player.inventory, "apple", "给予")
                 clickButton(root, "结束对话")
             end

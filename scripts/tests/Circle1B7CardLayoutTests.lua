@@ -342,43 +342,64 @@ function Tests.Run()
             click_first(findButton(hud.root, "拜访老人", true))
             hud.Refresh()
             assert(loop.elderOpen == true, "visiting the elder must open the dialogue")
-            -- 契约：打开即可操作，无「点击继续」门槛
-            for _, want in ipairs({ "给予", "展示", "结束对话", "展示透镜", "聊天记录 ∞" }) do
+            -- v2.3 契约：打开即见一级键（分类键带 ▸ 后缀避免与物品按钮撞名）
+            for _, want in ipairs({ "提问 ▸", "给予 ▸", "展示 ▸", "聊天记录", "结束对话" }) do
                 local button = findButton(hud.root, want, true)
                 assert(button, "elder card must expose " .. want .. " immediately")
                 assert(isVisible(button), want .. " must be visible immediately")
             end
-            local before = countVisibleImagePanels(hud.root)
-            -- 连问若干题：对话流条数必须有上限，否则气泡把下方选项挤出屏幕
+            -- 二级·展示：点分类键展开，物品行出现（行结构守 %02d 契约）
+            click_first(findButton(hud.root, "展示 ▸", true))
+            hud.Refresh()
+            local shows = 0
+            for _, text in ipairs(visibleButtonTexts(hud.root)) do
+                if text == "展示" then shows = shows + 1 end
+            end
+            eq(shows, 1, "the show submenu lists the displayable bait row")
+            assert(findLabelContaining(hud.root, "只能展示，不能给老人"),
+                "show rows must explain why they cannot be given")
+            -- 二级·给予：食物行 + 透镜不在此处
+            click_first(findButton(hud.root, "← 返回", true))
+            hud.Refresh()
+            click_first(findButton(hud.root, "给予 ▸", true))
+            hud.Refresh()
+            assert(findButton(hud.root, "给予", true), "the give submenu lists the apple row")
+            -- 二级操作后不自动返回一级（可连续给予/展示）
+            assert(findButton(hud.root, "← 返回", true), "submenu must stay open after the action row is built")
+            -- 二级·提问：问题列表 + 问过的不再出现
+            click_first(findButton(hud.root, "← 返回", true))
+            hud.Refresh()
+            click_first(findButton(hud.root, "提问 ▸", true))
+            hud.Refresh()
+            local q1 = findButtonPrefix(hud.root, "※ ")
+            assert(q1, "teaching questions must be listed in the ask submenu")
+            local asked = 0
             for _ = 1, 8 do
                 local question = findButtonPrefix(hud.root, "※ ")
-                if not question then
-                    for _, text in ipairs({
-                        "这海上讨生活，要紧的是什么？", "透镜该怎么用？", "鱼饵要放在哪？",
-                    }) do
-                        question = findButtonPrefix(hud.root, text)
-                        if question then break end
-                    end
-                end
                 if not question then break end
                 question.props.onClick()
+                asked = asked + 1
                 hud.Refresh()
             end
-            local after = countVisibleImagePanels(hud.root)
-            assert(after <= before + 8,
-                "the conversation stream must stay bounded, grew " .. before .. " → " .. after)
-            -- 多轮之后，选项区依然全部可点（这是本次重构的核心诉求）
-            for _, want in ipairs({ "给予", "展示", "结束对话" }) do
-                local button = findButton(hud.root, want, true)
-                assert(button and isVisible(button),
-                    want .. " must stay visible after a multi-turn conversation")
-            end
-            -- 溢出必须有明确去处，不能让对话"凭空消失"
+            assert(asked >= 3, "the teaching stage must offer three questions, asked " .. asked)
+            assert(findLabelContaining(hud.root, "这个阶段的问题都问过了"),
+                "an exhausted submenu must say so instead of going blank")
+            -- 对话流条数有上限（气泡限 6 条，不随轮数增长）
+            -- 溢出提示在一级态的对话流尾部：返回一级后断言（二级态对话流按设计隐藏）
+            click_first(findButton(hud.root, "← 返回", true))
+            hud.Refresh()
+            local bubbles = countVisibleImagePanels(hud.root)
+            assert(bubbles <= 10, "the conversation stream must stay bounded, got " .. bubbles)
             assert(findLabelContaining(hud.root, "更早对话已折叠"),
                 "folded history must point the player at the chat log")
-            local logToggle = findButtonPrefix(hud.root, "聊天记录")
-            click_first(logToggle)
+
+            -- v2.3 回看态：点[聊天记录] → 选项区收起为把手；点把手展开/收起
             hud.Refresh()
+            click_first(findButton(hud.root, "聊天记录", true))
+            hud.Refresh()
+            assert(findButton(hud.root, "选项 ▴", true), "review mode must collapse options into a handle")
+            assert(not findButton(hud.root, "提问 ▸", true),
+                "level-1 keys must hide while reviewing the chat log")
             local speakers = 0
             local function countSpeakers(widget)
                 if widget.visible and widget.kind == "Label"
@@ -389,6 +410,21 @@ function Tests.Run()
             end
             countSpeakers(hud.root)
             assert(speakers > 6, "the chat log must keep the full history, got " .. speakers)
+            -- 点把手展开选项区
+            click_first(findButton(hud.root, "选项 ▴", true))
+            hud.Refresh()
+            assert(findButton(hud.root, "提问 ▸", true), "the handle must expand the option keys")
+            assert(findButton(hud.root, "结束对话", true), "ending the dialogue must stay reachable in review mode")
+            -- 再点收起
+            click_first(findButton(hud.root, "选项 ▾", true))
+            hud.Refresh()
+            assert(findButton(hud.root, "选项 ▴", true) and not findButton(hud.root, "提问 ▸", true),
+                "the handle must collapse the option keys again")
+            -- 收起记录回常态：一级键恢复（文案带 ▾ 后缀，用前缀匹配）
+            click_first(findButtonPrefix(hud.root, "收起记录"))
+            hud.Refresh()
+            assert(findButton(hud.root, "提问 ▸", true) and not findButton(hud.root, "选项 ▴", true),
+                "leaving review mode must restore the level-1 keys")
         end)
     end)
 

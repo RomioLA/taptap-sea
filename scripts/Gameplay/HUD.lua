@@ -93,10 +93,15 @@ function HUD.Create(loop, parent, debugTools)
         destroyed = false,
         localMessage = "",
         inventorySignature = "",
-        -- v2.1 §7.14 对话式形态：老人对话记录（气泡序列）与抽屉开合。
+        -- v2.1 §7.14 对话式形态：老人对话记录（气泡序列）。
         -- transcript 每项 {who="elder"|"player", text=..., teach=bool}。
+        -- v2.3 选项区二级化：menuLevel="root"|"questions"|"give"|"show"；
+        -- reviewOpen=聊天记录回看态；optionsExpanded=回看态下选项区展开。
         elderTranscript = {},
-        elderLogOpen = false,
+        elderMenuLevel = "root",
+        elderReviewOpen = false,
+        elderOptionsExpanded = false,
+        elderWasOpen = false,
         elderAsked = {},
         elderOpenedGeneration = nil,
         lastTexts = {},
@@ -1239,33 +1244,30 @@ local header = UI.Panel {
     --   ③ 礼物区保持为 card 的直接后代（多包一层 ScrollView 会改变 UI 树
     --      导致 isVisible 沿父链判定失效，教训见 §7.9）。
     --      v2.2 已把礼物区并入 sectionCard 的主体滚动区，不再单独包 ScrollView。
-    -- v2.2 拜访老人卡重构（信息完整 + 选项不被遮挡）：
-    -- 旧结构问题（真机 21:46 / 23:34 两次反馈的同一根因）：
-    --   卡片是一列到底的纵向流，顺序为
-    --     对话流 → 聊天记录按钮 → 提问区 → 状态/教学/宝物/礼物区 → 结束对话
-    --   对话流每问一轮就追加 2 个气泡且**永不回收**，高度单调增长；
-    --   它上方的提问区与下方的"结束对话"被双向挤压，最终落到屏幕底边之外
-    --   （"结束对话"被裁、提问第 3 条点不到）。
-    --   maxHeight 只能给一个总上限，无法保证"最下方的按钮一定在屏内"。
+    -- v2.2 拜访老人卡重构：sectionCard 三段式 + 对话流限高（历史背景见 git）。
+    -- v2.3（2026-10-08 真机截图反馈）：选项区二级化 + 聊天记录回看态。
+    -- 真机问题（截图 16:34）：宝物卡、教程问题、记录开关、透镜、结束对话
+    -- 全部平铺在一层，拥挤且无分组。
     --
-    -- 新结构（sectionCard 三段式）：
-    --   摘要头：对话反馈 + 老人进展 + 教学（只读，恒可见）
-    --   主体  ：对话流（**限高只渲染最近 N 轮**，溢出提示"更早记录见聊天记录"）
-    --           + 宝物小卡 + 礼物区（可给予/展示的物品行）
-    --   操作条：提问按钮 + 展示透镜 + 结束对话（固定底部，永不被遮挡）
+    -- 新交互结构（用户拍板 A 案：二级化 + 同步更新测试契约）：
+    --   一级键（level1）：[提问 ▸] [给予 ▸] [展示 ▸] / [聊天记录] [结束对话]
+    --   二级列表（level2）：点一级键展开，[← 返回] 回一级
+    --     提问 → 问题列表（问过即消失，elderAsked 去重沿用）
+    --     给予 → 可给予的食物行
+    --     展示 → 可展示的鱼/饵行 + 透镜行（宝物卡从主区移除，融进此处）
+    --   回看态：点[聊天记录] → 记录展开、选项区收起为底部 [选项 ▴] 把手；
+    --           点把手展开选项区、再点收起；再点[收起记录]回常态。
     --
-    -- 为什么对话流"限高"而不是"包 ScrollView"：
-    --   §7.9 红线——多包一层 ScrollView 会改变 UI 树结构，测试沿父链判
-    --   isVisible 时会失配（3 套件红）。改用「只渲染最近 N 轮 + 更早内容
-    --   收进已有聊天记录抽屉」达成同一目的，不动树形语义。
+    -- 文案避撞（关键）：一级键带「 ▸」后缀，与二级物品按钮（精确文案
+    -- "给予"/"展示"）不撞名 —— findButtons 的精确匹配因此可区分层级。
     --
-    -- 契约（三条测试都是"点完拜访老人立刻操作"，无任何等待）：
-    --   ① Circle1B2UITests:243-247 打开后**立即** findButtons("展示",visibleOnly)=2
-    --      → 礼物区必须初始可见，不能有"点击继续"门槛；
-    --   ② Circle1B3SevenDaysTests:334 "01 · "前缀行 + "给予"按钮
-    --      → 礼物行格式保持不变；
-    --   ③ GameLoopUISpec:82-84 点"给予"→ 点"结束对话"
-    --      → 操作条必须保留"结束对话"文案按钮。
+    -- 契约（已随 A 案更新四套件）：
+    --   ① B2UITests：打开 → 点[展示 ▸] → findButtons("展示")=2（物品按钮）
+    --   ② SevenDays：打开 → 点[给予 ▸] → "01 · "前缀行的[给予]
+    --   ③ GameLoopUISpec：打开 → [给予 ▸] → [给予] → [结束对话]
+    --   行结构不变：带 %02d · 前缀的标签与按钮仍同处一个面板。
+    --   ④ 二级操作后**不自动返回一级**（可连续展示多条鱼/给多个苹果），
+    --     由[← 返回]手动回一级。
     refs.elderPanel, refs.elderBody, refs.elderFooter = sectionCard("拜访老人", { skin = "panel" })
 
     -- 摘要头：对话反馈 + 进展 + 教学（只读，永不滚动）
@@ -1284,12 +1286,15 @@ local header = UI.Panel {
     refs.elderHeaderBox:AddChild(refs.elderTeaching)
     refs.elderPanel:AddChild(refs.elderHeaderBox)
 
-    -- 主体区：对话流（限高）+ 宝物 + 礼物区
-    -- 对话流区（气泡序列，不包 ScrollView — §7.9 结构红线）
+    -- 主体区：对话流（限高）+ 聊天记录（回看态显示）
+    -- 对话流区（气泡序列，不包 ScrollView — §7.9 结构红线）。
+    -- 二级/回看态下隐藏，把空间让给二级列表或记录。
     refs.elderDialogue = UI.Panel {
         width = "100%",
         gap = 5,
-        flexShrink = 0,
+        flexGrow = 1,
+        flexBasis = 0,
+        minHeight = 0,
         flexDirection = "column",
     }
     refs.elderDialogOverflow = makeLabel("", UiKit.fontSize.small, UiKit.ink.dim)
@@ -1297,11 +1302,13 @@ local header = UI.Panel {
     refs.elderBody:AddChild(refs.elderDialogOverflow)
     refs.elderDialogTail = refs.elderDialogue -- 追加锚点
 
-    -- 聊天记录：完整历史的唯一去处（默认收起）
+    -- 聊天记录：回看态显示完整历史（内含 ScrollView 安全——§7.9 已验证）
     refs.elderLogPanel = UI.Panel(UiKit.cardProps("plain", {
         width = "100%",
         gap = 4,
-        flexShrink = 0,
+        flexGrow = 1,
+        flexBasis = 0,
+        minHeight = 0,
     }, true))
     themedPanels[#themedPanels + 1] = {
         widget = refs.elderLogPanel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
@@ -1309,77 +1316,154 @@ local header = UI.Panel {
     refs.elderLogRows = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
     refs.elderLogScroll = UI.ScrollView {
         width = "100%",
-        height = 180,
+        flexGrow = 1,
+        flexBasis = 0,
+        minHeight = 0,
         scrollY = true,
         showScrollbar = true,
         children = { refs.elderLogRows },
     }
     refs.elderLogPanel:AddChild(refs.elderLogScroll)
-    -- 收起时子树不可见，不影响 visibleOnly 查找（§7.9 已验证安全）
     refs.elderBody:AddChild(refs.elderLogPanel)
     refs.elderLogPanel:SetVisible(false)
 
-    -- 宝物小卡（卡内卡）：用 plain 素面纸档 compactPadding，
-    -- 显式 maxWidth 防溢出（真机 21:46 曾被模态卡底裁切）。
-    refs.elderTreasure = UI.Panel(UiKit.cardProps("plain", {
+    -- ── 操作条（固定底部）──────────────────────────────────────────
+    -- 回看态把手：仅 review 态可见；点一下展开选项区、再点收起。
+    refs.elderHandleRow = UI.Panel {
         width = "100%",
-        maxWidth = "100%",
-        gap = 4,
         flexShrink = 0,
-    }, true))
-    themedPanels[#themedPanels + 1] = {
-        widget = refs.elderTreasure, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
+        flexDirection = "row",
     }
-    refs.elderTreasureTitle = makeLabel("宝物", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
-    refs.elderLensStatus = makeLabel("尚未获得透镜。", UiKit.fontSize.small, UiKit.ink.dim)
-    refs.elderTreasure:AddChild(refs.elderTreasureTitle)
-    refs.elderTreasure:AddChild(refs.elderLensStatus)
-    refs.elderBody:AddChild(refs.elderTreasure)
+    refs.elderHandle = makeButton("选项 ▴", function()
+        state.elderOptionsExpanded = not (state.elderOptionsExpanded == true)
+        refresh()
+    end, "secondary", "100%")
+    refs.elderHandleRow:AddChild(refs.elderHandle)
+    refs.elderFooter:AddChild(refs.elderHandleRow)
+    refs.elderHandleRow:SetVisible(false)
 
-    -- 礼物区：可给予（食物）/ 展示（鱼与鱼饵）的物品行
-    refs.elderGiftTitle = makeLabel("可给老人的物品", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
-    refs.elderBody:AddChild(refs.elderGiftTitle)
-    refs.elderGiftRows = UI.Panel {
+    -- 一级键组：三个分类键一行 + 两个全局键一行。
+    -- 全局键行**常驻**（任何层级、回看态都可点）——"结束对话"是高频退出路径，
+    -- "收起记录"是回看态的唯一出口，不能被抽屉收起。
+    refs.elderLevel1 = UI.Panel {
         width = "100%",
-        gap = 4,
-        flexGrow = 1,
-        flexBasis = 0,
-        minHeight = 0,
+        gap = 5,
+        flexShrink = 0,
         flexDirection = "column",
     }
-    refs.elderBody:AddChild(refs.elderGiftRows)
+    refs.elderCategoryRow = UI.Panel {
+        width = "100%",
+        gap = 5,
+        flexShrink = 0,
+        flexDirection = "row",
+        flexWrap = "wrap",
+    }
+    refs.elderAskBtn = makeButton("提问 ▸", function()
+        state.elderMenuLevel = "questions"
+        refresh()
+    end, "secondary", "30%")
+    refs.elderGiveBtn = makeButton("给予 ▸", function()
+        state.elderMenuLevel = "give"
+        refresh()
+    end, "secondary", "30%")
+    refs.elderShowBtn = makeButton("展示 ▸", function()
+        state.elderMenuLevel = "show"
+        refresh()
+    end, "secondary", "30%")
+    refs.elderCategoryRow:AddChild(refs.elderAskBtn)
+    refs.elderCategoryRow:AddChild(refs.elderGiveBtn)
+    refs.elderCategoryRow:AddChild(refs.elderShowBtn)
+    refs.elderLevel1:AddChild(refs.elderCategoryRow)
 
-    -- 操作条（固定底部，永不被遮挡）
-    -- 提问区：按阶段解锁的问题按钮，初始可见（契约：打开即可操作）
+    refs.elderGlobalRow = UI.Panel {
+        width = "100%",
+        gap = 5,
+        flexShrink = 0,
+        flexDirection = "row",
+        flexWrap = "wrap",
+    }
+    refs.elderLogToggle = makeButton("聊天记录", function()
+        state.elderReviewOpen = not (state.elderReviewOpen == true)
+        state.elderOptionsExpanded = false
+        refresh()
+    end, "secondary", "46%")
+    refs.elderEnd = makeButton("结束对话", function() invokeLoop("SetElderOpen", false) end, "secondary", "46%")
+    refs.elderGlobalRow:AddChild(refs.elderLogToggle)
+    refs.elderGlobalRow:AddChild(refs.elderEnd)
+    -- v2.3：全局键行提升到 footer 直属（不随选项抽屉收起），常驻可点
+    refs.elderFooter:AddChild(refs.elderGlobalRow)
+    refs.elderFooter:AddChild(refs.elderLevel1)
+
+    -- 二级容器：[← 返回 + 标题] + 三套互斥内容（questions/give/show）
+    refs.elderLevel2 = UI.Panel {
+        width = "100%",
+        gap = 4,
+        flexShrink = 0,
+        flexDirection = "column",
+    }
+    local elderLevel2Header = UI.Panel {
+        width = "100%",
+        gap = 5,
+        flexShrink = 0,
+        flexDirection = "row",
+        alignItems = "center",
+    }
+    refs.elderBack = makeButton("← 返回", function()
+        state.elderMenuLevel = "root"
+        refresh()
+    end, "secondary", 88)
+    refs.elderLevel2Title = makeLabel("", UiKit.fontSize.info, UiKit.ink.teaching, "bold")
+    elderLevel2Header:AddChild(refs.elderBack)
+    elderLevel2Header:AddChild(refs.elderLevel2Title)
+    refs.elderLevel2:AddChild(elderLevel2Header)
+
+    -- 二级·提问：问题按钮列表（buildElderQuestions 重建；问过即消失）
     refs.elderQuestions = UI.Panel {
         width = "100%",
         gap = 4,
         flexShrink = 0,
         flexDirection = "column",
     }
-    refs.elderFooter:AddChild(refs.elderQuestions)
+    refs.elderLevel2:AddChild(refs.elderQuestions)
 
-    refs.elderActionRow = UI.Panel {
+    -- 二级·给予：可给予的食物行（rebuildItemRows 构建，行结构守契约）
+    refs.elderGiveRows = UI.Panel {
         width = "100%",
-        gap = 5,
+        gap = 4,
+        flexShrink = 0,
+        flexDirection = "column",
+    }
+    refs.elderLevel2:AddChild(refs.elderGiveRows)
+
+    -- 二级·展示：可展示的鱼/饵行 + 透镜行（宝物卡融进此处）
+    refs.elderShowRows = UI.Panel {
+        width = "100%",
+        gap = 4,
+        flexShrink = 0,
+        flexDirection = "column",
+    }
+    refs.elderLevel2:AddChild(refs.elderShowRows)
+    refs.elderLensRow = UI.Panel {
+        width = "100%",
+        gap = 4,
         flexShrink = 0,
         flexDirection = "row",
         flexWrap = "wrap",
         alignItems = "center",
+        backgroundColor = { 92, 70, 46, 24 },
+        borderRadius = 5,
+        padding = { 3, 5, 3, 5 },
     }
-    -- 聊天记录触发（点一次展开、再点收起）
-    refs.elderLogToggle = makeButton("聊天记录 ∞", function()
-        state.elderLogOpen = not (state.elderLogOpen == true)
-        refresh()
-    end, "secondary", 104)
+    refs.elderLensStatus = makeLabel("尚未获得透镜。", UiKit.fontSize.small, UiKit.ink.dim)
     refs.elderLensGive = makeButton("展示透镜", function()
         invokeLoop("GiveTreasureToElder", "scopeLens")
     end, "primary", 96)
-    refs.elderEnd = makeButton("结束对话", function() invokeLoop("SetElderOpen", false) end, "secondary", "100%")
-    refs.elderActionRow:AddChild(refs.elderLogToggle)
-    refs.elderActionRow:AddChild(refs.elderLensGive)
-    refs.elderActionRow:AddChild(refs.elderEnd)
-    refs.elderFooter:AddChild(refs.elderActionRow)
+    refs.elderLensRow:AddChild(makeLabel("望远镜透镜", UiKit.fontSize.teaching, UiKit.ink.body, "bold",
+        { flexGrow = 1, flexBasis = 0 }))
+    refs.elderLensRow:AddChild(refs.elderLensGive)
+    refs.elderLensRow:AddChild(refs.elderLensStatus)
+    refs.elderLevel2:AddChild(refs.elderLensRow)
+    refs.elderFooter:AddChild(refs.elderLevel2)
 
     refs.elderPanel:SetVisible(false)
     cardHost:AddChild(refs.elderPanel)
@@ -1623,15 +1707,17 @@ local header = UI.Panel {
         refs.elderDialogOverflow:SetVisible(hidden > 0)
         if hidden > 0 then
             setText(refs.elderDialogOverflow, "elderDialogOverflow",
-                string.format("上方 %d 条更早对话已折叠，点「聊天记录 ∞」查看完整历史。", hidden))
+                string.format("上方 %d 条更早对话已折叠，点「聊天记录」查看完整历史。", hidden))
         end
     end
 
-    -- 提问区构建：按 day 决定阶段，只列未问过的问题（问过的不重复出现）。
+    -- 提问二级构建：按 day 决定阶段，只列未问过的问题（问过的不重复出现）。
+    -- v2.3：移入「提问 ▸」二级；全部问完时给空态说明，不留空白列表。
     local function buildElderQuestions(day, teachingDone)
         if not refs.elderQuestions then return end
         destroyChildren(refs.elderQuestions)
         local stage = (day <= 3) and 1 or (day <= 6 and 2 or 3)
+        local asked = 0
         for _, q in ipairs(ELDER_QUESTIONS) do
             if q.stage == stage and state.elderAsked[q.id] ~= true then
                 if q.teach and teachingDone == true then
@@ -1641,8 +1727,13 @@ local header = UI.Panel {
                     refs.elderQuestions:AddChild(makeButton(label, function()
                         askElderQuestion(q)
                     end, q.teach and "secondary" or "primary", "100%"))
+                    asked = asked + 1
                 end
             end
+        end
+        if asked == 0 then
+            refs.elderQuestions:AddChild(makeLabel(
+                "这个阶段的问题都问过了。", UiKit.fontSize.small, UiKit.ink.dim))
         end
     end
 
@@ -1672,7 +1763,9 @@ local header = UI.Panel {
         local cargoRevision = loop:GetCargoRevision()
         destroyChildren(refs.inventoryRows)
         destroyChildren(refs.portSales)
-        destroyChildren(refs.elderGiftRows)
+        -- v2.3：礼物行拆分为「给予」与「展示」两个二级容器
+        destroyChildren(refs.elderGiveRows)
+        destroyChildren(refs.elderShowRows)
 
         if #items == 0 then addEmptyMessage(refs.inventoryRows, "背包是空的。先去捕点鱼，再返港出售。") end
         local saleCount, giftCount = 0, 0
@@ -1779,7 +1872,10 @@ local header = UI.Panel {
 
             if elderOpen and definition and definition.canGive then
                 giftCount = giftCount + 1
-                -- 同上：按钮直属行（契约硬要求），行内纵向两层排布
+                -- ⚠️ 契约（Circle1B3SevenDaysTests:146-160）：带 "%02d · " 前缀的
+                -- 标签与其按钮必须同处一个面板（label.parent 当行，只在
+                -- row.children 里找按钮）。
+                -- v2.3：按类别分流到「给予」/「展示」两个二级容器。
                 local giftRow = UI.Panel {
                     width = "100%",
                     minHeight = 38,
@@ -1792,22 +1888,28 @@ local header = UI.Panel {
                     borderRadius = 5,
                     padding = { 3, 5, 3, 5 },
                 }
-                -- 契约：格式保持 "%02d · 名称"（Circle1B3SevenDaysTests:334）
-                -- 后接一句说明为什么是"给予"或"展示"，信息完整不靠猜。
-                -- 标签与按钮同处 giftRow（见上方契约说明）。
+                local isFood = definition.category == "food"
                 giftRow:AddChild(makeLabel(string.format("%02d · %s · %s", itemIndex, name,
-                    definition.category == "food" and "可给老人吃" or "只能展示，不能给老人"),
+                    isFood and "可给老人吃" or "只能展示，不能给老人"),
                     UiKit.fontSize.teaching, UiKit.ink.body, "bold",
                     { flexGrow = 1, flexBasis = 0 }))
-                local giftAction = definition.category == "food" and "给予" or "展示"
-                local giftButton = makeButton(giftAction, function() invokeLoop("GiveToElder", itemIndex) end, "primary", 72)
+                local giftButton = makeButton(isFood and "给予" or "展示",
+                    function() invokeLoop("GiveToElder", itemIndex) end, "primary", 72)
                 giftButton:SetDisabled(actionsBlocked)
                 giftRow:AddChild(giftButton)
-                refs.elderGiftRows:AddChild(giftRow)
+                if isFood then
+                    refs.elderGiveRows:AddChild(giftRow)
+                else
+                    refs.elderShowRows:AddChild(giftRow)
+                end
             end
         end
         if saleCount == 0 then addEmptyMessage(refs.portSales, "没有可出售的鱼。先去捕点鱼，再返港出售。") end
-        if giftCount == 0 then addEmptyMessage(refs.elderGiftRows, "没有可给予或展示的物品。") end
+        -- v2.3：两个二级容器各自的空态说明
+        if giftCount == 0 then
+            addEmptyMessage(refs.elderGiveRows, "背包里没有可以给老人的食物。")
+            addEmptyMessage(refs.elderShowRows, "背包里没有可以展示的鱼或鱼饵。")
+        end
     end
 
     -- 图鉴/成就页行构建（v2.0 §7.4）：开页或切 tab 时重建一次，不在每帧执行。
@@ -2510,20 +2612,30 @@ local header = UI.Panel {
         -- v2.1 §7.13（用户 23:48「三个显示均独占，滚动屏不一起显示」）：
         -- 滚动屏三卡改为互斥，同一时刻只显示一张，避免并排挤占海面视野。
         -- 优先级：老人 > 背包 > 商店（后两者由下面的赋值再压制）。
-        -- 契约核对（互斥后仍成立）：
-        --  ① Circle1B2UITests:244-247 老人态找"展示"×2 → 由 elderGiftRows
-        --    独立构建的礼物行提供（每行 Label "01 · 名" + Button 展示/给予）；
-        --  ② Circle1B3SevenDaysTests:334 clickInventoryRowButton 找
-        --    "01 · "前缀行 + "给予" → 同样匹配礼物行格式。
-        --  ③ GameLoopUISpec:82-84 "结束对话"在老人卡内，不受影响。
+        -- 契约核对（v2.3 二级化后，四套件已同步更新路径）：
+        --  ① B2UITests：打开 → 点[展示 ▸] → findButtons("展示")=2（物品按钮）
+        --  ② SevenDays：打开 → 点[给予 ▸] → "01 · "前缀行的[给予]
+        --  ③ GameLoopUISpec：[给予 ▸] → [给予] → [结束对话]
         refs.elderPanel:SetVisible(showElder)
+        -- v2.3 修复（SevenDays day2 复现）：菜单重置必须在**打开对话的上升沿**
+        -- 触发，不能只在跨周目（generation 变化）时——同周目内第二天再开对话，
+        -- menuLevel 会停留在上次遗留的 "give"/"show" 二级，分类键整体隐藏，
+        -- 测试与用户都会"找不到给予 ▸"。
+        -- 记录（transcript）与已问问题（elderAsked）仍按周目保留（跨天不丢对话史）。
+        local elderNowOpen = loop.elderOpen == true
+        if elderNowOpen and state.elderWasOpen ~= true then
+            state.elderMenuLevel = "root"
+            state.elderReviewOpen = false
+            state.elderOptionsExpanded = false
+        end
+        state.elderWasOpen = elderNowOpen
         -- v2.1 §7.14 对话形态接线：开场白按"每次打开对话"初始化一次；
         -- 对话记录跨轮保留，玩家点问题后追加气泡并重建提问区。
+        -- 跨周目（generation 变化）时清空记录重新开场。
         if showElder and state.elderOpenedGeneration ~= loop.generation then
             state.elderOpenedGeneration = loop.generation
             state.elderTranscript = {}
             state.elderAsked = {}
-            state.elderLogOpen = false
             local day0 = tonumber(player.day) or 1
             state.elderTranscript[#state.elderTranscript + 1] = {
                 who = "elder",
@@ -2537,9 +2649,40 @@ local header = UI.Panel {
             local teachingDoneNow = type(loop.IsTeachingDone) == "function"
                 and loop:IsTeachingDone()
             renderElderDialogue()
-            buildElderQuestions(elderDay, teachingDoneNow)
-            refs.elderLogPanel:SetVisible(state.elderLogOpen == true)
-            refs.elderLogToggle:SetText(state.elderLogOpen == true and "收起记录 ▾" or "聊天记录 ∞")
+            -- v2.3 选项区三态接线：
+            --   review（回看记录）> level2（二级列表）> level1（一级键）
+            local elderReview = state.elderReviewOpen == true
+            local elderExpanded = state.elderOptionsExpanded == true
+            local elderLevel = state.elderMenuLevel or "root"
+            local elderOptionsVisible = (not elderReview) or elderExpanded
+
+            -- 主体：回看态显示记录，二级态显示二级列表，常态显示对话流
+            refs.elderLogPanel:SetVisible(elderReview)
+            refs.elderDialogue:SetVisible(not elderReview and elderLevel == "root")
+            refs.elderDialogOverflow:SetVisible(not elderReview and elderLevel == "root")
+
+            -- 底部：回看态分类键收起为把手（点开展开选项区，再点收起）；
+            -- 全局键行（收起记录/结束对话）常驻，是回看态的唯一出口。
+            refs.elderHandleRow:SetVisible(elderReview)
+            refs.elderHandle:SetText(elderExpanded and "选项 ▾" or "选项 ▴")
+            refs.elderCategoryRow:SetVisible(elderOptionsVisible and elderLevel == "root")
+            refs.elderLevel2:SetVisible(elderOptionsVisible and elderLevel ~= "root")
+            refs.elderLogToggle:SetText(elderReview and "收起记录 ▾" or "聊天记录")
+
+            -- 二级标题与内容（互斥三选一）
+            local level2Titles = {
+                questions = "问老人一个问题（问过的不重复出现）",
+                give = "选择要给老人的食物",
+                show = "选择要给老人看的物品",
+            }
+            setText(refs.elderLevel2Title, "elderLevel2Title", level2Titles[elderLevel] or "")
+            refs.elderQuestions:SetVisible(elderLevel == "questions")
+            refs.elderGiveRows:SetVisible(elderLevel == "give")
+            refs.elderShowRows:SetVisible(elderLevel == "show")
+            refs.elderLensRow:SetVisible(elderLevel == "show")
+            if elderLevel == "questions" then
+                buildElderQuestions(elderDay, teachingDoneNow)
+            end
         end
         refs.compendiumBody:SetVisible(showCompendium)
         -- 图鉴入口只在暂停态出现（避免海上误触打断操作）；页打开后入口隐藏。

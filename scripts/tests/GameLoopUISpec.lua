@@ -80,7 +80,8 @@ test("HUD always visible information, host subtree and core button wiring",funct
     button(hud.root,"背包"); update(10); eq(loop.clock.elapsed,10); eq(loop.inventoryOpen,true)
     button(hud.root,"背包"); update(5); eq(loop.clock.elapsed,15)
     button(hud.root,"返港"); button(hud.root,"拜访老人"); eq(loop.elderOpen,true)
-    button(hud.root,"给予"); eq(#loop.player.inventory:GetItems(),1)
+    -- v2.3 二级化：先点「给予 ▸」分类键展开物品列表，再点物品行的「给予」
+    button(hud.root,"给予 ▸"); button(hud.root,"给予"); eq(#loop.player.inventory:GetItems(),1)
     button(hud.root,"结束对话"); eq(loop.elderOpen,false)
     stop(); eq(#parent.children,0); eq((hud.root --[[@as table]]).destroyed,true); eq(update(1),false)
 end)
