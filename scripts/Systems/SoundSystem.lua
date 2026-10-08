@@ -44,6 +44,7 @@ local state = {
     currentAmbient = nil,  -- "day" | "night" | nil（底层世界声床，避免重复启停）
     overlay = nil,         -- nil | "elder" | "pause"（临时覆盖世界声床的环境音）
     lastAppliedBed = nil,  -- 最近一次成功应用的声床键（稳态早退用，评审 P1-1）
+    worldAudible = true,   -- 世界声床可闻开关：false=港内/未出航，昼夜声床静默（需求 环境：出航后自动播放）
     muted = false,
 }
 
@@ -73,10 +74,12 @@ local BED_KEYS = {
 }
 local AMB = BED_KEYS
 
--- 当前应循环的环境声床：overlay 临时覆盖优先，否则取底层世界声床（昼/夜）。
+-- 当前应循环的环境声床：overlay 临时覆盖优先，否则取底层世界声床（昼/夜）；
+-- 未出航（港内）时世界声床静默（target=nil → 四床全停）。
 local function activeBedKey()
     if state.overlay == "elder" then return BED_KEYS.elder end
     if state.overlay == "pause" then return BED_KEYS.morning end
+    if state.worldAudible == false then return nil end
     return state.currentAmbient == "night" and BED_KEYS.night or BED_KEYS.day
 end
 
@@ -134,10 +137,13 @@ end
 -- ---------------------------------------------------------------------------
 
 ---按当前昼夜相位同步环境声床：白天→白天声床，夜晚→夜晚声床。
----幂等：相位未变化时不重复启停，可在每帧时钟推进后安全调用。
 ---@param phase "day"|"night"
-function SoundSystem.SyncAmbient(phase)
+---@param worldActive? boolean 世界声床是否可闻：false=港内/未出航（昼夜床全停），
+---   缺省视为 true（兼容既有调用）。出航后由 Loop 以 `not inPort` 传入。
+---幂等：相位未变化时不重复启停，可在每帧时钟推进后安全调用。
+function SoundSystem.SyncAmbient(phase, worldActive)
     state.currentAmbient = (phase == "night") and "night" or "day"
+    state.worldAudible = worldActive ~= false
     if state.overlay == nil then applyActiveBed() end  -- overlay 期间仅更新底层相位，不抢床
 end
 

@@ -189,7 +189,7 @@ function Loop:Update(dt, advanceWorld)
         local before = clock.elapsed + (clock.phase == "night" and clock.daySec or 0)
         local previousPhase = clock.phase
         clock:Update(slice)
-        SoundSystem.SyncAmbient(clock.phase)  -- 需求 环境：白天声床自动播放 / 入夜切换 / 次日回白天（幂等）
+        SoundSystem.SyncAmbient(clock.phase, not self.inPort)  -- 需求 环境：出航后自动播放昼夜声床 / 入夜切换 / 返港静默（幂等）
         -- 音频诊断（真机静音排查 2026-10-08）：启动 2 秒后把音频状态推到状态行一次，
         -- 不依赖「开发调试」按钮（该按钮曾被透明 catcher 遮挡点不动）。
         if not audioDiagPushed and clock.elapsed >= 2 then

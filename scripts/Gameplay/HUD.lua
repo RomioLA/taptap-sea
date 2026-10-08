@@ -2356,6 +2356,14 @@ local header = UI.Panel {
         -- 但海面点选流程（捕鱼选点/投掷选点）期间仍强制收起信息屏，
         -- 此时商店应一并让位，避免挡住要点的海面。
         if seaClickFlow then refs.portPanel:SetVisible(false) end
+        -- 需求 UI：商店打开播放 ui_open——在港期间商店从"被背包/老人/海面点选
+        -- 遮蔽"变为可见时播放；返港瞬间（上一帧还不在港）不算"打开"，不播。
+        local shopVisibleNow = inPort and not elderActive and not showInventory and not seaClickFlow
+        local shopPrev = refs.shopVisPrev
+        if shopVisibleNow and shopPrev and shopPrev.inPort and shopPrev.blocked then
+            SoundSystem.OpenMenu()
+        end
+        refs.shopVisPrev = { inPort = inPort, blocked = not shopVisibleNow }
         -- 港口摘要头：把决策所需的四个前置数值一次给全
         -- （金币 / 体力 / 船速等级 / 容量），避免用户翻区找数。
         setText(refs.portSummary, "portSummary", string.format(
