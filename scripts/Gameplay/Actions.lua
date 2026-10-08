@@ -2,6 +2,7 @@
 local Items = require('data.items')
 local Config = require('config.gameplay')
 local Diagnostics = require('Gameplay.Diagnostics')
+local SoundSystem = require('Systems.SoundSystem')
 ---@class GameplayActionPoint
 ---@field x number
 ---@field y number
@@ -279,6 +280,7 @@ function Actions:BeginFishing(center,runtime)
     self._pendingFishing,self._lastFishing=record,record
     self._fishingTokens[token]=record
     self.loop:SetMessage('抛网中，可取消；捕鱼期间船只停止移动。')
+    SoundSystem.StartAction()  -- 需求 行动：40 体力行动开始（捕鱼）
     actionEvent('fishing_started', record, 'operation', 'started')
     return token
 end
@@ -377,6 +379,7 @@ function Actions:CompleteFishing(runtime,token,...)
     self._pendingFishing=nil
     record.result=table.pack(true,hasSpace and 'caught' or 'pending_catch',record.itemId)
     actionEvent('fishing_complete', record, 'operation', hasSpace and 'caught' or 'pending_catch')
+    SoundSystem.CaptureSuccess()  -- 需求 行动：捕获成功播放 fish_capture
     -- S6 教学：成功捕获即完成"投饵→捕鱼→结果反馈"闭环（05 页 P6）；
     -- 非满舱在此标记，满舱延迟到 claim 成功（下方）。容错调用，旧 Loop 无此方法时静默。
     if hasSpace and type(self.loop.NotifyCatchObtained) == 'function' then

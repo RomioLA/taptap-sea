@@ -6,6 +6,7 @@ local GameClock = require("Gameplay.GameClock")
 local Persistence = require("Gameplay.Persistence")
 local Actions = require("Gameplay.Actions")
 local Diagnostics = require("Gameplay.Diagnostics")
+local SoundSystem = require("Systems.SoundSystem")
 local Progress = require("Gameplay.Circle1B2Progress")
 local Barrel = require("Gameplay.Circle1B2Barrel")
 ---@alias GameplayWorldPreparation {generation:number, day:integer, worldIdentity:number}
@@ -187,6 +188,7 @@ function Loop:Update(dt, advanceWorld)
         local before = clock.elapsed + (clock.phase == "night" and clock.daySec or 0)
         local previousPhase = clock.phase
         clock:Update(slice)
+        SoundSystem.SyncAmbient(clock.phase)  -- 需求 环境：白天声床自动播放 / 入夜切换 / 次日回白天（幂等）
         if previousPhase == "day" and clock.phase == "night" and not clock.exhausted then
             self.lastMessage = "黄昏已至，请留意返港：夜晚前30秒返港体力全满；之后每晚归1秒次日少1体力，夜尽强返恢复上限的一半。"
         end
@@ -370,6 +372,7 @@ function Loop:SetElderOpen(open)
     if not self:Ready() and not self:CanManageInventory() and not bucketOnlyBusy then return false, "busy" end
     self.elderOpen = open
     if open then self.clock:Pause("elder") else self.clock:Resume("elder") end
+    if open then SoundSystem.EnterElder() else SoundSystem.ExitElder() end  -- 老人环境声床：拜访期间循环，结束对话切回世界声床
     return true
 end
 
@@ -653,6 +656,7 @@ function Loop:BeginNewDay()
     self.clock:Pause("settlement")
     self.inPort, self.dayExhausted = true, false
     self.inventoryOpen, self.elderOpen = false, false
+    SoundSystem.ExitElder()  -- 安全网：切日/回港时若残留老人声床则切回世界声床
     self.portNightElapsed = 0
     self:CancelThrowSelection()
     self.settlementApplied = true
@@ -985,6 +989,7 @@ function Loop:LoadSaved(done)
                 self.clock:Reset()
                 self.clock:Pause("port")
                 self.inventoryOpen, self.elderOpen = false, false
+                SoundSystem.ExitElder()  -- 安全网：读档若残留老人声床则切回世界声床
                 self.portNightElapsed = 0
                 self.inPort, self.dayExhausted = true, false
                 self.entryPending = false
@@ -1408,7 +1413,11 @@ end
 function Loop:CompleteEventOperation()
     local ok, err = self:CanStartEventOperation()
     if not ok then return false, err end
-    return self.player:ConsumeStamina(Config.stamina.eventOperationCost)
+    local charged = self.player:ConsumeStamina(Config.stamina.eventOperationCost)
+    if charged == true then
+        SoundSystem.StartAction()  -- 需求 行动：40 体力事件实操开始（圈2 事件上线后生效）
+    end
+    return charged
 end
 
 function Loop:BindRuntime(runtime)

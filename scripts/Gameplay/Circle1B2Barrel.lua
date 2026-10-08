@@ -2,6 +2,7 @@
 local Config = require("config.gameplay")
 local Progress = require("Gameplay.Circle1B2Progress")
 local Diagnostics = require("Gameplay.Diagnostics")
+local SoundSystem = require("Systems.SoundSystem")
 ---@class Circle1B2BarrelRecord
 ---@field token table
 ---@field runtime table
@@ -252,6 +253,7 @@ function Barrel:Begin()
     if not valid then return rejectBegin(invalidReason, stage, target) end
     self.active, self.receipts[token] = record, record
     emit("begin_started", "operation", record, { action = "inspect" })
+    SoundSystem.StartAction()  -- 需求 行动：40 体力行动开始（检查木桶）
     if type(executor) ~= "function" then return token end
     local ok, cancel = Diagnostics.Call("barrel", "executor", executor, { id = record.id, generation = record.generation,
         stage = record.stage, durationSec = Config.barrel.durationSec }, function(evidence)
@@ -336,6 +338,10 @@ function Barrel:AcceptCompletion(record, evidence)
         record.result = table.pack(true, record.stage == 1 and "empty" or "rewarded")
         Diagnostics.Call("barrel", "message", self.loop.SetMessage, self.loop, record.stage == 1 and "什么都没有捕捞到"
             or (record.stage == 0 and "取得1个苹果和1个鱼饵。" or "已取得透镜。"))
+    end
+    local barrelOutcome = record.result and record.result[2]
+    if barrelOutcome and barrelOutcome ~= "empty" then
+        SoundSystem.Discovery()  -- 需求 行动：探索发现播放 discovery（木桶补给 / 透镜发现）
     end
     emit("completed", "operation", record, { outcome = record.result[2], pending = self.pending ~= nil })
     return table.unpack(record.result, 1, record.result.n)

@@ -36,6 +36,13 @@ local SPECS = {
     ["explore.knowledge_gain"]       = { path = "audio/sfx/explore_knowledge_gain.wav",       bus = "world", gain = 0.70, pitchVar = 0.03, pan = 0, loop = false },
     ["amb.calm_sea"]                 = { path = "audio/sfx/ambience_calm_sea_loop.wav",       bus = "amb",   gain = 0.55, pitchVar = 0.00, pan = 0, loop = true },
     ["amb.night_ocean"]              = { path = "audio/sfx/ambience_night_ocean_loop.wav",    bus = "amb",   gain = 0.50, pitchVar = 0.00, pan = 0, loop = true },
+    -- 程序化生成的环境音（.tmp/gen_ambience.py；治愈探索基调，无缝循环）
+    ["amb.morning_sea"]            = { path = "audio/sfx/amb_morning_sea_loop.wav",        bus = "amb",   gain = 0.55, pitchVar = 0.00, pan = 0, loop = true },
+    ["amb.overcast_sea"]           = { path = "audio/sfx/amb_overcast_sea_loop.wav",       bus = "amb",   gain = 0.55, pitchVar = 0.00, pan = 0, loop = true },
+    ["amb.storm_premonition"]      = { path = "audio/sfx/amb_storm_premonition_loop.wav",  bus = "amb",   gain = 0.50, pitchVar = 0.00, pan = 0, loop = true },
+    ["amb.rare_fish"]              = { path = "audio/sfx/amb_rare_fish_loop.wav",          bus = "amb",   gain = 0.50, pitchVar = 0.00, pan = 0, loop = true },
+    ["amb.deep_ruins"]             = { path = "audio/sfx/amb_deep_ruins_loop.wav",         bus = "amb",   gain = 0.50, pitchVar = 0.00, pan = 0, loop = true },
+    ["amb.elder_npc"]              = { path = "audio/sfx/amb_elder_npc_loop.wav",          bus = "amb",   gain = 0.55, pitchVar = 0.00, pan = 0, loop = true },
 }
 
 -- 总线主增益基线（设计文档 §4）
@@ -282,10 +289,18 @@ function AudioDirector.Play(key, opts)
     return true, "已播放 " .. key
 end
 
----声床循环开关（S0 调试用；S2 起由 SetPhase 驱动昼夜切换与 3s 交叉淡化）
+local function bedActive(key)
+    local bed = state.beds[key]
+    return bed and bed.active or false
+end
+
+---声床显式启停（幂等：状态未变直接返回，避免重复 Play/Stop 与误触发）。
+---SoundSystem 的昼夜切换依赖此接口按目标状态精确设定，而非 toggle。
+---@param key string
+---@param active boolean
 ---@return boolean ok
 ---@return string message
-function AudioDirector.ToggleBed(key)
+function AudioDirector.SetBed(key, active)
     local spec = SPECS[key]
     if not spec then return false, "unknown_audio_key(" .. tostring(key) .. ")" end
     if not spec.loop then return false, "not_a_bed(" .. tostring(key) .. ")" end
@@ -299,17 +314,32 @@ function AudioDirector.ToggleBed(key)
     pcall(function() length = sound:GetLength() end)
     if length <= 0 then return false, "sound_not_ready_dwp(重试即可)" end
 
-    if bed.active then
-        pcall(function() bed.source:Stop() end)
-        bed.active = false
-        return true, "声床已停止 " .. key
+    active = active == true
+    if bed.active == active then
+        return true, "bed_unchanged(" .. tostring(key) .. ")"
     end
 
-    pcall(function() sound.looped = true end) -- 幂等；同路径仅循环用途
-    local okPlay = pcall(function() bed.source:Play(sound, 0, spec.gain) end)
-    if not okPlay then return false, "bed_play_failed(" .. tostring(key) .. ")" end
-    bed.active = true
-    return true, "声床已循环 " .. key
+    if active then
+        pcall(function() sound.looped = true end) -- 幂等；同路径仅循环用途
+        local okPlay = pcall(function() bed.source:Play(sound, 0, spec.gain) end)
+        if not okPlay then return false, "bed_play_failed(" .. tostring(key) .. ")" end
+        bed.active = true
+        return true, "声床已循环 " .. key
+    end
+
+    pcall(function() bed.source:Stop() end)
+    bed.active = false
+    return true, "声床已停止 " .. key
+end
+
+---声床循环开关（S0 调试用；S2 起由 SetPhase 驱动昼夜切换与 3s 交叉淡化）
+---@return boolean ok
+---@return string message
+function AudioDirector.ToggleBed(key)
+    local spec = SPECS[key]
+    if not spec then return false, "unknown_audio_key(" .. tostring(key) .. ")" end
+    if not spec.loop then return false, "not_a_bed(" .. tostring(key) .. ")" end
+    return AudioDirector.SetBed(key, not bedActive(key))
 end
 
 ---调试/验收状态行（Maker 无控制台，走屏幕通道）

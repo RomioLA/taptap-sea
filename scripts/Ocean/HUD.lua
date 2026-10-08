@@ -1,6 +1,7 @@
 -- 基于 2D 脚手架的界面层，文字和按钮全部使用 urhox-libs/UI。
 local UI = require("urhox-libs/UI")
 local Config = require("Ocean.Config")
+local SoundSystem = require("Systems.SoundSystem")
 local HUD = {}
 
 function HUD.Create(state)
@@ -37,7 +38,15 @@ function HUD.Create(state)
         Refresh()
     end
 
-    pauseButton.props.onClick = TogglePause
+    pauseButton.props.onClick = function()
+        SoundSystem.Click()  -- 需求 UI：按钮点击播放 ui_click
+        TogglePause()
+        if state.paused then
+            SoundSystem.EnterPause()  -- 暂停：清晨海面声床
+        else
+            SoundSystem.ExitPause()   -- 恢复：切回世界声床（昼/夜）
+        end
+    end
 
     local function MoveButton(text, direction)
         return UI.Button {
@@ -53,7 +62,10 @@ function HUD.Create(state)
             textColor = { 246, 244, 218, 255 },
             borderWidth = 1,
             borderColor = { 212, 235, 219, 65 },
-            onClick = function() state:MoveBy(direction) end,
+            onClick = function()
+                SoundSystem.Click()  -- 需求 UI：按钮点击播放 ui_click
+                state:MoveBy(direction)
+            end,
         }
     end
 
@@ -121,7 +133,10 @@ function HUD.Create(state)
                                         pressedBackgroundColor = { 249, 247, 221, 75 },
                                         borderWidth = 1,
                                         borderColor = { 212, 235, 219, 65 },
-                                        onClick = Reset,
+                                        onClick = function()
+                                            SoundSystem.Click()  -- 需求 UI：按钮点击播放 ui_click
+                                            Reset()
+                                        end,
                                     },
                                     MoveButton("→", 1),
                                 },

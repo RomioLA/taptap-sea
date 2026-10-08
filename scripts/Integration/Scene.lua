@@ -4,6 +4,7 @@ local FusedScene = require("Ocean.FusedScene")
 local Bridge = require("Integration.Bridge")
 local HUD = require("Gameplay.HUD")
 local Debug = require("Gameplay.Debug")
+local SoundSystem = require("Systems.SoundSystem")
 local SeaDebug = require("Ocean.SeaDebug")
 local SeaConfig = require("Ocean.Config")
 local Circle1BInput = require("Integration.Circle1BInput")
@@ -151,6 +152,7 @@ function Scene.Start(options)
                 borderWidth = 1,
                 borderColor = { 212, 235, 219, 65 },
                 onClick = function()
+                    SoundSystem.Click()  -- 需求 UI：按钮点击播放 ui_click
                     if seaDebugTools then seaDebugTools.handleKey(KEY_F3) end
                 end,
             })

@@ -4,6 +4,7 @@
 --       Space pause, R reset.
 local UI = require("urhox-libs/UI")
 local Config = require("Ocean.Config")
+local SoundSystem = require("Systems.SoundSystem")
 local FishData = require("Ocean.FishData")
 local FramePerf = require("Ocean.FramePerf")
 local ImageArt = require("Ocean.ImageArt")
@@ -244,6 +245,10 @@ function SeaDebug.Create(runtime, options)
     local buttons = {}
 
     local function buildButton(id, text, onClick)
+        local function wrappedOnClick()
+            SoundSystem.Click()  -- 需求 UI：按钮点击播放 ui_click
+            onClick()
+        end
         local button = UI.Button {
             id = id,
             text = text,
@@ -252,7 +257,7 @@ function SeaDebug.Create(runtime, options)
             paddingHorizontal = 4,
             paddingVertical = 4,
             variant = "secondary",
-            onClick = onClick,
+            onClick = wrappedOnClick,
         }
         buttons[id] = button
         return button

@@ -7,6 +7,7 @@ local ArtVariants = require("Ocean.ArtVariants")
 local DialogueStyle = require("Gameplay.DialogueStyle")
 local UiKit = require("Gameplay.UiKit")
 local Achievements = require("Gameplay.Achievements")
+local SoundSystem = require("Systems.SoundSystem")
 
 local HUD = {}
 
@@ -67,7 +68,13 @@ local makeButton = presentation.makeButton
 -- 的无依赖设计；DialogueStyle 无皮肤定义时 buttonProps 返回 nil，等价原行为。
 local plainMakeButton = makeButton
 makeButton = function(text, onClick, variant, width)
-    return plainMakeButton(text, onClick, variant, width, DialogueStyle.buttonProps(variant))
+    -- 需求 UI：所有按钮点击播放 ui_click（统一在此注入，玩法脚本无需各自写）。
+    -- 播放逻辑全部收敛在 SoundSystem，本处只触发一次语义调用。
+    local handler = onClick or function() end
+    return plainMakeButton(text, function()
+        SoundSystem.Click()
+        handler()
+    end, variant, width, DialogueStyle.buttonProps(variant))
 end
 local fadeOpacity = presentation.fadeOpacity
 local OPENING_ELDER_TEXT = presentation.OPENING_ELDER_TEXT
@@ -453,6 +460,7 @@ local header = UI.Panel {
         local willOpen = not (loop.inventoryOpen == true)
         invokeLoop("SetInventoryOpen", willOpen)
         if willOpen then
+            SoundSystem.OpenMenu()  -- 需求 UI：菜单打开播放 ui_open
             -- 打开信息屏并滚到背包卡（信息屏默认入口是图鉴/透镜状态）；
             -- v2.3.1：打开动作清除"总收起"意图，否则卡片看不到
             state.infoOpen = true
@@ -461,10 +469,13 @@ local header = UI.Panel {
         end
     end, "secondary", 128)
     refs.elderToggle = makeButton("拜访老人", function()
+        local willOpen = not (loop.elderOpen == true)
         -- v2.3.1：打开对话是明确的卡片诉求，清除"总收起"意图
-        if loop.elderOpen ~= true then state.infoCollapsed = false end
-        invokeLoop("SetElderOpen", not (loop.elderOpen == true))
-    -- v2.1 §7.9：文案会变"结束对话"/"老人不在"等，98 → 112
+        if willOpen then
+            state.infoCollapsed = false
+            SoundSystem.OpenMenu()  -- 需求 UI：菜单打开播放 ui_open
+        end
+        invokeLoop("SetElderOpen", willOpen)  -- 老人环境声床启停由 Loop:SetElderOpen 单一驱动
     end, "secondary", 112)
     -- 与捕鱼同级的上下文按钮：靠近出港点右侧木桶（新手教程点位）后出现；
     -- 望远镜（窥视镜）在获得后常驻、未获得时靠近木桶作为线索入口。
@@ -486,6 +497,7 @@ local header = UI.Panel {
         if state.infoCollapsed == true then
             state.infoCollapsed = false
             state.infoOpen = true
+            SoundSystem.OpenMenu()  -- 需求 UI：菜单打开播放 ui_open
         else
             state.infoCollapsed = true
             state.infoOpen = false
@@ -494,8 +506,10 @@ local header = UI.Panel {
     end, "secondary", 92)
     -- 图鉴/成就入口（v2.0 §7.4）：仅暂停态可见（refresh 控制），页壳走模态层。
     refs.compendiumToggle = makeButton("图鉴", function()
-        state.compendiumOpen = not (state.compendiumOpen == true)
+        local willOpen = not (state.compendiumOpen == true)
+        state.compendiumOpen = willOpen
         state.compendiumRowsDirty = true
+        if willOpen then SoundSystem.OpenMenu() end  -- 需求 UI：菜单打开播放 ui_open
         refresh()
     end, "secondary", 72)
     refs.compendiumToggle:SetVisible(false)
