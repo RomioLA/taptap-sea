@@ -7,6 +7,7 @@ local Persistence = require("Gameplay.Persistence")
 local Actions = require("Gameplay.Actions")
 local Diagnostics = require("Gameplay.Diagnostics")
 local SoundSystem = require("Systems.SoundSystem")
+local audioDiagPushed = false -- 音频诊断一次性上屏标记（真机静音排查，2026-10-08）
 local Progress = require("Gameplay.Circle1B2Progress")
 local Barrel = require("Gameplay.Circle1B2Barrel")
 ---@alias GameplayWorldPreparation {generation:number, day:integer, worldIdentity:number}
@@ -189,6 +190,15 @@ function Loop:Update(dt, advanceWorld)
         local previousPhase = clock.phase
         clock:Update(slice)
         SoundSystem.SyncAmbient(clock.phase)  -- 需求 环境：白天声床自动播放 / 入夜切换 / 次日回白天（幂等）
+        -- 音频诊断（真机静音排查 2026-10-08）：启动 2 秒后把音频状态推到状态行一次，
+        -- 不依赖「开发调试」按钮（该按钮曾被透明 catcher 遮挡点不动）。
+        if not audioDiagPushed and clock.elapsed >= 2 then
+            audioDiagPushed = true
+            local okDiag, diag = pcall(SoundSystem.Status)
+            if okDiag and type(diag) == "string" and #diag > 0 then
+                self.lastMessage = "音频：" .. diag
+            end
+        end
         if previousPhase == "day" and clock.phase == "night" and not clock.exhausted then
             self.lastMessage = "黄昏已至，请留意返港：夜晚前30秒返港体力全满；之后每晚归1秒次日少1体力，夜尽强返恢复上限的一半。"
         end

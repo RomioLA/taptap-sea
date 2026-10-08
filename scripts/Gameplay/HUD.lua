@@ -582,10 +582,15 @@ local header = UI.Panel {
         id = "infoCloseCatcher",
         text = "",
         position = "absolute",
-        top = 0,
+        -- 真机 2026-10-08「开发调试点不动」根因①：catcher 原为 top=0/height=100%
+        -- 铺满全屏，而开局在港口时信息屏默认展开（infoOpen 含 inPort 分支）→
+        -- 透明 catcher 盖住顶部状态栏（header 为 absolute 浮层不占布局）与底部
+        -- 按钮坞，header 按钮首次点击被无声吞掉。现与 cardHost 锚定语义对齐：
+        -- 四边同样让开状态栏（40）与按钮坞（92），二者永可点。
+        top = CARD_HOST_TOP,
+        bottom = CARD_HOST_BOTTOM,
         left = 0,
         width = "100%",
-        height = "100%",
         fontSize = 1,
         backgroundColor = { 0, 0, 0, 0 },
         borderColor = { 0, 0, 0, 0 },
@@ -1151,7 +1156,7 @@ local header = UI.Panel {
         debugBody:AddChild(uiDiagRow)
 
         -- 调试面板挂根流（仅开发模式创建）：不随信息滚动屏开合，保证调试按钮常可用。
-        root:AddChild(refs.debugPanel)
+        -- 挂载时机移至 infoLayer 之后（见下方 AddChild），确保 z 序高于卡片。
     end
 
     -- v2.1 §7.15：cardHost（三卡统一宿主）挂在 infoLayer 内。
@@ -1166,6 +1171,11 @@ local header = UI.Panel {
     -- 契约：必须在 refs.drawerBackdrop（root 倒数第二位）之前插入，
     -- 见 Circle1B3SceneUITests:231 的 "倒数第二 = gameplayInventoryDrawer"。
     root:AddChild(infoLayer)
+
+    -- 调试面板必须在 infoLayer 之后入树（真机 2026-10-08「开发调试点不动」根因②：
+    -- 原在 infoLayer 之前，居中面板被港口默认展开的卡片盖住，打开也看不见）。
+    -- 仍在 achievementToast/drawer/overlay 之前，B3 的"倒数第二 = drawer"契约不变。
+    if refs.debugPanel then root:AddChild(refs.debugPanel) end
 
     -- 统一遮罩承载强制返港、每日结算和拜访老人的反馈。
     refs.overlay = UI.Panel {
