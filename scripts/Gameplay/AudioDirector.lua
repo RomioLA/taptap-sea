@@ -36,13 +36,14 @@ local SPECS = {
     ["explore.knowledge_gain"]       = { path = "audio/sfx/explore_knowledge_gain.wav",       bus = "world", gain = 0.70, pitchVar = 0.03, pan = 0, loop = false },
     ["amb.calm_sea"]                 = { path = "audio/sfx/ambience_calm_sea_loop.wav",       bus = "amb",   gain = 0.55, pitchVar = 0.00, pan = 0, loop = true },
     ["amb.night_ocean"]              = { path = "audio/sfx/ambience_night_ocean_loop.wav",    bus = "amb",   gain = 0.50, pitchVar = 0.00, pan = 0, loop = true },
-    -- 程序化生成的环境音（.tmp/gen_ambience.py；治愈探索基调，无缝循环）
-    ["amb.morning_sea"]            = { path = "audio/sfx/amb_morning_sea_loop.wav",        bus = "amb",   gain = 0.55, pitchVar = 0.00, pan = 0, loop = true },
-    ["amb.overcast_sea"]           = { path = "audio/sfx/amb_overcast_sea_loop.wav",       bus = "amb",   gain = 0.55, pitchVar = 0.00, pan = 0, loop = true },
-    ["amb.storm_premonition"]      = { path = "audio/sfx/amb_storm_premonition_loop.wav",  bus = "amb",   gain = 0.50, pitchVar = 0.00, pan = 0, loop = true },
-    ["amb.rare_fish"]              = { path = "audio/sfx/amb_rare_fish_loop.wav",          bus = "amb",   gain = 0.50, pitchVar = 0.00, pan = 0, loop = true },
-    ["amb.deep_ruins"]             = { path = "audio/sfx/amb_deep_ruins_loop.wav",         bus = "amb",   gain = 0.50, pitchVar = 0.00, pan = 0, loop = true },
-    ["amb.elder_npc"]              = { path = "audio/sfx/amb_elder_npc_loop.wav",          bus = "amb",   gain = 0.55, pitchVar = 0.00, pan = 0, loop = true },
+    -- AI 生成版环境音（Maker 内置 batch_sound_effects / Seed Audio，2026-10-08 重出；
+    -- 已按既有声床 RMS 响度归一化；v1 程序合成版见 git 历史 b3aba52 之前）
+    ["amb.morning_sea"]            = { path = "audio/sfx/amb_morning_sea_ai.wav",        bus = "amb",   gain = 0.55, pitchVar = 0.00, pan = 0, loop = true },
+    ["amb.overcast_sea"]           = { path = "audio/sfx/amb_overcast_sea_ai.wav",       bus = "amb",   gain = 0.55, pitchVar = 0.00, pan = 0, loop = true },
+    ["amb.storm_premonition"]      = { path = "audio/sfx/amb_storm_premonition_ai.wav",  bus = "amb",   gain = 0.50, pitchVar = 0.00, pan = 0, loop = true },
+    ["amb.rare_fish"]              = { path = "audio/sfx/amb_rare_fish_ai.wav",          bus = "amb",   gain = 0.50, pitchVar = 0.00, pan = 0, loop = true },
+    ["amb.deep_ruins"]             = { path = "audio/sfx/amb_deep_ruins_ai.wav",         bus = "amb",   gain = 0.50, pitchVar = 0.00, pan = 0, loop = true },
+    ["amb.elder_npc"]              = { path = "audio/sfx/amb_elder_npc_ai.wav",          bus = "amb",   gain = 0.55, pitchVar = 0.00, pan = 0, loop = true },
 }
 
 -- 总线主增益基线（设计文档 §4）
