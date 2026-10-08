@@ -43,6 +43,7 @@ local BUS = { voice = "voice", world = "world", amb = "amb", music = "music", ma
 local state = {
     currentAmbient = nil,  -- "day" | "night" | nil（底层世界声床，避免重复启停）
     overlay = nil,         -- nil | "elder" | "pause"（临时覆盖世界声床的环境音）
+    lastAppliedBed = nil,  -- 最近一次成功应用的声床键（稳态早退用，评审 P1-1）
     muted = false,
 }
 
@@ -58,30 +59,38 @@ local function playOneShot(key)
 end
 
 local function setBed(key, active)
-    pcall(function() AudioDirector.SetBed(key, active == true) end)
+    -- pcall 直传函数值，避免每帧闭包分配（评审 P1-1）
+    local ok, applied = pcall(AudioDirector.SetBed, key, active == true)
+    return ok and applied == true
 end
 
 -- 四张环境声床对应的 AudioDirector 注册键（统一管理，避免散落硬字符串）。
-local AMB = {
+local BED_KEYS = {
     day     = "amb.calm_sea",     -- 白天世界声床
     night   = "amb.night_ocean",  -- 夜晚世界声床
     elder   = "amb.elder_npc",    -- 拜访老人覆盖声床
     morning = "amb.morning_sea",  -- 游戏暂停覆盖声床
 }
+local AMB = BED_KEYS
 
 -- 当前应循环的环境声床：overlay 临时覆盖优先，否则取底层世界声床（昼/夜）。
 local function activeBedKey()
-    if state.overlay == "elder" then return AMB.elder end
-    if state.overlay == "pause" then return AMB.morning end
-    return state.currentAmbient == "night" and AMB.night or AMB.day
+    if state.overlay == "elder" then return BED_KEYS.elder end
+    if state.overlay == "pause" then return BED_KEYS.morning end
+    return state.currentAmbient == "night" and BED_KEYS.night or BED_KEYS.day
 end
 
--- 按当前 overlay/世界相位精确设定四张声床启停（SetBed 幂等，重复调用零开销）。
+-- 按当前 overlay/世界相位精确设定四张声床启停。
+-- 稳态早退：目标床未变化时零开销（评审 P1-1：SyncAmbient 每帧调用）。
+-- 失败（如资源未就绪）不记 lastAppliedBed，下一帧自动重试。
 local function applyActiveBed()
     local target = activeBedKey()
-    for _, k in ipairs({ AMB.day, AMB.night, AMB.elder, AMB.morning }) do
-        setBed(k, k == target)
+    if state.lastAppliedBed == target then return end
+    local allOk = true
+    for _, k in ipairs({ BED_KEYS.day, BED_KEYS.night, BED_KEYS.elder, BED_KEYS.morning }) do
+        if not setBed(k, k == target) then allOk = false end
     end
+    if allOk then state.lastAppliedBed = target end
 end
 
 -- ---------------------------------------------------------------------------
@@ -147,6 +156,7 @@ end
 function SoundSystem.SetAmbient(mode)
     if mode == "off" then
         state.currentAmbient = nil
+        state.lastAppliedBed = nil  -- 床已显式全停，清除稳态标记以允许后续复床
         if state.overlay == nil then
             setBed(KEY.bedDay, false)
             setBed(KEY.bedNight, false)
@@ -227,6 +237,7 @@ function SoundSystem.Shutdown()
     pcall(function() AudioDirector.Shutdown() end)
     state.currentAmbient = nil
     state.overlay = nil
+    state.lastAppliedBed = nil
 end
 
 ---调试/验收状态（屏幕通道，Maker 无控制台时可用）

@@ -72,6 +72,8 @@ local state = {
     audioReady = nil,  -- 引擎音频子系统 IsInitialized()（nil=未探测；诊断用）
     pathSample = nil,  -- 首个成功解析的资源路径样本（真机路径诊断）
     firstPath = nil,   -- 首个尝试的原始路径（全部失败时上报）
+    initAttempts = 0,     -- ensureInit 累计调用数（失败退避节拍器，评审 P1-2）
+    lastFailAttempts = nil, -- 上次初始化失败时的 attempts（nil=从未失败）
 }
 
 -- ---------------------------------------------------------------------------
@@ -188,9 +190,9 @@ local function nextTick()
 end
 
 local function slotPlaying(slot)
-    local playing = false
-    pcall(function() playing = slot.source:IsPlaying() end)
-    return playing
+    -- pcall 直传方法+self，避免闭包分配
+    local ok, playing = pcall(slot.source.IsPlaying, slot.source)
+    return ok and playing == true
 end
 
 local function acquireSlot(key)
@@ -198,9 +200,14 @@ local function acquireSlot(key)
     if state.keySlot[key] then
         return state.keySlot[key]
     end
-    -- 优先空闲槽位
+    -- 优先空闲/可回收槽位：key 非空但已播完 → 回收并清标记（评审 P2-3，
+    -- 否则播完的 one-shot 滞留槽位，8 槽 12 键下会提前抢占正在播的音）
     for _, slot in ipairs(state.pool) do
-        if not slot.key and not slotPlaying(slot) then
+        if not slotPlaying(slot) then
+            if slot.key then
+                state.keySlot[slot.key] = nil
+                slot.key = nil
+            end
             return slot
         end
     end
@@ -233,14 +240,29 @@ local function applyBusGains()
     pcall(function() audioInstance:SetMasterGain(busConstant("music"), BUS_GAIN.music) end)
 end
 
+-- 初始化失败退避：失败后需间隔约 N 次 ensureInit 调用才重试
+--（60fps 下 ≈1.5s）。防止"资源异步未就绪"窗口内每帧重跑探针
+--（创建/销毁 SoundSource + 18 个 GetResource）与日志刷屏。评审 P1-2。
+local INIT_RETRY_CALLS = 90
+
+local function initFailed(message)
+    state.capability = message
+    state.lastFailAttempts = state.initAttempts
+    logWarning(message)
+    return false
+end
+
 local function ensureInit()
     if state.initialized then return true end
+    state.initAttempts = state.initAttempts + 1
+    if state.lastFailAttempts
+        and (state.initAttempts - state.lastFailAttempts) < INIT_RETRY_CALLS then
+        return false -- 退避窗口内直接跳过
+    end
 
     local probeOk, probeResult = probeStandalonePool()
     if not probeOk then
-        state.capability = "方案A不可用(" .. tostring(probeResult) .. ")：需降级方案B"
-        logWarning(state.capability)
-        return false
+        return initFailed("方案A不可用(" .. tostring(probeResult) .. ")：需降级方案B")
     end
 
     local cacheInstance = getCache()
@@ -263,10 +285,8 @@ local function ensureInit()
     end
     state.loadedCount = loaded
     if loaded == 0 then
-        state.capability = "0个音效加载成功：首试路径 " .. tostring(state.firstPath)
-            .. "｜已尝试含 assets/ 前缀候选"
-        logWarning(state.capability)
-        return false
+        return initFailed("0个音效加载成功：首试路径 " .. tostring(state.firstPath)
+            .. "｜已尝试含 assets/ 前缀候选")
     end
 
     -- one-shot 轮转池
@@ -274,9 +294,7 @@ local function ensureInit()
     for _ = 1, POOL_SIZE do
         local ok, source = pcall(SoundSource.new)
         if not ok or not source then
-            state.capability = "方案A可用但池创建失败"
-            logWarning(state.capability)
-            return false
+            return initFailed("方案A可用但池创建失败")
         end
         pcall(function() source:SetDeclickEnabled(true) end)
         pcall(function() audioInstance:AddSoundSource(source) end)
@@ -368,14 +386,16 @@ function AudioDirector.SetBed(key, active)
     local sound = state.sounds[key]
     if not bed or not sound then return false, "bed_not_ready(" .. tostring(key) .. ")" end
 
-    local length = 0
-    pcall(function() length = sound:GetLength() end)
-    if length <= 0 then return false, "sound_not_ready_dwp(重试即可)" end
-
     active = active == true
+    -- 幂等早退前置于 GetLength（评审 P1-1：SyncAmbient 每帧驱动，
+    -- 稳态下省去每帧 pcall 闭包 + 引擎 GetLength 跨越）
     if bed.active == active then
         return true, "bed_unchanged(" .. tostring(key) .. ")"
     end
+
+    local length = 0
+    pcall(function() length = sound:GetLength() end)
+    if length <= 0 then return false, "sound_not_ready_dwp(重试即可)" end
 
     if active then
         pcall(function() sound.looped = true end) -- 幂等；同路径仅循环用途
@@ -433,8 +453,13 @@ function AudioDirector.ListKeys()
     return keys
 end
 
----设置页音量滑杆
+---设置页音量滑杆（评审 S3：bus 白名单 + gain clamp，防越界/NaN 写坏总线）
 function AudioDirector.SetBusVolume(bus, gain)
+    if type(BUS_GAIN[bus]) ~= "number" then
+        return false, "unknown_bus(" .. tostring(bus) .. ")"
+    end
+    if type(gain) ~= "number" or gain ~= gain then gain = 0 end -- 非数/NaN 防御
+    gain = math.max(0, math.min(1, gain))
     BUS_GAIN[bus] = gain
     if state.initialized then
         local audioInstance = getAudio()
@@ -442,6 +467,7 @@ function AudioDirector.SetBusVolume(bus, gain)
             pcall(function() audioInstance:SetMasterGain(busConstant(bus), gain) end)
         end
     end
+    return true, "bus_volume_set(" .. tostring(bus) .. "=" .. tostring(gain) .. ")"
 end
 
 ---暂停策略：停世界轨与声床轨，UI（VOICE）与未来配乐轨（MUSIC）保留
