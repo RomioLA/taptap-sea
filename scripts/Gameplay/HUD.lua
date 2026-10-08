@@ -93,6 +93,12 @@ function HUD.Create(loop, parent, debugTools)
         destroyed = false,
         localMessage = "",
         inventorySignature = "",
+        -- v2.1 §7.14 对话式形态：老人对话记录（气泡序列）与抽屉开合。
+        -- transcript 每项 {who="elder"|"player", text=..., teach=bool}。
+        elderTranscript = {},
+        elderLogOpen = false,
+        elderAsked = {},
+        elderOpenedGeneration = nil,
         lastTexts = {},
         seekText = "",
         addItemText = "",
@@ -136,6 +142,29 @@ function HUD.Create(loop, parent, debugTools)
     -- "升级体力"。现统一 68% 屏高，礼物区改 flexGrow 自适应让位。
     -- 必须定义在所有 card() 调用之前，故放在 card() 工厂处。
     local HUD_CARD_MAXH = "68%"
+
+    -- v2.1 §7.14 对话式形态：老人问答链（方案 v2.0 §4）。
+    -- 按阶段解锁：stage1=第1~3天教程期 / stage2=第4~6天 / stage3=第7天。
+    -- teach=true 的问题前加 ※ 标记（复用 UiKit.teachMark），仅教程期出现。
+    -- answer 为老人答复；hint 为选项区右侧动作标签。
+    local ELDER_QUESTIONS = {
+        { id = "survival", stage = 1, teach = true, text = "这海上讨生活，要紧的是什么？",
+          answer = "先看水鸟，再看水花。船停在浪平的地方，别急着下网。" },
+        { id = "lens", stage = 1, teach = true, text = "透镜该怎么用？",
+          answer = "对着海面看，能望见远处的东西。海上认路，全靠它。" },
+        { id = "bait", stage = 1, teach = true, text = "鱼饵要放在哪？",
+          answer = "船尾水面，抛得远些。饵不保证成功，多试几次。" },
+        { id = "sea", stage = 2, text = "这片海有什么要紧的地方？",
+          answer = "暗流多的地方船要绕开，浅礁会咬住船底。记熟了就是你的路。" },
+        { id = "why", stage = 2, text = "你怎么会在这儿？",
+          answer = "船散了，人还在。海不记人过，只记得谁回来了。" },
+        { id = "need", stage = 2, text = "需要我做什么吗？",
+          answer = "你肯把东西分我一口，我这把老骨头就还撑得住。苹果最实在。" },
+        { id = "how", stage = 3, text = "我该怎么做？",
+          answer = "天亮出海，天黑回港。日子是熬出来的，不是撞出来的。" },
+        { id = "thanks", stage = 3, text = "谢谢你。",
+          answer = "去吧。风大的时候，记得回来。" },
+    }
 
     -- card() 通用卡工厂。skin 选底板档位（v2.1 批B-D 分级）：
     --   抽屉内面板（背包/港口）用默认 panel（繁复茶棕，信息量大需要框感）；
@@ -1009,6 +1038,59 @@ function HUD.Create(loop, parent, debugTools)
     }
     refs.elderBody:AddChild(refs.elderGiftScroll)
     refs.elderBody:AddChild(makeButton("结束对话", function() invokeLoop("SetElderOpen", false) end, "secondary", 104))
+
+    -- v2.1 §7.14（对话式形态，方案 v2.0）：上方"对话流"+ 底部"选项区"，
+    -- 聊天记录收进底部抽屉（点 [∞] 展开 / 再点收起）。
+    --
+    -- ⚠️ 契约红线（三条测试都是"点完拜访老人立刻操作"，无任何等待）：
+    --   ① Circle1B2UITests:243-247 打开后**立即** findButtons("展示",visibleOnly)=2
+    --      → 选项区必须初始可见，不能有"点击继续"门槛；
+    --   ② Circle1B3SevenDaysTests:334 "01 · "前缀行 + "给予"按钮
+    --      → 物品行格式保持不变；
+    --   ③ GameLoopUISpec:82-84 点"给予"→ 点"结束对话"
+    --      → 选项区必须保留"结束对话"文案按钮。
+    -- ⚠️ 结构红线：主对话流与选项区**禁止用 ScrollView 包裹**（会改变 UI 树
+    --    结构，致 isVisible 沿父链判定失效，3 套件变红，见 §7.9 教训）。
+    --    仅下方聊天记录抽屉可自带 ScrollView（默认收起，不影响 visibleOnly）。
+
+    -- 对话流区（气泡序列，不包 ScrollView）
+    refs.elderDialogue = UI.Panel { width = "100%", gap = 6 }
+    refs.elderPanel:AddChild(refs.elderDialogue)
+    refs.elderDialogTail = refs.elderDialogue -- 追加锚点
+
+    -- 聊天记录抽屉触发按钮（点一次展开、再点收起）
+    refs.elderLogToggle = makeButton("聊天记录 ∞", function()
+        state.elderLogOpen = not (state.elderLogOpen == true)
+        refresh()
+    end, "secondary", 108)
+    refs.elderPanel:AddChild(refs.elderLogToggle)
+
+    -- 聊天记录抽屉（默认收起；内含 ScrollView 安全——收起时子树不可见）
+    refs.elderLogPanel = UI.Panel(UiKit.cardProps("plain", {
+        width = "100%",
+        gap = 5,
+    }, true))
+    themedPanels[#themedPanels + 1] = {
+        widget = refs.elderLogPanel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
+    }
+    refs.elderLogPanel:AddChild(makeLabel("聊天记录", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold"))
+    refs.elderLogRows = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
+    refs.elderLogScroll = UI.ScrollView {
+        width = "100%",
+        height = 200,
+        scrollY = true,
+        showScrollbar = true,
+        children = { refs.elderLogRows },
+    }
+    refs.elderLogPanel:AddChild(refs.elderLogScroll)
+    refs.elderPanel:AddChild(refs.elderLogPanel)
+    refs.elderLogPanel:SetVisible(false)
+
+    -- 提问区（v2.1 §7.14 选项区上半）：按阶段解锁的问题按钮。
+    -- 初始可见（契约要求打开即可操作，无"点击继续"门槛）。
+    refs.elderQuestions = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
+    refs.elderPanel:AddChild(refs.elderQuestions)
+
     refs.elderPanel:AddChild(refs.elderBody)
     refs.elderPanel:SetVisible(false)
     infoLayer:AddChild(refs.elderPanel)
@@ -1194,7 +1276,77 @@ function HUD.Create(loop, parent, debugTools)
         rows:AddChild(makeLabel(text, 12, { 169, 191, 181, 255 }))
     end
 
-    local function destroyChildren(container)
+    -- 前置声明（v2.1 §7.14）：askElderQuestion / destroyChildren 被
+    -- buildElderQuestions、renderElderDialogue 提前引用，但定义在其后。
+    -- Lua 的 local function 不会自动提升作用域，不加声明会取到 nil：
+    -- destroyChildren 会退化为全局 nil → "attempt to call a nil value"。
+    local askElderQuestion
+    local destroyChildren
+    -- v2.1 §7.14（对话式形态）：对话流渲染 + 提问区构建 + 聊天记录抽屉同步。
+    -- 说明：对话流与提问区**不使用 ScrollView**（结构红线，会致 3 套件红）。
+    local function renderElderDialogue()
+        if not refs.elderDialogue then return end
+        destroyChildren(refs.elderDialogue)
+        destroyChildren(refs.elderLogRows)
+        for _, entry in ipairs(state.elderTranscript) do
+            -- 老人气泡在左（panelLite 羊皮纸底），玩家气泡在右（plain 素面纸）
+            local isElder = entry.who == "elder"
+            local bubble = UI.Panel(UiKit.cardProps(isElder and "panelLite" or "plain", {
+                width = "100%",
+                gap = 3,
+            }, true))
+            themedPanels[#themedPanels + 1] = {
+                widget = bubble, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
+            }
+            bubble:AddChild(makeLabel(isElder and "老人" or "你", 11,
+                isElder and UiKit.ink.teaching or UiKit.ink.dim, "bold"))
+            local body = entry.teach and UiKit.teachingText(entry.text) or entry.text
+            bubble:AddChild(makeLabel(body, UiKit.fontSize.teaching,
+                isElder and UiKit.ink.body or UiKit.ink.teaching))
+            refs.elderDialogue:AddChild(bubble)
+            -- 聊天记录抽屉同步同一份数据（收起时子树不可见，不影响契约查找）
+            local logRow = UI.Panel { width = "100%", gap = 2 }
+            logRow:AddChild(makeLabel(isElder and "老人" or "你", 11,
+                isElder and UiKit.ink.teaching or UiKit.ink.dim, "bold"))
+            logRow:AddChild(makeLabel(body, 11, UiKit.ink.teaching))
+            refs.elderLogRows:AddChild(logRow)
+        end
+    end
+
+    -- 提问区构建：按 day 决定阶段，只列未问过的问题（问过的不重复出现）。
+    local function buildElderQuestions(day, teachingDone)
+        if not refs.elderQuestions then return end
+        destroyChildren(refs.elderQuestions)
+        local stage = (day <= 3) and 1 or (day <= 6 and 2 or 3)
+        for _, q in ipairs(ELDER_QUESTIONS) do
+            if q.stage == stage and state.elderAsked[q.id] ~= true then
+                if q.teach and teachingDone == true then
+                    -- 教学已完成：教程问题不再出现（已答过则 earlier 分支已跳过）
+                else
+                    local label = q.teach and (UiKit.teachMark .. q.text) or q.text
+                    refs.elderQuestions:AddChild(makeButton(label, function()
+                        askElderQuestion(q)
+                    end, q.teach and "secondary" or "primary", "100%"))
+                end
+            end
+        end
+    end
+
+    -- 记录一次问答（玩家提问 → 老人答复），并标记已问。
+    askElderQuestion = function(q)
+        if state.destroyed or not q then return end
+        if state.elderAsked[q.id] == true then return end
+        state.elderAsked[q.id] = true
+        state.elderTranscript[#state.elderTranscript + 1] = { who = "player", text = q.text }
+        state.elderTranscript[#state.elderTranscript + 1] = { who = "elder", text = q.answer }
+        -- 教程问题问完 → 标记教学完成（沿用现有 Progress 通道）
+        -- 注：不改 teachingDone。该标记语义为"投饵→捕鱼→结果反馈闭环完成"
+        --（Loop:NotifyCatchObtained → Progress.MarkTeachingDone），
+        -- 若在此处调用会把"听完教程对话"误判为"已完成教学操作"。
+        refresh()
+    end
+
+    destroyChildren = function(container)
         local source = container:GetChildren()
         local snapshot = {}
         for index, child in ipairs(source) do snapshot[index] = child end
@@ -1948,6 +2100,30 @@ function HUD.Create(loop, parent, debugTools)
         --    "01 · "前缀行 + "给予" → 同样匹配礼物行格式。
         --  ③ GameLoopUISpec:82-84 "结束对话"在老人卡内，不受影响。
         refs.elderPanel:SetVisible(showElder)
+        -- v2.1 §7.14 对话形态接线：开场白按"每次打开对话"初始化一次；
+        -- 对话记录跨轮保留，玩家点问题后追加气泡并重建提问区。
+        if showElder and state.elderOpenedGeneration ~= loop.generation then
+            state.elderOpenedGeneration = loop.generation
+            state.elderTranscript = {}
+            state.elderAsked = {}
+            state.elderLogOpen = false
+            local day0 = tonumber(player.day) or 1
+            state.elderTranscript[#state.elderTranscript + 1] = {
+                who = "elder",
+                text = day0 <= 3
+                    and "孩子，这海上讨生活，先听我把话说完。"
+                    or "你来了。海上风大，坐稳了再说。",
+            }
+        end
+        if showElder then
+            local elderDay = tonumber(player.day) or 1
+            local teachingDoneNow = type(loop.IsTeachingDone) == "function"
+                and loop:IsTeachingDone()
+            renderElderDialogue()
+            buildElderQuestions(elderDay, teachingDoneNow)
+            refs.elderLogPanel:SetVisible(state.elderLogOpen == true)
+            refs.elderLogToggle:SetText(state.elderLogOpen == true and "收起记录 ▾" or "聊天记录 ∞")
+        end
         refs.compendiumBody:SetVisible(showCompendium)
         -- 图鉴入口只在暂停态出现（避免海上误触打断操作）；页打开后入口隐藏。
         refs.compendiumToggle:SetVisible(worldPaused and not overlayShown and not pendingCatch)
@@ -2005,14 +2181,9 @@ function HUD.Create(loop, parent, debugTools)
             local teachingDone = type(loop.IsTeachingDone) == "function" and loop:IsTeachingDone()
             local day = tonumber(player.day) or 1
             local showTeaching = showElder and teachingDone ~= true and day <= 3
-            refs.elderTeaching:SetVisible(showTeaching)
-            if showTeaching then
-                setText(refs.elderTeaching, "elderTeaching",
-                    DialogueStyle.teachingText(
-                        "「鸟在那边盘旋，附近应该有小鱼，投点饵试试。」\n"
-                        .. "「留意水花留下的方向，那是大鱼经过的痕迹。」\n"
-                        .. "船开动会惊散鱼群，停船再投；饵不保证成功，多试几次。"))
-            end
+            -- v2.1 §7.14：教程三问已移入提问区（带※ 标记，点选后老人答复），
+            -- 此静态教学块不再显示。showTeaching 保留仅为不改动上方取值。
+            refs.elderTeaching:SetVisible(false)
         end
         if loop.elderOpen == true then
             local elderProgressText = "老人进展暂不可用。"
