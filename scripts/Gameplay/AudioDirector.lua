@@ -69,6 +69,9 @@ local state = {
     tick = 0,
     fishingDuck = false,
     worldPaused = false,
+    audioReady = nil,  -- 引擎音频子系统 IsInitialized()（nil=未探测；诊断用）
+    pathSample = nil,  -- 首个成功解析的资源路径样本（真机路径诊断）
+    firstPath = nil,   -- 首个尝试的原始路径（全部失败时上报）
 }
 
 -- ---------------------------------------------------------------------------
@@ -97,6 +100,54 @@ local function getAudio()
     return audio -- 引擎注入的全局（可能为 nil）
 end
 
+-- ResourceCache 获取：优先引擎注入的 cache 全局；缺失时兜底 engine:GetResourceCache()
+--（UrhoX 不同运行时的全局注入存在差异，真机曾因 cache 缺失整系统静默——2026-10-08）。
+local function getCache()
+    if (type(cache) == "table" or type(cache) == "userdata")
+        and type(cache.GetResource) == "function" then
+        return cache
+    end
+    local ok, fallback = pcall(function()
+        local eng = (type(GetEngine) == "function" and GetEngine()) or engine
+        if eng and type(eng.GetResourceCache) == "function" then
+            return eng:GetResourceCache()
+        end
+        return nil
+    end)
+    if ok and fallback then return fallback end
+    return nil
+end
+
+-- 候选资源路径：仓库文件位于 assets/audio/sfx/，而 SPECS 历史写法为 audio/sfx/；
+-- 运行时资源根无法在脚本侧确定（Maker 打包决定），故按候选集逐一尝试自愈，
+-- 并在 Status 上报实际解析路径供真机验收。2026-10-08 真机静音排查。
+local function candidatePaths(spec)
+    local p = spec.path
+    local out = { p }
+    if p:sub(1, 6) == "audio/" then
+        out[#out + 1] = "assets/" .. p
+        out[#out + 1] = p:sub(7) -- sfx/X.wav
+    elseif p:sub(1, 7) == "assets/" then
+        out[#out + 1] = p:sub(8)
+    else
+        out[#out + 1] = "assets/audio/" .. p
+    end
+    local seen, list = {}, {}
+    for _, v in ipairs(out) do
+        if not seen[v] then seen[v] = true; list[#list + 1] = v end
+    end
+    return list
+end
+
+---按候选路径逐一 GetResource，返回首个命中的 (sound, path)。
+local function resolveSound(cacheInstance, spec)
+    for _, path in ipairs(candidatePaths(spec)) do
+        local ok, sound = pcall(function() return cacheInstance:GetResource("Sound", path) end)
+        if ok and sound then return sound, path end
+    end
+    return nil, nil
+end
+
 local function busConstant(bus)
     if bus == "voice" then return SOUND_VOICE or "Voice" end
     if bus == "world" then return SOUND_EFFECT or "Effect" end
@@ -108,8 +159,8 @@ end
 -- 方案 A 能力探针：SoundSource.new() 独立实例 + audio:AddSoundSource 注册。
 -- 任一环节失败即判定方案 A 不可用，返回原因供真机验收降级决策。
 local function probeStandalonePool()
-    local cacheInstance = cache
-    if not cacheInstance or type(cacheInstance.GetResource) ~= "function" then
+    local cacheInstance = getCache()
+    if not cacheInstance then
         return false, "no_resource_cache"
     end
     local audioInstance = getAudio()
@@ -192,13 +243,19 @@ local function ensureInit()
         return false
     end
 
-    local cacheInstance = cache
+    local cacheInstance = getCache()
     local audioInstance = getAudio()
+    -- 音频子系统初始化状态（诊断：未初始化时 AddSoundSource 仍会"成功"但无输出）
+    if audioInstance and type(audioInstance.IsInitialized) == "function" then
+        pcall(function() state.audioReady = audioInstance:IsInitialized() == true end)
+    end
     local loaded = 0
     for key, spec in pairs(SPECS) do
-        local ok, sound = pcall(function() return cacheInstance:GetResource("Sound", spec.path) end)
-        if ok and sound then
+        if not state.firstPath then state.firstPath = spec.path end
+        local sound, resolvedPath = resolveSound(cacheInstance, spec)
+        if sound then
             state.sounds[key] = sound
+            if not state.pathSample then state.pathSample = key .. "->" .. resolvedPath end
             loaded = loaded + 1
         else
             logWarning("加载失败: " .. key .. " <- " .. spec.path)
@@ -206,7 +263,8 @@ local function ensureInit()
     end
     state.loadedCount = loaded
     if loaded == 0 then
-        state.capability = "方案A可用但0个音效加载成功：检查资源路径/DWP"
+        state.capability = "0个音效加载成功：首试路径 " .. tostring(state.firstPath)
+            .. "｜已尝试含 assets/ 前缀候选"
         logWarning(state.capability)
         return false
     end
@@ -354,6 +412,8 @@ function AudioDirector.Status()
     end
     return state.capability
         .. "｜加载" .. tostring(state.loadedCount) .. "/" .. tostring(countSpecs())
+        .. (state.pathSample and ("｜路径" .. state.pathSample) or "")
+        .. (state.audioReady == false and "｜音频设备未初始化" or "")
         .. "｜声床 " .. (next(bedText) and table.concat(bedText, " ") or "无")
 end
 

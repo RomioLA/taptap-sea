@@ -23,9 +23,27 @@ function Tests.Run()
         "explore.knowledge_gain",
         "amb.calm_sea",
         "amb.night_ocean",
+        -- 程序化生成环境音（.tmp/gen_ambience.py，2026-10-08 接入）
+        "amb.morning_sea",
+        "amb.overcast_sea",
+        "amb.storm_premonition",
+        "amb.rare_fish",
+        "amb.deep_ruins",
+        "amb.elder_npc",
     }
 
-    check("12条注册键齐全且无多余", function()
+    local BED_KEYS = {
+        ["amb.calm_sea"] = true,
+        ["amb.night_ocean"] = true,
+        ["amb.morning_sea"] = true,
+        ["amb.overcast_sea"] = true,
+        ["amb.storm_premonition"] = true,
+        ["amb.rare_fish"] = true,
+        ["amb.deep_ruins"] = true,
+        ["amb.elder_npc"] = true,
+    }
+
+    check("18条注册键齐全且无多余", function()
         local actual = {}
         for _, key in ipairs(AudioDirector.ListKeys()) do actual[key] = true end
         for _, key in ipairs(expectedKeys) do
@@ -48,14 +66,14 @@ function Tests.Run()
         end
     end)
 
-    check("仅两个声床且全部走amb总线", function()
+    check("仅8张环境声床且全部走amb总线", function()
         for _, key in ipairs(expectedKeys) do
             local spec = assert(AudioDirector.GetSpec(key), key)
             if spec.loop then
-                assert(key == "amb.calm_sea" or key == "amb.night_ocean", key .. " unexpected bed")
+                assert(BED_KEYS[key] == true, key .. " unexpected bed")
                 assert(spec.bus == "amb" and spec.pitchVar == 0, key .. " bed must be amb/no pitch")
             else
-                assert(key ~= "amb.calm_sea" and key ~= "amb.night_ocean", key .. " bed missing loop flag")
+                assert(BED_KEYS[key] ~= true, key .. " bed missing loop flag")
             end
         end
     end)

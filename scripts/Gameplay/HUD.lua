@@ -332,7 +332,15 @@ local header = UI.Panel {
     header:AddChild(refs.nightRisk)
     header:AddChild(refs.portAccessReason)
     refs.debugToggle = makeButton("开发调试", function()
-        if refs.debugPanel then refs.debugPanel:SetVisible(not refs.debugPanel:IsVisible()) end
+        if refs.debugPanel then
+            local willShow = not refs.debugPanel:IsVisible()
+            refs.debugPanel:SetVisible(willShow)
+            -- 打开面板时读取音频诊断状态（2026-10-08 真机静音排查通道）
+            if willShow and refs.audioStatus then
+                local okSt, st = pcall(SoundSystem.Status)
+                refs.audioStatus:SetText("音频：" .. (okSt and tostring(st) or "状态读取失败"))
+            end
+        end
     end, "secondary", 92)
     if debugTools and debugTools.enabled == true then header:AddChild(refs.debugToggle) end
     -- 批2 水彩 HUD（2026-10-07）：状态图标条——体力(苹果)/钱(金币堆)/背包(鱼)。
@@ -372,45 +380,17 @@ local header = UI.Panel {
     end
     root:AddChild(header)
 
-    -- 真机反馈（2026-10-05）：捕鱼弹出框过大遮挡中心小船——压成左上角小卡
-    -- （宽 ≤216px、行高 ~11px、按钮 32px），面积约为原 1/4，只留必要提示；
-    -- 只在抛网/收网/结算过程中出现，入口仍走按钮坞"捕鱼"按钮。
-    refs.fishingPanel = UI.Panel(UiKit.cardProps("panelLite", {
-        id = "fishingCompactPanel",
-        width = "auto",
-        -- v2.1 §7.9：padding 抬到 34（避免文字压边框花纹）后，216px 宽只剩
-        -- 148px 文字区（12 字/行），24 字文案要 2 行、卡片长高 60px 重新压船。
-        -- 加宽到 300 换回单行，宽度仍远小于半屏（落区②上限 25%×30%）。
-        maxWidth = 300,
-        alignSelf = "flex-start",
-        -- 不再显式给 padding，继承 panelLite 档位的 34。
-        gap = 5,
-    }))
-    themedPanels[#themedPanels + 1] = {
-        widget = refs.fishingPanel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
-    }
-    refs.fishingStatus = makeLabel("选择海面网心开始捕鱼。", UiKit.fontSize.teaching)
-    refs.fishingProgress = makeLabel("动作进度：0%", UiKit.fontSize.teaching, UiKit.ink.dim)
-    -- T2b：同气泡根因的保险——显式宽度，避免任何父布局变化导致零宽不渲染。
-    refs.fishingResult = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching, nil, { width = "100%" })
-    refs.fishingPanel:AddChild(refs.fishingStatus)
-    refs.fishingPanel:AddChild(refs.fishingProgress)
-    refs.fishingPanel:AddChild(refs.fishingResult)
+    -- 真机反馈（2026-10-08）：左上角捕鱼小卡整卡移除——
+    -- ① 残留根因：Actions:GetFishingState 终态后持续返回 _lastFishing 记录，
+    --   HUD 以 fishingRestricted/fishingTerminal 控显 → 小卡终态后"残留"为塌陷
+    --   窄条（真机截图 10-08），且作为 root 列流子节点持续挤占 infoLayer 布局
+    --   空间，压垮 cardHost 内背包/商店/老人卡；
+    -- ② 收网状态/进度文字对玩法无增量（世界画面已表达），取消（A2）与重试清理
+    --   统一收敛到按钮坞"捕鱼"键（Loop:BeginFishingSelection 单一入口），结果
+    --   提示由中央结果气泡（catchBubble）承担。
     refs.beginFishing = makeButton("捕鱼", function()
         invokeLoop("BeginFishingSelection")
     end, "primary", 72)
-    local fishingButtons = UI.Panel {
-        width = "100%",
-        flexDirection = "row",
-        gap = 5,
-    }
-    -- Circle1 一键抛网（B 侧交付）：无确认步骤，仅保留取消/重试清理按钮。
-    refs.cancelFishing = makeButton("取消捕鱼", function()
-        invokeLoop("CancelFishingAction")
-    end, "danger", 88)
-    fishingButtons:AddChild(refs.cancelFishing)
-    refs.fishingPanel:AddChild(fishingButtons)
-    root:AddChild(refs.fishingPanel)
 
     -- 真机反馈（2026-10-05）：按钮坞由三行收敛为单行操作。容器透明 +
     -- box-none——空白区域点击穿透海面，只有按钮本身接收点击；超出屏幕
@@ -1046,6 +1026,9 @@ local header = UI.Panel {
         refs.debugPanel:SetVisible(false)
         refs.debugStatus = makeLabel("调试命令仅在开发模式启用", 12, { 189, 211, 190, 255 })
         debugBody:AddChild(refs.debugStatus)
+        -- 音频诊断行（2026-10-08 真机静音排查）：实时显示 AudioDirector 能力/加载/声床状态
+        refs.audioStatus = makeLabel("音频：待读取", 12, { 189, 211, 190, 255 })
+        debugBody:AddChild(refs.audioStatus)
 
         -- UI 树 dump（UI 定位诊断）：递归可见节点 → 诊断日志逐行输出；
         -- 深色窄条（w≤40 且 h≥40 且带背景）直接摘要在 debugStatus。
@@ -1673,6 +1656,10 @@ local header = UI.Panel {
             state.localMessage = tostring(reason or "")
         end
         if refs.debugStatus then setText(refs.debugStatus, "debugStatus", state.localMessage) end
+        if refs.audioStatus then
+            local okSt, st = pcall(SoundSystem.Status)
+            refs.audioStatus:SetText("音频：" .. (okSt and tostring(st) or "状态读取失败"))
+        end
         refresh()
     end
 
@@ -2166,40 +2153,9 @@ local header = UI.Panel {
         local fishingActive = fishingPhase == "casting" or fishingPhase == "landed" or fishingCleanupPending
         local fishingRestricted = fishingSelecting or fishingActive
         local fishingTerminal = fishingPhase == "complete" or fishingPhase == "failed" or fishingPhase == "cancelled"
-        local fishingStatus
-        if fishingSelecting then
-            fishingStatus = "点击或触摸30米内合法海面，立即抛网；可取消选点。"
-        elseif fishingPhase == "casting" then
-            fishingStatus = "抛网进行中。"
-        elseif fishingPhase == "landed" then
-            fishingStatus = "网已落水，正在收网。"
-        elseif fishingPhase == "cleanup_pending" then
-            fishingStatus = "捕鱼清理尚未完成，可以重试清理。"
-        elseif fishingPhase == "rollback_pending" then
-            fishingStatus = "捕鱼回滚尚未完成，可以重试清理。"
-        elseif fishingPhase == "committing" then
-            fishingStatus = "正在提交捕鱼结果，可以重试清理。"
-        elseif fishingPhase == "complete" then
-            fishingStatus = "本次捕鱼已完成。"
-        elseif fishingPhase == "failed" then
-            fishingStatus = "本次捕鱼未完成。"
-        elseif fishingPhase == "cancelled" then
-            fishingStatus = "本次捕鱼已取消。"
-        elseif not fishingState then
-            fishingStatus = "捕鱼状态暂不可用。"
-        else
-            fishingStatus = "选择海面网心开始捕鱼。"
-        end
-        setText(refs.fishingStatus, "fishingStatus", fishingStatus)
-        local actionDuration = math.max(0.01, tonumber(fishingState and fishingState.duration) or 4)
-        local actionElapsed = math.max(0, tonumber(fishingState and fishingState.elapsed) or 0)
-        local progress = fishingPhase == "complete" and 100
-            or math.floor(math.min(1, actionElapsed / actionDuration) * 100 + 0.5)
-        -- 真机反馈 2026-10-07：%.1f 秒使文本每帧变化 → SetText 每帧触发 UI 重排，
-        -- 收网期间成为卡顿源。改整数秒后文本变化率 ~10Hz→1Hz。
-        setText(refs.fishingProgress, "fishingProgress",
-            string.format("动作进度：%d%% · %d / %d 秒", progress,
-                math.floor(math.min(actionElapsed, actionDuration) + 0.5), math.floor(actionDuration + 0.5)))
+        -- （2026-10-08）左上角小卡移除：状态/进度/结果三行不再渲染，收网中
+        -- SetText 每帧重排的卡顿源随之消失（2026-10-07 整数秒优化的上位替代）；
+        -- fishingState 仍用于模式行、结果气泡与按钮态。
         local resultText = ""
         if fishingTerminal then
             if fishingPhase == "complete" then
@@ -2230,9 +2186,6 @@ local header = UI.Panel {
                 resultText = "未完成：" .. (reason ~= nil and userMessage(reason) or "请稍后重试")
             end
         end
-        refs.fishingResult:SetVisible(fishingTerminal)
-        setText(refs.fishingResult, "fishingResult", resultText)
-
         -- 收网结果气泡：进入终态时记录文本并展示约 5 秒；离开终态后允许下次收网重弹。
         -- （os.time 缺失的运行时静默禁用气泡，结果仍见捕鱼小卡的结果行。）
         local nowStamp = os and type(os.time) == "function" and os.time() or nil
@@ -2254,14 +2207,19 @@ local header = UI.Panel {
             end
         end
 
-        -- v2.0 零遮挡：捕鱼面板只在捕鱼过程（选择/收网/清理/结算）中出现；
-        -- 待机状态的出海画面只保留左上信息文字与右下按钮坞。
-        refs.fishingPanel:SetVisible(fishingRestricted or fishingTerminal)
-        -- A2（2026-10-05 用户裁决）：动作中再点捕鱼键=取消——按钮坞"捕鱼"在选点/收网期间
-        -- 保持可见可点（点击经 Loop:BeginFishingSelection 转为取消）；清理/结算 pending 态
-        -- 仍由捕鱼小卡内的"取消捕鱼/重试清理"按钮承担。
-        local fishingCancellable = fishingSelecting or fishingPhase == "casting" or fishingPhase == "landed"
+        -- A2（2026-10-05 用户裁决）：动作中再点捕鱼键=取消。2026-10-08 小卡移除后
+        -- 取消/重试清理统一由按钮坞"捕鱼"键承担：选点/抛网/收网期保持"捕鱼"可点
+        -- （点击经 Loop:BeginFishingSelection 转为取消），清理/结算 pending 态改显
+        -- "重试清理"（同一入口走 CancelFishingAction 重试清理路径）。文案经
+        -- lastTexts 去重，避免每帧 SetText 触发重排。
+        local fishingCancellable = fishingSelecting or fishingPhase == "casting"
+            or fishingPhase == "landed" or fishingCleanupPending
         refs.beginFishing:SetVisible(not inPort and (not fishingRestricted or fishingCancellable))
+        local beginFishingLabel = fishingCleanupPending and "重试清理" or "捕鱼"
+        if state.lastTexts.beginFishingLabel ~= beginFishingLabel then
+            state.lastTexts.beginFishingLabel = beginFishingLabel
+            refs.beginFishing:SetText(beginFishingLabel)
+        end
         refs.beginFishing:SetDisabled((not ready and not fishingCancellable) or busy or inPort
             or loop.inventoryOpen == true or loop.elderOpen == true)
         -- 新手教程点位：靠近出港点右侧木桶（≤操作距离+3m 余量）时出现 检查木桶/望远镜；
@@ -2288,9 +2246,6 @@ local header = UI.Panel {
         -- （ToggleScope 不暂停世界、不触碰捕获锁定），只禁移动/背包/投放/打捞/交谈/进港。
         refs.scopeToggleBar:SetDisabled(busy
             or not hasLens or not scopeApiAvailable)
-        refs.cancelFishing:SetVisible(fishingRestricted)
-        refs.cancelFishing:SetText(fishingCleanupPending and "重试清理" or "取消捕鱼")
-        refs.cancelFishing:SetDisabled(false)
 
         local pendingCatch = false
         if type(loop.HasPendingCatch) == "function" then
