@@ -199,7 +199,9 @@ test("production fishing HUD casts on the sea pointer then pauses and cancels",f
     eq(env.loop:GetFishingState().state,"landed")
     env.loop:ToggleManualPause(); env.bridge:Update(1); hud.Refresh()
     eq(env.loop:GetFishingState().elapsed,0.5)
-    button(hud.root,"取消捕鱼")
+    -- 2026-10-08 捕鱼小卡移除：取消入口收敛到按钮坞"捕鱼"键（A2：动作中再点=取消，
+    -- 点击经 Loop:BeginFishingSelection 转为 CancelFishingAction）。
+    button(hud.root,"捕鱼")
     eq(env.loop.player.stamina,100); eq(env.loop:GetFishingState().state,"cancelled")
 end)
 
