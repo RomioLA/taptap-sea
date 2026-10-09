@@ -1113,6 +1113,62 @@ function Tests.Run()
         if not ok then error(err) end
     end)
 
+    check("返港按钮立即暂停整局，关闭背包和手动暂停后仍须点击出航", function()
+        local context = sceneHarness()
+        local ok, err = pcall(function()
+            local sea = context.sea
+            assert(findByText(sea.uiRoot, "出航")):Click()
+            sea:Update(0.1)
+            local dropped = sea.runtime:spawnDroppedItem({ itemId = "bait" }, sea.runtime.ship.position)
+            local fish = sea.runtime:spawnFish("sardine", sea.runtime.ship.position)
+            local clockTime, seaTime = sea.loop.clock.elapsed, sea.runtime.time
+            local fishX, fishY = fish.position.x, fish.position.y
+            assert(findByText(sea.uiRoot, "返港")):Click()
+            assert(sea.loop.inPort and sea.loop.clock.pauseReasons.port and sea.runtime.paused)
+            for _ = 1, 5 do sea:Update(0.2) end
+            near(sea.loop.clock.elapsed, clockTime)
+            near(sea.runtime.time, seaTime)
+            near(dropped.age, 0)
+            near(fish.position.x, fishX); near(fish.position.y, fishY)
+            assert(sea.loop:SetInventoryOpen(true) and sea.loop:SetInventoryOpen(false))
+            assert(sea.bridge:TogglePause() and sea.bridge:TogglePause())
+            assert(sea.loop.clock.pauseReasons.port and sea.runtime.paused)
+            assert(findByText(sea.uiRoot, "出航")):Click()
+            assert(not sea.loop.clock:IsPaused() and not sea.runtime.paused)
+            sea:Update(0.1)
+            near(sea.loop.clock.elapsed, clockTime + 0.1)
+            near(sea.runtime.time, seaTime + 0.1)
+            near(dropped.age, 0.1)
+        end)
+        context.cleanup()
+        if not ok then error(err, 0) end
+    end)
+
+    check("正式 Scene 关闭失败不提前停声，成功关闭只执行一次音频清理", function()
+        local context = sceneHarness()
+        local sound = require("Systems.SoundSystem")
+        local originalShutdown = sound.Shutdown
+        local shutdowns = 0
+        sound.Shutdown = function() shutdowns = shutdowns + 1; originalShutdown() end
+        local ok, err = pcall(function()
+            local sea = context.sea
+            sea.loop.inventoryRollback = { items = {}, stamina = 100 }
+            local stopped, reason = sea:Stop()
+            assert(stopped == false and reason == "inventory_rollback_pending")
+            assert(shutdowns == 0 and not sea.loop.closed and context.ui.shutdowns == 0)
+            sea.loop.inventoryRollback = nil
+            sea:Stop()
+            sea:Stop()
+            assert(shutdowns == 1 and sea.loop.closed)
+            assert(context.ui.shutdowns == 1)
+            sea:Update(0.1)
+            assert(shutdowns == 1)
+        end)
+        context.cleanup()
+        sound.Shutdown = originalShutdown
+        if not ok then error(err, 0) end
+    end)
+
     check("Scene Stop releases five subscriptions, renderer, HUD and UI exactly once", function()
         assert(scene.ready, "Scene startup failed in its own test")
         local context, sea = scene.context, scene.context.sea

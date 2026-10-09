@@ -2,6 +2,79 @@
 -- 对应设计文档《自适应音乐与空间音效系统设计方案_v1.0_2026-10-06.md》§7 接线总表。
 local Tests = {}
 
+-- 隔离引擎边界；保留真实音频模块与 Loop，记录播放、停声、注销和释放。
+local function withAudioEngine(callback)
+    local savedGlobals, savedModules = {}, {}
+    for _, name in ipairs({ "GetAudio", "audio", "cache", "SoundSource" }) do
+        savedGlobals[name] = { value = _G[name] }
+    end
+    for _, name in ipairs({ "Gameplay.AudioDirector", "Systems.SoundSystem", "Gameplay.Loop" }) do
+        savedModules[name] = { value = package.loaded[name] }
+        package.loaded[name] = nil
+    end
+    local engine = { sources = {}, registered = {}, gains = {}, paused = {}, loads = 0 }
+    function engine:AddSoundSource(source) self.registered[source] = true end
+    function engine:RemoveSoundSource(source)
+        assert(self.registered[source], "声源不可重复注销")
+        self.registered[source] = nil
+        source.removed = source.removed + 1
+    end
+    function engine:IsInitialized() return true end
+    function engine:SetMasterGain(bus, gain) self.gains[bus] = gain end
+    function engine:PauseSoundType(bus) self.paused[bus] = true end
+    function engine:ResumeSoundType(bus) self.paused[bus] = nil end
+    function engine:ActiveCount()
+        local count = 0
+        for _, source in ipairs(self.sources) do
+            if source.playing then count = count + 1 end
+        end
+        return count
+    end
+    function engine:ActivePath()
+        for _, source in ipairs(self.sources) do
+            if source.playing and source.sound.looped then return source.sound.path end
+        end
+        return nil
+    end
+    _G.GetAudio = function() return engine end
+    _G.audio = engine
+    _G.cache = {
+        GetResource = function(_, kind, path)
+            assert(kind == "Sound")
+            engine.loads = engine.loads + 1
+            return { path = path, looped = false, GetLength = function() return 1 end,
+                GetFrequency = function() return 48000 end }
+        end,
+    }
+    _G.SoundSource = {
+        new = function()
+            local source = { playing = false, plays = 0, stops = 0, disposed = 0, removed = 0 }
+            function source:SetDeclickEnabled() end
+            function source:IsPlaying() return self.playing end
+            function source:Play(sound, frequency)
+                assert(self.disposed == 0 and engine.registered[self])
+                assert(frequency == 0 or frequency > 40000, "播放频率必须是 Hz")
+                self.sound, self.playing = sound, true
+                self.plays = self.plays + 1
+            end
+            function source:Stop() self.playing = false; self.stops = self.stops + 1 end
+            function source:StopImmediate() self:Stop() end
+            function source:Dispose()
+                assert(not engine.registered[self] and self.disposed == 0)
+                self.disposed = self.disposed + 1
+            end
+            engine.sources[#engine.sources + 1] = source
+            return source
+        end,
+    }
+    local ok, reason = xpcall(function()
+        callback(engine, require("Gameplay.AudioDirector"), require("Systems.SoundSystem"))
+    end, debug.traceback)
+    for name, entry in pairs(savedGlobals) do _G[name] = entry.value end
+    for name, entry in pairs(savedModules) do package.loaded[name] = entry.value end
+    if not ok then error(reason, 0) end
+end
+
 function Tests.Run()
     local AudioDirector = require("Gameplay.AudioDirector")
     local results = {}
@@ -127,7 +200,115 @@ function Tests.Run()
         AudioDirector.Shutdown()
     end)
 
-    return { results = results, evidenceKind = "offline Lua 5.4 audio registry checks; engine globals absent by design" }
+    check("reset 清空播放与临时混音状态但复用池和音量设置", function()
+        withAudioEngine(function(engine, director, sound)
+            sound.SetMuted(true)
+            assert(director.SetBusVolume("amb", 0.65))
+            sound.SyncAmbient("night", true)
+            sound.EnterElder()
+            sound.Click()
+            director.SetFishing(true)
+            director.SetPaused(true)
+            local sources, loads = #engine.sources, engine.loads
+            assert(engine:ActiveCount() == 2)
+            sound.Reset()
+            assert(engine:ActiveCount() == 0 and next(engine.paused) == nil)
+            assert(engine.gains[SOUND_AMBIENT or "Ambient"] == 0.65)
+            assert(sound.IsMuted() and engine.gains[SOUND_MASTER or "Master"] == 0)
+            sound.SyncAmbient("day", false)
+            assert(engine:ActiveCount() == 1)
+            assert(engine:ActivePath() == "audio/sfx/amb_morning_sea_ai.wav")
+            sound.SyncAmbient("day", true)
+            assert(engine:ActivePath() == "audio/sfx/ambience_calm_sea_loop.wav")
+            assert(#engine.sources == sources and engine.loads == loads, "reset 不得重复加载或注册")
+        end)
+    end)
+
+    check("Shutdown 注销释放全部声源且重入安全，重新播放无旧覆盖", function()
+        withAudioEngine(function(engine, director, sound)
+            sound.SyncAmbient("night", true)
+            sound.EnterElder()
+            sound.Click()
+            assert(engine:ActiveCount() == 2)
+            sound.Shutdown()
+            assert(engine:ActiveCount() == 0 and next(engine.registered) == nil)
+            for _, source in ipairs(engine.sources) do
+                assert(source.disposed == 1 and source.removed == 1)
+            end
+            local count = #engine.sources
+            sound.Shutdown()
+            assert(#engine.sources == count and next(engine.registered) == nil)
+            sound.SyncAmbient("day", true)
+            assert(engine:ActiveCount() == 1)
+            assert(engine:ActivePath() == "audio/sfx/ambience_calm_sea_loop.wav")
+            assert(director.Status():find("加载18/18", 1, true))
+        end)
+    end)
+
+    check("真实 Loop 返港后持续暂停声床，关闭菜单不恢复出海声床", function()
+        withAudioEngine(function(engine)
+            local loop = require("Gameplay.Loop").New({})
+            assert(loop:Depart())
+            loop.clock:Seek("night", 10)
+            loop:Update(0)
+            assert(engine:ActivePath() == "audio/sfx/ambience_night_ocean_loop.wav")
+            assert(loop:ReturnToPort())
+            assert(loop.inPort and loop.clock.pauseReasons.port)
+            assert(engine:ActivePath() == "audio/sfx/amb_morning_sea_ai.wav")
+            local elapsed, sourceCount = loop.clock.elapsed, #engine.sources
+            for _ = 1, 5 do loop:Update(1) end
+            assert(loop.clock.elapsed == elapsed and #engine.sources == sourceCount)
+            assert(loop:SetInventoryOpen(true) and loop:SetInventoryOpen(false))
+            assert(loop:SetElderOpen(true))
+            assert(engine:ActivePath() == "audio/sfx/amb_elder_npc_ai.wav")
+            assert(not loop:Depart(), "老人面板未关闭时不允许出港")
+            assert(loop:SetElderOpen(false))
+            assert(loop.clock.pauseReasons.port and engine:ActivePath() == "audio/sfx/amb_morning_sea_ai.wav")
+            assert(loop:Depart())
+            assert(not loop.clock:IsPaused())
+            assert(engine:ActivePath() == "audio/sfx/ambience_night_ocean_loop.wav")
+        end)
+    end)
+
+    check("真实 Loop reset 清旧声，初始保存成功仍暂停在港，Close 后更新不复声", function()
+        withAudioEngine(function(engine, _, sound)
+            local callbacks = {}
+            local loop = require("Gameplay.Loop").New({ store = {
+                Save = function(_, _, done) callbacks[#callbacks + 1] = done end,
+            } })
+            assert(loop:Depart())
+            sound.EnterElder()
+            sound.Click()
+            assert(engine:ActiveCount() == 2)
+            assert(loop:NewRun())
+            assert(engine:ActiveCount() == 0 and loop.clock.pauseReasons.port)
+            callbacks[1](true)
+            assert(loop.inPort and loop.clock:IsPaused())
+            loop:Update(0)
+            assert(engine:ActivePath() == "audio/sfx/amb_morning_sea_ai.wav")
+            assert(loop:Depart())
+            assert(engine:ActivePath() == "audio/sfx/ambience_calm_sea_loop.wav")
+            assert(loop:Close())
+            assert(engine:ActiveCount() == 0 and next(engine.registered) == nil)
+            local count = #engine.sources
+            loop:Update(1)
+            assert(#engine.sources == count and engine:ActiveCount() == 0)
+        end)
+    end)
+
+    check("reset 被回滚保护拒绝时不停止现有声音", function()
+        withAudioEngine(function(engine)
+            local loop = require("Gameplay.Loop").New({})
+            assert(loop:Depart())
+            local path = engine:ActivePath()
+            loop.inventoryRollback = { items = {}, stamina = 100 }
+            local ok, reason = loop:ResetState()
+            assert(not ok and reason == "inventory_rollback_pending")
+            assert(engine:ActiveCount() == 1 and engine:ActivePath() == path)
+        end)
+    end)
+
+    return { results = results, evidenceKind = "offline Lua 5.4 audio registry and lifecycle checks; engine/audio outputs are test doubles" }
 end
 
 return Tests

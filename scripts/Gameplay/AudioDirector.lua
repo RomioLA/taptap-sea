@@ -176,9 +176,13 @@ local function probeStandalonePool()
     local ok, source = pcall(SoundSource.new)
     if not ok or not source then return false, "soundsource_new_failed" end
     local okAdd = pcall(function() audioInstance:AddSoundSource(source) end)
-    if not okAdd then return false, "addsoundsource_rejected" end
+    if not okAdd then
+        pcall(function() source:Dispose() end)
+        return false, "addsoundsource_rejected"
+    end
     pcall(function() audioInstance:RemoveSoundSource(source) end)
-    return true, source
+    pcall(function() source:Dispose() end)
+    return true
 end
 
 -- ---------------------------------------------------------------------------
@@ -498,16 +502,39 @@ function AudioDirector.SetFishing(active)
     end
 end
 
----场景关闭时停声（S1 起由 Integration/Scene.lua 生命周期调用）
-function AudioDirector.Shutdown()
+---停止本轮声音并清理临时混音状态，保留已加载资源和声源池供 reset 复用。
+function AudioDirector.Reset()
     for _, bed in pairs(state.beds) do
-        pcall(function() bed.source:Stop() end)
+        pcall(function() bed.source:StopImmediate() end)
         bed.active = false
     end
     for _, slot in ipairs(state.pool) do
-        pcall(function() slot.source:Stop() end)
+        pcall(function() slot.source:StopImmediate() end)
+        slot.key, slot.startedAt = nil, 0
     end
     state.keySlot = {}
+    state.tick = 0
+    AudioDirector.SetPaused(false)
+    AudioDirector.SetFishing(false)
+end
+
+---场景关闭时停声、注销并释放独立声源；不释放 ResourceCache 共享的 Sound。
+function AudioDirector.Shutdown()
+    AudioDirector.Reset()
+    local audioInstance = getAudio()
+    local function release(source)
+        if audioInstance then
+            pcall(function() audioInstance:RemoveSoundSource(source) end)
+        end
+        pcall(function() source:Dispose() end)
+    end
+    for _, bed in pairs(state.beds) do release(bed.source) end
+    for _, slot in ipairs(state.pool) do release(slot.source) end
+    state.pool, state.beds, state.sounds = {}, {}, {}
+    state.initialized, state.loadedCount = false, 0
+    state.capability = "not_probed"
+    state.audioReady, state.pathSample, state.firstPath = nil, nil, nil
+    state.initAttempts, state.lastFailAttempts = 0, nil
 end
 
 return AudioDirector

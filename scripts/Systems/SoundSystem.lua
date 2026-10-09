@@ -44,7 +44,8 @@ local state = {
     currentAmbient = nil,  -- "day" | "night" | nil（底层世界声床，避免重复启停）
     overlay = nil,         -- nil | "elder" | "pause"（临时覆盖世界声床的环境音）
     lastAppliedBed = nil,  -- 最近一次成功应用的声床键（稳态早退用，评审 P1-1）
-    worldAudible = true,   -- 世界声床可闻开关：false=港内/未出航，昼夜声床静默（需求 环境：出航后自动播放）
+    worldAudible = false,  -- 世界声床可闻开关：false=港内/未出航，昼夜声床静默
+    portPaused = false,    -- 返港暂停独立于临时覆盖，关闭老人面板后仍留在港口声床
     muted = false,
 }
 
@@ -74,11 +75,11 @@ local BED_KEYS = {
 }
 local AMB = BED_KEYS
 
--- 当前应循环的环境声床：overlay 临时覆盖优先，否则取底层世界声床（昼/夜）；
--- 未出航（港内）时世界声床静默（target=nil → 四床全停）。
+-- 当前应循环的环境声床：老人/临时覆盖优先，返港后维持清晨暂停声床，
+-- 出港后恢复底层世界声床（昼/夜）；尚未建立模式时静默。
 local function activeBedKey()
     if state.overlay == "elder" then return BED_KEYS.elder end
-    if state.overlay == "pause" then return BED_KEYS.morning end
+    if state.overlay == "pause" or state.portPaused then return BED_KEYS.morning end
     if state.worldAudible == false then return nil end
     return state.currentAmbient == "night" and BED_KEYS.night or BED_KEYS.day
 end
@@ -137,14 +138,15 @@ end
 -- ---------------------------------------------------------------------------
 
 ---按当前昼夜相位同步环境声床：白天→白天声床，夜晚→夜晚声床。
----@param phase "day"|"night"
----@param worldActive? boolean 世界声床是否可闻：false=港内/未出航（昼夜床全停），
+---@param phase string 昼夜相位，非 night 值按 day 处理。
+---@param worldActive? boolean 世界声床是否可闻：false=港内暂停（清晨声床），
 ---   缺省视为 true（兼容既有调用）。出航后由 Loop 以 `not inPort` 传入。
 ---幂等：相位未变化时不重复启停，可在每帧时钟推进后安全调用。
 function SoundSystem.SyncAmbient(phase, worldActive)
     state.currentAmbient = (phase == "night") and "night" or "day"
     state.worldAudible = worldActive ~= false
-    if state.overlay == nil then applyActiveBed() end  -- overlay 期间仅更新底层相位，不抢床
+    state.portPaused = worldActive == false
+    applyActiveBed()
 end
 
 ---游戏开始自动播放白天环境声床（需求 环境：游戏开始自动播放 ocean_day_loop）
@@ -172,6 +174,7 @@ function SoundSystem.SetAmbient(mode)
     -- 注意：mode 为 "day"/"night" 时不再因等于 currentAmbient 而早退，
     -- 因为 overlay 期间 currentAmbient 不变但 applyActiveBed 需据此恢复床。
     state.currentAmbient = mode
+    state.worldAudible, state.portPaused = true, false
     if state.overlay == nil then applyActiveBed() end  -- 有 overlay 时不抢床
 end
 
@@ -238,12 +241,21 @@ end
 -- 公开 API：生命周期
 -- ---------------------------------------------------------------------------
 
----场景关闭时停声（由 Integration/Scene 等生命周期调用）
+local function clearPlaybackState()
+    state.currentAmbient, state.overlay, state.lastAppliedBed = nil, nil, nil
+    state.worldAudible, state.portPaused = false, false
+end
+
+---新周目停掉旧声音和临时覆盖，音量设置保留；下一次同步使用当前玩法状态。
+function SoundSystem.Reset()
+    pcall(AudioDirector.Reset)
+    clearPlaybackState()
+end
+
+---场景关闭时停声并释放独立声源（由成功关闭的生命周期调用）。
 function SoundSystem.Shutdown()
-    pcall(function() AudioDirector.Shutdown() end)
-    state.currentAmbient = nil
-    state.overlay = nil
-    state.lastAppliedBed = nil
+    pcall(AudioDirector.Shutdown)
+    clearPlaybackState()
 end
 
 ---调试/验收状态（屏幕通道，Maker 无控制台时可用）

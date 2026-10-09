@@ -113,6 +113,7 @@ function Loop:ResetState()
     self.settlementSaveDecision = nil
     self.worldPreparation = nil
     self.clock:Pause("port")
+    SoundSystem.Reset()
     return true
 end
 
@@ -147,6 +148,7 @@ local function newRequest(self, kind)
 end
 
 function Loop:Update(dt, advanceWorld)
+    if self.closed then return end
     self:RetryInventoryRollback()
     if self.barrel then self.barrel:Tick() end
     local actions, clock = self.actions, self.clock
@@ -189,7 +191,7 @@ function Loop:Update(dt, advanceWorld)
         local before = clock.elapsed + (clock.phase == "night" and clock.daySec or 0)
         local previousPhase = clock.phase
         clock:Update(slice)
-        SoundSystem.SyncAmbient(clock.phase, not self.inPort)  -- 需求 环境：出航后自动播放昼夜声床 / 入夜切换 / 返港静默（幂等）
+        SoundSystem.SyncAmbient(clock.phase, not self.inPort)  -- 港内保持暂停声床，出航后同步昼夜声床
         -- 音频诊断（真机静音排查 2026-10-08）：启动 2 秒后把音频状态推到状态行一次，
         -- 不依赖「开发调试」按钮（该按钮曾被透明 catcher 遮挡点不动）。
         if not audioDiagPushed and clock.elapsed >= 2 then
@@ -386,6 +388,7 @@ function Loop:SetElderOpen(open)
     return true
 end
 
+---@return boolean, string?, GameplayPortAccessDetails?
 local function readPortAccess(runtime)
     if not runtime then return true end
     if type(runtime.GetPortPosition) ~= "function" or type(runtime.GetShipPosition) ~= "function" then
@@ -538,6 +541,7 @@ function Loop:ReturnToPort()
         return reject(reason or "port_interface_unavailable")
     end
     if self.inPort then
+        SoundSystem.SyncAmbient(self.clock.phase, false)
         emit(self, "return_to_port", portFields(self, "operation", "already_at_port", nil, details))
         return true
     end
@@ -551,6 +555,7 @@ function Loop:ReturnToPort()
     self.inPort = true
     self.portNightElapsed = self.clock.phase == "night" and self.clock.elapsed or 0
     self.clock:Pause("port")
+    SoundSystem.SyncAmbient(self.clock.phase, false)
     self.lastMessage = "已返港，可交易、结束今天或再次出航"
     emit(self, "return_to_port", portFields(self, "operation", "returned", nil, details))
     return true
@@ -562,6 +567,7 @@ function Loop:Depart()
     if self.inventoryOpen or self.elderOpen then return false, "close_dialog_first" end
     self.inPort = false
     self.clock:Resume("port")
+    SoundSystem.SyncAmbient(self.clock.phase, true)
     self.lastMessage = "已出航"
     return true
 end
@@ -927,11 +933,13 @@ function Loop:RetryInitialSave()
 end
 
 function Loop:Close()
+    if self.closed then return true end
     self.generation = self.generation + 1
     self.closed, self.activeRequest = true, nil
     self.busy, self.loading = false, false
     self.initialSaveBusy = false
     self.clock:Pause("closed")
+    SoundSystem.Shutdown()
     return true
 end
 
