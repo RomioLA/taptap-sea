@@ -315,6 +315,7 @@ function Barrel:AcceptCompletion(record, evidence)
             if Progress.SetBarrelStage(self.loop.player, 2) ~= true then return false end
         else
             if Progress.GrantLens(self.loop.player) ~= true then return false end
+            if self.loop.achievements then self.loop.achievements:NoteLensUnlocked(self.loop.player.day) end  -- ②③ A1 首日透镜
             if Progress.SetBarrelStage(self.loop.player, 3) ~= true then return false end
         end
         return true

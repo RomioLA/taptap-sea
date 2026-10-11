@@ -3,6 +3,17 @@ local Items = require('data.items')
 local Config = require('config.gameplay')
 local Diagnostics = require('Gameplay.Diagnostics')
 local SoundSystem = require('Systems.SoundSystem')
+
+-- ②③ 大鱼判定：Items 定义目前无 size/big 字段（仅 category/worldEffect），
+-- 故默认 false；B 侧在 items.lua 给大鱼加 big=true 或 sizeClass="big" 后即生效（契约：A 工程 / B 数据）。
+local function isBigFishItem(id)
+    if not id then return false end
+    local def = Items.GetDefinition(id)
+    if not def then return false end
+    if def.big == true then return true end
+    if def.sizeClass == "big" then return true end
+    return false
+end
 ---@class GameplayActionPoint
 ---@field x number
 ---@field y number
@@ -338,6 +349,8 @@ function Actions:CompleteFishing(runtime,token,...)
         self._pendingFishing=nil
         self.loop:SetMessage('空网，本次不扣体力。')
         actionEvent('fishing_complete', record, 'operation', 'empty')
+        if self.loop.knowledge then self.loop.knowledge:OnFishingResolved({result = record.result}) end  -- ②③ emptyNetWhileFlee
+        if self.loop.achievements then self.loop.achievements:OnFishingResolved(record, false, false) end
         return true,'empty'
     end
     local targetCall,target=fishingCall(record,runtime,'GetFishingTarget',record.targetId)
@@ -378,6 +391,8 @@ function Actions:CompleteFishing(runtime,token,...)
     record.state='complete'
     self._pendingFishing=nil
     record.result=table.pack(true,hasSpace and 'caught' or 'pending_catch',record.itemId)
+    if self.loop.knowledge then self.loop.knowledge:OnFishingResolved({result = record.result}) end  -- ②③ 空网连击
+    if self.loop.achievements then self.loop.achievements:OnFishingResolved(record, isBigFishItem(record.itemId), true) end  -- ②③ A2/A5
     actionEvent('fishing_complete', record, 'operation', hasSpace and 'caught' or 'pending_catch')
     SoundSystem.CaptureSuccess()  -- 需求 行动：捕获成功播放 fish_capture
     -- S6 教学：成功捕获即完成"投饵→捕鱼→结果反馈"闭环（05 页 P6）；

@@ -10,6 +10,10 @@ local SoundSystem = require("Systems.SoundSystem")
 local audioDiagPushed = false -- 音频诊断一次性上屏标记（真机静音排查，2026-10-08）
 local Progress = require("Gameplay.Circle1B2Progress")
 local Barrel = require("Gameplay.Circle1B2Barrel")
+-- ②③ 认知度/成就系统执行器 + 跨局存档层
+local KnowledgeSystem = require("Gameplay.KnowledgeSystem")
+local AchievementSystem = require("Gameplay.AchievementSystem")
+local ProfileStore = require("Gameplay.ProfileStore")
 ---@alias GameplayWorldPreparation {generation:number, day:integer, worldIdentity:number}
 ---@class GameplayPortAccessDetails
 ---@field shipX number
@@ -86,6 +90,13 @@ function Loop:ResetState()
     self.player = assert(PlayerState.New())
     Progress.Initialize(self.player)
     Progress.OnDayStarted(self.player)
+    -- ②③ 认知度/成就系统接线：profile 跨周目仅建一次；KS/AS 每局随 player 重建
+    if not self.profileStore then
+        self.profileStore = ProfileStore.New()
+        self.profileStore:Load(function(ok) if ok then Diagnostics.Call("Loop", "profile_loaded", function() end) end)
+    end
+    if self.currentWeek == nil then self.currentWeek = 1 end
+    self:SetupKnowledgeSystems()
     self:ResetShopStock()
     self.clock = GameClock.New()
     self.inPort = true
@@ -149,6 +160,7 @@ end
 
 function Loop:Update(dt, advanceWorld)
     if self.closed then return end
+    if self.knowledge then self.knowledge:Update(dt) end  -- ②③ 0.25s 轮询观测 SurfaceSignals
     self:RetryInventoryRollback()
     if self.barrel then self.barrel:Tick() end
     local actions, clock = self.actions, self.clock
@@ -584,6 +596,12 @@ function Loop:EndToday()
 end
 
 function Loop:ConfirmForcedReturn()
+    -- ②③ A6 晚归强返：记录超出宽限后的晚归秒数（用于无强返判定）
+    if self.achievements then
+        local elapsed = self.clock.phase == "night" and self.clock.elapsed or 0
+        local late = math.max(0, elapsed - (Config.clock.graceSec or 0))
+        self.achievements:NoteLateReturn(late)
+    end
     if self:HasPendingCatch() then return false, "pending_catch_required" end
     if self.inventoryRollback or (self.actions and self.actions:IsBusy()) then return false, "busy" end
     if (self.barrel and self.barrel:IsBusy()) or self.storyDialog then return false, "busy" end
@@ -660,6 +678,12 @@ function Loop:BeginNewDay()
         emit(self, "new_day_preparation", {
             kind = "operation", result = "ending", endingKind = self.endingKind, day = self.player.day,
         })
+        -- ②③ 结局终判：非常规分支（改变结局）+ A6 无强返 + 认知成就终检
+        if self.achievements then
+            if self.endingKind == "changed" then self.achievements:NoteUnusualBranch() end
+            self.achievements:SettleRun()
+        end
+        if self.profileStore then self.profileStore:Save(function() end) end
         return true
     end
     local stamina = self:GetNextDayStamina(self.settlementForced)
@@ -843,6 +867,7 @@ function Loop:ConfirmSettlement()
 end
 
 function Loop:SettleDay()
+    if self.achievements then self.achievements:SettleDay() end  -- ②③ A2 单日零空网 / A5 大鱼率 日结
     if not self.inPort then local ok, err = self:ReturnToPort(); if not ok then return false, err end end
     return self:EndToday()
 end
@@ -1052,6 +1077,9 @@ function Loop:NewRun()
         return false, reason
     end
     if self.closed then return reject("scene_closed") end
+    -- ②③ 进入新周目前先落盘本周目已获图鉴/成就（跨周目保留）
+    if self.profileStore then self.profileStore:Save(function() end) end
+    self.currentWeek = (self.currentWeek or 1) + 1
     if self:HasPendingCatch() then return reject("pending_catch_required") end
     if self.busy or self.loading or self.initialSaveBusy or self.dropInFlight or self.forcedReturnPending or self.settlementPending then
         return reject("busy")
@@ -1157,6 +1185,9 @@ function Loop:DropItem(index)
     self.dropInFlight = false
     if not ok or accepted ~= true then return self:RollbackInventory(previous, stamina, "drop_rejected") end
     self.lastMessage = "已交接投放请求：" .. definition.name
+    if self.knowledge and payload and payload.worldEffect then
+        self.knowledge:OnDropItem(payload)  -- ②③ attractOnBait/birdSignalCast/repeatCastNoBird
+    end
     self:CancelThrowSelection()
     return true, payload
 end
@@ -1190,6 +1221,7 @@ function Loop:GiveToElder(index)
             record.applesGiven = priorCount
             return self:RollbackInventory(previous, stamina, "elder_progress_failed")
         end
+        if self.achievements then self.achievements:NoteAppleGiven(self.player.day) end  -- ②③ A3 三个苹果
     end
     self.player.elder.lastGivenItemId = id
     self.lastMessage = message or "老人收下了物品。"
@@ -1441,7 +1473,26 @@ end
 function Loop:BindRuntime(runtime)
     self.runtime = runtime
     self.barrel:BindRuntime(runtime)
+    self:SetupKnowledgeSystems()  -- runtime 就绪后补建 KS/AS（首帧 Init 时 runtime 可能尚未绑定）
 end
+
+-- ②③ 构建认知度/成就执行器；runtime.surfaceSignals 与 player 就绪后才建（幂等，每次 NewRun 重建以绑定新 player）
+function Loop:SetupKnowledgeSystems()
+    if not (self.runtime and self.runtime.surfaceSignals and self.player and self.profileStore) then return end
+    self.knowledge = KnowledgeSystem.New{
+        data = require("data.knowledge"),
+        surfaceSignals = self.runtime.surfaceSignals,
+        profile = self.profileStore,
+        currentWeek = self.currentWeek or 1,
+    }
+    self.achievements = AchievementSystem.New{
+        data = require("data.achievements"),
+        knowledge = self.knowledge,
+        profile = self.profileStore,
+        player = self.player,
+    }
+end
+
 function Loop:IsElderPresent() return Progress.IsElderPresent(self.player) end
 function Loop:GetElderStatus()
     local status = self.player.elder.circle1B2

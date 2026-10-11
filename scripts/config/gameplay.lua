@@ -60,6 +60,12 @@ return {
         key = "sea_game_loop_v1",
         schemaVersion = 1,
         localFilename = "sea_loop_save.json",
+        -- ③ profile 双层存档 (C2-1)：跨周目数据（图鉴 knowledgeLog / 成就 achievements）使用独立云 key，
+        -- 等同审查 §3.3「双文件」语义；本周目字段 domainLevels/storyLayerFlags 由 KnowledgeSystem 派生/重算，不在此持久化。
+        -- 字段存储结构见 Gameplay/ProfileStore.lua；本处仅登记键与版本，严禁其它模块自由加键（铁律5）。
+        -- U1：knowledgeLog/achievements 等字面键名由 ProfileStore 内部定义，已与 Config.persistence 对齐。
+        profileKey = "sea_game_loop_profile_v1",
+        profileSchemaVersion = 1,
     },
     -- 玩家界面设计方案 v1.0（2026-10-04）：海洋主题 token，HUD 表现层唯一取色来源。
     ui = {
