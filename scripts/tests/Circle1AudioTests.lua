@@ -5,20 +5,16 @@ local Tests = {}
 -- 隔离引擎边界；保留真实音频模块与 Loop，记录播放、停声、注销和释放。
 local function withAudioEngine(callback)
     local savedGlobals, savedModules = {}, {}
-    for _, name in ipairs({ "GetAudio", "audio", "cache", "SoundSource" }) do
+    for _, name in ipairs({ "GetAudio", "audio", "cache", "SoundSource", "Scene" }) do
         savedGlobals[name] = { value = _G[name] }
     end
     for _, name in ipairs({ "Gameplay.AudioDirector", "Systems.SoundSystem", "Gameplay.Loop" }) do
         savedModules[name] = { value = package.loaded[name] }
         package.loaded[name] = nil
     end
-    local engine = { sources = {}, registered = {}, gains = {}, paused = {}, loads = 0 }
-    function engine:AddSoundSource(source) self.registered[source] = true end
-    function engine:RemoveSoundSource(source)
-        assert(self.registered[source], "声源不可重复注销")
-        self.registered[source] = nil
-        source.removed = source.removed + 1
-    end
+    local engine = { sources = {}, registered = {}, gains = {}, paused = {}, loads = 0, scenes = {} }
+    function engine:AddSoundSource() error("组件自动注册，不得手动 AddSoundSource") end
+    function engine:RemoveSoundSource() error("组件自动注销，不得手动 RemoveSoundSource") end
     function engine:IsInitialized() return true end
     function engine:SetMasterGain(bus, gain) self.gains[bus] = gain end
     function engine:PauseSoundType(bus) self.paused[bus] = true end
@@ -46,27 +42,54 @@ local function withAudioEngine(callback)
                 GetFrequency = function() return 48000 end }
         end,
     }
-    _G.SoundSource = {
-        new = function()
-            local source = { playing = false, plays = 0, stops = 0, disposed = 0, removed = 0 }
-            function source:SetDeclickEnabled() end
-            function source:IsPlaying() return self.playing end
-            function source:Play(sound, frequency)
-                assert(self.disposed == 0 and engine.registered[self])
-                assert(frequency == 0 or frequency > 40000, "播放频率必须是 Hz")
-                self.sound, self.playing = sound, true
-                self.plays = self.plays + 1
+    _G.SoundSource = {} -- 与真实绑定一致：没有独立构造器。
+    _G.Scene = function()
+        local scene = { nodes = {}, disposed = 0 }
+        engine.scenes[#engine.scenes + 1] = scene
+        function scene:CreateChild()
+            local node = { sources = {} }
+            self.nodes[#self.nodes + 1] = node
+            function node:CreateComponent(kind)
+                assert(kind == "SoundSource")
+                if engine.failComponentAt == #engine.sources + 1 then error("模拟组件创建失败") end
+                local source = { playing = false, plays = 0, stops = 0, disposed = 0, removed = 0 }
+                function source:SetDeclickEnabled() end
+                function source:IsPlaying() return self.playing end
+                function source:Play(sound, frequency)
+                    assert(self.disposed == 0 and engine.registered[self])
+                    assert(frequency == 0 or frequency > 40000, "播放频率必须是 Hz")
+                    self.sound, self.playing = sound, true
+                    self.plays = self.plays + 1
+                end
+                function source:Stop() self.playing = false; self.stops = self.stops + 1 end
+                function source:StopImmediate() self:Stop() end
+                function source:Remove() self.detached = true end
+                function source:Dispose()
+                    assert(self.detached and self.disposed == 0 and engine.registered[self])
+                    self:StopImmediate()
+                    engine.registered[self] = nil
+                    self.removed, self.disposed = 1, 1
+                end
+                node.sources[#node.sources + 1] = source
+                engine.sources[#engine.sources + 1] = source
+                engine.registered[source] = true
+                return source
             end
-            function source:Stop() self.playing = false; self.stops = self.stops + 1 end
-            function source:StopImmediate() self:Stop() end
-            function source:Dispose()
-                assert(not engine.registered[self] and self.disposed == 0)
-                self.disposed = self.disposed + 1
+            return node
+        end
+        function scene:RemoveAllChildren() self.childrenRemoved = true end
+        function scene:Dispose()
+            assert(self.disposed == 0, "宿主不可重复释放")
+            assert(self.childrenRemoved, "关闭须清理子节点")
+            self.disposed = 1
+            for _, node in ipairs(self.nodes) do
+                for _, source in ipairs(node.sources) do
+                    assert(source.disposed == 1 and not engine.registered[source], "有外部引用的组件须先显式释放")
+                end
             end
-            engine.sources[#engine.sources + 1] = source
-            return source
-        end,
-    }
+        end
+        return scene
+    end
     local ok, reason = xpcall(function()
         callback(engine, require("Gameplay.AudioDirector"), require("Systems.SoundSystem"))
     end, debug.traceback)
@@ -198,6 +221,36 @@ function Tests.Run()
         AudioDirector.SetBusVolume("amb", 0.5)
         AudioDirector.SetBusVolume("amb", 0.8)
         AudioDirector.Shutdown()
+    end)
+
+    check("无 SoundSource 构造器时组件池仍可播放且声源仅注册一次", function()
+        withAudioEngine(function(engine, director)
+            assert(SoundSource.new == nil)
+            assert(director.Play("ui.button_click"))
+            assert(director.SetBed("amb.calm_sea", true))
+            assert(#engine.scenes == 1 and engine.scenes[1].updateEnabled == false)
+            assert(#engine.sources == 16 and engine:ActiveCount() == 2)
+            assert(director.Status():find("组件池可用(8+声床8)", 1, true))
+            director.Shutdown()
+            assert(engine.scenes[1].disposed == 1 and next(engine.registered) == nil)
+        end)
+    end)
+
+    check("部分组件创建失败释放宿主，退避后重试不残留声源", function()
+        withAudioEngine(function(engine, director)
+            engine.failComponentAt = 4
+            local ok, reason = director.Play("ui.button_click")
+            assert(not ok and reason:find("音频组件创建失败", 1, true))
+            assert(#engine.sources == 3 and next(engine.registered) == nil)
+            assert(engine.scenes[1].disposed == 1)
+            engine.failComponentAt = nil
+            for _ = 1, 89 do assert(not director.Play("ui.button_click")) end
+            assert(#engine.scenes == 1, "退避期间不得重复分配宿主")
+            assert(director.Play("ui.button_click"))
+            assert(#engine.scenes == 2 and #engine.sources == 19)
+            director.Shutdown()
+            assert(next(engine.registered) == nil and engine.scenes[2].disposed == 1)
+        end)
     end)
 
     check("reset 清空播放与临时混音状态但复用池和音量设置", function()

@@ -1,8 +1,9 @@
 -- AudioDirector：自适应音乐与空间音效系统 v1.0（S0 技术验证桩）
 -- 设计文档：《自适应音乐与空间音效系统设计方案_v1.0_2026-10-06.md》
 --
--- 实现路径（D-A1 已拍板）：方案 A——独立 SoundSource 池，脱离 Node/Scene。
--- 探针失败时优雅降级并回报原因（真机验收据此决定是否切换方案 B 隐藏音频 Scene）。
+-- 声源由持有的隐藏 Scene/Node 创建，通过引擎组件生命周期自动注册到 Audio。
+-- 不使用未导出的 SoundSource.new，也不手动重复 AddSoundSource。
+-- 音频 Scene 不参与玩法 World、渲染或时钟调度。
 --
 -- 引擎坑位守则（来源 engine-docs/api/audio.md，勿删）：
 --  1) SoundSource:Play 的 frequency 是绝对 Hz，不是 pitch 倍率；
@@ -51,13 +52,18 @@ local BUS_GAIN = { voice = 1.0, world = 1.0, amb = 0.8, music = 0.9, master = 1.
 -- 捕鱼 duck（设计文档 §5.2）：amb 主增益 0.8 → 0.56
 local AMB_DUCK_GAIN = 0.56
 
-local POOL_SIZE = 8 -- one-shot 轮转池（另含 2 个常驻声床专用源）
+local POOL_SIZE = 8 -- one-shot 轮转池；每张环境声床另有一个专用源
 
 local function countSpecs()
     local count = 0
     for _ in pairs(SPECS) do count = count + 1 end
     return count
 end
+
+---@type Scene?
+local audioScene = nil -- 明确持有顶层 Scene，防止 Lua GC 提前回收声源宿主。
+---@type SoundSource[]
+local audioSources = {} -- 包括尚未加入池的组件，初始化中途失败也可完整释放。
 
 local state = {
     initialized = false,
@@ -159,29 +165,47 @@ local function busConstant(bus)
     return SOUND_MASTER or "Master"
 end
 
--- 方案 A 能力探针：SoundSource.new() 独立实例 + audio:AddSoundSource 注册。
--- 任一环节失败即判定方案 A 不可用，返回原因供真机验收降级决策。
-local function probeStandalonePool()
-    local cacheInstance = getCache()
-    if not cacheInstance then
-        return false, "no_resource_cache"
-    end
-    local audioInstance = getAudio()
-    if not audioInstance or type(audioInstance.AddSoundSource) ~= "function" then
-        return false, "no_audio_subsystem"
-    end
-    if type(SoundSource) ~= "table" or type(SoundSource.new) ~= "function" then
-        return false, "no_soundsource_constructor"
-    end
-    local ok, source = pcall(SoundSource.new)
-    if not ok or not source then return false, "soundsource_new_failed" end
-    local okAdd = pcall(function() audioInstance:AddSoundSource(source) end)
-    if not okAdd then
+-- Lua 池也持有组件引用，不能仅释放 Scene 后等待 GC；逐个移除并立即释放。
+local function releaseAudioScene()
+    for _, source in ipairs(audioSources) do
+        pcall(function() source:StopImmediate() end)
+        pcall(function() source:Remove() end)
         pcall(function() source:Dispose() end)
-        return false, "addsoundsource_rejected"
     end
-    pcall(function() audioInstance:RemoveSoundSource(source) end)
-    pcall(function() source:Dispose() end)
+    audioSources = {}
+    state.pool, state.beds, state.keySlot = {}, {}, {}
+    if audioScene then
+        local scene = audioScene
+        audioScene = nil
+        pcall(function() scene:RemoveAllChildren() end)
+        pcall(function() scene:Dispose() end)
+    end
+end
+
+---@param name string
+---@return SoundSource
+local function createSource(name)
+    local scene = assert(audioScene, "audio_scene_unavailable")
+    local node = scene:CreateChild(name)
+    local source = node:CreateComponent("SoundSource")
+    audioSources[#audioSources + 1] = source
+    source:SetDeclickEnabled(true)
+    return source
+end
+
+-- 只使用实际导出的 Scene 构造器及组件 API，不依赖独立声源构造器。
+local function prepareAudioScene()
+    if not getCache() then return false, "no_resource_cache" end
+    if not getAudio() then return false, "no_audio_subsystem" end
+    releaseAudioScene()
+    local ok, reason = pcall(function()
+        audioScene = Scene()
+        audioScene.updateEnabled = false -- 无玩法/物理更新；Audio 仍独立混音。
+    end)
+    if not ok or not audioScene then
+        releaseAudioScene()
+        return false, "audio_scene_failed(" .. tostring(reason) .. ")"
+    end
     return true
 end
 
@@ -251,6 +275,7 @@ end
 local INIT_RETRY_CALLS = 90
 
 local function initFailed(message)
+    releaseAudioScene()
     state.capability = message
     state.lastFailAttempts = state.initAttempts
     logWarning(message)
@@ -265,14 +290,14 @@ local function ensureInit()
         return false -- 退避窗口内直接跳过
     end
 
-    local probeOk, probeResult = probeStandalonePool()
-    if not probeOk then
-        return initFailed("方案A不可用(" .. tostring(probeResult) .. ")：需降级方案B")
+    local sceneOk, sceneReason = prepareAudioScene()
+    if not sceneOk then
+        return initFailed("音频宿主不可用：" .. tostring(sceneReason))
     end
 
     local cacheInstance = getCache()
     local audioInstance = getAudio()
-    -- 音频子系统初始化状态（诊断：未初始化时 AddSoundSource 仍会"成功"但无输出）
+    -- 音频设备状态独立于组件创建成功与否，保留供真机诊断。
     if audioInstance and type(audioInstance.IsInitialized) == "function" then
         pcall(function() state.audioReady = audioInstance:IsInitialized() == true end)
     end
@@ -294,34 +319,28 @@ local function ensureInit()
             .. "｜已尝试含 assets/ 前缀候选")
     end
 
-    -- one-shot 轮转池
-    state.pool = {}
-    for _ = 1, POOL_SIZE do
-        local ok, source = pcall(SoundSource.new)
-        if not ok or not source then
-            return initFailed("方案A可用但池创建失败")
+    -- one-shot 与声床均通过组件创建；失败后整组释放，避免退避重试泄漏。
+    local poolOk, poolError = pcall(function()
+        for index = 1, POOL_SIZE do
+            local source = createSource("OneShot" .. tostring(index))
+            state.pool[#state.pool + 1] = { source = source, key = nil, startedAt = 0 }
         end
-        pcall(function() source:SetDeclickEnabled(true) end)
-        pcall(function() audioInstance:AddSoundSource(source) end)
-        state.pool[#state.pool + 1] = { source = source, key = nil, startedAt = 0 }
-    end
-
-    -- 常驻声床专用源（各 1 个，循环）
-    for key, spec in pairs(SPECS) do
-        if spec.loop then
-            local ok, source = pcall(SoundSource.new)
-            if ok and source then
-                pcall(function() source:SetDeclickEnabled(true) end)
-                pcall(function() source.soundType = busConstant(spec.bus) end)
-                pcall(function() audioInstance:AddSoundSource(source) end)
+        for key, spec in pairs(SPECS) do
+            if spec.loop then
+                local source = createSource(key)
+                source.soundType = busConstant(spec.bus)
                 state.beds[key] = { source = source, active = false }
             end
         end
-    end
+    end)
+    if not poolOk then return initFailed("音频组件创建失败：" .. tostring(poolError)) end
 
     applyBusGains()
     state.initialized = true
-    state.capability = "方案A可用(独立池" .. tostring(#state.pool) .. "+声床" .. tostring(#state.beds) .. ")"
+    local bedCount = 0
+    for _ in pairs(state.beds) do bedCount = bedCount + 1 end
+    state.capability = "组件池可用(" .. tostring(#state.pool) .. "+声床" .. tostring(bedCount) .. ")"
+    print("[AudioDirector] " .. state.capability .. "，资源加载" .. tostring(loaded) .. "/" .. tostring(countSpecs()))
     return true
 end
 
@@ -518,19 +537,11 @@ function AudioDirector.Reset()
     AudioDirector.SetFishing(false)
 end
 
----场景关闭时停声、注销并释放独立声源；不释放 ResourceCache 共享的 Sound。
+---场景关闭时停声并释放声源宿主；不释放 ResourceCache 共享的 Sound。
 function AudioDirector.Shutdown()
     AudioDirector.Reset()
-    local audioInstance = getAudio()
-    local function release(source)
-        if audioInstance then
-            pcall(function() audioInstance:RemoveSoundSource(source) end)
-        end
-        pcall(function() source:Dispose() end)
-    end
-    for _, bed in pairs(state.beds) do release(bed.source) end
-    for _, slot in ipairs(state.pool) do release(slot.source) end
-    state.pool, state.beds, state.sounds = {}, {}, {}
+    releaseAudioScene()
+    state.sounds = {}
     state.initialized, state.loadedCount = false, 0
     state.capability = "not_probed"
     state.audioReady, state.pathSample, state.firstPath = nil, nil, nil

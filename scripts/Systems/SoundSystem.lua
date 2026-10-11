@@ -252,7 +252,7 @@ function SoundSystem.Reset()
     clearPlaybackState()
 end
 
----场景关闭时停声并释放独立声源（由成功关闭的生命周期调用）。
+---场景关闭时停声并释放声源组件与宿主（由成功关闭的生命周期调用）。
 function SoundSystem.Shutdown()
     pcall(AudioDirector.Shutdown)
     clearPlaybackState()
