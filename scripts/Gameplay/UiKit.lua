@@ -32,6 +32,17 @@ local UiKit = {
         coinBright = { 250, 199, 117, 255 },
         coinDeep = { 133, 79, 11, 255 },
         warnCoral = { 216, 90, 48, 255 },
+        -- 强调色（v1.5 规格定稿 · 降饱和海蓝绿 {74,146,136}）：
+        -- 选中/列表高亮统一走这一组，避免各界面各自硬编码色值。
+        accent = { 74, 146, 136, 255 },
+        accentSoft = { 74, 146, 136, 50 },   -- 选中底（≈20%）
+        accentLine = { 74, 146, 136, 180 },  -- 选中边 2px
+        accentBar = { 74, 146, 136, 220 },   -- 左侧 3px 竖条
+        -- 状态条四色（降饱和，对齐淡彩素材集）：体力/饱食/心情/知识
+        statStamina = { 178, 96, 70, 255 },
+        statFood = { 186, 140, 68, 255 },
+        statMood = { 182, 116, 124, 255 },
+        statKnowledge = { 124, 110, 158, 255 },
         -- 文字：textMuted/textGold 现为**卡内墨色**（鱼获行标签在卡片内，
         -- 键名受 Circle1HUDReviewTests 契约保护不可改；色值即卡内色）。
         -- 海面信息层（零底板叠海面）必须用 seaTextMuted/seaTextGold 冷色。
@@ -109,6 +120,22 @@ local UiKit = {
             normal = { 29, 158, 117, 205 },
             pressed = { 15, 110, 86, 225 },
             text = { 255, 255, 255, 255 },
+        },
+        -- 选中态（v1.5 规格定稿 · 用户拍板「降饱和对齐淡彩素材」）：
+        -- 补齐四态矩阵缺失的 selected —— 图鉴/成就/商店/列表类界面的必需态。
+        -- 形态 = 低不透明淡青底 + 2px 边 + 左侧 3px 竖条（规格 §7 / §12.3）。
+        -- 色值 {74,146,136} 由 success 降饱和派生，与新美术素材的灰调粉彩一致；
+        -- **不改动 success 本身**（正向反馈语义与既有断言保持不变）。
+        selected = {
+            normal = { 74, 146, 136, 50 },
+            pressed = { 74, 146, 136, 90 },
+            text = { 74, 54, 32, 255 },
+            borderColor = { 74, 146, 136, 180 },
+            borderWidth = 2,
+            -- 左侧竖条：由调用方按规格画（3px / {74,146,136,220}），
+            -- 令牌在此集中定义，避免各界面各自硬编码。
+            barColor = { 74, 146, 136, 220 },
+            barWidth = 3,
         },
         -- 警告：暖金（"缺少图纸"类提示）
         warning = {
@@ -260,7 +287,8 @@ function UiKit.buttonProps(variant)
     local props = {
         backgroundColor = skin.normal,
         pressedBackgroundColor = skin.pressed or skin.normal,
-        borderColor = b.borderColor,
+        -- v1.5：描边色同样允许逐档覆盖（选中态用降饱和青边，而非通用墨棕边）
+        borderColor = skin.borderColor or b.borderColor,
         borderWidth = bw,
         pressedBorderWidth = bw,
         borderRadius = b.radius or 20,
