@@ -8,6 +8,8 @@ local DialogueStyle = require("Gameplay.DialogueStyle")
 local UiKit = require("Gameplay.UiKit")
 local Achievements = require("Gameplay.Achievements")
 local ElderQA = require("Gameplay.ElderQA")
+-- v3.0 P0：屏幕适配层（断点 / 按钮坞让位 / 对话条数公式），见方案 §4.1。
+local UiLayout = require("Gameplay.UiLayout")
 local SoundSystem = require("Systems.SoundSystem")
 
 local HUD = {}
@@ -87,6 +89,10 @@ local INFO_FLEX = presentation.INFO_FLEX
 function HUD.Create(loop, parent, debugTools)
     if not loop then error("HUD.Create requires a gameplay loop", 2) end
 
+    -- v3.0 P0：建 UI 之前先探一次视口。取不到（headless 测试 / 引擎未就绪）时
+    -- UiLayout 全部回退到改动前的常量，因此本行不会引入任何回归差异。
+    UiLayout.Sync()
+
     ---@class HUDLocalState
     ---@field destroyed boolean
     ---@field localMessage string
@@ -151,6 +157,21 @@ function HUD.Create(loop, parent, debugTools)
 
     local themedPanels = {} -- 昼夜主题注册表：{widget=, day=, night=}
     local applyTheme = makeThemer()
+
+    -- v3.0 P0：布局属性安全写入。测试桩（ABIntegrationTests / Circle1B3SceneUITests
+    -- 等）的 Panel 只实现 SetStyle 或干脆只有 props 表，**没有 SetProp**，直接
+    -- 调用会 "attempt to call a nil value (method 'SetProp')"（b5 新增红根因）。
+    -- 按 SetProp → SetStyle → props 表三级降级：真机走第一条，测试桩走后两条。
+    local function setLayoutProp(widget, key, value)
+        if not widget then return end
+        if type(widget.SetProp) == "function" then
+            widget:SetProp(key, value)
+        elseif type(widget.SetStyle) == "function" then
+            widget:SetStyle({ [key] = value })
+        elseif type(widget.props) == "table" then
+            widget.props[key] = value
+        end
+    end
 
     -- v2.1 批B：通用卡工厂换水彩底板（roundcard=圆角茶棕卡）。
     -- 皮肤/文字色全部来自 Gameplay.UiKit 单一令牌源，本函数不再内嵌样式。
@@ -506,6 +527,27 @@ local header = UI.Panel {
     dock:AddChild(refs.returnToPort)
     dock:AddChild(refs.endToday)
     dock:AddChild(refs.beginFishing)
+
+    -- v3.0 P0-1（评审 §二 P0-1）：按钮坞换行会压住卡片底部操作条。
+    -- 原 cardHost.bottom 固定 92（按 1 行预留），但常驻 7 键合计 ≈662px、
+    -- 情境键（木桶 96 / 望远镜 104 / 图鉴 72）全出时峰值 ≈970px，360 宽屏
+    -- 必然折 2~3 行，多出来的 50~100px 正好盖在「结束对话」上。
+    -- 改为按**可见**按钮总宽估算行数 → 动态让位高度（UiLayout.DockReserve）。
+    -- 宽度取自各 makeButton 的显式宽度入参，新增坞内按钮时请同步登记本表。
+    local dockEntries = {
+        { widget = refs.infoToggle,       width = 92 },
+        { widget = refs.compendiumToggle, width = 72 },
+        { widget = refs.barrelToggle,     width = 96 },
+        { widget = refs.scopeToggleBar,   width = 104 },
+        { widget = refs.inventoryToggle,  width = 128 },
+        { widget = refs.elderToggle,      width = 112 },
+        { widget = refs.depart,           width = 80 },
+        { widget = refs.returnToPort,     width = 80 },
+        { widget = refs.endToday,         width = 98 },
+        { widget = refs.beginFishing,     width = 72 },
+    }
+    local dockReserve = 92
+
     actionBar:AddChild(dock)
     root:AddChild(actionBar)
 
@@ -562,6 +604,17 @@ local header = UI.Panel {
         pointerEvents = "box-none",
     }
 
+    -- v3.0 P0（评审 P1-1）：大屏卡片封顶 720 居中。此前 left/right=0 全宽，
+    -- 平板/横屏下正文一行 100+ 汉字、气泡被拉成横条，可读性反而下降。
+    -- 注意：left/right 保持 0 不变（Circle1B7CardLayoutTests 断言四边锚定），
+    -- 只追加 maxWidth + alignSelf；compact（手机）下 CardMaxWidth() 返回 nil，
+    -- 一个 prop 都不写，与改动前完全一致。⚠️ 居中效果需真机验收。
+    local cardMaxWidth = UiLayout.CardMaxWidth()
+    if cardMaxWidth then
+        setLayoutProp(cardHost, "maxWidth", cardMaxWidth)
+        setLayoutProp(cardHost, "alignSelf", "center")
+    end
+
     -- ⚠️ 保持流式容器（flexGrow/flexBasis）——试过改absolute 后，测试桩对
     -- absolute 容器的子节点可见性判定与流式不同，导致 contentScroll/三卡
     -- 整棵子树被判hidden（12 红的真正元凶）。此处不动。
@@ -590,6 +643,16 @@ local header = UI.Panel {
         borderColor = { 0, 0, 0, 0 },
         borderWidth = 0,
         onClick = function()
+            -- v3.0 P0（用户拍板「点空白处退出」）：老人卡打开时，点空白的语义
+            -- 升级为「结束对话」，而不是只收起左侧整块。
+            -- 契约不受影响 —— 四套件仍走「结束对话」按钮（节点与文案都保留，
+            -- 见 UiKit.button.link），这里只是**多一条**退出路径。
+            -- ⚠️ 误触风险需真机验：海面拖拽/摇杆不应触发（catcher 只在
+            -- infoOpen 时才 SetVisible(true)，见 refresh）。
+            if loop.elderOpen == true then
+                invokeLoop("SetElderOpen", false)
+                return
+            end
             if state.infoOpen == true then
                 state.infoOpen = false
                 -- v2.3.1 总开合：点空白同样收起左侧整块（与「信息」按钮一致）
@@ -600,6 +663,29 @@ local header = UI.Panel {
     }
     refs.infoCloseCatcher:SetVisible(false)
     infoLayer:AddChild(refs.infoCloseCatcher)
+
+    -- v3.0 P0-1：按**可见**按钮估算坞行数 → 动态让位高度。
+    -- 只在数值变化时写回 bottom：引擎每收到一次 SetStyle 都会触发整树 Yoga
+    -- 布局，refresh 里无条件调用等于白烧一次布局（同 fadeOpacity 既有教训）。
+    local function updateDockReserve()
+        local total, visible = 0, 0
+        for _, entry in ipairs(dockEntries) do
+            local shown = true
+            local ok, value = pcall(function() return entry.widget:IsVisible() end)
+            if ok then shown = value ~= false end
+            if shown then
+                total = total + entry.width
+                visible = visible + 1
+            end
+        end
+        local gaps = visible > 1 and (visible - 1) or 0
+        local next = UiLayout.DockReserve(total, gaps)
+        if next == dockReserve then return end
+        dockReserve = next
+        setLayoutProp(cardHost, "bottom", next)
+        setLayoutProp(refs.infoCloseCatcher, "bottom", next)
+    end
+    updateDockReserve()
     refs.contentScroll = contentScroll
     refs.contentScroll:SetVisible(false)
     infoLayer:AddChild(contentScroll)
@@ -1402,12 +1488,15 @@ local header = UI.Panel {
         flexDirection = "row",
         flexWrap = "wrap",
     }
+    -- v3.0 P0（用户拍板「去按钮化」）：这两个是次级动作，改文字链皮肤
+    -- （透明底 + 墨棕字，见 UiKit.button.link）。节点仍是 Button、文案不变，
+    -- findButtons("结束对话") / ("聊天记录") 照旧命中，四套件零改动。
     refs.elderLogToggle = makeButton("聊天记录", function()
         state.elderReviewOpen = not (state.elderReviewOpen == true)
         state.elderOptionsExpanded = false
         refresh()
-    end, "secondary", "46%")
-    refs.elderEnd = makeButton("结束对话", function() invokeLoop("SetElderOpen", false) end, "secondary", "46%")
+    end, "link", "46%")
+    refs.elderEnd = makeButton("结束对话", function() invokeLoop("SetElderOpen", false) end, "link", "46%")
     refs.elderGlobalRow:AddChild(refs.elderLogToggle)
     refs.elderGlobalRow:AddChild(refs.elderEnd)
     -- v2.3：全局键行提升到 footer 直属（不随选项抽屉收起），常驻可点
@@ -1679,13 +1768,22 @@ local header = UI.Panel {
     -- destroyChildren 会退化为全局 nil → "attempt to call a nil value"。
     local askElderFree
     local destroyChildren
-    -- v2.2 对话流可见条数上限：主区只渲染最近 N 轮对话。
-    -- 为什么限条而不是包 ScrollView：§7.9 红线——多包一层 ScrollView 会
-    -- 改变 UI 树结构，测试沿父链判 isVisible 时失配（3 套件红）。
-    -- 限条 + elderDialogue(flexGrow=0) 双保险：气泡按自然高度排布，超出部分
-    -- 由 body 的 ScrollView 滚动兜底（不再 flexGrow=1 顶满后溢出压操作条），
-    -- 下方操作条恒在卡内可见。更早的完整历史由聊天记录抽屉承载（数据同一份）。
-    local ELDER_VISIBLE_LINES = 5
+    -- v3.0 P0-3：原为硬编码 `local ELDER_VISIBLE_LINES = 5` —— 小屏放不下、
+    -- 大屏太浪费，溢出还只能靠「聊天记录」二次跳转，等于信息丢失（评审 P0-3）。
+    -- 改为按卡片可用高度实时算：小屏得下限 3~4 条，大屏得上 8 条。
+    -- 视口不可用时回退 5，与改动前**逐像素一致**（headless 测试零差异）。
+    local ELDER_VISIBLE_LINES_FALLBACK = 5
+    -- 单条气泡实测高度：昵称行 13 + 正文 13×1~2 行 + 内边距 12 + 间距 4 ≈ 52
+    local ELDER_BUBBLE_HEIGHT = 52
+    ---卡片能放下几条气泡（可用高度扣掉头/选项/操作条后的净高 / 单条高）。
+    local function elderVisibleLines()
+        if not UiLayout.Available() then return ELDER_VISIBLE_LINES_FALLBACK end
+        -- 卡内扣减：摘要头 1~2 行 ≈52、选项区（一级键行 + 二级行）≈96、
+        -- 操作条 44、卡片内外边距 24。
+        local available = UiLayout.CardAvailableHeight(40, dockReserve)
+        local usable = available - 52 - 96 - 44 - 24
+        return UiLayout.BubbleCount(usable, ELDER_BUBBLE_HEIGHT, 3, 8)
+    end
     -- v2.1 §7.14（对话式形态）：对话流渲染 + 提问区构建 + 聊天记录抽屉同步。
     -- 说明：对话流与提问区**不使用 ScrollView**（结构红线，会致 3 套件红）。
     local function renderElderDialogue()
@@ -1694,10 +1792,12 @@ local header = UI.Panel {
         destroyChildren(refs.elderLogRows)
         local transcript = state.elderTranscript or {}
         local total = #transcript
-        -- 只渲染最近 ELDER_VISIBLE_LINES 条气泡；更早的仅进聊天记录
+        -- 只渲染最近 N 条气泡（N 随屏幕高度变化，见 elderVisibleLines）；
+        -- 更早的仅进聊天记录。
+        local visibleLines = elderVisibleLines()
         local firstVisible = 1
-        if total > ELDER_VISIBLE_LINES then
-            firstVisible = total - ELDER_VISIBLE_LINES + 1
+        if total > visibleLines then
+            firstVisible = total - visibleLines + 1
         end
         for index = 1, total do
             local entry = transcript[index]
@@ -1705,9 +1805,11 @@ local header = UI.Panel {
             local isElder = entry.who == "elder"
             local body = entry.teach and UiKit.teachingText(entry.text) or entry.text
             local logRow = UI.Panel { width = "100%", gap = 2 }
-            logRow:AddChild(makeLabel(isElder and "老人" or "你", 11,
+            -- v3.0 P0：昵称行原硬编码 11px，真机上明显偏小；统一走字号令牌
+            -- （下限 13px，见 UiKit.fontSize 注释）。
+            logRow:AddChild(makeLabel(isElder and "老人" or "你", UiKit.fontSize.small,
                 isElder and UiKit.ink.teaching or UiKit.ink.dim, "bold"))
-            logRow:AddChild(makeLabel(body, 11, UiKit.ink.teaching))
+            logRow:AddChild(makeLabel(body, UiKit.fontSize.small, UiKit.ink.teaching))
             refs.elderLogRows:AddChild(logRow)
 
             if index >= firstVisible then
@@ -1720,7 +1822,7 @@ local header = UI.Panel {
                 themedPanels[#themedPanels + 1] = {
                     widget = bubble, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
                 }
-                bubble:AddChild(makeLabel(isElder and "老人" or "你", 11,
+                bubble:AddChild(makeLabel(isElder and "老人" or "你", UiKit.fontSize.small,
                     isElder and UiKit.ink.teaching or UiKit.ink.dim, "bold"))
                 bubble:AddChild(makeLabel(body, UiKit.fontSize.teaching,
                     isElder and UiKit.ink.body or UiKit.ink.teaching))
@@ -2816,6 +2918,10 @@ local header = UI.Panel {
         end
         if refs.debugFishing then refs.debugFishing:SetDisabled(busy or inPort or not ready or fishingRestricted) end
         if refs.debugSalvage then refs.debugSalvage:SetDisabled(busy or inPort or not ready or fishingRestricted) end
+        -- v3.0 P0-1：坞内按钮显隐都定完后再算让位高度，写回 cardHost / catcher。
+        -- 必须放在 refresh 末尾（情境键 barrel/scope/compendium 的 SetVisible
+        -- 散落在上方各处），否则会让位算早、漏算刚显示的按钮。
+        updateDockReserve()
     end
 
     local function destroy()

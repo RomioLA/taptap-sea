@@ -4,9 +4,12 @@
 -- 色板走向（拍板决策）：卡片层向水彩暖色收敛；海面信息层保持冷色可读性。
 -- 纯数据模块：不依赖引擎，测试桩可直接加载。
 local UiKit = {
-    -- 字号层级：title=剧情/模态标题（17）；body=正文（14）；button=按钮（13）；
-    -- info=信息层（13）；teaching=教学/引导行（12）；small=辅助小字（12）。
-    fontSize = { title = 17, body = 14, button = 13, info = 13, teaching = 12, small = 12 },
+    -- 字号层级：title=剧情/模态标题（18）；body=正文（14）；button=按钮（13）；
+    -- info=信息层（13）；teaching=教学/引导行（13）；small=辅助小字（13）。
+    -- v3.0 P0（用户拍板「字号下限提到 13px」）：teaching/small 由 12 提到 13，
+    -- title 由 17 提到 18。此前聊天记录行还硬编码 11px（HUD.lua），真机上明显
+    -- 偏小，现已统一走本表。下限 13px 为可读性红线，不再下探到 11/12。
+    fontSize = { title = 18, body = 14, button = 13, info = 13, teaching = 13, small = 13 },
 
     -- 对白/教学文字（深底用，兼容 DialogueStyle.color 旧引用）：
     -- body=暖米白正文，teaching=教学金，dim=辅助弱化。
@@ -116,6 +119,18 @@ local UiKit = {
         disabled = {
             normal = { 160, 152, 140, 120 },
             text = { 240, 236, 228, 190 },
+        },
+        -- 文字链（v3.0 P0 轮 · 用户拍板「去按钮化」）：退出/回看这类次级动作
+        -- 不再做成实心按钮，改为清透底 + 墨棕字，视觉噪声下降、信息密度上升。
+        -- ⚠️ 契约：节点**仍是 Button**、文案不变（"结束对话"/"聊天记录"），
+        --    测试 findButtons 精确匹配照旧命中（方案 §4.6）。
+        -- 触控热区不缩水：minHeight 仍由 size.buttonMinHeight(44) 兜底，
+        --   只是去掉底色与描边，点击面积不变。
+        link = {
+            normal = { 0, 0, 0, 0 },
+            pressed = { 146, 96, 38, 40 },
+            text = { 146, 96, 38, 255 },
+            borderWidth = 0,
         },
         -- 极淡水彩纸纹叠加（保留手作感）：用 panelLite 素面纸当 overlay，
         -- alpha 极低（~28/255）只留纸纹不显花纹；不想要可设 paperOverlay=false。
@@ -239,7 +254,9 @@ function UiKit.buttonProps(variant)
     if not b then return nil end
     local skin = b[variant] or b.secondary
     if not skin or not skin.normal then return nil end
-    local bw = b.borderWidth or 1
+    -- v3.0：允许皮肤逐档覆盖描边宽度（文字链 skin 需要 borderWidth=0，
+    -- 否则透明底上会浮出一圈孤立的边框线）。
+    local bw = (type(skin.borderWidth) == "number") and skin.borderWidth or (b.borderWidth or 1)
     local props = {
         backgroundColor = skin.normal,
         pressedBackgroundColor = skin.pressed or skin.normal,
