@@ -404,14 +404,17 @@ function Tests.Run()
             -- 自由输入形态不再有预设教学问题按钮（※ 前缀）
             assert(not findButtonPrefix(hud.root, "※ "),
                 "free-input submenu must not list preset teaching buttons")
-            -- 对话流条数有上限（气泡限 ELDER_VISIBLE_LINES，不随轮数增长）
-            -- 溢出提示在对话流尾部：提问二级即显示对话流，返回一级后断言气泡边界
+            -- v3.1 羊皮卷：对话流改为 ScrollView（elderDialogueScroll）全量渲染，
+            -- 完整历史滚动可读；不再有 N 条限条与「更早对话已折叠」溢出提示。
             click_first(findButton(hud.root, "← 返回", true))
             hud.Refresh()
             local bubbles = countVisibleImagePanels(hud.root)
-            assert(bubbles <= 10, "the conversation stream must stay bounded, got " .. bubbles)
-            assert(findLabelContaining(hud.root, "更早对话已折叠"),
-                "folded history must point the player at the chat log")
+            assert(bubbles >= 6, "the parchment scroll must render the full history, got " .. bubbles)
+            local scroll = findById(hud.root, "elderDialogueScroll")
+            assert(scroll ~= nil and scroll.kind == "ScrollView",
+                "the dialogue stream must be a scrollable parchment (ScrollView)")
+            assert(not findLabelContaining(hud.root, "更早对话已折叠"),
+                "the parchment scroll renders everything; no fold notice may exist")
 
             -- v2.3 回看态：点[聊天记录] → 选项区收起为把手；点把手展开/收起
             hud.Refresh()

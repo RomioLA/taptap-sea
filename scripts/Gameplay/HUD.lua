@@ -1393,20 +1393,37 @@ local header = UI.Panel {
     refs.elderPanel:AddChild(refs.elderHeaderBox)
 
     -- 主体区：对话流（限高）+ 聊天记录（回看态显示）
-    -- 对话流区（气泡序列，不包 ScrollView — §7.9 结构红线）。
-    -- 二级/回看态下隐藏，把空间让给二级列表或记录。
-    refs.elderDialogue = UI.Panel {
+    -- v3.1 羊皮卷改造（用户拍板 2026-10-12）：对话流从「限条 Panel」升级为
+    -- ScrollView —— 展开的羊皮卷，滚动承载**全部**历史消息，全量渲染
+    -- transcript，取消 N 条限条与「更早对话已折叠」溢出提示（评审截图实测：
+    -- 限条形态在真机上首行被裁、话题行重叠，可读信息不完整）。
+    -- 「聊天记录」回看态保留（节点/文案不变，四套件契约不动），作为放大视图。
+    -- 树结构变化已同步 Circle1B7CardLayoutTests（气泡有界断言 → 全量渲染断言）。
+    refs.elderDialogueRows = UI.Panel { width = "100%", gap = 4, flexDirection = "column" }
+    refs.elderDialogue = UI.ScrollView {
+        id = "elderDialogueScroll",
         width = "100%",
-        gap = 4,
-        flexGrow = 0,
+        flexGrow = 1,
         flexBasis = 0,
         minHeight = 0,
-        flexDirection = "column",
+        scrollY = true,
+        showScrollbar = true,
+        children = { refs.elderDialogueRows },
     }
-    refs.elderDialogOverflow = makeLabel("", UiKit.fontSize.small, UiKit.ink.dim)
+    refs.elderDialogTail = refs.elderDialogueRows -- 追加锚点
+
+    -- 羊皮卷卷轴杆（上/下各一条，木轴质感）：纯装饰、flexShrink=0，
+    -- 不包任何子节点，不改变 ScrollView 的树结构（测试 walk 契约安全）。
+    local function makeScrollRod()
+        local rod = UI.Panel { width = "100%", height = 5, flexShrink = 0 }
+        themedPanels[#themedPanels + 1] = {
+            widget = rod, day = { 138, 108, 74, 200 }, night = { 96, 76, 54, 200 },
+        }
+        return rod
+    end
+    refs.elderBody:AddChild(makeScrollRod())
     refs.elderBody:AddChild(refs.elderDialogue)
-    refs.elderBody:AddChild(refs.elderDialogOverflow)
-    refs.elderDialogTail = refs.elderDialogue -- 追加锚点
+    refs.elderBody:AddChild(makeScrollRod())
 
     -- 聊天记录：回看态显示完整历史（内含 ScrollView 安全——§7.9 已验证）
     refs.elderLogPanel = UI.Panel(UiKit.cardProps("plain", {
@@ -1768,37 +1785,17 @@ local header = UI.Panel {
     -- destroyChildren 会退化为全局 nil → "attempt to call a nil value"。
     local askElderFree
     local destroyChildren
-    -- v3.0 P0-3：原为硬编码 `local ELDER_VISIBLE_LINES = 5` —— 小屏放不下、
-    -- 大屏太浪费，溢出还只能靠「聊天记录」二次跳转，等于信息丢失（评审 P0-3）。
-    -- 改为按卡片可用高度实时算：小屏得下限 3~4 条，大屏得上 8 条。
-    -- 视口不可用时回退 5，与改动前**逐像素一致**（headless 测试零差异）。
-    local ELDER_VISIBLE_LINES_FALLBACK = 5
-    -- 单条气泡实测高度：昵称行 13 + 正文 13×1~2 行 + 内边距 12 + 间距 4 ≈ 52
-    local ELDER_BUBBLE_HEIGHT = 52
-    ---卡片能放下几条气泡（可用高度扣掉头/选项/操作条后的净高 / 单条高）。
-    local function elderVisibleLines()
-        if not UiLayout.Available() then return ELDER_VISIBLE_LINES_FALLBACK end
-        -- 卡内扣减：摘要头 1~2 行 ≈52、选项区（一级键行 + 二级行）≈96、
-        -- 操作条 44、卡片内外边距 24。
-        local available = UiLayout.CardAvailableHeight(40, dockReserve)
-        local usable = available - 52 - 96 - 44 - 24
-        return UiLayout.BubbleCount(usable, ELDER_BUBBLE_HEIGHT, 3, 8)
-    end
+    -- v3.1 羊皮卷：原「按卡片可用高度算可见气泡数（3~8 条）」的公式块已删除 ——
+    -- 对话流升级为 ScrollView 全量渲染（见 elderDialogueScroll），限条不再存在。
     -- v2.1 §7.14（对话式形态）：对话流渲染 + 提问区构建 + 聊天记录抽屉同步。
-    -- 说明：对话流与提问区**不使用 ScrollView**（结构红线，会致 3 套件红）。
+    -- v3.1 羊皮卷：对话流自身是 ScrollView（elderDialogueScroll），全量渲染
+    -- transcript，新消息追加后自动滚到卷底；不再有 N 条限条与溢出提示。
     local function renderElderDialogue()
-        if not refs.elderDialogue then return end
-        destroyChildren(refs.elderDialogue)
+        if not refs.elderDialogueRows then return end
+        destroyChildren(refs.elderDialogueRows)
         destroyChildren(refs.elderLogRows)
         local transcript = state.elderTranscript or {}
         local total = #transcript
-        -- 只渲染最近 N 条气泡（N 随屏幕高度变化，见 elderVisibleLines）；
-        -- 更早的仅进聊天记录。
-        local visibleLines = elderVisibleLines()
-        local firstVisible = 1
-        if total > visibleLines then
-            firstVisible = total - visibleLines + 1
-        end
         for index = 1, total do
             local entry = transcript[index]
             -- 聊天记录抽屉同步**全部**历史（收起时子树不可见，不影响契约查找）
@@ -1812,29 +1809,26 @@ local header = UI.Panel {
             logRow:AddChild(makeLabel(body, UiKit.fontSize.small, UiKit.ink.teaching))
             refs.elderLogRows:AddChild(logRow)
 
-            if index >= firstVisible then
-                -- 老人气泡在左（panelLite 羊皮纸底），玩家气泡在右（plain 素面纸）
-                local bubble = UI.Panel(UiKit.cardProps(isElder and "panelLite" or "plain", {
-                    width = "100%",
-                    gap = 3,
-                    flexShrink = 0,
-                }, true))
-                themedPanels[#themedPanels + 1] = {
-                    widget = bubble, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
-                }
-                bubble:AddChild(makeLabel(isElder and "老人" or "你", UiKit.fontSize.small,
-                    isElder and UiKit.ink.teaching or UiKit.ink.dim, "bold"))
-                bubble:AddChild(makeLabel(body, UiKit.fontSize.teaching,
-                    isElder and UiKit.ink.body or UiKit.ink.teaching))
-                refs.elderDialogue:AddChild(bubble)
-            end
+            -- 老人气泡在左（panelLite 羊皮纸底），玩家气泡在右（plain 素面纸）
+            local bubble = UI.Panel(UiKit.cardProps(isElder and "panelLite" or "plain", {
+                width = "100%",
+                gap = 3,
+                flexShrink = 0,
+            }, true))
+            themedPanels[#themedPanels + 1] = {
+                widget = bubble, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
+            }
+            bubble:AddChild(makeLabel(isElder and "老人" or "你", UiKit.fontSize.small,
+                isElder and UiKit.ink.teaching or UiKit.ink.dim, "bold"))
+            bubble:AddChild(makeLabel(body, UiKit.fontSize.teaching,
+                isElder and UiKit.ink.body or UiKit.ink.teaching))
+            refs.elderDialogueRows:AddChild(bubble)
         end
-        -- 溢出提示：明确告知更早内容去哪找，避免"对话凭空消失"的困惑
-        local hidden = firstVisible - 1
-        refs.elderDialogOverflow:SetVisible(hidden > 0)
-        if hidden > 0 then
-            setText(refs.elderDialogOverflow, "elderDialogOverflow",
-                string.format("上方 %d 条更早对话已折叠，点「聊天记录」查看完整历史。", hidden))
+        -- 新消息追加后滚到卷底：SetScrollDirect 不做 clamp（布局未就绪也能安全调），
+        -- 下一帧 ScrollView:Update 把 scrollY 收敛到 maxScrollY，等效"永远停在最新"。
+        -- 条件调用：headless 测试桩没有该方法时静默跳过（零回归）。
+        if refs.elderDialogue and refs.elderDialogue.SetScrollDirect then
+            refs.elderDialogue:SetScrollDirect(0, 1e9)
         end
     end
 
@@ -2775,7 +2769,6 @@ local header = UI.Panel {
             local dialogueVisible = not elderReview
                 and (elderLevel == "root" or elderLevel == "questions")
             refs.elderDialogue:SetVisible(dialogueVisible)
-            refs.elderDialogOverflow:SetVisible(dialogueVisible)
 
             -- 底部：回看态分类键收起为把手（点开展开选项区，再点收起）；
             -- 全局键行（收起记录/结束对话）常驻，是回看态的唯一出口。
