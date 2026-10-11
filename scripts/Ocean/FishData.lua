@@ -7,7 +7,7 @@ local FishData = {
     -- spawnBandFromDayStart = 距当日出发点的软偏好带 [min,max]：
     -- 生成时优先落带内，带内不可行则回退均匀放置（不产生远海死区）。
     -- 沙丁鱼 150 ≈ 1.25×激活半径(120)，保证首日近港渔场；金枪鱼 200 起为既有硬约束，
-    -- 600 上限 ≈ 9m/s 船速单程 66s 可达。[PLACEHOLDER] 待圈1 遥测校准。
+    -- 480 上限 ≈ 9m/s 船速单程 53s 可达（D·生成带下调：把金枪鱼偏好带拉近，近港更快见追猎→上浮链）。[PLACEHOLDER] 待圈1 遥测校准。
     sardine = { id = "sardine", tuningStatus = "V1_IMPLEMENTATION_VALUE",
         densityStatus = "BALANCE_TARGET", targetActiveCount = 20, radius = 0.6,
         wanderMinSec = 2, wanderMaxSec = 4, dangerSpecies = "tuna",
@@ -17,7 +17,7 @@ local FishData = {
         densityStatus = "BALANCE_TARGET", targetActiveCount = 4, radius = 1.1,
         wanderMinSec = 2, wanderMaxSec = 4, preySpecies = "sardine",
         attractionStatus = "V1_IMPLEMENTATION_VALUE", -- Latest user values supersede provisional D1/D2.
-        spawnBandFromDayStart = { min = 200, max = 600 }, bandStatus = "S1_BALANCE_PLACEHOLDER",
+        spawnBandFromDayStart = { min = 200, max = 480 }, bandStatus = "S1_BALANCE_PLACEHOLDER",
         color = Config.fish[1].color, renderLength = 3.8 },
 }
 for _, row in ipairs(FishRows) do

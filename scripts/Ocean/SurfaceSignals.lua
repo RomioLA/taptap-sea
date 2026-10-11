@@ -243,6 +243,7 @@ local function newBirdGroup(source, settings)
         directionAngle = angleForId(source.id),
         phase = 0,
         diveElapsed = 0,
+        escaping = false,
         center = { x = source.position.x, y = source.position.y },
         birds = {},
     }
@@ -297,11 +298,19 @@ function SurfaceSignals:_refreshBirdGroups(sardines)
 end
 
 function SurfaceSignals:_updateBirdGroup(group, source, dt, waterQuery)
-    -- Each bird remains within the sardine's confirmed 18 m bait-sense radius.
+    -- E (TASK-EM-DESIGN-01): `escaping` is a derived presentation flag only. It does
+    -- NOT change when the bird cue appears/disappears or its invalidation conditions
+    -- (capture lock, removal, freeze, legality, pause) — those still come from the live
+    -- sardine source and _pruneInvalidSources. A fleeing/rising small fish (the "上浮"
+    -- half of the chain) makes the birds read as agitated so renderers can enhance the
+    -- cue without introducing any new game logic.
     if self.birdOffset + self.birdRadius > BIRD_PERCEPTION_RADIUS
         or not isPositionLegal(self.world, source.position, source.radius, waterQuery) then
         return false
     end
+    local escaping = source.state == "Flee"
+        or (type(source.surfaceDepth) == "number" and source.surfaceDepth > 0)
+    group.escaping = escaping
     local center, directionAngle = orbitCenter(
         source, group.directionAngle, self.birdOffset, self.birdRadius, group.center, waterQuery)
     if not center then return false end
@@ -323,6 +332,7 @@ function SurfaceSignals:_updateBirdGroup(group, source, dt, waterQuery)
         bird.position.y = center.y + math.sin(angle) * orbitRadius
         bird.heading = wrapAngle(angle + math.pi * 0.5)
         bird.diveProgress = diveProgress
+        bird.escaping = escaping
     end
     return true
 end
@@ -491,6 +501,7 @@ function SurfaceSignals:GetBirds()
                     position = copyPoint(bird.position),
                     heading = bird.heading,
                     diveProgress = bird.diveProgress,
+                    escaping = bird.escaping,
                 }
             end
         end
@@ -512,7 +523,7 @@ function SurfaceSignals:VisitBirds(visitor)
             and isBirdGroupCurrent(current, group, self.birdOffset, self.birdRadius, waterQuery) then
             for _, bird in ipairs(group.birds) do
                 visitor(bird.position.x, bird.position.y, bird.heading, bird.diveProgress,
-                    bird.id, bird.sourceId)
+                    bird.id, bird.sourceId, bird.escaping)
                 count = count + 1
             end
         end

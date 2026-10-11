@@ -52,6 +52,9 @@ local HUD = {}
 ---@field itemId string
 
 local presentation = require("Gameplay.HUDPresentation").Create(UI, Config, Items)
+-- A 任务：只读事实性现象文案（鸟影下的空隙 / 退潮的箭头）。仅消费 SurfaceSignals
+-- 公开读取接口，不写鱼/鸟/玩家状态；无信号时返回空串，HUD 不编造。
+local emCues = require("Gameplay.EMCues")
 local userMessage = presentation.userMessage
 local saveText = presentation.saveText
 local copyItems = presentation.copyItems
@@ -2046,6 +2049,9 @@ local header = UI.Panel {
             if not portAccess and portReason then portInfo = portInfo .. " " .. userMessage(portReason) end
         end
         setText(refs.portAccessReason, "portInfo", portInfo)
+        -- A 任务：海上空闲时，用只读事实性现象文案替换通用引导语（仅当确有信号、
+        -- 且没有被更高优先级的存档/反馈/港口提示占用日志槽）。不新增 widget、不动布局。
+        local oceanCue = emCues.Build(loop.runtime and loop.runtime.surfaceSignals)
         local logSlot = "log"
         local logText
         if saveStatus == "error" then
@@ -2060,6 +2066,8 @@ local header = UI.Panel {
             logText = saveText(loop)
         elseif portHintActive then
             logSlot = "port"
+        elseif oceanCue and oceanCue ~= "" then
+            logText = oceanCue
         else
             logText = "出海采集，返港交易与结算。"
         end

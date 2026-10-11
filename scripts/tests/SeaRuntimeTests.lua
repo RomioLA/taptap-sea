@@ -92,7 +92,7 @@ function Tests.Run()
     end)
     check("S1 spawn distribution prefers sardine near day start and tuna in far band, soft fallback keeps far regions stocked", function()
         assert(Data.sardine.spawnBandFromDayStart.min == 15 and Data.sardine.spawnBandFromDayStart.max == 150)
-        assert(Data.tuna.spawnBandFromDayStart.min == 200 and Data.tuna.spawnBandFromDayStart.max == 600)
+        assert(Data.tuna.spawnBandFromDayStart.min == 200 and Data.tuna.spawnBandFromDayStart.max == 480)
         assert(Data.sardine.bandStatus == "S1_BALANCE_PLACEHOLDER" and Data.tuna.bandStatus == "S1_BALANCE_PLACEHOLDER")
         -- Near-departure region [0,120]^2: sardines should land inside the 150m band;
         -- tuna can never pass the 200m hard constraint here and must stay absent.
