@@ -77,7 +77,8 @@ end
 
 function ProfileStore.New(cloud, localBackend)
     if localBackend == nil and LocalSaveBackend.Available() then
-        localBackend = LocalSaveBackend.New()
+        -- 独立文件名：严禁与主存档 localFilename 共文件，否则 profile:Save 会覆盖主存档
+        localBackend = LocalSaveBackend.New({ filename = "sea_loop_profile_save.json" })
     end
     local backend = makeBackend(cloud, localBackend)
     local cache = fresh()

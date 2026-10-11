@@ -93,7 +93,9 @@ function Loop:ResetState()
     -- ②③ 认知度/成就系统接线：profile 跨周目仅建一次；KS/AS 每局随 player 重建
     if not self.profileStore then
         self.profileStore = ProfileStore.New()
-        self.profileStore:Load(function(ok) if ok then Diagnostics.Call("Loop", "profile_loaded", function() end) end)
+        self.profileStore:Load(function(ok)
+            if ok then Diagnostics.Call("Loop", "profile_loaded", function() end) end
+        end)
     end
     if self.currentWeek == nil then self.currentWeek = 1 end
     self:SetupKnowledgeSystems()
