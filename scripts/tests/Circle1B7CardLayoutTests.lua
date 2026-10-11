@@ -138,6 +138,22 @@ local function findButtonPrefix(root, prefix)
     return found
 end
 
+-- 查找首个可见 TextField（老人自由问答输入框）
+local function findTextField(root)
+    local found
+    local function walk(widget)
+        if found then return end
+        if not widget.visible then return end
+        if widget.kind == "TextField" then
+            found = widget
+            return
+        end
+        for _, child in ipairs(widget.children or {}) do walk(child) end
+    end
+    walk(root)
+    return found
+end
+
 -- 点击第一个匹配按钮；缺失即报错（避免静默跳过断言）
 local function click_first(button)
     assert(button, "expected a button to click but found none")
@@ -366,26 +382,30 @@ function Tests.Run()
             assert(findButton(hud.root, "给予", true), "the give submenu lists the apple row")
             -- 二级操作后不自动返回一级（可连续给予/展示）
             assert(findButton(hud.root, "← 返回", true), "submenu must stay open after the action row is built")
-            -- 二级·提问：问题列表 + 问过的不再出现
+            -- 二级·提问：自由输入框 + 「问」按钮（2026-10-09 改造，决策「只留自由输入」）
             click_first(findButton(hud.root, "← 返回", true))
             hud.Refresh()
             click_first(findButton(hud.root, "提问 ▸", true))
             hud.Refresh()
-            local q1 = findButtonPrefix(hud.root, "※ ")
-            assert(q1, "teaching questions must be listed in the ask submenu")
-            local asked = 0
-            for _ = 1, 8 do
-                local question = findButtonPrefix(hud.root, "※ ")
-                if not question then break end
-                question.props.onClick()
-                asked = asked + 1
+            local field = findTextField(hud.root)
+            assert(field, "ask submenu must expose a free-text input")
+            local askBtn = findButton(hud.root, "问", true)
+            assert(askBtn, "ask submenu must expose the 问 button")
+            -- 模拟玩家连问 3 个问题：写入输入框 → 触发 onChange → 点「问」
+            for _, q in ipairs({ "怎么钓鱼？", "沙丁鱼是什么鱼", "天黑前要不要回港" }) do
+                field.props.value = q
+                field.props.onChange(field, q)
+                askBtn.props.onClick()
                 hud.Refresh()
             end
-            assert(asked >= 3, "the teaching stage must offer three questions, asked " .. asked)
-            assert(findLabelContaining(hud.root, "这个阶段的问题都问过了"),
-                "an exhausted submenu must say so instead of going blank")
-            -- 对话流条数有上限（气泡限 6 条，不随轮数增长）
-            -- 溢出提示在一级态的对话流尾部：返回一级后断言（二级态对话流按设计隐藏）
+            -- 老人确实基于知识库作答（首问答案含「看水鸟」）
+            assert(findLabelContaining(hud.root, "看水鸟"),
+                "the elder must answer free-text questions from the knowledge base")
+            -- 自由输入形态不再有预设教学问题按钮（※ 前缀）
+            assert(not findButtonPrefix(hud.root, "※ "),
+                "free-input submenu must not list preset teaching buttons")
+            -- 对话流条数有上限（气泡限 ELDER_VISIBLE_LINES，不随轮数增长）
+            -- 溢出提示在对话流尾部：提问二级即显示对话流，返回一级后断言气泡边界
             click_first(findButton(hud.root, "← 返回", true))
             hud.Refresh()
             local bubbles = countVisibleImagePanels(hud.root)

@@ -8,7 +8,7 @@
   "version": "1.0.44",
   "taptap_publish": {
     "title": "渔夫漂流记",
-    "description": "",
+    "description": "扮演一名与老人同行出海的少年，在七天航程中驾驶小船、观察海面与鱼群、撒网捕鱼，并带着渔获回港整理。通过每日航行和交谈，慢慢了解这片海，也看看这趟旅程会走向何处。",
     "category": "casual",
     "screen_orientation": "landscape",
     "collection_type": "sce",
@@ -19,9 +19,9 @@
     "miniapp_id": "tapmcafwqun9cspwz9"
   },
   "assets": {
-    "icon": "",
+    "icon": "assets/store/icon_512.png",
     "screenshots": [],
-    "promotional_image": ""
+    "promotional_image": "assets/store/promotional_16x9_1920x1080.jpg"
   },
   "metadata": {
     "updated_at": "2026-10-08T15:08:27.430Z"
@@ -31,3 +31,5 @@
     "generated_at": "2026-10-08T15:08:27.430Z"
   }
 }
+
+

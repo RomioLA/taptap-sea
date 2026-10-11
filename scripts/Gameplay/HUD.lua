@@ -7,6 +7,7 @@ local ArtVariants = require("Ocean.ArtVariants")
 local DialogueStyle = require("Gameplay.DialogueStyle")
 local UiKit = require("Gameplay.UiKit")
 local Achievements = require("Gameplay.Achievements")
+local ElderQA = require("Gameplay.ElderQA")
 local SoundSystem = require("Systems.SoundSystem")
 
 local HUD = {}
@@ -164,28 +165,10 @@ function HUD.Create(loop, parent, debugTools)
     -- 保留定义仅为兼容历史注释引用，实际不再被任何卡片使用。
     local HUD_CARD_MAXH = "68%"
 
-    -- v2.1 §7.14 对话式形态：老人问答链（方案 v2.0 §4）。
-    -- 按阶段解锁：stage1=第1~3天教程期 / stage2=第4~6天 / stage3=第7天。
-    -- teach=true 的问题前加 ※ 标记（复用 UiKit.teachMark），仅教程期出现。
-    -- answer 为老人答复；hint 为选项区右侧动作标签。
-    local ELDER_QUESTIONS = {
-        { id = "survival", stage = 1, teach = true, text = "这海上讨生活，要紧的是什么？",
-          answer = "先看水鸟，再看水花。船停在浪平的地方，别急着下网。" },
-        { id = "lens", stage = 1, teach = true, text = "透镜该怎么用？",
-          answer = "对着海面看，能望见远处的东西。海上认路，全靠它。" },
-        { id = "bait", stage = 1, teach = true, text = "鱼饵要放在哪？",
-          answer = "船尾水面，抛得远些。饵不保证成功，多试几次。" },
-        { id = "sea", stage = 2, text = "这片海有什么要紧的地方？",
-          answer = "暗流多的地方船要绕开，浅礁会咬住船底。记熟了就是你的路。" },
-        { id = "why", stage = 2, text = "你怎么会在这儿？",
-          answer = "船散了，人还在。海不记人过，只记得谁回来了。" },
-        { id = "need", stage = 2, text = "需要我做什么吗？",
-          answer = "你肯把东西分我一口，我这把老骨头就还撑得住。苹果最实在。" },
-        { id = "how", stage = 3, text = "我该怎么做？",
-          answer = "天亮出海，天黑回港。日子是熬出来的，不是撞出来的。" },
-        { id = "thanks", stage = 3, text = "谢谢你。",
-          answer = "去吧。风大的时候，记得回来。" },
-    }
+    -- v2.1 §7.14 对话式形态：老人自由问答（2026-10-09 改造）。
+    -- 玩家在「提问 ▸」二级用 TextField 自由输入，由 scripts/Gameplay/ElderQA.lua
+    -- 基于 data/elder_qa.lua 知识库作答（见 buildElderAskPanel / askElderFree）。
+    -- 旧的预设问题列表（ELDER_QUESTIONS）已废弃：决策改为「只留自由输入」。
 
     -- card() 通用卡工厂。skin 选底板档位（v2.1 批B-D 分级）：
     --   抽屉内面板（背包/港口）用默认 panel（繁复茶棕，信息量大需要框感）；
@@ -315,8 +298,6 @@ local header = UI.Panel {
     }
     refs.status = makeInfoLabel("", 12, nil, nil, INFO_FLEX)
     refs.statusRight = makeInfoLabel("", 12, nil, nil, nil)
-    header:AddChild(infoLine(refs.status))
-    header:AddChild(infoLine(refs.statusRight))
     -- 日志槽：暂停/反馈/存档/港口提示折叠到状态行尾部（不再单独占行）。
     refs.log = makeInfoLabel("", 12, UI_PALETTE.seaTextMuted, nil, INFO_FLEX)
     -- 夜航警示行：条件显隐（夜+海上+未耗尽才出现），折叠进状态行尾。
@@ -324,13 +305,23 @@ local header = UI.Panel {
     refs.nightRisk:SetVisible(false)
     refs.portAccessReason = makeInfoLabel("锚形标记=港口（交易中心）· 返港/交易需距港≤10米。", 12, UI_PALETTE.seaTextMuted, nil, INFO_FLEX)
     refs.portAccessReason:SetVisible(false)
-    -- v2.1 §7.15：三控件（日志槽/夜航警示/港口说明）不再单独占行，但必须
-    -- **直接挂在 header 上**——曾试过包一层零高隐藏容器，结果它们的子树
-    -- 被判为不可见，Circle1HUDReviewTests 的 visibleOnly 查找全部落空
-    -- （12 红的真凶）。视觉上它们默认 SetVisible(false)，不占位。
-    header:AddChild(refs.log)
-    header:AddChild(refs.nightRisk)
-    header:AddChild(refs.portAccessReason)
+    -- v2.1 §7.15 单行状态栏：左右两簇，避免 infoLine(width=100%) 在 row 内
+    -- 各自占满整行导致 3876px 宽度溢出（云构建 Layout Warning）。左簇弹性占满，
+    -- 右簇固定不压缩；折叠指示并入左簇、默认隐藏不占位（仍处 header 子树，
+    -- Circle1HUDReviewTests.visibleOnly 沿父链判定不受影响）。
+    local statusLeft = UI.Panel {
+        flexDirection = "row", flexGrow = 1, flexBasis = 0, gap = 12, alignItems = "center",
+    }
+    statusLeft:AddChild(refs.status)
+    statusLeft:AddChild(refs.log)
+    statusLeft:AddChild(refs.nightRisk)
+    statusLeft:AddChild(refs.portAccessReason)
+    header:AddChild(statusLeft)
+    local statusRightBox = UI.Panel {
+        flexDirection = "row", flexShrink = 0, gap = 12, alignItems = "center",
+    }
+    statusRightBox:AddChild(refs.statusRight)
+    header:AddChild(statusRightBox)
     refs.debugToggle = makeButton("开发调试", function()
         if refs.debugPanel then
             local willShow = not refs.debugPanel:IsVisible()
@@ -342,7 +333,7 @@ local header = UI.Panel {
             end
         end
     end, "secondary", 92)
-    if debugTools and debugTools.enabled == true then header:AddChild(refs.debugToggle) end
+    if debugTools and debugTools.enabled == true then statusRightBox:AddChild(refs.debugToggle) end
     -- 批2 水彩 HUD（2026-10-07）：状态图标条——体力(苹果)/钱(金币堆)/背包(鱼)。
     -- 文本状态行原样保留（B 侧 Circle1HUDReviewTests 契约），图标条是增量层；
     -- 显隐随 ArtVariants（StoryArt 开关）在 refresh 中同步，A/B 一键切换。
@@ -936,7 +927,7 @@ local header = UI.Panel {
     upgradeRow:AddChild(refs.staminaLevelText)
     refs.portBody:AddChild(upgradeRow)
 
-    -- ② 购买区：每种商品独占一行（标签 + 库存 + 按钮），不再标签按钮混排
+    -- ② 购买区：每种商品独占一行（购买按钮已含名称与售价 + 库存），名称不单列
     refs.portBody:AddChild(sectionTitle("购买补给", "每日限量，次日补货；金币不足或船舱已满时按钮禁用并说明原因。"))
     refs.shopButtons = {}
     refs.shopStockLabels = {}
@@ -952,15 +943,15 @@ local header = UI.Panel {
         refs.shopStockLabels[buyId] = makeLabel("", UiKit.fontSize.small, UiKit.ink.dim)
         local buyLine = UI.Panel {
             width = "100%",
-            gap = 3,
+            gap = 6,
             flexShrink = 0,
             flexDirection = "row",
             flexWrap = "wrap",
             alignItems = "center",
         }
-        -- 标签必须占满剩余宽度：row 布局下无宽度约束的 label 会被压为不可见
-        buyLine:AddChild(makeLabel(itemLabel, UiKit.fontSize.body, UiKit.ink.body, nil,
-            { flexGrow = 1, flexBasis = 0 }))
+        -- 简化显示：物品名称已并入购买按钮（"苹果 · ¥20"），不再单列名称标签，
+        -- 消除「名称标签 + 按钮重复名称」的冗余（用户真机反馈，同类去重）。
+        -- 按钮文案保持 "苹果 · ¥" 前缀不动（B7/GameLoopUISpec/B3 契约均按按钮匹配）。
         buyLine:AddChild(shopButton)
         buyLine:AddChild(refs.shopStockLabels[buyId])
         refs.portBuyRows = refs.portBuyRows or {}
@@ -1009,7 +1000,9 @@ local header = UI.Panel {
     refs.debugPanel = card("开发调试", {
         width = "86%",
         maxWidth = 520,
-        maxHeight = "72%",
+        -- 必须用确定高度（height）而非 maxHeight：父级缺确定高度时，子 ScrollView
+        -- 的 flexGrow 解析为 0（云构建 ScrollView Warning + 内容 520>369 溢出）。
+        height = "72%",
     }, "panelLite")
     -- 内容统一挂 debugBody（卡内滚动容器），面板本身只承担标题 + 滚动。
     local debugBody = UI.Panel {
@@ -1315,8 +1308,8 @@ local header = UI.Panel {
     -- 二级/回看态下隐藏，把空间让给二级列表或记录。
     refs.elderDialogue = UI.Panel {
         width = "100%",
-        gap = 5,
-        flexGrow = 1,
+        gap = 4,
+        flexGrow = 0,
         flexBasis = 0,
         minHeight = 0,
         flexDirection = "column",
@@ -1441,7 +1434,7 @@ local header = UI.Panel {
     elderLevel2Header:AddChild(refs.elderLevel2Title)
     refs.elderLevel2:AddChild(elderLevel2Header)
 
-    -- 二级·提问：问题按钮列表（buildElderQuestions 重建；问过即消失）
+    -- 二级·提问：自由输入框 + 「问」按钮（buildElderAskPanel 构建一次）
     refs.elderQuestions = UI.Panel {
         width = "100%",
         gap = 4,
@@ -1677,18 +1670,19 @@ local header = UI.Panel {
         rows:AddChild(makeLabel(text, 12, { 169, 191, 181, 255 }))
     end
 
-    -- 前置声明（v2.1 §7.14）：askElderQuestion / destroyChildren 被
-    -- buildElderQuestions、renderElderDialogue 提前引用，但定义在其后。
+    -- 前置声明（v2.1 §7.14）：askElderFree / destroyChildren 被
+    -- buildElderAskPanel、renderElderDialogue 提前引用，但定义在其后。
     -- Lua 的 local function 不会自动提升作用域，不加声明会取到 nil：
     -- destroyChildren 会退化为全局 nil → "attempt to call a nil value"。
-    local askElderQuestion
+    local askElderFree
     local destroyChildren
     -- v2.2 对话流可见条数上限：主区只渲染最近 N 轮对话。
     -- 为什么限条而不是包 ScrollView：§7.9 红线——多包一层 ScrollView 会
     -- 改变 UI 树结构，测试沿父链判 isVisible 时失配（3 套件红）。
-    -- 限条达到同一目的：对话区高度有界 → 下方操作条恒在卡内可见。
-    -- 更早的完整历史由聊天记录抽屉承载（数据同一份，不丢内容）。
-    local ELDER_VISIBLE_LINES = 6
+    -- 限条 + elderDialogue(flexGrow=0) 双保险：气泡按自然高度排布，超出部分
+    -- 由 body 的 ScrollView 滚动兜底（不再 flexGrow=1 顶满后溢出压操作条），
+    -- 下方操作条恒在卡内可见。更早的完整历史由聊天记录抽屉承载（数据同一份）。
+    local ELDER_VISIBLE_LINES = 5
     -- v2.1 §7.14（对话式形态）：对话流渲染 + 提问区构建 + 聊天记录抽屉同步。
     -- 说明：对话流与提问区**不使用 ScrollView**（结构红线，会致 3 套件红）。
     local function renderElderDialogue()
@@ -1739,43 +1733,38 @@ local header = UI.Panel {
         end
     end
 
-    -- 提问二级构建：按 day 决定阶段，只列未问过的问题（问过的不重复出现）。
-    -- v2.3：移入「提问 ▸」二级；全部问完时给空态说明，不留空白列表。
-    local function buildElderQuestions(day, teachingDone)
+    -- 提问二级构建（2026-10-09）：自由输入形态，不再列预设问题按钮。
+    -- 含：静态引导文案 + TextField + 「问」按钮。仅构建一次（key 恒定，见 Refresh 分支）。
+    local function buildElderAskPanel()
         if not refs.elderQuestions then return end
         destroyChildren(refs.elderQuestions)
-        local stage = (day <= 3) and 1 or (day <= 6 and 2 or 3)
-        local asked = 0
-        for _, q in ipairs(ELDER_QUESTIONS) do
-            if q.stage == stage and state.elderAsked[q.id] ~= true then
-                if q.teach and teachingDone == true then
-                    -- 教学已完成：教程问题不再出现（已答过则 earlier 分支已跳过）
-                else
-                    local label = q.teach and (UiKit.teachMark .. q.text) or q.text
-                    refs.elderQuestions:AddChild(makeButton(label, function()
-                        askElderQuestion(q)
-                    end, q.teach and "secondary" or "primary", "100%"))
-                    asked = asked + 1
-                end
-            end
-        end
-        if asked == 0 then
-            refs.elderQuestions:AddChild(makeLabel(
-                "这个阶段的问题都问过了。", UiKit.fontSize.small, UiKit.ink.dim))
-        end
+        refs.elderQuestions:AddChild(makeLabel(
+            "有啥想问的，直接打字问我就行。", UiKit.fontSize.small, UiKit.ink.dim))
+        local askRow = UI.Panel {
+            width = "100%", flexDirection = "row", flexWrap = "wrap",
+            alignItems = "center", gap = 5,
+        }
+        refs.elderAskField = UI.TextField {
+            value = "",
+            placeholder = "问老人任何事，如：怎么钓鱼？",
+            width = 170, height = 40,
+            onChange = function(_, value) state.elderFreeAskText = tostring(value or "") end,
+        }
+        askRow:AddChild(refs.elderAskField)
+        askRow:AddChild(makeButton("问", function()
+            local txt = (state.elderFreeAskText or ""):match("^%s*(.-)%s*$")
+            if txt == "" then return end
+            askElderFree(txt)
+        end, "primary", "30%"))
+        refs.elderQuestions:AddChild(askRow)
     end
 
-    -- 记录一次问答（玩家提问 → 老人答复），并标记已问。
-    askElderQuestion = function(q)
-        if state.destroyed or not q then return end
-        if state.elderAsked[q.id] == true then return end
-        state.elderAsked[q.id] = true
-        state.elderTranscript[#state.elderTranscript + 1] = { who = "player", text = q.text }
-        state.elderTranscript[#state.elderTranscript + 1] = { who = "elder", text = q.answer }
-        -- 教程问题问完 → 标记教学完成（沿用现有 Progress 通道）
-        -- 注：不改 teachingDone。该标记语义为"投饵→捕鱼→结果反馈闭环完成"
-        --（Loop:NotifyCatchObtained → Progress.MarkTeachingDone），
-        -- 若在此处调用会把"听完教程对话"误判为"已完成教学操作"。
+    -- 自由提问：记录「玩家气泡 + 老人答复」到对话流（复用现有 transcript 渲染）。
+    askElderFree = function(text)
+        if state.destroyed or not text or text == "" then return end
+        local result = ElderQA.ask(text)
+        state.elderTranscript[#state.elderTranscript + 1] = { who = "player", text = text }
+        state.elderTranscript[#state.elderTranscript + 1] = { who = "elder", text = result.answer }
         refresh()
     end
 
@@ -2671,8 +2660,12 @@ local header = UI.Panel {
 
             -- 主体：回看态显示记录，二级态显示二级列表，常态显示对话流
             refs.elderLogPanel:SetVisible(elderReview)
-            refs.elderDialogue:SetVisible(not elderReview and elderLevel == "root")
-            refs.elderDialogOverflow:SetVisible(not elderReview and elderLevel == "root")
+            -- 提问二级也显示对话流：玩家打字提问后立即看到老人基于知识库的回答
+            -- （气泡在可滚动 body，输入框固定在 footer，布局天然不冲突）。
+            local dialogueVisible = not elderReview
+                and (elderLevel == "root" or elderLevel == "questions")
+            refs.elderDialogue:SetVisible(dialogueVisible)
+            refs.elderDialogOverflow:SetVisible(dialogueVisible)
 
             -- 底部：回看态分类键收起为把手（点开展开选项区，再点收起）；
             -- 全局键行（收起记录/结束对话）常驻，是回看态的唯一出口。
@@ -2684,7 +2677,7 @@ local header = UI.Panel {
 
             -- 二级标题与内容（互斥三选一）
             local level2Titles = {
-                questions = "问老人一个问题（问过的不重复出现）",
+                questions = "问老人任何问题（打字后点「问」）",
                 give = "选择要给老人的食物",
                 show = "选择要给老人看的物品",
             }
@@ -2694,24 +2687,11 @@ local header = UI.Panel {
             refs.elderShowRows:SetVisible(elderLevel == "show")
             refs.elderLensRow:SetVisible(elderLevel == "show")
             if elderLevel == "questions" then
-                -- ⚠️ 真机修复（2026-10-08 反馈"问题选项显示但点不了"）：
-                -- Bootstrap.Update 每帧调 hud.Refresh()，此处若无条件重建，
-                -- 问题按钮每帧销毁重建——真机手指从按下到抬起之间按钮已被
-                -- 替换，click 事件丢失（表现即"看得到点不动"）。离线测试
-                -- 不跑帧循环，故测不出。加 key 缓存：仅当阶段/教学完成/
-                -- 已问集合变化时才重建，其余帧 widget 引用稳定可点。
-                local stage = (elderDay <= 3) and 1 or (elderDay <= 6 and 2 or 3)
-                local askedInStage = {}
-                for _, q in ipairs(ELDER_QUESTIONS) do
-                    if q.stage == stage and state.elderAsked[q.id] == true then
-                        askedInStage[#askedInStage + 1] = q.id
-                    end
-                end
-                local questionsKey = stage .. "|" .. tostring(teachingDoneNow == true)
-                    .. "|" .. table.concat(askedInStage, ",")
-                if state.elderQuestionsBuiltKey ~= questionsKey then
-                    buildElderQuestions(elderDay, teachingDoneNow)
-                    state.elderQuestionsBuiltKey = questionsKey
+                -- 自由输入形态：输入 UI 只构建一次（key 恒定），避免每帧重建
+                -- 导致真机「看得到点不动」（同 2026-10-08 老人按钮修复根因）。
+                if state.elderQuestionsBuiltKey ~= "freeask" then
+                    buildElderAskPanel()
+                    state.elderQuestionsBuiltKey = "freeask"
                 end
             end
         end

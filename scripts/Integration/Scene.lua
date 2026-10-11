@@ -78,7 +78,8 @@ function Scene.Start(options)
     local settings = copyOptions(options)
     local uiTheme = settings.theme or "default-taptap"
     local bridgeOptions = copyOptions(settings)
-    bridgeOptions.store = settings.store or Persistence.Dual(settings.cloud)
+    -- Maker 的 clientCloud 是正式存档来源；本地文件仅用于离线开发，不可覆盖跨设备云档。
+    bridgeOptions.store = settings.store or Persistence.Cloud(settings.cloud)
     bridgeOptions.loadSaved = false
 
     UI.Init({ theme = uiTheme, scale = UI.Scale.DEFAULT,
