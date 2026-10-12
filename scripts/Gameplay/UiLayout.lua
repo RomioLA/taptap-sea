@@ -9,7 +9,7 @@
 --
 -- 三条硬约束（改这个文件时必须守住）：
 --   1. **取不到视口就回退到改动前的行为**：scale=1、mode="compact"、
---      CardMaxWidth()=nil、DockReserve()=92。headless 测试与引擎未就绪时
+--      CardMaxWidth()=nil、DockReserve()=60。headless 测试与引擎未就绪时
 --      必须与改动前完全一致，否则回归基线会新增红（基线 failureCount=9）。
 --   2. **不依赖引擎全局**：graphics / urhox UI 全部用 pcall 探测，缺失时
 --      模块照常加载，不抛错。
@@ -34,13 +34,18 @@ local MODE_EXPANDED_SHORT = 600 -- 平板短边通常 ≥600（820×1180 / 744×
 local MODE_REGULAR_SHORT = 420 -- 大屏手机 / 平板竖屏窄边
 
 -- 按钮坞让位常量（与 HUD.lua 原实现对齐）
-local DOCK_BASE_RESERVE = 92 -- 原 CARD_HOST_BOTTOM：按按钮坞 1 行预留
+-- v1.5 横板版式（规格 §3）：单行让位 = padding 8 + 按钮 44 + 缓冲 8 = 60。
+-- 旧值 92 是竖屏口径（含 home indicator 40 余量）；横板下 home 在底部窄边、
+-- 由引擎 insets 叠加即可，且可用高仅 262 —— 多留 32px 直接吃掉内容区。
+local DOCK_BASE_RESERVE = 60
 local DOCK_ROW_HEIGHT = 44 -- size.buttonMinHeight
 local DOCK_ROW_GAP = 6 -- dock 的 gap
 local DOCK_SIDE_PADDING = 8 -- actionBar 的 padding
 
--- 大屏卡片封顶宽度（评审 §4.3：解决平板行长失控 / P1-1）
-local CARD_MAX_WIDTH = 720
+-- 卡片封顶宽度（v1.5 横板口径：560；旧值 720 是竖屏/平板口径）
+-- 依据：横板 640 宽 − 卡 560 = 80 → 左右各留 40 海面，观察层不被卡吃掉（规格 §8）。
+local CARD_MAX_WIDTH = 560
+local CARD_SEA_MARGIN = 40 -- 卡片两侧必须露出的海面宽度
 
 ---@class UiLayoutViewport
 ---@field width number
@@ -172,12 +177,16 @@ function UiLayout.Height()
     return viewport.height
 end
 
----卡片最大宽度：compact 不限制（手机本来就不够宽，限宽反而浪费），
----regular/expanded 封顶 720 并居中（评审 P1-1：平板行长失控）。
+---卡片最大宽度（v1.5 横板口径）：
+---屏宽装得下「560 + 两侧各留 40 海面」才限宽居中，否则不限（限宽反而压缩内容）。
+---依据：横板 640 宽 → 560 + 40×2 正好，两侧留出观察层；窄屏（< 640）不限宽。
 ---@return number|nil
 function UiLayout.CardMaxWidth()
-    if viewport.mode == "compact" then return nil end
-    return CARD_MAX_WIDTH
+    if not viewport.available then return nil end
+    local width = viewport.width
+    if not isPositiveNumber(width) then return nil end
+    if width >= CARD_MAX_WIDTH + CARD_SEA_MARGIN * 2 then return CARD_MAX_WIDTH end
+    return nil
 end
 
 ---按钮坞让位高度（评审 P0-1 的核心修复）。
@@ -205,7 +214,7 @@ function UiLayout.DockReserve(totalButtonWidth, gapCount, screenWidth)
     if needed > usable then rows = math.ceil(needed / usable) end
     rows = clamp(rows, 1, 4)
 
-    -- rows=1 时正好等于原常量 92，参考机零视觉变化
+    -- rows=1 时等于横板单行让位 60（v1.5 规格 §3），多一行 +50
     return DOCK_BASE_RESERVE + (rows - 1) * (DOCK_ROW_HEIGHT + DOCK_ROW_GAP)
 end
 

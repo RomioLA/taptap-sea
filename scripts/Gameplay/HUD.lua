@@ -546,7 +546,7 @@ local header = UI.Panel {
         { widget = refs.endToday,         width = 98 },
         { widget = refs.beginFishing,     width = 72 },
     }
-    local dockReserve = 92
+    local dockReserve = 60
 
     actionBar:AddChild(dock)
     root:AddChild(actionBar)
@@ -589,8 +589,10 @@ local header = UI.Panel {
     -- · 宿主内部不用 ScrollView（§7.9 教训，会让 isVisible 沿父链判定失效）；
     -- · 三卡互斥，同一时刻只显示一张（§7.13），显隐不影响兄弟节点位置；
     -- · pointerEvents=box-none，宿主空白区点击穿透到海面。
-    local CARD_HOST_TOP = 40        -- 让开顶部单行状态栏（height 30 + 间距）
-    local CARD_HOST_BOTTOM = 92     -- 让开底部按钮坞（padding 8 + 按钮 44 + 余量）
+    -- v1.5 横板版式（规格 §3）：顶 38（状态条 30 + 间距 8，锁单行）/ 底 60
+    -- （坞 padding 8 + 按钮 44 + 缓冲 8）。旧值 40 / 92 是竖屏口径。
+    local CARD_HOST_TOP = 38        -- 让开顶部**单行**状态栏（height 30 + 间距 8）
+    local CARD_HOST_BOTTOM = 60     -- 让开底部单行按钮坞（padding 8 + 按钮 44 + 缓冲 8）
     local cardHost = UI.Panel {
         id = "gameplayCardHost",
         position = "absolute",
@@ -604,11 +606,11 @@ local header = UI.Panel {
         pointerEvents = "box-none",
     }
 
-    -- v3.0 P0（评审 P1-1）：大屏卡片封顶 720 居中。此前 left/right=0 全宽，
-    -- 平板/横屏下正文一行 100+ 汉字、气泡被拉成横条，可读性反而下降。
+    -- v1.5 横板（规格 §8）：卡片封顶 **560 居中**，两侧各留 ≥40 海面（旧值 720
+    -- 是竖屏/平板口径，横板下会吃掉观察层）。UiLayout.CardMaxWidth() 只在
+    -- 「屏宽 ≥ 560 + 40×2」时才返回 560，窄屏返回 nil 一个 prop 都不写。
     -- 注意：left/right 保持 0 不变（Circle1B7CardLayoutTests 断言四边锚定），
-    -- 只追加 maxWidth + alignSelf；compact（手机）下 CardMaxWidth() 返回 nil，
-    -- 一个 prop 都不写，与改动前完全一致。⚠️ 居中效果需真机验收。
+    -- 只追加 maxWidth + alignSelf。⚠️ 居中效果需真机验收。
     local cardMaxWidth = UiLayout.CardMaxWidth()
     if cardMaxWidth then
         setLayoutProp(cardHost, "maxWidth", cardMaxWidth)
