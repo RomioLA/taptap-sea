@@ -1820,6 +1820,19 @@ local header = UI.Panel {
     -- transcript，新消息追加后自动滚到卷底；不再有 N 条限条与溢出提示。
     local function renderElderDialogue()
         if not refs.elderDialogueRows then return end
+        -- v3.2.1 真机修复（2026-10-13 反馈"滚动条一直滚动，信息无法正常显示"）：
+        -- Bootstrap.Update 每帧 hud.Refresh()，此前本函数无闸每帧全量销毁重建
+        -- 气泡并 SetScrollDirect(0, 1e9)——滚动目标每帧被重置，ScrollView 永远
+        -- 收敛不到 maxScrollY（滚动条一直滚）；内容每帧重建 contentSize 反复
+        -- 重算、视口停在空白区（信息显示不出）。加 transcript 签名闸：
+        -- 内容没变零操作，变了才重建并滚到卷底（与 rebuildItemRows 的
+        -- inventorySignature 同一手法；transcript 只在开场重置与追加时变化，
+        -- 长度+周目代数足以唯一签名）。
+        local transcript = state.elderTranscript or {}
+        local dialogueSignature = tostring(#transcript)
+            .. "|" .. tostring(state.elderOpenedGeneration)
+        if dialogueSignature == state.elderDialogueSignature then return end
+        state.elderDialogueSignature = dialogueSignature
         destroyChildren(refs.elderDialogueRows)
         destroyChildren(refs.elderLogRows)
         local transcript = state.elderTranscript or {}

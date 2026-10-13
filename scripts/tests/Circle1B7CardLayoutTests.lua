@@ -492,6 +492,17 @@ function Tests.Run()
             local second = findButton(hud.root, "给予", true)
             assert(second == first,
                 "submenu rows must not be rebuilt on every refresh frame")
+            -- v3.2.1（2026-10-13 真机"滚动条一直滚动，信息无法正常显示"）：
+            -- 对话气泡同样不得每帧销毁重建——每帧 SetScrollDirect(1e9) 会让
+            -- 滚动条永远收敛不到位、contentSize 反复重算致视口停在空白区。
+            local parchment = findById(hud.root, "elderDialogueScroll")
+            assert(parchment and parchment.children and parchment.children[1],
+                "the parchment scroll must host the dialogue rows panel")
+            local bubbleBefore = parchment.children[1].children[1]
+            hud.Refresh()
+            local parchmentAfter = findById(hud.root, "elderDialogueScroll")
+            assert(parchmentAfter.children[1].children[1] == bubbleBefore,
+                "dialogue bubbles must not be rebuilt on every refresh frame")
             -- 点击后仍可用（交付成功 → 对话流出现老人答复）
             first.props.onClick()
             hud.Refresh()
