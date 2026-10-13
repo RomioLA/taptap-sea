@@ -66,7 +66,7 @@ def main():
     modules = sorted({p.stem for p in test_dir.glob('Circle1*Tests.lua')})
     modules += ['ABIntegrationTests', 'ArchitectureIntegrationTests', 'SeaFusedSceneTests',
                 'SeaFusionRenderTests', 'SeaRuntimeTests', 'SeaStabilityTests',
-                'SurfaceRiseTests', 'SurfaceSignalsTests']
+                'SurfaceRiseTests', 'SurfaceSignalsTests', 'SeaAtmosphereTests']
     if args.phase == 'new':
         modules = [name for name in modules if name.startswith('Circle1B5')]
     suites = []
@@ -82,7 +82,8 @@ def main():
             if isinstance(module, tuple):
                 module = module[0]
             render_suites = {'Circle1A2BarrelRenderTests', 'Circle1A2FishingTests',
-                             'Circle1A3RecognitionTests', 'SeaFusionRenderTests', 'Circle1B5PortDrawTests'}
+                             'Circle1A3RecognitionTests', 'SeaFusionRenderTests', 'Circle1B5PortDrawTests',
+                             'SeaAtmosphereTests'}
             report = plain(module.Run(recorder_table) if name in render_suites else module.Run())
             checks = report.get('results', report.get('checks', report.get('tests', []))) if isinstance(report, dict) else []
             if isinstance(checks, dict):

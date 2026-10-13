@@ -50,15 +50,18 @@ local function makeBackend(cloud, localBackend)
     local key = Config.persistence.profileKey
     local c = cloud or _G.clientCloud
     if c ~= nil then
+        -- ⚠️ self 占位不可省：api 内统一以 backend:Save / backend:Load 冒号调用，
+        -- 漏掉首参 self 会把 backend 表本身塞进 value/done（真回调被丢弃），
+        -- 云上落盘的将是适配器表而非 cache —— 与下方内存分支保持同签名。
         return {
-            Save = function(value, done)
+            Save = function(_, value, done)
                 c:Set(key, value, {
                     ok = function() done(true) end,
                     error = function(code, reason) done(false, tostring(code) .. ":" .. tostring(reason)) end,
                     timeout = function() done(false, "timeout") end,
                 })
             end,
-            Load = function(done)
+            Load = function(_, done)
                 c:Get(key, {
                     ok = function(values) done(true, values and values[key] or nil) end,
                     error = function(code, reason) done(false, tostring(code) .. ":" .. tostring(reason)) end,

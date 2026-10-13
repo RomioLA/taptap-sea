@@ -354,8 +354,13 @@ function Tests.Run()
         local default=r:spawnDroppedItem({itemId="default"},{x=3,y=0}); assert(default.lifetimeSec==20)
     end)
     check("predator sees prey before sardine senses danger", function()
+        -- 几何适配（2026-10-13）：教学木桶 (14,6) 自真机反馈 #6 起为 blocking
+        -- 碰撞体（Circle1A2BarrelTests 断言鱼避障须绕桶），原 (20,0) 布点落入
+        -- 桶的避障圈 → tuna 先进 Avoid 看不见猎物。把捕食对镜像到第三象限：
+        -- 20m 间距不变（ tuna 视距 30 > 20 > 沙丁鱼危险感知 12），且整条
+        -- 追猎路径远离桶体，断言语义原样保留。
         local r=fresh(); local s=r:spawnFish("sardine",{x=0,y=0})
-        local t=r:spawnFish("tuna",{x=20,y=0},math.pi); r:Update(0.05)
+        local t=r:spawnFish("tuna",{x=0,y=-20},math.pi/2); r:Update(0.05)
         assert(s.state=="Wander" and t.state=="Chase")
     end)
     check("danger outranks attraction; flee jitter remains away", function()
@@ -386,10 +391,14 @@ function Tests.Run()
         assert(#r:queryEntitiesInRadius({x=0,y=0},5,{species="sardine"})==0)
     end)
     check("tuna chase tracks moved prey; loss grace >2 sec", function()
-        local r=fresh(); local s=r:spawnFish("sardine",{x=20,y=0})
+        -- 几何适配（2026-10-13）：同上——原追猎路径 (0,0)→(10,15) 擦过 blocking
+        -- 木桶 (14,6) 的避障圈，宽限 2.1s 到期时 tuna 恰在桶边被 Avoid 抢态。
+        -- 镜像到第三象限后路径全程远离桶体，宽限语义（>2s 保持 Chase、
+        -- 到期回 Wander）原样验证。
+        local r=fresh(); local s=r:spawnFish("sardine",{x=-20,y=0})
         local t=r:spawnFish("tuna",{x=0,y=0}); local b=r.behaviors[t.id] --[[@as FishBehavior]]
         b:Update(0.05); assert(t.state=="Chase")
-        s.position={x=10,y=15}; b:Update(0.05); assert(b.lastPreyPosition.y==15)
+        s.position={x=-10,y=-15}; b:Update(0.05); assert(b.lastPreyPosition.y==-15)
         r.world:remove(s.id); b:Update(1.9); assert(t.state=="Chase")
         b:Update(0.2); assert(t.state=="Wander")
     end)

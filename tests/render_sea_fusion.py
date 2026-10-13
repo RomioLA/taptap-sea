@@ -12,7 +12,7 @@ import math
 import sys
 import traceback
 from collections import Counter
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -38,6 +38,16 @@ class LinearGradient:
     y1: float
     x2: float
     y2: float
+    start: Color
+    end: Color
+
+
+@dataclass(frozen=True)
+class RadialGradient:
+    cx: float
+    cy: float
+    r_inner: float
+    r_outer: float
     start: Color
     end: Color
 
@@ -83,6 +93,8 @@ class NVGCapture:
         self.stroke_width = 1.0
         self.transform = self.IDENTITY
         self.clip: tuple[float, float, float, float] | None = None
+        self.global_alpha = 1.0
+        self.shape_anti_alias = True
         self.stack: list[dict[str, Any]] = []
 
     def bind(self, lua):
@@ -104,6 +116,7 @@ class NVGCapture:
         globals_.nvgFillColor = self.set_fill_color
         globals_.nvgFillPaint = self.set_fill_paint
         globals_.nvgLinearGradient = self.linear_gradient
+        globals_.nvgRadialGradient = self.radial_gradient
         globals_.nvgStrokeColor = self.set_stroke_color
         globals_.nvgStrokeWidth = self.set_stroke_width
         globals_.nvgFill = self.fill
@@ -114,7 +127,11 @@ class NVGCapture:
         globals_.nvgScale = self.scale
         globals_.nvgRotate = self.rotate
         globals_.nvgScissor = self.scissor
+        globals_.nvgIntersectScissor = self.intersect_scissor
         globals_.nvgResetScissor = self.reset_scissor
+        globals_.nvgGlobalAlpha = self.set_global_alpha
+        globals_.nvgShapeAntiAlias = self.set_shape_anti_alias
+        globals_.nvgTransform = self.apply_transform
         return lua.table_from(
             {
                 "reset": self.reset,
@@ -123,6 +140,7 @@ class NVGCapture:
                 "hasEllipseArgs": self.has_ellipse_args,
                 "countEllipseArgs": self.count_ellipse_args,
                 "scissorMatches": self.scissor_matches,
+                "hasGreenFillAboveY": self.has_green_fill_above_y,
             }
         )
 
@@ -230,13 +248,26 @@ class NVGCapture:
 
     def set_fill_paint(self, ctx, paint):
         self._call("nvgFillPaint", ctx, paint)
-        self.fill_paint = paint if isinstance(paint, LinearGradient) else None
+        self.fill_paint = paint if isinstance(paint, (LinearGradient, RadialGradient)) else None
 
     def linear_gradient(self, ctx, x1, y1, x2, y2, start, end):
         self._call("nvgLinearGradient", ctx, x1, y1, x2, y2)
         p1 = self._point(self.transform, _finite(x1), _finite(y1))
         p2 = self._point(self.transform, _finite(x2), _finite(y2))
         return LinearGradient(*p1, *p2, _as_color(start), _as_color(end))
+
+    def radial_gradient(self, ctx, cx, cy, r_inner, r_outer, start, end):
+        self._call("nvgRadialGradient", ctx, cx, cy, r_inner, r_outer)
+        center = self._point(self.transform, _finite(cx), _finite(cy))
+        a, b, c, d, _, _ = self.transform
+        # 半径按变换矩阵行列式的平方根缩放（均匀缩放下即线性比例）
+        radius_scale = math.sqrt(abs(a * d - b * c)) or 1.0
+        return RadialGradient(
+            center[0], center[1],
+            max(0.0, _finite(r_inner) * radius_scale),
+            max(0.0, _finite(r_outer) * radius_scale),
+            _as_color(start), _as_color(end),
+        )
 
     def set_stroke_color(self, ctx, color):
         self._call("nvgStrokeColor", ctx, color)
@@ -249,6 +280,17 @@ class NVGCapture:
     def _element(self, *, fill_color=None, fill_paint=None, stroke_color=None, stroke_width=None):
         if not self.path:
             return
+        alpha = self.global_alpha
+        if fill_color is not None and alpha != 1.0:
+            fill_color = replace(fill_color, a=fill_color.a * alpha)
+        if stroke_color is not None and alpha != 1.0:
+            stroke_color = replace(stroke_color, a=stroke_color.a * alpha)
+        if fill_paint is not None and alpha != 1.0:
+            fill_paint = replace(
+                fill_paint,
+                start=replace(fill_paint.start, a=fill_paint.start.a * alpha),
+                end=replace(fill_paint.end, a=fill_paint.end.a * alpha),
+            )
         a, b, c, d, _, _ = self.transform
         self.elements.append(
             {
@@ -282,6 +324,8 @@ class NVGCapture:
                 "stroke_width": self.stroke_width,
                 "transform": self.transform,
                 "clip": _copy_clip(self.clip),
+                "global_alpha": self.global_alpha,
+                "shape_anti_alias": self.shape_anti_alias,
             }
         )
 
@@ -296,6 +340,8 @@ class NVGCapture:
         self.stroke_width = state["stroke_width"]
         self.transform = state["transform"]
         self.clip = state["clip"]
+        self.global_alpha = state["global_alpha"]
+        self.shape_anti_alias = state["shape_anti_alias"]
 
     def translate(self, ctx, x, y):
         self._call("nvgTranslate", ctx, x, y)
@@ -311,8 +357,23 @@ class NVGCapture:
         cosine, sine = math.cos(angle), math.sin(angle)
         self._multiply((cosine, sine, -sine, cosine, 0, 0))
 
-    def scissor(self, ctx, x, y, w, h):
-        self._call("nvgScissor", ctx, x, y, w, h)
+    def apply_transform(self, ctx, a, b, c, d, e, f):
+        self._call("nvgTransform", ctx, a, b, c, d, e, f)
+        self._multiply((
+            _finite(a, 1), _finite(b), _finite(c), _finite(d, 1), _finite(e), _finite(f),
+        ))
+
+    def set_global_alpha(self, ctx, alpha):
+        self._call("nvgGlobalAlpha", ctx, alpha)
+        self.global_alpha = max(0.0, _finite(alpha, 1.0))
+
+    def set_shape_anti_alias(self, ctx, enabled):
+        self._call("nvgShapeAntiAlias", ctx, enabled)
+        self.shape_anti_alias = _finite(enabled, 1) != 0
+
+    def _apply_scissor(self, name, ctx, x, y, w, h):
+        """nvgScissor / nvgIntersectScissor 共用：矩形过当前变换后与既有裁剪区求交。"""
+        self._call(name, ctx, x, y, w, h)
         x, y, w, h = map(_finite, (x, y, w, h))
         points = [
             self._point(self.transform, x, y),
@@ -327,6 +388,14 @@ class NVGCapture:
             new_clip = (max(old[0], new_clip[0]), max(old[1], new_clip[1]),
                         min(old[2], new_clip[2]), min(old[3], new_clip[3]))
         self.clip = new_clip
+
+    def scissor(self, ctx, x, y, w, h):
+        self._apply_scissor("nvgScissor", ctx, x, y, w, h)
+
+    def intersect_scissor(self, ctx, x, y, w, h):
+        # NanoVG 语义：nvgIntersectScissor 将给定矩形与当前裁剪区求交
+        # （SeaAtmosphere 的地平线裁剪即依赖此行为）。
+        self._apply_scissor("nvgIntersectScissor", ctx, x, y, w, h)
 
     def reset_scissor(self, ctx):
         self._call("nvgResetScissor", ctx)
@@ -370,6 +439,28 @@ class NVGCapture:
             for name, args in self.calls
         )
 
+    def has_green_fill_above_y(self, y, tolerance=0.001):
+        """Exists a green-dominant fill whose path reaches above screen y (smaller y = higher).
+
+        岛树剪影 {91,126,109} / {108,141,117} 即绿主导；地平线上方的树冠必须
+        以自然形态入图（SeaFusionRenderTests 地平线断言依赖此判据）。
+        """
+        limit = _finite(y)
+        for element in self.elements:
+            color = element["fill_color"]
+            if color is None and element["fill_paint"] is not None:
+                color = element["fill_paint"].start
+            if color is None:
+                continue
+            r, g, b, _ = self._rgba(color)
+            if not (g > r and g > b):
+                continue
+            for _command, values in element["path"]:
+                for index in range(1, len(values), 2):
+                    if values[index] <= limit + _finite(tolerance):
+                        return True
+        return False
+
     @staticmethod
     def _rgba(color):
         values = (color.r, color.g, color.b, color.a)
@@ -395,7 +486,17 @@ class NVGCapture:
             attrs = [f'd="{self._svg_path(element["path"])}"']
             paint = element["fill_paint"]
             color = element["fill_color"]
-            if paint is not None:
+            if isinstance(paint, RadialGradient):
+                gradient_id = f"gradient-{index}"
+                defs.append(
+                    f'<radialGradient id="{gradient_id}" gradientUnits="userSpaceOnUse" '
+                    f'cx="{self._fmt(paint.cx)}" cy="{self._fmt(paint.cy)}" '
+                    f'r="{self._fmt(paint.r_outer)}">{self._svg_stop(0, paint.start)}'
+                    f'{self._svg_stop(1, paint.end)}</radialGradient>'
+                )
+                attrs.append(f'fill="url(#{gradient_id})"')
+                attrs.append('stroke="none"')
+            elif paint is not None:
                 gradient_id = f"gradient-{index}"
                 defs.append(
                     f'<linearGradient id="{gradient_id}" gradientUnits="userSpaceOnUse" '
@@ -489,7 +590,11 @@ class NVGCapture:
                 mask = ImageChops.multiply(mask, clip_mask)
 
             if element["fill_color"] is not None or element["fill_paint"] is not None:
-                if element["fill_paint"] is not None:
+                if isinstance(element["fill_paint"], RadialGradient):
+                    source = _radial_gradient_image(
+                        element["fill_paint"], patch_size, x0, y0, scale, np, Image, ImageDraw
+                    )
+                elif element["fill_paint"] is not None:
                     source = _linear_gradient_image(
                         element["fill_paint"], patch_size, x0, y0, scale, np, Image, ImageDraw
                     )
@@ -610,6 +715,33 @@ def _linear_gradient_image(gradient, size, x0, y0, scale, np, Image, ImageDraw):
             for px in range(width):
                 t = max(0.0, min(1.0, (((px - x1) * vx + (py - y1) * vy) / denominator)))
                 pixels[px, py] = tuple(round(a + t * (b - a)) for a, b in zip(start, end))
+    return image
+
+
+def _radial_gradient_image(gradient, size, x0, y0, scale, np, Image, ImageDraw):
+    """Radial paint fallback: distance-to-center interpolation between inner and outer color."""
+    width, height = size
+    cx = gradient.cx * scale - x0
+    cy = gradient.cy * scale - y0
+    r_outer = max(gradient.r_outer * scale, 1e-6)
+    # PIL 的颜色分量必须是 int（_rgba 产出 float）
+    start = tuple(round(max(0, min(255, v))) for v in NVGCapture._rgba(gradient.start))
+    end = tuple(round(max(0, min(255, v))) for v in NVGCapture._rgba(gradient.end))
+    if np is not None:
+        yy, xx = np.ogrid[:height, :width]
+        t = np.clip(np.sqrt((xx - cx) ** 2 + (yy - cy) ** 2) / r_outer, 0.0, 1.0)
+        arr = np.empty((height, width, 4), dtype=np.uint8)
+        for channel in range(4):
+            arr[:, :, channel] = np.rint(start[channel] + t * (end[channel] - start[channel])).astype(np.uint8)
+        return Image.fromarray(arr, "RGBA")
+    image = Image.new("RGBA", size, start)
+    draw = ImageDraw.Draw(image)
+    steps = max(width, height)
+    for index in range(steps + 1):
+        t = index / steps
+        radius = t * r_outer
+        color = tuple(round(a + t * (b - a)) for a, b in zip(start, end))
+        draw.ellipse((cx - radius, cy - radius, cx + radius, cy + radius), outline=color)
     return image
 
 

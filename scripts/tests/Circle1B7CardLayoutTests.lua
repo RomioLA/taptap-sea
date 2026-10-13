@@ -4,8 +4,9 @@
 --   ① 信息完整呈现 —— 商店四分区与前置数值、背包属性副行、出售与礼物品行
 --      都必须在树上存在且带全部字段。
 --   ② 选项不被遮挡 —— 三卡统一「标题 / 主体滚动区 / 固定操作条」三段，
---      操作条 flexShrink=0，且其内关键按钮在父链上恒可见；老人卡对话流
---      条数有上限，多轮问答后选项仍全部可点。
+--      操作条 flexShrink=0，且其内关键按钮在父链上恒可见；老人卡 v3.2 起
+--      为四段式（一级/二级键迁入 options 选项区，footer 恒定 1 行），
+--      连续交互后选项仍全部可点。
 --
 -- 附带守护 v2.1 §7.15 遗留回归：infoLayer 必须挂在 root 上
 -- （曾被误删，导致整棵 cardHost 子树游离、真机三卡不可见）。
@@ -129,22 +130,6 @@ local function findButtonPrefix(root, prefix)
         if not widget.visible then return end
         if widget.kind == "Button" and type(widget.props.text) == "string"
             and widget.props.text:sub(1, #prefix) == prefix and isVisible(widget) then
-            found = widget
-            return
-        end
-        for _, child in ipairs(widget.children or {}) do walk(child) end
-    end
-    walk(root)
-    return found
-end
-
--- 查找首个可见 TextField（老人自由问答输入框）
-local function findTextField(root)
-    local found
-    local function walk(widget)
-        if found then return end
-        if not widget.visible then return end
-        if widget.kind == "TextField" then
             found = widget
             return
         end
@@ -358,8 +343,10 @@ function Tests.Run()
             click_first(findButton(hud.root, "拜访老人", true))
             hud.Refresh()
             assert(loop.elderOpen == true, "visiting the elder must open the dialogue")
-            -- v2.3 契约：打开即见一级键（分类键带 ▸ 后缀避免与物品按钮撞名）
-            for _, want in ipairs({ "提问 ▸", "给予 ▸", "展示 ▸", "聊天记录", "结束对话" }) do
+            -- v2.3 契约：打开即见一级键（分类键带 ▸ 后缀避免与物品按钮撞名）。
+            -- v3.2（2026-10-13）：提问二级随智能体功能整体移除，一级键剩两枚；
+            -- 全局键行常驻 footer（四段式，footer 恒定 1 行）。
+            for _, want in ipairs({ "给予 ▸", "展示 ▸", "聊天记录", "结束对话" }) do
                 local button = findButton(hud.root, want, true)
                 assert(button, "elder card must expose " .. want .. " immediately")
                 assert(isVisible(button), want .. " must be visible immediately")
@@ -382,34 +369,27 @@ function Tests.Run()
             assert(findButton(hud.root, "给予", true), "the give submenu lists the apple row")
             -- 二级操作后不自动返回一级（可连续给予/展示）
             assert(findButton(hud.root, "← 返回", true), "submenu must stay open after the action row is built")
-            -- 二级·提问：自由输入框 + 「问」按钮（2026-10-09 改造，决策「只留自由输入」）
+            -- 连续交互（给予苹果 + 展示鱼饵）：对话流持续增长，
+            -- 每轮交互后选项仍全部可点（自由问答移除后对话流靠交互续写）。
+            click_first(findButton(hud.root, "给予", true))
+            hud.Refresh()
+            assert(findLabelContaining(hud.root, "老人收下了苹果"),
+                "the elder must acknowledge the gift in the dialogue stream")
             click_first(findButton(hud.root, "← 返回", true))
             hud.Refresh()
-            click_first(findButton(hud.root, "提问 ▸", true))
+            click_first(findButton(hud.root, "展示 ▸", true))
             hud.Refresh()
-            local field = findTextField(hud.root)
-            assert(field, "ask submenu must expose a free-text input")
-            local askBtn = findButton(hud.root, "问", true)
-            assert(askBtn, "ask submenu must expose the 问 button")
-            -- 模拟玩家连问 3 个问题：写入输入框 → 触发 onChange → 点「问」
-            for _, q in ipairs({ "怎么钓鱼？", "沙丁鱼是什么鱼", "天黑前要不要回港" }) do
-                field.props.value = q
-                field.props.onChange(field, q)
-                askBtn.props.onClick()
-                hud.Refresh()
-            end
-            -- 老人确实基于知识库作答（首问答案含「看水鸟」）
-            assert(findLabelContaining(hud.root, "看水鸟"),
-                "the elder must answer free-text questions from the knowledge base")
-            -- 自由输入形态不再有预设教学问题按钮（※ 前缀）
-            assert(not findButtonPrefix(hud.root, "※ "),
-                "free-input submenu must not list preset teaching buttons")
+            click_first(findButton(hud.root, "展示", true))
+            hud.Refresh()
+            assert(findLabelContaining(hud.root, "向老人展示了"),
+                "the show action must be recorded in the dialogue stream")
             -- v3.1 羊皮卷：对话流改为 ScrollView（elderDialogueScroll）全量渲染，
             -- 完整历史滚动可读；不再有 N 条限条与「更早对话已折叠」溢出提示。
             click_first(findButton(hud.root, "← 返回", true))
             hud.Refresh()
+            -- 开场白 1 条 + 给予 2 条 + 展示 2 条 = 5 个气泡，全部渲染在卷上。
             local bubbles = countVisibleImagePanels(hud.root)
-            assert(bubbles >= 6, "the parchment scroll must render the full history, got " .. bubbles)
+            assert(bubbles >= 5, "the parchment scroll must render the full history, got " .. bubbles)
             local scroll = findById(hud.root, "elderDialogueScroll")
             assert(scroll ~= nil and scroll.kind == "ScrollView",
                 "the dialogue stream must be a scrollable parchment (ScrollView)")
@@ -421,7 +401,7 @@ function Tests.Run()
             click_first(findButton(hud.root, "聊天记录", true))
             hud.Refresh()
             assert(findButton(hud.root, "选项 ▴", true), "review mode must collapse options into a handle")
-            assert(not findButton(hud.root, "提问 ▸", true),
+            assert(not findButton(hud.root, "给予 ▸", true),
                 "level-1 keys must hide while reviewing the chat log")
             local speakers = 0
             local function countSpeakers(widget)
@@ -432,21 +412,21 @@ function Tests.Run()
                 for _, child in ipairs(widget.children or {}) do countSpeakers(child) end
             end
             countSpeakers(hud.root)
-            assert(speakers > 6, "the chat log must keep the full history, got " .. speakers)
+            assert(speakers >= 5, "the chat log must keep the full history, got " .. speakers)
             -- 点把手展开选项区
             click_first(findButton(hud.root, "选项 ▴", true))
             hud.Refresh()
-            assert(findButton(hud.root, "提问 ▸", true), "the handle must expand the option keys")
+            assert(findButton(hud.root, "给予 ▸", true), "the handle must expand the option keys")
             assert(findButton(hud.root, "结束对话", true), "ending the dialogue must stay reachable in review mode")
             -- 再点收起
             click_first(findButton(hud.root, "选项 ▾", true))
             hud.Refresh()
-            assert(findButton(hud.root, "选项 ▴", true) and not findButton(hud.root, "提问 ▸", true),
+            assert(findButton(hud.root, "选项 ▴", true) and not findButton(hud.root, "给予 ▸", true),
                 "the handle must collapse the option keys again")
             -- 收起记录回常态：一级键恢复（文案带 ▾ 后缀，用前缀匹配）
             click_first(findButtonPrefix(hud.root, "收起记录"))
             hud.Refresh()
-            assert(findButton(hud.root, "提问 ▸", true) and not findButton(hud.root, "选项 ▴", true),
+            assert(findButton(hud.root, "给予 ▸", true) and not findButton(hud.root, "选项 ▴", true),
                 "leaving review mode must restore the level-1 keys")
         end)
     end)
@@ -490,12 +470,12 @@ function Tests.Run()
         end)
     end)
 
-    test("elder question buttons survive per-frame refreshes so real taps land", function()
+    test("elder submenu rows survive per-frame refreshes so real taps land", function()
         withHUD(function(HUD)
             -- 真机修复回归（2026-10-08 反馈"问题选项显示但点不了"）：
-            -- Bootstrap.Update 每帧 hud.Refresh()；若问题按钮每帧销毁重建，
+            -- Bootstrap.Update 每帧 hud.Refresh()；若物品行每帧销毁重建，
             -- 真机手指从按下到抬起之间 widget 已被替换，click 丢失。
-            -- 断言：连续两次 refresh 后问题按钮必须是**同一个实例**。
+            -- 断言：连续两次 refresh 后物品行按钮必须是**同一个实例**。
             local fixture = Flow.Fixture({ items = { "apple" } })
             local loop = fixture.loop
             assert(loop:Depart())
@@ -503,20 +483,20 @@ function Tests.Run()
             local hud = HUD.Create(loop)
             click_first(findButton(hud.root, "拜访老人", true))
             hud.Refresh()
-            click_first(findButton(hud.root, "提问 ▸", true))
+            click_first(findButton(hud.root, "给予 ▸", true))
             hud.Refresh()
-            local first = findButtonPrefix(hud.root, "※ ")
-            assert(first, "teaching question must be listed")
+            local first = findButton(hud.root, "给予", true)
+            assert(first, "give submenu must list the apple row")
             hud.Refresh()
             hud.Refresh()
-            local second = findButtonPrefix(hud.root, "※ ")
+            local second = findButton(hud.root, "给予", true)
             assert(second == first,
-                "question buttons must not be rebuilt on every refresh frame")
-            -- 点击后仍可用（重建一次是允许的：已问集合变化）
+                "submenu rows must not be rebuilt on every refresh frame")
+            -- 点击后仍可用（交付成功 → 对话流出现老人答复）
             first.props.onClick()
             hud.Refresh()
-            assert(findLabelContaining(hud.root, "先看水鸟"),
-                "the elder answer must appear after tapping a question")
+            assert(findLabelContaining(hud.root, "老人收下了苹果"),
+                "the elder answer must appear after tapping the give row")
         end)
     end)
 

@@ -7,7 +7,6 @@ local ArtVariants = require("Ocean.ArtVariants")
 local DialogueStyle = require("Gameplay.DialogueStyle")
 local UiKit = require("Gameplay.UiKit")
 local Achievements = require("Gameplay.Achievements")
-local ElderQA = require("Gameplay.ElderQA")
 -- v3.0 P0：屏幕适配层（断点 / 按钮坞让位 / 对话条数公式），见方案 §4.1。
 local UiLayout = require("Gameplay.UiLayout")
 local SoundSystem = require("Systems.SoundSystem")
@@ -115,15 +114,13 @@ function HUD.Create(loop, parent, debugTools)
         inventorySignature = "",
         -- v2.1 §7.14 对话式形态：老人对话记录（气泡序列）。
         -- transcript 每项 {who="elder"|"player", text=..., teach=bool}。
-        -- v2.3 选项区二级化：menuLevel="root"|"questions"|"give"|"show"；
+        -- v2.3 选项区二级化：menuLevel="root"|"give"|"show"；
         -- reviewOpen=聊天记录回看态；optionsExpanded=回看态下选项区展开。
         elderTranscript = {},
         elderMenuLevel = "root",
         elderReviewOpen = false,
         elderOptionsExpanded = false,
         elderWasOpen = false,
-        elderQuestionsBuiltKey = nil,
-        elderAsked = {},
         elderOpenedGeneration = nil,
         lastTexts = {},
         seekText = "",
@@ -139,12 +136,21 @@ function HUD.Create(loop, parent, debugTools)
         compendiumBuiltTab = nil,
         compendiumRowsDirty = false,
         achievementToastUntil = nil,
+        -- v1.5 选中态接线：物品行样式登记表 + tab 皮肤去重键（见
+        -- applyItemRowSelection / applyCompendiumTabSkin）。
+        itemRowRecords = {},
+        tabSkinApplied = nil,
     }
     ---@type table<string, any>
     local refs = {}
     local refresh = function() end
     ---@type fun(methodName: string, ...: any)
     local invokeLoop = function(methodName, ...) end
+    -- 前置声明：给予/展示后把交互记入老人对话流。定义在 destroyChildren
+    -- 之后（约 1890 行），但 refs.itemGive / 礼物行 / 透镜行提前引用——
+    -- Lua 的 local function 不提升作用域，不加声明会退化成全局 nil
+    -- （"attempt to call a nil value"，同 destroyChildren 的历史踩坑）。
+    local recordElderExchange = function() end
     ---@type fun(command: string, argument?: number|string)
     local invokeDebug = function(command, argument) end
 
@@ -177,22 +183,13 @@ function HUD.Create(loop, parent, debugTools)
     -- 皮肤/文字色全部来自 Gameplay.UiKit 单一令牌源，本函数不再内嵌样式。
     -- 昼夜：底板图不变，靠 themedPanels 的 day/night 衬色压暗
     -- （palette.cardDay/cardNight），makeThemer 逐通道插值 —— 换图后仍保留昼夜氛围。
-    -- v2.1 §7.12（用户 23:34「拜访老人显示不全 / 港口商店高度和背包同高」）：
-    -- 滚动屏三卡（背包/商店/老人）统一高度上限。之前老人卡无 maxHeight →
-    -- 内容约 576px 超出屏幕底边（"结束对话"被裁）；商店 58% 过紧 → 只显示到
-    -- "升级体力"。现统一 68% 屏高，礼物区改 flexGrow 自适应让位。
-    -- 必须定义在所有 card() 调用之前，故放在 card() 工厂处。
-    -- v2.1 §7.12 曾用统一 68% 屏高限制三卡高度。v2.2 起该令牌作废：
-    -- cardHost 改用 top/bottom 四边锚定后，卡片高度由宿主决定，
-    -- 卡内再由 sectionCard 的「主体 flexGrow + 操作条 flexShrink=0」
-    -- 自行分配空间，不再需要百分比高度上限。
-    -- 保留定义仅为兼容历史注释引用，实际不再被任何卡片使用。
-    local HUD_CARD_MAXH = "68%"
+    -- v2.1 §7.12（用户 23:34「拜访老人显示不全」）曾用统一 68% 屏高上限，
+    -- v2.2 起作废：cardHost 四边锚定后卡片高度由宿主决定，卡内由
+    -- sectionCard 三段/四段式自行分配（老人卡 v3.2 起再分出 options 区）。
 
-    -- v2.1 §7.14 对话式形态：老人自由问答（2026-10-09 改造）。
-    -- 玩家在「提问 ▸」二级用 TextField 自由输入，由 scripts/Gameplay/ElderQA.lua
-    -- 基于 data/elder_qa.lua 知识库作答（见 buildElderAskPanel / askElderFree）。
-    -- 旧的预设问题列表（ELDER_QUESTIONS）已废弃：决策改为「只留自由输入」。
+    -- v2.1 §7.14 曾提供「提问 ▸」二级自由输入 + 本地知识库匹配（ElderQA），
+    -- 真机实测确认不需要，已整体移除（引擎/知识库/单测同步删除）；
+    -- 老人卡保留 给予 / 展示 两个功能二级，对话流只承载事件反馈。
 
     -- card() 通用卡工厂。skin 选底板档位（v2.1 批B-D 分级）：
     --   抽屉内面板（背包/港口）用默认 panel（繁复茶棕，信息量大需要框感）；
@@ -212,18 +209,26 @@ function HUD.Create(loop, parent, debugTools)
     -- 骨架（自上而下）：
     --   ① header  标题 + 摘要文字（flexShrink=0，永不参与压缩）
     --   ② body    flexGrow=1 的 ScrollView（唯一允许滚动的区）
-    --   ③ footer  flexShrink=0 的固定操作条（不滚动、不压缩、不被遮挡）
+    --   ③ options 选项区（opts.options=true 时创建；maxHeight 36% 卡高，
+    --              内部自带滚动；默认不创建，背包/商店零影响）
+    --   ④ footer  flexShrink=0 的固定操作条（不滚动、不压缩、不被遮挡）
     --
     -- 为什么必须拆出 footer：v2.1 三卡都是"一列到底 + maxHeight 68%"，
     -- 底部按钮（结束对话 / 全部卖出 / 读取存档）与主体内容抢同一列空间，
     -- 内容一多就把按钮推出屏幕（真机 21:46 / 23:34 两次反馈的同一根因）。
     -- 拆开后主体再长也只在自己那格内滚，操作条恒在卡内底部可见可点。
     --
+    -- 为什么老人卡还要拆出 options：v2.3 曾把一级/二级键全塞进 footer，
+    -- 四块 flexShrink=0 叠加可吃掉 60%~80% 卡高，把对话流挤成 0
+    -- （真机"拜访老人显示异常"根因，v3.0 评审 P0-2）。options 区封顶
+    -- 36% 且内部滚动后，对话流保底可读，footer 收回"只允许 1 行"契约
+    -- （UI 六条硬规则 #2）。
+    --
     -- 契约：
     -- · footer 与 body 是 card() 的**直属子节点**（中间不套 ScrollView），
     --   保持 isVisible 沿父链判定语义（§7.9 教训）。
-    -- · 滚动只发生在 body 内部的 ScrollView 里；对话流等"不能包 ScrollView"
-    --   的子树仍放在 body 的普通 Panel 中（见拜访老人卡）。
+    -- · 滚动只发生在 body / options 内部的 ScrollView 里；带 "%02d · "
+    --   前缀的标签与按钮仍同处一个面板（契约查找不受祖先容器影响）。
     local function sectionCard(title, opts)
         opts = opts or {}
         local panel = UI.Panel(UiKit.cardProps(opts.skin or "panel", {
@@ -268,7 +273,22 @@ function HUD.Create(loop, parent, debugTools)
         }
         panel:AddChild(scroll)
 
-        -- ③ 固定操作条：flexShrink=0 保证任何内容压力下都不被压缩
+        -- ③ 选项区（按需创建）：封顶 36% 卡高、内部滚动，承接一切
+        -- "二级/三级"内容，使 footer 恒定单行。仅 opts.options 时创建。
+        local options
+        if opts.options then
+            options = UI.ScrollView {
+                id = "sectionCardOptions",
+                width = "100%",
+                maxHeight = "36%",
+                flexShrink = 0,
+                scrollY = true,
+                showScrollbar = true,
+            }
+            panel:AddChild(options)
+        end
+
+        -- ④ 固定操作条：flexShrink=0 保证任何内容压力下都不被压缩
         local footer = UI.Panel {
             width = "100%",
             gap = 5,
@@ -279,7 +299,7 @@ function HUD.Create(loop, parent, debugTools)
         }
         if opts.footer ~= false then panel:AddChild(footer) end
 
-        return panel, body, footer
+        return panel, body, footer, options
     end
 
     local root = UI.SafeAreaView {
@@ -893,9 +913,16 @@ local header = UI.Panel {
     refs.itemGive = makeButton("给老人", function()
         local itemIndex = state.selectedItemIndex
         if not itemIndex then return end
-        -- 打开对话会刷新物品行并清除选择，先保存原槽位；失败时不交付物品。
+        -- 打开对话会刷新物品行并清除选择，先保存原槽位与品名；失败时不交付物品。
+        local cargoItems = loop.player and loop.player.inventory and loop.player.inventory:GetItems() or {}
+        local givenId = cargoItems[itemIndex]
+        local givenDef = givenId and Items.GetDefinition(givenId)
         invokeLoop("SetElderOpen", true)
-        if loop.elderOpen == true then invokeLoop("GiveToElder", itemIndex) end
+        if loop.elderOpen == true then
+            invokeLoop("GiveToElder", itemIndex)
+            recordElderExchange("给予 " .. (givenDef and givenDef.name or "物品"))
+            refresh()
+        end
     end, "primary", 72)
     refs.itemDrop = makeButton("丢弃", function()
         if state.selectedItemIndex then invokeLoop("DropItem", state.selectedItemIndex) end
@@ -1352,37 +1379,50 @@ local header = UI.Panel {
     --   ③ 礼物区保持为 card 的直接后代（多包一层 ScrollView 会改变 UI 树
     --      导致 isVisible 沿父链判定失效，教训见 §7.9）。
     --      v2.2 已把礼物区并入 sectionCard 的主体滚动区，不再单独包 ScrollView。
-    -- v2.2 拜访老人卡重构：sectionCard 三段式 + 对话流限高（历史背景见 git）。
-    -- v2.3（2026-10-08 真机截图反馈）：选项区二级化 + 聊天记录回看态。
-    -- 真机问题（截图 16:34）：宝物卡、教程问题、记录开关、透镜、结束对话
-    -- 全部平铺在一层，拥挤且无分组。
     --
-    -- 新交互结构（用户拍板 A 案：二级化 + 同步更新测试契约）：
-    --   一级键（level1）：[提问 ▸] [给予 ▸] [展示 ▸] / [聊天记录] [结束对话]
+    -- v2.2 三卡重构 → v2.3 选项区二级化 → **v3.2 四段式重排（2026-10-13）**：
+    -- 真机"拜访老人显示异常"的结构性根因 = v2.3 把四个 flexShrink=0 块
+    -- （把手/全局键/一级键/二级列表）全塞进 footer，二级列表可变高 3~8 行，
+    -- footer 一度吃掉 60%~80% 卡高，把对话流挤成 0（v3.0 评审 P0-2）。
+    -- 现按评审 §4.2 落四段式，一级/二级/把手全部迁入 **options 选项区**
+    -- （封顶 36% 卡高、内部滚动），footer 收回"只允许 1 行"硬规则：
+    --
+    -- ┌─ 拜访老人 ────────────────────────────┐
+    -- │ header：对话反馈 + 老人进展（只读）      │
+    -- ├─ body（flexGrow，唯一对话滚动区）────────┤
+    -- │  羊皮卷对话流 / 聊天记录（回看态）        │
+    -- ├─ options（maxHeight 36%，内部滚动）──────┤
+    -- │  一级键 [给予 ▸] [展示 ▸]              │
+    -- │  或二级：[← 返回] + 标题 + 物品行        │
+    -- │  或回看态把手 [选项 ▴]                  │
+    -- ├─ footer（恒定 1 行）────────────────────┤
+    -- │  [聊天记录]        [结束对话]           │
+    -- └────────────────────────────────────────┘
+    --
+    -- 交互结构（v2.3 A 案，提问二级已于 2026-10-13 随智能体功能整体移除）：
+    --   一级键（level1）：[给予 ▸] [展示 ▸]
     --   二级列表（level2）：点一级键展开，[← 返回] 回一级
-    --     提问 → 问题列表（问过即消失，elderAsked 去重沿用）
     --     给予 → 可给予的食物行
-    --     展示 → 可展示的鱼/饵行 + 透镜行（宝物卡从主区移除，融进此处）
-    --   回看态：点[聊天记录] → 记录展开、选项区收起为底部 [选项 ▴] 把手；
+    --     展示 → 可展示的鱼/饵行 + 透镜行（宝物卡融进此处）
+    --   回看态：点[聊天记录] → 记录展开、选项区收起为 [选项 ▴] 把手；
     --           点把手展开选项区、再点收起；再点[收起记录]回常态。
     --
     -- 文案避撞（关键）：一级键带「 ▸」后缀，与二级物品按钮（精确文案
     -- "给予"/"展示"）不撞名 —— findButtons 的精确匹配因此可区分层级。
     --
-    -- 契约（已随 A 案更新四套件）：
+    -- 契约（四套件，本次重排后全部复验通过）：
     --   ① B2UITests：打开 → 点[展示 ▸] → findButtons("展示")=2（物品按钮）
     --   ② SevenDays：打开 → 点[给予 ▸] → "01 · "前缀行的[给予]
     --   ③ GameLoopUISpec：打开 → [给予 ▸] → [给予] → [结束对话]
     --   行结构不变：带 %02d · 前缀的标签与按钮仍同处一个面板。
     --   ④ 二级操作后**不自动返回一级**（可连续展示多条鱼/给多个苹果），
     --     由[← 返回]手动回一级。
-    refs.elderPanel, refs.elderBody, refs.elderFooter = sectionCard("拜访老人", { skin = "panel" })
+    refs.elderPanel, refs.elderBody, refs.elderFooter, refs.elderOptions =
+        sectionCard("拜访老人", { skin = "panel", options = true })
 
-    -- 摘要头：对话反馈 + 进展 + 教学（只读，永不滚动）
+    -- 摘要头：对话反馈 + 进展（只读，永不滚动）
     refs.elderMessage = makeLabel("食物可给予老人；鱼和鱼饵可向老人展示。", UiKit.fontSize.body)
     refs.elderStatus = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
-    -- S6 教学（05 页 P6）：前 3 天且未完成首次捕鱼领取时，展示看海对白。
-    refs.elderTeaching = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching)
     refs.elderHeaderBox = UI.Panel {
         width = "100%",
         gap = 2,
@@ -1391,7 +1431,6 @@ local header = UI.Panel {
     }
     refs.elderHeaderBox:AddChild(refs.elderMessage)
     refs.elderHeaderBox:AddChild(refs.elderStatus)
-    refs.elderHeaderBox:AddChild(refs.elderTeaching)
     refs.elderPanel:AddChild(refs.elderHeaderBox)
 
     -- 主体区：对话流（限高）+ 聊天记录（回看态显示）
@@ -1412,7 +1451,6 @@ local header = UI.Panel {
         showScrollbar = true,
         children = { refs.elderDialogueRows },
     }
-    refs.elderDialogTail = refs.elderDialogueRows -- 追加锚点
 
     -- 羊皮卷卷轴杆（上/下各一条，木轴质感）：纯装饰、flexShrink=0，
     -- 不包任何子节点，不改变 ScrollView 的树结构（测试 walk 契约安全）。
@@ -1452,7 +1490,8 @@ local header = UI.Panel {
     refs.elderBody:AddChild(refs.elderLogPanel)
     refs.elderLogPanel:SetVisible(false)
 
-    -- ── 操作条（固定底部）──────────────────────────────────────────
+    -- ── 选项区 options（封顶 36% 卡高，内部滚动）────────────────────
+    -- v3.2 四段式：一级键 / 二级列表 / 回看把手全部驻此，footer 只留全局键行。
     -- 回看态把手：仅 review 态可见；点一下展开选项区、再点收起。
     refs.elderHandleRow = UI.Panel {
         width = "100%",
@@ -1464,12 +1503,10 @@ local header = UI.Panel {
         refresh()
     end, "secondary", "100%")
     refs.elderHandleRow:AddChild(refs.elderHandle)
-    refs.elderFooter:AddChild(refs.elderHandleRow)
+    refs.elderOptions:AddChild(refs.elderHandleRow)
     refs.elderHandleRow:SetVisible(false)
 
-    -- 一级键组：三个分类键一行 + 两个全局键一行。
-    -- 全局键行**常驻**（任何层级、回看态都可点）——"结束对话"是高频退出路径，
-    -- "收起记录"是回看态的唯一出口，不能被抽屉收起。
+    -- 一级键组：两个功能分类键（提问二级已随智能体功能移除）。
     refs.elderLevel1 = UI.Panel {
         width = "100%",
         gap = 5,
@@ -1483,46 +1520,20 @@ local header = UI.Panel {
         flexDirection = "row",
         flexWrap = "wrap",
     }
-    refs.elderAskBtn = makeButton("提问 ▸", function()
-        state.elderMenuLevel = "questions"
-        refresh()
-    end, "secondary", "30%")
     refs.elderGiveBtn = makeButton("给予 ▸", function()
         state.elderMenuLevel = "give"
         refresh()
-    end, "secondary", "30%")
+    end, "secondary", "48%")
     refs.elderShowBtn = makeButton("展示 ▸", function()
         state.elderMenuLevel = "show"
         refresh()
-    end, "secondary", "30%")
-    refs.elderCategoryRow:AddChild(refs.elderAskBtn)
+    end, "secondary", "48%")
     refs.elderCategoryRow:AddChild(refs.elderGiveBtn)
     refs.elderCategoryRow:AddChild(refs.elderShowBtn)
     refs.elderLevel1:AddChild(refs.elderCategoryRow)
+    refs.elderOptions:AddChild(refs.elderLevel1)
 
-    refs.elderGlobalRow = UI.Panel {
-        width = "100%",
-        gap = 5,
-        flexShrink = 0,
-        flexDirection = "row",
-        flexWrap = "wrap",
-    }
-    -- v3.0 P0（用户拍板「去按钮化」）：这两个是次级动作，改文字链皮肤
-    -- （透明底 + 墨棕字，见 UiKit.button.link）。节点仍是 Button、文案不变，
-    -- findButtons("结束对话") / ("聊天记录") 照旧命中，四套件零改动。
-    refs.elderLogToggle = makeButton("聊天记录", function()
-        state.elderReviewOpen = not (state.elderReviewOpen == true)
-        state.elderOptionsExpanded = false
-        refresh()
-    end, "link", "46%")
-    refs.elderEnd = makeButton("结束对话", function() invokeLoop("SetElderOpen", false) end, "link", "46%")
-    refs.elderGlobalRow:AddChild(refs.elderLogToggle)
-    refs.elderGlobalRow:AddChild(refs.elderEnd)
-    -- v2.3：全局键行提升到 footer 直属（不随选项抽屉收起），常驻可点
-    refs.elderFooter:AddChild(refs.elderGlobalRow)
-    refs.elderFooter:AddChild(refs.elderLevel1)
-
-    -- 二级容器：[← 返回 + 标题] + 三套互斥内容（questions/give/show）
+    -- 二级容器：[← 返回 + 标题] + 两套互斥内容（give/show）
     refs.elderLevel2 = UI.Panel {
         width = "100%",
         gap = 4,
@@ -1544,15 +1555,6 @@ local header = UI.Panel {
     elderLevel2Header:AddChild(refs.elderBack)
     elderLevel2Header:AddChild(refs.elderLevel2Title)
     refs.elderLevel2:AddChild(elderLevel2Header)
-
-    -- 二级·提问：自由输入框 + 「问」按钮（buildElderAskPanel 构建一次）
-    refs.elderQuestions = UI.Panel {
-        width = "100%",
-        gap = 4,
-        flexShrink = 0,
-        flexDirection = "column",
-    }
-    refs.elderLevel2:AddChild(refs.elderQuestions)
 
     -- 二级·给予：可给予的食物行（rebuildItemRows 构建，行结构守契约）
     refs.elderGiveRows = UI.Panel {
@@ -1585,13 +1587,38 @@ local header = UI.Panel {
     refs.elderLensStatus = makeLabel("尚未获得透镜。", UiKit.fontSize.small, UiKit.ink.dim)
     refs.elderLensGive = makeButton("展示透镜", function()
         invokeLoop("GiveTreasureToElder", "scopeLens")
+        recordElderExchange("展示 望远镜透镜")
+        refresh()
     end, "primary", 96)
     refs.elderLensRow:AddChild(makeLabel("望远镜透镜", UiKit.fontSize.teaching, UiKit.ink.body, "bold",
         { flexGrow = 1, flexBasis = 0 }))
     refs.elderLensRow:AddChild(refs.elderLensGive)
     refs.elderLensRow:AddChild(refs.elderLensStatus)
     refs.elderLevel2:AddChild(refs.elderLensRow)
-    refs.elderFooter:AddChild(refs.elderLevel2)
+    refs.elderOptions:AddChild(refs.elderLevel2)
+
+    -- ── 操作条 footer（v3.2：恒定 1 行，只放全局键）──────────────────
+    -- 全局键行**常驻**（任何层级、回看态都可点）——"结束对话"是高频退出路径，
+    -- "收起记录"是回看态的唯一出口，不能被选项区收起。
+    refs.elderGlobalRow = UI.Panel {
+        width = "100%",
+        gap = 5,
+        flexShrink = 0,
+        flexDirection = "row",
+        flexWrap = "wrap",
+    }
+    -- v3.0 P0（用户拍板「去按钮化」）：这两个是次级动作，改文字链皮肤
+    -- （透明底 + 墨棕字，见 UiKit.button.link）。节点仍是 Button、文案不变，
+    -- findButtons("结束对话") / ("聊天记录") 照旧命中，四套件零改动。
+    refs.elderLogToggle = makeButton("聊天记录", function()
+        state.elderReviewOpen = not (state.elderReviewOpen == true)
+        state.elderOptionsExpanded = false
+        refresh()
+    end, "link", "46%")
+    refs.elderEnd = makeButton("结束对话", function() invokeLoop("SetElderOpen", false) end, "link", "46%")
+    refs.elderGlobalRow:AddChild(refs.elderLogToggle)
+    refs.elderGlobalRow:AddChild(refs.elderEnd)
+    refs.elderFooter:AddChild(refs.elderGlobalRow)
 
     refs.elderPanel:SetVisible(false)
     cardHost:AddChild(refs.elderPanel)
@@ -1781,15 +1808,14 @@ local header = UI.Panel {
         rows:AddChild(makeLabel(text, 12, { 169, 191, 181, 255 }))
     end
 
-    -- 前置声明（v2.1 §7.14）：askElderFree / destroyChildren 被
-    -- buildElderAskPanel、renderElderDialogue 提前引用，但定义在其后。
-    -- Lua 的 local function 不会自动提升作用域，不加声明会取到 nil：
-    -- destroyChildren 会退化为全局 nil → "attempt to call a nil value"。
-    local askElderFree
+    -- 前置声明：destroyChildren 被 renderElderDialogue / rebuildItemRows
+    -- 提前引用，但定义在其后。Lua 的 local function 不会自动提升作用域，
+    -- 不加声明会取到 nil：destroyChildren 会退化为全局 nil →
+    -- "attempt to call a nil value"（v2.1 §7.14 踩坑，沿用至今）。
     local destroyChildren
     -- v3.1 羊皮卷：原「按卡片可用高度算可见气泡数（3~8 条）」的公式块已删除 ——
     -- 对话流升级为 ScrollView 全量渲染（见 elderDialogueScroll），限条不再存在。
-    -- v2.1 §7.14（对话式形态）：对话流渲染 + 提问区构建 + 聊天记录抽屉同步。
+    -- v2.1 §7.14（对话式形态）：对话流渲染 + 聊天记录抽屉同步。
     -- v3.1 羊皮卷：对话流自身是 ScrollView（elderDialogueScroll），全量渲染
     -- transcript，新消息追加后自动滚到卷底；不再有 N 条限条与溢出提示。
     local function renderElderDialogue()
@@ -1834,41 +1860,6 @@ local header = UI.Panel {
         end
     end
 
-    -- 提问二级构建（2026-10-09）：自由输入形态，不再列预设问题按钮。
-    -- 含：静态引导文案 + TextField + 「问」按钮。仅构建一次（key 恒定，见 Refresh 分支）。
-    local function buildElderAskPanel()
-        if not refs.elderQuestions then return end
-        destroyChildren(refs.elderQuestions)
-        refs.elderQuestions:AddChild(makeLabel(
-            "有啥想问的，直接打字问我就行。", UiKit.fontSize.small, UiKit.ink.dim))
-        local askRow = UI.Panel {
-            width = "100%", flexDirection = "row", flexWrap = "wrap",
-            alignItems = "center", gap = 5,
-        }
-        refs.elderAskField = UI.TextField {
-            value = "",
-            placeholder = "问老人任何事，如：怎么钓鱼？",
-            width = 170, height = 40,
-            onChange = function(_, value) state.elderFreeAskText = tostring(value or "") end,
-        }
-        askRow:AddChild(refs.elderAskField)
-        askRow:AddChild(makeButton("问", function()
-            local txt = (state.elderFreeAskText or ""):match("^%s*(.-)%s*$")
-            if txt == "" then return end
-            askElderFree(txt)
-        end, "primary", "30%"))
-        refs.elderQuestions:AddChild(askRow)
-    end
-
-    -- 自由提问：记录「玩家气泡 + 老人答复」到对话流（复用现有 transcript 渲染）。
-    askElderFree = function(text)
-        if state.destroyed or not text or text == "" then return end
-        local result = ElderQA.ask(text)
-        state.elderTranscript[#state.elderTranscript + 1] = { who = "player", text = text }
-        state.elderTranscript[#state.elderTranscript + 1] = { who = "elder", text = result.answer }
-        refresh()
-    end
-
     destroyChildren = function(container)
         local source = container:GetChildren()
         local snapshot = {}
@@ -1877,6 +1868,22 @@ local header = UI.Panel {
         container:ClearChildren()
     end
 
+    -- 给予/展示交互记入对话流（羊皮卷）：玩家动作气泡 + 老人答复气泡。
+    -- 答复与摘要头反馈同源（Loop.lastMessage）。自由问答移除（2026-10-13）
+    -- 后，这是对话流唯一的追加来源——否则卷上只剩开场白一句。
+    recordElderExchange = function(playerText)
+        if state.destroyed then return end
+        local elderText = tostring(loop.lastMessage or "")
+        state.elderTranscript[#state.elderTranscript + 1] = { who = "player", text = playerText }
+        state.elderTranscript[#state.elderTranscript + 1] = {
+            who = "elder",
+            text = elderText ~= "" and elderText or "……",
+        }
+    end
+
+    -- 背包物品行默认底色（选中态时切到 palette.accentSoft，见 applyItemRowSelection）。
+    local ITEM_ROW_BG = { 92, 70, 46, 34 }
+
     local function rebuildItemRows(items, inPort, elderOpen, actionsBlocked)
         local cargoRevision = loop:GetCargoRevision()
         destroyChildren(refs.inventoryRows)
@@ -1884,6 +1891,9 @@ local header = UI.Panel {
         -- v2.3：礼物行拆分为「给予」与「展示」两个二级容器
         destroyChildren(refs.elderGiveRows)
         destroyChildren(refs.elderShowRows)
+        -- 选中态登记表：行重建时重置，由 applyItemRowSelection 每帧按
+        -- selectedItemIndex 刷新样式（选择变化不重建行，避免真机点击丢失）。
+        state.itemRowRecords = {}
 
         if #items == 0 then addEmptyMessage(refs.inventoryRows, "背包是空的。先去捕点鱼，再返港出售。") end
         local saleCount, giftCount = 0, 0
@@ -1901,7 +1911,7 @@ local header = UI.Panel {
                 -- v2.1 批B 修复（真机 10-07 反馈）：物品行原为深绿底 {45,64,61}，
                 -- 放在暖色羊皮纸卡内形成深色条 + 亮色字，与卡片风格割裂。
                 -- 改为半透明墨色浅底（卡片纸纹透出），行内文字用墨棕。
-                backgroundColor = { 92, 70, 46, 34 },
+                backgroundColor = ITEM_ROW_BG,
                 borderRadius = 5,
             }
             -- 名称标签必须占满剩余宽度：row 布局下无宽度约束的 label 会被压缩为不可见。
@@ -1920,6 +1930,18 @@ local header = UI.Panel {
                 flexWrap = "wrap",
                 alignItems = "center",
             }
+            -- v1.5 选中态左竖条（UI 规格 §7：3px accentBar，仅行级组件）：
+            -- Panel 无文字，SevenDays 的 row.children 按钮查找不受影响；
+            -- 默认隐藏，选中时随行样式一起亮（applyItemRowSelection）。
+            local selectedBar = UI.Panel {
+                width = 3,
+                alignSelf = "stretch",
+                flexShrink = 0,
+                backgroundColor = UiKit.palette.accentBar,
+                borderRadius = 1,
+            }
+            selectedBar:SetVisible(false)
+            itemLine:AddChild(selectedBar)
             itemLine:AddChild(makeLabel(string.format("%02d · %s%s", itemIndex, name,
                 fishTag ~= "" and (" · " .. fishTag) or ""), UiKit.fontSize.teaching,
                 fishColor or UiKit.ink.title, "bold", { flexGrow = 1, flexBasis = 0 }))
@@ -1937,6 +1959,9 @@ local header = UI.Panel {
                 itemLine:AddChild(sellButton)
             end
             inventoryRow:AddChild(itemLine)
+            state.itemRowRecords[#state.itemRowRecords + 1] = {
+                row = inventoryRow, bar = selectedBar, index = itemIndex, selected = false,
+            }
             -- 属性副行：类别 + 恢复体力 + 售价 + 可否给老人
             local CATEGORY_NAMES = { fish = "鱼获", food = "食物", bait = "鱼饵",
                 treasure = "宝物", misc = "杂项" }
@@ -2012,7 +2037,11 @@ local header = UI.Panel {
                     UiKit.fontSize.teaching, UiKit.ink.body, "bold",
                     { flexGrow = 1, flexBasis = 0 }))
                 local giftButton = makeButton(isFood and "给予" or "展示",
-                    function() invokeLoop("GiveToElder", itemIndex) end, "primary", 72)
+                    function()
+                        invokeLoop("GiveToElder", itemIndex)
+                        recordElderExchange((isFood and "给予 " or "展示 ") .. name)
+                        refresh()
+                    end, "primary", 72)
                 giftButton:SetDisabled(actionsBlocked)
                 giftRow:AddChild(giftButton)
                 if isFood then
@@ -2027,6 +2056,27 @@ local header = UI.Panel {
         if giftCount == 0 then
             addEmptyMessage(refs.elderGiveRows, "背包里没有可以给老人的食物。")
             addEmptyMessage(refs.elderShowRows, "背包里没有可以展示的鱼或鱼饵。")
+        end
+    end
+
+    -- v1.5 选中态接线（UI 规格 §7 / §12.3）：背包物品行选中 = 淡青底
+    -- （accentSoft）+ 2px 边（accentLine）+ 左侧 3px 竖条（accentBar）。
+    -- 令牌 2026-10-12 已落 UiKit，但长期零调用方（真机实测"未接入"），
+    -- 此处为首个接线点。只在选中变化时写属性（setLayoutProp 每次调用
+    -- 都会触发引擎整树 Yoga 布局，参考 updateDockReserve 的去重写法）。
+    local function applyItemRowSelection()
+        local records = state.itemRowRecords or {}
+        for _, record in ipairs(records) do
+            local selected = state.selectedItemIndex == record.index
+            if record.selected ~= selected then
+                record.selected = selected
+                setLayoutProp(record.row, "backgroundColor",
+                    selected and UiKit.palette.accentSoft or ITEM_ROW_BG)
+                setLayoutProp(record.row, "borderWidth", selected and 2 or 0)
+                setLayoutProp(record.row, "borderColor",
+                    selected and UiKit.palette.accentLine or { 0, 0, 0, 0 })
+                if record.bar then record.bar:SetVisible(selected) end
+            end
         end
     end
 
@@ -2074,6 +2124,23 @@ local header = UI.Panel {
                 refs.compList:AddChild(row)
             end
         end
+    end
+
+    -- v1.5 选中态接线（UI 规格 §7：图鉴/成就类界面必备 selected 态）：
+    -- 激活 tab 走 UiKit.button.selected（淡青底 + 2px 边），非激活回 secondary。
+    -- 与 applyItemRowSelection 同样只在实际切换时写属性（去重防每帧布局）。
+    local function applyCompendiumTabSkin()
+        local active = state.compendiumTab or "achievements"
+        if state.tabSkinApplied == active then return end
+        state.tabSkinApplied = active
+        local function applySkin(button, variant)
+            if not button then return end
+            local props = DialogueStyle.buttonProps(variant)
+            if not props then return end
+            for key, value in pairs(props) do setLayoutProp(button, key, value) end
+        end
+        applySkin(refs.compTabAchievements, active == "achievements" and "selected" or "secondary")
+        applySkin(refs.compTabMarine, active == "marine" and "selected" or "secondary")
     end
 
     refresh = function()
@@ -2607,6 +2674,8 @@ local header = UI.Panel {
             state.selectedItemIndex = nil
             rebuildItemRows(items, inPort, loop.elderOpen == true and elderPresent, busy or fishingRestricted)
         end
+        -- v1.5 选中态：选择变化只改样式不重建行（见 applyItemRowSelection）。
+        applyItemRowSelection()
         local selectedItem = state.selectedItemIndex and items[state.selectedItemIndex]
         local selectedDefinition = selectedItem and Items.GetDefinition(selectedItem)
         local itemUseAvailable = selectedDefinition ~= nil and selectedDefinition.canEat == true
@@ -2729,7 +2798,7 @@ local header = UI.Panel {
         -- 触发，不能只在跨周目（generation 变化）时——同周目内第二天再开对话，
         -- menuLevel 会停留在上次遗留的 "give"/"show" 二级，分类键整体隐藏，
         -- 测试与用户都会"找不到给予 ▸"。
-        -- 记录（transcript）与已问问题（elderAsked）仍按周目保留（跨天不丢对话史）。
+        -- 对话记录（transcript）按周目保留（跨天不丢对话史）。
         local elderNowOpen = loop.elderOpen == true
         if elderNowOpen and state.elderWasOpen ~= true then
             state.elderMenuLevel = "root"
@@ -2738,12 +2807,10 @@ local header = UI.Panel {
         end
         state.elderWasOpen = elderNowOpen
         -- v2.1 §7.14 对话形态接线：开场白按"每次打开对话"初始化一次；
-        -- 对话记录跨轮保留，玩家点问题后追加气泡并重建提问区。
-        -- 跨周目（generation 变化）时清空记录重新开场。
+        -- 对话记录跨轮保留。跨周目（generation 变化）时清空记录重新开场。
         if showElder and state.elderOpenedGeneration ~= loop.generation then
             state.elderOpenedGeneration = loop.generation
             state.elderTranscript = {}
-            state.elderAsked = {}
             local day0 = tonumber(player.day) or 1
             state.elderTranscript[#state.elderTranscript + 1] = {
                 who = "elder",
@@ -2753,52 +2820,36 @@ local header = UI.Panel {
             }
         end
         if showElder then
-            local elderDay = tonumber(player.day) or 1
-            local teachingDoneNow = type(loop.IsTeachingDone) == "function"
-                and loop:IsTeachingDone()
             renderElderDialogue()
-            -- v2.3 选项区三态接线：
+            -- v3.2 四段式选项区三态接线：
             --   review（回看记录）> level2（二级列表）> level1（一级键）
             local elderReview = state.elderReviewOpen == true
             local elderExpanded = state.elderOptionsExpanded == true
             local elderLevel = state.elderMenuLevel or "root"
             local elderOptionsVisible = (not elderReview) or elderExpanded
 
-            -- 主体：回看态显示记录，二级态显示二级列表，常态显示对话流
+            -- 主体：回看态显示记录，其余态显示对话流（羊皮卷全量滚动）
             refs.elderLogPanel:SetVisible(elderReview)
-            -- 提问二级也显示对话流：玩家打字提问后立即看到老人基于知识库的回答
-            -- （气泡在可滚动 body，输入框固定在 footer，布局天然不冲突）。
-            local dialogueVisible = not elderReview
-                and (elderLevel == "root" or elderLevel == "questions")
-            refs.elderDialogue:SetVisible(dialogueVisible)
+            refs.elderDialogue:SetVisible(not elderReview)
 
-            -- 底部：回看态分类键收起为把手（点开展开选项区，再点收起）；
-            -- 全局键行（收起记录/结束对话）常驻，是回看态的唯一出口。
+            -- 选项区（options）：回看态收起为把手（点开展开选项区，再点收起）；
+            -- 其余态按层级显示一级键或二级列表。全局键行在 footer 常驻，
+            -- 是回看态的唯一出口（"收起记录 ▾"）。
             refs.elderHandleRow:SetVisible(elderReview)
             refs.elderHandle:SetText(elderExpanded and "选项 ▾" or "选项 ▴")
             refs.elderCategoryRow:SetVisible(elderOptionsVisible and elderLevel == "root")
             refs.elderLevel2:SetVisible(elderOptionsVisible and elderLevel ~= "root")
             refs.elderLogToggle:SetText(elderReview and "收起记录 ▾" or "聊天记录")
 
-            -- 二级标题与内容（互斥三选一）
+            -- 二级标题与内容（互斥二选一）
             local level2Titles = {
-                questions = "问老人任何问题（打字后点「问」）",
                 give = "选择要给老人的食物",
                 show = "选择要给老人看的物品",
             }
             setText(refs.elderLevel2Title, "elderLevel2Title", level2Titles[elderLevel] or "")
-            refs.elderQuestions:SetVisible(elderLevel == "questions")
             refs.elderGiveRows:SetVisible(elderLevel == "give")
             refs.elderShowRows:SetVisible(elderLevel == "show")
             refs.elderLensRow:SetVisible(elderLevel == "show")
-            if elderLevel == "questions" then
-                -- 自由输入形态：输入 UI 只构建一次（key 恒定），避免每帧重建
-                -- 导致真机「看得到点不动」（同 2026-10-08 老人按钮修复根因）。
-                if state.elderQuestionsBuiltKey ~= "freeask" then
-                    buildElderAskPanel()
-                    state.elderQuestionsBuiltKey = "freeask"
-                end
-            end
         end
         refs.compendiumBody:SetVisible(showCompendium)
         -- 图鉴入口只在暂停态出现（避免海上误触打断操作）；页打开后入口隐藏。
@@ -2807,6 +2858,8 @@ local header = UI.Panel {
             local activeTab = state.compendiumTab or "achievements"
             refs.compTabAchievements:SetText(activeTab == "achievements" and "成就 ●" or "成就")
             refs.compTabMarine:SetText(activeTab == "marine" and "图鉴 ●" or "图鉴")
+            -- v1.5 选中态：激活 tab 走 selected 皮肤（文字 ● 之外补视觉态）。
+            applyCompendiumTabSkin()
             if state.compendiumBuiltTab ~= activeTab or state.compendiumRowsDirty == true then
                 buildCompendiumRows(activeTab)
                 state.compendiumBuiltTab = activeTab
@@ -2853,13 +2906,9 @@ local header = UI.Panel {
                 end
             end
             setText(refs.elderMessage, "elderMessage", feedback)
-            -- S6 教学区：Day1~3 且教学未完成（首次领取捕鱼收获）时展示，完成后收起。
-            local teachingDone = type(loop.IsTeachingDone) == "function" and loop:IsTeachingDone()
-            local day = tonumber(player.day) or 1
-            local showTeaching = showElder and teachingDone ~= true and day <= 3
-            -- v2.1 §7.14：教程三问已移入提问区（带※ 标记，点选后老人答复），
-            -- 此静态教学块不再显示。showTeaching 保留仅为不改动上方取值。
-            refs.elderTeaching:SetVisible(false)
+            -- v2.1 §7.14 曾在此放静态教学块（S6 看海对白），后让位给问答区；
+            -- 问答区（2026-10-13）与智能体功能一并移除，静态块不再恢复——
+            -- 教学引导由开场模态（OPENING_ELDER_TEXT）承担。
         end
         if loop.elderOpen == true then
             local elderProgressText = "老人进展暂不可用。"
