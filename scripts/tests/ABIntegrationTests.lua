@@ -1029,7 +1029,7 @@ function Tests.Run()
         near(sea.loop.clock.elapsed, 0.1, 0.000001, "B clock after Scene Update")
         near(sea.runtime.time, 0.1, 0.000001, "A world after Scene Update")
 
-        local inventoryButton = findByText(sea.hud.root, "背包")
+        local inventoryButton = findByText(sea.hud.root, "船舱")
         assert(inventoryButton)
         inventoryButton:Click()
         assert(sea.loop.inventoryOpen and sea.runtime.paused, "inventory should pause A immediately")
@@ -1113,7 +1113,7 @@ function Tests.Run()
         if not ok then error(err) end
     end)
 
-    check("返港按钮立即暂停整局，关闭背包和手动暂停后仍须点击出航", function()
+    check("返港按钮立即暂停整局，关闭船舱和手动暂停后仍须点击出航", function()
         local context = sceneHarness()
         local ok, err = pcall(function()
             local sea = context.sea

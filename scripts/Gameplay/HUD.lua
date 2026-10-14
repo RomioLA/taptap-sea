@@ -471,7 +471,7 @@ local header = UI.Panel {
     -- 背包开关（v2.1 批B 真机图1 修复）：背包已迁入信息滚动屏，按钮不再开关
     -- 65% 抽屉，改为"开信息屏 + 标记定位到背包卡"。世界仍照常暂停
     -- （走 loop:SetInventoryOpen，契约 Circle1B2UITests 要求该调用生效）。
-    refs.inventoryToggle = makeButton("背包", function()
+    refs.inventoryToggle = makeButton("船舱", function()
         local willOpen = not (loop.inventoryOpen == true)
         invokeLoop("SetInventoryOpen", willOpen)
         if willOpen then
@@ -508,7 +508,7 @@ local header = UI.Panel {
     -- v2.3.1（真机反馈"收起信息按钮无效"）语义升级为**左侧整块总开合**——
     -- 三卡已迁 cardHost，"信息"点击即收起/恢复 cardHost（商店/背包/老人）
     -- 与信息滚动屏。infoCollapsed 记录显式收起意图（见 refresh 推导处）。
-    refs.infoToggle = makeButton("信息", function()
+    refs.infoToggle = makeButton("港口商店", function()
         if state.infoCollapsed == true then
             state.infoCollapsed = false
             state.infoOpen = true
@@ -520,7 +520,7 @@ local header = UI.Panel {
         refresh()
     end, "secondary", 92)
     -- 图鉴/成就入口（v2.0 §7.4）：仅暂停态可见（refresh 控制），页壳走模态层。
-    refs.compendiumToggle = makeButton("图鉴", function()
+    refs.compendiumToggle = makeButton("记事本", function()
         local willOpen = not (state.compendiumOpen == true)
         state.compendiumOpen = willOpen
         state.compendiumRowsDirty = true
@@ -791,7 +791,7 @@ local header = UI.Panel {
     root:AddChild(refs.throwSelectionPanel)
 
     refs.barrelPanel = card("海岸木桶")
-    refs.barrelStatus = makeLabel("木桶检查暂未开放。", 13)
+    refs.barrelStatus = makeLabel("", 13)
     refs.barrelPanel:AddChild(refs.barrelStatus)
     refs.barrelCancel = makeButton("取消检查", function()
         invokeLoop("CancelBarrelInspection")
@@ -808,7 +808,7 @@ local header = UI.Panel {
         alignItems = "center",
         gap = 7,
     }
-    refs.scopeStatus = makeInfoLabel("尚未获得透镜；无法查看或切换望远镜功能。", 12, UI_PALETTE.seaTextMuted)
+    refs.scopeStatus = makeInfoLabel("", 12, UI_PALETTE.seaTextMuted)
     refs.scopePanel:AddChild(refs.scopeStatus)
     content:AddChild(refs.scopePanel)
     -- 宝物是既有player.treasures状态，不占有限格inventory；开关复用既有望远镜入口。
@@ -837,7 +837,7 @@ local header = UI.Panel {
     --   与可见性全部保留（Circle1B2UITests:234、HUDReviewTests:171-185、
     --   GameLoopUISpec:80-81 依赖）。
     -- · 卡片挂 infoLayer（常驻层），只受 showInventory 控制，不受 infoOpen 牵连。
-    refs.inventoryPanel, refs.inventoryBody, refs.inventoryFooter = sectionCard("背包", { skin = "panel" })
+    refs.inventoryPanel, refs.inventoryBody, refs.inventoryFooter = sectionCard("船舱", { skin = "panel" })
     refs.inventoryCount = makeLabel("0 / 0 格", UiKit.fontSize.teaching, UiKit.ink.dim)
     refs.inventoryHeaderRow = UI.Panel {
         width = "100%",
@@ -861,7 +861,6 @@ local header = UI.Panel {
         widget = refs.pendingCatchPanel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
     }
     refs.pendingCatchText = makeLabel("有渔获等待接收。", UiKit.fontSize.info, UiKit.ink.title, "bold")
-    refs.pendingCatchPanel:AddChild(makeLabel("需要丢弃时，先点击海面选择投放点；船舱保持打开，世界仍暂停。", 12))
     refs.pendingCatchClaim = makeButton("领取渔获", function()
         invokeLoop("ClaimPendingCatch")
     end, "primary", 108)
@@ -893,8 +892,6 @@ local header = UI.Panel {
     }
     refs.itemMenuTitle = makeLabel("物品操作", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
     refs.itemMenu:AddChild(refs.itemMenuTitle)
-    refs.itemUseReason = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.dim)
-    refs.itemMenu:AddChild(refs.itemUseReason)
     refs.upgrade = makeButton("扩容", function() invokeLoop("UpgradeInventory") end, "secondary", 148)
     refs.sellAll = makeButton("全部卖出", function() invokeLoop("SellAll") end, "primary", 108)
     refs.inventoryClose = makeButton("收起", function()
@@ -907,10 +904,10 @@ local header = UI.Panel {
         alignItems = "center",
         gap = 5,
     }
-    refs.itemUse = makeButton("使用", function()
+    refs.itemUse = makeButton("食用", function()
         if state.selectedItemIndex then invokeLoop("UseItem", state.selectedItemIndex) end
     end, "success", 56)
-    refs.itemGive = makeButton("给老人", function()
+    refs.itemGive = makeButton("给予", function()
         local itemIndex = state.selectedItemIndex
         if not itemIndex then return end
         -- 打开对话会刷新物品行并清除选择，先保存原槽位与品名；失败时不交付物品。
@@ -1201,7 +1198,7 @@ local header = UI.Panel {
         staminaRow:AddChild(makeButton("体力 +", function() invokeDebug("staminaPlus") end, "secondary", 82))
         staminaRow:AddChild(makeButton("体力 −", function() invokeDebug("staminaMinus") end, "secondary", 82))
         staminaRow:AddChild(makeButton("金钱 +", function() invokeDebug("moneyPlus") end, "secondary", 82))
-        staminaRow:AddChild(makeButton("清空背包", function() invokeDebug("clearInventory") end, "danger", 92))
+        staminaRow:AddChild(makeButton("清空船舱", function() invokeDebug("clearInventory") end, "danger", 92))
         refs.debugFishing = makeButton("钓鱼（" .. tostring(Config.stamina.fishingCost) .. "体力）", function()
             invokeDebug("fishing")
         end, "primary", 112)
@@ -1421,7 +1418,6 @@ local header = UI.Panel {
         sectionCard("拜访老人", { skin = "panel", options = true })
 
     -- 摘要头：对话反馈 + 进展（只读，永不滚动）
-    refs.elderMessage = makeLabel("食物可给予老人；鱼和鱼饵可向老人展示。", UiKit.fontSize.body)
     refs.elderStatus = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
     refs.elderHeaderBox = UI.Panel {
         width = "100%",
@@ -1429,7 +1425,6 @@ local header = UI.Panel {
         flexShrink = 0,
         flexDirection = "column",
     }
-    refs.elderHeaderBox:AddChild(refs.elderMessage)
     refs.elderHeaderBox:AddChild(refs.elderStatus)
     refs.elderPanel:AddChild(refs.elderHeaderBox)
 
@@ -1584,7 +1579,7 @@ local header = UI.Panel {
         borderRadius = 5,
         padding = { 3, 5, 3, 5 },
     }
-    refs.elderLensStatus = makeLabel("尚未获得透镜。", UiKit.fontSize.small, UiKit.ink.dim)
+    refs.elderLensStatus = makeLabel("", UiKit.fontSize.small, UiKit.ink.dim)
     refs.elderLensGive = makeButton("展示透镜", function()
         invokeLoop("GiveTreasureToElder", "scopeLens")
         recordElderExchange("展示 望远镜透镜")
@@ -1908,7 +1903,7 @@ local header = UI.Panel {
         -- selectedItemIndex 刷新样式（选择变化不重建行，避免真机点击丢失）。
         state.itemRowRecords = {}
 
-        if #items == 0 then addEmptyMessage(refs.inventoryRows, "背包是空的。先去捕点鱼，再返港出售。") end
+        if #items == 0 then addEmptyMessage(refs.inventoryRows, "船舱是空的。") end
         local saleCount, giftCount = 0, 0
         for index, itemId in ipairs(items) do
             local itemIndex = index
@@ -1985,9 +1980,6 @@ local header = UI.Panel {
             if definition and definition.sellPrice and definition.sellPrice > 0 then
                 traits[#traits + 1] = "售价 ¥" .. tostring(definition.sellPrice)
             end
-            if definition and definition.canGive then
-                traits[#traits + 1] = definition.category == "food" and "可给老人" or "可向老人展示"
-            end
             inventoryRow:AddChild(makeLabel(table.concat(traits, " · "), UiKit.fontSize.small, UiKit.ink.dim,
                 nil, { width = "100%" }))
             refs.inventoryRows:AddChild(inventoryRow)
@@ -2045,8 +2037,7 @@ local header = UI.Panel {
                     padding = { 3, 5, 3, 5 },
                 }
                 local isFood = definition.category == "food"
-                giftRow:AddChild(makeLabel(string.format("%02d · %s · %s", itemIndex, name,
-                    isFood and "可给老人吃" or "只能展示，不能给老人"),
+                giftRow:AddChild(makeLabel(string.format("%02d · %s", itemIndex, name),
                     UiKit.fontSize.teaching, UiKit.ink.body, "bold",
                     { flexGrow = 1, flexBasis = 0 }))
                 local giftButton = makeButton(isFood and "给予" or "展示",
@@ -2067,8 +2058,8 @@ local header = UI.Panel {
         if saleCount == 0 then addEmptyMessage(refs.portSales, "没有可出售的鱼。先去捕点鱼，再返港出售。") end
         -- v2.3：两个二级容器各自的空态说明
         if giftCount == 0 then
-            addEmptyMessage(refs.elderGiveRows, "背包里没有可以给老人的食物。")
-            addEmptyMessage(refs.elderShowRows, "背包里没有可以展示的鱼或鱼饵。")
+            addEmptyMessage(refs.elderGiveRows, "船舱里没有可以给老人的食物。")
+            addEmptyMessage(refs.elderShowRows, "船舱里没有可以展示的鱼或鱼饵。")
         end
     end
 
@@ -2352,7 +2343,7 @@ local header = UI.Panel {
                     local definition = Items.GetDefinition(caughtItemId)
                     local fishName = definition and definition.name or "鱼获"
                     if outcome == "pending_catch" then
-                        resultText = "本次捞到 1 条" .. fishName .. "；船舱已满，请整理背包接收鱼获。"
+                        resultText = "本次捞到 1 条" .. fishName .. "；船舱已满，请整理船舱接收鱼获。"
                     else
                         local sellPrice = definition and definition.sellPrice
                         resultText = "本次捞到 1 条" .. fishName
@@ -2424,7 +2415,7 @@ local header = UI.Panel {
             or (not barrelNearForDock and not barrelDockEngaged))
         -- 望远镜单入口（真机反馈 2026-10-05 精简：信息屏内只留状态文字）：
         -- 海上常驻；无透镜时按 B 侧契约显示禁用的"透镜未获得"。
-        refs.scopeToggleBar:SetVisible(not inPort)
+        refs.scopeToggleBar:SetVisible(not inPort and hasLens)
         refs.scopeToggleBar:SetText(hasLens
             and (scopeEnabled and "关闭望远镜" or "开启望远镜") or "透镜未获得")
         -- A1（2026-10-05 用户裁决）：白名单制——捕鱼动作期间允许透镜开关
@@ -2456,7 +2447,7 @@ local header = UI.Panel {
         -- ⚠️ 文案格式受 GameLoopUISpec:77 契约约束（"100/100" / "钱：100" /
         -- "2 / 5"，冒号与空格均不可改），仅位置搬到右列。
         setText(refs.statusRight, "statusRight", string.format(
-            "体力：%s/%s · 钱：%s · 背包 %d / %d 格",
+            "体力：%s/%s · 钱：%s · 船舱 %d / %d 格",
             tostring(player.stamina or 0), tostring(player.maxStamina or 0),
             tostring(player.money or 0), #items, capacity))
 
@@ -2494,7 +2485,7 @@ local header = UI.Panel {
         -- 总开合落在 cardHost：三卡（商店/背包/老人）一并收起/恢复，
         -- 各卡自身的互斥显隐逻辑不变（恢复时仍显示当前应显示的那张）。
         cardHost:SetVisible(infoOpen)
-        refs.infoToggle:SetText(infoOpen and "收起信息" or "信息")
+        refs.infoToggle:SetText(infoOpen and "收起信息" or "港口商店")
         refs.infoToggle:SetDisabled(busy or loop.loading == true)
 
         refs.depart:SetVisible(inPort)
@@ -2506,7 +2497,7 @@ local header = UI.Panel {
         refs.endToday:SetDisabled(busy or not ready or fishingRestricted)
         refs.inventoryToggle:SetDisabled(busy or fishingRestricted or pendingCatch
             or (not ready and loop.inventoryOpen ~= true and not bucketActiveForInput))
-        refs.inventoryToggle:SetText(pendingCatch and "船舱（收获待领）" or "背包")
+        refs.inventoryToggle:SetText(pendingCatch and "船舱（收获待领）" or "船舱")
         refs.elderToggle:SetDisabled(busy or fishingRestricted
             or (not ready and not bucketActiveForInput and loop.elderOpen ~= true))
         local showInventory = loop.inventoryOpen == true or pendingCatch
@@ -2609,7 +2600,7 @@ local header = UI.Panel {
         local barrelActive = bucketActiveForInput
         local barrelPending = barrelState ~= nil and barrelState.pending == true
         if not barrelGatesAvailable then
-            setText(refs.barrelStatus, "barrelStatus", "木桶检查暂未开放。")
+            setText(refs.barrelStatus, "barrelStatus", "")
             refs.barrelCancel:SetVisible(false)
         elseif barrelPending then
             setText(refs.barrelStatus, "barrelStatus", "木桶补给等待领取，请先处理待领取奖励。")
@@ -2620,7 +2611,7 @@ local header = UI.Panel {
         elseif barrelActive then
             local seconds = math.max(0, tonumber(barrelState.remaining) or 0)
             setText(refs.barrelStatus, "barrelStatus", string.format(
-                "木桶检查进行中，剩余 %.1f 秒；打开背包或对话会暂停计时，可以取消。", seconds))
+                "木桶检查进行中，剩余 %.1f 秒；打开船舱或对话会暂停计时，可以取消。", seconds))
             refs.barrelCancel:SetVisible(true)
             refs.barrelCancel:SetDisabled(false)
         else
@@ -2628,9 +2619,10 @@ local header = UI.Panel {
             refs.barrelCancel:SetVisible(false)
         end
 
-        -- 望远镜状态行（信息屏内）只读；开关统一走按钮坞"望远镜"。
+        -- 望远镜状态行（信息屏内）只读；无透镜时整条隐藏（UI精简 v1.0 §六）。
+        refs.scopePanel:SetVisible(hasLens)
         if not hasLens then
-            setText(refs.scopeStatus, "scopeStatus", "尚未获得透镜；无法查看或切换望远镜功能。")
+            setText(refs.scopeStatus, "scopeStatus", "")
         elseif not scopeApiAvailable or loop.scopeSyncError == "scope_interface_unavailable" then
             setText(refs.scopeStatus, "scopeStatus", "望远镜功能接口暂不可用。")
         elseif loop.scopeSyncError then
@@ -2639,8 +2631,8 @@ local header = UI.Panel {
             setText(refs.scopeStatus, "scopeStatus", scopeEnabled and "望远镜设置：开启。" or "望远镜设置：关闭。")
         end
 
-        -- 注：scopePanel（望远镜条目）保留常驻——测试契约要求无透镜时显示
-        -- "透镜未获得"禁用按钮；v2.0 已将其压成一行透明文字+按钮。
+        -- 注：scopePanel（望远镜条目）仅在获得透镜后显示；无透镜时整条隐藏，
+        -- 不在信息屏或坞内出现"尚未获得透镜／透镜未获得"等提示（UI精简 v1.0 §六）。
 
         refs.throwSelectionPanel:SetVisible(throwSelection ~= nil)
         if throwSelection then
@@ -2697,7 +2689,7 @@ local header = UI.Panel {
         if selectedItem then
             setText(refs.itemMenuTitle, "itemMenuTitle", string.format("%02d · %s", state.selectedItemIndex, itemName(selectedItem)))
         end
-        refs.itemUse:SetVisible(selectedDefinition ~= nil)
+        refs.itemUse:SetVisible(selectedDefinition ~= nil and selectedDefinition.canEat == true)
         refs.itemGive:SetVisible(selectedDefinition ~= nil and selectedDefinition.canGive == true)
         refs.itemThrow:SetVisible(selectedDefinition ~= nil and selectedDefinition.category ~= "treasure")
         refs.itemUse:SetDisabled(busy or fishingRestricted or not itemUseAvailable)
@@ -2708,9 +2700,6 @@ local header = UI.Panel {
         refs.itemThrow:SetDisabled(busy or fishingRestricted or inPort or not ready
             or selectedDefinition == nil or selectedDefinition.category == "treasure")
         refs.itemMenuBack:SetDisabled(false)
-        local useUnavailable = selectedDefinition ~= nil and not itemUseAvailable
-        refs.itemUseReason:SetVisible(useUnavailable)
-        setText(refs.itemUseReason, "itemUseReason", useUnavailable and userMessage("item_has_no_use") or "")
 
         local pendingIds = pendingData and pendingData.itemIds or {}
         local requiredSlots = pendingData and pendingData.requiredSlots
@@ -2910,19 +2899,8 @@ local header = UI.Panel {
             local forcedButton = refs.forcedConfirm
             forcedButton:SetDisabled(busy)
         end
-        if showElder then
-            local feedback = state.localMessage
-            if feedback == "" then
-                feedback = userMessage(loop.lastMessage)
-                if feedback == "" or not string.find(feedback, "老人", 1, true) then
-                    feedback = "食物可给予老人；鱼和鱼饵可向老人展示。"
-                end
-            end
-            setText(refs.elderMessage, "elderMessage", feedback)
-            -- v2.1 §7.14 曾在此放静态教学块（S6 看海对白），后让位给问答区；
-            -- 问答区（2026-10-13）与智能体功能一并移除，静态块不再恢复——
-            -- 教学引导由开场模态（OPENING_ELDER_TEXT）承担。
-        end
+        -- 老人卡头部只保留进展（elderStatus）；引导/说明文字按 UI精简 v1.0 §三 移除。
+        -- 真实反馈（localMessage）已由 HUD 日志行与调试面板另行展示，不在此重复。
         if loop.elderOpen == true then
             local elderProgressText = "老人进展暂不可用。"
             if elderStatus then
@@ -2939,17 +2917,16 @@ local header = UI.Panel {
                 end
             end
             setText(refs.elderStatus, "elderStatus", elderProgressText)
-            if not scopeApiAvailable then
-                setText(refs.elderLensStatus, "elderLensStatus", "透镜状态接口暂不可用。")
+            refs.elderLensRow:SetVisible(hasLens)
+            if not hasLens then
+                -- 无透镜：整行隐藏，不显示"展示透镜"按钮与"尚未获得"提示（UI精简 v1.0 §三）
+            elseif not scopeApiAvailable then
+                setText(refs.elderLensStatus, "elderLensStatus", "")
                 refs.elderLensGive:SetDisabled(true)
-            elseif hasLens then
-                setText(refs.elderLensStatus, "elderLensStatus", "透镜仍保留在宝物栏，可向老人展示。")
-                refs.elderLensGive:SetDisabled(busy or not elderPresent)
             else
-                setText(refs.elderLensStatus, "elderLensStatus", "尚未获得透镜。")
-                refs.elderLensGive:SetDisabled(true)
+                setText(refs.elderLensStatus, "elderLensStatus", "")
+                refs.elderLensGive:SetDisabled(busy or not elderPresent)
             end
-            refs.elderLensGive:SetVisible(true)
         end
         if showOpening then
             setText(refs.storyText, "storyText", OPENING_ELDER_TEXT)

@@ -501,7 +501,7 @@ function Tests.Run()
         assert(f.loop:CancelFishingAction())
     end)
 
-    -- A1（2026-10-05 用户裁决）：白名单制——动作中透镜开关可用，对话/背包仍拒绝。
+    -- A1（2026-10-05 用户裁决）：白名单制——动作中透镜开关可用，对话/船舱仍拒绝。
     test("A1 whitelist: scope toggle stays available and dialogs stay blocked mid-action", function()
         local f = atSea()
         -- 最小透镜接口桩（同 Circle1B2ScopeTests.bindScope 的生产同步契约）。
@@ -517,7 +517,7 @@ function Tests.Run()
         assert(f.loop:ToggleScope())
         assert(not f.loop.clock:IsPaused())
         assert(f.loop:ToggleScope())
-        -- 白名单外：背包与老人对话在动作中仍被拒绝。
+        -- 白名单外：船舱与老人对话在动作中仍被拒绝。
         assertEqual(f.loop:SetInventoryOpen(true), false)
         assertEqual(f.loop:SetElderOpen(true), false)
         assert(f.loop:CancelFishingAction())

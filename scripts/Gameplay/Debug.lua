@@ -104,7 +104,7 @@ local function executeClearInventory(loop)
         if not removed then return false, reason or "remove_failed" end
         items = inventory:GetItems()
     end
-    return true, "背包已清空"
+    return true, "船舱已清空"
 end
 
 local function executeSettleDay(loop)

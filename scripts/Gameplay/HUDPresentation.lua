@@ -31,7 +31,7 @@ function Presentation.Create(UI, Config, Items)
         day_finished = "今天已经结束",
         port_required = "请先返港",
         close_dialog_first = "请先关闭当前界面",
-        inventory_full = "背包已满",
+        inventory_full = "船舱已满",
         unknown_item = "未知物品",
         not_enough_money = "钱不够",
         not_enough_stamina = "体力不足",
@@ -68,8 +68,8 @@ function Presentation.Create(UI, Config, Items)
         day_required = "这张纸条要到第 7 天才能查看。",
         paper_already_shown = "这张纸条已经看过了。",
         stale_story_dialog = "纸条状态已更新，请重新打开。",
-        drop_receiver_unavailable = "附近没有接收地点，物品仍保留在背包里",
-        drop_rejected = "没有接收地点接收物品，物品仍保留在背包里",
+        drop_receiver_unavailable = "附近没有接收地点，物品仍保留在船舱里",
+        drop_rejected = "没有接收地点接收物品，物品仍保留在船舱里",
         invalid_drop_position = "请在海面选择有效投放点。",
         throw_out_of_range = "投掷距离太远，请点击 12 米内的海面。",
         throw_selection_required = "请先选择要投掷的物品。",
@@ -211,7 +211,7 @@ function Presentation.Create(UI, Config, Items)
         if loop.storyDialog then return "剧情对话" end
         if throwSelection then return "投放选点 · " .. itemName(throwSelection.itemId) end
         if pendingCatch then return "满舱整理 · 收获待领" end
-        if loop.inventoryOpen then return "背包整理" end
+        if loop.inventoryOpen then return "船舱整理" end
         if fishingPhase == "selecting" then return "捕鱼选点 · 点击30米内海面" end
         if fishingPhase == "casting" or fishingPhase == "landed" then return "抛网／收网" end
         if fishingPhase == "cleanup_pending" or fishingPhase == "rollback_pending" or fishingPhase == "committing" then

@@ -231,7 +231,7 @@ function Tests.Run()
             local titles = {}
             for _, card in ipairs(host.children) do titles[#titles + 1] = cardTitle(card) end
             assert(#titles >= 3, "three cards must hang under the host, got " .. #titles)
-            for _, want in ipairs({ "背包", "港口商店", "拜访老人" }) do
+            for _, want in ipairs({ "船舱", "港口商店", "拜访老人" }) do
                 local hit = false
                 for _, title in ipairs(titles) do if title == want then hit = true end end
                 assert(hit, "host must carry the card titled " .. want)
@@ -316,7 +316,7 @@ function Tests.Run()
             -- 售价只在鱼获（有 sellPrice）上出现，由港口出售区用例覆盖。
             assert(findLabelContaining(hud.root, "食物"), "backpack must state the item category")
             assert(findLabelContaining(hud.root, "恢复体力 20"), "backpack must state the heal amount")
-            assert(findLabelContaining(hud.root, "可给老人"), "backpack must state give-ability")
+            -- UI精简 v1.0 §一.2：物品行不再显示"可给老人"等说明，仅保留类别/数值
             -- 操作条固定在卡内底部：全部卖出 / 扩容 / 收起恒可见
             for _, want in ipairs({ "全部卖出", "扩容", "收起" }) do
                 local button = findButtonPrefix(hud.root, want)
@@ -325,7 +325,7 @@ function Tests.Run()
             -- 选中物品后，操作区出现在固定操作条而非列表上方
             click_first(findButton(hud.root, "操作", true))
             hud.Refresh()
-            for _, want in ipairs({ "使用", "丢弃", "投掷" }) do
+            for _, want in ipairs({ "食用", "丢弃", "投掷" }) do
                 local button = findButton(hud.root, want, true)
                 assert(button, "selected item must expose " .. want)
                 assert(isVisible(button), want .. " must stay visible after selecting a row")
@@ -359,8 +359,7 @@ function Tests.Run()
                 if text == "展示" then shows = shows + 1 end
             end
             eq(shows, 1, "the show submenu lists the displayable bait row")
-            assert(findLabelContaining(hud.root, "只能展示，不能给老人"),
-                "show rows must explain why they cannot be given")
+            -- UI精简 v1.0 §三：老人礼物行不再追加"只能展示"等说明
             -- 二级·给予：食物行 + 透镜不在此处
             click_first(findButton(hud.root, "← 返回", true))
             hud.Refresh()
@@ -446,9 +445,9 @@ function Tests.Run()
 
             click_first(findButton(hud.root, "结束对话", true))
             hud.Refresh()
-            click_first(findButton(hud.root, "背包", true))
+            click_first(findButton(hud.root, "船舱", true))
             hud.Refresh()
-            eq(table.concat(visibleCardTitles(host), "/"), "背包", "backpack takes over after the dialogue")
+            eq(table.concat(visibleCardTitles(host), "/"), "船舱", "cabin takes over after the dialogue")
 
             -- 用精确文案收起背包（前缀匹配会撞上「收起信息」按钮）
             click_first(findButton(hud.root, "收起", true))
@@ -462,7 +461,7 @@ function Tests.Run()
             click_first(findButton(hud.root, "收起信息", true))
             hud.Refresh()
             eq(host.visible, false, "collapsing info must hide the whole card host")
-            click_first(findButton(hud.root, "信息", true))
+            click_first(findButton(hud.root, "港口商店", true))
             hud.Refresh()
             eq(host.visible, true, "tapping info again must restore the card host")
             eq(table.concat(visibleCardTitles(host), "/"), "港口商店",

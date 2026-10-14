@@ -202,8 +202,9 @@ function Tests.Run()
         assert(scopeSynced, "the fake A scope interface should clear the initial missing-interface status")
         withHUD(function(HUD)
             local hud = HUD.Create(f.loop)
-            local noLensButton = button(hud.root, "透镜未获得", true)
-            assert(noLensButton.disabled)
+            -- UI精简 v1.0 §六：无透镜时透镜按钮直接隐藏，不显示"透镜未获得"
+            local noLensButtons = findButtons(hud.root, "透镜未获得", true)
+            assert(#noLensButtons == 0, "lens button must be hidden when no lens is owned")
             eq(f.loop:IsScopeEnabled(), false)
 
             assert(Progress.GrantLens(f.loop.player))
@@ -227,20 +228,20 @@ function Tests.Run()
         end)
     end)
 
-    test("bait use is disabled with a Chinese reason and bait and fish display without consumption", function()
+    test("non-edible bait hides the 食用 button and shows no use reason", function()
         local f = Flow.Fixture({ items = { "bait", "sardine" } })
         withHUD(function(HUD)
             local hud = HUD.Create(f.loop)
-            click(button(hud.root, "背包", true))
+            click(button(hud.root, "船舱", true))
             local operations = findButtons(hud.root, "操作", true)
             eq(#operations, 2)
-            click(operations[1]) -- select the bait
+        click(operations[1]) -- select the bait
 
-            local useButton = button(hud.root, "使用", true)
-            assert(useButton.disabled)
-            assert(exactLabel(hud.root, "该物品没有可用效果，无法使用。", true))
+        -- UI精简 v1.0 §四：非食用物品不显示"食用"按钮，也无理由文案
+        local useButtons = findButtons(hud.root, "食用", true)
+        assert(#useButtons == 0, "edible-only 食用 button must be hidden for non-food bait")
 
-            click(button(hud.root, "背包", true))
+            click(button(hud.root, "船舱", true))
             click(button(hud.root, "拜访老人", true))
             -- v2.3 二级化：先点「展示 ▸」分类键展开物品列表，再找物品行的「展示」
             click(button(hud.root, "展示 ▸", true))
@@ -275,7 +276,7 @@ function Tests.Run()
             local hud = HUD.Create(f.loop)
             local cancelButton = assert(findButtons(hud.root, "取消检查", false)[1])
             assert(isVisible(cancelButton), "active barrel action should offer cancellation")
-            assert(exactLabel(hud.root, "木桶检查进行中，剩余 4.0 秒；打开背包或对话会暂停计时，可以取消。", true))
+            assert(exactLabel(hud.root, "木桶检查进行中，剩余 4.0 秒；打开船舱或对话会暂停计时，可以取消。", true))
             eq(#findButtons(hud.root, "完成检查", false), 0)
             eq(#findButtons(hud.root, "立即完成", false), 0)
         end)
