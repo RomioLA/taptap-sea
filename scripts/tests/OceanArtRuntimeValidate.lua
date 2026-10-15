@@ -30,7 +30,7 @@ V.atFrame(10, function()
     Test.scene.options.simulationUpdate = function(_, _dt)
         Test.scene.bridge:Update(1 / 60, axis[1], axis[2])
     end
-    V.assert(Images.IsLoaded(Test.scene.context, "boat"), "船 PNG 已由引擎加载")
+    -- 2026-10-16：船贴图已裁决移除（还原无贴图矢量形态），无 boat 加载路径可断言。
     V.assert(Images.IsLoaded(Test.scene.context, "barrel"), "木桶 PNG 已由引擎加载")
     V.assert(Images.IsLoaded(Test.scene.context, "gull"), "海鸥 PNG 已由引擎加载")
     V.assert(Images.IsLoaded(Test.scene.context, "island"), "岛 PNG 已由引擎加载")

@@ -30,15 +30,20 @@ function Tests.Run()
         spec.path = "错误路径"
         assert(Art.GetSpec("sardine").path == "image/OceanReady/sardine.png")
         assert(Art.GetSpec("missing") == nil and not Art.LoadImage(a, "missing"))
+        -- 2026-10-16 用户裁决：船贴图替换效果不好，还原无贴图矢量形态；
+        -- boat/boat_story 目录项与素材文件同步移除，此处锁定移除契约。
+        assert(Art.GetSpec("boat") == nil and Art.GetSpec("boat_story") == nil,
+            "船目录项应已移除")
         assert(#created == 0)
     end)
-    check("正式启动加载六张原图与全部 story 变体且重复调用幂等", function()
+    check("正式启动加载五张原图与全部 story 变体且重复调用幂等", function()
         -- 2026-10-15 修复前此处锁定 #created==6（story 变体无加载路径的 bug 契约）；
-        -- 现在 ArtVariants 开启时 Load 必须连带预载 5 个 story 目标。
+        -- 现在 ArtVariants 开启时 Load 必须连带预载 4 个 story 目标
+        -- （boat_story 于 2026-10-16 随船贴图移除）。
         Art.Load(a)
         Art.Load(a)
-        assert(#created == 11)
-        for _, name in ipairs({ "boat", "island", "barrel", "gull", "ripple", "waterpaper" }) do
+        assert(#created == 9)
+        for _, name in ipairs({ "island", "barrel", "gull", "ripple", "waterpaper" }) do
             assert(Art.IsLoaded(a, name))
         end
         for _, name in ipairs(ArtVariants.StoryTargets()) do
@@ -52,7 +57,7 @@ function Tests.Run()
     end)
     check("story 变体目标清单与 catalog 一一对应", function()
         local targets = ArtVariants.StoryTargets()
-        assert(#targets == 5, "story 目标应为 5 个，实际 " .. #targets)
+        assert(#targets == 4, "story 目标应为 4 个，实际 " .. #targets)
         local seen = {}
         for _, name in ipairs(targets) do
             assert(not seen[name], name .. " 重复")
@@ -60,7 +65,7 @@ function Tests.Run()
             assert(Art.GetSpec(name) and not Art.GetSpec(name).preload,
                 name .. " 应存在且保持 preload=false")
         end
-        seen["island_story"], seen["boat_story"], seen["barrel_story"] = true, true, true
+        seen["island_story"], seen["barrel_story"] = true, true
         seen["gull_story"], seen["waterpaper_story"] = true, true
     end)
     check("变体漏载时 WaterPaper 按需加载一次后仍尊重地平线缺失", function()
@@ -68,21 +73,21 @@ function Tests.Run()
         -- 海面纸纹层整体消失（Fill 0/f 的组成部分）。
         assert(not Art.IsLoaded(c, "waterpaper_story"))
         assert(not Art.WaterPaper(c, {}, 640, 360))
-        assert(#created == 12 and Art.IsLoaded(c, "waterpaper_story"))
+        assert(#created == 10 and Art.IsLoaded(c, "waterpaper_story"))
         Art.Release(c)
         assert(#deleted == 1 and not Art.IsLoaded(c, "waterpaper_story"))
     end)
     check("新增候选显式加载且不影响另一上下文", function()
         assert(Art.LoadImage(a, "reef") and Art.LoadImage(a, "reef"))
-        assert(#created == 13 and Art.IsLoaded(a, "reef") and not Art.IsLoaded(b, "reef"))
+        assert(#created == 11 and Art.IsLoaded(a, "reef") and not Art.IsLoaded(b, "reef"))
         assert(Art.LoadImage(b, "shrub"))
         Art.Load(b)
-        assert(#created == 25 and Art.IsLoaded(b, "boat"))
+        assert(#created == 21 and Art.IsLoaded(b, "island"))
     end)
     check("失败只尝试一次并保留矢量回退", function()
         failedPath = Art.GetSpec("driftwood").path
         assert(not Art.LoadImage(a, "driftwood") and not Art.LoadImage(a, "driftwood"))
-        assert(#created == 26 and not Art.IsLoaded(a, "driftwood"))
+        assert(#created == 22 and not Art.IsLoaded(a, "driftwood"))
         assert(not Art.Sprite(a, "driftwood", {}, { x = 0, y = 0 }, 2, 0))
         failedPath = ""
     end)
@@ -113,16 +118,17 @@ function Tests.Run()
     check("停止释放仅当前上下文的成功句柄且幂等", function()
         Art.Release(a)
         Art.Release(a)
-        assert(#deleted == 12 and not Art.IsLoaded(a, "boat") and Art.IsLoaded(b, "boat"))
+        -- 计数含 test 4 的 Release(c)（+1）：a=9(启动)+reef+sardine=11，c=1。
+        assert(#deleted == 12 and not Art.IsLoaded(a, "island") and Art.IsLoaded(b, "island"))
         Art.Release(b)
-        assert(#deleted == 24 and not Art.IsLoaded(b, "shrub"))
+        assert(#deleted == 22 and not Art.IsLoaded(b, "shrub"))
     end)
     check("停止后可重新加载候选与默认集", function()
         assert(Art.LoadImage(a, "driftwood"))
         Art.Load(a)
-        assert(Art.IsLoaded(a, "driftwood") and Art.IsLoaded(a, "boat"))
+        assert(Art.IsLoaded(a, "driftwood") and Art.IsLoaded(a, "island"))
         Art.Release(a)
-        assert(#deleted == 36)
+        assert(#deleted == 32)
     end)
     Art.Plane = oldPlane
     Art.Release(a)

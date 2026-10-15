@@ -137,6 +137,7 @@ class NVGCapture:
                 "reset": self.reset,
                 "countFillColor": self.count_fill_color,
                 "callCount": self.call_count,
+                "globalAlpha": self.global_alpha_value,
                 "hasEllipseArgs": self.has_ellipse_args,
                 "countEllipseArgs": self.count_ellipse_args,
                 "scissorMatches": self.scissor_matches,
@@ -366,6 +367,10 @@ class NVGCapture:
     def set_global_alpha(self, ctx, alpha):
         self._call("nvgGlobalAlpha", ctx, alpha)
         self.global_alpha = max(0.0, _finite(alpha, 1.0))
+
+    def global_alpha_value(self):
+        """当前 globalAlpha 读数（测试断言 save/restore 平衡后回到 1）。"""
+        return self.global_alpha
 
     def set_shape_anti_alias(self, ctx, enabled):
         self._call("nvgShapeAntiAlias", ctx, enabled)

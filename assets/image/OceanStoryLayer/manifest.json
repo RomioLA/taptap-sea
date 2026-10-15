@@ -35,33 +35,6 @@
       "layer": "story",
       "status": "variant_not_wired_default_off"
     },
-    "boat_story": {
-      "path": "image/OceanStory_boat_20261005114947.png",
-      "source": "image/OceanStory_boat_20261005114947.png",
-      "size": [
-        768,
-        1536
-      ],
-      "content_bounds": [
-        155,
-        82,
-        614,
-        1437
-      ],
-      "alpha_range": [
-        0,
-        255
-      ],
-      "transparent_ratio": 0.6324801974826388,
-      "sha256": "9eca06ac3431916d72e411c99c80ab7c2e8dd71c00062769fc826d46dcd2c348",
-      "source_sha256": "9eca06ac3431916d72e411c99c80ab7c2e8dd71c00062769fc826d46dcd2c348",
-      "anchor": [
-        0.5,
-        0.5
-      ],
-      "layer": "story",
-      "status": "variant_not_wired_default_off"
-    },
     "barrel_story": {
       "path": "image/OceanStory_barrel_20261005115009.png",
       "source": "image/OceanStory_barrel_20261005115009.png",
