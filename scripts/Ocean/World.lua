@@ -199,9 +199,13 @@ local function matches(entity, filter)
 end
 
 -- Visibility/frozen flags never implicitly filter this interaction query.
-function World:queryEntitiesInRadius(center, radius, filter)
+-- S1-c（2026-10-15 卡顿排查）：可选 out 参数。Fish 行为树每鱼每步 3 次查询
+-- （danger/attract/prey），此前每次调用分配新结果表；热调用方（Fish:_nearestEntity）
+-- 改传复用的 scratch 表，零分配。不传 out 时行为与原先完全一致。
+function World:queryEntitiesInRadius(center, radius, filter, out)
     assert(type(radius) == "number" and radius >= 0, "radius must be nonnegative")
-    local found = {}
+    local found = out or {}
+    if out then clearArray(out) end
     for _, entity in ipairs(self.entities) do
         if not entity.removed and M.distanceSquared(center, entity.position) <= radius * radius and matches(entity, filter) then
             found[#found + 1] = entity
@@ -213,8 +217,9 @@ end
 function World:isPositionFree(position, radius)
     local bound = Config.world.halfSize - radius
     if math.abs(position.x) > bound or math.abs(position.y) > bound then return false end
-    for _, object in ipairs(self.entities) do
-        if not object.removed and object.blocking and M.distanceSquared(position, object.position) < (radius + object.radius)^2 then
+    -- S1-b：blockingList 只含未移除的 blocking 实体（CreateEntity 入/RemoveEntity 摘）。
+    for _, object in ipairs(self.blockingList) do
+        if M.distanceSquared(position, object.position) < (radius + object.radius)^2 then
             return false
         end
     end
@@ -235,10 +240,9 @@ function World:CreateWaterQuery(workspace)
     state.halfSize = Config.world.halfSize
     state.usePublicPredicate = self.isPositionFree ~= World.isPositionFree
     if not state.usePublicPredicate then
-        for _, entity in ipairs(self.entities) do
-            if not entity.removed and entity.blocking then
-                state.blockers[#state.blockers + 1] = entity
-            end
+        -- S1-b：快照源改 blockingList（与 isPositionFree 同源，语义不变）。
+        for _, entity in ipairs(self.blockingList) do
+            state.blockers[#state.blockers + 1] = entity
         end
     end
     return waterQueryForState(state)
@@ -352,8 +356,8 @@ function World:getAvoidance(entity, margin)
     local ax, ay = 0, 0
     if x >= bound then ax = ax-1 elseif x <= -bound then ax = ax+1 end
     if y >= bound then ay = ay-1 elseif y <= -bound then ay = ay+1 end
-    for _, object in ipairs(self.entities) do
-        if not object.removed and object.blocking and object.id ~= entity.id then
+    for _, object in ipairs(self.blockingList) do
+        if object.id ~= entity.id then
             local ox, oy = x-object.position.x, y-object.position.y
             if ox*ox+oy*oy <= (object.radius+entity.radius+margin)^2 then
                 local nx, ny = M.normal(ox, oy)

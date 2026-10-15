@@ -139,6 +139,24 @@ function Fish:Init(world, entity, speciesData, rng)
     self.surfaceRiseDuration = nil
     self.predationCooldownUntil = 0
 
+    -- S1-c（2026-10-15 卡顿排查）：行为树查询零分配化。三个 finder 闭包按物种
+    -- 构造一次后缓存（speciesData 构造后不变），查询结果表 likewise 复用；
+    -- 每次 _findDanger/_findAttraction/_findPrey 省 1 闭包 + 1 结果表分配。
+    self.queryScratch = {}
+    self.dangerFilter = function(candidate)
+        -- V2.2: only small fish fear a translating ship, using the same danger
+        -- radius and priority as tuna. A stopped ship has no lingering threat.
+        return (candidate.entityType == "fish" and candidate.species == speciesData.dangerSpecies)
+            or (speciesData.id == "sardine" and candidate.entityType == "ship"
+                and candidate.isMoving == true)
+    end
+    self.attractFilter = function(candidate)
+        return effectOf(candidate) == speciesData.attractEffect and not candidate.removed
+    end
+    self.preyFilter = function(candidate)
+        return self:_isUsablePrey(candidate)
+    end
+
     entity.surfaceDepth = 0
     entity.riseRemaining = 0
     entity.state = self.state
@@ -185,10 +203,11 @@ end
 
 ---@param radius number
 ---@param filter fun(candidate: table): boolean
+---@param out table? 复用的结果表（S1-c 零分配；nil 时由 queryEntitiesInRadius 新建）
 ---@return table? nearest
 ---@return number nearestDistanceSquared
-function Fish:_nearestEntity(radius, filter)
-    local matches = self.world:queryEntitiesInRadius(self.entity.position, radius, filter)
+function Fish:_nearestEntity(radius, filter, out)
+    local matches = self.world:queryEntitiesInRadius(self.entity.position, radius, filter, out)
     ---@type table?
     local nearest = nil
     local nearestDistanceSquared = math.huge
@@ -210,13 +229,7 @@ function Fish:_findDanger()
     local radius = self.speciesData.dangerRadius
     if type(species) ~= "string" or type(radius) ~= "number" or radius <= 0 then return nil end
 
-    return self:_nearestEntity(radius, function(candidate)
-        -- V2.2: only small fish fear a translating ship, using the same danger
-        -- radius and priority as tuna. A stopped ship has no lingering threat.
-        return (candidate.entityType == "fish" and candidate.species == species)
-            or (self.speciesData.id == "sardine" and candidate.entityType == "ship"
-                and candidate.isMoving == true)
-    end)
+    return self:_nearestEntity(radius, self.dangerFilter, self.queryScratch)
 end
 
 ---@return table? attraction
@@ -231,9 +244,7 @@ function Fish:_findAttraction()
         return nil
     end
 
-    return self:_nearestEntity(radius, function(candidate)
-        return effectOf(candidate) == data.attractEffect and not candidate.removed
-    end)
+    return self:_nearestEntity(radius, self.attractFilter, self.queryScratch)
 end
 
 ---@param candidate table?
@@ -252,9 +263,7 @@ function Fish:_findPrey()
     local radius = self.speciesData.preyRadius
     if type(species) ~= "string" or type(radius) ~= "number" or radius <= 0 then return nil end
 
-    return self:_nearestEntity(radius, function(candidate)
-        return self:_isUsablePrey(candidate)
-    end)
+    return self:_nearestEntity(radius, self.preyFilter, self.queryScratch)
 end
 
 function Fish:_clearPrey()
