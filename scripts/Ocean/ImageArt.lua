@@ -33,7 +33,8 @@ function Art.GetSpec(name)
         preload = spec.preload, repeatTexture = spec.repeatTexture }
 end
 
--- 库内候选按需显式加载，不随场景启动批量占用纹理或自动生成对象。
+-- 库内候选显式加载：preload=true 基础图与（ArtVariants 开启时）story 变体
+-- 随场景启动装入；其余候选保持按需，由 Plane/WaterPaper 首次使用时触发。
 ---@param ctx NVGContextWrapper
 ---@param name string
 function Art.LoadImage(ctx, name)
@@ -48,10 +49,15 @@ function Art.LoadImage(ctx, name)
     local flags = spec.repeatTexture
         and (NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY | NVG_IMAGE_GENERATE_MIPMAPS)
         or NVG_IMAGE_GENERATE_MIPMAPS
+    -- 卡顿排查埋点（2026-10-15）：story 变体默认随场景启动预载（见 Art.Load），
+    -- 运行中切换 StoryArt 触发的按需加载仍会在此打出单帧尖峰；loadMs 直接量化。
+    local loadStartMs = (type(os) == "table" and type(os.clock) == "function") and os.clock() * 1000 or nil
     local handle = nvgCreateImage(ctx, spec.path, flags) or -1
     images[name] = handle
     if handle > 0 then
-        print("[OceanArt] loaded " .. name .. " path=" .. spec.path)
+        local loadMs = loadStartMs and ((os.clock() * 1000) - loadStartMs) or nil
+        print("[OceanArt] loaded " .. name .. " path=" .. spec.path
+            .. (loadMs and (" loadMs=" .. string.format("%.1f", loadMs)) or ""))
     else
         print("[OceanArt] load failed " .. spec.path .. "; retaining vector fallback")
     end
@@ -62,6 +68,17 @@ end
 function Art.Load(ctx)
     for name, spec in pairs(catalog) do
         if spec.preload then Art.LoadImage(ctx, name) end
+    end
+    -- 2026-10-15 修复（卡顿排查根因）：story 变体 preload=false 且自批1接入
+    -- （59c1f9b）起没有任何加载路径——Art.Load 只载 preload=true 的基础图，
+    -- Plane/Sprite/WaterPaper 解析到 story 名后 images[name] 恒为 nil；
+    -- ArtVariants 默认开启，导致全量静默走矢量回退（SeaDebug 读数 Fill 0/f，
+    -- Draw 111ms 的主因之一）。变体开启时随场景启动预载，把同步解码+上传的
+    -- 成本移到加载期，避免首帧绘制尖峰。
+    if ArtVariants.IsEnabled() then
+        for _, storyName in ipairs(ArtVariants.StoryTargets()) do
+            if catalog[storyName] then Art.LoadImage(ctx, storyName) end
+        end
     end
 end
 
@@ -157,7 +174,15 @@ function Art.Plane(ctx, name, movement, origin, length, width, heading, altitude
     name = ArtVariants.Resolve(name)
     local images = contexts[ctx]
     local image = images and images[name] or 0
-    if image <= 0 then return false end
+    if image <= 0 then
+        -- 按需加载（2026-10-15 修复）：覆盖 SeaDebug 运行中切换 StoryArt 的场景；
+        -- 启动预载漏项（如变体当时关闭）也在此兜底。加载失败时 -1 已缓存，
+        -- 不会每帧重试，保持矢量回退语义。
+        Art.LoadImage(ctx, name)
+        images = contexts[ctx]
+        image = images and images[name] or 0
+        if image <= 0 then return false end
+    end
     local cosine, sine = math.cos(heading or 0), math.sin(heading or 0)
     local rollSin = math.sin(roll or 0)
     local function vertex(u, v)
@@ -232,7 +257,13 @@ function Art.WaterPaper(ctx, movement, width, height)
     local name = ArtVariants.Resolve("waterpaper")
     local images = contexts[ctx]
     local image = images and images[name] or 0
-    if image <= 0 then return false end
+    if image <= 0 then
+        -- 按需加载（2026-10-15 修复）：与 Plane 同构，兜底运行中切换与漏项。
+        Art.LoadImage(ctx, name)
+        images = contexts[ctx]
+        image = images and images[name] or 0
+        if image <= 0 then return false end
+    end
     local horizon = Projection.HorizonFunction(movement)
     if not horizon then return false end
     nvgSave(ctx)

@@ -31,4 +31,18 @@ function ArtVariants.Resolve(name)
     return STORY_NAMES[name] or name
 end
 
+--- story 变体目标名清单（catalog 键，去重）。
+--- 供 ImageArt 启动预载与测试守护使用；调用方不得改写返回值语义。
+---@return string[]
+function ArtVariants.StoryTargets()
+    local seen, targets = {}, {}
+    for _, storyName in pairs(STORY_NAMES) do
+        if not seen[storyName] then
+            seen[storyName] = true
+            targets[#targets + 1] = storyName
+        end
+    end
+    return targets
+end
+
 return ArtVariants

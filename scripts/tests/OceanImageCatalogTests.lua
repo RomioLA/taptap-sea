@@ -3,6 +3,7 @@ local Tests = {}
 
 function Tests.Run()
     local Art = require("Ocean.ImageArt")
+    local ArtVariants = require("Ocean.ArtVariants")
     local results = {}
     local function check(name, callback)
         local ok, err = pcall(callback)
@@ -11,8 +12,10 @@ function Tests.Run()
     local oldCreate, oldDelete = nvgCreateImage, nvgDeleteImage
     local oldMipmap, oldRepeatX, oldRepeatY = NVG_IMAGE_GENERATE_MIPMAPS, NVG_IMAGE_REPEATX, NVG_IMAGE_REPEATY
     local oldPlane = Art.Plane
+    local variantsWereEnabled = ArtVariants.IsEnabled()
+    ArtVariants.SetEnabled(true) -- 本套件锁定变体开启契约；结束前还原
     local created, deleted, failedPath = {}, {}, ""
-    local a, b = {}, {}
+    local a, b, c = {}, {}, {}
     NVG_IMAGE_GENERATE_MIPMAPS, NVG_IMAGE_REPEATX, NVG_IMAGE_REPEATY = 1, 2, 4
     nvgCreateImage = function(ctx, path, flags)
         created[#created + 1] = { ctx = ctx, path = path, flags = flags }
@@ -29,29 +32,57 @@ function Tests.Run()
         assert(Art.GetSpec("missing") == nil and not Art.LoadImage(a, "missing"))
         assert(#created == 0)
     end)
-    check("正式启动仍只加载六张原图且重复调用幂等", function()
+    check("正式启动加载六张原图与全部 story 变体且重复调用幂等", function()
+        -- 2026-10-15 修复前此处锁定 #created==6（story 变体无加载路径的 bug 契约）；
+        -- 现在 ArtVariants 开启时 Load 必须连带预载 5 个 story 目标。
         Art.Load(a)
         Art.Load(a)
-        assert(#created == 6)
+        assert(#created == 11)
         for _, name in ipairs({ "boat", "island", "barrel", "gull", "ripple", "waterpaper" }) do
             assert(Art.IsLoaded(a, name))
+        end
+        for _, name in ipairs(ArtVariants.StoryTargets()) do
+            assert(Art.GetSpec(name), name .. " 必须在 catalog 中存在")
+            assert(Art.IsLoaded(a, name), name .. " 必须随变体开启预载")
         end
         assert(not Art.IsLoaded(a, "reef") and not Art.IsLoaded(a, "sardine"))
         for _, entry in ipairs(created) do
             assert(entry.flags == (entry.path:find("waterpaper", 1, true) and 7 or 1))
         end
     end)
+    check("story 变体目标清单与 catalog 一一对应", function()
+        local targets = ArtVariants.StoryTargets()
+        assert(#targets == 5, "story 目标应为 5 个，实际 " .. #targets)
+        local seen = {}
+        for _, name in ipairs(targets) do
+            assert(not seen[name], name .. " 重复")
+            seen[name] = true
+            assert(Art.GetSpec(name) and not Art.GetSpec(name).preload,
+                name .. " 应存在且保持 preload=false")
+        end
+        seen["island_story"], seen["boat_story"], seen["barrel_story"] = true, true, true
+        seen["gull_story"], seen["waterpaper_story"] = true, true
+    end)
+    check("变体漏载时 WaterPaper 按需加载一次后仍尊重地平线缺失", function()
+        -- 修复前：waterpaper_story 永不加载，WaterPaper 直接返回 false，
+        -- 海面纸纹层整体消失（Fill 0/f 的组成部分）。
+        assert(not Art.IsLoaded(c, "waterpaper_story"))
+        assert(not Art.WaterPaper(c, {}, 640, 360))
+        assert(#created == 12 and Art.IsLoaded(c, "waterpaper_story"))
+        Art.Release(c)
+        assert(#deleted == 1 and not Art.IsLoaded(c, "waterpaper_story"))
+    end)
     check("新增候选显式加载且不影响另一上下文", function()
         assert(Art.LoadImage(a, "reef") and Art.LoadImage(a, "reef"))
-        assert(#created == 7 and Art.IsLoaded(a, "reef") and not Art.IsLoaded(b, "reef"))
+        assert(#created == 13 and Art.IsLoaded(a, "reef") and not Art.IsLoaded(b, "reef"))
         assert(Art.LoadImage(b, "shrub"))
         Art.Load(b)
-        assert(#created == 14 and Art.IsLoaded(b, "boat"))
+        assert(#created == 25 and Art.IsLoaded(b, "boat"))
     end)
     check("失败只尝试一次并保留矢量回退", function()
         failedPath = Art.GetSpec("driftwood").path
         assert(not Art.LoadImage(a, "driftwood") and not Art.LoadImage(a, "driftwood"))
-        assert(#created == 15 and not Art.IsLoaded(a, "driftwood"))
+        assert(#created == 26 and not Art.IsLoaded(a, "driftwood"))
         assert(not Art.Sprite(a, "driftwood", {}, { x = 0, y = 0 }, 2, 0))
         failedPath = ""
     end)
@@ -82,22 +113,23 @@ function Tests.Run()
     check("停止释放仅当前上下文的成功句柄且幂等", function()
         Art.Release(a)
         Art.Release(a)
-        assert(#deleted == 8 and not Art.IsLoaded(a, "boat") and Art.IsLoaded(b, "boat"))
+        assert(#deleted == 12 and not Art.IsLoaded(a, "boat") and Art.IsLoaded(b, "boat"))
         Art.Release(b)
-        assert(#deleted == 15 and not Art.IsLoaded(b, "shrub"))
+        assert(#deleted == 24 and not Art.IsLoaded(b, "shrub"))
     end)
     check("停止后可重新加载候选与默认集", function()
         assert(Art.LoadImage(a, "driftwood"))
         Art.Load(a)
         assert(Art.IsLoaded(a, "driftwood") and Art.IsLoaded(a, "boat"))
         Art.Release(a)
-        assert(#deleted == 22)
+        assert(#deleted == 36)
     end)
     Art.Plane = oldPlane
     Art.Release(a)
     Art.Release(b)
     nvgCreateImage, nvgDeleteImage = oldCreate, oldDelete
     NVG_IMAGE_GENERATE_MIPMAPS, NVG_IMAGE_REPEATX, NVG_IMAGE_REPEATY = oldMipmap, oldRepeatX, oldRepeatY
+    ArtVariants.SetEnabled(variantsWereEnabled)
     return { results = results }
 end
 

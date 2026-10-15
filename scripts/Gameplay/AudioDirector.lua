@@ -81,6 +81,12 @@ local state = {
     firstPath = nil,   -- 首个尝试的原始路径（全部失败时上报）
     initAttempts = 0,     -- ensureInit 累计调用数（失败退避节拍器，评审 P1-2）
     lastFailAttempts = nil, -- 上次初始化失败时的 attempts（nil=从未失败）
+    -- 卡顿排查埋点（2026-10-15）：WAV 全程主线程同步解码，初始化耗时与驻留
+    -- PCM 总时长是「音频爆音/内存压力」的直接证据；playCount/lastPlayMs 供关联。
+    initMs = nil,
+    totalSoundSec = 0,
+    playCount = 0,
+    lastPlayMs = nil,
 }
 
 -- ---------------------------------------------------------------------------
@@ -274,6 +280,12 @@ end
 --（创建/销毁 SoundSource + 18 个 GetResource）与日志刷屏。评审 P1-2。
 local INIT_RETRY_CALLS = 90
 
+-- 墙钟毫秒（os.clock 不可用时返回 nil）；仅初始化路径与播放统计使用，不逐帧调用。
+local function wallMs()
+    if type(os) == "table" and type(os.clock) == "function" then return os.clock() * 1000 end
+    return nil
+end
+
 local function initFailed(message)
     releaseAudioScene()
     state.capability = message
@@ -302,6 +314,8 @@ local function ensureInit()
         pcall(function() state.audioReady = audioInstance:IsInitialized() == true end)
     end
     local loaded = 0
+    local totalSoundSec = 0
+    local initStartMs = wallMs()
     for key, spec in pairs(SPECS) do
         if not state.firstPath then state.firstPath = spec.path end
         local sound, resolvedPath = resolveSound(cacheInstance, spec)
@@ -309,11 +323,18 @@ local function ensureInit()
             state.sounds[key] = sound
             if not state.pathSample then state.pathSample = key .. "->" .. resolvedPath end
             loaded = loaded + 1
+            local length = 0
+            pcall(function() length = sound:GetLength() end)
+            if type(length) == "number" and length == length and length > 0 then
+                totalSoundSec = totalSoundSec + length
+            end
         else
             logWarning("加载失败: " .. key .. " <- " .. spec.path)
         end
     end
     state.loadedCount = loaded
+    state.totalSoundSec = totalSoundSec
+    if initStartMs then state.initMs = (wallMs() or initStartMs) - initStartMs end
     if loaded == 0 then
         return initFailed("0个音效加载成功：首试路径 " .. tostring(state.firstPath)
             .. "｜已尝试含 assets/ 前缀候选")
@@ -340,7 +361,9 @@ local function ensureInit()
     local bedCount = 0
     for _ in pairs(state.beds) do bedCount = bedCount + 1 end
     state.capability = "组件池可用(" .. tostring(#state.pool) .. "+声床" .. tostring(bedCount) .. ")"
-    print("[AudioDirector] " .. state.capability .. "，资源加载" .. tostring(loaded) .. "/" .. tostring(countSpecs()))
+    print("[AudioDirector] " .. state.capability .. "，资源加载" .. tostring(loaded) .. "/" .. tostring(countSpecs())
+        .. "，initMs=" .. tostring(state.initMs and math.floor(state.initMs + 0.5) or -1)
+        .. "，驻留声样总时长=" .. string.format("%.1fs", state.totalSoundSec))
     return true
 end
 
@@ -386,6 +409,9 @@ function AudioDirector.Play(key, opts)
     slot.key = key
     slot.startedAt = nextTick()
     state.keySlot[key] = slot
+    state.playCount = state.playCount + 1
+    local nowMs = wallMs()
+    if nowMs then state.lastPlayMs = nowMs end
     return true, "已播放 " .. key
 end
 
@@ -456,6 +482,9 @@ function AudioDirector.Status()
     end
     return state.capability
         .. "｜加载" .. tostring(state.loadedCount) .. "/" .. tostring(countSpecs())
+        .. "｜initMs=" .. tostring(state.initMs and math.floor(state.initMs + 0.5) or -1)
+        .. "｜驻留" .. string.format("%.1fs", state.totalSoundSec)
+        .. "｜播放" .. tostring(state.playCount) .. "次"
         .. (state.pathSample and ("｜路径" .. state.pathSample) or "")
         .. (state.audioReady == false and "｜音频设备未初始化" or "")
         .. "｜声床 " .. (next(bedText) and table.concat(bedText, " ") or "无")
@@ -546,6 +575,7 @@ function AudioDirector.Shutdown()
     state.capability = "not_probed"
     state.audioReady, state.pathSample, state.firstPath = nil, nil, nil
     state.initAttempts, state.lastFailAttempts = 0, nil
+    state.initMs, state.totalSoundSec, state.playCount, state.lastPlayMs = nil, 0, 0, nil
 end
 
 return AudioDirector
