@@ -559,7 +559,31 @@ local function hillShapes(center,radius)
     return shapes
 end
 
-local function drawHill(ctx, movement, center, radius, bounds, airMix,shapes,frame)
+-- 岛饰贴图接入常数（2026-10-15，替换矢量山/树/泡沫）。
+-- 数值来源：assets/image/OceanDecor/manifest.json 的 content_bounds（AI 抠图后实测），
+-- 把"内容主体世界尺寸"换算为 Plane 的画幅（UV 0-1）世界尺寸。素材重导后需重算。
+-- 山：内容宽几乎全画幅（u 0.02~1.0）、主体横带 v 0.27~0.77——origin 取岛心即坐在岛面。
+-- 树：内容底 v≈0.93~1.0，baseOffset=(v_bottom-0.5) 令画幅底对齐世界树基；
+-- lengthPerHeight 使内容宽=矢量树冠宽 height*0.38，widthPerHeight 使内容高=height。
+local HILL_ASPECT = 1024 / 1536
+local TREE_IMAGE = {
+    tree_palm = { lengthPerHeight = 0.4676, widthPerHeight = 1.1312, baseOffset = 0.4342 },
+    tree_round = { lengthPerHeight = 0.4508, widthPerHeight = 1.0417, baseOffset = 0.5000 },
+}
+-- 泡沫环（方案 A）：与岛贴图相同 0.88 画幅修正；环 content/pixel=0.869，
+-- 外缘落在世界岸线附近。贴图就绪后呼吸弧 24→6 段保留"活"感。
+local FOAM_RING_ALPHA, FOAM_RING_ARC_MAX = 0.85, 6
+
+local function drawHill(ctx, movement, center, radius, bounds, airMix,shapes,frame,imageName)
+    if imageName and radius >= 3 then
+        -- 画幅宽 1.10r：内容宽≈1.08r，略宽于矢量山 0.95r 以容忍透明留边。
+        local length = radius * 1.10
+        if ImageArt.Plane(ctx, imageName, movement, center,
+            length, length * HILL_ASPECT, 0, 0, 1) then
+            return
+        end
+        -- Plane 返回 false 仅发生于加载失败（-1 已缓存不重试），保持矢量回退。
+    end
     for _,worldPoints in ipairs(shapes or hillShapes(center,radius)) do
         if Geometry.WorldBoundsVisible(movement,worldPoints) then
             local projected = Geometry.ProjectPolygon(movement, worldPoints,nil,nil,frame)
@@ -589,7 +613,17 @@ local function treeShape(base,heightMeters)
         envelope={stem[1],stem[2],left,right,top}}
 end
 
-local function drawTree(ctx, movement, base, heightMeters, bounds, paletteShift, airMix,shape,frame)
+local function drawTree(ctx, movement, base, heightMeters, bounds, paletteShift, airMix,shape,frame,imageName)
+    local profile = imageName and TREE_IMAGE[imageName]
+    if profile then
+        local width = heightMeters * profile.widthPerHeight
+        local origin = { x = base.x, y = base.y + width * profile.baseOffset }
+        if ImageArt.Plane(ctx, imageName, movement, origin,
+            heightMeters * profile.lengthPerHeight, width, 0, 0, 1) then
+            return
+        end
+        -- 加载失败保持矢量回退（下方原路径）。
+    end
     shape=shape or treeShape(base,heightMeters)
     if not Geometry.WorldBoundsVisible(movement,shape.envelope) then return end
     Geometry.StrokeWorldLine(ctx,movement,shape.stem[1],shape.stem[2],
@@ -607,6 +641,13 @@ local function drawShoreFoam(ctx, movement, center, shorelineRadius, time, bound
     if settings.enabled == false then return end
     local count = clamp(math.floor(settings.bubbleCount or 24), 1, 64)
     local baseOpacity = clamp(settings.opacity or 165, 0, 255)
+    -- 方案 A（2026-10-15）：静态泡沫环 + 保留少量呼吸矢量弧。环参数与岛贴图同构
+    -- （radius*2/0.88），content/pixel=0.869 使环外缘贴合世界岸线；贴图就绪后弧数
+    -- 降至 6 段（水彩泡沫带提供主体质感，矢量弧提供"活"感），加载失败则全矢量。
+    if ImageArt.Plane(ctx, "foam_ring", movement, center,
+        shorelineRadius * 2 / 0.88, shorelineRadius * 2 / 0.88, 0, 0, FOAM_RING_ALPHA) then
+        count = math.min(count, FOAM_RING_ARC_MAX)
+    end
     for index = 1, count do
         local arc = SurfaceEffects.ShoreFoamArc(center, shorelineRadius, index, count, time, settings)
         if arc and arc.strength > 0.02 and Geometry.WorldBoundsVisible(movement,arc.points,0) then
@@ -644,7 +685,9 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
         geometry={x=center.x,y=center.y,radius=radius,segments=segmentCount,
             outer=circlePoints(center,radius,segmentCount),
             land=circlePoints(center,radius*.89,segmentCount),
-            hills=hillShapes(center,radius),trees={}}
+            hills=hillShapes(center,radius),trees={},
+            -- 山造型按岛世界位置轮换沙丘/草坡（位置 hash 稳定，相邻岛不同造型）。
+            hillName=(math.floor(center.x*7+center.y*13)%2==0) and "hill_sand" or "hill_grass"}
         if radius>=5 then
             local treeHeight=clamp(radius*.30,2.2,5.4)
             for index,layout in ipairs(TREE_LAYOUT) do
@@ -653,7 +696,9 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
                     local base=localIslandPoint(center,x,y)
                     local height=treeHeight*layout.size
                     geometry.trees[#geometry.trees+1]={base=base,height=height,
-                        palette=index%2,shape=treeShape(base,height)}
+                        palette=index%2,
+                        name=index%2==0 and "tree_round" or "tree_palm",
+                        shape=treeShape(base,height)}
                 end
             end
         end
@@ -692,9 +737,9 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     end
     drawShoreFoam(ctx, movement, center, radius, finite(time) and time or 0, bounds,frame)
 
-    drawHill(ctx, movement, center, radius, bounds, airMix,geometry.hills,frame)
+    drawHill(ctx, movement, center, radius, bounds, airMix,geometry.hills,frame,geometry.hillName)
     for _,tree in ipairs(geometry.trees) do
-        drawTree(ctx,movement,tree.base,tree.height,bounds,tree.palette,airMix,tree.shape,frame)
+        drawTree(ctx,movement,tree.base,tree.height,bounds,tree.palette,airMix,tree.shape,frame,tree.name)
     end
     PerfProbe.Sample("islandVector", probeVectorStop())
     PerfProbe.Sample("islandTotal", probeTotalStop())

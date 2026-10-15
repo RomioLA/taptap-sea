@@ -120,21 +120,21 @@
       "path": "image/OceanStory_waterpaper_20261005114940.png",
       "source": "image/OceanStory_waterpaper_20261005114940.png",
       "size": [
-        1024,
-        1024
+        512,
+        512
       ],
       "content_bounds": [
         0,
         0,
-        1024,
-        1024
+        512,
+        512
       ],
       "alpha_range": [
         254,
         255
       ],
       "transparent_ratio": 0.0,
-      "sha256": "9d2de78709f917f0db3ac7104636b0fc6ab9ba383e3d3ee7eeb2a7483e7963ee",
+      "sha256": "bd21f7bfe113de656eca80bcdcd710bcd213fc2520d7e5fd22b0d471a502414a",
       "source_sha256": "9d2de78709f917f0db3ac7104636b0fc6ab9ba383e3d3ee7eeb2a7483e7963ee",
       "anchor": [
         0.5,

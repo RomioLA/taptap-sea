@@ -1,4 +1,12 @@
-"""整理新增航海绘本素材并生成只读运行目录；--check 仅校验，不覆盖文件。"""
+"""整理新增航海绘本素材并生成只读运行目录；--check 仅校验，不覆盖文件。
+
+注意（2026-10-15）：OUT（assets/image/OceanReady）当前是 tests/slim_ocean_art.py
+量化后的 256 色 P 模式瘦身产物；直接运行 prepare() 会以 RGBA 全彩重写这四张图、
+回退 P3 瘦身（体积约 5 倍）。新增素材（如 OceanDecor）只应：
+  1) 用 catalog_text(manifest) 重写 scripts/GeneratedData/OceanImageCatalog.lua；
+  2) 运行 --check 校验清单、PNG、源图与运行目录一致性。
+除非明确要重新导入 OceanReady 源图，否则不要运行 prepare()。
+"""
 import argparse
 import hashlib
 import importlib.util
@@ -27,9 +35,11 @@ def importer():
 def catalog_text(manifest):
     existing = json.loads((ROOT / "assets/image/OceanLoop/manifest.json").read_text(encoding="utf-8"))
     story = json.loads((ROOT / "assets/image/OceanStoryLayer/manifest.json").read_text(encoding="utf-8"))
+    decor = json.loads((ROOT / "assets/image/OceanDecor/manifest.json").read_text(encoding="utf-8"))
     lines = ["-- 自动生成：python3 tests/prepare_ocean_ready_art.py；禁止手工编辑。",
              "-- 只含图片规格，不含实体、玩法数值或更新逻辑。", "return {"]
-    for collection, preload in ((existing["assets"], True), (manifest["assets"], False), (story["assets"], False)):
+    for collection, preload in ((existing["assets"], True), (manifest["assets"], False),
+                                (story["assets"], False), (decor["assets"], False)):
         for name, entry in sorted(collection.items()):
             size, bounds = entry["size"], entry["content_bounds"]
             lines.extend([
@@ -118,8 +128,9 @@ def check():
     manifest = json.loads((OUT / "manifest.json").read_text(encoding="utf-8"))
     existing = json.loads((ROOT / "assets/image/OceanLoop/manifest.json").read_text(encoding="utf-8"))
     story = json.loads((ROOT / "assets/image/OceanStoryLayer/manifest.json").read_text(encoding="utf-8"))
+    decor = json.loads((ROOT / "assets/image/OceanDecor/manifest.json").read_text(encoding="utf-8"))
     full_bleed = ("waterpaper", "waterpaper_story", "ocean_tile")  # 整幅材质，无透明留边契约
-    for name, entry in {**existing["assets"], **manifest["assets"], **story["assets"]}.items():
+    for name, entry in {**existing["assets"], **manifest["assets"], **story["assets"], **decor["assets"]}.items():
         path = ROOT / "assets" / entry["path"]
         if path.is_absolute() and not path.resolve().is_relative_to((ROOT / "assets").resolve()):
             raise ValueError("素材路径越界")
@@ -141,6 +152,7 @@ def check():
     assert CATALOG.read_text(encoding="utf-8") == catalog_text(manifest), "运行目录与素材清单不同步"
     print(json.dumps({"passed": True, "existing_assets": len(existing["assets"]),
                       "new_assets": len(manifest["assets"]), "story_assets": len(story["assets"]),
+                      "decor_assets": len(decor["assets"]),
                       "catalog": CATALOG.relative_to(ROOT).as_posix()}, ensure_ascii=False))
 
 
