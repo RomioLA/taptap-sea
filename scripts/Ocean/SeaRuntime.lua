@@ -4,6 +4,7 @@ local FishData = require("Ocean.FishData")
 local M = require("Ocean.Math")
 local World = require("Ocean.World")
 local Movement = require("Ocean.Movement")
+local AutoNavigation = require("Ocean.AutoNavigation")
 local Fish = require("Ocean.Fish")
 local DefaultStrategy = require("Ocean.SpawnStrategy")
 local EntityStateSystem = require("Systems.EntityStateSystem")
@@ -18,6 +19,10 @@ function Runtime.New(options)
 end
 
 function Runtime:Init(options)
+    if self.autoNavigation then
+        self.autoNavigation:Cancel("runtime_reset")
+        self.autoNavigation = nil
+    end
     if self.world then self.world:Retire() end
     self.fishingGeneration = (self.fishingGeneration or 0) + 1
     self.world = World.New()
@@ -34,6 +39,50 @@ function Runtime:Init(options)
     assert(self.world:isPositionFree(self.ship.position, self.ship.radius), "invalid ship departure")
     self.movement = Movement.New(self.world, self.ship)
     if options.shipLevel ~= nil then self:SetShipLevel(options.shipLevel) end
+    local navWorld, navShip, navMovement = self.world, self.ship, self.movement
+    local adapter = {
+        getPosition = function()
+            return M.copy(navShip.position)
+        end,
+        getBlockers = function()
+            local blockers = {}
+            for _, entity in pairs(navWorld.entities) do
+                if entity and not entity.removed and entity.blocking == true then
+                    blockers[#blockers + 1] = {
+                        id = tostring(entity.id),
+                        position = M.copy(entity.position),
+                        radius = entity.radius,
+                        blocking = true,
+                    }
+                end
+            end
+            return blockers
+        end,
+        getTarget = function()
+            return navMovement.target
+        end,
+        ---@param point OceanPoint?
+        setTarget = function(point)
+            if point == nil then
+                -- AutoNavigation clears only after its target identity check.
+                navMovement:Stop()
+            else
+                navMovement:SetTarget(point)
+            end
+            return navMovement.target
+        end,
+        isValid = function()
+            return not navWorld.retired
+                and navWorld:get(navShip.id) == navShip
+                and navShip.alive and not navShip.removed
+                and navMovement.ship == navShip
+        end,
+        shipRadius = navShip.radius,
+        halfSize = Config.world.halfSize,
+        diagnostic = options.autoReturnDiagnostic,
+    }
+    ---@type OceanAutoNavigation
+    self.autoNavigation = AutoNavigation.New(adapter)
     ---@type table<string, FishBehavior>
     self.behaviors = {}
     self.initializedRegions = {}
@@ -136,6 +185,41 @@ function Runtime:GetPortPosition()
     return M.copy(Config.ship.start)
 end
 
+---@param portPosition OceanPoint?
+---@return boolean, string?
+function Runtime:StartAutoReturn(portPosition)
+    if self.paused then return false, "runtime_paused" end
+    if portPosition == nil then portPosition = self:GetPortPosition() end
+    return self.autoNavigation:Start(portPosition)
+end
+
+---@param reason string?
+---@return boolean
+function Runtime:CancelAutoReturn(reason)
+    return self.autoNavigation:Cancel(reason)
+end
+
+---@return table
+function Runtime:GetAutoReturnState()
+    return self.autoNavigation:GetState()
+end
+
+---@return table?
+function Runtime:ConsumeAutoReturnArrival()
+    return self.autoNavigation:ConsumeArrival()
+end
+
+---@param reason string
+---@return boolean, string?
+function Runtime:RejectAutoReturnArrival(reason)
+    return self.autoNavigation:RejectArrival(reason)
+end
+
+---@return string?
+function Runtime:GetAutoReturnFailure()
+    return self.autoNavigation:GetFailure()
+end
+
 local function isFiniteNumber(value)
     return type(value) == "number" and value == value and math.abs(value) < math.huge
 end
@@ -174,6 +258,7 @@ function Runtime:ResetShipAtPort()
     local port = self:GetPortPosition()
     local free, reason = isPortFreeForShip(world, ship, port)
     if not free then return false, reason end
+    self.autoNavigation:Cancel("port_reset")
     movement:ResetAtPosition(port)
     return true
 end
@@ -250,6 +335,7 @@ function Runtime:IsPositionFree(position, radius)
 end
 
 function Runtime:ClearMovementTarget()
+    self.autoNavigation:Cancel("movement_cleared")
     self.movement:SetTarget(nil)
 end
 
@@ -422,7 +508,10 @@ function Runtime:setDebugFlag(name, value)
     return true
 end
 
-function Runtime:TogglePause() self.paused = not self.paused end
+function Runtime:TogglePause()
+    self.paused = not self.paused
+    if self.paused then self.autoNavigation:Cancel("paused") end
+end
 function Runtime:Reset()
     local seed, strategy = self.daySeed, self.strategy
     self:Init({ daySeed = seed, strategy = strategy, initializeRegions = self.initializeRegions,
@@ -430,12 +519,19 @@ function Runtime:Reset()
 end
 
 function Runtime:Update(dt, axisX, axisY)
-    if self.paused then return end
+    if self.paused then
+        self.autoNavigation:Cancel("paused")
+        return
+    end
+    local inputX, inputY = axisX or 0, axisY or 0
+    local hasManualInput = math.sqrt(inputX * inputX + inputY * inputY) > Config.world.epsilon
+    if hasManualInput then self.autoNavigation:Cancel("manual_input") end
     local remaining = M.clamp(dt, 0, Config.world.maxFrameSec)
     while remaining > Config.world.epsilon do
         local step = math.min(remaining, Config.world.maxStepSec)
         self.time = self.time+step
-        self.movement:Update(step, axisX or 0, axisY or 0)
+        self.movement:Update(step, inputX, inputY)
+        self.autoNavigation:Update(step)
         if self.initializeRegions then self:ensureNearbyRegions() end
         self.world:updateActivity(self.ship.position)
         self.world:updateLifecycle(step, self.ship)
