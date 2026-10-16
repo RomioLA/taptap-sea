@@ -11,6 +11,10 @@
 基础版，story 层漏网）；② manifest 刷新范围扩到 OceanStoryLayer 与 OceanDecor
 （decor 为 10-15 新导入的 AI 水彩岛饰，FASTOCTREE 量化后仍需人工对比画质，
 见 _tmp 试点报告）；③ ocean_tile 未接入（D3 待真机 A/B），不降采样。
+
+扩展（2026-10-16，主场景组件线）：④ manifest 刷新范围扩到 OceanComponents
+（本批 10 件 AI 水彩主场景组件：海岸底图/礁石/沉船/告示牌替换元素，
+与 OceanDecor 同代同链；libimagequant 不可用，沿用 FASTOCTREE）。
 """
 import importlib.util
 import json
@@ -21,7 +25,8 @@ ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets/image"
 CATALOG = ROOT / "scripts/GeneratedData/OceanImageCatalog.lua"
 MANIFESTS = [ASSETS / "OceanLoop/manifest.json", ASSETS / "OceanReady/manifest.json",
-             ASSETS / "OceanStoryLayer/manifest.json", ASSETS / "OceanDecor/manifest.json"]
+             ASSETS / "OceanStoryLayer/manifest.json", ASSETS / "OceanDecor/manifest.json",
+             ASSETS / "OceanComponents/manifest.json"]
 WATERPAPER = ASSETS / "OceanLoop/waterpaper.png"
 WATERPAPER_STORY = ASSETS / "OceanStory_waterpaper_20261005114940.png"
 

@@ -36,10 +36,12 @@ def catalog_text(manifest):
     existing = json.loads((ROOT / "assets/image/OceanLoop/manifest.json").read_text(encoding="utf-8"))
     story = json.loads((ROOT / "assets/image/OceanStoryLayer/manifest.json").read_text(encoding="utf-8"))
     decor = json.loads((ROOT / "assets/image/OceanDecor/manifest.json").read_text(encoding="utf-8"))
+    components = json.loads((ROOT / "assets/image/OceanComponents/manifest.json").read_text(encoding="utf-8"))
     lines = ["-- 自动生成：python3 tests/prepare_ocean_ready_art.py；禁止手工编辑。",
              "-- 只含图片规格，不含实体、玩法数值或更新逻辑。", "return {"]
     for collection, preload in ((existing["assets"], True), (manifest["assets"], False),
-                                (story["assets"], False), (decor["assets"], False)):
+                                (story["assets"], False), (decor["assets"], False),
+                                (components["assets"], False)):
         for name, entry in sorted(collection.items()):
             size, bounds = entry["size"], entry["content_bounds"]
             lines.extend([
@@ -129,8 +131,10 @@ def check():
     existing = json.loads((ROOT / "assets/image/OceanLoop/manifest.json").read_text(encoding="utf-8"))
     story = json.loads((ROOT / "assets/image/OceanStoryLayer/manifest.json").read_text(encoding="utf-8"))
     decor = json.loads((ROOT / "assets/image/OceanDecor/manifest.json").read_text(encoding="utf-8"))
+    components = json.loads((ROOT / "assets/image/OceanComponents/manifest.json").read_text(encoding="utf-8"))
     full_bleed = ("waterpaper", "waterpaper_story", "ocean_tile")  # 整幅材质，无透明留边契约
-    for name, entry in {**existing["assets"], **manifest["assets"], **story["assets"], **decor["assets"]}.items():
+    for name, entry in {**existing["assets"], **manifest["assets"], **story["assets"],
+                        **decor["assets"], **components["assets"]}.items():
         path = ROOT / "assets" / entry["path"]
         if path.is_absolute() and not path.resolve().is_relative_to((ROOT / "assets").resolve()):
             raise ValueError("素材路径越界")

@@ -1,0 +1,274 @@
+{
+  "schema_version": 1,
+  "style": "读海日系水彩绘本风，主场景组件（海岸底图/浅滩礁石/海底沉船/告示牌替换元素），与 OceanDecor 同代同链派生",
+  "format": "RGBA PNG，直通 Alpha；AI 抠图去底，透明边 RGB 保留主体色；入库后经 slim_ocean_art 256 色量化",
+  "placement": "资产库候选，暂无渲染器：coast_base/reef_rocks 为 oblique 海面组件（待海面平面渲染接入），shipwreck 为海底严格顶视（透镜观察候选），sign_* 为告示牌矢量图替换元素",
+  "projection": "Ocean.Projection 世界平面分片投影（接入时与 island/boat 同构，0.88 画幅修正）",
+  "references": [
+    "assets/image/OceanDecor/manifest.json",
+    "scripts/Ocean/SeaViewArt.lua",
+    "scripts/Ocean/ImageArt.lua"
+  ],
+  "assets": {
+    "coast_base_v3": {
+      "path": "image/OceanComponents/coast_base_v3.png",
+      "source": "image/OceanComponents/coast_base_v3.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        0,
+        226,
+        1024,
+        987
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.5576438903808594,
+      "sha256": "698fcd970415486b39f5ababc728e097f5b02c64f439866e8e418a939af1982e",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "ready_not_placed"
+    },
+    "reef_rocks_v1": {
+      "path": "image/OceanComponents/reef_rocks_v1.png",
+      "source": "image/OceanComponents/reef_rocks_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        48,
+        184,
+        983,
+        906
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.5045642852783203,
+      "sha256": "7992870ccee2df3bb447ac4a5237556bcca25ea250c80819bae7b11e84559019",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "ready_not_placed"
+    },
+    "shipwreck_v1": {
+      "path": "image/OceanComponents/shipwreck_v1.png",
+      "source": "image/OceanComponents/shipwreck_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        46,
+        96,
+        981,
+        931
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.2912778854370117,
+      "sha256": "5647286b9c0a2912f39f48e2ef25df16c3466db7abe0f56179a5fcea7d59028a",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "ready_not_placed"
+    },
+    "sign_broadleaf_v1": {
+      "path": "image/OceanComponents/sign_broadleaf_v1.png",
+      "source": "image/OceanComponents/sign_broadleaf_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        202,
+        189,
+        868,
+        817
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7802610397338867,
+      "sha256": "73de19b2c6e307442cb3b99b5ede9611789ac1ec543183339a509fa98992a6c4",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "ready_not_placed"
+    },
+    "sign_chest_v1": {
+      "path": "image/OceanComponents/sign_chest_v1.png",
+      "source": "image/OceanComponents/sign_chest_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        210,
+        199,
+        1024,
+        1024
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7088680267333984,
+      "sha256": "0c55e85f6131bd1aa6d83875b13ea81389285c4752beda2a58d1c72065f0fafb",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "ready_not_placed"
+    },
+    "sign_coins_v1": {
+      "path": "image/OceanComponents/sign_coins_v1.png",
+      "source": "image/OceanComponents/sign_coins_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        171,
+        301,
+        1024,
+        1024
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.780064582824707,
+      "sha256": "ad7cc04f6b5e4ecf081bf0c758d4e6c1db49d9027f8c20d01ddff6c8109c1a04",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "ready_not_placed"
+    },
+    "sign_palm_v1": {
+      "path": "image/OceanComponents/sign_palm_v1.png",
+      "source": "image/OceanComponents/sign_palm_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        181,
+        83,
+        824,
+        915
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7948989868164062,
+      "sha256": "860367c5e29f0f76dd48ec8a3f1826174a6ecc5710ae75adaff7b5b80a7c0722",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "ready_not_placed"
+    },
+    "sign_planks_v1": {
+      "path": "image/OceanComponents/sign_planks_v1.png",
+      "source": "image/OceanComponents/sign_planks_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        168,
+        187,
+        858,
+        843
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7622385025024414,
+      "sha256": "f9510d1b2676b7d128da16e4a9f106a030f919fbda1de95400cf5d878fe9b684",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "ready_not_placed"
+    },
+    "sign_rock_v1": {
+      "path": "image/OceanComponents/sign_rock_v1.png",
+      "source": "image/OceanComponents/sign_rock_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        118,
+        182,
+        917,
+        848
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.6334114074707031,
+      "sha256": "9b3e1612547697916031787c86a177e7a6d708d5766775be451530ce7b1d50f8",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "ready_not_placed"
+    },
+    "sign_seaweed_v1": {
+      "path": "image/OceanComponents/sign_seaweed_v1.png",
+      "source": "image/OceanComponents/sign_seaweed_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        242,
+        180,
+        786,
+        869
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.8409433364868164,
+      "sha256": "6a3610c75585c96460820383ecdad6610ae893b46287ce0d04bc2deb3168b995",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "ready_not_placed"
+    }
+  }
+}
