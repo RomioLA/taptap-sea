@@ -303,7 +303,7 @@ local function route(appleGiftDays)
                     assert(hasVisibleLabel(root, "老人获救"),
                         "day-four elder dialogue should show the saved state")
                     advance(0.5)
-                    clickButton(root, "结束对话")
+                    clickButton(root, "收起")
                     assert(not loop.elderOpen, "day-four elder HUD entry did not close the dialogue")
                     routeData.day4ElderAccess = {
                         visible = true, enabled = true, label = elderButton.props.text,
@@ -335,7 +335,7 @@ local function route(appleGiftDays)
                 -- v2.3 二级化：先点「给予 ▸」分类键展开物品列表，再点苹果行的「给予」
                 clickButton(root, "给予 ▸")
                 clickInventoryRowButton(root, loop.player.inventory, "apple", "给予")
-                clickButton(root, "结束对话")
+                clickButton(root, "收起")
             end
 
             clickButton(root, "出航")

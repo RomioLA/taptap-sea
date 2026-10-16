@@ -51,6 +51,13 @@ local function walk(root, fn)
     fn(root)
     for _, child in ipairs(root.children) do walk(child, fn) end
 end
+local function isVisible(widget)
+    while widget do
+        if widget.visible ~= true then return false end
+        widget = widget.parent
+    end
+    return true
+end
 local function find(root, predicate)
     local result
     walk(root, function(widget) if not result and predicate(widget) then result = widget end end)
@@ -61,6 +68,17 @@ local function label(root, text)
 end
 local function button(root, text)
     return find(root, function(w) return w.kind == "Button" and (w.props.text or ""):find(text, 1, true) end)
+end
+local function exactButton(root, text)
+    return find(root, function(w) return w.kind == "Button" and w.props.text == text end)
+end
+local function hasVisibleLabel(root, text)
+    local found = false
+    walk(root, function(w)
+        if w.kind == "Label" and type(w.props.text) == "string"
+            and w.props.text:find(text, 1, true) and isVisible(w) then found = true end
+    end)
+    return found
 end
 local function fixture(items, action)
     local oldUI, oldHUD = package.loaded["urhox-libs/UI"], package.loaded["Gameplay.HUD"]
@@ -80,6 +98,24 @@ function Tests.Run()
         local ok, err = xpcall(action, debug.traceback)
         results[#results + 1] = { name = name, passed = ok, error = not ok and tostring(err) or nil }
     end
+    check("port-shop card and entry are hidden at sea while remaining available in port", function()
+        fixture({}, function(loop, hud)
+            local buy = button(hud.root, "苹果 · ¥")
+            assert(isVisible(buy), "the port shop card must be available in port")
+            button(hud.root, "收起信息").props.onClick()
+            hud.Refresh()
+            local entry = exactButton(hud.root, "港口商店")
+            assert(entry and isVisible(entry), "the collapsed shop entry must be visible in port")
+            entry.props.onClick(entry)
+            hud.Refresh()
+            assert(isVisible(buy), "the port shop card must be available in port")
+
+            assert(loop:Depart())
+            hud.Refresh()
+            assert(not isVisible(entry), "the port-shop entry must disappear immediately after departure")
+            assert(not isVisible(buy), "the port shop card must not remain at sea")
+        end)
+    end)
     check("stable visible and hidden modal opacity does not dirty layout on each refresh", function()
         fixture({}, function(loop, hud)
             local modal = find(hud.root, function(w) return w.props.transition == "opacity 0.25s easeOut" end) --[[@as any]]
@@ -183,6 +219,8 @@ function Tests.Run()
             assert(loop.elderOpen and loop.clock.pauseReasons.elder)
             assert(#loop.player.inventory:GetItems() == 1 and loop.player.inventory:GetItems()[1] == "bait")
             assert(loop.player.stamina == stamina and loop:GetElderStatus().applesGiven == 1)
+            assert(not hasVisibleLabel(hud.root, "已给予老人苹果"),
+                "apple progress stays in gameplay state and is not rendered on the elder card")
         end)
     end)
     check("elder absence remains clickable and explains reason without losing cargo", function()

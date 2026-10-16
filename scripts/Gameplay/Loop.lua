@@ -53,6 +53,7 @@ local ProfileStore = require("Gameplay.ProfileStore")
 ---@field storyDialog table?
 ---@field scopeEnabled boolean
 ---@field scopeSyncError string?
+---@field fishingSelectionHintPending boolean
 ---@field worldPreparation GameplayWorldPreparation?
 ---@field initialSaveStatus string
 ---@field initialSaveBusy boolean
@@ -60,6 +61,26 @@ local ProfileStore = require("Gameplay.ProfileStore")
 ---@field lastSettlementSaveId integer?
 local Loop = {}
 Loop.__index = Loop
+
+-- 逐物品正式对白尚未配置时，沿用现有交互反馈作为 fallback。
+-- 后续内容只需通过 options.elderDialogues[itemId][action] 提供两行文本，
+-- 无需改动给予/展示事务或 HUD 气泡结构。
+local function elderExchange(self, itemId, action, fallbackPlayerLine, fallbackElderLine)
+    local configured = self.options and self.options.elderDialogues
+    configured = type(configured) == "table" and configured[itemId] or nil
+    configured = type(configured) == "table" and configured[action] or nil
+    local playerLine = type(configured) == "table" and configured.playerLine or nil
+    local elderLine = type(configured) == "table" and configured.elderLine or nil
+    local hasConfiguredCopy = type(playerLine) == "string" and playerLine ~= ""
+        and type(elderLine) == "string" and elderLine ~= ""
+    return {
+        itemId = itemId,
+        action = action,
+        playerLine = hasConfiguredCopy and playerLine or fallbackPlayerLine,
+        elderLine = hasConfiguredCopy and elderLine or fallbackElderLine,
+        fallback = not hasConfiguredCopy,
+    }
+end
 
 function Loop.New(options)
     local self = setmetatable({}, Loop)
@@ -114,6 +135,7 @@ function Loop:ResetState()
     -- T1：第 7 天结算进入结局；NewRun/读档重置。
     self.endingPending, self.endingKind = false, nil
     self.throwSelection, self.storyDialog, self.scopeEnabled = nil, nil, false
+    self.fishingSelectionHintPending = false
     self.scopeSyncError = nil
     self.closed = false
     self.loadStatus = "idle"
@@ -1030,6 +1052,7 @@ function Loop:LoadSaved(done)
                 self.player = player
                 Progress.OnDayStarted(self.player)
                 self.scopeEnabled, self.throwSelection, self.storyDialog = false, nil, nil
+                self.fishingSelectionHintPending = false
                 self:ResetShopStock()
                 self.clock:Reset()
                 self.clock:Pause("port")
@@ -1204,7 +1227,8 @@ function Loop:GiveToElder(index)
     if not definition or not definition.canGive then return false, "invalid_item" end
     if definition.category ~= "food" then
         self.lastMessage = "向老人展示了" .. definition.name .. "，物品仍保留，没有额外奖励。"
-        return true, self.lastMessage
+        return true, self.lastMessage, elderExchange(
+            self, id, "show", "展示 " .. definition.name, self.lastMessage)
     end
     self.dropInFlight = true
     local removed, previous, stamina = self:RemoveCargo(index)
@@ -1228,7 +1252,8 @@ function Loop:GiveToElder(index)
     self.player.elder.lastGivenItemId = id
     self.lastMessage = message or "老人收下了物品。"
     self:CancelThrowSelection()
-    return true, self.lastMessage
+    return true, self.lastMessage, elderExchange(
+        self, id, "give", "给予 " .. definition.name, self.lastMessage)
 end
 
 function Loop:PortTransaction(action)
@@ -1397,8 +1422,29 @@ function Loop:BeginFishingSelection()
     if not self.actions then return false, "fishing_runtime_interface_unavailable" end
     -- A2（2026-10-05 用户裁决）：捕鱼动作（选点/收网）进行中再点捕鱼键=取消（免费），
     -- 不新增按钮；清理/结算 pending 态仍走 CancelFishingAction 的重试清理路径。
-    if self.actions:IsBusy() then return self:CancelFishingAction() end
-    return self.actions:BeginSelection()
+    if self.actions:IsBusy() then
+        self.fishingSelectionHintPending = false
+        return self:CancelFishingAction()
+    end
+    self.fishingSelectionHintPending = false
+    local started, reason = self.actions:BeginSelection()
+    if started ~= true then return started, reason end
+    local fishingState = self.actions:GetFishingState()
+    if type(fishingState) ~= "table" or fishingState.state ~= "selecting" then
+        return false, "fishing_selection_not_started"
+    end
+    local marked, newlyShown = Progress.MarkFishingSelectionHintShown(self.player)
+    if marked ~= true then
+        self.actions:CancelActiveFishing("progress_invalid")
+        return false, newlyShown
+    end
+    if newlyShown == true then self.fishingSelectionHintPending = true end
+    return true
+end
+function Loop:TakeFishingSelectionHint()
+    if self.fishingSelectionHintPending ~= true then return false end
+    self.fishingSelectionHintPending = false
+    return true
 end
 function Loop:SetFishingCenter(center)
     if not self.actions then return false, "fishing_runtime_interface_unavailable" end
@@ -1409,6 +1455,7 @@ function Loop:ConfirmFishing()
     return self.actions:ConfirmFishing()
 end
 function Loop:CancelFishingAction()
+    self.fishingSelectionHintPending = false
     if not self.actions then return true end
     return self.actions:CancelActiveFishing("cancelled")
 end
@@ -1507,7 +1554,8 @@ function Loop:GiveTreasureToElder(id)
     if not self:CanManageInventory() then return false, "busy" end
     if id ~= "scopeLens" or not self:HasLens() then return false, "treasure_unavailable" end
     self.lastMessage = "向老人展示了透镜，宝物仍保留，没有额外奖励。"
-    return true, self.lastMessage
+    return true, self.lastMessage, elderExchange(
+        self, id, "show", "展示 望远镜透镜", self.lastMessage)
 end
 function Loop:BeginBarrelInspection() return self.barrel:Begin() end
 function Loop:CancelBarrelInspection() return self.barrel:Cancel("cancelled") end
