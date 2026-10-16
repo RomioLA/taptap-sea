@@ -51,6 +51,15 @@ for _, name in ipairs({ "Wander", "Attracted", "Flee", "Chase", "Avoid" }) do
     }
 end
 
+-- S1-d（2026-10-16 卡顿排查续）：感知查询节流。queryEntitiesInRadius 是
+-- O(全表) 扫描（无空间分区），每条 active 鱼每帧 2 次全表查询，鱼群密度高时
+-- 成为主要稳态成本（捕鱼期船停人盯，感知峰值最易被察觉）。
+-- 按固定间隔刷新 danger/attraction 缓存、间隔内复用：转向/逃逸/吸引对
+-- 0.2s 感知延迟不可感知（鱼速下 0.2s 内相对位移 << 感知半径）。
+-- 可注入：测试环境置 0 恢复帧级即时语义（契约按即时感知书写）；
+-- 节流契约由 Circle1B5FishPerceptionTests 守护。
+Fish.perceptionIntervalSec = 0.2
+
 local function normalizeAngle(angle)
     return (angle + math.pi) % TWO_PI - math.pi
 end
@@ -138,6 +147,11 @@ function Fish:Init(world, entity, speciesData, rng)
     self.wasFleeing = false
     self.surfaceRiseDuration = nil
     self.predationCooldownUntil = 0
+    -- S1-d：感知缓存与节流计时（见文件顶部 perceptionIntervalSec 注释）
+    self.perceptionRemaining = 0
+    self.perceptionInterval = Fish.perceptionIntervalSec
+    self.dangerCache = nil
+    self.attractionCache = nil
 
     -- S1-c（2026-10-15 卡顿排查）：行为树查询零分配化。三个 finder 闭包按物种
     -- 构造一次后缓存（speciesData 构造后不变），查询结果表 likewise 复用；
@@ -221,6 +235,18 @@ function Fish:_nearestEntity(radius, filter, out)
         end
     end
     return nearest, nearestDistanceSquared
+end
+
+-- 按间隔刷新感知缓存；到期时一次性刷新 danger 与 attraction（各一次全表）。
+-- 缓存实体在间隔内可能被移除/吃掉，调用方用前必须检查 removed。
+---@param dt number
+function Fish:_refreshPerception(dt)
+    self.perceptionRemaining = self.perceptionRemaining - dt
+    if self.perceptionRemaining <= 0 then
+        self.perceptionRemaining = self.perceptionInterval
+        self.dangerCache = self:_findDanger()
+        self.attractionCache = self:_findAttraction()
+    end
 end
 
 ---@return table? danger
@@ -466,8 +492,9 @@ function Fish:Update(dt)
         speed = data.wanderSpeed or 0
         self.wasFleeing = false
     else
-        local danger = self:_findDanger()
-        if danger then
+        self:_refreshPerception(dt)
+        local danger = self.dangerCache
+        if danger and not danger.removed then
             local awayX, awayY = Math.normal(
                 self.entity.position.x - danger.position.x,
                 self.entity.position.y - danger.position.y
@@ -490,7 +517,8 @@ function Fish:Update(dt)
             self.wasFleeing = false
             ---@type OceanFishPoint?
             local preyPosition = data.preySpecies and self:_getChaseTarget(dt) or nil
-            local attraction = not preyPosition and self:_findAttraction() or nil
+            local attraction = not preyPosition and self.attractionCache or nil
+            if attraction and attraction.removed then attraction = nil end
             if preyPosition then
                 local dx = preyPosition.x - self.entity.position.x
                 local dy = preyPosition.y - self.entity.position.y

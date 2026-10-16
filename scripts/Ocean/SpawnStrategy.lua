@@ -143,6 +143,26 @@ function SpawnStrategy.GenerateRegion(world, daySeed, regionX, regionY, departur
             end
         end
 
+        -- S1-f（2026-10-16 卡顿排查）：spawn band 是 departure 距离带；当整个 region
+        -- 与 band 无空间交集（远处区域整体在带外）时 phase1 不可能命中，原本仍会
+        -- 为每条鱼跑满 maxAttempts 次 isPositionFree（远处移动 121ms 卡顿帧根因）。
+        -- 快速路径：band 不可达时第一个 valid 位置即采纳（与原 fallback 语义一致），
+        -- inRegion/minSpawnDistance/minShipDistance 约束判定完全不变。
+        -- 注意：band 是物种级变量，本计算必须在物种循环内、band 就绪之后。
+        local bandReachable = true
+        if band and validDeparture(departure) then
+            local nearX = math.max(left, math.min(departure.x, right))
+            local nearY = math.max(bottom, math.min(departure.y, top))
+            local nearestSquared = (nearX - departure.x) ^ 2 + (nearY - departure.y) ^ 2
+            local farX = math.abs(departure.x - left) > math.abs(departure.x - right) and left or right
+            local farY = math.abs(departure.y - bottom) > math.abs(departure.y - top) and bottom or top
+            local farthestSquared = (farX - departure.x) ^ 2 + (farY - departure.y) ^ 2
+            bandReachable = not (farthestSquared < band.min * band.min
+                or nearestSquared > band.max * band.max)
+        elseif band then
+            bandReachable = false -- departure 非法时 inBand 恒 false
+        end
+
         for _ = 1, count do
             -- Phase 1 prefers an in-band candidate; phase 2 keeps the first valid
             -- out-of-band candidate as fallback. Deterministic for a fixed seed.
@@ -154,11 +174,16 @@ function SpawnStrategy.GenerateRegion(world, daySeed, regionX, regionY, departur
                     y = bottom + rng() * height,
                 }
                 if inRegion(world, position, radius, departure, minSpawnDistance, shipPosition, minShipDistance) then
-                    if inBand(position, departure, band) then
+                    if bandReachable and inBand(position, departure, band) then
                         chosenPosition = position
                         break
                     elseif not fallbackPosition then
                         fallbackPosition = position
+                        if not bandReachable then
+                            -- band 不可达：第一个 valid 位置即最终结果（与原 fallback 语义一致）
+                            chosenPosition = position
+                            break
+                        end
                     end
                 end
             end

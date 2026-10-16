@@ -326,8 +326,11 @@ function World:moveEntity(entity, dx, dy)
     if dy < 0 and start.y+dy < -bound then contact((-bound-start.y)/dy, 0, 1) end
     local a = dx*dx + dy*dy
     if a > epsilon then
-        for _, object in ipairs(self.entities) do
-            if not object.removed and object.blocking and object.id ~= entity.id then
+        -- S1-e（2026-10-16 卡顿排查续）：swept 检测只关心 blocking 实体，
+        -- 直接遍历 blockingList（CreateEntity 入/RemoveEntity 摘，只含未移除的
+        -- blocking 实体），不再全表扫描 entities（船每步移动 + 每鱼每步都走这里）。
+        for _, object in ipairs(self.blockingList) do
+            if object.id ~= entity.id then
                 local ox, oy = start.x-object.position.x, start.y-object.position.y
                 local combined = entity.radius+object.radius
                 local b = 2*(ox*dx + oy*dy)
@@ -351,8 +354,8 @@ function World:moveEntity(entity, dx, dy)
     local t = hit and math.max(0, first-epsilon) or 1
     local result = { x = M.clamp(start.x+dx*t, -bound, bound), y = M.clamp(start.y+dy*t, -bound, bound) }
     -- Final projection also repairs externally moved/debug entities inside a collider.
-    for _, object in ipairs(self.entities) do
-        if not object.removed and object.blocking and object.id ~= entity.id then
+    for _, object in ipairs(self.blockingList) do
+        if object.id ~= entity.id then
             local combined = entity.radius+object.radius
             local ox, oy = result.x-object.position.x, result.y-object.position.y
             if ox*ox+oy*oy < combined*combined then

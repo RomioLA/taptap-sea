@@ -100,7 +100,9 @@ function Runtime:Init(options)
     if self.initializeRegions then self:ensureNearbyRegions() end
 end
 
-function Runtime:spawnFish(species, position, rotation)
+-- deferActivity=true 时跳过逐鱼活跃度刷新，由调用方在批量生成结束后
+-- 统一调一次 updateActivity——逐鱼刷新是 O(N²)（新区域移动卡顿根因）。
+function Runtime:spawnFish(species, position, rotation, deferActivity)
     local data = assert(FishData[species], "unsupported fish species")
     assert(self.world:isPositionFree(position, data.radius), "fish spawn must be in free sea")
     self.spawnSequence = self.spawnSequence+1
@@ -108,7 +110,7 @@ function Runtime:spawnFish(species, position, rotation)
         species = species, ordinaryFish = true, position = position, rotation = rotation or 0,
         radius = data.radius, state = "Wander", active = false, frozen = true })
     self.behaviors[entity.id] = Fish.New(self.world, entity, data, M.rng(self.daySeed+self.spawnSequence))
-    self.world:updateActivity(self.ship.position)
+    if not deferActivity then self.world:updateActivity(self.ship.position) end
     return entity
 end
 
@@ -130,9 +132,11 @@ function Runtime:ensureNearbyRegions()
             if not self.initializedRegions[key] and M.distanceSquared(pos, nearest) <= radius*radius then
                 local placements = self.strategy.GenerateRegion(self.world, self.daySeed, ix, iy, self.departure, FishData, pos)
                 for _, placement in ipairs(placements) do
-                    self:spawnFish(placement.species, placement.position, placement.rotation)
+                    self:spawnFish(placement.species, placement.position, placement.rotation, true)
                 end
                 self.initializedRegions[key] = true
+                -- 区域批量生成后统一刷新一次活跃度（spawnFish 已逐条 defer）。
+                self.world:updateActivity(self.ship.position)
             end
         end
     end

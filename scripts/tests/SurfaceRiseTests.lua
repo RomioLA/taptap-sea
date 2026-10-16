@@ -18,6 +18,9 @@ local function keepDangerNear(sardine, tuna, distance)
 end
 
 function Tests.Run()
+    -- S1-d：本suite 契约按帧级即时感知书写（单帧大 dt 推进），注入 interval=0 恢复原语义；
+    -- 节流契约由 Circle1B5FishPerceptionTests 守护。runner 每 suite 独立 LuaRuntime，无跨 suite 污染。
+    require("Ocean.Fish").perceptionIntervalSec = 0
     local results = {}
     local function check(name, fn)
         local ok, err = pcall(fn)
