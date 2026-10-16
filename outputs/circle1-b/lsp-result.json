@@ -1,0 +1,32 @@
+{
+  "filesExpected": 16,
+  "filesDiagnosed": 16,
+  "missing": [],
+  "errors": [],
+  "warnings": [
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Integration/Scene.lua",
+      "line": 276,
+      "code": "unnecessary-assert",
+      "message": "Unnecessary assert: this expression is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Integration/Scene.lua",
+      "line": 154,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/GameClock.lua",
+      "line": 175,
+      "code": "missing-return",
+      "message": "Annotations specify that a return value is required here."
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Actions.lua",
+      "line": 229,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    }
+  ]
+}

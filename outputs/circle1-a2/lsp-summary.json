@@ -1,0 +1,13 @@
+{
+  "initialized": true,
+  "missingDiagnostics": [],
+  "configuredErrorCount": 0,
+  "rawErrorCount": 41,
+  "priorRawErrorCount": 41,
+  "priorReport": "outputs/circle1-a/lsp.json",
+  "newRawErrors": [],
+  "elapsedSec": 17.84005800000159,
+  "checkerExitCode": null,
+  "passed": true,
+  "note": "Uses the installed Maker EmmyLua server and existing diagnostic filters; the prior A1 report is the comparison baseline."
+}

@@ -12,7 +12,7 @@ function FusedScene.Start(options)
     for key, value in pairs(options or {}) do settings[key] = value end
     settings.theme = settings.theme or "default-taptap"
     settings.windowTitle = settings.windowTitle or Config.title
-    settings.pointerMinY = settings.pointerMinY or Config.layers.waves
+    settings.pointerMinY = settings.pointerMinY or Config.camera.horizonY
     if settings.ownsUI == false and not settings.uiFactory and settings.debugUI == nil then
         settings.debugUI = false
     end

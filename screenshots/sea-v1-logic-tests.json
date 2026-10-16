@@ -2,6 +2,66 @@
   "luaVersion": "Lua 5.4",
   "syntax": [
     {
+      "file": "scripts\\config\\gameplay.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\data\\items.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\Bootstrap.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\Debug.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\GameClock.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\HUD.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\Inventory.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\Loop.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\Persistence.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\PlayerState.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Integration\\Bridge.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Integration\\Scene.lua",
+      "passed": true,
+      "error": null
+    },
+    {
       "file": "scripts\\Main.lua",
       "passed": true,
       "error": null
@@ -92,6 +152,31 @@
       "error": null
     },
     {
+      "file": "scripts\\tests\\ABIntegrationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\GameLoopSpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\GameLoopUISpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\NumericEconomySpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\PersistenceRegressionSpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
       "file": "scripts\\tests\\SeaEngineSmoke.lua",
       "passed": true,
       "error": null
@@ -123,6 +208,11 @@
     },
     {
       "file": "scripts\\tests\\SeaStabilityTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\ShopStockSpec.lua",
       "passed": true,
       "error": null
     }
@@ -395,18 +485,18 @@
     }
   ],
   "metrics": {
-    "sardineIn120": 19.28,
-    "movingCaptureMinSec": 8.5,
     "movingCaptureMeanSec": 10.046875,
-    "tunaIn120": 3.94,
-    "tunaRunning": 3.94,
-    "debugViewportTuna": 0.13,
-    "debugViewportSardine": 1.16,
-    "sardineRunning": 19.28,
-    "hiddenViewportFish": 0,
     "startSardineIn120": 19.35,
+    "sardineIn120": 19.28,
+    "movingCaptureMaxSec": 11.600000000000001,
+    "debugViewportSardine": 1.16,
+    "hiddenViewportFish": 0,
+    "tunaRunning": 3.94,
+    "sardineRunning": 19.28,
+    "tunaIn120": 3.94,
+    "movingCaptureMinSec": 8.5,
     "startTunaIn120": 0.0,
-    "movingCaptureMaxSec": 11.600000000000001
+    "debugViewportTuna": 0.13
   },
   "passed": true
 }

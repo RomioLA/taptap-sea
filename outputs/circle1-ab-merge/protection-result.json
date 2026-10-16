@@ -1,0 +1,521 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-03T04:44:07Z",
+  "repository_root": "C:\\codex\\taptap-sea",
+  "scope": {
+    "protected_file_count": 43,
+    "a3_delivery_file_count": 12,
+    "supplemental_protection_file": "outputs/circle1-ab-merge/supplemental-protection.json",
+    "historical_outputs": "outputs/circle1-a* and outputs/circle1-ab-review, excluding outputs/circle1-ab-merge",
+    "writes_only": [
+      "outputs/circle1-ab-merge/protection-result.json",
+      "outputs/circle1-ab-merge/protection-audit.md"
+    ]
+  },
+  "status": "attention_required",
+  "a_protection": {
+    "status": "review_required",
+    "expected_file_count": 43,
+    "baseline_file_count": 43,
+    "matched_count": 41,
+    "missing_count": 0,
+    "changed_count": 2,
+    "issues": [],
+    "entries": [
+      {
+        "file": "scripts/Ocean/Bootstrap.lua",
+        "expected_sha256": "DC6DA15E2D8C3CF622591A757A81CC77F2C25F822856EB172E025514F36CF161",
+        "actual_sha256": "dc6da15e2d8c3cf622591a757a81cc77f2c25f822856eb172e025514f36cf161",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/Config.lua",
+        "expected_sha256": "DDCB679F469F11DCA03FFF62B2872278EE186C73B4F96FD93A96A869073DF046",
+        "actual_sha256": "ddcb679f469f11dca03fff62b2872278ee186c73b4f96fd93a96a869073df046",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/Config.lua.meta",
+        "expected_sha256": "C49CA4FE2C65DBA3F2183C56F5E65660A4DED77C6519ED6DD5F6EC6E43527571",
+        "actual_sha256": "c49ca4fe2c65dba3f2183c56f5e65660a4ded77c6519ed6dd5f6ec6e43527571",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/Draw.lua",
+        "expected_sha256": "8E2A8871ADE22C2F35B196B81D5FAB1FD1DF15D17C3404F7769E22304B7ADC10",
+        "actual_sha256": "8e2a8871ade22c2f35b196b81d5fab1fd1df15d17c3404f7769e22304b7adc10",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/Draw.lua.meta",
+        "expected_sha256": "80CE5F411043878B96E95C2482847B45C30B4C17C1BF7EE8987A3D985DF14109",
+        "actual_sha256": "80ce5f411043878b96e95c2482847b45c30b4c17c1bf7ee8987a3d985df14109",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/Fish.lua",
+        "expected_sha256": "AAF4CCD132480CBF50DC8A502B8DE1D2C2AB88275F1092BC8F7EE481A8983B41",
+        "actual_sha256": "aaf4ccd132480cbf50dc8a502b8de1d2c2ab88275f1092bc8f7ee481a8983b41",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/FishData.lua",
+        "expected_sha256": "F8D494AA7CC8F5AF357E8A8AFE894BE6F824EE2AE42802C762AD8ED9725BD299",
+        "actual_sha256": "f8d494aa7cc8f5af357e8a8afe894be6f824ee2ae42802c762ad8ed9725bd299",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/FusedScene.lua",
+        "expected_sha256": "8BFB660DB1D2B5DD2E0B7A9EABE4E0F9B539B741FAC9026AC7A55C9C8F81D6BF",
+        "actual_sha256": "8bfb660db1d2b5dd2e0b7a9eabe4e0f9b539b741fac9026ac7a55c9c8f81d6bf",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/HUD.lua",
+        "expected_sha256": "3E54576096A956BECC6890A9AAE91D1C1B2A781E62AFD366658500CC31FFF625",
+        "actual_sha256": "3e54576096a956becc6890a9aae91d1c1b2a781e62afd366658500cc31fff625",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/HUD.lua.meta",
+        "expected_sha256": "D20136F9A16280B69F7D6010417E169D4D84A05B695B29A188001CE920173006",
+        "actual_sha256": "d20136f9a16280b69f7d6010417e169d4d84a05b695b29a188001ce920173006",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/Math.lua",
+        "expected_sha256": "9CB75E3C99F667E1529944DB1F777A99CD3A9EAB3E45EBED631776B0A22E1A5D",
+        "actual_sha256": "9cb75e3c99f667e1529944db1f777a99cd3a9eab3e45ebed631776b0a22e1a5d",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/Movement.lua",
+        "expected_sha256": "50B6FF818F1D37142C0977B4855EA40E062BE8C3B7C0F16B8B1826ADE79A158D",
+        "actual_sha256": "50b6ff818f1d37142c0977b4855ea40e062be8c3b7c0f16b8b1826ade79a158d",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/SceneState.lua",
+        "expected_sha256": "F78AAB095BD890F968564C05426CAB843A5344AAD519EDBF724BBF49B5C3C5BE",
+        "actual_sha256": "f78aab095bd890f968564c05426cab843a5344aad519edbf724bbf49b5c3c5be",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/SeaDebug.lua",
+        "expected_sha256": "9645D0673D933BDB9E3B50AC0DD0D3BE436FED113875BBEF23BA9C20FB4A0C31",
+        "actual_sha256": "9645d0673d933bdb9e3b50ac0dd0d3be436fed113875bbef23ba9c20fb4a0c31",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/SeaDraw.lua",
+        "expected_sha256": "A6245CBB49CB74EFA28DEFB63D7546BD87F6B6C990A79E9AF18C95888193534A",
+        "actual_sha256": "a6245cbb49cb74efa28defb63d7546bd87f6b6c990a79e9af18c95888193534a",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/SeaRuntime.lua",
+        "expected_sha256": "B914C87A2557FF528426F7C587D92638F96C66CE6956054A609104F1FA78219F",
+        "actual_sha256": "b914c87a2557ff528426f7c587d92638f96c66ce6956054a609104f1fa78219f",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/SpawnStrategy.lua",
+        "expected_sha256": "DBB5B67E46B21B00F6D9A86F5DE806BCB70D233678F59A7F1D730E3F484A5B9F",
+        "actual_sha256": "dbb5b67e46b21b00f6d9a86f5de806bcb70d233678f59a7f1d730e3f484a5b9f",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/State.lua",
+        "expected_sha256": "CB95DF6447BD3BA046A1D4F1B25D84EC6014756422B9BC7ABC46DC0A8AD1DB52",
+        "actual_sha256": "cb95df6447bd3ba046a1d4f1b25d84ec6014756422b9bc7abc46dc0a8ad1db52",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/State.lua.meta",
+        "expected_sha256": "A165279F14B4A9108A5A462BE800D0C0352AAB73C28F1EF3AD61913DE61D53F3",
+        "actual_sha256": "a165279f14b4a9108a5a462be800d0c0352aab73c28f1ef3ad61913de61d53f3",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/SurfaceSignals.lua",
+        "expected_sha256": "724390AE99C892205FD8606ED220DBF42D40CC8FAAD8CD0BD0FEABA67A9FCBB3",
+        "actual_sha256": "724390ae99c892205fd8606ed220dbf42d40cc8faad8cd0bd0feaba67a9fcbb3",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/World.lua",
+        "expected_sha256": "4C4F98EE088E30718C18886D80C6D014712A3DD4407D5A90412B646C6B49ED9B",
+        "actual_sha256": "4c4f98ee088e30718c18886d80c6d014712a3dd4407d5a90412b646c6b49ed9b",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Systems/EntityStateSystem.lua",
+        "expected_sha256": "2C44801D07E2921C3D5A5492FAF0832D2B86890A759D11E9EC23B597EC3E8F18",
+        "actual_sha256": "2c44801d07e2921c3d5a5492faf0832d2b86890a759d11e9ec23b597ec3e8f18",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/ABIntegrationTests.lua",
+        "expected_sha256": "84B8CBDD408085756D2329C8FE00D07DB08A1E6443EA9F8D27B9CD20C14AF50E",
+        "actual_sha256": "de232115b234707f53eb87d980f1bd63672194a125f4b94586a578a11b40ab25",
+        "status": "changed"
+      },
+      {
+        "file": "scripts/tests/ArchitectureIntegrationTests.lua",
+        "expected_sha256": "3423577120B27F5652CC6DDAE9F725B003680C0866661949897F7D3EF7B41525",
+        "actual_sha256": "aeca8b95918f02b42d5016b764252f643080f4c60cbe364b6885fdd75855012e",
+        "status": "changed"
+      },
+      {
+        "file": "scripts/tests/Circle1A2BarrelRenderTests.lua",
+        "expected_sha256": "5DE403B5CB33E5B84D17254A3738FCE26ED942450111178956562F4AFB5EEA35",
+        "actual_sha256": "5de403b5cb33e5b84d17254a3738fce26ed942450111178956562f4afb5eea35",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A2BarrelTests.lua",
+        "expected_sha256": "F9111B55DA708A9082B7CBCFE51478BB7FC165A3C317443A1C2F5D2454E2F7AA",
+        "actual_sha256": "f9111b55da708a9082b7cbcfe51478bb7fc165a3c317443a1c2f5d2454e2f7aa",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A2FishingTests.lua",
+        "expected_sha256": "B9C5121C15E6610284B76CF147F28ADCE545D9876A45FF3C4075E61A7674562F",
+        "actual_sha256": "b9c5121c15e6610284b76cf147f28adce545d9876a45ff3c4075e61a7674562f",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A2ScopeTests.lua",
+        "expected_sha256": "A0993CA2011C8C07D0EC4B931EA7E1F286B8B86E88AF10724362E2E2D3D8A8C8",
+        "actual_sha256": "a0993ca2011c8c07d0ec4b931ea7e1f286b8b86e88af10724362e2e2d3d8a8c8",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A2SignalsTests.lua",
+        "expected_sha256": "91CA8D70B764779E8A7C87276609841D174C179C371447BDBF0DBDBE3C946816",
+        "actual_sha256": "91ca8d70b764779e8a7c87276609841d174c179c371447bdbf0dbdbe3c946816",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A3ExperienceTests.lua",
+        "expected_sha256": "239252880BDF1953E840A99D07FD49BFFC6E81C3AA1DBC13B07E6AFE5264E6AC",
+        "actual_sha256": "239252880bdf1953e840a99d07fd49bffc6e81c3aa1dbc13b07e6afe5264e6ac",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A3InputTests.lua",
+        "expected_sha256": "B86AA2FE35CFDE09ABB41AC0AC5B7DAC57FD3117BA952A0C7813605658F68174",
+        "actual_sha256": "b86aa2fe35cfde09abb41ac0ac5b7dac57fd3117ba952a0c7813605658f68174",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A3PortTests.lua",
+        "expected_sha256": "3626DC7E0A9F344CB56672007F1EAAFADBAB887832B2AFDAAE34500387831F8D",
+        "actual_sha256": "3626dc7e0a9f344cb56672007f1eaafadbab887832b2afdaae34500387831f8d",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A3RecognitionTests.lua",
+        "expected_sha256": "81B41BEF5416B0B5E6BB2690D70190036FD22E43C5B6929DF9D47708ED9478BF",
+        "actual_sha256": "81b41bef5416b0b5e6bb2690d70190036fd22e43c5b6929df9d47708ed9478bf",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A3SignalsTests.lua",
+        "expected_sha256": "2E131A4DB6A298355B6961012711E3205584F557D519D27EE95AF890DD15BC60",
+        "actual_sha256": "2e131a4db6a298355b6961012711e3205584f557d519d27ee95af890dd15bc60",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A3StabilityTests.lua",
+        "expected_sha256": "87A7559FF7A6C55D005B7084DCA21DC270EC7E100F233B6BE0354F67BA0A5D0F",
+        "actual_sha256": "87a7559ff7a6c55d005b7084dca21dc270ec7e100f233b6be0354f67ba0a5d0f",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1AFishLocksTests.lua",
+        "expected_sha256": "A13C50914B92D1C47B8448C74AA2D4B4655BEC7803B81D4A897AB5DDF2D718F7",
+        "actual_sha256": "a13c50914b92d1c47b8448c74aa2d4b4655bec7803b81d4a897ab5ddf2d718f7",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1APredationCooldownTests.lua",
+        "expected_sha256": "0ED13D31B8D9F63D5F20C6171B5F92D7EA111BD36FFCEF9747FC72315D9E5A75",
+        "actual_sha256": "0ed13d31b8d9f63d5f20c6171b5f92d7ea111bd36ffcef9747fc72315d9e5a75",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/SeaFusedSceneTests.lua",
+        "expected_sha256": "8BFF4D6069B16417028880EE0223169006A58FB75F914196904230F35EAD5CEC",
+        "actual_sha256": "8bff4d6069b16417028880ee0223169006a58fb75f914196904230f35ead5cec",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/SeaFusionRenderTests.lua",
+        "expected_sha256": "44E322CF5B3E6A52F221A480F7FAF42B38C522F9854F5ACDBEBBEB8EED702580",
+        "actual_sha256": "44e322cf5b3e6a52f221a480f7faf42b38c522f9854f5acdbebbeb8eed702580",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/SeaRuntimeTests.lua",
+        "expected_sha256": "2F2E2297B049E9743BB22F465E96C2D7ABFC1AFCCF10D339EF796ACF10CD5983",
+        "actual_sha256": "2f2e2297b049e9743bb22f465e96c2d7abfc1afccf10d339ef796acf10cd5983",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/SeaStabilityTests.lua",
+        "expected_sha256": "464E66542DD485CA6F4417A2A486CB199DB5BF5DFBADCF39B077198D2C7A9809",
+        "actual_sha256": "464e66542dd485ca6f4417a2a486cb199db5bf5dfbadcf39b077198d2c7a9809",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/SurfaceRiseTests.lua",
+        "expected_sha256": "092002A2F7AA9BC4937CD2AEE927A6B6A5FD54FDA83A2A784673F334027DC86C",
+        "actual_sha256": "092002a2f7aa9bc4937cd2aee927a6b6a5fd54fda83a2a784673f334027dc86c",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/SurfaceSignalsTests.lua",
+        "expected_sha256": "077ED8223E39A150EBFA50E186BFF9B7EEACA4946FB7291838862DCCF78545F8",
+        "actual_sha256": "077ed8223e39a150ebfa50e186bff9b7eeaca4946fb7291838862dccf78545f8",
+        "status": "match"
+      }
+    ]
+  },
+  "supplemental_protection": {
+    "status": "match",
+    "baseline_file": "outputs/circle1-ab-merge/supplemental-protection.json",
+    "baseline_sha256": "5a8da3e57cc75c13c1d0e9571b30c5b25c409319509442412fe6086d536136d2",
+    "expected_file_count": 15,
+    "matched_count": 15,
+    "missing_count": 0,
+    "changed_count": 0,
+    "issues": [],
+    "entries": [
+      {
+        "file": "data/fish.lua",
+        "expected_sha256": "F6563E4CFC32C55ADBD471118C43658E1C59D27FFFC8D752DFFC4C688BDD7A21",
+        "actual_sha256": "f6563e4cfc32c55adbd471118c43658e1c59d27fffc8d752dffc4c688bdd7a21",
+        "status": "match"
+      },
+      {
+        "file": "data/items.lua",
+        "expected_sha256": "1A369DA6CFE8ED9A0E1F1DF975FE49896C08981DFC40F4CD86A2A254A6FEDD45",
+        "actual_sha256": "1a369da6cfe8ed9a0e1f1df975fe49896c08981dfc40f4cd86a2a254a6fedd45",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Entities/EntityFactory.lua",
+        "expected_sha256": "78A35FFC54AB3ED6642DE732EC3D7AF389183690EA2A3F8C5337D09E60E4AD34",
+        "actual_sha256": "78a35ffc54ab3ed6642de732ec3d7af389183690ea2a3f8c5337d09e60e4ad34",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Entities/EntityFactory.lua.meta",
+        "expected_sha256": "455554B17CE46FD6AE8072F0F156BD03D638B7D43F3A975B76F8AED87CE7A8F7",
+        "actual_sha256": "455554b17ce46fd6ae8072f0f156bd03d638b7d43f3a975b76f8aed87ce7a8f7",
+        "status": "match"
+      },
+      {
+        "file": "scripts/FSM/StateMachine.lua",
+        "expected_sha256": "34376BB99D73878A4EA8B042AC810E0940F6549C0E67339DAB042B9CDD003EE4",
+        "actual_sha256": "34376bb99d73878a4ea8b042ac810e0940f6549c0e67339dab042b9cdd003ee4",
+        "status": "match"
+      },
+      {
+        "file": "scripts/FSM/StateMachine.lua.meta",
+        "expected_sha256": "76AF020588116F7BFB70DAE3EC19414F29B54F45133187F2DBCD23BDFF53EF16",
+        "actual_sha256": "76af020588116f7bfb70dae3ec19414f29b54f45133187f2dbcd23bdff53ef16",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Game/World.lua",
+        "expected_sha256": "566ADFE3C4560B6F55D38059C72514B710485A290112E40172FA650B694C6DED",
+        "actual_sha256": "566adfe3c4560b6f55d38059c72514b710485a290112e40172fa650b694c6ded",
+        "status": "match"
+      },
+      {
+        "file": "scripts/GeneratedData/Fish.lua",
+        "expected_sha256": "65E35588F19AC41D1B6594294FE47EB5802258753DD309510B9B66C73D9FE9FB",
+        "actual_sha256": "65e35588f19ac41d1b6594294fe47eb5802258753dd309510b9b66c73d9fe9fb",
+        "status": "match"
+      },
+      {
+        "file": "scripts/GeneratedData/Items.lua",
+        "expected_sha256": "33FAEF6384FF84BC973F2D0BA964F7B1A9572F886A39755DCDD53BEF010433EC",
+        "actual_sha256": "33faef6384ff84bc973f2d0ba964f7b1a9572f886a39755dcdd53bef010433ec",
+        "status": "match"
+      },
+      {
+        "file": "scripts/Main.lua",
+        "expected_sha256": "7B14E1225833ED502B329A78681C5257FB1DB75DCB72E1CCCB6DA906E322B7C2",
+        "actual_sha256": "7b14e1225833ed502b329a78681c5257fb1db75dcb72e1cccb6da906e322b7c2",
+        "status": "match"
+      },
+      {
+        "file": "scripts/data/items.lua",
+        "expected_sha256": "E0E74B36FA1FE33E17E5AC6797D37C9BBC2047EBCFF64A5DEDAAB35EF9AE6ECA",
+        "actual_sha256": "e0e74b36fa1fe33e17e5ac6797d37c9bbc2047ebcff64a5dedaab35ef9ae6eca",
+        "status": "match"
+      },
+      {
+        "file": "scripts/data/items.lua.meta",
+        "expected_sha256": "9E46CBBF7F590FE28464666739C1146A9E0C1F2DE3309E9CA983A1816980DC15",
+        "actual_sha256": "9e46cbbf7f590fe28464666739c1146a9e0c1f2de3309e9ca983a1816980dc15",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/SeaEngineSmoke.lua",
+        "expected_sha256": "700BDF37E55A805B33EB1950FF73F4110C611637E6DAE42A0F85B74EFDEE6BE7",
+        "actual_sha256": "700bdf37e55a805b33eb1950ff73f4110c611637e6dae42a0f85b74efdee6be7",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/SeaNativeVoyage.lua",
+        "expected_sha256": "97927D01A089A7A186631FE09D398E48C6AF598FD9A26852E8FBA7A53485A145",
+        "actual_sha256": "97927d01a089a7a186631fe09d398e48c6af598fd9a26852e8fba7a53485a145",
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/SeaNativeVoyageEntry.lua",
+        "expected_sha256": "3D189D95774B774B3088268800B99785A6862934D9F988028A78DF3B292D7FAA",
+        "actual_sha256": "3d189d95774b774b3088268800b99785a6862934d9f988028a78df3b292d7faa",
+        "status": "match"
+      }
+    ],
+    "new_files_are_informational": true,
+    "unlisted_files_enumerated": false,
+    "addition_note": "The supplemental baseline is an explicit hash list with no directory inventory; unlisted source paths are not inferred as violations."
+  },
+  "a3_delivery": {
+    "status": "match",
+    "expected_file_count": 12,
+    "manifest_file": "outputs/circle1-a3/delivery-manifest.json",
+    "manifest_sha256": "61a3d487be24bd40d5c9c9fa4f778057b75ae95b5c06e955714ac362655831a1",
+    "manifest_entry_count": 12,
+    "matched_count": 12,
+    "issues": [],
+    "entries": [
+      {
+        "file": "scripts/Ocean/Bootstrap.lua",
+        "manifest_sha256": "dc6da15e2d8c3cf622591a757a81cc77f2c25f822856eb172e025514f36cf161",
+        "protection_sha256": "DC6DA15E2D8C3CF622591A757A81CC77F2C25F822856EB172E025514F36CF161",
+        "actual_sha256": "dc6da15e2d8c3cf622591a757a81cc77f2c25f822856eb172e025514f36cf161",
+        "a_protection_check_matches": true,
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/Movement.lua",
+        "manifest_sha256": "50b6ff818f1d37142c0977b4855ea40e062be8c3b7c0f16b8b1826ade79a158d",
+        "protection_sha256": "50B6FF818F1D37142C0977B4855EA40E062BE8C3B7C0F16B8B1826ADE79A158D",
+        "actual_sha256": "50b6ff818f1d37142c0977b4855ea40e062be8c3b7c0f16b8b1826ade79a158d",
+        "a_protection_check_matches": true,
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/SeaDraw.lua",
+        "manifest_sha256": "a6245cbb49cb74efa28defb63d7546bd87f6b6c990a79e9af18c95888193534a",
+        "protection_sha256": "A6245CBB49CB74EFA28DEFB63D7546BD87F6B6C990A79E9AF18C95888193534A",
+        "actual_sha256": "a6245cbb49cb74efa28defb63d7546bd87f6b6c990a79e9af18c95888193534a",
+        "a_protection_check_matches": true,
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/SeaRuntime.lua",
+        "manifest_sha256": "b914c87a2557ff528426f7c587d92638f96c66ce6956054a609104f1fa78219f",
+        "protection_sha256": "B914C87A2557FF528426F7C587D92638F96C66CE6956054A609104F1FA78219F",
+        "actual_sha256": "b914c87a2557ff528426f7c587d92638f96c66ce6956054a609104f1fa78219f",
+        "a_protection_check_matches": true,
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/SurfaceSignals.lua",
+        "manifest_sha256": "724390ae99c892205fd8606ed220dbf42d40cc8faad8cd0bd0feaba67a9fcbb3",
+        "protection_sha256": "724390AE99C892205FD8606ED220DBF42D40CC8FAAD8CD0BD0FEABA67A9FCBB3",
+        "actual_sha256": "724390ae99c892205fd8606ed220dbf42d40cc8faad8cd0bd0feaba67a9fcbb3",
+        "a_protection_check_matches": true,
+        "status": "match"
+      },
+      {
+        "file": "scripts/Ocean/World.lua",
+        "manifest_sha256": "4c4f98ee088e30718c18886d80c6d014712a3dd4407d5a90412b646c6b49ed9b",
+        "protection_sha256": "4C4F98EE088E30718C18886D80C6D014712A3DD4407D5A90412B646C6B49ED9B",
+        "actual_sha256": "4c4f98ee088e30718c18886d80c6d014712a3dd4407d5a90412b646c6b49ed9b",
+        "a_protection_check_matches": true,
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A3ExperienceTests.lua",
+        "manifest_sha256": "239252880bdf1953e840a99d07fd49bffc6e81c3aa1dbc13b07e6afe5264e6ac",
+        "protection_sha256": "239252880BDF1953E840A99D07FD49BFFC6E81C3AA1DBC13B07E6AFE5264E6AC",
+        "actual_sha256": "239252880bdf1953e840a99d07fd49bffc6e81c3aa1dbc13b07e6afe5264e6ac",
+        "a_protection_check_matches": true,
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A3InputTests.lua",
+        "manifest_sha256": "b86aa2fe35cfde09abb41ac0ac5b7dac57fd3117ba952a0c7813605658f68174",
+        "protection_sha256": "B86AA2FE35CFDE09ABB41AC0AC5B7DAC57FD3117BA952A0C7813605658F68174",
+        "actual_sha256": "b86aa2fe35cfde09abb41ac0ac5b7dac57fd3117ba952a0c7813605658f68174",
+        "a_protection_check_matches": true,
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A3PortTests.lua",
+        "manifest_sha256": "3626dc7e0a9f344cb56672007f1eaafadbab887832b2afdaae34500387831f8d",
+        "protection_sha256": "3626DC7E0A9F344CB56672007F1EAAFADBAB887832B2AFDAAE34500387831F8D",
+        "actual_sha256": "3626dc7e0a9f344cb56672007f1eaafadbab887832b2afdaae34500387831f8d",
+        "a_protection_check_matches": true,
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A3RecognitionTests.lua",
+        "manifest_sha256": "81b41bef5416b0b5e6bb2690d70190036fd22e43c5b6929df9d47708ed9478bf",
+        "protection_sha256": "81B41BEF5416B0B5E6BB2690D70190036FD22E43C5B6929DF9D47708ED9478BF",
+        "actual_sha256": "81b41bef5416b0b5e6bb2690d70190036fd22e43c5b6929df9d47708ed9478bf",
+        "a_protection_check_matches": true,
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A3SignalsTests.lua",
+        "manifest_sha256": "2e131a4db6a298355b6961012711e3205584f557d519d27ee95af890dd15bc60",
+        "protection_sha256": "2E131A4DB6A298355B6961012711E3205584F557D519D27EE95AF890DD15BC60",
+        "actual_sha256": "2e131a4db6a298355b6961012711e3205584f557d519d27ee95af890dd15bc60",
+        "a_protection_check_matches": true,
+        "status": "match"
+      },
+      {
+        "file": "scripts/tests/Circle1A3StabilityTests.lua",
+        "manifest_sha256": "87a7559ff7a6c55d005b7084dca21dc270ec7e100f233b6be0354f67ba0a5d0f",
+        "protection_sha256": "87A7559FF7A6C55D005B7084DCA21DC270EC7E100F233B6BE0354F67BA0A5D0F",
+        "actual_sha256": "87a7559ff7a6c55d005b7084dca21dc270ec7e100f233b6be0354f67ba0a5d0f",
+        "a_protection_check_matches": true,
+        "status": "match"
+      }
+    ]
+  },
+  "historical_evidence": {
+    "status": "unchanged",
+    "baseline_captured_at_utc": "2026-10-03T03:20:08Z",
+    "baseline_directory_count": 4,
+    "current_directory_count": 4,
+    "baseline_file_count": 212,
+    "current_file_count": 212,
+    "unchanged_files": 212,
+    "missing_files": [],
+    "changed_files": [],
+    "added_files": [],
+    "missing_directories": [],
+    "added_directories": [],
+    "issues": [],
+    "new_files_are_informational": true,
+    "directories_are_informational_when_added": true
+  },
+  "limitations": [
+    "This is a hash and file-inventory check; it does not assess behavior or correctness.",
+    "B4 business source files are changing and are not subject to final acceptance here.",
+    "Added historical evidence is informational and does not automatically count as a violation.",
+    "Unlisted supplemental source files are not inferred as additions because that baseline has no directory inventory; hash changes and missing listed paths require review.",
+    "A matching hash does not establish that the historical evidence itself proves runtime or cloud behavior."
+  ]
+}

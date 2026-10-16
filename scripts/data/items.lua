@@ -1,6 +1,6 @@
 -- 四种基础物品定义；价格和世界效果集中在此处。
 -- V1_IMPLEMENTATION_VALUE：本表价格/恢复量与配置中的生命周期均已由用户确认。
-local GameConfig = require "config.gameplay"
+local ItemRows = require("GeneratedData.Items")
 
 local Items = {}
 Items.Categories = { "fish", "food", "bait", "treasure", "misc" }
@@ -19,54 +19,24 @@ Items.WorldEffects = { "ATTRACT_SMALL_FISH", "ATTRACT_BIG_FISH", "NONE" }
 ---@field lifetimeSec number
 
 ---@type table<string, ItemDefinition>
-local definitions = {
-    apple = {
-        id = "apple",
-        name = "苹果",
-        category = "food",
-        buyPrice = 30,
-        sellPrice = 0,
-        heal = 20,
-        canEat = true,
-        canGive = true,
-        worldEffect = "ATTRACT_SMALL_FISH",
-        lifetimeSec = GameConfig.drop.lifetimeSec,
-    },
-    bait = {
-        id = "bait",
-        name = "鱼饵",
-        category = "bait",
-        buyPrice = 20,
-        sellPrice = 0,
-        heal = 0,
-        canEat = false,
-        canGive = true,
-        worldEffect = "ATTRACT_SMALL_FISH",
-        lifetimeSec = GameConfig.drop.lifetimeSec,
-    },
-    sardine = {
-        id = "sardine",
-        name = "沙丁鱼",
-        category = "fish",
-        sellPrice = 70,
-        heal = 10,
-        canEat = true,
-        canGive = true,
-        worldEffect = "ATTRACT_BIG_FISH",
-        lifetimeSec = GameConfig.drop.lifetimeSec,
-    },
-    tuna = {
-        id = "tuna",
-        name = "金枪鱼",
-        category = "fish",
-        sellPrice = 120,
-        heal = 20,
-        canEat = true,
-        canGive = true,
-        worldEffect = "NONE",
-        lifetimeSec = GameConfig.drop.lifetimeSec,
-    },
-}
+local definitions = {}
+-- Giving permissions remain code-owned; the v1 data contract has no canGive field.
+local giveable = { apple = true, bait = true, sardine = true, tuna = true }
+for _, row in ipairs(ItemRows) do
+    assert(definitions[row.id] == nil, "duplicate item ID in data table")
+    definitions[row.id] = {
+        id = row.id,
+        name = row.name,
+        category = row.category,
+        buyPrice = row.buy,
+        sellPrice = row.sell or 0,
+        heal = row.heal or 0,
+        canEat = row.heal ~= nil,
+        canGive = giveable[row.id] == true,
+        worldEffect = row.worldEffect,
+        lifetimeSec = row.worldDuration,
+    }
+end
 
 ---返回独立定义副本；未知物品返回 nil。
 ---@param itemId string

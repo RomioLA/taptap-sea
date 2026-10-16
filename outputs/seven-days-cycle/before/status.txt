@@ -1,0 +1,141 @@
+ M .gitignore
+ M screenshots/sea-fusion-render-qa.json
+ M screenshots/sea-v1-logic-tests.json
+ M screenshots/sea-v1-lsp.json
+ M screenshots/sea-v1-stability-tests.json
+ M scripts/Gameplay/Bootstrap.lua
+ M scripts/Gameplay/Debug.lua
+ M scripts/Gameplay/GameClock.lua
+ M scripts/Gameplay/HUD.lua
+ M scripts/Gameplay/Inventory.lua
+ M scripts/Gameplay/Loop.lua
+ M scripts/Gameplay/Persistence.lua
+ M scripts/Gameplay/PlayerState.lua
+ M scripts/Main.lua
+ M scripts/Ocean/Bootstrap.lua
+ M scripts/Ocean/Config.lua
+ M scripts/Ocean/Draw.lua
+ M scripts/Ocean/Fish.lua
+ M scripts/Ocean/FishData.lua
+ M scripts/Ocean/FusedScene.lua
+ M scripts/Ocean/Movement.lua
+ M scripts/Ocean/SeaDebug.lua
+ M scripts/Ocean/SeaDraw.lua
+ M scripts/Ocean/SeaRuntime.lua
+ M scripts/Ocean/World.lua
+ M scripts/Tests/GameLoopSpec.lua
+ M scripts/Tests/GameLoopUISpec.lua
+ M scripts/Tests/NumericEconomySpec.lua
+ M scripts/Tests/PersistenceRegressionSpec.lua
+ M scripts/Tests/ShopStockSpec.lua
+ M scripts/Tests/check_game_loop_lsp.py
+ M scripts/config/gameplay.lua
+ M scripts/data/items.lua
+ M scripts/tests/SeaFusedSceneTests.lua
+ M scripts/tests/SeaFusionRenderTests.lua
+ M scripts/tests/SeaRuntimeTests.lua
+ M scripts/tests/SeaStabilityTests.lua
+ M tests/render_sea_fusion.py
+?? .github/
+?? AGENTS.md
+?? "assets/image/\350\210\252\346\265\267\347\254\254\344\270\200\350\247\206\350\247\222_20261001094821.png.meta"
+?? data/
+?? docs/AB_LOCAL_INTEGRATION_01.md
+?? docs/ARCHITECTURE_INTEGRATION_INTERNAL.md
+?? docs/ARCHITECTURE_LAYOUT.md
+?? docs/DATA_MIGRATION_INTERNAL.md
+?? docs/DATA_MIGRATION_REVIEW.md
+?? docs/DATA_SCHEMA.md
+?? docs/PROJECT_HANDOFF.md
+?? docs/SAVE_FAILURE_CONTINUATION_INTERNAL.md
+?? docs/STATE_SCHEDULER_INTERNAL.md
+?? docs/planning/
+?? outputs/
+?? screenshots/ab-b-baseline-lsp.txt
+?? screenshots/ab-b-baseline-tests.txt
+?? screenshots/ab-b-final-lsp.json
+?? screenshots/ab-b-final-tests.txt
+?? screenshots/ab-integration-tests.json
+?? screenshots/ab-local-integration-acceptance.json
+?? screenshots/ab-local-integration-audit.json
+?? screenshots/ab-native-check.json
+?? screenshots/ab-native-logs-after-100.json
+?? screenshots/ab-native-logs.json
+?? screenshots/ab-native-run.json
+?? screenshots/ab-native-source-hashes.json
+?? screenshots/ab-native-status.json
+?? scripts/Entities/
+?? scripts/FSM/
+?? scripts/Game/
+?? scripts/Gameplay/Actions.lua
+?? scripts/Gameplay/Circle1B2Barrel.lua
+?? scripts/Gameplay/Circle1B2Progress.lua
+?? scripts/Gameplay/UpdateSystem.lua
+?? scripts/GeneratedData/
+?? scripts/Integration/
+?? scripts/Ocean/ProjectedGeometry.lua
+?? scripts/Ocean/Projection.lua
+?? scripts/Ocean/SeaAtmosphere.lua
+?? scripts/Ocean/SeaPresentation.lua
+?? scripts/Ocean/SeaSurfaceEffects.lua
+?? scripts/Ocean/SeaViewArt.lua
+?? scripts/Ocean/SurfaceSignals.lua
+?? scripts/Ocean/Wake.lua
+?? scripts/Systems/
+?? scripts/data/items.lua.meta
+?? scripts/tests/ABIntegrationTests.lua
+?? scripts/tests/ArchitectureIntegrationTests.lua
+?? scripts/tests/Circle1A2BarrelRenderTests.lua
+?? scripts/tests/Circle1A2BarrelTests.lua
+?? scripts/tests/Circle1A2FishingTests.lua
+?? scripts/tests/Circle1A2ScopeTests.lua
+?? scripts/tests/Circle1A2SignalsTests.lua
+?? scripts/tests/Circle1A3ExperienceTests.lua
+?? scripts/tests/Circle1A3InputTests.lua
+?? scripts/tests/Circle1A3PortTests.lua
+?? scripts/tests/Circle1A3RecognitionTests.lua
+?? scripts/tests/Circle1A3SignalsTests.lua
+?? scripts/tests/Circle1A3StabilityTests.lua
+?? scripts/tests/Circle1ABMergeFrameBudgetTests.lua
+?? scripts/tests/Circle1AFishLocksTests.lua
+?? scripts/tests/Circle1APredationCooldownTests.lua
+?? scripts/tests/Circle1B2BarrelTests.lua
+?? scripts/tests/Circle1B2Lsp.py
+?? scripts/tests/Circle1B2ProgressTests.lua
+?? scripts/tests/Circle1B2Run.py
+?? scripts/tests/Circle1B2ScopeTests.lua
+?? scripts/tests/Circle1B2ThrowTests.lua
+?? scripts/tests/Circle1B2UITests.lua
+?? scripts/tests/Circle1B3ClockAsyncTests.lua
+?? scripts/tests/Circle1B3CloudTests.lua
+?? scripts/tests/Circle1B3EconomyTests.lua
+?? scripts/tests/Circle1B3Lsp.py
+?? scripts/tests/Circle1B3Run.py
+?? scripts/tests/Circle1B3SceneUITests.lua
+?? scripts/tests/Circle1B3SevenDaysTests.lua
+?? scripts/tests/Circle1B3SpatialTests.lua
+?? scripts/tests/Circle1B4Run.py
+?? scripts/tests/Circle1B5PortDrawTests.lua
+?? scripts/tests/Circle1BFishingFlowTests.lua
+?? scripts/tests/Circle1BPendingCatchTests.lua
+?? scripts/tests/SeaAtmosphereTests.lua
+?? scripts/tests/SeaCurvatureTests.lua
+?? scripts/tests/SeaMotionEffectsTests.lua
+?? scripts/tests/SeaPresentationTests.lua
+?? scripts/tests/SeaViewUpgradeTests.lua
+?? scripts/tests/SurfaceRiseTests.lua
+?? scripts/tests/SurfaceSignalsTests.lua
+?? tests/__pycache__/
+?? tests/check_sea_view_lsp.py
+?? tests/run_ab_integration.py
+?? tests/run_architecture_integration.py
+?? tests/run_circle1_a.py
+?? tests/run_circle1_a2.py
+?? tests/run_circle1_b.py
+?? tests/run_data_migration.py
+?? tests/run_sea_view_regression.py
+?? tests/run_sea_view_upgrade.py
+?? tests/run_selective_merge.py
+?? tests/run_surface_merge.py
+?? tests/summarize_sea_view_checks.py
+?? tests/sync_runtime_data.py

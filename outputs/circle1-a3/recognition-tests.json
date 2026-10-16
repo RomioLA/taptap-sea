@@ -1,0 +1,61 @@
+{
+  "module": "tests.Circle1A3RecognitionTests",
+  "report": {
+    "metrics": {
+      "recognitionOwner": "real Gameplay.PlayerState",
+      "restore": "real Persistence.Restore (offline)",
+      "evidenceKind": "NanoVG recorder / render fixtures, not native gameplay",
+      "recognitionMeters": 20,
+      "outlineMeters": 80
+    },
+    "results": [
+      {
+        "name": "first_approach_then_depart_and_return_reads_existing_player_progress",
+        "passed": true
+      },
+      {
+        "name": "restore_and_new_game_are_read_live_without_ocean_progress_copy",
+        "passed": true
+      },
+      {
+        "name": "missing_false_nil_and_nonboolean_queries_preserve_unknown_behavior",
+        "passed": true
+      },
+      {
+        "name": "recognized_offscreen_and_content_decoys_do_not_bypass_existing_filters",
+        "passed": true
+      },
+      {
+        "name": "repeated_draw_is_readonly_for_world_ship_signals_and_player",
+        "passed": true
+      }
+    ]
+  },
+  "nvgCalls": {
+    "nvgBeginPath": 136,
+    "nvgBezierTo": 20,
+    "nvgCircle": 4,
+    "nvgClosePath": 30,
+    "nvgEllipse": 40,
+    "nvgFill": 81,
+    "nvgFillColor": 77,
+    "nvgFillPaint": 4,
+    "nvgLineTo": 286,
+    "nvgLinearGradient": 4,
+    "nvgMoveTo": 84,
+    "nvgQuadTo": 63,
+    "nvgRect": 1,
+    "nvgRestore": 10,
+    "nvgRotate": 1,
+    "nvgRoundedRect": 11,
+    "nvgSave": 10,
+    "nvgScale": 9,
+    "nvgScissor": 1,
+    "nvgStroke": 55,
+    "nvgStrokeColor": 55,
+    "nvgStrokeWidth": 55,
+    "nvgTranslate": 9
+  },
+  "nvgCallTotal": 1046,
+  "capturedElements": 136
+}

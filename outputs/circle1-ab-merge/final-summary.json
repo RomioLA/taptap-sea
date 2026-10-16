@@ -1,0 +1,67 @@
+{
+  "createdAtUtc": "2026-10-03T04:46:39.580505+00:00",
+  "status": "offline_composition_passed_native_and_cloud_pending",
+  "workspace": "C:/codex/taptap-sea",
+  "finalRegressionFile": "final-checks/run-20261003T043853914928Z.json",
+  "finalRegressionSha256": "6f388f6262163017bee4b2e3080eede5094505710a6bea8a29812afe7ab46d98",
+  "suiteExecutions": 45,
+  "uniqueSuites": 40,
+  "repeatedB4Suites": 5,
+  "uniqueReportedCases": 328,
+  "playerReportedAssertions": 152,
+  "counts": {
+    "passed": 45,
+    "failed": 0,
+    "skipped": 0,
+    "load_error": 0,
+    "not_ready": 0,
+    "not_tested": 0
+  },
+  "frozenLuaFiles": 86,
+  "sourceChangedDuringRun": false,
+  "sourceMatchesFinalFreeze": true,
+  "finalSourceReadySha256": "d3e1826ce2e8c91a80bbee9b1c74decdce5aeed8f3950cbb284e97f1fed2cff1",
+  "syntaxPassed": true,
+  "lspFiles": 21,
+  "lspErrorCount": 0,
+  "lspWarningCount": 73,
+  "trackedWhitespaceExitCode": 0,
+  "aProtectionMatched": 41,
+  "aProtectionTotal": 43,
+  "reviewedSharedTestDeltas": 2,
+  "a3DeliveryMatched": 12,
+  "supplementalMatched": 15,
+  "historicalEvidenceUnchanged": 212,
+  "rootFinalReviewSourceChanges": [
+    {
+      "file": "scripts/Game/Game.lua",
+      "sha256": "c73b8dd4cc2b28b0e020d6a0df4dbd898fbf096ac76690c27bc7605ce35330dd"
+    },
+    {
+      "file": "scripts/Gameplay/GameClock.lua",
+      "sha256": "76e5a617c5d6dc18b1634b2d6799ea1c983bf9af569031cb09c042727a48285b"
+    },
+    {
+      "file": "scripts/Gameplay/Circle1B2Barrel.lua",
+      "sha256": "47de71711a07b8044b4277d166bcd0c1d90b7f1ebdb56cdef8402a6f553cc39b"
+    },
+    {
+      "file": "scripts/Tests/ABIntegrationTests.lua",
+      "sha256": "de232115b234707f53eb87d980f1bd63672194a125f4b94586a578a11b40ab25"
+    },
+    {
+      "file": "scripts/Tests/Circle1B2BarrelTests.lua",
+      "sha256": "4e8ecf17c6b38553dbb8a5690d262b7538633a62306a10d6d45fc8fd79f7ca0d"
+    },
+    {
+      "file": "scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "sha256": "63742f8b0c6548ef9a15c575fb0cfba12185ab8a085ba84db3920f52906f8caf"
+    }
+  ],
+  "nativeGuiPreviewVerified": false,
+  "nativeFrameRateVerified": false,
+  "realCloudSdkVerified": false,
+  "gitCommitPushBuildPublishPerformed": false,
+  "temporaryGameplayParametersAdded": [],
+  "scopeLimit": "No project-wide clean or Circle1 completion claim. Case/assertion counts are separate units, not summed."
+}

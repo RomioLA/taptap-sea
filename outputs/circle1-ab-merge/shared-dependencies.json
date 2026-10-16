@@ -1,0 +1,54 @@
+{
+  "purpose": "static shared dependencies, read only; not a final B4 snapshot",
+  "files": [
+    {
+      "file": "scripts/data/items.lua",
+      "cExists": true,
+      "bExists": true,
+      "cHash": "E0E74B36FA1FE33E17E5AC6797D37C9BBC2047EBCFF64A5DEDAAB35EF9AE6ECA",
+      "bHash": "E0E74B36FA1FE33E17E5AC6797D37C9BBC2047EBCFF64A5DEDAAB35EF9AE6ECA"
+    },
+    {
+      "file": "scripts/GeneratedData/Items.lua",
+      "cExists": true,
+      "bExists": true,
+      "cHash": "33FAEF6384FF84BC973F2D0BA964F7B1A9572F886A39755DCDD53BEF010433EC",
+      "bHash": "33FAEF6384FF84BC973F2D0BA964F7B1A9572F886A39755DCDD53BEF010433EC"
+    },
+    {
+      "file": "scripts/GeneratedData/Fish.lua",
+      "cExists": true,
+      "bExists": true,
+      "cHash": "65E35588F19AC41D1B6594294FE47EB5802258753DD309510B9B66C73D9FE9FB",
+      "bHash": "65E35588F19AC41D1B6594294FE47EB5802258753DD309510B9B66C73D9FE9FB"
+    },
+    {
+      "file": "scripts/GeneratedData/Schema.lua",
+      "cExists": false,
+      "bExists": false,
+      "cHash": null,
+      "bHash": null
+    },
+    {
+      "file": "scripts/Game/World.lua",
+      "cExists": true,
+      "bExists": true,
+      "cHash": "566ADFE3C4560B6F55D38059C72514B710485A290112E40172FA650B694C6DED",
+      "bHash": "566ADFE3C4560B6F55D38059C72514B710485A290112E40172FA650B694C6DED"
+    },
+    {
+      "file": "scripts/Entities/EntityFactory.lua",
+      "cExists": true,
+      "bExists": true,
+      "cHash": "78A35FFC54AB3ED6642DE732EC3D7AF389183690EA2A3F8C5337D09E60E4AD34",
+      "bHash": "78A35FFC54AB3ED6642DE732EC3D7AF389183690EA2A3F8C5337D09E60E4AD34"
+    },
+    {
+      "file": "scripts/FSM/StateMachine.lua",
+      "cExists": true,
+      "bExists": true,
+      "cHash": "34376BB99D73878A4EA8B042AC810E0940F6549C0E67339DAB042B9CDD003EE4",
+      "bHash": "34376BB99D73878A4EA8B042AC810E0940F6549C0E67339DAB042B9CDD003EE4"
+    }
+  ]
+}

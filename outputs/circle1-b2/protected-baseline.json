@@ -1,0 +1,150 @@
+[
+  {
+    "path": "data\\items.lua",
+    "sha256": "1A369DA6CFE8ED9A0E1F1DF975FE49896C08981DFC40F4CD86A2A254A6FEDD45"
+  },
+  {
+    "path": "data\\fish.lua",
+    "sha256": "F6563E4CFC32C55ADBD471118C43658E1C59D27FFFC8D752DFFC4C688BDD7A21"
+  },
+  {
+    "path": "scripts/Systems\\EntityStateSystem.lua",
+    "sha256": "AF2A94DECE7B1831EEF7E8C4719FA67443A48A1EA6C8FEA24D54CA7E7BFAB99A"
+  },
+  {
+    "path": "scripts/GeneratedData\\Items.lua",
+    "sha256": "33FAEF6384FF84BC973F2D0BA964F7B1A9572F886A39755DCDD53BEF010433EC"
+  },
+  {
+    "path": "scripts/GeneratedData\\Fish.lua",
+    "sha256": "65E35588F19AC41D1B6594294FE47EB5802258753DD309510B9B66C73D9FE9FB"
+  },
+  {
+    "path": "scripts/Ocean\\World.lua",
+    "sha256": "1C178B6654AB712669DA5E7F57CA91269AC527F0AC4BA9CAE6D9C5652C9F4791"
+  },
+  {
+    "path": "scripts/Ocean\\SurfaceSignals.lua",
+    "sha256": "F341AA49BC8A35B2218319A07C0D6F0C7C3A5BB124BA75F9F17D27FE61F214B0"
+  },
+  {
+    "path": "scripts/Ocean\\State.lua",
+    "sha256": "CB95DF6447BD3BA046A1D4F1B25D84EC6014756422B9BC7ABC46DC0A8AD1DB52"
+  },
+  {
+    "path": "scripts/Ocean\\SpawnStrategy.lua",
+    "sha256": "DBB5B67E46B21B00F6D9A86F5DE806BCB70D233678F59A7F1D730E3F484A5B9F"
+  },
+  {
+    "path": "scripts/Ocean\\SeaRuntime.lua",
+    "sha256": "F3884BCEDE776CF57C821D4A240A2A15249471CC035609C39D75660B1EF51ADE"
+  },
+  {
+    "path": "scripts/Ocean\\SeaDraw.lua",
+    "sha256": "489541F4F18CED5533211BBE9706A7C35E95FE59F33660ACAB0A0FD7B90D2F03"
+  },
+  {
+    "path": "scripts/Ocean\\SeaDebug.lua",
+    "sha256": "9645D0673D933BDB9E3B50AC0DD0D3BE436FED113875BBEF23BA9C20FB4A0C31"
+  },
+  {
+    "path": "scripts/Ocean\\SceneState.lua",
+    "sha256": "F78AAB095BD890F968564C05426CAB843A5344AAD519EDBF724BBF49B5C3C5BE"
+  },
+  {
+    "path": "scripts/Ocean\\Movement.lua",
+    "sha256": "04F424D10C1DBA1987FBEED0F0BEDC63265D7EC94649D4C29559ED3C0121E8DF"
+  },
+  {
+    "path": "scripts/Ocean\\Math.lua",
+    "sha256": "9CB75E3C99F667E1529944DB1F777A99CD3A9EAB3E45EBED631776B0A22E1A5D"
+  },
+  {
+    "path": "scripts/Ocean\\HUD.lua",
+    "sha256": "F9E0EBEB6704BEF7F03891B062967A06F32FB78E7628E2E35F80936EA6AD040A"
+  },
+  {
+    "path": "scripts/Ocean\\FusedScene.lua",
+    "sha256": "8BFB660DB1D2B5DD2E0B7A9EABE4E0F9B539B741FAC9026AC7A55C9C8F81D6BF"
+  },
+  {
+    "path": "scripts/Ocean\\FishData.lua",
+    "sha256": "F8D494AA7CC8F5AF357E8A8AFE894BE6F824EE2AE42802C762AD8ED9725BD299"
+  },
+  {
+    "path": "scripts/Ocean\\Fish.lua",
+    "sha256": "A4967AF9C27372A617FC5C591EE2D63823278C21D086EA670E25E8E109B9324A"
+  },
+  {
+    "path": "scripts/Ocean\\Draw.lua",
+    "sha256": "8E2A8871ADE22C2F35B196B81D5FAB1FD1DF15D17C3404F7769E22304B7ADC10"
+  },
+  {
+    "path": "scripts/Ocean\\Config.lua",
+    "sha256": "06EFCD4F858673547DC402974582C57FD0C414D88A84ED9075EC71144A2AC135"
+  },
+  {
+    "path": "scripts/Ocean\\Bootstrap.lua",
+    "sha256": "3B8A0402E3A2E77F5846830E0573DDE0118121858BF850645B2C976894B79D54"
+  },
+  {
+    "path": "scripts/Main.lua",
+    "sha256": "7B14E1225833ED502B329A78681C5257FB1DB75DCB72E1CCCB6DA906E322B7C2"
+  },
+  {
+    "path": "scripts/Game/World.lua",
+    "sha256": "566ADFE3C4560B6F55D38059C72514B710485A290112E40172FA650B694C6DED"
+  },
+  {
+    "path": "docs/DATA_SCHEMA.md",
+    "sha256": "ABD467C86D1A5502B29F5F82A3656DE45ADA628CEF515E124C0B4F1737F37304"
+  },
+  {
+    "path": "AGENTS.md",
+    "sha256": "82AD27E94EE30B70FF031A8E2EE173440586CD40AB77A1E70EE1A5B7E47FE3D1"
+  },
+  {
+    "path": "outputs/circle1-b/交付说明.md",
+    "sha256": "7ADCCEA8672422D2A62D3B886E6D71BA4906E518BFBECA212448090A73782083"
+  },
+  {
+    "path": "outputs/circle1-b/baseline-hashes.json",
+    "sha256": "09A9827CC339E2EE3003289635CCB22E36937738D152C899AFCD1E8CF4542CE7"
+  },
+  {
+    "path": "outputs/circle1-b/delivery-hashes.json",
+    "sha256": "76BC5071D4E4125AFFA657CC0F90B3BE45500BF1727E8BA40DEEF66591C44A62"
+  },
+  {
+    "path": "outputs/circle1-b/dependency-evidence.json",
+    "sha256": "A8A64175AD772D9A19A88A567334C4A1B53E77031B4AB1F9645B41C001FE3BC3"
+  },
+  {
+    "path": "outputs/circle1-b/flow-first-run.txt",
+    "sha256": "7C5FC07A1A3E99C2BC7668E77B50D3D411F850FCC3C7E965B4F6F6A00AEED2D4"
+  },
+  {
+    "path": "outputs/circle1-b/lsp-console.txt",
+    "sha256": "A883AB13A7F202A5776DECBBDF13DD127383F1D1DE05F5ADAA6DC8D0F6801325"
+  },
+  {
+    "path": "outputs/circle1-b/lsp-result.json",
+    "sha256": "436E61F7038499E3A69DF30B19226BA912FB9C6CAFFBD78826E8DB0E6F94C591"
+  },
+  {
+    "path": "outputs/circle1-b/preview-status.json",
+    "sha256": "08DA9963039870629430E9061EBDB3698A57BD7BDE4C921A3789B6374C15745B"
+  },
+  {
+    "path": "outputs/circle1-b/regression-console.txt",
+    "sha256": "A8A2D351363F160ADD6380A80FC439870EA373FBFA37BC08AEDE74F8E0FF8F67"
+  },
+  {
+    "path": "outputs/circle1-b/regression-result.json",
+    "sha256": "6D003DACBA3039E439535817CCC02023C9F85E8D3CEF43F387B866A00A3ED28C"
+  },
+  {
+    "path": "outputs/circle1-b/ShopStockSpec_待授权补丁.patch",
+    "sha256": "07FDF63D1E4CF35719BE9322AB0FC39234806496890756DE4EAEBB6416C3C87E"
+  }
+]

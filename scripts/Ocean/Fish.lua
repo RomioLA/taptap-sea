@@ -2,14 +2,20 @@
 -- World owns storage, activity, collision resolution, and removal; this module
 -- only selects an FSM state and asks World to move the entity.
 local Math = require("Ocean.Math")
+local Config = require("Ocean.Config")
+local StateMachine = require("FSM.StateMachine")
 
 ---@class OceanFishPoint
 ---@field x number
 ---@field y number
 
+---@class OceanFishEntity: SeaEntity
+---@field surfaceDepth number 视觉上浮进度，范围 0..1
+---@field riseRemaining number 视觉上浮剩余时间（秒）
+
 ---@class FishBehavior
 ---@field world table
----@field entity table
+---@field entity OceanFishEntity
 ---@field speciesData table
 ---@field rng fun(): number
 ---@field state string
@@ -21,10 +27,29 @@ local Math = require("Ocean.Math")
 ---@field fleeJitterRemaining number
 ---@field fleeJitterRadians number
 ---@field wasFleeing boolean
+---@field surfaceRiseDuration number?
+---@field predationCooldownUntil number
+---@field fsm table
 local Fish = {}
 Fish.__index = Fish
 
 local TWO_PI = math.pi * 2
+-- Keep tested sea decisions/movement intact; the shared FSM supplies state callbacks and scheduling.
+---@type table<string, table>
+local STATES = {}
+for _, name in ipairs({ "Wander", "Attracted", "Flee", "Chase", "Avoid" }) do
+    STATES[name] = {
+        enter = function(owner)
+            owner.state = name
+            owner.entity.state = name
+            if name == "Flee" then owner:_beginSurfaceRise() end
+        end,
+        exit = function(owner)
+            if name == "Flee" then owner:_clearSurfaceRise() end
+        end,
+        update = function(owner, dt) owner:Update(dt) end,
+    }
+end
 
 local function normalizeAngle(angle)
     return (angle + math.pi) % TWO_PI - math.pi
@@ -45,6 +70,17 @@ end
 
 local function isLive(entity)
     return entity ~= nil and not entity.removed
+end
+
+local function configuredSurfaceRiseDuration()
+    local signals = Config and Config.surfaceSignals
+    if type(signals) == "table" and signals.enabled == false then return nil end
+    local duration = type(signals) == "table" and signals.riseSeconds or nil
+    if type(duration) ~= "number" or duration <= 0 or duration ~= duration
+        or duration == math.huge or duration == -math.huge then
+        return nil
+    end
+    return duration
 end
 
 local function directionFromAngle(angle)
@@ -100,8 +136,37 @@ function Fish:Init(world, entity, speciesData, rng)
     self.fleeJitterRemaining = 0
     self.fleeJitterRadians = 0
     self.wasFleeing = false
+    self.surfaceRiseDuration = nil
+    self.predationCooldownUntil = 0
 
+    entity.surfaceDepth = 0
+    entity.riseRemaining = 0
     entity.state = self.state
+    self.fsm = StateMachine.New(STATES, "Wander", self)
+    entity.fsm = self.fsm
+end
+
+function Fish:_beginSurfaceRise()
+    local duration = configuredSurfaceRiseDuration()
+    self.surfaceRiseDuration = duration
+    self.entity.surfaceDepth = 0
+    self.entity.riseRemaining = duration or 0
+end
+
+function Fish:_clearSurfaceRise()
+    self.surfaceRiseDuration = nil
+    self.entity.surfaceDepth = 0
+    self.entity.riseRemaining = 0
+end
+
+---@param dt number
+function Fish:_advanceSurfaceRise(dt)
+    local duration = self.surfaceRiseDuration
+    if type(duration) ~= "number" or duration <= 0 then return end
+
+    local remaining = Math.clamp(self.entity.riseRemaining - dt, 0, duration)
+    self.entity.riseRemaining = remaining
+    self.entity.surfaceDepth = Math.clamp(1 - remaining / duration, 0, 1)
 end
 
 function Fish:_random()
@@ -146,7 +211,11 @@ function Fish:_findDanger()
     if type(species) ~= "string" or type(radius) ~= "number" or radius <= 0 then return nil end
 
     return self:_nearestEntity(radius, function(candidate)
-        return candidate.entityType == "fish" and candidate.species == species and not candidate.removed
+        -- V2.2: only small fish fear a translating ship, using the same danger
+        -- radius and priority as tuna. A stopped ship has no lingering threat.
+        return (candidate.entityType == "fish" and candidate.species == species)
+            or (self.speciesData.id == "sardine" and candidate.entityType == "ship"
+                and candidate.isMoving == true)
     end)
 end
 
@@ -170,7 +239,8 @@ end
 ---@param candidate table?
 ---@return boolean
 function Fish:_isUsablePrey(candidate)
-    return isLive(candidate)
+    return candidate ~= nil and isLive(candidate)
+        and candidate.captureLocked ~= true
         and candidate.entityType == "fish"
         and candidate.species == self.speciesData.preySpecies
         and candidate.id ~= self.entity.id
@@ -183,28 +253,44 @@ function Fish:_findPrey()
     if type(species) ~= "string" or type(radius) ~= "number" or radius <= 0 then return nil end
 
     return self:_nearestEntity(radius, function(candidate)
-        return candidate.entityType == "fish" and candidate.species == species and not candidate.removed
+        return self:_isUsablePrey(candidate)
     end)
+end
+
+function Fish:_clearPrey()
+    self.preyId = nil
+    self.lastPreyPosition = nil
+    self.lostPreyTime = 0
+end
+
+function Fish:_tryEat(prey)
+    if self.world:remove(prey.id, "eaten") then
+        self.predationCooldownUntil = self.world.time + Config.predation.cooldownSeconds
+        self:_clearPrey()
+        return true
+    end
+    return false
 end
 
 ---@param dt number
 ---@return OceanFishPoint? targetPosition
 function Fish:_getChaseTarget(dt)
+    if self.world.time < self.predationCooldownUntil then
+        self:_clearPrey()
+        return nil
+    end
     local data = self.speciesData
     ---@type table?
     local prey = self.preyId and self.world:get(self.preyId) or nil
     local preyRadius = data.preyRadius or 0
+    -- A lock is an explicit invalidation, not ordinary lost-sight grace.
+    if prey and prey.captureLocked then self:_clearPrey(); prey = nil end
 
-    if self:_isUsablePrey(prey)
+    if prey ~= nil and self:_isUsablePrey(prey)
         and Math.distanceSquared(self.entity.position, prey.position) <= preyRadius * preyRadius then
         local distanceSquared = Math.distanceSquared(self.entity.position, prey.position)
         if distanceSquared <= (data.eatRadius or 0) * (data.eatRadius or 0) then
-            self.world:remove(prey.id, "eaten")
-            prey.removed = true
-            self.preyId = nil
-            self.lastPreyPosition = nil
-            self.lostPreyTime = 0
-            return nil
+            if self:_tryEat(prey) then return nil end
         end
 
         self.lastPreyPosition = Math.copy(prey.position)
@@ -220,11 +306,7 @@ function Fish:_getChaseTarget(dt)
         self.lostPreyTime = 0
         local distanceSquared = Math.distanceSquared(self.entity.position, replacement.position)
         if distanceSquared <= (data.eatRadius or 0) * (data.eatRadius or 0) then
-            self.world:remove(replacement.id, "eaten")
-            replacement.removed = true
-            self.preyId = nil
-            self.lastPreyPosition = nil
-            return nil
+            if self:_tryEat(replacement) then return nil end
         end
         return replacement.position
     end
@@ -342,7 +424,8 @@ end
 ---@param dt number
 ---@return string state
 function Fish:Update(dt)
-    if not isLive(self.entity) or self.entity.active == false or self.entity.frozen == true then
+    if not isLive(self.entity) or self.entity.active == false or self.entity.frozen == true
+        or self.entity.captureLocked == true then
         return self.state
     end
 
@@ -427,8 +510,8 @@ function Fish:Update(dt)
     end
 
     if self.state == "Flee" and nextState ~= "Flee" then self.wasFleeing = false end
-    self.state = nextState
-    self.entity.state = nextState
+    self.fsm:Change(nextState)
+    if nextState == "Flee" then self:_advanceSurfaceRise(dt) end
 
     self:_turnToward(targetAngle or (self.entity.rotation or 0), dt)
 

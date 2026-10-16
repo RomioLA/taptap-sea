@@ -2,6 +2,8 @@
 local Loop = require("Gameplay.Loop")
 local HUD = require("Gameplay.HUD")
 local Debug = require("Gameplay.Debug")
+local World = require("Game.World")
+local UpdateSystem = require("Gameplay.UpdateSystem")
 
 local Bootstrap = {}
 
@@ -11,7 +13,10 @@ end
 
 function Bootstrap.Init(options)
     local initOptions = options or {}
+    initOptions.initialRunRequired = initOptions.loadSaved ~= false
     local loop = Loop.New(initOptions)
+    local world = World.New()
+    world:AddSystem(UpdateSystem.New(loop), "frame")
     local development = initOptions.development == true
     local debugTools = Debug.New(loop, development)
     local hud = HUD.Create(loop, initOptions.parent, development and debugTools or nil)
@@ -20,13 +25,17 @@ function Bootstrap.Init(options)
     local function Update(dt)
         if stopped then return false, "stopped" end
         if not isFiniteNumber(dt) or dt < 0 then return false, "invalid_dt" end
-        loop:Update(dt)
+        world:Update(dt, "frame")
         hud.Refresh()
         return true
     end
 
     local function Stop()
         if stopped then return end
+        if loop.actions then
+            local ok, reason = loop.actions:CancelActiveFishing("scene_stopped")
+            if not ok then return false, reason end
+        end
         stopped = true
         hud.Destroy()
     end

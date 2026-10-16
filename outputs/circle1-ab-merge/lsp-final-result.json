@@ -1,0 +1,446 @@
+{
+  "filesExpected": 21,
+  "filesDiagnosed": 21,
+  "missing": [],
+  "errors": [],
+  "warnings": [
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Integration/Scene.lua",
+      "line": 226,
+      "code": "unnecessary-assert",
+      "message": "Unnecessary assert: this expression is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Actions.lua",
+      "line": 229,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/GameClock.lua",
+      "line": 183,
+      "code": "missing-return",
+      "message": "Annotations specify that a return value is required here."
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 54,
+      "code": "unnecessary-assert",
+      "message": "Unnecessary assert: this expression is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 21,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 345,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 346,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 428,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 110,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 432,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 442,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 67,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 125,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 175,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 181,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 427,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 456,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 510,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 513,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 539,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 544,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 591,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 592,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 630,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 709,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 718,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 1240,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 1191,
+      "code": "param-type-mismatch",
+      "message": "expected `boolean` but found `(false|true)?`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 1217,
+      "code": "param-type-mismatch",
+      "message": "expected `boolean` but found `false?`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 1079,
+      "code": "need-check-nil",
+      "message": "barrelState may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 86,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 31,
+      "code": "param-type-mismatch",
+      "message": "expected `fun(event: string) -> any` but found `nil`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 45,
+      "code": "need-check-nil",
+      "message": "loop.barrel.active may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 57,
+      "code": "need-check-nil",
+      "message": "ship may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 57,
+      "code": "need-check-nil",
+      "message": "ship may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 59,
+      "code": "need-check-nil",
+      "message": "ship may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 59,
+      "code": "need-check-nil",
+      "message": "ship may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 70,
+      "code": "need-check-nil",
+      "message": "loop.barrel.active may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 73,
+      "code": "need-check-nil",
+      "message": "loop.barrel.active may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 80,
+      "code": "need-check-nil",
+      "message": "record may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 84,
+      "code": "need-check-nil",
+      "message": "record may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 85,
+      "code": "need-check-nil",
+      "message": "record may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 97,
+      "code": "need-check-nil",
+      "message": "loop.barrel.active may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 57,
+      "code": "undefined-field",
+      "message": "Undefined field `x`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 57,
+      "code": "undefined-field",
+      "message": "Undefined field `y`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 59,
+      "code": "undefined-field",
+      "message": "Undefined field `x`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 59,
+      "code": "undefined-field",
+      "message": "Undefined field `y`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1ABMergeFrameBudgetTests.lua",
+      "line": 29,
+      "code": "redundant-parameter",
+      "message": "expected 2 parameters but found 3"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 91,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 444,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 862,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 988,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 1007,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 1072,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 1090,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 1097,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 1107,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 1112,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 1113,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 225,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 1119,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 969,
+      "code": "missing-fields",
+      "message": "Missing required fields in type `ClientCloud`: `Add`, `BatchGet`, `BatchSet`, `GetRankList`, `GetRankTotal`, `GetUserRank`, `SetInt`, `mapName`, `userId`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 432,
+      "code": "need-check-nil",
+      "message": "seaTime value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 599,
+      "code": "need-check-nil",
+      "message": "env.loop.actions may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 661,
+      "code": "need-check-nil",
+      "message": "env.loop.actions may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 700,
+      "code": "need-check-nil",
+      "message": "env.loop.actions may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 864,
+      "code": "need-check-nil",
+      "message": "ship may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 900,
+      "code": "need-check-nil",
+      "message": "ship may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 997,
+      "code": "need-check-nil",
+      "message": "sea.uiRoot:FindById(\"seaDebugPanel\") may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 1022,
+      "code": "need-check-nil",
+      "message": "sea.hud may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 1109,
+      "code": "need-check-nil",
+      "message": "sea.hud may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 967,
+      "code": "global-in-non-module",
+      "message": "Global variable should only be defined in module scope"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/ABIntegrationTests.lua",
+      "line": 1079,
+      "code": "global-in-non-module",
+      "message": "Global variable should only be defined in module scope"
+    }
+  ]
+}

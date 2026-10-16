@@ -5,6 +5,7 @@ local Items = require "data.items"
 ---@class Inventory
 ---@field _level integer
 ---@field _items string[]
+---@field _revision integer
 local Inventory = {}
 Inventory.__index = Inventory
 
@@ -100,6 +101,7 @@ function Inventory:init(level, items)
 
     self._level = integerLevel
     self._items = copiedItems
+    self._revision = (self._revision or 0) + 1
     return true
 end
 
@@ -111,6 +113,32 @@ function Inventory:GetItems()
         copy[index] = self._items[index]
     end
     return copy
+end
+
+-- Runtime-only identity for a rendered cargo action. Never serialized.
+function Inventory:GetRevision()
+    return self._revision
+end
+
+-- Restore a transaction's validated contents and upgrade level together.
+function Inventory:RestoreSnapshot(level, items)
+    local snapshot, reason = Inventory.New(level, items)
+    if not snapshot then return false, reason end
+    self._items, self._level = snapshot:GetItems(), snapshot:GetLevel()
+    self._revision = self._revision + 1
+    return true
+end
+
+---Restore an entire validated inventory snapshot, including mutation-then-error rollback.
+---@param items string[]
+---@return boolean, string?
+function Inventory:RestoreItems(items)
+    local restored, reason = CopyAndValidateItems(items)
+    if not restored then return false, reason end
+    if #restored > self:GetCapacity() then return false, "inventory_full" end
+    self._items = restored
+    self._revision = self._revision + 1
+    return true
 end
 
 ---@return integer
@@ -137,6 +165,7 @@ function Inventory:Add(itemId)
     end
 
     self._items[#self._items + 1] = itemId
+    self._revision = self._revision + 1
     return true
 end
 
@@ -151,6 +180,7 @@ function Inventory:Remove(index)
     end
 
     table.remove(self._items, math.floor(index))
+    self._revision = self._revision + 1
     return true
 end
 
@@ -176,6 +206,7 @@ function Inventory:Upgrade()
     end
 
     self._level = self._level + 1
+    self._revision = self._revision + 1
     return true
 end
 

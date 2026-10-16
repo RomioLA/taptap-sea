@@ -50,14 +50,19 @@ for _, case in ipairs({{"apple",30,0,20}, {"bait",20,0,0}, {"sardine",false,70,1
         eq(d.buyPrice or false, case[2]); eq(d.sellPrice, case[3]); eq(d.heal, case[4]); eq(d.lifetimeSec, 20)
     end)
 end
-test("empty-net-cost-and-result-contract", function()
+test("standalone-empty-net-is-free-and-world-bound-direct-completion-is-rejected", function()
     local l = newLoop(); assert(l:Depart())
     local count = #l.player.inventory:GetItems()
-    assert(l:CompleteFishing(0)); eq(l.player.stamina,60)
+    assert(l:CompleteFishing(0)); eq(l.player.stamina,100)
     eq(#l.player.inventory:GetItems(),count)
-    eq(l:CompleteFishing(2),false); eq(l.player.stamina,60)
-    assert(l:CompleteFishing(1)); eq(l.player.stamina,20)
-    eq(l:CompleteFishing(0),false); eq(l.player.stamina,20)
+    eq(l:CompleteFishing(2),false); eq(l.player.stamina,100)
+    assert(l:CompleteFishing(1)); eq(l.player.stamina,60)
+    assert(l:CompleteFishing(0)); eq(l.player.stamina,60)
+
+    local worldBound = newLoop(); worldBound:EnableWorldActions(); assert(worldBound:Depart())
+    eq(worldBound:CompleteFishing(0),false)
+    eq(worldBound:CompleteFishing(1),false)
+    eq(worldBound.player.stamina,100)
 end)
 test("free-interactions-no-save-no-player-mutation", function()
     local l, store = newLoop()
@@ -92,7 +97,7 @@ test("no-daily-fishing-limit-and-food-action-math", function()
         end
         eq(actions,case[3])
     end
-    eq(Config.dailyFishingLimit,nil)
+    eq((Config --[[@as table]]).dailyFishingLimit,nil)
 end)
 test("single-config-prices-and-total-cost3900", function()
     local l = newLoop(); l.player.money = 3900
@@ -101,7 +106,8 @@ test("single-config-prices-and-total-cost3900", function()
     for _ = 1,2 do assert(l:UpgradeBoatSpeed()) end
     eq(l.player.money,0)
     for _, method in ipairs({"UpgradeStamina","UpgradeInventory","UpgradeBoatSpeed"}) do
-        eq(l[method](l),false); eq(l.player.money,0)
+        local upgrade = l[method] --[[@as fun(loop: GameplayLoop): boolean]]
+        eq(upgrade(l),false); eq(l.player.money,0)
     end
     -- 改同一配置的价格，交易必须即时读取；恢复配置避免污染后续测试。
     l = newLoop(); local original = Config.upgrades.stamina.prices[1]
@@ -120,10 +126,11 @@ end)
 test("upgrade-rejections-atomic-sea-busy-and-insufficient", function()
     for _, method in ipairs({"UpgradeStamina","UpgradeInventory","UpgradeBoatSpeed"}) do
         local l = newLoop()
-        eq(l[method](l),false); eq(l.player.money,100); eq(l.player.maxStamina,100)
+        local upgrade = l[method] --[[@as fun(loop: GameplayLoop): boolean]]
+        eq(upgrade(l),false); eq(l.player.money,100); eq(l.player.maxStamina,100)
         eq(l.player.inventory:GetLevel(),1); eq(l.player.boatSpeedLevel,1)
-        l.player.money = 4000; assert(l:Depart()); eq(l[method](l),false); eq(l.player.money,4000)
-        assert(l:ReturnToPort()); l.loading = true; eq(l[method](l),false); eq(l.player.money,4000)
+        l.player.money = 4000; assert(l:Depart()); eq(upgrade(l),false); eq(l.player.money,4000)
+        assert(l:ReturnToPort()); l.loading = true; eq(upgrade(l),false); eq(l.player.money,4000)
     end
 end)
 test("persistence-levels-legacy-validation-and-new-run-reset", function()
@@ -132,9 +139,10 @@ test("persistence-levels-legacy-validation-and-new-run-reset", function()
     eq(store.writes,0); assert(l:EndToday()); assert(l:ConfirmSettlement()); eq(store.writes,1)
     local restored = assert(Persistence.Restore(store.data))
     eq(restored.maxStamina,160); eq(restored.boatSpeedLevel,2); eq(restored.inventory:GetCapacity(),10)
+    l.player.day=Config.run.days; l.player.runStatus="awaiting_ending"
     assert(l:NewRun()); eq(l.player.boatSpeedLevel,1); eq(l.player.maxStamina,100)
-    eq(l.player.inventory:GetCapacity(),5); eq(l.player.money,100); eq(store.writes,1)
-    assert(l:LoadSaved()); eq(l.player.boatSpeedLevel,2); eq(l:GetStaminaLevel(),2)
+    eq(l.player.inventory:GetCapacity(),5); eq(l.player.money,100); eq(store.writes,2)
+    assert(l:LoadSaved()); eq(l.player.boatSpeedLevel,1); eq(l:GetStaminaLevel(),1)
     store.data.boatSpeedLevel = nil; eq(assert(Persistence.Restore(store.data)).boatSpeedLevel,1)
     for _, level in ipairs({0,99,"2",true,1.5,math.huge,0/0}) do
         store.data.boatSpeedLevel = level

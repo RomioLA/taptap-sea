@@ -1,0 +1,29 @@
+{
+  "createdAtUtc": "2026-10-03T05:30:35.255177+00:00",
+  "status": "project_deliverables_merged_and_independently_verified",
+  "target": "C:\\codex\\taptap-sea",
+  "source": "D:\\sillytavern-data\\taptap-sea-B",
+  "sourceFilesConsidered": 337,
+  "mergeCounts": {
+    "keep_identical": 172,
+    "add_missing": 136,
+    "skip_cache": 2,
+    "keep_reviewed_c_code": 27
+  },
+  "existingTargetFilesUnchanged": 838,
+  "sourceStillMatchesMergeHashes": true,
+  "currentLuaMatchesReviewedFreeze": true,
+  "currentLuaFiles": 86,
+  "independentChecksPassed": 10,
+  "teamFilesCopied": 8,
+  "workbooksIntegrityChecked": 8,
+  "nativeGuiOrCloudTestedThisMerge": false,
+  "gitCommitPushBuildPublishPerformed": false,
+  "entry": "docs/PROJECT_HANDOFF.md",
+  "boundaries": [
+    "Project deliverable merge with retained reviewed C code; not a byte mirror of old D code.",
+    "Environment, Git metadata and engine-library distribution are excluded.",
+    "Source planning/history retained verbatim; latest user confirmations govern implementation.",
+    "No source-code edits or new business-test pass claims in this merge."
+  ]
+}

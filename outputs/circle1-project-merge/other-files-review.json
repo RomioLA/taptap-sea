@@ -1,0 +1,53 @@
+{
+  "authoredBy": "root",
+  "basis": "Second subagent partial inventory messages, immutable merge-result, completed independent verifier",
+  "independentReport": "independent-verification.json",
+  "counts": {
+    "keep_identical": 172,
+    "add_missing": 136,
+    "skip_cache": 2,
+    "keep_reviewed_c_code": 27
+  },
+  "groups": {
+    ".gitignore": {
+      "keep_identical": 1
+    },
+    "AGENTS.md": {
+      "keep_identical": 1
+    },
+    "CLAUDE.md": {
+      "keep_identical": 1
+    },
+    "assets": {
+      "keep_identical": 2
+    },
+    "data": {
+      "keep_identical": 2
+    },
+    "docs": {
+      "keep_identical": 24,
+      "add_missing": 92,
+      "skip_cache": 1
+    },
+    "outputs": {
+      "keep_identical": 2,
+      "add_missing": 44
+    },
+    "screenshots": {
+      "keep_identical": 64
+    },
+    "scripts": {
+      "keep_identical": 63,
+      "keep_reviewed_c_code": 27,
+      "skip_cache": 1
+    },
+    "tests": {
+      "keep_identical": 12
+    }
+  },
+  "noUnresolvedFileActions": true,
+  "sourceReadOnly": true,
+  "businessLuaMissing": false,
+  "codeDifferencesKeptCurrentC": 27,
+  "nativeOrCloudVerified": false
+}

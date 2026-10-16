@@ -1,9 +1,121 @@
 -- World state is independent of rendering and future inventory/player state.
 local Config = require("Ocean.Config")
 local M = require("Ocean.Math")
-local World = {}
+local BaseWorld = require("Game.World")
+---@class SeaEntity: OceanShip
+---@field kind string
+---@field entityType string
+---@field layer string
+---@field alive boolean
+---@field removed boolean
+---@field active boolean
+---@field frozen boolean
+---@field state string
+---@field blocking boolean
+---@field ordinaryFish boolean
+---@field species string?
+---@field itemId string?
+---@field category string?
+---@field worldEffect string
+---@field lifetimeSec number?
+---@field age number
+---@field fsm table?
+---@field removeReason string?
+---@field surfaceDepth number?
+---@field riseRemaining number?
+---@field captureLocked boolean?
+---@field captureOwnerToken table?
+---@field contentId string?
+
+---@class SeaWorld: GameWorld, OceanWorld
+---@field surfaceSignals table?
+---@field scopeShip SeaEntity?
+---@field scopeEnabled boolean
+---@field fixedBarrel SeaEntity?
+---@field fixedBarrelGeneration integer
+---@field retired boolean
+local World = setmetatable({}, { __index = BaseWorld })
 World.__index = World
 
+local SCOPE_LENGTH_METERS = 20.0
+local SCOPE_LENGTH_SQUARED = SCOPE_LENGTH_METERS * SCOPE_LENGTH_METERS
+local SCOPE_HALF_ANGLE_RADIANS = math.rad(45.0)
+local SCOPE_HALF_ANGLE_TANGENT = math.tan(SCOPE_HALF_ANGLE_RADIANS)
+local VISIBILITY_EPSILON = Config.world.epsilon
+-- Process-local credentials, independent of fish refreshes and day seeds.
+-- A new World (including a separate Runtime.New) cannot reuse an old token.
+local barrelGenerationCounter = 0
+
+local function clearArray(values)
+    for index = #values, 1, -1 do values[index] = nil end
+end
+
+local function queryWaterState(state, position, radius)
+    radius = radius or 0
+    if state.usePublicPredicate == true then
+        local world = state.world
+        if type(world) ~= "table" or type(world.isPositionFree) ~= "function" then return true end
+        return world:isPositionFree(position, radius)
+    end
+
+    local bound = state.halfSize - radius
+    if math.abs(position.x) > bound or math.abs(position.y) > bound then return false end
+    for _, object in ipairs(state.blockers) do
+        if not object.removed and object.blocking then
+            local dx = position.x - object.position.x
+            local dy = position.y - object.position.y
+            local combined = radius + object.radius
+            if dx * dx + dy * dy < combined * combined then return false end
+        end
+    end
+    return true
+end
+
+local function waterQueryForState(state)
+    if type(state.query) ~= "function" then
+        state.query = function(position, radius)
+            return queryWaterState(state, position, radius)
+        end
+    end
+    return state.query
+end
+
+local function isFiniteNumber(value)
+    return type(value) == "number" and value == value and value > -math.huge and value < math.huge
+end
+
+-- This is a visibility test against the ship's current transform. It does not
+-- cache a location, so the sector follows movement while a stopped ship keeps
+-- its last heading.
+---@param ship SeaEntity?
+---@param entity SeaEntity
+local function isInsideScope(ship, entity)
+    if type(ship) ~= "table" or type(entity.position) ~= "table" then return false end
+    local shipPosition = ship.position
+    local rotation = ship.rotation
+    if type(shipPosition) ~= "table"
+        or not isFiniteNumber(shipPosition.x) or not isFiniteNumber(shipPosition.y)
+        or not isFiniteNumber(entity.position.x) or not isFiniteNumber(entity.position.y)
+        or not isFiniteNumber(rotation) then
+        return false
+    end
+
+    local dx = entity.position.x - shipPosition.x
+    local dy = entity.position.y - shipPosition.y
+    local distanceSquared = dx * dx + dy * dy
+    if distanceSquared > SCOPE_LENGTH_SQUARED + VISIBILITY_EPSILON then return false end
+
+    local forwardX, forwardY = math.cos(rotation), math.sin(rotation)
+    local forwardDistance = dx * forwardX + dy * forwardY
+    if forwardDistance < -VISIBILITY_EPSILON then return false end
+
+    -- A 45 degree half-angle has tan(45) == 1, so the absolute side distance
+    -- may not exceed the forward projection. The epsilon includes exact edges.
+    local sideDistance = -dx * forwardY + dy * forwardX
+    return math.abs(sideDistance) <= forwardDistance * SCOPE_HALF_ANGLE_TANGENT + VISIBILITY_EPSILON
+end
+
+---@return SeaWorld
 function World.New()
     local self = setmetatable({}, World)
     self:Init()
@@ -11,13 +123,14 @@ function World.New()
 end
 
 function World:Init()
-    self.entities = {}
-    self.byId = {}
-    self.nextId = 0
+    BaseWorld.Init(self, { idPrefix = "sea-" })
+    self.retired = false
     self.time = 0
     self.daySeed = Config.world.seed
     self.reveals = {}
     self.showUnderwater = false
+    self.scopeShip = nil
+    self.scopeEnabled = false
     self.overlaps = {}
     self.events = {}
     self.onOverlap = false
@@ -25,13 +138,22 @@ function World:Init()
         self:spawn({ entityType = object.entityType, kind = "fixed", layer = "surface",
             position = object.position, radius = object.radius, blocking = object.blocking })
     end
+    barrelGenerationCounter = barrelGenerationCounter + 1
+    self.fixedBarrelGeneration = barrelGenerationCounter
+    local barrel = Config.world.fixedBarrel
+    assert(self:isPositionFree(barrel.position, barrel.radius), "fixed barrel must be in open sea")
+    -- Separate identity from other floats; no FSM, expiry, drift or obstruction.
+    self.fixedBarrel = self:spawn({ entityType = "float", kind = "fixed", layer = "surface",
+        contentId = "driftwood_barrel", position = barrel.position, radius = barrel.radius,
+        blocking = false })
 end
 
+---@return SeaEntity
 function World:spawn(spec)
+    assert(not self.retired, "cannot spawn into a retired sea world")
     assert(spec.position and type(spec.position.x) == "number" and type(spec.position.y) == "number", "position requires x,y")
-    self.nextId = self.nextId + 1
     local entity = {
-        id = "sea-" .. self.nextId, entityType = spec.entityType or "object",
+        entityType = spec.entityType or "object",
         kind = spec.kind or "dynamic", layer = spec.layer or "surface",
         position = M.copy(spec.position), rotation = spec.rotation or 0,
         direction = { x = math.cos(spec.rotation or 0), y = math.sin(spec.rotation or 0) },
@@ -39,33 +161,29 @@ function World:spawn(spec)
         radius = spec.radius or 0, blocking = spec.blocking == true, removed = false,
         species = spec.species, ordinaryFish = spec.ordinaryFish == true,
         itemId = spec.itemId, category = spec.category, worldEffect = spec.worldEffect or "NONE",
+        contentId = spec.contentId,
         lifetimeSec = spec.lifetimeSec, age = 0,
     }
-    self.entities[#self.entities + 1] = entity
-    self.byId[entity.id] = entity
-    return entity
+    return self:CreateEntity(entity.kind, entity)
 end
 
-function World:get(id) return self.byId[id] end
+function World:get(id) return self:GetEntity(id) end
 
-function World:remove(id, reason)
-    local entity = self.byId[id]
-    if not entity then return false end
-    entity.removed, entity.active, entity.frozen = true, false, false
-    entity.state = "Removed"
-    entity.removeReason = reason or "removed"
-    self.byId[id] = nil
+function World:remove(id, reason, ownerToken)
+    local entity = self:get(id)
+    if entity and entity.captureLocked then
+        if reason == "eaten" then return false end
+        if reason == "caught" and not rawequal(entity.captureOwnerToken, ownerToken) then return false end
+    end
+    if not BaseWorld.RemoveEntity(self, id, reason, true) then return false end
+    entity.captureLocked, entity.captureOwnerToken = false, nil
     self.overlaps[id] = nil
+    if self.surfaceSignals then self.surfaceSignals:OnRemoved(id) end
     return true
 end
 
-function World:compact()
-    local live = {}
-    for _, entity in ipairs(self.entities) do
-        if not entity.removed then live[#live + 1] = entity end
-    end
-    self.entities = live
-end
+function World:RemoveEntity(id, reason, ownerToken) return self:remove(id, reason, ownerToken) end
+function World:compact() self:Compact() end
 
 local function matches(entity, filter)
     if filter == nil then return true end
@@ -101,8 +219,75 @@ function World:isPositionFree(position, radius)
     return true
 end
 
+-- A transient query for a batch of read-only water checks (for example surface
+-- cues). Consume it synchronously; it is a snapshot, not a persistent index.
+-- Every blocking entity participates, including user-spawned dynamic blockers.
+function World:CreateWaterQuery(workspace)
+    -- Without a workspace this remains an independent snapshot, preserving
+    -- existing callers that retain more than one query at a time. Surface
+    -- signal getters/visitors pass their private workspace for zero-churn use.
+    local state = type(workspace) == "table" and workspace or { blockers = {} }
+    if type(state.blockers) ~= "table" then state.blockers = {} end
+    clearArray(state.blockers)
+    state.world = self
+    state.halfSize = Config.world.halfSize
+    state.usePublicPredicate = self.isPositionFree ~= World.isPositionFree
+    if not state.usePublicPredicate then
+        for _, entity in ipairs(self.entities) do
+            if not entity.removed and entity.blocking then
+                state.blockers[#state.blockers + 1] = entity
+            end
+        end
+    end
+    return waterQueryForState(state)
+end
+
+-- Replacing a Runtime retires its former World. Normal Clear remains a
+-- same-instance reset and deliberately keeps systems registered.
+function World:Retire()
+    if self.retired then return false end
+    self.retired = true
+    self:Clear()
+    self:compact()
+
+    local signals = self.surfaceSignals
+    if type(signals) == "table" then
+        if type(signals.DetachWorld) == "function" then
+            signals:DetachWorld()
+        else
+            if type(signals.Clear) == "function" then signals:Clear() end
+            signals.world = nil
+        end
+    end
+    self.surfaceSignals = nil
+    self.scopeShip = nil
+    self.scopeEnabled = false
+    self.showUnderwater = false
+    self.reveals = {}
+    self.overlaps = {}
+    self.events = {}
+    self.fixedBarrel = nil
+    self.systems = {}
+    self.systemCadences = {}
+    return true
+end
+
+function World:AddSystem(system, cadence)
+    if self.retired then return false end
+    return BaseWorld.AddSystem(self, system, cadence)
+end
+
+function World:Update(dt, cadence)
+    if self.retired then return end
+    BaseWorld.Update(self, dt, cadence)
+end
+
 -- Swept circle prevents tunnelling through islands even for a large caller delta.
+---@param entity SeaEntity
+---@param dx number
+---@param dy number
 function World:moveEntity(entity, dx, dy)
+    if entity.captureLocked == true then return false, 0, 0 end
     local start = entity.position
     local epsilon = Config.world.epsilon
     local bound = Config.world.halfSize - entity.radius
@@ -238,10 +423,20 @@ end
 function World:isVisible(entity)
     if entity.removed then return false end
     if entity.layer ~= "underwater" or self.showUnderwater then return true end
+    if self.scopeEnabled and isInsideScope(self.scopeShip, entity) then return true end
     for _, reveal in ipairs(self.reveals) do
         if M.distanceSquared(entity.position, reveal.center) <= reveal.radius^2 then return true end
     end
     return false
+end
+
+-- Presentation reads the very same constants as isInsideScope; it cannot
+-- enlarge the sector, reveal fish, or turn on observation.
+function World:GetScopeView()
+    local ship = self.scopeShip
+    if not self.scopeEnabled or not ship or not ship.position then return nil end
+    return { center = M.copy(ship.position), heading = ship.rotation,
+        radius = math.sqrt(SCOPE_LENGTH_SQUARED), halfAngle = math.atan(SCOPE_HALF_ANGLE_TANGENT) }
 end
 
 function World:clearOrdinaryFish()

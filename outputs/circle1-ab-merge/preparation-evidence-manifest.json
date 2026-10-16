@@ -1,0 +1,103 @@
+{
+  "createdAtUtc": "2026-10-03T03:40:15.8412853Z",
+  "status": "preparation_complete_pending_b4",
+  "sourceTestsExecuted": false,
+  "finalSourceReadyCreated": false,
+  "files": [
+    {
+      "file": "outputs/circle1-ab-merge/共享测试差异待核对.md",
+      "bytes": 2447,
+      "sha256": "BCBEDDD1B7BC9FC3D5F010BE3CC94C50F4AEB1B6E6B5C2DBB0C1C5A1EE233318"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/合并准备.md",
+      "bytes": 3923,
+      "sha256": "D5F610A433035039672B8109CF64A711E021528A0F10FABA43FEF115F4FA6683"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/接口验收矩阵.md",
+      "bytes": 15798,
+      "sha256": "99D35242E88E529BEAE470C4EE9E2355DA193340B6F0291B329DFF9860438D47"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/验证执行说明.md",
+      "bytes": 8671,
+      "sha256": "E9060027008548A448B00FB71266264E6CB6FBF0F88F29392BB9F16A8364E257"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/准备交付.md",
+      "bytes": 4266,
+      "sha256": "01331599E2AF7DFF0183C7FD5EAED5F8C6A267C1BD20699CB220B923A839220D"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/最终检查顺序.md",
+      "bytes": 3571,
+      "sha256": "561B87247843BDD7DF980C590DC7BEC68B48BBE62B04861CAB48A0A28C0BB771"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/a-protection.json",
+      "bytes": 7703,
+      "sha256": "AF4EE47AA7C79E63E3E0AD6FE13F86F0D7AF16276779F00B8D6AC803F804EAF9"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/check_protection.py",
+      "bytes": 25671,
+      "sha256": "7FD10A810C67E18A7075338B58A2BE75F1A3F75B7FDE3DC514B3F28B33340919"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/contract-inventory.json",
+      "bytes": 13176,
+      "sha256": "212B0409DF9AE49BC34876C6FDB01BCC1957E951363165DD69B6358AB82D8C79"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/final-checks/readiness-20261003T033349495486Z.json",
+      "bytes": 10713,
+      "sha256": "0F7A08CE38D2EEE74A69C62E22223C6AF4737DC17E46B65C00898A99B1175302"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/historical-evidence-baseline.json",
+      "bytes": 41004,
+      "sha256": "686E5A6157803C170DEA57E4CCFC9C000C5236777B10BB01A3E80E928EC854BB"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/protection-audit.md",
+      "bytes": 839,
+      "sha256": "41C78525BFD9AEFC42425C7CCAA192B91263F18B7CAA883995E4B4B91EB4D84B"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/protection-result.json",
+      "bytes": 24866,
+      "sha256": "27B664FE2D3A50A5740879F8B3E3699CA58AD6259A4C0CA9D35A04E37E36A340"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/run_final_checks.py",
+      "bytes": 37581,
+      "sha256": "B9C3EF8B121567F9BF281339234C4220E42219B061817033510B16D51AA25E46"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/runner-selfcheck.json",
+      "bytes": 11096,
+      "sha256": "6714183DF60ED4EC9302DDED27C05BEA32EFC8D721C45754A3ECDD77590BC92F"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/shared-architecture-change.json",
+      "bytes": 391,
+      "sha256": "AF1773A419062FEEABE031A2C1F9B7AA67A06BDFFF7D2D4C0FA9BA5E4D8391A7"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/shared-dependencies.json",
+      "bytes": 1924,
+      "sha256": "1B559528C2A767177266AA5C22CBB75431C9CE8365C50FBE6EAE0FBD0CCBFD32"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/shared-test-change.json",
+      "bytes": 381,
+      "sha256": "33914D9064F564AD2BE03B6EEF3250DF81F727CB83C6DB97629BDAE0BD8B75C9"
+    },
+    {
+      "file": "outputs/circle1-ab-merge/supplemental-protection.json",
+      "bytes": 4684,
+      "sha256": "5A8DA3E57CC75C13C1D0E9571B30C5B25C409319509442412FE6086D536136D2"
+    }
+  ]
+}

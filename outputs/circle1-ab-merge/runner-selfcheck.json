@@ -1,0 +1,356 @@
+{
+  "createdAtUtc": "2026-10-03T03:39:41.902927+00:00",
+  "workspace": "C:/codex/taptap-sea",
+  "sourcePolicy": {
+    "sourceRoot": "C:/codex/taptap-sea/scripts",
+    "sourceOnlyCurrentTree": true,
+    "luaPathRestrictedToCurrentScripts": true,
+    "luaModuleSearchRoots": [
+      "C:/codex/taptap-sea/scripts/?.lua",
+      "C:/codex/taptap-sea/scripts/?/init.lua"
+    ],
+    "nativeLuaSearchersRemoved": true,
+    "dualSourceSearcher": false,
+    "externalDSourceFallback": false
+  },
+  "host": {
+    "pythonVersion": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "pythonExecutable": "C:\\Users\\80739\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "lua54Available": true,
+    "luaVersion": "Lua 5.4",
+    "lupaImportError": null,
+    "lupaModuleFile": "D:\\sillytavern-data\\taptap-sea-B\\.tmp\\game-loop-test-runtime\\lupa\\__init__.py",
+    "lupaVersion": "2.8",
+    "dependencyPaths": [
+      {
+        "path": "D:/sillytavern-data/taptap-sea-B/.tmp/game-loop-test-runtime",
+        "exists": true
+      },
+      {
+        "path": "C:/codex/taptap-sea/outputs/remote-review-20261002/test-runtime",
+        "exists": true
+      },
+      {
+        "path": "C:/codex/taptap-sea/.tmp/sea-test-deps",
+        "exists": true
+      }
+    ],
+    "luaModulePath": "C:/codex/taptap-sea/scripts/?.lua;C:/codex/taptap-sea/scripts/?/init.lua",
+    "luaCPath": "",
+    "nativeSearchersRemoved": true
+  },
+  "groups": {
+    "a1": {
+      "readiness": "available",
+      "execution": "not_tested",
+      "modules": [
+        {
+          "module": "tests.Circle1AFishLocksTests",
+          "file": "scripts/tests/Circle1AFishLocksTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.Circle1APredationCooldownTests",
+          "file": "scripts/tests/Circle1APredationCooldownTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.SeaRuntimeTests",
+          "file": "scripts/tests/SeaRuntimeTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.SurfaceRiseTests",
+          "file": "scripts/tests/SurfaceRiseTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.SurfaceSignalsTests",
+          "file": "scripts/tests/SurfaceSignalsTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.SeaStabilityTests",
+          "file": "scripts/tests/SeaStabilityTests.lua",
+          "exists": true
+        }
+      ]
+    },
+    "a2": {
+      "readiness": "available",
+      "execution": "not_tested",
+      "modules": [
+        {
+          "module": "tests.Circle1A2BarrelTests",
+          "file": "scripts/tests/Circle1A2BarrelTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.Circle1A2ScopeTests",
+          "file": "scripts/tests/Circle1A2ScopeTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.Circle1A2SignalsTests",
+          "file": "scripts/tests/Circle1A2SignalsTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.Circle1A2BarrelRenderTests",
+          "file": "scripts/tests/Circle1A2BarrelRenderTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.Circle1A2FishingTests",
+          "file": "scripts/tests/Circle1A2FishingTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.SeaFusionRenderTests",
+          "file": "scripts/tests/SeaFusionRenderTests.lua",
+          "exists": true
+        }
+      ]
+    },
+    "a3": {
+      "readiness": "available",
+      "execution": "not_tested",
+      "modules": [
+        {
+          "module": "tests.Circle1A3ExperienceTests",
+          "file": "scripts/tests/Circle1A3ExperienceTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.Circle1A3InputTests",
+          "file": "scripts/tests/Circle1A3InputTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.Circle1A3PortTests",
+          "file": "scripts/tests/Circle1A3PortTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.Circle1A3RecognitionTests",
+          "file": "scripts/tests/Circle1A3RecognitionTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.Circle1A3SignalsTests",
+          "file": "scripts/tests/Circle1A3SignalsTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.Circle1A3StabilityTests",
+          "file": "scripts/tests/Circle1A3StabilityTests.lua",
+          "exists": true
+        }
+      ]
+    },
+    "legacy": {
+      "readiness": "available",
+      "execution": "not_tested",
+      "modules": [
+        {
+          "module": "tests.ABIntegrationTests",
+          "file": "scripts/tests/ABIntegrationTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.ArchitectureIntegrationTests",
+          "file": "scripts/tests/ArchitectureIntegrationTests.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.SeaFusedSceneTests",
+          "file": "scripts/tests/SeaFusedSceneTests.lua",
+          "exists": true
+        }
+      ]
+    },
+    "players": {
+      "readiness": "available",
+      "execution": "not_tested",
+      "modules": [
+        {
+          "module": "tests.GameLoopSpec",
+          "file": "scripts/tests/GameLoopSpec.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.GameLoopUISpec",
+          "file": "scripts/tests/GameLoopUISpec.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.PersistenceRegressionSpec",
+          "file": "scripts/tests/PersistenceRegressionSpec.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.NumericEconomySpec",
+          "file": "scripts/tests/NumericEconomySpec.lua",
+          "exists": true
+        },
+        {
+          "module": "tests.ShopStockSpec",
+          "file": "scripts/tests/ShopStockSpec.lua",
+          "exists": true
+        }
+      ]
+    },
+    "b1": {
+      "readiness": "available",
+      "execution": "not_tested",
+      "modules": [
+        {
+          "module": "tests.Circle1BFishingFlowTests",
+          "file": "scripts/tests/Circle1BFishingFlowTests.lua"
+        },
+        {
+          "module": "tests.Circle1BPendingCatchTests",
+          "file": "scripts/tests/Circle1BPendingCatchTests.lua"
+        }
+      ],
+      "deliveryNotes": [],
+      "finalSourceReady": null
+    },
+    "b2": {
+      "readiness": "available",
+      "execution": "not_tested",
+      "modules": [
+        {
+          "module": "tests.Circle1B2BarrelTests",
+          "file": "scripts/tests/Circle1B2BarrelTests.lua"
+        },
+        {
+          "module": "tests.Circle1B2ProgressTests",
+          "file": "scripts/tests/Circle1B2ProgressTests.lua"
+        },
+        {
+          "module": "tests.Circle1B2ScopeTests",
+          "file": "scripts/tests/Circle1B2ScopeTests.lua"
+        },
+        {
+          "module": "tests.Circle1B2ThrowTests",
+          "file": "scripts/tests/Circle1B2ThrowTests.lua"
+        },
+        {
+          "module": "tests.Circle1B2UITests",
+          "file": "scripts/tests/Circle1B2UITests.lua"
+        }
+      ],
+      "deliveryNotes": [],
+      "finalSourceReady": null
+    },
+    "b3": {
+      "readiness": "available",
+      "execution": "not_tested",
+      "modules": [
+        {
+          "module": "tests.Circle1B3ClockAsyncTests",
+          "file": "scripts/tests/Circle1B3ClockAsyncTests.lua"
+        },
+        {
+          "module": "tests.Circle1B3CloudTests",
+          "file": "scripts/tests/Circle1B3CloudTests.lua"
+        },
+        {
+          "module": "tests.Circle1B3EconomyTests",
+          "file": "scripts/tests/Circle1B3EconomyTests.lua"
+        },
+        {
+          "module": "tests.Circle1B3SceneUITests",
+          "file": "scripts/tests/Circle1B3SceneUITests.lua"
+        },
+        {
+          "module": "tests.Circle1B3SevenDaysTests",
+          "file": "scripts/tests/Circle1B3SevenDaysTests.lua"
+        },
+        {
+          "module": "tests.Circle1B3SpatialTests",
+          "file": "scripts/tests/Circle1B3SpatialTests.lua"
+        }
+      ],
+      "deliveryNotes": [],
+      "finalSourceReady": null
+    },
+    "b4": {
+      "readiness": "not_ready",
+      "execution": "not_tested",
+      "modules": [],
+      "deliveryNotes": [],
+      "finalSourceReady": {
+        "file": "outputs/circle1-ab-merge/final-source-ready.json",
+        "present": false,
+        "status": "missing",
+        "snapshotEntryCount": 0,
+        "matchedEntryCount": 0,
+        "currentLuaFileCount": 0,
+        "missingSnapshotEntries": [],
+        "mismatches": [],
+        "ready": false
+      }
+    }
+  },
+  "nativeGuiPreviewVerified": false,
+  "nativeFrameRateVerified": false,
+  "realCloudSdkVerified": false,
+  "mode": "readiness",
+  "executedStages": [],
+  "suiteResults": [],
+  "counts": {
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "load_error": 0,
+    "not_ready": 0,
+    "not_tested": 0
+  },
+  "b4Gate": {
+    "ready": false,
+    "requiresNonemptyB4DeliveryNote": true,
+    "requiresCurrentScriptsB4Tests": true,
+    "requiresRootFinalSourceReadyMarker": true,
+    "reason": "waiting for a nonempty B4 delivery note, B4 suite under current scripts, and final-source-ready.json with status=ready plus matching source hashes"
+  },
+  "aProtectionAudit": {
+    "file": "outputs/circle1-ab-merge/a-protection.json",
+    "available": true,
+    "checked": 43,
+    "matched": 41,
+    "mismatches": [
+      {
+        "file": "scripts/tests/ABIntegrationTests.lua",
+        "reason": "sha256 differs from A protection baseline",
+        "expected": "84B8CBDD408085756D2329C8FE00D07DB08A1E6443EA9F8D27B9CD20C14AF50E",
+        "actual": "b69a55a6aacce973875cb040fd026eab964b18eed8e12d8d77285e9438b39975"
+      },
+      {
+        "file": "scripts/tests/ArchitectureIntegrationTests.lua",
+        "reason": "sha256 differs from A protection baseline",
+        "expected": "3423577120B27F5652CC6DDAE9F725B003680C0866661949897F7D3EF7B41525",
+        "actual": "aeca8b95918f02b42d5016b764252f643080f4c60cbe364b6885fdd75855012e"
+      }
+    ],
+    "a3DeliveryCheck": {
+      "matched": 12,
+      "total": 12
+    }
+  },
+  "testExecutionStarted": false,
+  "ready": true,
+  "selfCheck": {
+    "runnerCompiles": true,
+    "runnerUnderAllowedMergeFolder": true,
+    "outputDirectoryIsFinalChecksOnly": true,
+    "sourceScopeIsCurrentScriptsOnly": true,
+    "lua54HostReady": true,
+    "nativeSearchersRemoved": true,
+    "b4Ready": false,
+    "finalSourceReadyMarkerReadOnly": true,
+    "suiteRunFunctionsCalled": false,
+    "passed": true
+  }
+}

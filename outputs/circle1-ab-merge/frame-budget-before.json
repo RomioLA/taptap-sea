@@ -1,0 +1,59 @@
+{
+  "group": "merge",
+  "module": "tests.Circle1ABMergeFrameBudgetTests",
+  "status": "failed",
+  "cases": [
+    {
+      "error": "...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:10: 0.35 ~= 0.25\nstack traceback:\n\t[C]: in function 'assert'\n\t...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:10: in upvalue 'near'\n\t...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:48: in function <...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:42>\n\t[C]: in function 'xpcall'\n\t...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:38: in local 'check'\n\t...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:42: in function 'tests.Circle1ABMergeFrameBudgetTests.Run'",
+      "name": "barrel completion slices share one original sea frame budget",
+      "passed": false
+    },
+    {
+      "name": "four game seconds keep ship locked and preserve fixed barrel identity",
+      "passed": true
+    },
+    {
+      "name": "inventory pause stops clock sea and barrel progress together",
+      "passed": true
+    },
+    {
+      "error": "...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:83: assertion failed!\nstack traceback:\n\t[C]: in function 'assert'\n\t...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:83: in function <...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:76>\n\t[C]: in function 'xpcall'\n\t...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:38: in local 'check'\n\t...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:76: in function 'tests.Circle1ABMergeFrameBudgetTests.Run'",
+      "name": "rounded exact night tie settles completed barrel once before forcing port",
+      "passed": false
+    },
+    {
+      "name": "unfinished barrel at night end cancels without charging",
+      "passed": true
+    }
+  ],
+  "reportedCaseCount": 5,
+  "report": {
+    "evidenceKind": "real modules with explicit offline fixtures",
+    "results": [
+      {
+        "error": "...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:10: 0.35 ~= 0.25\nstack traceback:\n\t[C]: in function 'assert'\n\t...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:10: in upvalue 'near'\n\t...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:48: in function <...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:42>\n\t[C]: in function 'xpcall'\n\t...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:38: in local 'check'\n\t...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:42: in function 'tests.Circle1ABMergeFrameBudgetTests.Run'",
+        "name": "barrel completion slices share one original sea frame budget",
+        "passed": false
+      },
+      {
+        "name": "four game seconds keep ship locked and preserve fixed barrel identity",
+        "passed": true
+      },
+      {
+        "name": "inventory pause stops clock sea and barrel progress together",
+        "passed": true
+      },
+      {
+        "error": "...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:83: assertion failed!\nstack traceback:\n\t[C]: in function 'assert'\n\t...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:83: in function <...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:76>\n\t[C]: in function 'xpcall'\n\t...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:38: in local 'check'\n\t...tap-sea/scripts/tests\\Circle1ABMergeFrameBudgetTests.lua:76: in function 'tests.Circle1ABMergeFrameBudgetTests.Run'",
+        "name": "rounded exact night tie settles completed barrel once before forcing port",
+        "passed": false
+      },
+      {
+        "name": "unfinished barrel at night end cancels without charging",
+        "passed": true
+      }
+    ]
+  },
+  "sourceFile": "scripts/tests/Circle1ABMergeFrameBudgetTests.lua",
+  "log": []
+}

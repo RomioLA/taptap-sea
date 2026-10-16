@@ -1,0 +1,233 @@
+{
+  "purpose": "Read-only B4 test scope and shared-test review",
+  "workspace": "C:/codex/taptap-sea",
+  "reviewedAt": "2026-10-03",
+  "mutatedScope": [
+    "outputs/circle1-ab-merge/B4测试与范围复查.md",
+    "outputs/circle1-ab-merge/b4-suite-evidence.json"
+  ],
+  "dSource": {
+    "path": "D:/sillytavern-data/taptap-sea-B",
+    "access": "read-only",
+    "sourceSyncManifestPath": "outputs/circle1-b4/source-sync-tests.json",
+    "filesAtSync": 26,
+    "filesMatchingDAtSync": 26
+  },
+  "protectionBaseline": {
+    "status": "attention_required",
+    "protectedFilesMatching": 41,
+    "protectedFileCount": 43,
+    "a3DeliveryMatching": 12,
+    "a3DeliveryCount": 12,
+    "supplementalProtectionMatching": 15,
+    "supplementalProtectionCount": 15,
+    "historicalEvidenceChanged": 0,
+    "changedSharedTests": [
+      {
+        "path": "scripts/Tests/ABIntegrationTests.lua",
+        "aBaselineSha256": "84B8CBDD408085756D2329C8FE00D07DB08A1E6443EA9F8D27B9CD20C14AF50E",
+        "preSyncCurrentCBackupSha256": "84B8CBDD408085756D2329C8FE00D07DB08A1E6443EA9F8D27B9CD20C14AF50E",
+        "currentCSha256": "B69A55A6AACCE973875CB040FD026EAB964B18EED8E12D8D77285E9438B39975",
+        "oldBSha256": "B69A55A6AACCE973875CB040FD026EAB964B18EED8E12D8D77285E9438B39975",
+        "matchesOldB": true,
+        "originalCaseCount": 30,
+        "currentCaseCount": 31,
+        "regressionStatus": "6 failed, 25 passed, 0 skipped"
+      },
+      {
+        "path": "scripts/Tests/ArchitectureIntegrationTests.lua",
+        "aBaselineSha256": "3423577120B27F5652CC6DDAE9F725B003680C0866661949897F7D3EF7B41525",
+        "preSyncCurrentCBackupSha256": "3423577120B27F5652CC6DDAE9F725B003680C0866661949897F7D3EF7B41525",
+        "currentCSha256": "AECA8B95918F02B42D5016B764252F643080F4C60CBE364B6885FDD75855012E",
+        "oldBSha256": "AECA8B95918F02B42D5016B764252F643080F4C60CBE364B6885FDD75855012E",
+        "matchesOldB": true,
+        "originalCaseCount": 12,
+        "currentCaseCount": 12,
+        "regressionStatus": "12 passed, 0 failed, 0 skipped"
+      }
+    ],
+    "baselineWasNotChanged": true
+  },
+  "runner": {
+    "path": "scripts/Tests/Circle1B4Run.py",
+    "sha256": "062A0A2E06448CECD96A73E907F2262E6D63E4EA05EBF6075BD0AB61FF7A97C0",
+    "circle1B4LuaTestFiles": [],
+    "suiteCount": 21,
+    "syntaxFiles": 85,
+    "syntaxPassed": 85,
+    "selectedSuite": "all",
+    "allExecutedPassed": false,
+    "allRequestedVerified": false,
+    "unverifiedSkippedCases": 0,
+    "guiVerified": false,
+    "realOceanRuntimeVerified": false,
+    "realCloudVerified": false,
+    "sevenDayRouteKind": "headless protocol simulation; ocean travel is a test double",
+    "resultPath": "outputs/circle1-b4/regression-result.json"
+  },
+  "suiteGroups": [
+    {
+      "group": "b3",
+      "suiteCount": 6,
+      "status": "all_passed"
+    },
+    {
+      "group": "prior-protocol",
+      "suiteCount": 7,
+      "status": "all_passed"
+    },
+    {
+      "group": "player-regression",
+      "suiteCount": 5,
+      "status": "all_passed"
+    },
+    {
+      "group": "existing-a-regression",
+      "suiteCount": 3,
+      "status": "one_suite_has_six_failures"
+    }
+  ],
+  "changedCurrentCTestFilesComparedWithOldB": [
+    {
+      "path": "scripts/Tests/Circle1B2BarrelTests.lua",
+      "currentCSha256": "C3C8ED3D70023E055F3CB969840448253825B514D726DA73ECBEA578CA8C9967",
+      "oldBSha256": "962B33F86E9694EBDDF152C6F9D1DD94F66D8BB3D620CD189FD455B9EEC1A814",
+      "suite": "prior-protocol/Circle1B2BarrelTests",
+      "status": "12 passed",
+      "relevantCases": [
+        "built-in timer advances with the ocean, blocks steering, and pauses for UI",
+        "barrel completion at night end commits once, while unfinished work cancels free"
+      ]
+    },
+    {
+      "path": "scripts/Tests/Circle1B2ScopeTests.lua",
+      "currentCSha256": "7EC34542698CFAA77FEA6C07FC9A98287D6CE95C9DC48F56EB4F98A32BF26097",
+      "oldBSha256": "F658F46E027B26E10E4E01ECFC8D3148C7D7F9BD0B81FB52A448DCB5F5B0C7F4",
+      "suite": "prior-protocol/Circle1B2ScopeTests",
+      "status": "5 passed",
+      "relevantCases": [
+        "false is a valid disabled result while rejection and exceptions fail readback"
+      ]
+    },
+    {
+      "path": "scripts/Tests/Circle1B2UITests.lua",
+      "currentCSha256": "5B3601E87DAAB21D30583E5E810DA1B204A27B482ABF84BDA11991A737D08CF0",
+      "oldBSha256": "B4F264EB50EA8F3E149F8230542076AE694D4E0E50A1F70CFCFC83261A202A58",
+      "suite": "prior-protocol/Circle1B2UITests",
+      "status": "4 passed",
+      "relevantCases": [
+        "barrel uses its built-in timer and exposes cancel without an instant-finish control"
+      ]
+    },
+    {
+      "path": "scripts/Tests/Circle1B3ClockAsyncTests.lua",
+      "currentCSha256": "4C64023790A655A9F236D5BE85DF3409EE0C0D92C31098720016F1AE279B0FC0",
+      "oldBSha256": "64BF42D835029B07CBC2B0FE9FEA075A496656A739F9B142BDDC460C5EA4E0C6",
+      "suite": "b3/Circle1B3ClockAsyncTests",
+      "status": "17 passed",
+      "relevantCases": [
+        "saving rejects duplicate confirmation and explicit skip ignores late callbacks",
+        "new run immediately writes a reset snapshot before releasing the entry pause"
+      ]
+    },
+    {
+      "path": "scripts/Tests/Circle1B3SceneUITests.lua",
+      "currentCSha256": "7E3246F20DE7F7EE94F62E027B2591C1DFD40D16184378AD1B359CC41872CF2F",
+      "oldBSha256": "C78DBA6DF1666E3BDD8488AF2B76F8B50953E03DB9218E01CADD180A558E9EE7",
+      "suite": "b3/Circle1B3SceneUITests",
+      "status": "10 passed",
+      "relevantCases": [
+        "formal scene defaults to clientCloud read and blocks entry until a choice",
+        "new-run initial save can retry or explicitly continue without waiting",
+        "scene Stop accepts A's false disabled result and closes the real scope",
+        "formal HUD save failure explicitly retries or abandons without double settlement"
+      ]
+    },
+    {
+      "path": "scripts/Tests/GameLoopSpec.lua",
+      "currentCSha256": "92C4335D328AC61A7FC9BC41C7209DC2987C8848D360404D2854C410E1B13A11",
+      "oldBSha256": "5D8E95208E1A7CA621183BDD3D8B1F467F7A47C177920498769EC86EAFE3C27F",
+      "suite": "player-regression/GameLoopSpec.lua",
+      "status": "22 passed",
+      "relevantCases": [
+        "explicitly skipping a failed save releases one settlement without pretending to save",
+        "a save retry in flight can be explicitly skipped and ignores its late callback",
+        "new run resets gameplay and immediately saves its starting snapshot"
+      ]
+    },
+    {
+      "path": "scripts/Tests/NumericEconomySpec.lua",
+      "currentCSha256": "F1993E331E481E9BFD5DA77BF01D1D722BCA21FB59CAD1BA4369959D888D8213",
+      "oldBSha256": "5C1BBC301F0B587F9AA9E3083D95AA022D187C52D4201F7845927B853522F49E",
+      "suite": "player-regression/NumericEconomySpec.lua",
+      "status": "21 passed",
+      "relevantCases": [
+        "persistence-levels-legacy-validation-and-new-run-reset"
+      ]
+    },
+    {
+      "path": "scripts/Tests/ShopStockSpec.lua",
+      "currentCSha256": "FC10E273BC935A90AE225F58571629C04A01ABBE469326302BF60742148F5A4B",
+      "oldBSha256": "B8CF3CA99E2BF412D4BAC6F6CD613718747E82F2BD011A59910868E0CCF96FCD",
+      "suite": "player-regression/ShopStockSpec.lua",
+      "status": "15 passed",
+      "relevantCases": [
+        "new-run-and-successful-day-snapshot-load-restock"
+      ]
+    }
+  ],
+  "sixCurrentSharedAbFailures": [
+    {
+      "name": "net includes its eight-meter boundary and a single cast catches only one fish",
+      "error": "ABIntegrationTests.lua:569 assertion failed",
+      "assessment": "outdated fixture assumption around delayed landing and moving fish; not enough evidence for product bug",
+      "minimalFix": "Test inclusive/exclusive geometry directly, then separately use a stable in-range catch fixture to test landing, timer and one-fish semantics."
+    },
+    {
+      "name": "new-day world refresh waits for save success and retry is idempotent",
+      "error": "ABIntegrationTests.lua:876 port_out_of_range",
+      "assessment": "fixture starts ship at (-20,-20) while marking loop inPort=true; port is (0,0), 28.3m away",
+      "minimalFix": "Start settlement fixture at the real port coordinate and preserve retry/idempotency assertions."
+    },
+    {
+      "name": "explicit unsaved continuation refreshes the sea once and releases settlement pause",
+      "error": "ABIntegrationTests.lua:905 port_out_of_range",
+      "assessment": "same physically inconsistent inPort fixture; save-skip path is not reached",
+      "minimalFix": "Start at the real port and preserve world-refresh, skip, and late-callback assertions."
+    },
+    {
+      "name": "Scene starts one B HUD over A renderer and shows offline status without legacy HUD",
+      "error": "ABIntegrationTests.lua:982 missing offlinePersistenceNotice",
+      "assessment": "old static notice ID was removed; test also disables loadSaved, bypassing current formal entry/load-error path",
+      "minimalFix": "Exercise the default entry read with an unavailable cloud backend and assert visible load failure/retry/new-run choice before entry is released."
+    },
+    {
+      "name": "Scene ticks B once, gates pointer input immediately and records the sea pointer drop target",
+      "error": "ABIntegrationTests.lua:1000 missing seaDebugPause",
+      "assessment": "fixture is not development mode; current Scene creates SeaDebug only for development=true",
+      "minimalFix": "Use development=true in debug-specific harness; keep production cheat-hiding assertion in Circle1B3SceneUITests."
+    },
+    {
+      "name": "Scene offline store returns a clear error and never touches cloud or auto-loads",
+      "error": "ABIntegrationTests.lua:1060 ReturnToPort rejected with port_out_of_range",
+      "assessment": "prior Scene test departs from (-20,-20), then calls normal ReturnToPort without travelling within 10m",
+      "minimalFix": "Simulate movement into the 10m port interaction radius, then retain the no-cloud-call assertion; do not reset/teleport for normal return."
+    }
+  ],
+  "recommendation": {
+    "keepCurrentSharedContracts": "Keep the current timed fishing and current entry/port assertions as reviewed shared tests if accepted; preserve the A originals and historical protection hashes unchanged.",
+    "restore": "Do not blindly restore the two A originals on top of the current product because instant-fishing and old port assumptions conflict with the current confirmed behavior. Restore exact A hashes only after extracting incompatible assertions and when running them as historical/compatible A evidence.",
+    "independentMigration": "If file ownership must be isolated, migrate current B4-specific timer/lock/full-hold cases and entry/save/scope/HUD cases into B4-specific suites, with an explicit 8m geometry case and real travel-to-port fixture; keep nonconflicting Architecture cases in the current shared coverage.",
+    "baseline": "Never rewrite a-protection.json or historical baseline hashes to hide the reviewed shared-file delta."
+  },
+  "postReviewFinalState": {
+    "source": "root task follow-up message, after B4 regression snapshot",
+    "currentCAbIntegrationSha256": "DE232115B234707F53EB87D980F1BD63672194A125F4B94586A578A11B40AB25",
+    "archivedB4AbIntegrationSha256": "B69A55A6AACCE973875CB040FD026EAB964B18EED8E12D8D77285E9438B39975",
+    "architectureIntegrationSha256": "AECA8B95918F02B42D5016B764252F643080F4C60CBE364B6885FDD75855012E",
+    "currentAbSuiteStatusReported": "32/32 passed",
+    "independentlyRerunByThisReviewer": false,
+    "originalB4SixFailureEvidencePreserved": true,
+    "inputFlowFinding": "Select an item with BeginThrowItem(1) before sea pointer drop; a normal pointer click only sets navigation target."
+  }
+}

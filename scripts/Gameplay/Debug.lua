@@ -54,7 +54,7 @@ local function executeSeek(loop, phase, argument)
     loop.clock:Seek(phase, elapsed)
     if loop.inPort then loop.portNightElapsed = phase == "night" and elapsed or 0 end
     -- 恰好跳到夜晚终点时，让 Loop 立即创建强制返港状态。
-    loop:Update(0)
+    loop:RefreshClockStatus()
     return true, (phase == "day" and "已跳转到白天 " or "已跳转到夜晚 ")
         .. string.format("%.0f 秒", elapsed)
 end

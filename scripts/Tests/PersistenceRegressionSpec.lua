@@ -3,6 +3,7 @@ local Config = require("config.gameplay")
 local Player = require("Gameplay.PlayerState")
 local Persistence = require("Gameplay.Persistence")
 local Loop = require("Gameplay.Loop")
+local Progress = require("Gameplay.Circle1B2Progress")
 local passed = 0
 
 local function eq(actual, expected)
@@ -23,6 +24,7 @@ local function snapshot()
     player.treasures = { found = true }
     player.story = { chapter = 2 }
     player.elder = { lastGivenItemId = "apple" }
+    assert(Progress.Initialize(player)); assert(Progress.OnDayStarted(player))
     return Persistence.Snapshot(player)
 end
 

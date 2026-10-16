@@ -1,0 +1,62 @@
+{
+  "project": "C:\\codex\\taptap-sea",
+  "methods": [
+    {
+      "method": "GetPortPosition",
+      "present": false
+    },
+    {
+      "method": "ResetShipAtPort",
+      "present": false
+    },
+    {
+      "method": "LockFishingTarget",
+      "present": false
+    },
+    {
+      "method": "UnlockFishingTarget",
+      "present": false
+    },
+    {
+      "method": "GetFixedBarrel",
+      "present": false
+    },
+    {
+      "method": "CanInteractWithBarrel",
+      "present": false
+    },
+    {
+      "method": "SetScopeEnabled",
+      "present": false
+    },
+    {
+      "method": "IsScopeEnabled",
+      "present": false
+    },
+    {
+      "method": "SetShipLevel",
+      "present": true
+    }
+  ],
+  "bootstrapReadsRecognition": false,
+  "bootstrapReadsFishingView": false,
+  "bootstrapReadsSeaPointer": true,
+  "realCloudVerified": false,
+  "projectFieldNames": [
+    "$schema",
+    "project_id",
+    "author",
+    "entry",
+    "version",
+    "taptap_publish",
+    "assets",
+    "metadata"
+  ],
+  "source": "Current local source, no A-computer report or cloud operation",
+  "localCloudConfigFieldsPresent": {
+    "app_platforms": true,
+    "developer_id": true,
+    "app_id": true
+  },
+  "localCloudConfigPath": ".project/project.json:taptap_publish"
+}

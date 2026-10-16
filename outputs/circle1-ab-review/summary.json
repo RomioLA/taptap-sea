@@ -1,0 +1,141 @@
+{
+  "b_original": {
+    "b3": {
+      "suites": 6,
+      "passedRows": 62,
+      "failedRows": 0,
+      "skippedRows": 0,
+      "scriptPassed": 0,
+      "scriptFailed": 0
+    },
+    "prior-b": {
+      "suites": 7,
+      "passedRows": 63,
+      "failedRows": 0,
+      "skippedRows": 0,
+      "scriptPassed": 0,
+      "scriptFailed": 0
+    },
+    "player": {
+      "suites": 5,
+      "passedRows": 0,
+      "failedRows": 0,
+      "skippedRows": 0,
+      "scriptPassed": 5,
+      "scriptFailed": 0
+    },
+    "existing-a": {
+      "suites": 3,
+      "passedRows": 32,
+      "failedRows": 9,
+      "skippedRows": 11,
+      "scriptPassed": 0,
+      "scriptFailed": 0
+    }
+  },
+  "a3_b3_composed": {
+    "b3": {
+      "suites": 6,
+      "passedRows": 61,
+      "failedRows": 1,
+      "skippedRows": 0,
+      "scriptPassed": 0,
+      "scriptFailed": 0
+    },
+    "prior-b": {
+      "suites": 7,
+      "passedRows": 63,
+      "failedRows": 0,
+      "skippedRows": 0,
+      "scriptPassed": 0,
+      "scriptFailed": 0
+    },
+    "player": {
+      "suites": 5,
+      "passedRows": 0,
+      "failedRows": 0,
+      "skippedRows": 0,
+      "scriptPassed": 5,
+      "scriptFailed": 0
+    },
+    "existing-a": {
+      "suites": 3,
+      "passedRows": 45,
+      "failedRows": 7,
+      "skippedRows": 0,
+      "scriptPassed": 0,
+      "scriptFailed": 0
+    }
+  },
+  "a3_ocean_tests_composed": {
+    "a3": {
+      "suites": 6,
+      "passedRows": 26,
+      "failedRows": 0,
+      "skippedRows": 0,
+      "scriptPassed": 0,
+      "scriptFailed": 0
+    }
+  },
+  "smoke": {
+    "passed": 6,
+    "total": 6
+  },
+  "nativeVerified": false,
+  "cloudVerified": false,
+  "originalSourcesModified": false,
+  "scopeContractMismatch": {
+    "toggleOff": {
+      "ocean": true,
+      "reason": "scope_sync_failed",
+      "expectedOcean": false,
+      "ok": false
+    },
+    "fixture": "lens ownership supplied only for API contract test",
+    "retryDisable": {
+      "ocean": false,
+      "ok": true
+    },
+    "enable": {
+      "ocean": true,
+      "ok": true
+    },
+    "firstDisable": {
+      "ocean": false,
+      "reason": "scope_sync_failed",
+      "ok": false
+    }
+  },
+  "differentSharedScripts": [
+    "scripts/config/gameplay.lua",
+    "scripts/Game/Game.lua",
+    "scripts/Gameplay/Actions.lua",
+    "scripts/Gameplay/Bootstrap.lua",
+    "scripts/Gameplay/HUD.lua",
+    "scripts/Gameplay/Inventory.lua",
+    "scripts/Gameplay/Loop.lua",
+    "scripts/Gameplay/Persistence.lua",
+    "scripts/Gameplay/PlayerState.lua",
+    "scripts/Gameplay/UpdateSystem.lua",
+    "scripts/Integration/Bridge.lua",
+    "scripts/Integration/Scene.lua",
+    "scripts/Ocean/Bootstrap.lua",
+    "scripts/Ocean/Config.lua",
+    "scripts/Ocean/Fish.lua",
+    "scripts/Ocean/HUD.lua",
+    "scripts/Ocean/Movement.lua",
+    "scripts/Ocean/SeaDraw.lua",
+    "scripts/Ocean/SeaRuntime.lua",
+    "scripts/Ocean/SurfaceSignals.lua",
+    "scripts/Ocean/World.lua",
+    "scripts/Systems/EntityStateSystem.lua",
+    "scripts/tests/ABIntegrationTests.lua",
+    "scripts/tests/ArchitectureIntegrationTests.lua",
+    "scripts/tests/GameLoopSpec.lua",
+    "scripts/tests/GameLoopUISpec.lua",
+    "scripts/tests/NumericEconomySpec.lua",
+    "scripts/tests/PersistenceRegressionSpec.lua",
+    "scripts/tests/ShopStockSpec.lua",
+    "scripts/tests/SurfaceSignalsTests.lua"
+  ]
+}

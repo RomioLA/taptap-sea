@@ -1,0 +1,12 @@
+--- a/scripts/Tests/ShopStockSpec.lua
++++ b/scripts/Tests/ShopStockSpec.lua
+@@ -64,6 +64,6 @@
+-test("fishing4sec-clock-runs-empty-catch-charged-once",function()
++test("fishing4sec-clock-runs-empty-catch-free",function()
+     local l=newLoop(); assert(l:Depart()); assert(l:CanStartAction("fishing"))
+     eq(l.clock:IsPaused(),false); l:Update(4); eq(l.clock.elapsed,4); eq(l.player.stamina,100)
+-    assert(l:CompleteFishing(0)); eq(l.player.stamina,60); eq(l.clock:IsPaused(),false)
+-    l:Update(4); eq(l.clock.elapsed,8); eq(l.player.stamina,60)
++    assert(l:CompleteFishing(0)); eq(l.player.stamina,100); eq(l.clock:IsPaused(),false)
++    l:Update(4); eq(l.clock.elapsed,8); eq(l.player.stamina,100)
+ end)

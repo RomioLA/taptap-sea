@@ -1,0 +1,154 @@
+{
+  "review_date": "2026-10-03",
+  "timezone": "Asia/Hong_Kong",
+  "scope": {
+    "source": "D:/sillytavern-data/taptap-sea-B",
+    "target": "C:/codex/taptap-sea",
+    "read_only": true,
+    "source_docs_or_code_modified": false,
+    "source_material_rewritten": false,
+    "runtime_or_gameplay_reverified": false
+  },
+  "copy_audit": {
+    "source_docs_top_level_files": 24,
+    "target_preexisting_docs_top_level_files": 24,
+    "preexisting_top_level_hash_differences": 0,
+    "source_planning_files": 93,
+    "skipped_cache_file": "docs/planning/tools/__pycache__/extract_sources.cpython-312.pyc",
+    "copied_noncache_planning_files": 92,
+    "target_planning_files": 92,
+    "planning_sha256_mismatches": 0,
+    "nested_agents_files": 0,
+    "source_and_target_root_agents_sha256_equal": true,
+    "target_handoff": "docs/PROJECT_HANDOFF.md"
+  },
+  "link_audit": {
+    "active_planning_markdown_broken_relative_links": 0,
+    "archived_control_broken_relative_links": 12,
+    "affected_file": "docs/planning/_archive/v2.1_2026-10-03/CONTROL.md",
+    "target_handoff_links_resolved": true
+  },
+  "current_user_confirmations": [
+    "木桶4秒动作期间海洋与昼夜继续；背包和对话暂停。",
+    "保留基础存档，并在新局保存初始状态。",
+    "图鉴、成就和正式Day7结局延后。",
+    "移动惊鱼和自然补鱼的未定阈值不得实现。"
+  ],
+  "findings": [
+    {
+      "severity": "high",
+      "subject": "木桶动作与暂停",
+      "sources": [
+        "docs/planning/team/07_进度与待决策.md:103-104",
+        "docs/planning/team/05_剧情与事件.md:72,74"
+      ],
+      "issue": "来源仍把木桶操作与事件暂停的关系标为未决，泛称事件界面暂停。",
+      "current_rule": "木桶4秒动作推进海洋与昼夜；背包和对话暂停。"
+    },
+    {
+      "severity": "high",
+      "subject": "新局初始保存",
+      "sources": [
+        "docs/planning/team/03_系统规则.md:71-76",
+        "docs/planning/team/08_技术约定.md:71,74"
+      ],
+      "issue": "来源把日结写为唯一正常保存点，未明确 NewRun 创建后保存初始状态。",
+      "current_rule": "保留基础存档，并在新局保存初始状态。"
+    },
+    {
+      "severity": "high",
+      "subject": "正式Day7结局延期",
+      "sources": [
+        "docs/planning/team/02_三圈范围.md:7,16,22,26",
+        "docs/planning/team/05_剧情与事件.md:45,78,86",
+        "docs/planning/team/06_视听与交互.md:20",
+        "docs/planning/team/07_进度与待决策.md:24,40,73"
+      ],
+      "issue": "来源把Day7结局/纸条以及完成结局列为圈1内容和验收。",
+      "current_rule": "正式Day7结局延后；不推定纸条钩子是否单独保留。"
+    },
+    {
+      "severity": "high",
+      "subject": "移动惊鱼和自然补鱼阈值",
+      "sources": [
+        "docs/planning/team/03_系统规则.md:50,56,60",
+        "docs/planning/team/07_进度与待决策.md:83,88-89",
+        "docs/planning/team/08_技术约定.md:39,42-43,49,63"
+      ],
+      "issue": "页面以圈1采用/测试方案描述机制，同时保留决定实现所需的阈值未定项。",
+      "current_rule": "移动惊鱼和补鱼阈值未定前不实现；已有测试值不能视作实现授权。"
+    },
+    {
+      "severity": "medium",
+      "subject": "规划状态时效",
+      "sources": [
+        "docs/planning/CONTROL.md:17-19",
+        "docs/planning/TEAM_VALIDATION.md",
+        "docs/planning/STATUS.md",
+        "docs/planning/VALIDATION.md",
+        "docs/planning/REVIEW_补细节_2026-10-02.md"
+      ],
+      "issue": "文档属于架构未同步或旧导出/旧实现报告；CONTROL 明确旧验证记录不覆盖 v2.1。",
+      "current_rule": "按 docs/PROJECT_HANDOFF.md、AGENTS.md、ARCHITECTURE_LAYOUT.md 和最新用户确认读取当前边界。"
+    },
+    {
+      "severity": "medium",
+      "subject": "图鉴与成就范围",
+      "sources": [
+        "docs/planning/team/02_三圈范围.md:34,50-56",
+        "docs/planning/team/03_系统规则.md:77-78",
+        "docs/planning/team/05_剧情与事件.md:37"
+      ],
+      "issue": "旧页将其定在圈2，并规定跨周目记录持久化。",
+      "current_rule": "目前延后；不实现或新增保存字段，除非未来重新确认范围。"
+    }
+  ],
+  "path_dependencies": [
+    {
+      "item": "CONTROL.md and SOURCES.md",
+      "issue": "Retain references to source workbooks under D:/SillyTavern-Data/taptap and D:/库/Downloads; provenance, not a portable project-relative dependency."
+    },
+    {
+      "item": "tools/export_workbook.mjs",
+      "issue": "Hard-coded D:/ source workbook and a prior user's C:/Users/... Python executable."
+    },
+    {
+      "item": "tools/extract_sources.py",
+      "issue": "Hard-coded original workbook and prior user's Codex attachments path."
+    },
+    {
+      "item": "tools/prepare_surface_v21.py and tools/edit_surface_v21.mjs",
+      "issue": "Hard-coded D:/ input; edit_surface_v21.mjs also hard-codes C:/ output."
+    },
+    {
+      "item": "tools/validate_documents.py and tools/validate_team_workbook.py",
+      "issue": "Target the older non-v2.1 workbook naming; CONTROL warns the old validator is not applicable to v2.1."
+    }
+  ],
+  "preserve": {
+    "active": [
+      "docs/planning/CONTROL.md",
+      "docs/planning/team/01_游戏总览.md through 08_技术约定.md",
+      "docs/planning/SOURCES.md and docs/planning/sources/",
+      "docs/planning/exports/记录表_新版策划_2026-10-02_v2.1.xlsx",
+      "docs/planning/tools/"
+    ],
+    "historical": [
+      "docs/planning/_archive/surface_2026-10-03/",
+      "docs/planning/_archive/v2.1_2026-10-03/",
+      "older dated workbooks in docs/planning/exports/"
+    ],
+    "generated_evidence": [
+      "docs/planning/exports/*.png",
+      "docs/planning/exports/*.inspect.ndjson",
+      "docs/planning/exports/export_manifest.json",
+      "docs/planning/exports/*.log",
+      "docs/planning/exports/surface_baseline.json",
+      "docs/planning/exports/surface_edits.json"
+    ]
+  },
+  "skip": [
+    "docs/planning/tools/__pycache__/extract_sources.cpython-312.pyc"
+  ],
+  "limitation": "Review covers planning material and references only. No scripts, runtime, cloud, build, preview, or gameplay verification was performed."
+}

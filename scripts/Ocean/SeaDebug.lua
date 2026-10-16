@@ -224,7 +224,7 @@ end
 
 --- Create the development UI. UI.Init must already have been called by the caller.
 ---@param runtime table
----@param options {parent: Widget?, panelVisible: boolean?, expanded: boolean?}?
+---@param options {parent: Widget?, panelVisible: boolean?, expanded: boolean?, onPause: (fun())?, onReset: (fun())?}?
 ---@return table controller { refresh=function(dt), handleKey=function(key) }
 function SeaDebug.Create(runtime, options)
     runtime = runtime or {}
@@ -336,10 +336,12 @@ function SeaDebug.Create(runtime, options)
             }),
             row({
                 buildButton("seaDebugPause", "Pause / resume", function()
-                    if type(runtime.TogglePause) == "function" then runtime:TogglePause() end
+                    if options.onPause then options.onPause()
+                    elseif type(runtime.TogglePause) == "function" then runtime:TogglePause() end
                 end),
                 buildButton("seaDebugReset", "Reset sea", function()
-                    if type(runtime.Reset) == "function" then runtime:Reset() end
+                    if options.onReset then options.onReset()
+                    elseif type(runtime.Reset) == "function" then runtime:Reset() end
                 end),
             }),
             UI.Label { text = "F3 panel | U underwater | H states | P perception", fontSize = 9, fontColor = { 156, 185, 195, 255 } },
@@ -451,9 +453,11 @@ function SeaDebug.Create(runtime, options)
         elseif key == KEY_B then
             spawnTestLure()
         elseif key == KEY_SPACE then
-            if type(runtime.TogglePause) == "function" then runtime:TogglePause() end
+            if options.onPause then options.onPause()
+            elseif type(runtime.TogglePause) == "function" then runtime:TogglePause() end
         elseif key == KEY_R then
-            if type(runtime.Reset) == "function" then runtime:Reset() end
+            if options.onReset then options.onReset()
+            elseif type(runtime.Reset) == "function" then runtime:Reset() end
         else
             return false
         end

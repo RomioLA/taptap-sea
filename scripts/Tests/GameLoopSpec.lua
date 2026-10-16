@@ -112,7 +112,7 @@ test("port pauses preserve elapsed and repeat departure", function()
 end)
 
 test("normal return penalties at 0 30 30.9 40 55 59.9", function()
-    for _, pair in ipairs({{0,100},{30,100},{30.9,100},{40,90},{55,75},{59.9,71}}) do
+    for _, pair in ipairs({{0,100},{30,100},{30.9,99.1},{40,90},{55,75},{59.9,70.1}}) do
         local loop, store = newLoop()
         assert(loop:Depart()); loop.clock:Seek("night", pair[1]); assert(loop:ReturnToPort())
         assert(loop:EndToday()); eq(#store.saves, 0)
@@ -143,6 +143,38 @@ test("save failure retry freezes state and does not advance day twice", function
     store.callbacks[2](true); eq(loop.player.day, 2)
 end)
 
+test("explicitly skipping a failed save releases one settlement without pretending to save", function()
+    local days = {}
+    local loop, store = newLoop({ onNewDay = function(day) days[#days + 1] = day end })
+    eq(loop:ContinueWithoutSaving(), false)
+    assert(loop:EndToday()); assert(loop:ConfirmSettlement())
+    store.callbacks[1](false, "offline")
+    local stamina, money, stock = loop.player.stamina, loop.player.money, loop:GetShopStock("apple")
+    assert(loop:ContinueWithoutSaving())
+    eq(loop.player.day, 2); eq(loop.player.stamina, stamina); eq(loop.player.money, money)
+    eq(loop:GetShopStock("apple"), stock); eq(loop.saveStatus, "skipped")
+    eq(loop.settlementPending, false); eq(loop.settlementApplied, false)
+    eq(#store.saves, 1); eq(#days, 1); eq(days[1], 2)
+    eq(loop:ContinueWithoutSaving(), false)
+    store.callbacks[1](true)
+    eq(loop.saveStatus, "skipped"); eq(#days, 1)
+    assert(loop:Depart()); assert(loop:ReturnToPort()); assert(loop:EndToday())
+    assert(loop:ConfirmSettlement()); store.callbacks[2](true)
+    eq(loop.player.day, 3); eq(loop.saveStatus, "saved"); eq(#days, 2)
+end)
+
+test("a save retry in flight can be explicitly skipped and ignores its late callback", function()
+    local loop, store = newLoop()
+    assert(loop:EndToday()); assert(loop:ConfirmSettlement())
+    store.callbacks[1](false, "offline")
+    assert(loop:ConfirmSettlement())
+    assert(loop:ContinueWithoutSaving())
+    eq(loop.settlementPending, false)
+    eq(loop.saveStatus, "skipped")
+    store.callbacks[2](true)
+    eq(loop.saveStatus, "skipped"); eq(loop.player.day, 2)
+end)
+
 test("transactions read item prices, reject invalid/full/sea without side effects", function()
     local loop, store = newLoop()
     assert(loop:Buy("apple")); eq(loop.player.money, 70)
@@ -165,7 +197,7 @@ test("drop acceptance payloads and rejected/error receiver retains item", functi
         local definition = Items.GetDefinition(id)
         eq(payload.itemId, id); eq(payload.category, definition.category)
         eq(payload.worldEffect, definition.worldEffect); eq(payload.lifetimeSec, 20)
-        eq(#loop.player.inventory:GetItems(), 0); eq(payload.position, nil)
+        eq(#loop.player.inventory:GetItems(), 0); eq((payload --[[@as table]]).position, nil)
     end
     for _, receiver in ipairs({function() return false end,function() error("rejected") end}) do
         local loop = newLoop({dropReceiver=receiver}); assert(loop:Depart())
@@ -175,18 +207,22 @@ test("drop acceptance payloads and rejected/error receiver retains item", functi
     eq(#loop.player.inventory:GetItems(), 2)
 end)
 
-test("new run resets gameplay and never adds save points", function()
+test("new run resets gameplay and immediately saves its starting snapshot", function()
     local resetCount = 0
     local loop, store = newLoop({resetDynamicWorld=function() resetCount = resetCount+1 end})
     loop.player.money = 999; loop.player.maxStamina = 120; loop.player.stamina = 1
     loop.player:MarkRecognized("island"); loop.player.treasures.found = true
     loop.player.story.chapter = 3; loop.player.elder.lastGivenItemId = "bait"
-    loop.player.inventory:Upgrade(); assert(loop:NewRun())
+    loop.player.inventory:Upgrade(); loop.player.day = Config.run.days
+    loop.player.runStatus = "awaiting_ending"; assert(loop:NewRun())
     eq(loop.player.money,100); eq(loop.player.maxStamina,100); eq(loop.player.stamina,100)
     eq(loop.player.inventory:GetCapacity(),5); eq(#loop.player.inventory:GetItems(),2)
-    eq(loop.player:IsRecognized("island"),false); eq(next(loop.player.treasures),nil)
-    eq(next(loop.player.story),nil); eq(next(loop.player.elder),nil); eq(resetCount,1)
-    eq(#store.saves,0)
+    eq(loop.player:IsRecognized("island"),false); eq(loop.player.treasures.found,nil)
+    eq(loop.player.treasures.scopeLens,false); eq(loop.player.story.chapter,nil)
+    eq(loop.player.story.circle1B2.barrelStage,0); eq(loop.player.story.circle1B2.paperShown,false)
+    eq(loop.player.elder.lastGivenItemId,nil); eq(loop.player.elder.circle1B2.applesGiven,0)
+    eq(loop.player.elder.circle1B2.decision,"pending"); eq(resetCount,1)
+    eq(#store.saves,1); eq(store.saves[1].day,1); eq(store.saves[1].money,100)
 end)
 
 test("snapshot round trip and invalid saves leave state intact", function()
@@ -219,10 +255,12 @@ test("load success failure pending lock and late callbacks", function()
     local callback
     function store:Load(done) callback = done end
     assert(loop:LoadSaved()); eq(loop:Depart(),false); eq(loop:Buy("apple"),false)
-    local savedPlayer = Player.New(); savedPlayer.money = 333; savedPlayer.day = 8
+    local savedPlayer = Player.New(); savedPlayer.money = 333; savedPlayer.day = 2
     savedPlayer:MarkRecognized("saved_island")
-    callback(true,Persistence.Snapshot(savedPlayer)); eq(loop.player.money,333); eq(loop.player.day,8)
+    callback(true,Persistence.Snapshot(savedPlayer)); eq(loop.player.money,333); eq(loop.player.day,2)
     eq(loop.player:IsRecognized("saved_island"),true); eq(loop.loading,false)
+    assert(loop:LoadSaved()); local invalidDay = Persistence.Snapshot(savedPlayer); invalidDay.day = Config.run.days + 1
+    callback(true,invalidDay); eq(loop.player.money,333); eq(loop.player.day,2)
     assert(loop:LoadSaved()); callback(false,"offline"); eq(loop.player.money,333)
     assert(loop:LoadSaved()); callback(true,{schemaVersion=99}); eq(loop.player.money,333)
     eq(loop.loading,false); assert(loop:Depart()); eq(loop:LoadSaved(),false)
@@ -267,7 +305,7 @@ test("only confirmed daily settlement writes, no manual sea save API", function(
     assert(loop:Buy("apple")); assert(loop:SetElderOpen(true)); assert(loop:GiveToElder(1))
     assert(loop:SetElderOpen(false)); assert(loop:Depart()); loop.player:MarkRecognized("island")
     loop.player:ConsumeStamina(40); loop:Update(10)
-    eq(#store.saves,0); eq(loop.Save,nil); eq(loop:EndToday(),false)
+    eq(#store.saves,0); eq((loop --[[@as table]]).Save,nil); eq(loop:EndToday(),false)
 end)
 
 print("GAME_LOOP_SPEC_PASS " .. passed)

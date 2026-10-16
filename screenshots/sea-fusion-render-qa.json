@@ -29,33 +29,33 @@
     "presentation_fixture_does_not_change_config_world"
   ],
   "metrics": {
-    "landscape": {
-      "width": 1920,
-      "height": 1080,
-      "hiddenWorldFishCalls": 0,
-      "viewWidth": 80,
-      "shipScreenY": 648,
-      "pixelsPerWorldUnit": 24,
-      "shipScreenX": 960,
-      "viewHeight": 45
+    "previewFixtures": {
+      "sardine": "(-8,-8)",
+      "tuna": "(8,-14)",
+      "island": "(-14,-12)"
     },
-    "originalFixedObjectCount": 3,
-    "originalConfiguredBirds": 2,
     "portrait": {
       "width": 1200,
-      "height": 1150,
       "revealedWorldFishCalls": 2,
-      "viewWidth": 46.95652173913044,
-      "shipScreenY": 690,
-      "pixelsPerWorldUnit": 25.555555555555557,
       "shipScreenX": 600,
-      "viewHeight": 45
+      "shipScreenY": 690,
+      "height": 1150,
+      "pixelsPerWorldUnit": 25.555555555555557,
+      "viewHeight": 45,
+      "viewWidth": 46.95652173913044
     },
-    "previewFixtures": {
-      "island": "(-14,-12)",
-      "sardine": "(-8,-8)",
-      "tuna": "(8,-14)"
-    }
+    "landscape": {
+      "width": 1920,
+      "viewHeight": 45,
+      "shipScreenX": 960,
+      "shipScreenY": 648,
+      "height": 1080,
+      "pixelsPerWorldUnit": 24,
+      "hiddenWorldFishCalls": 0,
+      "viewWidth": 80
+    },
+    "originalFixedObjectCount": 3,
+    "originalConfiguredBirds": 2
   },
   "screenshots": [
     {

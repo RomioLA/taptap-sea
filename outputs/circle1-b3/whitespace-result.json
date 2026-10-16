@@ -1,0 +1,4 @@
+{
+  "command": "git diff --check for authorized tracked sources and player tests",
+  "exitCode": 0
+}

@@ -1,0 +1,9 @@
+{
+  "checkedAt": "2026-10-03T11:31:07.0888610+08:00",
+  "makerStatusResourceAvailable": false,
+  "makerStatusToolAvailable": false,
+  "taptapMakerCliOnPath": false,
+  "currentPreviewState": "UNDETERMINED",
+  "action": "No preview was started or refreshed",
+  "basis": "No Maker status resource/tool appeared in this session; taptap-maker is not on PATH. Existing circle1-ab-review records are historical only."
+}

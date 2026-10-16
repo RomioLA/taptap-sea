@@ -1,0 +1,55 @@
+{
+  "group": "merge",
+  "module": "tests.Circle1ABMergeFrameBudgetTests",
+  "status": "passed",
+  "cases": [
+    {
+      "name": "barrel completion slices share one original sea frame budget",
+      "passed": true
+    },
+    {
+      "name": "four game seconds keep ship locked and preserve fixed barrel identity",
+      "passed": true
+    },
+    {
+      "name": "inventory pause stops clock sea and barrel progress together",
+      "passed": true
+    },
+    {
+      "name": "rounded exact night tie settles completed barrel once before forcing port",
+      "passed": true
+    },
+    {
+      "name": "unfinished barrel at night end cancels without charging",
+      "passed": true
+    }
+  ],
+  "reportedCaseCount": 5,
+  "report": {
+    "evidenceKind": "real modules with explicit offline fixtures",
+    "results": [
+      {
+        "name": "barrel completion slices share one original sea frame budget",
+        "passed": true
+      },
+      {
+        "name": "four game seconds keep ship locked and preserve fixed barrel identity",
+        "passed": true
+      },
+      {
+        "name": "inventory pause stops clock sea and barrel progress together",
+        "passed": true
+      },
+      {
+        "name": "rounded exact night tie settles completed barrel once before forcing port",
+        "passed": true
+      },
+      {
+        "name": "unfinished barrel at night end cancels without charging",
+        "passed": true
+      }
+    ]
+  },
+  "sourceFile": "scripts/tests/Circle1ABMergeFrameBudgetTests.lua",
+  "log": []
+}

@@ -156,7 +156,15 @@ function GameClock:Update(dt)
 
         if gameSeconds < phaseRemaining then
             self.elapsed = self.elapsed + gameSeconds
-            return false
+            if self.elapsed < phaseDuration then return false end
+            -- Addition can round to the exact phase boundary (59.9 + 0.1).
+            -- Resolve it now so the caller never receives a zero-time unfinished phase.
+            if self.phase == "day" then
+                self.phase, self.elapsed = "night", 0
+                return false
+            end
+            self.elapsed, self.exhausted = self.nightSec, true
+            return true
         end
 
         gameSeconds = gameSeconds - phaseRemaining
@@ -225,6 +233,8 @@ function GameClock:GetState()
     return {
         phase = self.phase,
         elapsed = self.elapsed,
+        duration = duration,
+        progress = math.max(0, math.min(1, self.elapsed / duration)),
         remaining = math.max(0, duration - self.elapsed),
         paused = self:IsPaused(),
         pauseReasons = self:GetPauseReasons(),

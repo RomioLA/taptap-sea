@@ -42,6 +42,18 @@ class LinearGradient:
     end: Color
 
 
+@dataclass(frozen=True)
+class RadialGradient:
+    cx: float
+    cy: float
+    inner_radius: float
+    outer_radius: float
+    start: Color
+    end: Color
+    axis_x: float = 1.0
+    axis_y: float = 1.0
+
+
 def _finite(value: Any, fallback: float = 0.0) -> float:
     try:
         result = float(value)
@@ -78,7 +90,8 @@ class NVGCapture:
         self.counts: Counter[str] = Counter()
         self.path: list[tuple[str, tuple[float, ...]]] = []
         self.fill_color = Color(0, 0, 0, 255)
-        self.fill_paint: LinearGradient | None = None
+        self.fill_paint: LinearGradient | RadialGradient | None = None
+        self.global_alpha = 1.0
         self.stroke_color = Color(0, 0, 0, 255)
         self.stroke_width = 1.0
         self.transform = self.IDENTITY
@@ -104,6 +117,8 @@ class NVGCapture:
         globals_.nvgFillColor = self.set_fill_color
         globals_.nvgFillPaint = self.set_fill_paint
         globals_.nvgLinearGradient = self.linear_gradient
+        globals_.nvgRadialGradient = self.radial_gradient
+        globals_.nvgGlobalAlpha = self.set_global_alpha
         globals_.nvgStrokeColor = self.set_stroke_color
         globals_.nvgStrokeWidth = self.set_stroke_width
         globals_.nvgFill = self.fill
@@ -114,6 +129,7 @@ class NVGCapture:
         globals_.nvgScale = self.scale
         globals_.nvgRotate = self.rotate
         globals_.nvgScissor = self.scissor
+        globals_.nvgIntersectScissor = self.intersect_scissor
         globals_.nvgResetScissor = self.reset_scissor
         return lua.table_from(
             {
@@ -123,6 +139,7 @@ class NVGCapture:
                 "hasEllipseArgs": self.has_ellipse_args,
                 "countEllipseArgs": self.count_ellipse_args,
                 "scissorMatches": self.scissor_matches,
+                "globalAlpha": lambda: self.global_alpha,
             }
         )
 
@@ -230,7 +247,7 @@ class NVGCapture:
 
     def set_fill_paint(self, ctx, paint):
         self._call("nvgFillPaint", ctx, paint)
-        self.fill_paint = paint if isinstance(paint, LinearGradient) else None
+        self.fill_paint = paint if isinstance(paint, (LinearGradient, RadialGradient)) else None
 
     def linear_gradient(self, ctx, x1, y1, x2, y2, start, end):
         self._call("nvgLinearGradient", ctx, x1, y1, x2, y2)
@@ -241,6 +258,20 @@ class NVGCapture:
     def set_stroke_color(self, ctx, color):
         self._call("nvgStrokeColor", ctx, color)
         self.stroke_color = _as_color(color)
+
+    def radial_gradient(self, ctx, cx, cy, inner_radius, outer_radius, start, end):
+        self._call("nvgRadialGradient", ctx, cx, cy, inner_radius, outer_radius)
+        x, y = self._point(self.transform, _finite(cx), _finite(cy))
+        a, b, c, d, _, _ = self.transform
+        factor = math.sqrt(abs(a * d - b * c))
+        return RadialGradient(x, y, _finite(inner_radius) * factor,
+                              _finite(outer_radius) * factor, _as_color(start), _as_color(end),
+                              math.hypot(a, b) / max(factor, 1e-9),
+                              math.hypot(c, d) / max(factor, 1e-9))
+
+    def set_global_alpha(self, ctx, alpha):
+        self._call("nvgGlobalAlpha", ctx, alpha)
+        self.global_alpha = max(0.0, min(1.0, _finite(alpha)))
 
     def set_stroke_width(self, ctx, width):
         self._call("nvgStrokeWidth", ctx, width)
@@ -259,6 +290,7 @@ class NVGCapture:
                 "stroke_width": stroke_width,
                 "stroke_scale": math.sqrt(abs(a * d - b * c)),
                 "clip": _copy_clip(self.clip),
+                "global_alpha": self.global_alpha,
             }
         )
 
@@ -281,6 +313,7 @@ class NVGCapture:
                 "stroke_color": self.stroke_color,
                 "stroke_width": self.stroke_width,
                 "transform": self.transform,
+                "global_alpha": self.global_alpha,
                 "clip": _copy_clip(self.clip),
             }
         )
@@ -295,6 +328,7 @@ class NVGCapture:
         self.stroke_color = state["stroke_color"]
         self.stroke_width = state["stroke_width"]
         self.transform = state["transform"]
+        self.global_alpha = state["global_alpha"]
         self.clip = state["clip"]
 
     def translate(self, ctx, x, y):
@@ -311,8 +345,7 @@ class NVGCapture:
         cosine, sine = math.cos(angle), math.sin(angle)
         self._multiply((cosine, sine, -sine, cosine, 0, 0))
 
-    def scissor(self, ctx, x, y, w, h):
-        self._call("nvgScissor", ctx, x, y, w, h)
+    def _transformed_clip(self, x, y, w, h):
         x, y, w, h = map(_finite, (x, y, w, h))
         points = [
             self._point(self.transform, x, y),
@@ -321,12 +354,22 @@ class NVGCapture:
             self._point(self.transform, x, y + h),
         ]
         xs, ys = [p[0] for p in points], [p[1] for p in points]
-        new_clip = (min(xs), min(ys), max(xs), max(ys))
-        if self.clip:
-            old = self.clip
-            new_clip = (max(old[0], new_clip[0]), max(old[1], new_clip[1]),
-                        min(old[2], new_clip[2]), min(old[3], new_clip[3]))
-        self.clip = new_clip
+        return (min(xs), min(ys), max(xs), max(ys))
+
+    def scissor(self, ctx, x, y, w, h):
+        self._call("nvgScissor", ctx, x, y, w, h)
+        self.clip = self._transformed_clip(x, y, w, h)
+
+    def intersect_scissor(self, ctx, x, y, w, h):
+        # Axis-aligned intersection is exact for this project's screen-space clips.
+        self._call("nvgIntersectScissor", ctx, x, y, w, h)
+        old = self.clip
+        self.clip = self._transformed_clip(x, y, w, h)
+        if old is not None:
+            new = self.clip
+            self.clip = (max(old[0], new[0]), max(old[1], new[1]),
+                         max(max(old[0], new[0]), min(old[2], new[2])),
+                         max(max(old[1], new[1]), min(old[3], new[3])))
 
     def reset_scissor(self, ctx):
         self._call("nvgResetScissor", ctx)
@@ -393,16 +436,26 @@ class NVGCapture:
         body: list[str] = []
         for index, element in enumerate(self.elements, start=1):
             attrs = [f'd="{self._svg_path(element["path"])}"']
+            attrs.append(f'opacity="{element.get("global_alpha", 1.0):.4f}"')
             paint = element["fill_paint"]
             color = element["fill_color"]
             if paint is not None:
                 gradient_id = f"gradient-{index}"
-                defs.append(
+                if isinstance(paint, RadialGradient):
+                    inner = paint.inner_radius / max(paint.outer_radius, 1e-8)
+                    defs.append(
+                        f'<radialGradient id="{gradient_id}" gradientUnits="userSpaceOnUse" '
+                        f'cx="{self._fmt(paint.cx)}" cy="{self._fmt(paint.cy)}" '
+                        f'r="{self._fmt(paint.outer_radius)}">'
+                        f'{self._svg_stop(inner, paint.start)}{self._svg_stop(1, paint.end)}</radialGradient>'
+                    )
+                else:
+                    defs.append(
                     f'<linearGradient id="{gradient_id}" gradientUnits="userSpaceOnUse" '
                     f'x1="{self._fmt(paint.x1)}" y1="{self._fmt(paint.y1)}" '
                     f'x2="{self._fmt(paint.x2)}" y2="{self._fmt(paint.y2)}">'
                     f'{self._svg_stop(0, paint.start)}{self._svg_stop(1, paint.end)}</linearGradient>'
-                )
+                    )
                 attrs.append(f'fill="url(#{gradient_id})"')
                 attrs.append('stroke="none"')
             elif color is not None:
@@ -490,12 +543,14 @@ class NVGCapture:
 
             if element["fill_color"] is not None or element["fill_paint"] is not None:
                 if element["fill_paint"] is not None:
-                    source = _linear_gradient_image(
+                    source = _gradient_image(
                         element["fill_paint"], patch_size, x0, y0, scale, np, Image, ImageDraw
                     )
                 else:
                     rgba = tuple(round(v) for v in self._rgba(element["fill_color"]))
                     source = Image.new("RGBA", patch_size, rgba)
+                source.putalpha(source.getchannel("A").point(
+                    lambda alpha: round(alpha * element.get("global_alpha", 1.0))))
                 _composite_masked(canvas, source, mask, x0, y0, Image, ImageChops)
 
             if element["stroke_color"] is not None and element["stroke_width"] > 0:
@@ -518,6 +573,8 @@ class NVGCapture:
                     stroke_mask = ImageChops.multiply(stroke_mask, clip_mask)
                 stroke_rgba = tuple(round(v) for v in self._rgba(element["stroke_color"]))
                 source = Image.new("RGBA", patch_size, stroke_rgba)
+                source.putalpha(source.getchannel("A").point(
+                    lambda alpha: round(alpha * element.get("global_alpha", 1.0))))
                 _composite_masked(canvas, source, stroke_mask, x0, y0, Image, ImageChops)
 
         if scale != 1:
@@ -576,7 +633,27 @@ def _flatten_path(commands: Iterable[tuple[str, tuple[float, ...]]], curve_steps
     return result
 
 
-def _linear_gradient_image(gradient, size, x0, y0, scale, np, Image, ImageDraw):
+def _gradient_image(gradient, size, x0, y0, scale, np, Image, ImageDraw):
+    if isinstance(gradient, RadialGradient):
+        width, height = size
+        cx, cy = gradient.cx * scale - x0, gradient.cy * scale - y0
+        inner, outer = gradient.inner_radius * scale, gradient.outer_radius * scale
+        start, end = NVGCapture._rgba(gradient.start), NVGCapture._rgba(gradient.end)
+        span = max(outer - inner, 1e-9)
+        if np is not None:
+            yy, xx = np.ogrid[:height, :width]
+            t = np.clip((np.sqrt(((xx-cx)/gradient.axis_x)**2
+                                + ((yy-cy)/gradient.axis_y)**2) - inner) / span, 0, 1)
+            arr = np.empty((height, width, 4), dtype=np.uint8)
+            for channel in range(4):
+                arr[:, :, channel] = np.rint(start[channel] + t * (end[channel]-start[channel])).astype(np.uint8)
+            return Image.fromarray(arr, "RGBA")
+        image = Image.new("RGBA", size)
+        image.putdata([tuple(round(a + max(0, min(1,
+            (math.hypot((x-cx)/gradient.axis_x, (y-cy)/gradient.axis_y)-inner)/span))
+            * (b-a)) for a, b in zip(start, end))
+            for y in range(height) for x in range(width)])
+        return image
     width, height = size
     x1, y1 = gradient.x1 * scale - x0, gradient.y1 * scale - y0
     x2, y2 = gradient.x2 * scale - x0, gradient.y2 * scale - y0

@@ -1,12 +1,15 @@
 -- 玩家运行时基础状态；序列化由上层持久化模块负责。
 local GameConfig = require "config.gameplay"
 local Inventory = require "Gameplay.Inventory"
+local Progress = require "Gameplay.Circle1B2Progress"
 
 ---@class PlayerState
 ---@field stamina number
 ---@field maxStamina number
 ---@field money number
 ---@field day integer
+---@field runNumber integer
+---@field runStatus "not_started"|"active"|"awaiting_ending"
 ---@field boatSpeedLevel integer
 ---@field inventory Inventory
 ---@field recognizedLocations table<string, boolean>
@@ -47,6 +50,7 @@ function PlayerState:init()
         or initial.money % 1 ~= 0
         or not IsFiniteNumber(initial.day)
         or initial.day < 1
+        or initial.day > GameConfig.run.days
         or initial.day % 1 ~= 0
     then
         return false, "invalid initial player configuration"
@@ -61,13 +65,15 @@ function PlayerState:init()
     self.maxStamina = initial.maxStamina
     self.money = initial.money
     self.day = initial.day
+    self.runNumber = 1
+    self.runStatus = "active"
     self.boatSpeedLevel = 1
     self.inventory = inventory
     self.recognizedLocations = {}
     self.treasures = {}
     self.story = {}
     self.elder = {}
-    return true
+    return Progress.Initialize(self)
 end
 
 ---@param cost number

@@ -1,0 +1,253 @@
+{
+  "checks": [
+    {
+      "module": "tests.SeaFusionRenderTests",
+      "report": {
+        "status": "PASS",
+        "metrics": {
+          "originalFixedObjectCount": 3,
+          "landscape": {
+            "height": 1080,
+            "pixelsPerWorldUnit": 24,
+            "shipScreenX": 960,
+            "viewWidth": 80,
+            "width": 1920,
+            "shipScreenY": 648,
+            "hiddenWorldFishCalls": 0,
+            "viewHeight": 45
+          },
+          "portrait": {
+            "height": 1150,
+            "revealedWorldFishCalls": 2,
+            "shipScreenX": 600,
+            "viewWidth": 46.95652173913044,
+            "width": 1200,
+            "shipScreenY": 690,
+            "pixelsPerWorldUnit": 25.555555555555557,
+            "viewHeight": 45
+          },
+          "previewFixtures": {
+            "tuna": "(8,-14)",
+            "island": "(-14,-12)",
+            "sardine": "(-8,-8)"
+          },
+          "originalConfiguredBirds": 2
+        },
+        "tests": [
+          "draw_is_pure_for_runtime_state",
+          "original_sun_and_birds_reused",
+          "existing_world_shape_apis_reused",
+          "ordinary_fish_hidden_by_default",
+          "show_underwater_draws_both_fixture_fish",
+          "resize_keeps_camera_height_at_45_world_units",
+          "sea_scissor_tracks_wave_horizon_in_both_aspects",
+          "presentation_fixture_does_not_change_config_world",
+          "night_tint_precedes_boat_and_preserves_paused_gameplay_clock",
+          "daytime_removes_night_tint_and_nvg_state_stack_is_balanced"
+        ]
+      },
+      "nvgCalls": {
+        "nvgBeginPath": 175,
+        "nvgBezierTo": 24,
+        "nvgCircle": 2,
+        "nvgClosePath": 44,
+        "nvgEllipse": 60,
+        "nvgFill": 113,
+        "nvgFillColor": 109,
+        "nvgFillPaint": 4,
+        "nvgLineTo": 293,
+        "nvgLinearGradient": 4,
+        "nvgMoveTo": 103,
+        "nvgQuadTo": 87,
+        "nvgRect": 1,
+        "nvgRestore": 13,
+        "nvgRotate": 1,
+        "nvgRoundedRect": 11,
+        "nvgSave": 13,
+        "nvgScale": 12,
+        "nvgScissor": 1,
+        "nvgStroke": 62,
+        "nvgStrokeColor": 62,
+        "nvgStrokeWidth": 62,
+        "nvgTranslate": 12
+      },
+      "nvgCallTotal": 1268,
+      "capturedElements": 175,
+      "passed": true,
+      "testFailures": []
+    },
+    {
+      "module": "tests.Circle1A2FishingTests",
+      "report": {
+        "results": [
+          {
+            "passed": true,
+            "name": "fishing_phase_geometry_and_readonly_snapshot"
+          },
+          {
+            "passed": true,
+            "name": "optional_sixth_argument_keeps_fifth_clock_and_absent_view"
+          },
+          {
+            "passed": true,
+            "name": "offscreen_fish_culling_keeps_partial_horizon_and_edge_shapes"
+          },
+          {
+            "passed": true,
+            "name": "pointer_consumption_preserves_navigation_and_guards"
+          },
+          {
+            "passed": true,
+            "name": "bootstrap_optional_callback_is_forwarded_without_mutation"
+          }
+        ]
+      },
+      "nvgCalls": {
+        "nvgBeginPath": 279,
+        "nvgBezierTo": 40,
+        "nvgCircle": 4,
+        "nvgClosePath": 64,
+        "nvgEllipse": 86,
+        "nvgFill": 173,
+        "nvgFillColor": 165,
+        "nvgFillPaint": 8,
+        "nvgLineTo": 572,
+        "nvgLinearGradient": 8,
+        "nvgMoveTo": 168,
+        "nvgQuadTo": 130,
+        "nvgRect": 3,
+        "nvgRestore": 25,
+        "nvgRotate": 4,
+        "nvgRoundedRect": 22,
+        "nvgSave": 25,
+        "nvgScale": 20,
+        "nvgScissor": 3,
+        "nvgStroke": 106,
+        "nvgStrokeColor": 106,
+        "nvgStrokeWidth": 106,
+        "nvgTranslate": 22
+      },
+      "nvgCallTotal": 2139,
+      "capturedElements": 279,
+      "passed": true,
+      "testFailures": []
+    },
+    {
+      "module": "tests.Circle1A2BarrelRenderTests",
+      "report": {
+        "status": "PASS",
+        "metrics": {
+          "offscreenCulling": "partial visible / full margin culled",
+          "outlineDistance": 80,
+          "contentId": "driftwood_barrel",
+          "recognitionDistance": 20
+        },
+        "tests": [
+          {
+            "name": "barrel_outline_and_recognition_boundaries_are_inclusive",
+            "passed": true
+          },
+          {
+            "name": "barrel_screen_culling_keeps_partial_edges_and_skips_fully_offscreen",
+            "passed": true
+          },
+          {
+            "name": "only_the_exact_barrel_gets_recognition_and_other_floats_keep_their_shape",
+            "passed": true
+          }
+        ]
+      },
+      "nvgCalls": {
+        "nvgBeginPath": 140,
+        "nvgBezierTo": 20,
+        "nvgCircle": 8,
+        "nvgClosePath": 30,
+        "nvgEllipse": 40,
+        "nvgFill": 83,
+        "nvgFillColor": 79,
+        "nvgFillPaint": 4,
+        "nvgLineTo": 286,
+        "nvgLinearGradient": 4,
+        "nvgMoveTo": 84,
+        "nvgQuadTo": 63,
+        "nvgRect": 1,
+        "nvgRestore": 10,
+        "nvgRotate": 1,
+        "nvgRoundedRect": 11,
+        "nvgSave": 10,
+        "nvgScale": 9,
+        "nvgScissor": 1,
+        "nvgStroke": 57,
+        "nvgStrokeColor": 57,
+        "nvgStrokeWidth": 57,
+        "nvgTranslate": 9
+      },
+      "nvgCallTotal": 1064,
+      "capturedElements": 140,
+      "passed": true
+    },
+    {
+      "module": "tests.Circle1A3RecognitionTests",
+      "report": {
+        "metrics": {
+          "restore": "real Persistence.Restore (offline)",
+          "recognitionMeters": 20,
+          "recognitionOwner": "real Gameplay.PlayerState",
+          "evidenceKind": "NanoVG recorder / render fixtures, not native gameplay",
+          "outlineMeters": 80
+        },
+        "results": [
+          {
+            "name": "first_approach_then_depart_and_return_reads_existing_player_progress",
+            "passed": true
+          },
+          {
+            "name": "restore_and_new_game_are_read_live_without_ocean_progress_copy",
+            "passed": true
+          },
+          {
+            "name": "missing_false_nil_and_nonboolean_queries_preserve_unknown_behavior",
+            "passed": true
+          },
+          {
+            "name": "recognized_offscreen_and_content_decoys_do_not_bypass_existing_filters",
+            "passed": true
+          },
+          {
+            "name": "repeated_draw_is_readonly_for_world_ship_signals_and_player",
+            "passed": true
+          }
+        ]
+      },
+      "nvgCalls": {
+        "nvgBeginPath": 136,
+        "nvgBezierTo": 20,
+        "nvgCircle": 4,
+        "nvgClosePath": 30,
+        "nvgEllipse": 40,
+        "nvgFill": 81,
+        "nvgFillColor": 77,
+        "nvgFillPaint": 4,
+        "nvgLineTo": 286,
+        "nvgLinearGradient": 4,
+        "nvgMoveTo": 84,
+        "nvgQuadTo": 63,
+        "nvgRect": 1,
+        "nvgRestore": 10,
+        "nvgRotate": 1,
+        "nvgRoundedRect": 11,
+        "nvgSave": 10,
+        "nvgScale": 9,
+        "nvgScissor": 1,
+        "nvgStroke": 55,
+        "nvgStrokeColor": 55,
+        "nvgStrokeWidth": 55,
+        "nvgTranslate": 9
+      },
+      "nvgCallTotal": 1046,
+      "capturedElements": 136,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

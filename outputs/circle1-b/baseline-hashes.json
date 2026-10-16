@@ -1,0 +1,42 @@
+[
+  {
+    "path": "scripts/Gameplay/Actions.lua",
+    "hash": "5260D1089F2F95EBDBD22740A1B0A9737F3CEA8C7CAA231AA9EC5CBCF5F6EC57"
+  },
+  {
+    "path": "scripts/Gameplay/Loop.lua",
+    "hash": "A419624DE95187B736076034BF30D0EE42A7183F993D4273D2E10F778A9D3293"
+  },
+  {
+    "path": "scripts/Gameplay/Inventory.lua",
+    "hash": "48397892D5BAFB7524DFE6D428FBFE8213E608F81880DC16FA33F6681C098C7B"
+  },
+  {
+    "path": "scripts/Gameplay/UpdateSystem.lua",
+    "hash": "79513CEBD48669606A6CA3FC728268BFCCB0570A25D607F2E440DE0CAD14F082"
+  },
+  {
+    "path": "scripts/Gameplay/Bootstrap.lua",
+    "hash": "F66CB19E0CB9CB889579C73C388325F83EDB1A47664B8071B8F765F9B44EA2D6"
+  },
+  {
+    "path": "scripts/config/gameplay.lua",
+    "hash": "3F22E5FB76C68C06E42BEEFCA2B988A8E698EBC4D04CDE0489111DD34512724C"
+  },
+  {
+    "path": "scripts/Integration/Bridge.lua",
+    "hash": "1140DB8AB5E407CF0DA55E3B8CEA2892B6CEF80119146F60D1AA1DA98DABA81B"
+  },
+  {
+    "path": "scripts/Integration/Scene.lua",
+    "hash": "3FCA7F66AAD6CF6439783BEEA2A41F3DAF9C388B0E3876B6057786DAADAF4735"
+  },
+  {
+    "path": "scripts/Game/Game.lua",
+    "hash": "440F54E1A0E7BCD9E207FE971CF3F33B923A739A3BF6C7EFD7AD54D6B4F9BCF1"
+  },
+  {
+    "path": "scripts/Gameplay/HUD.lua",
+    "hash": "CD39CD1FE738D55FDC198DCE8E70BB68494EFF89105E5E7A66AA63D592FC8B5B"
+  }
+]

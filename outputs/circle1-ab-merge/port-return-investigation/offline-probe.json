@@ -1,0 +1,45 @@
+{
+  "sourceOnlyCurrentTree": true,
+  "fixture": "Actual Runtime and normal fish count; manual departure/target, 600 frames at 1/60. CanAccessPort is real Loop method, no fake distance predicate.",
+  "nativeUserSessionReproduced": false,
+  "results": {
+    "floatDestination": {
+      "accepted": false,
+      "distance": 11.441256536534437,
+      "navigationFinished": true,
+      "port": {
+        "x": 0,
+        "y": 0
+      },
+      "radius": 10,
+      "reason": "port_out_of_range",
+      "ship": {
+        "x": 11.437882737800127,
+        "y": -0.277830183971849
+      },
+      "target": {
+        "x": 10,
+        "y": 0
+      }
+    },
+    "portDestination": {
+      "accepted": true,
+      "distance": 1.443191263847983,
+      "navigationFinished": true,
+      "port": {
+        "x": 0,
+        "y": 0
+      },
+      "radius": 10,
+      "reason": "",
+      "ship": {
+        "x": 1.4315030264545876,
+        "y": -0.18330332593407783
+      },
+      "target": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  }
+}

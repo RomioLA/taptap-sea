@@ -69,9 +69,10 @@ function Tests.Run()
     UI.GetScale = function() return 1 end
     UI.FindWidgetAt = function() return UI.hit end
     package.loaded["urhox-libs/UI"] = UI
-    local rendered = {}
-    package.loaded["Ocean.SeaDraw"] = { Scene = function(_, w, h, runtime)
-        rendered.width, rendered.height, rendered.runtime = w, h, runtime
+    local rendered = { calls = {} }
+    package.loaded["Ocean.SeaDraw"] = { Scene = function(_, w, h, runtime, clock)
+        rendered.width, rendered.height, rendered.runtime, rendered.clock = w, h, runtime, clock
+        rendered.calls[#rendered.calls + 1] = { width = w, height = h, runtime = runtime, clock = clock }
     end }
     local callbacks, unsubscribes, removals, deletes = {}, 0, 0, 0
     replace("graphics", { GetWidth = function() return 1920 end, GetHeight = function() return 1080 end,
@@ -101,7 +102,8 @@ function Tests.Run()
     end)
     check("sky clicks do not sail; sea clicks target world meters; UI blocks clicks", function()
         assert(not sea:HandlePointer(960, 100))
-        assert(sea:HandlePointer(1200, 648))
+        local sx, sy = sea.runtime.movement:WorldToScreen({ x = 10, y = 0 })
+        assert(sea:HandlePointer(sx * sea.dpr, sy * sea.dpr))
         assert(math.abs(sea.runtime.movement.target.x - 10) < 0.00001)
         local x = sea.runtime.movement.target.x
         UI.hit = {}
@@ -112,7 +114,7 @@ function Tests.Run()
         assert(#callbacks == 5)
         sea:Update(0.05)
         sea:Render()
-        assert(sea.runtime.time == 0.05 and rendered.runtime == sea.runtime)
+        assert(sea.runtime.time == 0.05 and rendered.runtime == sea.runtime and rendered.clock == nil)
         assert(rendered.width == 960 and rendered.height == 540 and sea.runtime.movement.viewHeight == 45)
     end)
     check("keyboard pause reset and hidden debug visibility keep the HUD synchronized", function()
@@ -127,6 +129,45 @@ function Tests.Run()
         sea:Stop(); sea:Stop()
         assert(unsubscribes == 1 and removals == 1 and deletes == 1 and UI.shutdowns == 1)
         assert(not sea:HandlePointer(1200, 648))
+    end)
+    check("render receives the live external clock without advancing it", function()
+        local GameClock = require("Gameplay.GameClock")
+        local firstClock, nextClock = GameClock.New(), GameClock.New()
+        firstClock:Update(1.25)
+        nextClock:Update(2.5)
+        local firstElapsed, nextElapsed = firstClock.elapsed, nextClock.elapsed
+        local updateCalls = 0
+        local firstUpdate, nextUpdate = firstClock.Update, nextClock.Update
+        firstClock.Update = function(self, dt)
+            updateCalls = updateCalls + 1
+            return firstUpdate(self, dt)
+        end
+        nextClock.Update = function(self, dt)
+            updateCalls = updateCalls + 1
+            return nextUpdate(self, dt)
+        end
+
+        local currentClock, getterCalls = firstClock, 0
+        local clockScene = FusedScene.Start({ initializeRegions = false, ownsUI = false,
+            getClock = function()
+                getterCalls = getterCalls + 1
+                return currentClock
+            end,
+            uiFactory = function()
+                return { refresh = function() end, handleKey = function() return false end }
+            end,
+        })
+        clockScene:Render()
+        assert(rendered.calls[#rendered.calls].clock == firstClock)
+        clockScene:Render()
+        assert(rendered.calls[#rendered.calls].clock == firstClock)
+        currentClock = nextClock
+        clockScene:Render()
+        assert(rendered.calls[#rendered.calls].clock == nextClock)
+
+        assert(getterCalls == 3)
+        assert(updateCalls == 0 and firstClock.elapsed == firstElapsed and nextClock.elapsed == nextElapsed)
+        clockScene:Stop()
     end)
     check("B may supply a UI factory without replacing or initializing its UI", function()
         local roots, initialized = UI.roots, UI.initialized

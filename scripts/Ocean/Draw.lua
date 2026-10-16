@@ -30,6 +30,80 @@ local function Stroke(ctx, color, width)
     nvgStroke(ctx)
 end
 
+local function finiteNumber(value)
+    return type(value) == "number" and value == value and math.abs(value) < math.huge
+end
+
+-- The scene reads the normalized phase from the existing gameplay clock. The
+-- elapsed/duration fallback keeps older callers usable without adding a timer.
+local function clockVisualState(clock)
+    if type(clock) ~= "table" then return nil, nil end
+    local phase = clock.phase
+    if phase ~= "day" and phase ~= "night" then return nil, nil end
+
+    local progress = clock.progress
+    if not finiteNumber(progress) then
+        local duration = clock.duration
+        if not finiteNumber(duration) or duration <= 0 then
+            duration = phase == "day" and clock.daySec or clock.nightSec
+        end
+        if finiteNumber(clock.elapsed) and finiteNumber(duration) and duration > 0 then
+            progress = clock.elapsed / duration
+        else
+            progress = 0
+        end
+    end
+    return phase, math.max(0, math.min(1, progress))
+end
+
+local function mixChannel(from, to, amount)
+    return math.floor(from + (to - from) * amount + 0.5)
+end
+
+local function celestialPosition(w, h, phase, progress, radius, horizonAtX)
+    if not phase or not finiteNumber(progress) then return w * 0.76, h * 0.13 end
+
+    -- The same east-to-west arc serves the sun and moon. It is tied to phase
+    -- progress, so configured phase durations and pause state stay authoritative.
+    local camera = Config.camera or {}
+    local horizonRatio = finiteNumber(camera.horizonY) and camera.horizonY or 0.24
+    horizonRatio = math.max(0.18, math.min(0.38, horizonRatio))
+    local x = w * (0.94 - 0.88 * progress)
+    local horizonY = h * horizonRatio
+    if type(horizonAtX) == "function" then
+        local projectedHorizon = horizonAtX(x)
+        if finiteNumber(projectedHorizon) then horizonY = projectedHorizon end
+    end
+    -- Surface is painted after the sky, so place the whole disc behind the
+    -- horizon at both phase boundaries. Its visible portion then rises and
+    -- sets naturally as the sea layer covers or reveals it.
+    local startY = horizonY + radius
+    local topY = h * math.min(0.12, horizonRatio * 0.5)
+    local y = startY + (topY - startY) * math.sin(math.pi * progress)
+    return x, y
+end
+
+local function drawSun(ctx, x, y, radius, progress)
+    local daylight = math.sin(math.pi * progress)
+    local warmth = 1 - daylight
+    Ellipse(ctx, x, y, radius * 1.7, radius * 1.7,
+        { 255, mixChannel(225, 194, warmth), mixChannel(153, 112, warmth), 24 })
+    Ellipse(ctx, x, y, radius * 1.28, radius * 1.28,
+        { 255, mixChannel(229, 205, warmth), mixChannel(157, 122, warmth), 52 })
+    Ellipse(ctx, x, y, radius, radius,
+        { 255, mixChannel(237, 207, warmth), mixChannel(177, 136, warmth), 255 })
+end
+
+local function drawMoon(ctx, x, y, radius)
+    Ellipse(ctx, x, y, radius * 1.7, radius * 1.7, { 169, 207, 250, 24 })
+    Ellipse(ctx, x, y, radius * 1.28, radius * 1.28, { 185, 218, 252, 48 })
+    Ellipse(ctx, x, y, radius, radius, { 232, 241, 255, 248 })
+    Ellipse(ctx, x - radius * 0.27, y - radius * 0.18,
+        radius * 0.13, radius * 0.13, { 180, 198, 224, 92 })
+    Ellipse(ctx, x + radius * 0.28, y + radius * 0.24,
+        radius * 0.09, radius * 0.09, { 180, 198, 224, 76 })
+end
+
 ---@param ctx NVGContextWrapper
 local function Cloud(ctx, x, y, scale)
     nvgSave(ctx)
@@ -46,18 +120,41 @@ local function Cloud(ctx, x, y, scale)
 end
 
 ---@param ctx NVGContextWrapper
-local function Background(ctx, w, h, time)
+local function Background(ctx, w, h, time, clock, horizonAtX)
+    local phase, progress = clockVisualState(clock)
+    local topR, topG, topB = 216, 239, 229
+    local bottomR, bottomG, bottomB = 46, 138, 150
+    if phase == "day" then
+        -- A restrained warm cast near dawn and dusk, fading toward the brighter
+        -- middle of the day. The night wash is handled by the existing overlay.
+        local daylight = math.sin(math.pi * progress)
+        local twilight = math.max(0, math.min(1, (1 - daylight) * 0.16))
+        topR, topG, topB = mixChannel(topR, 244, twilight), mixChannel(topG, 202, twilight),
+            mixChannel(topB, 171, twilight)
+        bottomR, bottomG, bottomB = mixChannel(bottomR, 95, twilight), mixChannel(bottomG, 127, twilight),
+            mixChannel(bottomB, 133, twilight)
+    end
     nvgBeginPath(ctx)
     nvgRect(ctx, 0, 0, w, h)
     nvgFillPaint(ctx, nvgLinearGradient(ctx, 0, 0, 0, h,
-        nvgRGBA(216, 239, 229, 255), nvgRGBA(46, 138, 150, 255)))
+        nvgRGBA(topR, topG, topB, 255), nvgRGBA(bottomR, bottomG, bottomB, 255)))
     nvgFill(ctx)
 
-    local sunX, sunY = w * 0.76, h * 0.13
     local sunRadius = math.min(w * 0.055, h * 0.065)
-    Ellipse(ctx, sunX, sunY, sunRadius * 1.7, sunRadius * 1.7, { 255, 241, 177, 30 })
-    Ellipse(ctx, sunX, sunY, sunRadius * 1.28, sunRadius * 1.28, { 255, 241, 177, 55 })
-    Ellipse(ctx, sunX, sunY, sunRadius, sunRadius, { 255, 237, 177, 255 })
+    if phase == "day" then
+        local sunX, sunY = celestialPosition(w, h, phase, progress, sunRadius, horizonAtX)
+        drawSun(ctx, sunX, sunY, sunRadius, progress)
+    elseif phase == "night" then
+        local moonRadius = sunRadius * 0.78
+        local moonX, moonY = celestialPosition(w, h, phase, progress, moonRadius, horizonAtX)
+        drawMoon(ctx, moonX, moonY, moonRadius)
+    else
+        -- Preserve the original no-clock backdrop for previews and legacy callers.
+        local sunX, sunY = w * 0.76, h * 0.13
+        Ellipse(ctx, sunX, sunY, sunRadius * 1.7, sunRadius * 1.7, { 255, 241, 177, 30 })
+        Ellipse(ctx, sunX, sunY, sunRadius * 1.28, sunRadius * 1.28, { 255, 241, 177, 55 })
+        Ellipse(ctx, sunX, sunY, sunRadius, sunRadius, { 255, 237, 177, 255 })
+    end
 
     local cloudScale = math.min(w / 560, h / 680)
     Cloud(ctx, w * 0.2 + math.sin(time * 0.12) * 8, h * 0.15, cloudScale)
@@ -381,6 +478,159 @@ function Draw.WorldIsland(ctx, x, y, pixelsPerUnit, entity, time)
     Island(ctx, x, y, radius / 149, time or 0)
 end
 
+local function clamp01(value)
+    return math.max(0, math.min(1, value))
+end
+
+--- Draw a rising fish as a dark, depth-sensitive silhouette and surface ring.
+---@param ctx NVGContextWrapper
+---@param x number Screen-space center in logical pixels.
+---@param y number Screen-space center in logical pixels.
+---@param pixelsPerUnit number Screen pixels per meter.
+---@param entity table Fish entity with species, direction/rotation, and surfaceDepth.
+---@param time number Animation time; this function does not advance it.
+function Draw.WorldRise(ctx, x, y, pixelsPerUnit, entity, time)
+    if not ctx or not entity or type(pixelsPerUnit) ~= "number" or pixelsPerUnit <= 0 then return end
+    local fishConfig = FishData[entity.species]
+    if not fishConfig then return end
+    local surfaceDepth = tonumber(entity.surfaceDepth)
+    if not surfaceDepth then return end
+
+    local depth = clamp01(surfaceDepth)
+    local scale = (fishConfig.renderLength or fishConfig.radius or 1) * pixelsPerUnit / 67
+        * (1 + 0.2 * depth)
+    local heading = entity.rotation or 0
+    local direction = entity.direction
+    if type(direction) == "table"
+        and type(direction.x) == "number"
+        and type(direction.y) == "number"
+        and (math.abs(direction.x) + math.abs(direction.y)) > 0.000001 then
+        heading = math.atan(direction.y, direction.x)
+    end
+
+    -- Keep the local fish silhouette proportions, but omit its eye and belly marks.
+    local alpha = math.floor(255 * depth)
+    local sway = math.sin((time or 0) * 4 + (entity.phase or 0)) * 3
+    nvgSave(ctx)
+    nvgTranslate(ctx, x, y)
+    -- Screen Y is inverted relative to world Y, matching WorldFish's heading convention.
+    nvgRotate(ctx, -heading)
+    nvgScale(ctx, scale, scale)
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, -21, 0)
+    nvgLineTo(ctx, -40, -13 + sway)
+    nvgQuadTo(ctx, -35, 0, -40, 13 + sway)
+    nvgClosePath(ctx)
+    Fill(ctx, { 14, 34, 52, alpha })
+    Ellipse(ctx, 0, 0, 27, 14, { 14, 34, 52, alpha })
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, -5, -10)
+    nvgLineTo(ctx, 3, -21)
+    nvgLineTo(ctx, 11, -10)
+    nvgClosePath(ctx)
+    Fill(ctx, { 14, 34, 52, alpha })
+    nvgRestore(ctx)
+
+    local ringAlpha = math.floor(150 * depth)
+    nvgBeginPath(ctx)
+    nvgEllipse(ctx, x, y, 1.5 * pixelsPerUnit, 1.0 * pixelsPerUnit)
+    Stroke(ctx, { 235, 250, 248, ringAlpha }, 1.6)
+end
+
+--- Draw a short-lived expanding splash and a short wake behind its heading.
+---@param ctx NVGContextWrapper
+---@param x number Screen-space center in logical pixels.
+---@param y number Screen-space center in logical pixels.
+---@param pixelsPerUnit number Screen pixels per meter.
+---@param remaining number Remaining lifetime in seconds.
+---@param lifetime number Total lifetime in seconds.
+---@param heading number Radians in world space, with forward along positive X.
+---@param trailLength number? Requested wake length in meters; capped at 2m.
+function Draw.WorldSplash(ctx, x, y, pixelsPerUnit, remaining, lifetime, heading, trailLength)
+    if not ctx or type(pixelsPerUnit) ~= "number" or pixelsPerUnit <= 0 then return end
+    lifetime = tonumber(lifetime) or 0.6
+    remaining = tonumber(remaining) or 0
+    if lifetime <= 0 or remaining <= 0 then return end
+
+    local lifeRatio = clamp01(remaining / lifetime)
+    local age = 1 - lifeRatio
+    local alpha = math.floor(lifeRatio * 230)
+    local length = math.min(2, math.max(0, tonumber(trailLength) or 2)) * pixelsPerUnit
+    if length > 0 and alpha > 0 then
+        nvgSave(ctx)
+        nvgTranslate(ctx, x, y)
+        -- Screen Y is inverted relative to world Y, as in WorldFish.
+        nvgRotate(ctx, -(tonumber(heading) or 0))
+        nvgBeginPath(ctx)
+        nvgMoveTo(ctx, -length, 0)
+        nvgQuadTo(ctx, -length * 0.55, -pixelsPerUnit * 0.08,
+            -length * 0.15, pixelsPerUnit * 0.02)
+        nvgLineTo(ctx, 0, 0)
+        Stroke(ctx, { 240, 252, 250, math.floor(alpha * 0.72) },
+            math.max(1.25, math.min(4, pixelsPerUnit * 0.08)))
+        nvgRestore(ctx)
+    end
+
+    nvgBeginPath(ctx)
+    nvgEllipse(ctx, x, y, (0.5 + age * 3.2) * pixelsPerUnit,
+        (0.3 + age * 2.0) * pixelsPerUnit)
+    Stroke(ctx, { 240, 252, 250, alpha }, 2.5)
+end
+
+--- Draw a top-down seabird silhouette whose wings fold during its dive.
+---@param ctx NVGContextWrapper
+---@param x number Screen-space center in logical pixels.
+---@param y number Screen-space center in logical pixels.
+---@param pixelsPerUnit number Screen pixels per meter.
+---@param heading number Radians in world space, with forward along positive X.
+---@param diveProgress number? Dive progress from 0 (gliding) to 1 (folded dive).
+function Draw.WorldSeabird(ctx, x, y, pixelsPerUnit, heading, diveProgress)
+    if not ctx or type(pixelsPerUnit) ~= "number" or pixelsPerUnit <= 0 then return end
+
+    local dive = clamp01(tonumber(diveProgress) or 0)
+    local size = pixelsPerUnit * 0.9
+    local wingSpan = 1 - 0.62 * dive
+    local wingSweep = 0.18 * dive
+    local tipX = (-0.55 - wingSweep) * size
+    local tipY = 0.50 * wingSpan * size
+    local innerX = -0.15 * size
+    local innerY = 0.10 * wingSpan * size
+
+    nvgSave(ctx)
+    nvgTranslate(ctx, x, y)
+    -- Screen Y is inverted relative to world Y, matching WorldFish.
+    nvgRotate(ctx, -(tonumber(heading) or 0))
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, 0.10 * size, 0)
+    nvgLineTo(ctx, tipX, -tipY)
+    nvgLineTo(ctx, innerX, -innerY)
+    nvgClosePath(ctx)
+    nvgMoveTo(ctx, 0.10 * size, 0)
+    nvgLineTo(ctx, tipX, tipY)
+    nvgLineTo(ctx, innerX, innerY)
+    nvgClosePath(ctx)
+    nvgFillColor(ctx, nvgRGBA(250, 250, 240, 238))
+    nvgFill(ctx)
+
+    -- The body shortens slightly with the folded wings to make dive progress readable.
+    nvgBeginPath(ctx)
+    nvgEllipse(ctx, 0, 0, 0.48 * size, (0.15 - 0.025 * dive) * size)
+    nvgFillColor(ctx, nvgRGBA(255, 255, 248, 245))
+    nvgFill(ctx)
+    nvgBeginPath(ctx)
+    nvgEllipse(ctx, 0.43 * size, 0, 0.12 * size, 0.10 * size)
+    nvgFillColor(ctx, nvgRGBA(255, 255, 248, 245))
+    nvgFill(ctx)
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, 0.52 * size, -0.045 * size)
+    nvgLineTo(ctx, 0.72 * size, 0)
+    nvgLineTo(ctx, 0.52 * size, 0.045 * size)
+    nvgClosePath(ctx)
+    nvgFillColor(ctx, nvgRGBA(235, 190, 130, 255))
+    nvgFill(ctx)
+    nvgRestore(ctx)
+end
+
 ---@param ctx NVGContextWrapper
 local function Arrow(ctx, x, y, scale, alpha)
     nvgBeginPath(ctx)
@@ -397,17 +647,30 @@ end
 ---@param w number
 ---@param h number
 ---@param time number
-function Draw.SceneBackdrop(ctx, w, h, time)
+function Draw.SceneBackdrop(ctx, w, h, time, skyOnly, clock, horizonAtX)
     if not ctx or w <= 0 or h <= 0 then return end
     time = time or 0
     local scale = math.min(w / 520, h / 800)
-    Background(ctx, w, h, time)
-    Sea(ctx, w, h, time)
+    Background(ctx, w, h, time, clock, horizonAtX)
+    if not skyOnly then Sea(ctx, w, h, time) end
     for _, bird in ipairs(Config.birds) do
         local x = w * bird.x + math.sin(time * 0.4 + bird.phase) * 15 * scale
         local y = h * Config.layers.birds + math.sin(time * 1.2 + bird.phase) * 5 * scale
         Bird(ctx, x, y, scale * bird.scale, time, bird.phase)
     end
+end
+
+--- Remote STEP-5 night tint, drawn below the boat and the separate UI context.
+--- The caller owns clipping/layer order and supplies the existing gameplay clock.
+---@param ctx NVGContextWrapper
+---@param w number
+---@param h number
+---@param clock table?
+function Draw.NightOverlay(ctx, w, h, clock)
+    if not ctx or w <= 0 or h <= 0 or not clock or clock.phase ~= "night" then return end
+    nvgBeginPath(ctx)
+    nvgRect(ctx, 0, 0, w, h)
+    Fill(ctx, Config.visual.nightOverlay)
 end
 
 ---@param ctx NVGContextWrapper

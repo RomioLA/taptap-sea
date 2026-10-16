@@ -11,9 +11,11 @@ EXE = Path.home() / ".taptap-maker/lua-lsp-venv/Lib/site-packages/maker_lua_lsp/
 files = sorted((ROOT / "scripts/Gameplay").glob("*.lua"))
 files += sorted((ROOT / "scripts/config").glob("*.lua"))
 files += sorted((ROOT / "scripts/data").glob("*.lua"))
-resource_dir = ROOT / ".tmp/game-loop-lsp-resources"
-resource_dir.mkdir(parents=True, exist_ok=True)
-proc = subprocess.Popen([str(EXE), "--log-level", "error", "--resources-path", str(resource_dir)],
+files += sorted((ROOT / "scripts/Integration").glob("*.lua"))
+files += [ROOT / "scripts/Game/Game.lua"]
+# Keep the installed server's embedded Lua standard library. An empty override
+# directory makes require/type/math disappear on the receiving computer.
+proc = subprocess.Popen([str(EXE), "--log-level", "error"],
                         cwd=ROOT / "scripts", stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
 messages = queue.Queue()
 
@@ -80,6 +82,26 @@ try:
             data = msg["params"]
             if data["uri"] in expected:
                 diagnostics[data["uri"]] = data["diagnostics"]
+    # Reanalyze import users after all modules have opened. The initial scan can
+    # otherwise retain unresolved dependency warnings from startup ordering.
+    for path in files:
+        send({"method": "textDocument/didChange", "params": {
+            "textDocument": {"uri": path.as_uri(), "version": 2},
+            "contentChanges": [{"text": path.read_text(encoding="utf-8-sig")}]}})
+    deadline = time.monotonic() + 8
+    while time.monotonic() < deadline:
+        try:
+            msg = messages.get(timeout=1)
+        except queue.Empty:
+            continue
+        if msg.get("method") == "workspace/configuration":
+            send({"id": msg["id"], "result": [config for _ in msg["params"]["items"]]})
+        elif "id" in msg and "method" in msg:
+            send({"id": msg["id"], "result": None})
+        elif msg.get("method") == "textDocument/publishDiagnostics":
+            data = msg["params"]
+            if data["uri"] in expected:
+                diagnostics[data["uri"]] = data["diagnostics"]
     missing = expected - diagnostics.keys()
     errors = []
     warnings = []
@@ -93,8 +115,8 @@ try:
                 warnings.append(record)
     output = {"filesExpected": len(expected), "filesDiagnosed": len(diagnostics),
               "missing": sorted(missing), "errors": errors, "warnings": warnings}
-    destination = ROOT / ".tmp/game-loop-lsp-result.json"
-    destination.parent.mkdir(exist_ok=True)
+    destination = ROOT / "outputs/circle1-b/lsp-result.json"
+    destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps({"filesExpected":len(expected),"filesDiagnosed":len(diagnostics),
                       "missing":sorted(missing),"errorCount":len(errors),"warningCount":len(warnings),

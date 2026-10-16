@@ -3,6 +3,7 @@ local Config = require("config.gameplay")
 local PlayerState = require("Gameplay.PlayerState")
 local Inventory = require("Gameplay.Inventory")
 local Items = require("data.items")
+local Progress = require("Gameplay.Circle1B2Progress")
 local Persistence = {}
 
 local function finite(value)
@@ -35,9 +36,17 @@ local function validMap(value, flagsOnly)
     return true
 end
 
+---@param player PlayerState
+---@return table
 function Persistence.Snapshot(player)
+    local progressValid, progressError = Progress.Validate(player)
+    assert(progressValid, progressError or "invalid_progress_state")
+    assert(integer(player.runNumber, 1), "invalid_run_number")
+    assert(player.runStatus == "active"
+        or (player.runStatus == "awaiting_ending" and player.day == Config.run.days), "invalid_run_status")
     return {
         schemaVersion = Config.persistence.schemaVersion,
+        runNumber = player.runNumber, runStatus = player.runStatus,
         day = player.day, maxStamina = player.maxStamina,
         stamina = player.stamina, money = player.money,
         boatSpeedLevel = player.boatSpeedLevel,
@@ -49,8 +58,11 @@ function Persistence.Snapshot(player)
     }
 end
 
+---@param data table
+---@return PlayerState?, string?
 local function restoreValidated(data)
-    if type(data) ~= "table" or data.schemaVersion ~= Config.persistence.schemaVersion then
+    if type(data) ~= "table" or (data.schemaVersion ~= 1
+        and data.schemaVersion ~= Config.persistence.schemaVersion) then
         return nil, "unsupported_save_schema"
     end
     if not integer(data.inventoryLevel, 1)
@@ -68,7 +80,8 @@ local function restoreValidated(data)
         or boatSpeedLevel > #Config.upgrades.boatSpeed.metersPerSec then
         return nil, "invalid_boat_speed_level"
     end
-    if not integer(data.day, 1) or not finite(data.maxStamina) or data.maxStamina <= 0
+    if not integer(data.day, 1) or data.day > Config.run.days
+        or not finite(data.maxStamina) or data.maxStamina <= 0
         or not finite(data.stamina) or data.stamina < 0 or data.stamina > data.maxStamina
         or not integer(data.money, 0)
         or type(data.inventory) ~= "table" then return nil, "invalid_save_state" end
@@ -81,21 +94,49 @@ local function restoreValidated(data)
     for index = 1, count do
         if not data.inventory[index] then return nil, "invalid_inventory" end
     end
-    if not validMap(data.recognizedLocations, true) or not validMap(data.treasures, false)
-        or not validMap(data.story, false) or not validMap(data.elder, false) then
+    -- 老快照可能尚未包含这些进度容器；缺失时按空容器迁移。
+    local treasures = data.treasures
+    local story = data.story
+    local elder = data.elder
+    if treasures == nil then treasures = {} end
+    if story == nil then story = {} end
+    if elder == nil then elder = {} end
+    if not validMap(data.recognizedLocations, true) or not validMap(treasures, false)
+        or not validMap(story, false) or not validMap(elder, false) then
         return nil, "invalid_progress_state"
+    end
+    local originalProgressValid, originalProgressError = Progress.Validate(data)
+    if not originalProgressValid then
+        return nil, originalProgressError or "invalid_progress_state"
     end
     local player = assert(PlayerState.New())
     player.day, player.maxStamina = data.day, data.maxStamina
+    if data.schemaVersion == 1 then
+        -- Older saves had one implicit run and no terminal-day state.
+        player.runNumber, player.runStatus = 1, "active"
+    else
+        if not integer(data.runNumber, 1)
+            or (data.runStatus ~= "active" and data.runStatus ~= "awaiting_ending")
+            or (data.runStatus == "awaiting_ending" and data.day ~= Config.run.days) then
+            return nil, "invalid_run_state"
+        end
+        player.runNumber, player.runStatus = data.runNumber, data.runStatus
+    end
     player.stamina, player.money = data.stamina, data.money
     player.boatSpeedLevel = boatSpeedLevel
     player.inventory = assert(Inventory.New(data.inventoryLevel, copy(data.inventory)))
-    player.recognizedLocations, player.treasures = copy(data.recognizedLocations), copy(data.treasures)
-    player.story, player.elder = copy(data.story), copy(data.elder)
+    player.recognizedLocations, player.treasures = copy(data.recognizedLocations), copy(treasures)
+    player.story, player.elder = copy(story), copy(elder)
+    local initialized, initializeError = Progress.Initialize(player)
+    if not initialized then return nil, initializeError or "invalid_progress_state" end
+    local progressValid, progressError = Progress.Validate(player)
+    if not progressValid then return nil, progressError or "invalid_progress_state" end
     return player
 end
 
 -- 校验/构造在保护边界内完成；只返回完整玩家状态，不向调用方泄漏异常。
+---@param data table
+---@return PlayerState?, string?
 function Persistence.Restore(data)
     local ok, player, err = pcall(restoreValidated, data)
     if not ok then return nil, "invalid_save_state:" .. tostring(player) end
@@ -104,31 +145,81 @@ end
 
 -- 注入 cloud 可做纯 Lua 测试；不回退到 WASM 刷新即丢失的本地文件。
 function Persistence.Cloud(cloud)
-    local backend = cloud or clientCloud
-    local function invoke(action, done)
-        local completed = false
-        local function finish(ok, value)
-            if completed then return end
-            completed = true
-            done(ok, value)
+    local backend = cloud
+    if backend == nil then backend = clientCloud end
+    local key = Config.persistence.key
+
+    local function safeString(value)
+        local ok, result = pcall(tostring, value)
+        return ok and result or "<unprintable>"
+    end
+
+    local function reportError(reason)
+        if type(print) == "function" then
+            pcall(print, "[Persistence.Cloud] " .. safeString(reason))
         end
-        if not backend then finish(false, "cloud_unavailable"); return end
+    end
+
+    local function invoke(action, done, expectsValuesTable)
+        if type(done) ~= "function" then return false, "callback_required" end
+        local completed = false
+        local completionOk = false
+        local function finish(ok, value)
+            if completed then return false end
+            completed = true
+            completionOk = ok
+            local callbackOk, callbackError = pcall(done, ok, value)
+            if not callbackOk then reportError("completion callback failed: " .. safeString(callbackError)) end
+            return true
+        end
+        if backend == nil or backend == false then
+            finish(false, "cloud_unavailable")
+            return false, "cloud_unavailable"
+        end
         local callbacks = {
-            ok = function(values)
-                finish(true, values and values[Config.persistence.key])
+            -- clientCloud:Get(key, events) calls ok(values, iscores). Values
+            -- written by Set are in the first result table under the key.
+            ok = function(values, _iscores)
+                if expectsValuesTable and type(values) ~= "table" then
+                    finish(false, "cloud_invalid_response")
+                    return
+                end
+                local saved = expectsValuesTable and values[key] or nil
+                finish(true, saved)
             end,
-            error = function(code, reason) finish(false, tostring(code) .. ":" .. tostring(reason)) end,
+            error = function(code, reason)
+                finish(false, safeString(code) .. ":" .. safeString(reason))
+            end,
             timeout = function() finish(false, "cloud_timeout") end,
         }
-        local ok, err = pcall(action, callbacks)
-        if not ok then finish(false, tostring(err)) end
+        local callOk, result = pcall(action, callbacks)
+        if not callOk then
+            local reason = safeString(result)
+            local firstCompletion = finish(false, reason)
+            if not firstCompletion then
+                reportError("cloud request raised after callback: " .. reason)
+                return completionOk, reason
+            end
+            return false, reason
+        end
+        if result == false then
+            local reason = "cloud_request_rejected"
+            local firstCompletion = finish(false, reason)
+            if not firstCompletion then return completionOk, reason end
+            return false, reason
+        end
+        return true
     end
     return {
         Save = function(_, snapshot, done)
-            invoke(function(callbacks) backend:Set(Config.persistence.key, copy(snapshot), callbacks) end, done)
+            return invoke(function(callbacks)
+                return backend:Set(key, copy(snapshot), callbacks)
+            end, done, false)
         end,
         Load = function(_, done)
-            invoke(function(callbacks) backend:Get(Config.persistence.key, callbacks) end, done)
+            return invoke(function(callbacks)
+                return backend:Get(key, callbacks)
+            end, done, true)
         end,
     }
 end

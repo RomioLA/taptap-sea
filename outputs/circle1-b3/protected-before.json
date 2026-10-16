@@ -1,0 +1,1142 @@
+[
+  {
+    "path": "scripts\\Ocean\\Bootstrap.lua",
+    "sha256": "3B8A0402E3A2E77F5846830E0573DDE0118121858BF850645B2C976894B79D54"
+  },
+  {
+    "path": "scripts\\Ocean\\Config.lua",
+    "sha256": "06EFCD4F858673547DC402974582C57FD0C414D88A84ED9075EC71144A2AC135"
+  },
+  {
+    "path": "scripts\\Ocean\\Config.lua.meta",
+    "sha256": "C49CA4FE2C65DBA3F2183C56F5E65660A4DED77C6519ED6DD5F6EC6E43527571"
+  },
+  {
+    "path": "scripts\\Ocean\\Draw.lua",
+    "sha256": "8E2A8871ADE22C2F35B196B81D5FAB1FD1DF15D17C3404F7769E22304B7ADC10"
+  },
+  {
+    "path": "scripts\\Ocean\\Draw.lua.meta",
+    "sha256": "80CE5F411043878B96E95C2482847B45C30B4C17C1BF7EE8987A3D985DF14109"
+  },
+  {
+    "path": "scripts\\Ocean\\Fish.lua",
+    "sha256": "A4967AF9C27372A617FC5C591EE2D63823278C21D086EA670E25E8E109B9324A"
+  },
+  {
+    "path": "scripts\\Ocean\\FishData.lua",
+    "sha256": "F8D494AA7CC8F5AF357E8A8AFE894BE6F824EE2AE42802C762AD8ED9725BD299"
+  },
+  {
+    "path": "scripts\\Ocean\\FusedScene.lua",
+    "sha256": "8BFB660DB1D2B5DD2E0B7A9EABE4E0F9B539B741FAC9026AC7A55C9C8F81D6BF"
+  },
+  {
+    "path": "scripts\\Ocean\\HUD.lua",
+    "sha256": "F9E0EBEB6704BEF7F03891B062967A06F32FB78E7628E2E35F80936EA6AD040A"
+  },
+  {
+    "path": "scripts\\Ocean\\HUD.lua.meta",
+    "sha256": "D20136F9A16280B69F7D6010417E169D4D84A05B695B29A188001CE920173006"
+  },
+  {
+    "path": "scripts\\Ocean\\Math.lua",
+    "sha256": "9CB75E3C99F667E1529944DB1F777A99CD3A9EAB3E45EBED631776B0A22E1A5D"
+  },
+  {
+    "path": "scripts\\Ocean\\Movement.lua",
+    "sha256": "04F424D10C1DBA1987FBEED0F0BEDC63265D7EC94649D4C29559ED3C0121E8DF"
+  },
+  {
+    "path": "scripts\\Ocean\\SceneState.lua",
+    "sha256": "F78AAB095BD890F968564C05426CAB843A5344AAD519EDBF724BBF49B5C3C5BE"
+  },
+  {
+    "path": "scripts\\Ocean\\SeaDebug.lua",
+    "sha256": "9645D0673D933BDB9E3B50AC0DD0D3BE436FED113875BBEF23BA9C20FB4A0C31"
+  },
+  {
+    "path": "scripts\\Ocean\\SeaDraw.lua",
+    "sha256": "489541F4F18CED5533211BBE9706A7C35E95FE59F33660ACAB0A0FD7B90D2F03"
+  },
+  {
+    "path": "scripts\\Ocean\\SeaRuntime.lua",
+    "sha256": "F3884BCEDE776CF57C821D4A240A2A15249471CC035609C39D75660B1EF51ADE"
+  },
+  {
+    "path": "scripts\\Ocean\\SpawnStrategy.lua",
+    "sha256": "DBB5B67E46B21B00F6D9A86F5DE806BCB70D233678F59A7F1D730E3F484A5B9F"
+  },
+  {
+    "path": "scripts\\Ocean\\State.lua",
+    "sha256": "CB95DF6447BD3BA046A1D4F1B25D84EC6014756422B9BC7ABC46DC0A8AD1DB52"
+  },
+  {
+    "path": "scripts\\Ocean\\State.lua.meta",
+    "sha256": "A165279F14B4A9108A5A462BE800D0C0352AAB73C28F1EF3AD61913DE61D53F3"
+  },
+  {
+    "path": "scripts\\Ocean\\SurfaceSignals.lua",
+    "sha256": "F341AA49BC8A35B2218319A07C0D6F0C7C3A5BB124BA75F9F17D27FE61F214B0"
+  },
+  {
+    "path": "scripts\\Ocean\\World.lua",
+    "sha256": "1C178B6654AB712669DA5E7F57CA91269AC527F0AC4BA9CAE6D9C5652C9F4791"
+  },
+  {
+    "path": "scripts\\Systems\\EntityStateSystem.lua",
+    "sha256": "AF2A94DECE7B1831EEF7E8C4719FA67443A48A1EA6C8FEA24D54CA7E7BFAB99A"
+  },
+  {
+    "path": "scripts\\Systems\\EntityStateSystem.lua.meta",
+    "sha256": "AB356DAFCAFB374C30304BBF21E95DC594E7C36D5D03096B5FF222C5D9A5048B"
+  },
+  {
+    "path": "scripts\\GeneratedData\\Fish.lua",
+    "sha256": "65E35588F19AC41D1B6594294FE47EB5802258753DD309510B9B66C73D9FE9FB"
+  },
+  {
+    "path": "scripts\\GeneratedData\\Items.lua",
+    "sha256": "33FAEF6384FF84BC973F2D0BA964F7B1A9572F886A39755DCDD53BEF010433EC"
+  },
+  {
+    "path": "data\\fish.lua",
+    "sha256": "F6563E4CFC32C55ADBD471118C43658E1C59D27FFFC8D752DFFC4C688BDD7A21"
+  },
+  {
+    "path": "data\\items.lua",
+    "sha256": "1A369DA6CFE8ED9A0E1F1DF975FE49896C08981DFC40F4CD86A2A254A6FEDD45"
+  },
+  {
+    "path": "outputs\\circle1-b\\交付说明.md",
+    "sha256": "7ADCCEA8672422D2A62D3B886E6D71BA4906E518BFBECA212448090A73782083"
+  },
+  {
+    "path": "outputs\\circle1-b\\baseline-hashes.json",
+    "sha256": "09A9827CC339E2EE3003289635CCB22E36937738D152C899AFCD1E8CF4542CE7"
+  },
+  {
+    "path": "outputs\\circle1-b\\delivery-hashes.json",
+    "sha256": "76BC5071D4E4125AFFA657CC0F90B3BE45500BF1727E8BA40DEEF66591C44A62"
+  },
+  {
+    "path": "outputs\\circle1-b\\dependency-evidence.json",
+    "sha256": "A8A64175AD772D9A19A88A567334C4A1B53E77031B4AB1F9645B41C001FE3BC3"
+  },
+  {
+    "path": "outputs\\circle1-b\\flow-first-run.txt",
+    "sha256": "7C5FC07A1A3E99C2BC7668E77B50D3D411F850FCC3C7E965B4F6F6A00AEED2D4"
+  },
+  {
+    "path": "outputs\\circle1-b\\lsp-console.txt",
+    "sha256": "A883AB13A7F202A5776DECBBDF13DD127383F1D1DE05F5ADAA6DC8D0F6801325"
+  },
+  {
+    "path": "outputs\\circle1-b\\lsp-result.json",
+    "sha256": "436E61F7038499E3A69DF30B19226BA912FB9C6CAFFBD78826E8DB0E6F94C591"
+  },
+  {
+    "path": "outputs\\circle1-b\\preview-status.json",
+    "sha256": "08DA9963039870629430E9061EBDB3698A57BD7BDE4C921A3789B6374C15745B"
+  },
+  {
+    "path": "outputs\\circle1-b\\regression-console.txt",
+    "sha256": "A8A2D351363F160ADD6380A80FC439870EA373FBFA37BC08AEDE74F8E0FF8F67"
+  },
+  {
+    "path": "outputs\\circle1-b\\regression-result.json",
+    "sha256": "6D003DACBA3039E439535817CCC02023C9F85E8D3CEF43F387B866A00A3ED28C"
+  },
+  {
+    "path": "outputs\\circle1-b\\ShopStockSpec_待授权补丁.patch",
+    "sha256": "07FDF63D1E4CF35719BE9322AB0FC39234806496890756DE4EAEBB6416C3C87E"
+  },
+  {
+    "path": "outputs\\circle1-b2\\交付说明.md",
+    "sha256": "3B811D6EDEA64BF2885AB686BEC2198B04D81029C59291BE7F8F3592EF28D457"
+  },
+  {
+    "path": "outputs\\circle1-b2\\delivery-hashes.json",
+    "sha256": "1595A7E42893D1CC653CEFB17C1BBEC5AF69EFF667CFFA7CF264FF35D499661B"
+  },
+  {
+    "path": "outputs\\circle1-b2\\diff-check.txt",
+    "sha256": "54C1A7D814A794939B030DFA925A85F6BD61430C2822C2681A36EB5313D4B2D6"
+  },
+  {
+    "path": "outputs\\circle1-b2\\lsp-console.txt",
+    "sha256": "D15316E35FC43E46ED4C0CB921D26ACFAA34E0F15B06C904BD720F0BBBB7D0D0"
+  },
+  {
+    "path": "outputs\\circle1-b2\\lsp-result.json",
+    "sha256": "8145FBA89DAE4DA2E4E55C27735BB4A11EA9591CB1BB236797C4C048E11601A8"
+  },
+  {
+    "path": "outputs\\circle1-b2\\preview-status.json",
+    "sha256": "08DA9963039870629430E9061EBDB3698A57BD7BDE4C921A3789B6374C15745B"
+  },
+  {
+    "path": "outputs\\circle1-b2\\protected-baseline.json",
+    "sha256": "76F38FC21552E130AD1246B449E6ED075A997E0B72A93B78056587B799605D8A"
+  },
+  {
+    "path": "outputs\\circle1-b2\\protected-result.json",
+    "sha256": "3D34BEE0EF76DEE97F71479F4091D79B34EE52252FD7C254F755328F0AE04B26"
+  },
+  {
+    "path": "outputs\\circle1-b2\\regression-console.txt",
+    "sha256": "3F8443A18336F531617A5A58F3B3DF15D15B0FCE39494C21D539109F5F68A70F"
+  },
+  {
+    "path": "outputs\\circle1-b2\\regression-result.json",
+    "sha256": "664779D2BFBCAD471FD7D5F825876F3D6A9ED3420D34AAA28BDB5DA7921979BE"
+  },
+  {
+    "path": ".project\\i18n.json",
+    "sha256": "3D9864EAC1D408E5D5B42F01EACF6156F03A0932B83A016CD4391CA21220CF05"
+  },
+  {
+    "path": ".project\\i18n.json.meta",
+    "sha256": "F590847C743B5445227F1F178B876DED1E10F789DB51BF624B821FAD8BB42AE3"
+  },
+  {
+    "path": ".project\\project.json",
+    "sha256": "FB71FC676EC750345B35FB1195227F6A18F62C98026D746DA93515E9D9B59F2E"
+  },
+  {
+    "path": ".project\\project.json.meta",
+    "sha256": "E8BDA02DFAC758E02170C1B6AE3958F2FCA3D6316F4D1808265477AC81968C25"
+  },
+  {
+    "path": ".project\\resources.json",
+    "sha256": "F76B42FD8C1618C527D0B62C56E137D57C0D06B7120834CDCC8A9F8ECF1EEFD8"
+  },
+  {
+    "path": ".project\\resources.json.meta",
+    "sha256": "E2B6446D1D2AC4BF41D4DBF95A0A220E4A100ADA05E65F8B2F70FFE926E11B07"
+  },
+  {
+    "path": ".project\\settings.json",
+    "sha256": "C55454AD9EECC7C18A33EB2FF24E384D8CF1D4CF22F5B6345491C079B56A3EB0"
+  },
+  {
+    "path": ".project\\settings.json.meta",
+    "sha256": "8F192E6DC721111982102064C4DDE9A71F03F2D10B885785CC0292FD2C2B963F"
+  },
+  {
+    "path": "engine-docs\\index.md",
+    "sha256": "E3BF9B0640DE49D50A6E1F5E24FAE8243FAF0CB22AC900F4B22ECD63929BCC2A"
+  },
+  {
+    "path": "engine-docs\\lua-scripting-guide.md",
+    "sha256": "CF77D219D33B2C85E1F7F79E477BBC6B1FFC8DAED0812226E6BA7162FA805C03"
+  },
+  {
+    "path": "engine-docs\\api\\audio.md",
+    "sha256": "8B5727E0BE308868BE1DF1FECD88FDD9AF4A8C557C3E186B91297AF7148C284C"
+  },
+  {
+    "path": "engine-docs\\api\\core.md",
+    "sha256": "7F406A050883144F683E1F6D14E70230D86352D7D06F44184704B6A57ED2A7ED"
+  },
+  {
+    "path": "engine-docs\\api\\enums.md",
+    "sha256": "FA4469B2A573956E25A590742F5E9A145E6ED0FFD8B4EEBC193AECD21217C6C0"
+  },
+  {
+    "path": "engine-docs\\api\\globals.md",
+    "sha256": "1E8A3B8F5560D3CC04DDD64BAC7B256C8872FF36E41740CE18BBC30F228C5AD2"
+  },
+  {
+    "path": "engine-docs\\api\\graphics.md",
+    "sha256": "678C8A7144EE3B9BA51F466E0B0B40BE64E891C77DA2C4D74F923A80F4327333"
+  },
+  {
+    "path": "engine-docs\\api\\index.md",
+    "sha256": "33782B889336973B021F0EF3DD9369E3FAC31269DEAAF15477D8E76409F2FF28"
+  },
+  {
+    "path": "engine-docs\\api\\input.md",
+    "sha256": "768DBB7AD2ADD422F4CED5B39C926BA1BD9F967288A6F7287B667EE2931A89E7"
+  },
+  {
+    "path": "engine-docs\\api\\math.md",
+    "sha256": "B376888A32D59297AC7A3F402F95C12A12CF6AD0E351807472ED31B5A018DF65"
+  },
+  {
+    "path": "engine-docs\\api\\network.md",
+    "sha256": "00BD28E0E172EED0FD26E06422B40A428021F23493B65A2DBC16A5C20904C50D"
+  },
+  {
+    "path": "engine-docs\\api\\physics-2d.md",
+    "sha256": "3AE4AFEBC0A7F54629A3CA2F2C9CBA635CC7C7D947F3DC016BB7B1C375A4C9D4"
+  },
+  {
+    "path": "engine-docs\\api\\physics.md",
+    "sha256": "7C227A7ACAE4282D08ECAF9F0C6F7ED43C9926D79336AD20663D63FC6CA86187"
+  },
+  {
+    "path": "engine-docs\\gotchas\\camera.md",
+    "sha256": "86489260F3451B60B3E6EE7DA597CCA2D532D99D78FA39CD31CBBB606DC5E8EA"
+  },
+  {
+    "path": "engine-docs\\gotchas\\index.md",
+    "sha256": "4D94290BBBE38A6F25A7AFEA9E974914E85B75C1989DB06CF9548E2A9DE37390"
+  },
+  {
+    "path": "engine-docs\\gotchas\\physics.md",
+    "sha256": "9185639CBCA7FB498E26FDA7729222CA4964E5A51A83C288DC4C80FF2820D4FE"
+  },
+  {
+    "path": "engine-docs\\recipes\\built-in-models.md",
+    "sha256": "C4BBCFC663CB7EE0A67E1B4A1BCD2229644AF8273AC1B4F0CB97E8C779BF4B38"
+  },
+  {
+    "path": "engine-docs\\recipes\\camera.md",
+    "sha256": "3236A07BF697FA7B688B86ADC9CC02D430BE9A54EB72375C4EA6BF98FF7A6603"
+  },
+  {
+    "path": "engine-docs\\recipes\\client-cloud-score.md",
+    "sha256": "B4DA51277D09A7BFCCB88714CB0CFCCA85F0FAFDA2739F44B6F14B518D92B7B4"
+  },
+  {
+    "path": "engine-docs\\recipes\\custom-lobby.md",
+    "sha256": "4A0F27235CB016BF4471B42E9123763A03471B5696B9E5849F1194C14C145914"
+  },
+  {
+    "path": "engine-docs\\recipes\\download-while-playing.md",
+    "sha256": "A1EA9893173435515199869015D15EC14C8A7A159AF959A7C9B522F672FB07A4"
+  },
+  {
+    "path": "engine-docs\\recipes\\file-storage.md",
+    "sha256": "6A386D15073E8910533ED121DB588ECCB5CF867CE852738C6E0D67246E263C32"
+  },
+  {
+    "path": "engine-docs\\recipes\\http.md",
+    "sha256": "60FEEA9D7D15140C838C7AEDD1F636B1D9B8BA2E1C74177E70B3CC13E689CE41"
+  },
+  {
+    "path": "engine-docs\\recipes\\i18n-resource.md",
+    "sha256": "BAA01492BE02B07D663B39D5EE7DF2082DFEA35AC4802501E821988CCC557502"
+  },
+  {
+    "path": "engine-docs\\recipes\\i18n-translation.md",
+    "sha256": "0B5A18318AD1BFEE8A006B5040458BBC897B478F642C7330664014205F4B32E1"
+  },
+  {
+    "path": "engine-docs\\recipes\\input-controls.md",
+    "sha256": "954CF73E3C7DC8D3813F660A233CEBBE687410D4A0DA0D4DF39F9B6A82FD99A8"
+  },
+  {
+    "path": "engine-docs\\recipes\\json.md",
+    "sha256": "F3202631097A8B2E31A4105AF8E9956C3698A76F208580D5AAA7302FA2E0EFEC"
+  },
+  {
+    "path": "engine-docs\\recipes\\materials.md",
+    "sha256": "04AF7AA325E1E8FB644B985C96C3703642E31D5EF458087B66E52268CE4E5D9B"
+  },
+  {
+    "path": "engine-docs\\recipes\\nanovg_bloom_glow_guide.md",
+    "sha256": "E26F88331E7752FA74DFE811FA8858AD10756B64336D04911CC12377702AC037"
+  },
+  {
+    "path": "engine-docs\\recipes\\network-game-guide.md",
+    "sha256": "6251FFD3CA601F7159544F49B681B0C6A560BF01211C99B4AD6DEC789D53E0FA"
+  },
+  {
+    "path": "engine-docs\\recipes\\preload-and-build-refs.md",
+    "sha256": "F22C3F54238A7A8B01AD7B8D10CE231D25C23C6A6797BC2A1933B1025E5FAC6C"
+  },
+  {
+    "path": "engine-docs\\recipes\\procedural-geometry.md",
+    "sha256": "0C1F906162F031D18A2209A23C8CC6D04845C450EA07CCA88A4F7269E797619B"
+  },
+  {
+    "path": "engine-docs\\recipes\\procedural-lua-headless.md",
+    "sha256": "C04646E423E90BBD67A549A8AC46CB71401AF55177ABEB17E98210D43BE007D9"
+  },
+  {
+    "path": "engine-docs\\recipes\\rendering.md",
+    "sha256": "56E5F6BA572532B50352887267558CDD0E0CA0D3B61127B8BFBD4951DFD4B106"
+  },
+  {
+    "path": "engine-docs\\recipes\\scene-to-nanovg.md",
+    "sha256": "F956E161EA52B88879B0E1FFCC207CC4C4B6F5012952DC2325E800076CB95F45"
+  },
+  {
+    "path": "engine-docs\\recipes\\sdk.md",
+    "sha256": "B8F9F31F696C4405F01150840416BE612DEC30020C1B704C75A4E527F5E81F01"
+  },
+  {
+    "path": "engine-docs\\recipes\\server-cloud-score.md",
+    "sha256": "68406BCD4DC6499CC75FCCEA86E2F0D3091434B544014CD6045514D1992E2F54"
+  },
+  {
+    "path": "engine-docs\\recipes\\server-time.md",
+    "sha256": "E12002D82B11CF8A6D56BFBFC8D5B23ADC097468A298DD1EF7930FFD2976F440"
+  },
+  {
+    "path": "engine-docs\\recipes\\state-machine.md",
+    "sha256": "12DC6C838A25834BE8DAA246F8A667030B12D20697AA5130DD2B2C28AA75678E"
+  },
+  {
+    "path": "engine-docs\\recipes\\surface-shader.md",
+    "sha256": "13CDB5E81BAA7AF6B8845B76F8CED10CB91ADA2EA389E176DE61E809C054A15F"
+  },
+  {
+    "path": "engine-docs\\recipes\\tile-terrain-guide.md",
+    "sha256": "C11D6DB56F276DBDBB7DD662F675F0E6CB1E25A58F361195640C986327E1F109"
+  },
+  {
+    "path": "engine-docs\\recipes\\ui.md",
+    "sha256": "5895EE166241E8CB7E37EF1378D416861A8FFE33F1BAC1DDB897FDBF91003758"
+  },
+  {
+    "path": "engine-docs\\recipes\\video-screen-3d.md",
+    "sha256": "641121A6DD0C3F04313BBF16E84E4D752573B070694997359D85CF084535AB1A"
+  },
+  {
+    "path": "engine-docs\\recipes\\video.md",
+    "sha256": "D6AF21F73AC903530E087864AD69FDB40FEF140C6666FCAE37F7DF9F53AFBE02"
+  },
+  {
+    "path": "engine-docs\\recipes\\voxel-networking.md",
+    "sha256": "0D103993FC7D112608EDE5855CBCAFF1C926497F694E9BC6D955838BC9B0B92C"
+  },
+  {
+    "path": "engine-docs\\recipes\\voxel-physics.md",
+    "sha256": "F7138E9847838D80DF4B650235BC7531285F2C46A0CEDED63320EECE3BEBC9AA"
+  },
+  {
+    "path": "engine-docs\\recipes\\templates\\fsm\\MovementBlendSpace1D_Template.blendspace",
+    "sha256": "837EF9EB08E81A817178FCC4B21B70A54244482A09CBA893443616BA3807052E"
+  },
+  {
+    "path": "engine-docs\\recipes\\templates\\fsm\\MovementBlendSpace2D_Polar_Template.blendspace",
+    "sha256": "A03E597346CD4BE1D9DF8A40F4883AC76461747A14F3D83BEAD7B42E9022CE84"
+  },
+  {
+    "path": "engine-docs\\recipes\\templates\\fsm\\StandardLocomotion_Template.fsm",
+    "sha256": "AB38CD33DD4ED2077DD564F0A80C0033837EC4F161C1104F979227E164F30E43"
+  },
+  {
+    "path": "urhox-libs\\LICENSE",
+    "sha256": "B6377281E9D542FC77294918968EF690F91C7E394BA1AC7AEF6B69F49F2A66D5"
+  },
+  {
+    "path": "urhox-libs\\README.md",
+    "sha256": "9331664E5C7D6CD287BA3E4F05A670FD0B238B8B9F09E60B85C9116FFAB5A502"
+  },
+  {
+    "path": "urhox-libs\\Animation\\FSM\\DefaultMale_Armed.fsm",
+    "sha256": "54C1A9C63FAE274F1A51D76C39F51636D8E7C1A88A1B9AD269CBD1266F583650"
+  },
+  {
+    "path": "urhox-libs\\Animation\\FSM\\DefaultMale_Normal.fsm",
+    "sha256": "69BDD7D12A6E2A5AEDA0EC9C8A6F76C05D16C3C8F8DD029ADF97FB15B48B1F9F"
+  },
+  {
+    "path": "urhox-libs\\Animation\\FSM\\DefaultMaleCharacterFSM.fsm",
+    "sha256": "5F6DC95B1E8F0D4E9321DE8E0C4CC71D4291405A20B80EEBECC5D64723B2A2A3"
+  },
+  {
+    "path": "urhox-libs\\Animation\\FSM\\DefaultMaleMovementBlendSpace.blendspace",
+    "sha256": "D1E26698AEF5096973A2AFE94AA1268BD633941BD38CDEC739675D45664239B7"
+  },
+  {
+    "path": "urhox-libs\\Animation\\FSM\\DefaultMaleRifleMovementBlendSpace.blendspace",
+    "sha256": "A4B9B557366C0A7108A4CC7521F608B0944E5F367D4B78E36D4055989B670279"
+  },
+  {
+    "path": "urhox-libs\\Camera\\ThirdPersonCamera.lua",
+    "sha256": "C2EB1D8860509476C66266AAB2ABEA21B19AB74C731EECEBB923EE4E0F50E988"
+  },
+  {
+    "path": "urhox-libs\\Effects\\Effects.lua",
+    "sha256": "B611CBD1F808F7CA03541D3FC3E2863FFB34199B0F7502DEB735658448797CDD"
+  },
+  {
+    "path": "urhox-libs\\Effects\\README.md",
+    "sha256": "7C4AF3BE50DDDD518EF11F5D3B7D5BB8FA2D860FC317DC80D5BCB9CDFDCC4DDA"
+  },
+  {
+    "path": "urhox-libs\\Engine\\i18n.lua",
+    "sha256": "89B03AE4D9CA6BB48672E5ED7E4C493A69C5B2004AF68581991A49A813B2F40A"
+  },
+  {
+    "path": "urhox-libs\\Engine\\init.lua",
+    "sha256": "DD9ED09BA4B1E16199FCEF9F34DECA15DD6564BA7E342A076D062F75C0C9041E"
+  },
+  {
+    "path": "urhox-libs\\Engine\\InputExtensions.lua",
+    "sha256": "A4D926FB3A266F192677F375D745CD34A461D71A5D63CE764B3D504B12C89167"
+  },
+  {
+    "path": "urhox-libs\\Engine\\ResourceCacheExtensions.lua",
+    "sha256": "F580B29CB4084EF8081EAAFE63EE4A11D1743ED43A1FC3D968E97EA8B57B5A71"
+  },
+  {
+    "path": "urhox-libs\\FakeAd\\init.lua",
+    "sha256": "BB244E1ED36CC860C576929CBBDAA6BC8812C3E0810197B15E7FC9AFD6EFD4BC"
+  },
+  {
+    "path": "urhox-libs\\GameLobby\\Runtime\\lobby_client.d.lua",
+    "sha256": "612893F2913892852E5FF15CC80B3F5C4AFC0E4FA416CD8ACDBFCD1C4C909EBF"
+  },
+  {
+    "path": "urhox-libs\\GameLobby\\Runtime\\LobbySystemDialogs.lua",
+    "sha256": "7F278818AAC949119A195FA2B96933E159EB5787B0583520A2479D35CB5F5E4A"
+  },
+  {
+    "path": "urhox-libs\\GameLobby\\Runtime\\Example\\Example_Custom_LobbyRuntime.lua",
+    "sha256": "5F7AF8A6B94C03D8CD2EC27D2B539AB18C3D81105769738B453581125FB9E9D4"
+  },
+  {
+    "path": "urhox-libs\\GameLobby\\Runtime\\Example\\Example_lobby_ui.lua",
+    "sha256": "9E56B6F76D9B32D52DB88EAE518A8D62D06F1C603E1BEDADDFE23B4129BFBCF2"
+  },
+  {
+    "path": "urhox-libs\\GameLobby\\Runtime\\Template\\DefaultLobbyUI.lua",
+    "sha256": "AA8765D5AFCBCD638A4D56525B19987F9C74D36760B6331EB0E4AC5139802814"
+  },
+  {
+    "path": "urhox-libs\\GameLobby\\Runtime\\Template\\lobby_ui.d.lua",
+    "sha256": "FFA8587F5FAB3BA2A8D6507673161E0F4084B4323FF36F6E664DABF0D6192EE6"
+  },
+  {
+    "path": "urhox-libs\\GameLobby\\Runtime\\Template\\LobbyRuntimeUI.lua",
+    "sha256": "ECE7535595319639D4551F9971962953093F73922319C9C8847F257544F177BB"
+  },
+  {
+    "path": "urhox-libs\\GameLobby\\Runtime\\Template\\LobbyUI.lua",
+    "sha256": "E9186C8FF90A8CA9214BDCBF1B654041B778865D9AF7D2D930F353E8B69A4495"
+  },
+  {
+    "path": "urhox-libs\\GameLobby\\Runtime\\Template\\LobbyUISandbox.lua",
+    "sha256": "2A333C5B802FC71BB1D906F58B8E689252C2A0B710C6F4F9080AE86A69730E4F"
+  },
+  {
+    "path": "urhox-libs\\GameLobby\\Runtime\\WidgetExtension\\GradientCard.lua",
+    "sha256": "145781DF8C64CDAEBA464667D741AA619A5C47B5327B9D191E4793C280AC6FA0"
+  },
+  {
+    "path": "urhox-libs\\GameLobby\\Runtime\\WidgetExtension\\Icon.lua",
+    "sha256": "565CC6F70B513C860832BB5843B56FDFE11DDDC8CB12BA6B04E073ED4A287907"
+  },
+  {
+    "path": "urhox-libs\\GameLobby\\Runtime\\WidgetExtension\\init.lua",
+    "sha256": "5B15378BD85A6EA10E6CFD8763F58AC958EF143850E668C6947807276D3E5C37"
+  },
+  {
+    "path": "urhox-libs\\GameLobby\\Runtime\\WidgetExtension\\PulsingCircles.lua",
+    "sha256": "F6E5E5007925894D3DD4F7A72974B5753F059639BA608728C61A6DC19CA27C18"
+  },
+  {
+    "path": "urhox-libs\\Geometry\\Primitives.lua",
+    "sha256": "BB72BC7250921F8B85891682975350BA10ECFEAC9557776BC7F62859EF62B57E"
+  },
+  {
+    "path": "urhox-libs\\Geometry\\README.md",
+    "sha256": "EEE5F16EC315B1BDE3605B399986BF4B3E0C2BB5080C00CED1FBD881442518E8"
+  },
+  {
+    "path": "urhox-libs\\Input\\README.md",
+    "sha256": "BF2EC8BE3E105F33ECDB9576762B24FBA1E52CA965F0DC6F1CB33C6801F7AEDE"
+  },
+  {
+    "path": "urhox-libs\\Input\\TouchCamera.lua",
+    "sha256": "882754C65314A8A119944ED48503EC5E52C14696DA830901058D523D319A4A05"
+  },
+  {
+    "path": "urhox-libs\\Input\\TouchController.lua",
+    "sha256": "25E27A9D0EF952FFBFDEB7D9A5D57332C78F6F45D2AF33F8DCB9D65E8BC48A8B"
+  },
+  {
+    "path": "urhox-libs\\Network\\CommandLineParser.lua",
+    "sha256": "41202809A6D0D52B9DB0F400C631465CFCE0ED32AF7AF3D128A7926A3390A768"
+  },
+  {
+    "path": "urhox-libs\\Network\\NetworkUtils.lua",
+    "sha256": "DC45586C8BBCD8850E0AF7771BFB88C63E725D3D8DD41C2B49659F0143604790"
+  },
+  {
+    "path": "urhox-libs\\Network\\PlayerSessions.lua",
+    "sha256": "4399A1A2A316E8020C9F84D57AF3F39E1386554005F5B0BE06B7487D3E661771"
+  },
+  {
+    "path": "urhox-libs\\Network\\README.md",
+    "sha256": "448033660F0B2355F21B07C2E16C51B6F82B935C3F73847F057AB9194227512B"
+  },
+  {
+    "path": "urhox-libs\\Paint\\init.lua",
+    "sha256": "79738F486760BC438EF5AA4F7F1EBEFBBD8ED582A5A71968C4EB5BDD7E32C435"
+  },
+  {
+    "path": "urhox-libs\\Paint\\ModelPainter.lua",
+    "sha256": "9FAFFD94FDAC9C0BEF7702D7A597C243E5516A3088998008A9B11622CD20C050"
+  },
+  {
+    "path": "urhox-libs\\Paint\\ScreenColorPicker.lua",
+    "sha256": "BC3B8B6916A6216D7EA9BBEE5CC1FC14AB932EA2A7E855C60CA19AE38737EE96"
+  },
+  {
+    "path": "urhox-libs\\Physics2D\\PathFollower.lua",
+    "sha256": "80761C4FAE4B065A3286F3C2C002001A5D277112BB86A654D370D765091C4910"
+  },
+  {
+    "path": "urhox-libs\\Physics2D\\README.md",
+    "sha256": "55C0C8AE2719CFAC3A4F9C9C6949DDEB9DDDFE1131476EB75200B825A42042AE"
+  },
+  {
+    "path": "urhox-libs\\Physics2D\\TilemapPhysics.lua",
+    "sha256": "0FA19A3AB2A8D62531CBDB798376DD9E4C486440FDEFCFBCD336FE9A83F580DD"
+  },
+  {
+    "path": "urhox-libs\\Platform\\InputManager.lua",
+    "sha256": "B5337625ED83A5410BB7387C5C13DF4E7DDC39EEC680FF2346DAFB55955474BC"
+  },
+  {
+    "path": "urhox-libs\\Platform\\MouseLockManager.lua",
+    "sha256": "A239842A7D1AFB63F8017D35233619679F60899B99BB8EB9A16C1DC3ECE44879"
+  },
+  {
+    "path": "urhox-libs\\Platform\\PlatformUtils.lua",
+    "sha256": "AC5C16880804ABAC14327A179B96DB6505A5CAF78F07130829203D97A2F339C9"
+  },
+  {
+    "path": "urhox-libs\\Platform\\README.md",
+    "sha256": "97B0CBFB76E003FEB35238AD6A9564FFB5884C4438AD1CB90F1BD9F5E5E3E4C9"
+  },
+  {
+    "path": "urhox-libs\\Plugin\\_Common.lua",
+    "sha256": "C4F0B01A07B875FD8852607A9F4F79907790675D9EEBA56F232A7430F7B627CC"
+  },
+  {
+    "path": "urhox-libs\\Plugin\\Agent.lua",
+    "sha256": "1059DD91C52D6C3AC4A6621B3D2F359C938D7754E3C9D35E413CB60743C7365A"
+  },
+  {
+    "path": "urhox-libs\\Plugin\\Environment.lua",
+    "sha256": "A84EA45DED4710CF8FB6C12E070D48DB4A783E77F5199E5E6C1911956B6882CB"
+  },
+  {
+    "path": "urhox-libs\\Plugin\\Files.lua",
+    "sha256": "DCFA6FFAC5188A900E0A328726F1ED09259D8D93BFF51B36E0CCE169347541EC"
+  },
+  {
+    "path": "urhox-libs\\Profiler\\init.lua",
+    "sha256": "BD87CE7DE4CCDA871A4DB072BABACD0BD7BA20A27C95849D88CD656E2D50DFC3"
+  },
+  {
+    "path": "urhox-libs\\Profiler\\Profiler.lua",
+    "sha256": "B47A2AC4F7AA0497F0DFD78197B3538CFA99E3B734630BD0B12C7C26F768958B"
+  },
+  {
+    "path": "urhox-libs\\Profiler\\ProfilerUI.lua",
+    "sha256": "8D4399912D6F357209BB30CFDD6ADF6B7AC6B4ACFCA477702982A63C4AF35A2F"
+  },
+  {
+    "path": "urhox-libs\\Profiler\\README.md",
+    "sha256": "B011963E638F18F1C25A52E40B7559A27106CD3F73965D8EA4BF269D38588806"
+  },
+  {
+    "path": "urhox-libs\\Rendering\\SkyUtils.lua",
+    "sha256": "E0DFD098A29EBC2AB3D0F7328D4071DFE6CCC8438DAAA6ADF73D5AC2DF82CD60"
+  },
+  {
+    "path": "urhox-libs\\Shop\\init.lua",
+    "sha256": "8F95CB57BE3FA0D202F7225DDD528D7D198FB5ACA68471655FE70D66D70E8FB5"
+  },
+  {
+    "path": "urhox-libs\\Sprite\\AGENTS.md",
+    "sha256": "74508C957988E69A26848A196E63C52490FE689D28682960A699038725637657"
+  },
+  {
+    "path": "urhox-libs\\Sprite\\SpriteAnimator.lua",
+    "sha256": "A63B2854EA0FB976D59978BABFD26923C79303112DF3D98E3D248A4479F15C0E"
+  },
+  {
+    "path": "urhox-libs\\Sprite\\SpriteSheet.lua",
+    "sha256": "C49B537026E63170506033CEC029D45FC720B586B9E8736381F3012D4294D053"
+  },
+  {
+    "path": "urhox-libs\\System\\SystemNotification.lua",
+    "sha256": "668F0B4E80258339EA2608E35197852F24CEF1986F9BCE713DF661AD470E5A5D"
+  },
+  {
+    "path": "urhox-libs\\Testing\\luaunit.lua",
+    "sha256": "EB8F71CCE8A96A704A52A37C5AA58273154C14BFCAD7876197DA651B4A409F20"
+  },
+  {
+    "path": "urhox-libs\\UI\\GameHUD.lua",
+    "sha256": "8ECCB3C0756A8C84341CF38980440A055EC1862913AD7C6ADDD92654ADC759AF"
+  },
+  {
+    "path": "urhox-libs\\UI\\init.lua",
+    "sha256": "41A44475E29A1172BCA0F415F1608AE5E8260E4D7337FA72EA6BDC5CAA13C58C"
+  },
+  {
+    "path": "urhox-libs\\UI\\README.md",
+    "sha256": "A4DECDA68925C063F3FC44EBA6E9B1ED7381470EBFF0FED2354F0210C5803F0F"
+  },
+  {
+    "path": "urhox-libs\\UI\\VirtualControls.lua",
+    "sha256": "FDD700D7C0889330F24A9CF495065136D674586F8EE3C63668D59D775C9F912B"
+  },
+  {
+    "path": "urhox-libs\\UI\\Components\\ChatWindow.lua",
+    "sha256": "4E629AE5258F71E364060C688560282EB1EC20537A7A1C622BEAE76B89F31CD3"
+  },
+  {
+    "path": "urhox-libs\\UI\\Components\\DragDropContext.lua",
+    "sha256": "BC6820D8A4B1A6E6F39AB6E2704EEC2A3F62DA98029C07AE344FC4747BFE8FC0"
+  },
+  {
+    "path": "urhox-libs\\UI\\Components\\InventoryManager.lua",
+    "sha256": "DEAEBD09BA497A3A03A1FD456340C058B5D066B66AA73154CB2171D4EDBBD752"
+  },
+  {
+    "path": "urhox-libs\\UI\\Components\\ItemSlot.lua",
+    "sha256": "5E94F034686D8A849EDD0BD06DD664ACB7DDC91F6BDC614901257A59543995D2"
+  },
+  {
+    "path": "urhox-libs\\UI\\Components\\ItemTooltip.lua",
+    "sha256": "AC7904DA1318CD50F5A2FF7CACFC2C0E988FB625648F67A511B445367E92EF3F"
+  },
+  {
+    "path": "urhox-libs\\UI\\Components\\SkillTree.lua",
+    "sha256": "2D08017FB535569881468EAFD71D13834672E8CABF2DBD3B6B984FCE2AFCED23"
+  },
+  {
+    "path": "urhox-libs\\UI\\Components\\VirtualList.lua",
+    "sha256": "0D64174AF8E4DF408D835A454B80240D1DF5A1D60688826FCAC7007F16B80E5D"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\Gesture.lua",
+    "sha256": "5AC07EAF16C13CCA115FC929105122EBB7B86FF3036A7E1657A5755B2122F006"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\GestureEvent.lua",
+    "sha256": "901EBCE018AB618CB21D87DCA8D6AEE7E80350DAD1009068D54E4148A3FEA7A9"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\ImageCache.lua",
+    "sha256": "3773F2704B7D7B51BB9E6F224E372A0D0DADE625C6339964E30E1332EC8389E8"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\Input.lua",
+    "sha256": "2F83E6DEE292C5D0D0A41D10861CF4D0B8D00A921F2009778471824A2B1027D7"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\InputAdapter.lua",
+    "sha256": "2878BC47003FAAA09A2249CA8520520D33061AC284EA42E20BC82185BD9973F7"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\PointerEvent.lua",
+    "sha256": "753D6557BE63D7C00CC9F5C8B5219A27ACD41EF67021E86918DBE097A44AF2AE"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\Style.lua",
+    "sha256": "7ACE494A67F881D98886E58D1219AEF3A482A7CB22DCD4A13798D9EF6CA086BD"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\Theme.lua",
+    "sha256": "311C3FB128A90A838A7E951BAA3968BF720F030721ADBC3BBEC7BCD9896BC2A4"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\Transition.lua",
+    "sha256": "208FAE3334D2EF24CBBF2B298009512B632DD902C540B79E391A34F50AE826D5"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\UI.lua",
+    "sha256": "71F48AAA663ADBCE0B3B12C7D0753DA4C7642383DCB03EC965BC9C3C829865E5"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\UILoader.lua",
+    "sha256": "9BB93883E134058220702D490C7B07375D5D4F471E58B6DD4A135AD522E11447"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\UISerializer.lua",
+    "sha256": "3F71DC2D3135F38A2E1AD115AF01220CA9E9D87B1E14DCEF861B090FC449C9CD"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\Widget.lua",
+    "sha256": "AA4F6E9B667F0681CCB9C0DF4A7E727C1AC204AFB5F8FB4EC6EEB57F62E4128D"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\UIInspector\\Context.lua",
+    "sha256": "78DA0DEF810767D438D5202B7851CA3B927CFFA63A9E920F04A2FB20AAAA0C72"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\UIInspector\\EditTool.lua",
+    "sha256": "47B15074B0DCE420641F112B3FB23FC812DA8C3494375A9549E6B40AB4FED985"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\UIInspector\\init.lua",
+    "sha256": "A09257402A503FF58A9E67FBE0B1E3097906F2303C34AC7DFE5764457D16B51A"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\UIInspector\\Overlay.lua",
+    "sha256": "EBAB319CB693FA5DD0A674A51854A33EBADFDC6AC9C1DA582B9935EEB7C13A4B"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\UIInspector\\Panel.lua",
+    "sha256": "3C6536A77283C4AB1A70CCEA4F21955A9AB234A0EA07C34169CD51FA15AE530A"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\UIInspector\\QuickTweak.lua",
+    "sha256": "A64EA6F751CCC98AD024ADF40AA9248C9C2E07C63C1420F103E63B807209D455"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\UIInspector\\Report.lua",
+    "sha256": "E6E6F21865446E468A2A9D1F5373C29A4EAFCB7308AB7486E812CFB69A8022C3"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\UIInspector\\Schema.lua",
+    "sha256": "205BC4E328847646B0A078A11C6997B3EEFEB6A382F79A5EFFF0418AA1745FA3"
+  },
+  {
+    "path": "urhox-libs\\UI\\Core\\UIInspector\\Selection.lua",
+    "sha256": "9D426CC4F89EFD4E8DFE3F1F92A7A1F78621A5264C997F116E6688ABECA63E43"
+  },
+  {
+    "path": "urhox-libs\\UI\\Examples\\ColorFormatTest.lua",
+    "sha256": "46392146F775EB44B41263B6B59C3A4F295E6A9399FE4ED622B7FB5A688A963B"
+  },
+  {
+    "path": "urhox-libs\\UI\\Examples\\CSSEnhancementTest.lua",
+    "sha256": "9B4EE491B9F4B9E517C61E7A225B6D0197704DC066EF806035E52965E1BC6A38"
+  },
+  {
+    "path": "urhox-libs\\UI\\Examples\\InspectorTest.lua",
+    "sha256": "E171DE63CB312D663395DE8F7FCD93B26346E800AEC88D6B087DF3D9C485B7D8"
+  },
+  {
+    "path": "urhox-libs\\UI\\Examples\\SimpleGridScrollViewTest.lua",
+    "sha256": "DFBCE44B3D574BC7AB10EACB60354C0FDF2DED65BD5D4961EF23AB6DFFD64026"
+  },
+  {
+    "path": "urhox-libs\\UI\\Examples\\WidgetsGallery.lua",
+    "sha256": "E969ECF47F2F603683EA3DA458E1682446F69BA7D45706D1BD9B3387295423F9"
+  },
+  {
+    "path": "urhox-libs\\UI\\Theme\\DefaultDark.lua",
+    "sha256": "0284EE46756E2B7E9155D50C12FAB52BF6DA49B74AF1080FC29A28716788C794"
+  },
+  {
+    "path": "urhox-libs\\UI\\Theme\\DefaultTaptap.lua",
+    "sha256": "286862645F9D5ED1D0882AAB532C98752CC0730B0512E08EA8FE8CE86755AFA0"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Accordion.lua",
+    "sha256": "B76E98997625DF81F9BBD9605D2BA6E8F2E1E184D2BF8316FDFB22B118835EE5"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Alert.lua",
+    "sha256": "F765EB91DD88A4BF39FDAF8D02BB9D2AA8DC5FDE57A50650CA696F59E429405D"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Avatar.lua",
+    "sha256": "5C8B4549F2E71D83F3D9237619BDBF4825294B2B167AECD55F6C4E49D09A8BA5"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Badge.lua",
+    "sha256": "5AD14A1C5743A64A7DE5A69C38D44CBD4384EF5B8BBC9C28BE94F0236DCE6F8F"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Breadcrumb.lua",
+    "sha256": "A65997F91DDF1A62A45B04564A540FE45318076EBA60EDD44F2282ACC7B12399"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Button.lua",
+    "sha256": "4841A1871DB8EF78C557B2EE65D0C5F3C3FE877BC92F82FEB7842D67C7BAC6EF"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Calendar.lua",
+    "sha256": "F8040644B377D871C2BFEFA4290190BC4646E2751B5DABDFB40606DD0F1A26BB"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Card.lua",
+    "sha256": "E3EC549B58B10315B9D9DD3337DAC54E512B6AAAD06E2759A95F9EDAEC6644EA"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Carousel.lua",
+    "sha256": "4BE5570DE303758B559F17A4E297CF4703FC6874A326C6DF6A1BA50C23330AA6"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Checkbox.lua",
+    "sha256": "926907A27B2AF85040F57D67673B55C816B2C877A04F66CA491031D56F147543"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Chip.lua",
+    "sha256": "18CD5CD933BA7F9CB77AB83F2636AE85BCC434002E5114AC2924CEBEC40DF1A0"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\ColorPicker.lua",
+    "sha256": "F0BB51C44397BAD1A09D8ECE02E7BFAAC1ADCC9760504CB9FC15AADB16608F90"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\DatePicker.lua",
+    "sha256": "CFFF3A75E979C29B7B9A713289CCB831D6166D567492F1A14A8B53801DC8C255"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Divider.lua",
+    "sha256": "9C5F755897E79B712157E3881F0BBEC2A60232B379FEDFCE4BA14AF13B14BB73"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Drawer.lua",
+    "sha256": "111E08A503C7EC64BB09519DEEA2E3ABAC22606D0997ED029768F01173847AC0"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Dropdown.lua",
+    "sha256": "C1C607DA9BD10BC6B2ED3E57F25BB71A94601F194E20BB06B87CADE5C8DC531E"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\EditMenu.lua",
+    "sha256": "5C4C516FE2E19500BC42A310D07F5D7E928D9B0479C79B9BAC8C6DF193E67EB8"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\FileUpload.lua",
+    "sha256": "6CBCB13671E277D70B7242088A89347A63F8A96AA5CBAC43A4A8A415648501D9"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Label.lua",
+    "sha256": "C04904AAE6257963685B94B273F23CE343848D92B85252002C653475ED25CC03"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\List.lua",
+    "sha256": "28262CDA1DD80AD766933CF433832C7E14A55D7DBB17DCE9F285BF2A27C5093E"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Menu.lua",
+    "sha256": "C0EFE11BE927516BC90CA10BF33A0CFBF981891D72FEF88951AC9BCF0CB2B152"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Modal.lua",
+    "sha256": "627D07F4E86092EB7CF774192CA66CFF2C40DF44DA208F86C2546EA38D966A2A"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Pagination.lua",
+    "sha256": "B3E3275D09E62C2CD26B291150ED7A573D2000955C3E9496DE38A5B6F03D1A30"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Panel.lua",
+    "sha256": "0519B7B27605210069735A2A07530B7D74FC02AE6CCA45E888E59AA09B1F4E26"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Popover.lua",
+    "sha256": "1E2DE43BD61A9FA7CF500D285F3B276AF2B373E62E9D859862E2F03E6C5CFD4E"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\ProgressBar.lua",
+    "sha256": "E727D2B25E5E68AC49513DED226C95FCB558515FBE1912CDF2F09AEE02487671"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Rating.lua",
+    "sha256": "6D9ACC9EA984078B5331C561AE15C654C618F3C5FE63F4E6DFF0C94D032B01B8"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\RichText.lua",
+    "sha256": "C50B75CA28890F40B98CFB1519AB380D79F809F611BF135B77520017D19FE714"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\SafeAreaView.lua",
+    "sha256": "22C0F9A9CC706E57C6C5366598C64BB24B42344780A957DAD9C23A7BDF407472"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\ScrollView.lua",
+    "sha256": "0CC6DA4947926CBF8BB642AF4099675EA24FA46461C9A294A46D188A39427202"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\SimpleGrid.lua",
+    "sha256": "76C1D7CC0ADE7C66142DF74741602235EFC90A91529312524111D95148DFC6A5"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Skeleton.lua",
+    "sha256": "77933DBF040DF77ECEC4F1BA76F10B814AB2591E68416312F53E4E2639C99DF5"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Slider.lua",
+    "sha256": "D81BA221E18640B3DC02DC8EEC48051BC2A9F9C247A6BA1F8A4B7B3DCD0490E8"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Spine.lua",
+    "sha256": "90E6CC19AC05CA634352ABD05EAB0F060B574A5FADC25B258E773A9CE407A393"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Sprite.lua",
+    "sha256": "12AD6180B7C7E25CB040E0C38374B5041F35D79410B4C967C26625014A0B9EDA"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Stepper.lua",
+    "sha256": "21531A0E76599576D09BC2C6D121F4237B1ADE1437BF0D0D4974B7C24DF6C1CB"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Table.lua",
+    "sha256": "903005134B624B13DC2792F9712385511B12B1A715730CCD7C22DE312021BA69"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Tabs.lua",
+    "sha256": "B2920342912ACE6BA5242D59CFE149994E907CF4FC8E8A0C818F9A20BC0836EC"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\TextField.lua",
+    "sha256": "DE85BE958D6F1FFC5A4BD5ECB73EBEF89056C50B0D8BD1FB1048DC617C49337D"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Timeline.lua",
+    "sha256": "270C2D78A8B55B93755B82DF835699FF79E75D34017581FC4C6E1758E882169C"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\TimePicker.lua",
+    "sha256": "A999F87936CD9AB5B7AF716AA1295288A155889EEDF4AB4E0AA893FA1B17774E"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Toast.lua",
+    "sha256": "749BC261F6DA7EC1FAC5D02CAAD2A5BA7F293A3AF8F27BBDDC4481EEE796E78F"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Toggle.lua",
+    "sha256": "645907A30DE6B7E9B358709F9888D7142DC5FF5B7B35246FDF93711A3F4AF6FE"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Tooltip.lua",
+    "sha256": "93EF6D997B5A35FE6C10A30E7D92E48327D8FEDE6FD34BAFDB8A1E470DBBDD43"
+  },
+  {
+    "path": "urhox-libs\\UI\\Widgets\\Tree.lua",
+    "sha256": "F43CAAF8E3C04DFFEE68B6801420C83006DF78135FE1B9517DA8E54918779D19"
+  },
+  {
+    "path": "urhox-libs\\Video\\init.lua",
+    "sha256": "E7164262824A568E265E9D5107E275481DBAE54D03ED53EA0DA4039B4554A4E8"
+  },
+  {
+    "path": "urhox-libs\\Video\\VideoPlayer.lua",
+    "sha256": "885FCCA194BFB33E42931A293F3EE5450A3B1786A122B1FC1590A4EB2CBB2543"
+  },
+  {
+    "path": "urhox-libs\\Video\\VideoScreen3D.lua",
+    "sha256": "33139B28803BDC73F6D2009A6D107A115F520FBDA6AEDB0F64541889676DEB43"
+  },
+  {
+    "path": "AGENTS.md",
+    "sha256": "82AD27E94EE30B70FF031A8E2EE173440586CD40AB77A1E70EE1A5B7E47FE3D1"
+  },
+  {
+    "path": "scripts\\Main.lua",
+    "sha256": "7B14E1225833ED502B329A78681C5257FB1DB75DCB72E1CCCB6DA906E322B7C2"
+  },
+  {
+    "path": "scripts\\Game\\World.lua",
+    "sha256": "566ADFE3C4560B6F55D38059C72514B710485A290112E40172FA650B694C6DED"
+  },
+  {
+    "path": "scripts\\Tests\\ABIntegrationTests.lua",
+    "sha256": "B69A55A6AACCE973875CB040FD026EAB964B18EED8E12D8D77285E9438B39975"
+  },
+  {
+    "path": "scripts\\Tests\\ArchitectureIntegrationTests.lua",
+    "sha256": "AECA8B95918F02B42D5016B764252F643080F4C60CBE364B6885FDD75855012E"
+  },
+  {
+    "path": "scripts\\Tests\\check_game_loop_lsp.py",
+    "sha256": "4D83F568D94046C398FF5B9CCF06FBC99307C814260D8F2450E7A366B13C13DA"
+  },
+  {
+    "path": "scripts\\Tests\\Circle1B2BarrelTests.lua",
+    "sha256": "962B33F86E9694EBDDF152C6F9D1DD94F66D8BB3D620CD189FD455B9EEC1A814"
+  },
+  {
+    "path": "scripts\\Tests\\Circle1B2Lsp.py",
+    "sha256": "9A37122BED3D71CCB6D3E28E4587FDDC2BCBAFC1E136787AB0643988572AF03F"
+  },
+  {
+    "path": "scripts\\Tests\\Circle1B2ProgressTests.lua",
+    "sha256": "212F035472EE02ACF2631E408835695CD72B56FD1B52C9FEE8EC199127232F5D"
+  },
+  {
+    "path": "scripts\\Tests\\Circle1B2Run.py",
+    "sha256": "FDC8BB6C931CB2DEAD7FAB9E94E23F23557828ACE0C934A41D4228E1548ED873"
+  },
+  {
+    "path": "scripts\\Tests\\Circle1B2ScopeTests.lua",
+    "sha256": "F658F46E027B26E10E4E01ECFC8D3148C7D7F9BD0B81FB52A448DCB5F5B0C7F4"
+  },
+  {
+    "path": "scripts\\Tests\\Circle1B2ThrowTests.lua",
+    "sha256": "2A3A9A6A260E7A07EB0FB9BA911AB0CB35BF458036592B2680936C56125EE7A4"
+  },
+  {
+    "path": "scripts\\Tests\\Circle1B2UITests.lua",
+    "sha256": "B4F264EB50EA8F3E149F8230542076AE694D4E0E50A1F70CFCFC83261A202A58"
+  },
+  {
+    "path": "scripts\\Tests\\Circle1BFishingFlowTests.lua",
+    "sha256": "9EEE49DE71466B223EC0AA4B6808F082BC76857A09CB4A56DA48E7B351F00A85"
+  },
+  {
+    "path": "scripts\\Tests\\Circle1BPendingCatchTests.lua",
+    "sha256": "139371BE715977964DF734466B8F067D706B2CD8EB418C12B2A3A68692340159"
+  },
+  {
+    "path": "scripts\\Tests\\GameLoopSpec.lua",
+    "sha256": "CF718248FDFC42914D96107DFA68AFA55D909E80FA80F7F1FCBF709B898E6F32"
+  },
+  {
+    "path": "scripts\\Tests\\GameLoopUISpec.lua",
+    "sha256": "60847C8E26570B3D2C752A3E9E4E53DF29F7C7E122A745DF6BA8856CB446F5F7"
+  },
+  {
+    "path": "scripts\\Tests\\NumericEconomySpec.lua",
+    "sha256": "5C1BBC301F0B587F9AA9E3083D95AA022D187C52D4201F7845927B853522F49E"
+  },
+  {
+    "path": "scripts\\Tests\\PersistenceRegressionSpec.lua",
+    "sha256": "3D62FA898ADFE0CBD3F4F9491ADD02C13B3389A207F9069A1971C8DA070106C6"
+  },
+  {
+    "path": "scripts\\Tests\\run_game_loop.py",
+    "sha256": "6F42AF1A7613438883F9098466A98CFA976C1806A550D2F9E7FFC7CC1F25F294"
+  },
+  {
+    "path": "scripts\\Tests\\SeaEngineSmoke.lua",
+    "sha256": "700BDF37E55A805B33EB1950FF73F4110C611637E6DAE42A0F85B74EFDEE6BE7"
+  },
+  {
+    "path": "scripts\\Tests\\SeaFusedSceneTests.lua",
+    "sha256": "8BFF4D6069B16417028880EE0223169006A58FB75F914196904230F35EAD5CEC"
+  },
+  {
+    "path": "scripts\\Tests\\SeaFusionRenderTests.lua",
+    "sha256": "44E322CF5B3E6A52F221A480F7FAF42B38C522F9854F5ACDBEBBEB8EED702580"
+  },
+  {
+    "path": "scripts\\Tests\\SeaNativeVoyage.lua",
+    "sha256": "97927D01A089A7A186631FE09D398E48C6AF598FD9A26852E8FBA7A53485A145"
+  },
+  {
+    "path": "scripts\\Tests\\SeaNativeVoyageEntry.lua",
+    "sha256": "3D189D95774B774B3088268800B99785A6862934D9F988028A78DF3B292D7FAA"
+  },
+  {
+    "path": "scripts\\Tests\\SeaRuntimeTests.lua",
+    "sha256": "2F2E2297B049E9743BB22F465E96C2D7ABFC1AFCCF10D339EF796ACF10CD5983"
+  },
+  {
+    "path": "scripts\\Tests\\SeaStabilityTests.lua",
+    "sha256": "464E66542DD485CA6F4417A2A486CB199DB5BF5DFBADCF39B077198D2C7A9809"
+  },
+  {
+    "path": "scripts\\Tests\\ShopStockSpec.lua",
+    "sha256": "B8CF3CA99E2BF412D4BAC6F6CD613718747E82F2BD011A59910868E0CCF96FCD"
+  },
+  {
+    "path": "scripts\\Tests\\SurfaceRiseTests.lua",
+    "sha256": "092002A2F7AA9BC4937CD2AEE927A6B6A5FD54FDA83A2A784673F334027DC86C"
+  },
+  {
+    "path": "scripts\\Tests\\SurfaceSignalsTests.lua",
+    "sha256": "CABFBEBBE86E450E9B47ACC9BDF3BE9FAC3BFE4657503A77924394387361D450"
+  }
+]

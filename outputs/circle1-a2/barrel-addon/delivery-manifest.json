@@ -1,0 +1,30 @@
+{
+  "scripts/Ocean/Config.lua": {
+    "beforeSha256": "0e260fd182d2d5a13aa5b3de7ebe15346db3863cccfbe40779f283293b5a7e25",
+    "sha256": "ddcb679f469f11dca03fff62b2872278ee186c73b4f96fd93a96a869073df046"
+  },
+  "scripts/Ocean/SeaDraw.lua": {
+    "beforeSha256": "ec13456893379f7aeb238f3a3485e31f52fb4bf1b3b38e05ec17d13fe39b43c4",
+    "sha256": "b4273b63ae9dd519c446cbd64d82b63e66cf85d3ecccec3923b0b5d3168dad54"
+  },
+  "scripts/Ocean/SeaRuntime.lua": {
+    "beforeSha256": "e39f61f2548dea950c1243f222fee8fde4723f00efb6415d01a6ab2cbde5208c",
+    "sha256": "5f979b096727cd9139ad2f6f9f2c83e101756b86f02e480d7df8921dccd58d67"
+  },
+  "scripts/Ocean/World.lua": {
+    "beforeSha256": "ea5c288f96788469fc5d98974a1cce45c9ea0e403aa7ce3589ae5a6cbf30fd8f",
+    "sha256": "7fbd50a4ce1821a2ca7b62276281cc5ab50cb28d5b7e3ded31e494a8ad3ff97f"
+  },
+  "scripts/tests/Circle1A2BarrelRenderTests.lua": {
+    "beforeSha256": null,
+    "sha256": "5de403b5cb33e5b84d17254a3738fce26ed942450111178956562f4afb5eea35"
+  },
+  "scripts/tests/Circle1A2BarrelTests.lua": {
+    "beforeSha256": null,
+    "sha256": "f9111b55da708a9082b7cbcfe51478bb7fc165a3c317443a1c2f5d2454e2f7aa"
+  },
+  "scripts/tests/Circle1A2FishingTests.lua": {
+    "beforeSha256": "784e75b131406ec8c858fe50ddd86bb311977bb8841f8bd3f4313755dcb1e7c4",
+    "sha256": "b9c5121c15e6610284b76cf147f28adce545d9876a45ff3c4075e61a7674562f"
+  }
+}

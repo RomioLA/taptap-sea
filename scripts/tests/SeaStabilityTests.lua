@@ -100,7 +100,8 @@ function Tests.Run()
                                 if entity.species == "sardine" then activeSardines = activeSardines+1 else activeTuna = activeTuna+1 end
                             end
                             local sx, sy = r.movement:WorldToScreen(entity.position)
-                            if sx >= 0 and sx <= 1920 and sy >= 0 and sy <= 1080 then
+                            if sx and sy and sx >= 0 and sx <= 1920
+                                and sy >= r.movement:GetHorizonY() and sy <= 1080 then
                                 if entity.species == "sardine" then viewportSardines = viewportSardines+1 else viewportTuna = viewportTuna+1 end
                             end
                         end

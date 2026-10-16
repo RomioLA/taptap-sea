@@ -1,0 +1,96 @@
+{
+  "createdAtUtc": "2026-10-03T05:30:35.255177+00:00",
+  "status": "project_deliverables_merged_and_independently_verified",
+  "files": [
+    {
+      "file": "outputs/circle1-project-merge/final-summary.json",
+      "sha256": "329a58a2f027ef5fcc903f8c26b026e6c9a15d2e63024af638e73eb56da76b18",
+      "bytes": 1143
+    },
+    {
+      "file": "outputs/circle1-project-merge/finalize_evidence.py",
+      "sha256": "5328948082b369b83ad7cc480aaf3fa4573df57774e4a45d5aa8d1b0535d1e06",
+      "bytes": 3400
+    },
+    {
+      "file": "outputs/circle1-project-merge/independent-verification.json",
+      "sha256": "1f041361e5cd0ad030f064f6608d52fe81e2ff2d5064c80327d4756fff00d8d8",
+      "bytes": 521943
+    },
+    {
+      "file": "outputs/circle1-project-merge/merge-plan.json",
+      "sha256": "0453b5af327ff1b36d23765ff1879472b7d3b8255e95571977636652a206b5d4",
+      "bytes": 100535
+    },
+    {
+      "file": "outputs/circle1-project-merge/merge-progress.json",
+      "sha256": "a574231b30404bb901add9903eb4fde003e00a86863e912b54dc34579c19488f",
+      "bytes": 142262
+    },
+    {
+      "file": "outputs/circle1-project-merge/merge-result.json",
+      "sha256": "ed80ad98fe2b16ddc68cd2dfb2ab6fc8d5510d9997724192a334ade245d60413",
+      "bytes": 142817
+    },
+    {
+      "file": "outputs/circle1-project-merge/merge_project_files.py",
+      "sha256": "843d0a16f891963f1ff3eb319bd8f83bf30e0376ba8e08568ea38aaf19275706",
+      "bytes": 5687
+    },
+    {
+      "file": "outputs/circle1-project-merge/other-files-review.json",
+      "sha256": "4a91b7368df8a07518555f05c85707610d180910f21cc526a015f26c242200d5",
+      "bytes": 1188
+    },
+    {
+      "file": "outputs/circle1-project-merge/planning-review.json",
+      "sha256": "1ef5538bdf3b253b6f6964cf4a96f31d2ee3a665d3e1959c9e76fb1a526effe7",
+      "bytes": 6352
+    },
+    {
+      "file": "outputs/circle1-project-merge/preview-status-after-merge.json",
+      "sha256": "da4d13b70e786c83272b093e0f5c0fe04d7676b8124298178d6c96089061bf0a",
+      "bytes": 3389
+    },
+    {
+      "file": "outputs/circle1-project-merge/target-before.json",
+      "sha256": "eeb884b1e5bce537d96f918023dba31733bf34794e5736dfbd0b55938b02a820",
+      "bytes": 108556
+    },
+    {
+      "file": "outputs/circle1-project-merge/verify_independent_merge.py",
+      "sha256": "54e936238f90fd94816f117cfa5ef48671a6e1553ee46a3372d354b87f63aa90",
+      "bytes": 17062
+    },
+    {
+      "file": "outputs/circle1-project-merge/交付说明.md",
+      "sha256": "001fc828b8816d914b4e7457d69e9226b73e88ff5aa4886661b0f1c47b959a2a",
+      "bytes": 5047
+    },
+    {
+      "file": "outputs/circle1-project-merge/其他文件复查.md",
+      "sha256": "61efa344307dfceda13e3ad1271cac7f9ee433068dd1cc63779703e594578767",
+      "bytes": 1728
+    },
+    {
+      "file": "outputs/circle1-project-merge/独立核验.md",
+      "sha256": "8cefe70355d4ed5996c5db2b543cb18e49bf704a4a446cda9c77a5eff9647b70",
+      "bytes": 2562
+    },
+    {
+      "file": "outputs/circle1-project-merge/策划资料复查.md",
+      "sha256": "392fcce84b52264ad75b842e849a6eb05ac7f1cd43a598d860b4cbc3e52d91ad",
+      "bytes": 6244
+    },
+    {
+      "file": "docs/PROJECT_HANDOFF.md",
+      "sha256": "5f4eaea09c71d13fd66b9352b851144705c2514a2f4c5f69993eea4535f501de",
+      "bytes": 2576
+    }
+  ],
+  "sourceCopyHashes": "merge-result.json",
+  "excludes": [
+    "This manifest itself",
+    "Python bytecode caches"
+  ]
+}

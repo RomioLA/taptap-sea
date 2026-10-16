@@ -1,0 +1,9 @@
+{
+  "configuredMakerErrors": 0,
+  "missingDiagnostics": [],
+  "rawErrorCount": 41,
+  "priorRawErrorCount": 41,
+  "baseline": "outputs/selective-merge-20261003-surface/lsp.json",
+  "newRawErrors": [],
+  "note": "Existing installed Maker compatibility filters unchanged; raw diagnostics preserved in lsp.json."
+}

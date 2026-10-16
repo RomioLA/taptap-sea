@@ -1,0 +1,14 @@
+[SeaV1] bootstrap ready; world height=45; local density=20/4
+[SeaV1] first frame rendered; underwater hidden=true
+[SeaV1] bootstrap stopped
+[海洋框架] 界面就绪：左右移动、暂停、重置；支持键盘和触摸
+[SeaV1] bootstrap ready; world height=45; local density=20/4
+[SeaV1] first frame rendered; underwater hidden=true
+[SeaV1] bootstrap stopped
+[SeaV1] bootstrap ready; world height=45; local density=20/4
+[SeaV1] first frame rendered; underwater hidden=true
+[SeaV1] bootstrap stopped
+[SeaV1] bootstrap ready; world height=45; local density=20/4
+[SeaV1] bootstrap stopped
+{"initialized": true, "missing": [], "configurationRequests": 1, "errorCount": 0, "errors": []}
+{"passed": true, "quick": false, "elapsedSec": 38.35048090000055}

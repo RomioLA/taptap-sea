@@ -1,0 +1,88 @@
+{
+  "timingAndAllocation": {
+    "initCpuSec": {
+      "beforeMedian": 0.006999999999999951,
+      "afterMedian": 0.0070000000000014495,
+      "delta": 1.4988010832439613e-15,
+      "percentChange": 2.1411444046342455e-11
+    },
+    "updateCpuSec": {
+      "beforeMedian": 0.10250000000000001,
+      "afterMedian": 0.09450000000000003,
+      "delta": -0.00799999999999998,
+      "percentChange": -7.804878048780467
+    },
+    "signalGetterCpuSec": {
+      "beforeMedian": 0.03700000000000003,
+      "afterMedian": 0.06299999999999883,
+      "delta": 0.025999999999998802,
+      "percentChange": 70.27027027026696
+    },
+    "signalCheckpointGetterCpuSec": {
+      "beforeMedian": 0.0,
+      "afterMedian": 0.0,
+      "delta": 0.0,
+      "percentChange": null
+    },
+    "memoryDeltaKiB": {
+      "beforeMedian": 416.0986328125,
+      "afterMedian": 470.52734375,
+      "delta": 54.4287109375,
+      "percentChange": 13.080723329852026
+    }
+  },
+  "trajectoryMatchesBySeed": {
+    "271828": true,
+    "314159": true
+  },
+  "behaviorEquivalent": true,
+  "signalSnapshotMatchesBySeed": {
+    "271828": true,
+    "314159": true
+  },
+  "signalRecordCountsBySeed": {
+    "271828": {
+      "before": {
+        "birdsSeenMedian": 50400,
+        "splashesSeenMedian": 0
+      },
+      "after": {
+        "birdsSeenMedian": 50400,
+        "splashesSeenMedian": 0
+      },
+      "unchanged": true
+    },
+    "314159": {
+      "before": {
+        "birdsSeenMedian": 45600,
+        "splashesSeenMedian": 0
+      },
+      "after": {
+        "birdsSeenMedian": 45600,
+        "splashesSeenMedian": 0
+      },
+      "unchanged": true
+    }
+  },
+  "drawCallEvidence": [
+    {
+      "scene": "landscape",
+      "pixelsIdentical": true,
+      "beforeNvgCalls": 1286,
+      "afterNvgCalls": 1198,
+      "nvgCallDelta": -88,
+      "beforeSha256": "ed323de7c6e29bfc4cb2f82dcb7ee13eb7ebb115f6987322510100480bb021e5",
+      "afterSha256": "ed323de7c6e29bfc4cb2f82dcb7ee13eb7ebb115f6987322510100480bb021e5"
+    },
+    {
+      "scene": "portrait",
+      "pixelsIdentical": true,
+      "beforeNvgCalls": 1286,
+      "afterNvgCalls": 1154,
+      "nvgCallDelta": -132,
+      "beforeSha256": "1fb3e756b3b7c75141c073997684ed1e2a7909b3dd710bab8baf23d5fc5381a0",
+      "afterSha256": "1fb3e756b3b7c75141c073997684ed1e2a7909b3dd710bab8baf23d5fc5381a0"
+    }
+  ],
+  "note": "Microbenchmark timings are diagnostic medians; trajectory equivalence is exact for this fixed scene."
+}
