@@ -58,18 +58,113 @@ local function Cloud(ctx, x, y, scale)
 end
 
 ---@param ctx NVGContextWrapper
-local function Background(ctx, w, h, time)
+local function finiteNumber(value)
+    return type(value) == "number" and value == value and math.abs(value) < math.huge
+end
+
+-- Read only the existing Gameplay clock; rendering never advances or caches it.
+local function clockVisualState(clock)
+    if type(clock) ~= "table" then return nil, nil end
+    local phase = clock.phase
+    if phase ~= "day" and phase ~= "night" then return nil, nil end
+
+    local progress = clock.progress
+    if not finiteNumber(progress) then
+        local duration = clock.duration
+        if not finiteNumber(duration) or duration <= 0 then
+            duration = phase == "day" and clock.daySec or clock.nightSec
+        end
+        if finiteNumber(clock.elapsed) and finiteNumber(duration) and duration > 0 then
+            progress = clock.elapsed / duration
+        else
+            progress = 0
+        end
+    end
+    return phase, math.max(0, math.min(1, progress))
+end
+
+local function mixChannel(from, to, amount)
+    return math.floor(from + (to - from) * amount + 0.5)
+end
+
+local function celestialPosition(w, h, phase, progress, radius, horizonAtX)
+    if not phase or not finiteNumber(progress) then return w * 0.76, h * 0.13 end
+
+    -- Sun and moon share the deterministic east-to-west arc from the source branch.
+    local camera = Config.camera or {}
+    local horizonRatio = finiteNumber(camera.horizonY) and camera.horizonY or 0.24
+    horizonRatio = math.max(0.18, math.min(0.38, horizonRatio))
+    local x = w * (0.94 - 0.88 * progress)
+    local horizonY = h * horizonRatio
+    if type(horizonAtX) == "function" then
+        local projectedHorizon = horizonAtX(x)
+        if finiteNumber(projectedHorizon) then horizonY = projectedHorizon end
+    end
+
+    -- Surface art is painted after the sky, so the disc sinks behind the curved
+    -- horizon at phase boundaries and emerges as progress increases.
+    local startY = horizonY + radius
+    local topY = h * math.min(0.12, horizonRatio * 0.5)
+    local y = startY + (topY - startY) * math.sin(math.pi * progress)
+    return x, y
+end
+
+local function drawSun(ctx, x, y, radius, progress)
+    local daylight = math.sin(math.pi * progress)
+    local warmth = 1 - daylight
+    Ellipse(ctx, x, y, radius * 1.7, radius * 1.7,
+        { 255, mixChannel(225, 194, warmth), mixChannel(153, 112, warmth), 24 })
+    Ellipse(ctx, x, y, radius * 1.28, radius * 1.28,
+        { 255, mixChannel(229, 205, warmth), mixChannel(157, 122, warmth), 52 })
+    Ellipse(ctx, x, y, radius, radius,
+        { 255, mixChannel(237, 207, warmth), mixChannel(177, 136, warmth), 255 })
+end
+
+local function drawMoon(ctx, x, y, radius)
+    Ellipse(ctx, x, y, radius * 1.7, radius * 1.7, { 169, 207, 250, 24 })
+    Ellipse(ctx, x, y, radius * 1.28, radius * 1.28, { 185, 218, 252, 48 })
+    Ellipse(ctx, x, y, radius, radius, { 232, 241, 255, 248 })
+    Ellipse(ctx, x - radius * 0.27, y - radius * 0.18,
+        radius * 0.13, radius * 0.13, { 180, 198, 224, 92 })
+    Ellipse(ctx, x + radius * 0.28, y + radius * 0.24,
+        radius * 0.09, radius * 0.09, { 180, 198, 224, 76 })
+end
+
+local function Background(ctx, w, h, time, clock, horizonAtX)
+    local phase, progress = clockVisualState(clock)
+    -- Keep the current Integration palette and apply only the source branch's
+    -- restrained dawn/dusk warmth.
+    local topR, topG, topB = 184, 224, 216
+    local bottomR, bottomG, bottomB = 221, 235, 215
+    if phase == "day" then
+        local daylight = math.sin(math.pi * progress)
+        local twilight = math.max(0, math.min(1, (1 - daylight) * 0.16))
+        topR, topG, topB = mixChannel(topR, 244, twilight), mixChannel(topG, 202, twilight),
+            mixChannel(topB, 171, twilight)
+        bottomR, bottomG, bottomB = mixChannel(bottomR, 95, twilight), mixChannel(bottomG, 127, twilight),
+            mixChannel(bottomB, 133, twilight)
+    end
     nvgBeginPath(ctx)
     nvgRect(ctx, 0, 0, w, h)
     nvgFillPaint(ctx, nvgLinearGradient(ctx, 0, 0, 0, h,
-        nvgRGBA(184, 224, 216, 255), nvgRGBA(221, 235, 215, 255)))
+        nvgRGBA(topR, topG, topB, 255), nvgRGBA(bottomR, bottomG, bottomB, 255)))
     nvgFill(ctx)
 
-    local sunX, sunY = w * 0.76, h * 0.13
     local sunRadius = math.min(w * 0.055, h * 0.065)
-    Ellipse(ctx, sunX, sunY, sunRadius * 1.7, sunRadius * 1.7, { 250, 229, 164, 18 })
-    Ellipse(ctx, sunX, sunY, sunRadius * 1.28, sunRadius * 1.28, { 250, 229, 164, 32 })
-    Ellipse(ctx, sunX, sunY, sunRadius, sunRadius, { 251, 221, 139, 255 })
+    if phase == "day" then
+        local sunX, sunY = celestialPosition(w, h, phase, progress, sunRadius, horizonAtX)
+        drawSun(ctx, sunX, sunY, sunRadius, progress)
+    elseif phase == "night" then
+        local moonRadius = sunRadius * 0.78
+        local moonX, moonY = celestialPosition(w, h, phase, progress, moonRadius, horizonAtX)
+        drawMoon(ctx, moonX, moonY, moonRadius)
+    else
+        -- Keep the fixed sun for headless rendering and legacy art previews.
+        local sunX, sunY = w * 0.76, h * 0.13
+        Ellipse(ctx, sunX, sunY, sunRadius * 1.7, sunRadius * 1.7, { 250, 229, 164, 18 })
+        Ellipse(ctx, sunX, sunY, sunRadius * 1.28, sunRadius * 1.28, { 250, 229, 164, 32 })
+        Ellipse(ctx, sunX, sunY, sunRadius, sunRadius, { 251, 221, 139, 255 })
+    end
 
     local cloudScale = math.min(w / 560, h / 680)
     Cloud(ctx, w * 0.2 + math.sin(time * 0.12) * 8, h * 0.15, cloudScale)
@@ -567,11 +662,11 @@ end
 ---@param w number
 ---@param h number
 ---@param time number
-function Draw.SceneBackdrop(ctx, w, h, time, skyOnly)
+function Draw.SceneBackdrop(ctx, w, h, time, skyOnly, clock, horizonAtX)
     if not ctx or w <= 0 or h <= 0 then return end
     time = time or 0
     local scale = math.min(w / 520, h / 800)
-    Background(ctx, w, h, time)
+    Background(ctx, w, h, time, clock, horizonAtX)
     if not skyOnly then Sea(ctx, w, h, time) end
     for _, bird in ipairs(Config.birds) do
         local x = w * bird.x + math.sin(time * 0.4 + bird.phase) * 15 * scale

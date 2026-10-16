@@ -155,7 +155,8 @@ function Bootstrap:Render()
     ---@type table?
     local fishingView = nil
     if type(self.options.getFishingView) == "function" then fishingView = self.options.getFishingView() end
-    Draw.Scene(self.context, w, h, self.runtime, clock, fishingView, self.options.isLocationRecognized)
+    Draw.Scene(self.context, w, h, self.runtime, clock, fishingView,
+        self.options.isLocationRecognized, self.options.isWorldContentMarked)
     nvgEndFrame(self.context)
     FramePerf.EndDraw()
     if self.firstFrame then

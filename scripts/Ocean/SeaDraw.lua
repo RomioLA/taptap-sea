@@ -107,6 +107,47 @@ local function drawFish(ctx, movement, entity, showActivity, time)
     end, (FishData[entity.species].renderLength or 1) * 1.2)
 end
 
+-- Ocean validates fixed identity and visibility; Gameplay contributes only the
+-- read-only marked bit used for the small completion glyph.
+local function drawFixedTreasure(ctx, runtime, entity, marked)
+    if entity.kind ~= "fixed" or entity.entityType ~= "treasure"
+        or entity.layer ~= "underwater" or entity.contentId ~= "underwater_treasure_01"
+        or type(runtime.GetFixedContentGeneration) ~= "function"
+        or type(runtime.GetWorldContent) ~= "function" then return end
+    local generationOk, generation = pcall(runtime.GetFixedContentGeneration, runtime)
+    if not generationOk or type(generation) ~= "number" then return end
+    local snapshotOk, snapshot = pcall(runtime.GetWorldContent, runtime, entity.contentId)
+    if not snapshotOk or type(snapshot) ~= "table" or snapshot.entityId ~= entity.id
+        or snapshot.generation ~= generation or snapshot.layer ~= "underwater"
+        or type(snapshot.position) ~= "table" or not finite(snapshot.position.x)
+        or not finite(snapshot.position.y) then return end
+    marked = marked == true
+    local point = snapshot.position
+    local radius = math.max(0.75, (snapshot.radius or 0.5) * 1.5)
+    local ink = marked and { 255, 218, 150, 235 } or { 113, 232, 220, 220 }
+    local glow = marked and { 255, 202, 116, 45 } or { 105, 230, 222, 38 }
+    local diamond = {
+        { x = point.x, y = point.y + radius },
+        { x = point.x + radius * 0.68, y = point.y },
+        { x = point.x, y = point.y - radius },
+        { x = point.x - radius * 0.68, y = point.y },
+    }
+    Presentation.Draw(ctx, runtime.movement, point, radius * 2.2, -0.8, function()
+        Geometry.WorldCircle(ctx, runtime.movement, point, radius * 1.75, glow, ink, 1.2)
+        Geometry.WorldPolygon(ctx, runtime.movement, diamond, glow, ink, 1.5)
+        if marked then
+            worldLine(ctx, runtime.movement,
+                { x = point.x - radius * 0.35, y = point.y },
+                { x = point.x - radius * 0.08, y = point.y - radius * 0.28 }, ink, 1.8)
+            worldLine(ctx, runtime.movement,
+                { x = point.x - radius * 0.08, y = point.y - radius * 0.28 },
+                { x = point.x + radius * 0.38, y = point.y + radius * 0.3 }, ink, 1.8)
+        else
+            Geometry.WorldCircle(ctx, runtime.movement, point, radius * 0.2, ink, nil, 0)
+        end
+    end)
+end
+
 local function drawPerception(ctx, movement, entity)
     local data = FishData[entity.species]
     if not data then return end
@@ -268,14 +309,15 @@ end
 ---@param clock table? Existing read-only Gameplay clock.
 ---@param fishingView table? Existing read-only Gameplay fishing view.
 ---@param isLocationRecognized (fun(contentId: string): boolean)?
-function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocationRecognized)
+---@param isWorldContentMarked (fun(contentId: string): boolean)? Read-only Gameplay progress query.
+function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocationRecognized, isWorldContentMarked)
     if not ctx or width <= 0 or height <= 0 or not runtime or not runtime.movement then return end
     local movement, world, time = runtime.movement, runtime.world, runtime.time or 0
     -- T3 帧耗时探针：全帧对照基准（岛分项见 SeaViewArt）。
     local probeSceneStop = PerfProbe.Timer()
     PerfProbe.Frame()
     local horizon = movement:GetHorizonY()
-    Art.Backdrop(ctx, width, height, time)
+    Art.Backdrop(ctx, width, height, time, clock, movement)
     Art.Surface(ctx, movement, time)
     -- T5（2026-10-06 美术审核确认）：昼夜色罩移到世界实体之后统一染色——
     -- 旧层级（实体前）导致 PNG 船/岛/木桶等贴图实体夜间不被染暗。
@@ -292,6 +334,19 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
         if not entity.removed and entity.species and entity.layer == "underwater" and isVisible(world, entity) then
             Presentation.Draw(ctx, movement, entity.position, FishData[entity.species].renderLength, 0,
                 function() drawFish(ctx, movement, entity, flags.showActivity, time) end)
+        elseif not entity.removed and entity.layer == "underwater" and entity.entityType == "treasure"
+            and entity.contentId == "underwater_treasure_01" then
+            local marked = false
+            if type(isWorldContentMarked) == "function" then
+                local queryOk, value = pcall(isWorldContentMarked, entity.contentId)
+                marked = queryOk and value == true
+            end
+            -- Once Gameplay marks this fixed treasure, keep that known map glyph
+            -- visible with the scope closed. This is presentation only; action
+            -- eligibility still uses Runtime:IsWorldContentInScope.
+            if marked or isVisible(world, entity) then
+                drawFixedTreasure(ctx, runtime, entity, marked)
+            end
         end
     end
     Art.Wake(ctx, movement, movement.wake)

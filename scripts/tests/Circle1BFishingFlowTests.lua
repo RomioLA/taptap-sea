@@ -44,6 +44,7 @@ function Runtime.New(settings)
         ship = { id = "ship-1", position = copyPoint(settings.shipPosition or { x = 0, y = 0 }), level = 1 },
         paused = true,
         generation = 1,
+        fixedContentGeneration = 1,
         time = 0,
         oceanTime = 0,
         currentFrameSea = 0,
@@ -137,6 +138,24 @@ end
 
 function Runtime:GetFishingGeneration()
     return self.generation
+end
+
+-- This fishing fixture has no fixed world content. Keep the new C adapter
+-- contract explicit so unrelated gameplay suites still exercise their scope.
+function Runtime:GetFixedContentGeneration()
+    return self.fixedContentGeneration
+end
+
+function Runtime:CancelAutoReturn()
+    return true
+end
+
+function Runtime:GetWorldContentAccess(contentId)
+    return nil, "content_unavailable"
+end
+
+function Runtime:IsWorldContentInScope(contentId)
+    return false
 end
 
 function Runtime:selectFishingTarget(center, radius, filter)
@@ -498,6 +517,30 @@ function Tests.Run()
         -- 取消后同一按钮立即可重新开始选点。
         assert(f.loop:BeginFishingSelection())
         assertEqual(f.loop:GetFishingState().state, "selecting")
+        assert(f.loop:CancelFishingAction())
+    end)
+
+    test("fishing selection hint is pending only after first successful entry and never repeats", function()
+        local f = atSea()
+        assertEqual(Progress.IsFishingSelectionHintShown(f.loop.player), false)
+        f.loop.player.stamina = 0
+        assertEqual(f.loop:BeginFishingSelection(), false, "a rejected start is not a successful selection")
+        assertEqual(Progress.IsFishingSelectionHintShown(f.loop.player), false)
+        assertEqual(f.loop:TakeFishingSelectionHint(), false)
+
+        f.loop.player.stamina = 100
+        assert(f.loop:BeginFishingSelection())
+        assertEqual(f.loop:GetFishingState().state, "selecting")
+        assertEqual(Progress.IsFishingSelectionHintShown(f.loop.player), true)
+        assertEqual(f.loop:TakeFishingSelectionHint(), true)
+        assertEqual(f.loop:TakeFishingSelectionHint(), false, "the pending hint can be consumed once")
+
+        assert(f.loop:BeginFishingSelection()) -- A2 re-tap cancels the active selection.
+        assertEqual(f.loop:GetFishingState().state, "idle", "cancelling a selection leaves no fishing action")
+        assertEqual(f.loop:TakeFishingSelectionHint(), false, "cancellation does not enqueue a duplicate")
+        assert(f.loop:BeginFishingSelection())
+        assertEqual(f.loop:GetFishingState().state, "selecting")
+        assertEqual(f.loop:TakeFishingSelectionHint(), false, "a later selection in this run stays quiet")
         assert(f.loop:CancelFishingAction())
     end)
 

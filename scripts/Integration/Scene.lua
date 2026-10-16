@@ -225,6 +225,9 @@ function Scene.Start(options)
     oceanOptions.isLocationRecognized = function(contentId)
         return bridge ~= nil and bridge.loop.player:IsRecognized(contentId) == true
     end
+    oceanOptions.isWorldContentMarked = function(contentId)
+        return bridge ~= nil and bridge.loop:IsWorldContentMarked(contentId) == true
+    end
     oceanOptions.beforePointer = function()
         if bridge then bridge:Sync() end
     end
@@ -300,8 +303,9 @@ function Scene.Start(options)
             initializedBridge.loop:SetMessage("透镜观察未能关闭，请重试关闭场景。")
             return false, scopeReason
         end
+        local loopClosed, loopCloseReason = initializedBridge.loop:Close()
+        if not loopClosed then return false, loopCloseReason or "scene_close_failed" end
         if pendingPointerListener then UI.Input.Off("PointerDown", pendingPointerListener) end
-        initializedBridge.loop:Close()
         uiShutdown = true
         local stopOk, stopError = Diagnostics.Call("Integration", "scene_stop", oceanStop, self)
         if activeSea == self then activeSea = nil end

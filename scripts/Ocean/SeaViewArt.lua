@@ -173,10 +173,20 @@ end
 
 
 -- The legacy scene backdrop owns the established sun, sky, and decorative birds.
-function SeaViewArt.Backdrop(ctx, width, height, time)
+function SeaViewArt.Backdrop(ctx, width, height, time, clock, movement)
     if not ctx or not finite(width) or not finite(height) or width <= 0 or height <= 0 then return end
-    Draw.SceneBackdrop(ctx, width, height, time, true)
-
+    ---@type (fun(x: number): number?)?
+    local horizonAtX
+    if type(movement) == "table" and type(movement.viewportWidth) == "number"
+        and type(movement.viewportHeight) == "number" and movement.viewportWidth > 0
+        and movement.viewportHeight > 0 then
+        horizonAtX = function(x)
+            local horizon = Projection.Horizon(movement, x)
+            if finite(horizon) then return clamp(horizon, 0, height) end
+            return nil
+        end
+    end
+    Draw.SceneBackdrop(ctx, width, height, time, true, clock, horizonAtX)
 end
 
 local function getSurfaceSettings()
