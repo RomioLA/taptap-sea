@@ -317,7 +317,7 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
     local probeSceneStop = PerfProbe.Timer()
     PerfProbe.Frame()
     local horizon = movement:GetHorizonY()
-    Art.Backdrop(ctx, width, height, time)
+    Art.Backdrop(ctx, width, height, time, clock, movement)
     Art.Surface(ctx, movement, time)
     -- T5（2026-10-06 美术审核确认）：昼夜色罩移到世界实体之后统一染色——
     -- 旧层级（实体前）导致 PNG 船/岛/木桶等贴图实体夜间不被染暗。
