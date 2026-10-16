@@ -1,0 +1,441 @@
+{
+  "suite": "AutoNavigationTests",
+  "project": "C:\\codex\\taptap-sea-worktrees\\WORK-B-AUTO-RETURN",
+  "tests": [
+    {
+      "error": "",
+      "name": "defaults and segment entry cover endpoint contact and a zero-length interior segment",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "geometry emits only the two tangent-line intersection candidates and validates both",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "planner has direct, one-side-only, shortest-side, stable-tie, and order-independent routes",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "planner and candidate validation reject world bounds and actual-circle collision",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "nearest blocker returns exact entry and resolves equal entries by id regardless of order",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "geometry rejects a ship already inside an actual circle and a target inside one",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "geometry chooses the next blocker on the segment and ignores inactive circles",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "port radius boundary is inclusive at nine meters and accepts twelve and sixteen",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "start copies the port and state snapshots, and duplicate active starts are refused",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "cancel clears its own target idempotently",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "cancel preserves a manual target with a different movement identity",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "update detects an external same-coordinate replacement without clearing it",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "controller update observes position without moving it and clamps one update to a quarter second",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "a newly blocking current leg is rechecked at the half-second interval",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "stuck retries are counted twice and the third stalled interval fails explicitly",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "plan-count budget fails closed with retry_limit",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "single-leg time budget fails closed with retry_limit",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "overall time budget fails closed with retry_limit",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "blocker snapshot limit is enforced before a target is installed",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "configuration cannot raise the frozen retry, plan, blocker, or time ceilings",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "diagnostic callback errors do not break navigation",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "state snapshots copy waypoint coordinates",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "a new request after failure gets a fresh request id and clears failure state",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "a cancelled detour never resumes its old waypoint on a new request",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "arrival at exactly ten meters is ready and consumed only once",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "arrival is a one-shot handshake and rejection requires prior consumption",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "failed initial planning clears the explicitly taken-over manual target",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "reset retires the old runtime navigation adapter",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "runtime treats nine meters as near and starts at twelve or sixteen meters",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "runtime cancels keyboard intent before even a zero-delta movement update",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "runtime pause and explicit target clearing cancel auto navigation",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "successful port reset cancels auto navigation",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real blockers at forty twelve reject safely without moving the ship",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real two-circle route replans from the first obstacle to the second",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "auto cancel stops a real fixed-barrel push without moving the ship",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "failed planning stops a real pending barrel push before the next runtime update",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "cancel preserves a replacement manual target and its real collision feedback",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "Movement.Stop clears only steering feedback and is idempotent",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-one-near level 1 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-one-near level 1 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-one-near level 2 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-one-near level 2 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-one-near level 3 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-one-near level 3 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-one-far level 1 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-one-far level 1 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-one-far level 2 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-one-far level 2 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-one-far level 3 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-one-far level 3 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-two level 1 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-two level 1 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-two level 2 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-two level 2 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-two level 3 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-two level 3 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime open-water level 1 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime open-water level 1 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime open-water level 2 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime open-water level 2 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime open-water level 3 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime open-water level 3 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime fixed-barrel level 1 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime fixed-barrel level 1 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime fixed-barrel level 2 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime fixed-barrel level 2 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime fixed-barrel level 3 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime fixed-barrel level 3 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-route level 1 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-route level 1 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-route level 2 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-route level 2 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-route level 3 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime island-route level 3 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime far-water level 1 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime far-water level 1 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime far-water level 2 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime far-water level 2 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime far-water level 3 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime far-water level 3 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime world-corner level 1 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime world-corner level 1 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime world-corner level 2 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime world-corner level 2 reverse",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime world-corner level 3 forward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "real runtime world-corner level 3 reverse",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "luaVersion": "Lua 5.4",
+  "testCount": 86,
+  "passedCount": 86,
+  "failures": []
+}
