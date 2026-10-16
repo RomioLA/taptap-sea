@@ -9,6 +9,7 @@ local FishData = require("Ocean.FishData")
 local FramePerf = require("Ocean.FramePerf")
 local ImageArt = require("Ocean.ImageArt")
 local ArtVariants = require("Ocean.ArtVariants")
+local BuildInfo = require("GeneratedData.BuildInfo")
 
 local SeaDebug = {}
 
@@ -199,6 +200,11 @@ local function updateFishLabels(runtime, pool)
     hideUnusedLabels(pool.entries, used)
 end
 
+local function buildStampText()
+    return string.format("Build v%s · %s · %s", tostring(BuildInfo.version),
+        tostring(BuildInfo.commit), tostring(BuildInfo.commitDate))
+end
+
 local function countsText(runtime)
     local world = runtime.world
     local runningCounts = world and type(world.getCounts) == "function" and world:getCounts() or {}
@@ -321,6 +327,8 @@ function SeaDebug.Create(runtime, options)
         flexDirection = "column",
         gap = 6,
         children = {
+            -- 构建身份戳：PC 预览与真机同屏对读，版本不一致类事故的判读依据。
+            UI.Label { id = "seaDebugBuild", text = buildStampText(), fontSize = 10, fontColor = { 168, 226, 178, 255 } },
             UI.Label { id = "seaDebugPopulation", text = countsText(runtime), fontSize = 10, fontColor = { 220, 237, 239, 255 } },
             UI.Label { id = "seaDebugWorldCounts", text = "World 0  |  dropped 0", fontSize = 10, fontColor = { 180, 207, 216, 255 } },
             UI.Label { id = "seaDebugActivityCounts", text = "World active 0  |  frozen 0", fontSize = 10, fontColor = { 180, 207, 216, 255 } },

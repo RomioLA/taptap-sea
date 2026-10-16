@@ -14,6 +14,11 @@
 --
 -- 模块加载为纯 Lua（不触碰引擎全局），可在 headless 测试中 require；
 -- 引擎访问全部收敛在函数内并带能力守卫。
+--
+-- 音效懒加载（2026-10-16 真机卡顿根因修复）：WAV 全程主线程同步解码，
+-- 旧 ensureInit 在首次发声时一次性 GetResource 全部 18 条（≈43MB），
+-- 造成真机启动数秒卡死 + 常驻 PCM 内存压力。现改为按 key 懒加载
+-- （loadSound）：仅首次实际播放/启床时加载单条，失败按调用次数退避。
 
 local AudioDirector = {}
 
@@ -68,7 +73,10 @@ local audioSources = {} -- 包括尚未加入池的组件，初始化中途失�
 local state = {
     initialized = false,
     capability = "not_probed",
-    sounds = {},       -- key -> Sound
+    sounds = {},       -- key -> Sound（懒加载缓存，仅存放实际使用过的音效）
+    failedKeys = {},   -- key -> 失败时的 loadCalls（退避窗口内不重复重试）
+    loadCalls = 0,     -- loadSound 累计调用数（退避节拍器）
+    lastLoadMs = nil,  -- 最近一次单条加载耗时（首播卡顿埋点）
     loadedCount = 0,
     pool = {},         -- { { source, key, startedAt } }
     keySlot = {},      -- key -> pool slot（进行中占用；并发上限=1）
@@ -294,6 +302,43 @@ local function initFailed(message)
     return false
 end
 
+-- 按 key 懒加载单条音效（WAV 主线程同步解码，绝不批量预载）。
+-- 返回缓存的 Sound；文件缺失时按调用次数退避，避免每次点击都重跑 IO。
+local SOUND_RETRY_CALLS = 90
+
+---@param key string
+---@return table? sound
+local function loadSound(key)
+    local cached = state.sounds[key]
+    if cached then return cached end
+    state.loadCalls = state.loadCalls + 1
+    local failedAt = state.failedKeys[key]
+    if failedAt and (state.loadCalls - failedAt) < SOUND_RETRY_CALLS then
+        return nil -- 退避窗口内直接跳过
+    end
+    local cacheInstance = getCache()
+    if not cacheInstance then return nil end
+    local spec = SPECS[key]
+    local startMs = wallMs()
+    local sound, resolvedPath = resolveSound(cacheInstance, spec)
+    if startMs then state.lastLoadMs = (wallMs() or startMs) - startMs end
+    if not sound then
+        state.failedKeys[key] = state.loadCalls
+        logWarning("加载失败: " .. key .. " <- " .. spec.path)
+        return nil
+    end
+    state.failedKeys[key] = nil
+    state.sounds[key] = sound
+    state.loadedCount = state.loadedCount + 1
+    if not state.pathSample then state.pathSample = key .. "->" .. resolvedPath end
+    local length = 0
+    pcall(function() length = sound:GetLength() end)
+    if type(length) == "number" and length == length and length > 0 then
+        state.totalSoundSec = state.totalSoundSec + length
+    end
+    return sound
+end
+
 local function ensureInit()
     if state.initialized then return true end
     state.initAttempts = state.initAttempts + 1
@@ -307,40 +352,16 @@ local function ensureInit()
         return initFailed("音频宿主不可用：" .. tostring(sceneReason))
     end
 
+    local initStartMs = wallMs()
     local cacheInstance = getCache()
     local audioInstance = getAudio()
     -- 音频设备状态独立于组件创建成功与否，保留供真机诊断。
     if audioInstance and type(audioInstance.IsInitialized) == "function" then
         pcall(function() state.audioReady = audioInstance:IsInitialized() == true end)
     end
-    local loaded = 0
-    local totalSoundSec = 0
-    local initStartMs = wallMs()
-    for key, spec in pairs(SPECS) do
-        if not state.firstPath then state.firstPath = spec.path end
-        local sound, resolvedPath = resolveSound(cacheInstance, spec)
-        if sound then
-            state.sounds[key] = sound
-            if not state.pathSample then state.pathSample = key .. "->" .. resolvedPath end
-            loaded = loaded + 1
-            local length = 0
-            pcall(function() length = sound:GetLength() end)
-            if type(length) == "number" and length == length and length > 0 then
-                totalSoundSec = totalSoundSec + length
-            end
-        else
-            logWarning("加载失败: " .. key .. " <- " .. spec.path)
-        end
-    end
-    state.loadedCount = loaded
-    state.totalSoundSec = totalSoundSec
-    if initStartMs then state.initMs = (wallMs() or initStartMs) - initStartMs end
-    if loaded == 0 then
-        return initFailed("0个音效加载成功：首试路径 " .. tostring(state.firstPath)
-            .. "｜已尝试含 assets/ 前缀候选")
-    end
 
     -- one-shot 与声床均通过组件创建；失败后整组释放，避免退避重试泄漏。
+    -- 音效资源不在此处加载：按 key 懒加载（loadSound），首播时才同步解码单条。
     local poolOk, poolError = pcall(function()
         for index = 1, POOL_SIZE do
             local source = createSource("OneShot" .. tostring(index))
@@ -356,14 +377,14 @@ local function ensureInit()
     end)
     if not poolOk then return initFailed("音频组件创建失败：" .. tostring(poolError)) end
 
+    if initStartMs then state.initMs = (wallMs() or initStartMs) - initStartMs end
     applyBusGains()
     state.initialized = true
     local bedCount = 0
     for _ in pairs(state.beds) do bedCount = bedCount + 1 end
     state.capability = "组件池可用(" .. tostring(#state.pool) .. "+声床" .. tostring(bedCount) .. ")"
-    print("[AudioDirector] " .. state.capability .. "，资源加载" .. tostring(loaded) .. "/" .. tostring(countSpecs())
-        .. "，initMs=" .. tostring(state.initMs and math.floor(state.initMs + 0.5) or -1)
-        .. "，驻留声样总时长=" .. string.format("%.1fs", state.totalSoundSec))
+    print("[AudioDirector] " .. state.capability .. "，音效懒加载就绪（按 key 首次使用时同步解码）"
+        .. "，initMs=" .. tostring(state.initMs and math.floor(state.initMs + 0.5) or -1))
     return true
 end
 
@@ -380,7 +401,7 @@ function AudioDirector.Play(key, opts)
     if spec.loop then return false, "use_toggle_bed_for_loop(" .. tostring(key) .. ")" end
     if not ensureInit() then return false, state.capability end
 
-    local sound = state.sounds[key]
+    local sound = loadSound(key)
     if not sound then return false, "sound_not_loaded(" .. tostring(key) .. ")" end
 
     local length = 0
@@ -433,15 +454,18 @@ function AudioDirector.SetBed(key, active)
     if not ensureInit() then return false, state.capability end
 
     local bed = state.beds[key]
-    local sound = state.sounds[key]
-    if not bed or not sound then return false, "bed_not_ready(" .. tostring(key) .. ")" end
+    if not bed then return false, "bed_not_ready(" .. tostring(key) .. ")" end
 
     active = active == true
-    -- 幂等早退前置于 GetLength（评审 P1-1：SyncAmbient 每帧驱动，
-    -- 稳态下省去每帧 pcall 闭包 + 引擎 GetLength 跨越）
+    -- 幂等早退前置于加载（评审 P1-1：SyncAmbient 每帧驱动，
+    -- 稳态下省去每帧 pcall 闭包 + 引擎 GetLength 跨越；
+    -- 同时停床不触发懒加载——只为关一首没播过的歌而解码它是纯浪费）
     if bed.active == active then
         return true, "bed_unchanged(" .. tostring(key) .. ")"
     end
+
+    local sound = loadSound(key)
+    if not sound then return false, "sound_not_loaded(" .. tostring(key) .. ")" end
 
     local length = 0
     pcall(function() length = sound:GetLength() end)
@@ -481,8 +505,9 @@ function AudioDirector.Status()
         bedText[#bedText + 1] = key .. ":" .. (bed.active and "开" or "关")
     end
     return state.capability
-        .. "｜加载" .. tostring(state.loadedCount) .. "/" .. tostring(countSpecs())
+        .. "｜懒加载" .. tostring(state.loadedCount) .. "/" .. tostring(countSpecs())
         .. "｜initMs=" .. tostring(state.initMs and math.floor(state.initMs + 0.5) or -1)
+        .. (state.lastLoadMs and ("｜末次加载" .. string.format("%.0fms", state.lastLoadMs)) or "")
         .. "｜驻留" .. string.format("%.1fs", state.totalSoundSec)
         .. "｜播放" .. tostring(state.playCount) .. "次"
         .. (state.pathSample and ("｜路径" .. state.pathSample) or "")
@@ -571,6 +596,9 @@ function AudioDirector.Shutdown()
     AudioDirector.Reset()
     releaseAudioScene()
     state.sounds = {}
+    state.failedKeys = {}
+    state.loadCalls = 0
+    state.lastLoadMs = nil
     state.initialized, state.loadedCount = false, 0
     state.capability = "not_probed"
     state.audioReady, state.pathSample, state.firstPath = nil, nil, nil
