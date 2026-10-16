@@ -11,6 +11,7 @@ local EntityStateSystem = require("Systems.EntityStateSystem")
 local SurfaceSignals = require("Ocean.SurfaceSignals")
 local Runtime = {}
 Runtime.__index = Runtime
+local FIXED_CONTENT_IDS = { "island_01", "island_02", "underwater_treasure_01" }
 
 function Runtime.New(options)
     local self = setmetatable({}, Runtime)
@@ -306,6 +307,87 @@ function Runtime:GetFixedBarrel()
     return readOnlySnapshot({ id = barrel.id, contentId = "driftwood_barrel",
         generation = self.world.fixedBarrelGeneration,
         position = readOnlySnapshot(M.copy(barrel.position)) })
+end
+
+local function currentFixedContent(world, contentId)
+    if type(contentId) ~= "string" or not world or world.retired
+        or type(world.fixedContentEntities) ~= "table" then return nil end
+    local entity = world.fixedContentEntities[contentId]
+    if not entity or type(world.get) ~= "function" or world:get(entity.id) ~= entity
+        or entity.removed or entity.alive == false or entity.kind ~= "fixed"
+        or entity.contentId ~= contentId or not validBarrelPoint(entity.position)
+        or not isFiniteNumber(entity.radius) or entity.radius < 0 then
+        return nil
+    end
+    return entity
+end
+
+---The identity changes only when a new fixed Ocean World is created.
+---@return integer?
+function Runtime:GetFixedContentGeneration()
+    if not self.world or self.world.retired then return nil end
+    local generation = self.world and self.world.fixedContentGeneration
+    if type(generation) ~= "number" or generation < 1 or generation ~= math.floor(generation) then return nil end
+    return generation
+end
+
+---Fresh immutable value snapshot; no entity or mutable position table escapes.
+---@param contentId string
+---@return table?
+function Runtime:GetWorldContent(contentId)
+    local entity = currentFixedContent(self.world, contentId)
+    if not entity then return nil end
+    return readOnlySnapshot({ id = entity.id, entityId = entity.id, contentId = contentId,
+        generation = self.world.fixedContentGeneration, entityType = entity.entityType,
+        layer = entity.layer, position = readOnlySnapshot(M.copy(entity.position)),
+        radius = entity.radius, blocking = entity.blocking == true,
+        ordinaryFish = entity.ordinaryFish == true })
+end
+
+---Return fixed island and treasure snapshots in stable content-ID order.
+---@return table
+function Runtime:GetFixedWorldContentSnapshots()
+    local snapshots = {}
+    for _, contentId in ipairs(FIXED_CONTENT_IDS) do
+        local snapshot = self:GetWorldContent(contentId)
+        if snapshot then snapshots[#snapshots + 1] = snapshot end
+    end
+    return snapshots
+end
+
+---Ocean owns all geometry; edgeDistance is to the content edge and
+---surfaceGap also accounts for the ship collision radius.
+---@param contentId string
+---@return table?, string?
+function Runtime:GetWorldContentAccess(contentId)
+    local entity = currentFixedContent(self.world, contentId)
+    if not entity then return nil, "content_unavailable" end
+    local ship = self.ship
+    if not ship or self.world:get(ship.id) ~= ship or ship.removed or ship.alive == false
+        or not validBarrelPoint(ship.position) or not isFiniteNumber(ship.radius) or ship.radius < 0 then
+        return nil, "ship_unavailable"
+    end
+    local dx, dy = entity.position.x - ship.position.x, entity.position.y - ship.position.y
+    local distance = math.sqrt(dx * dx + dy * dy)
+    if not isFiniteNumber(distance) then return nil, "invalid_content_distance" end
+    local edgeDistance = math.max(0, distance - entity.radius)
+    local surfaceGap = math.max(0, edgeDistance - ship.radius)
+    return readOnlySnapshot({ exists = true, contentId = contentId, entityId = entity.id,
+        generation = self.world.fixedContentGeneration, distance = distance,
+        edgeDistance = edgeDistance, surfaceGap = surfaceGap })
+end
+
+---Use only the real scope-enabled wedge; reveal/debug visibility grants no access.
+---@param contentId string
+---@return boolean?, string?
+function Runtime:IsWorldContentInScope(contentId)
+    local entity = currentFixedContent(self.world, contentId)
+    if not entity then return nil, "content_unavailable" end
+    if entity.layer ~= "underwater" then return nil, "scope_not_applicable" end
+    if not self.world or type(self.world.IsEntityInScope) ~= "function" then
+        return nil, "scope_unavailable"
+    end
+    return self.world:IsEntityInScope(entity)
 end
 
 ---木桶操作半径（新手教程点位按钮显隐用），权威值仍在 Config.interaction。

@@ -10,6 +10,8 @@ local SoundSystem = require("Systems.SoundSystem")
 local audioDiagPushed = false -- 音频诊断一次性上屏标记（真机静音排查，2026-10-08）
 local Progress = require("Gameplay.Circle1B2Progress")
 local Barrel = require("Gameplay.Circle1B2Barrel")
+local WorldContentActions = require("Gameplay.WorldContentActions")
+local WorldContentProgress = require("Gameplay.WorldContentProgress")
 -- ②③ 认知度/成就系统执行器 + 跨局存档层
 local KnowledgeSystem = require("Gameplay.KnowledgeSystem")
 local AchievementSystem = require("Gameplay.AchievementSystem")
@@ -48,6 +50,8 @@ local ProfileStore = require("Gameplay.ProfileStore")
 ---@field actions GameplayActions?
 ---@field inventoryRollback table?
 ---@field barrel Circle1B2Barrel
+---@field worldContentActions WorldContentActions?
+---@field worldContentAdapter table?
 ---@field runtime table?
 ---@field throwSelection table?
 ---@field storyDialog table?
@@ -99,6 +103,10 @@ end
 
 function Loop:ResetState()
     if self.inventoryRollback then return false, "inventory_rollback_pending" end
+    local autoCancelled, autoCancelError = self:CancelAutoReturn("state_reset")
+    if not autoCancelled then return false, autoCancelError or "auto_return_cancel_failed" end
+    local contentInvalidated, contentInvalidateError = self:InvalidateWorldContent("stale_generation")
+    if not contentInvalidated then return false, contentInvalidateError end
     if self.actions then
         local resetOk, reason = self.actions:Reset(true)
         if not resetOk then return false, reason end
@@ -110,6 +118,8 @@ function Loop:ResetState()
     self.generation = self.generation + 1
     self.player = assert(PlayerState.New())
     Progress.Initialize(self.player)
+    local contentInitialized, contentInitializeError = WorldContentProgress.Initialize(self.player)
+    assert(contentInitialized, contentInitializeError or "invalid_world_content_progress")
     Progress.OnDayStarted(self.player)
     -- ②③ 认知度/成就系统接线：profile 跨周目仅建一次；KS/AS 每局随 player 重建
     if not self.profileStore then
@@ -158,6 +168,7 @@ function Loop:Ready()
         and not self.forcedReturnPending and not self.settlementPending
         and not (self.actions and self.actions:IsBusy())
         and not (self.barrel and self.barrel:IsBusy()) and not self.storyDialog
+        and not (self.worldContentActions and self.worldContentActions:GetActionState())
 end
 
 -- 仅新周目、下一天应用或成功恢复每日结算快照时补货。
@@ -192,6 +203,7 @@ function Loop:Update(dt, advanceWorld)
     if actions and clock.exhausted then
         actions:CancelActiveFishing("night_interrupted")
     end
+    local worldContentElapsed = 0
     local remaining = dt
     repeat
         local slice = remaining
@@ -242,6 +254,9 @@ function Loop:Update(dt, advanceWorld)
         end
         local after = clock.elapsed + (clock.phase == "night" and clock.daySec or 0)
         local gameSeconds = math.max(0, after - before)
+        if not clock:IsPaused() and not clock.exhausted and not self.inPort then
+            worldContentElapsed = worldContentElapsed + gameSeconds
+        end
         if actions then actions:AdvanceFishing(gameSeconds) end
         if clock.exhausted then
             -- Resolve exact-tie actions before the forced pause, then prevent any
@@ -258,10 +273,16 @@ function Loop:Update(dt, advanceWorld)
         end
         remaining = math.max(0, remaining - slice)
     until remaining <= 1e-9
+    if self.worldContentActions then
+        Diagnostics.Call("Loop", "world_content_advance",
+            self.worldContentActions.Advance, self.worldContentActions, worldContentElapsed)
+    end
 end
 
 function Loop:RefreshClockStatus()
     if self.clock.exhausted and not self.dayExhausted then
+        self:CancelAutoReturn("night_forced_return")
+        self:CancelWorldContentAction(nil, "night_interrupted")
         if self.actions then self.actions:CancelActiveFishing("night_interrupted") end
         self.dayExhausted = true
         self.forcedReturnPending = true
@@ -310,8 +331,55 @@ function Loop:SetStateObserver(observer)
 end
 
 function Loop:ToggleManualPause()
-    if self.clock.pauseReasons.manual then self.clock:Resume("manual")
-    else self.clock:Pause("manual") end
+    if self.clock.pauseReasons.manual then
+        self.clock:Resume("manual")
+    else
+        local cancelled, reason = self:CancelAutoReturn("manual_pause")
+        if not cancelled then return false, reason or "auto_return_cancel_failed" end
+        self.clock:Pause("manual")
+    end
+    return true, self.clock:IsPaused()
+end
+
+function Loop:CancelAutoReturn(reason)
+    local runtime = self.runtime
+    if not runtime then return true end
+    if type(runtime.CancelAutoReturn) ~= "function" then return false, "auto_return_unavailable" end
+    return runtime:CancelAutoReturn(reason)
+end
+
+function Loop:GetAutoReturnState()
+    local runtime = self.runtime
+    if not runtime or type(runtime.GetAutoReturnState) ~= "function" then
+        return nil, "auto_return_unavailable"
+    end
+    local ok, state = pcall(runtime.GetAutoReturnState, runtime)
+    if not ok or type(state) ~= "table" then return nil, "auto_return_state_unavailable" end
+    -- Keep navigation diagnostics owned by AutoNavigation; callers receive only
+    -- the phase needed to present current controls and the failure reason.
+    return { phase = state.phase, failureReason = state.failureReason,
+        cancelReason = state.cancelReason, distance = state.distance }
+end
+
+function Loop:IsAutoReturnActive()
+    local state = self:GetAutoReturnState()
+    return state ~= nil and (state.phase == "active" or state.phase == "arrival_ready")
+end
+
+function Loop:RequestAutoReturn()
+    local runtime = self.runtime
+    if not runtime or type(runtime.StartAutoReturn) ~= "function" then return false, "auto_return_unavailable" end
+    if self.inPort or self.clock:IsPaused() or self.clock.exhausted then return false, "action_blocked" end
+    if self:HasPendingCatch() then return false, "pending_catch_required" end
+    if not self:Ready() or self:IsMovementBlocked() then return false, "busy" end
+    return runtime:StartAutoReturn()
+end
+
+function Loop:GetReturnActionMode()
+    if self.inPort then return "depart" end
+    if self:IsAutoReturnActive() then return "cancel_auto_return" end
+    local near = self:CanAccessPort()
+    return near and "return_to_port" or "request_auto_return"
 end
 
 function Loop:SetMessage(message)
@@ -403,6 +471,10 @@ function Loop:SetInventoryOpen(open)
         and not self.forcedReturnPending and not self.settlementPending
         and not (self.actions and self.actions:IsBusy()) and not self.storyDialog
     if not self:Ready() and not (open and self:CanManageInventory()) and not bucketOnlyBusy then return false, "busy" end
+    if open then
+        local cancelled, reason = self:CancelAutoReturn("inventory_open")
+        if not cancelled then return false, reason or "auto_return_cancel_failed" end
+    end
     self.inventoryOpen = open
     if open then self.clock:Pause("inventory") else self.clock:Resume("inventory") end
     return true
@@ -418,6 +490,10 @@ function Loop:SetElderOpen(open)
         and not self.forcedReturnPending and not self.settlementPending
         and not (self.actions and self.actions:IsBusy()) and not self.storyDialog
     if not self:Ready() and not self:CanManageInventory() and not bucketOnlyBusy then return false, "busy" end
+    if open then
+        local cancelled, cancelError = self:CancelAutoReturn("elder_open")
+        if not cancelled then return false, cancelError or "auto_return_cancel_failed" end
+    end
     self.elderOpen = open
     if open then self.clock:Pause("elder") else self.clock:Resume("elder") end
     if open then SoundSystem.EnterElder() else SoundSystem.ExitElder() end  -- 老人环境声床：拜访期间循环，结束对话切回世界声床
@@ -499,6 +575,9 @@ end
 
 -- Only forced return, new-day preparation, new run and restore call this.
 function Loop:PreparePort(reason)
+    local autoCancelled, autoCancelError = self:CancelAutoReturn(reason or "port_preparation")
+    if not autoCancelled then return false, autoCancelError or "auto_return_cancel_failed" end
+    self:CancelWorldContentAction(nil, reason or "port_preparation")
     if not self.runtime then return true end
     if type(self.runtime.ResetShipAtPort) ~= "function" then
         emit(self, "port_preparation", portFields(self, "failure", "failed", "port_reset_unavailable", nil, reason))
@@ -560,6 +639,8 @@ function Loop:ReturnToPort()
         emit(self, "return_to_port", portFields(self, kind or "rejected", "rejected", reason, details))
         return false, reason
     end
+    local cancelled, cancelError = self:CancelAutoReturn("return_to_port")
+    if not cancelled then return reject(cancelError or "auto_return_cancel_failed", "failure") end
     local detailRead, detailNear, detailReason, detailValue = Diagnostics.Call(
         "Loop", "return_port_access", readPortAccess, self.runtime)
     if detailRead then details = detailValue end
@@ -983,6 +1064,10 @@ end
 
 function Loop:Close()
     if self.closed then return true end
+    local autoCancelled, autoCancelError = self:CancelAutoReturn("scene_closed")
+    if not autoCancelled then return false, autoCancelError or "auto_return_cancel_failed" end
+    local contentInvalidated, contentInvalidateError = self:InvalidateWorldContent("scene_closed")
+    if not contentInvalidated then return false, contentInvalidateError or "busy" end
     self.generation = self.generation + 1
     self.closed, self.activeRequest = true, nil
     self.busy, self.loading = false, false
@@ -993,6 +1078,10 @@ function Loop:Close()
 end
 
 function Loop:LoadSaved(done)
+    local autoCancelled, autoCancelError = self:CancelAutoReturn("load_requested")
+    if not autoCancelled then return false, autoCancelError or "auto_return_cancel_failed" end
+    local contentInvalidated, contentInvalidateError = self:InvalidateWorldContent("stale_generation")
+    if not contentInvalidated then return false, contentInvalidateError or "busy" end
     if self:HasPendingCatch() then return false, "pending_catch_required" end
     if self.closed or self.busy or self.loading or self.initialSaveBusy or self.dropInFlight or self.settlementPending
         or self.forcedReturnPending or self.inventoryRollback or not self.inPort
@@ -1102,6 +1191,10 @@ function Loop:NewRun()
         return false, reason
     end
     if self.closed then return reject("scene_closed") end
+    local autoCancelled, autoCancelError = self:CancelAutoReturn("new_run")
+    if not autoCancelled then return reject(autoCancelError or "auto_return_cancel_failed") end
+    local contentInvalidated, contentInvalidateError = self:InvalidateWorldContent("stale_generation")
+    if not contentInvalidated then return reject(contentInvalidateError or "busy") end
     -- ②③ 进入新周目前先落盘本周目已获图鉴/成就（跨周目保留）
     if self.profileStore then self.profileStore:Save(function() end) end
     self.currentWeek = (self.currentWeek or 1) + 1
@@ -1427,6 +1520,8 @@ function Loop:BeginFishingSelection()
         return self:CancelFishingAction()
     end
     self.fishingSelectionHintPending = false
+    local cancelled, cancelError = self:CancelAutoReturn("fishing_selection")
+    if not cancelled then return false, cancelError end
     local started, reason = self.actions:BeginSelection()
     if started ~= true then return started, reason end
     local fishingState = self.actions:GetFishingState()
@@ -1488,11 +1583,13 @@ function Loop:ClaimPendingCatch()
 end
 function Loop:IsMovementBlocked()
     return (self.actions ~= nil and self.actions:IsBusy()) or (self.barrel and self.barrel:IsBusy())
+        or (self.worldContentActions and self.worldContentActions:GetActionState() ~= nil)
         or self.throwSelection ~= nil
 end
 function Loop:CanManageInventory()
     if self.busy or self.loading or self.dropInFlight or (self.actions and self.actions:IsBusy())
         or (self.barrel and self.barrel:IsBusy()) or self.storyDialog then return false end
+    if self.worldContentActions and self.worldContentActions:GetActionState() then return false end
     if self.inventoryRollback then return false end
     if self.actions and self.actions:IsClaimBlocked() then return false end
     if self.barrel and not self.barrel:CanEditCargo() then return false end
@@ -1519,10 +1616,120 @@ function Loop:CompleteEventOperation()
     return charged
 end
 
+function Loop:InvalidateWorldContent(reason)
+    if not self.worldContentActions then return true end
+    return self.worldContentActions:Invalidate(reason or "stale_generation")
+end
+
+function Loop:GetWorldContentActionState()
+    return self.worldContentActions and self.worldContentActions:GetActionState() or nil
+end
+
+function Loop:GetWorldContentPrompt()
+    local actions = self.worldContentActions
+    if not actions then return nil, "world_content_unavailable" end
+    if actions:GetActionState() then return actions:GetWorldContentPrompt() end
+    if self.inPort or self.clock:IsPaused() or self.clock.exhausted or self.inventoryOpen or self.elderOpen
+        or self:HasPendingCatch() or not self:Ready() then return nil end
+    return actions:GetWorldContentPrompt()
+end
+
+function Loop:BeginWorldContentAction(contentId, actionKind)
+    local actions = self.worldContentActions
+    if not actions then return false, "world_content_unavailable" end
+    if self.inPort or self.clock:IsPaused() or self.clock.exhausted or self.inventoryOpen or self.elderOpen
+        or self:HasPendingCatch() or not self:Ready() or self:IsMovementBlocked() then
+        return false, "action_blocked"
+    end
+    local method = actionKind == "explore" and actions.BeginExplore
+        or actionKind == "salvage" and actions.BeginSalvage
+    if type(method) ~= "function" then return false, "invalid_action_kind" end
+    local cancelled, cancelError = self:CancelAutoReturn("world_content_action")
+    if not cancelled then return false, cancelError or "auto_return_cancel_failed" end
+    local token, reason = method(actions, contentId)
+    if not token then return false, reason or "action_rejected" end
+    self.lastMessage = actionKind == "explore" and "开始探索" or "开始打捞"
+    return token
+end
+
+function Loop:CancelWorldContentAction(token, reason)
+    local actions = self.worldContentActions
+    if not actions then return true, "idle" end
+    local active = actions:GetActionState()
+    if not active then return true, "idle" end
+    return actions:Cancel(token or active.token, reason or "cancelled")
+end
+
+function Loop:GetOwnedTreasures()
+    if not self.worldContentActions then return {} end
+    return self.worldContentActions:GetOwnedTreasures()
+end
+
+function Loop:IsWorldContentMarked(contentId)
+    local state, reason = WorldContentProgress.GetState(self.player, contentId)
+    if not state then return false, reason end
+    return state.marked == true
+end
+
+function Loop:ShowTreasureToElder(treasureId)
+    local present, reason = self:IsElderPresent()
+    if not present then return false, reason or "elder_not_present" end
+    if not self.elderOpen then return false, "elder_dialog_required" end
+    if not self:CanManageInventory() then return false, "busy" end
+    local owned, ownershipError = self:GetOwnedTreasures()
+    if type(owned) ~= "table" then return false, ownershipError or "treasure_unavailable" end
+    local found = false
+    for _, id in ipairs(owned) do if id == treasureId then found = true; break end end
+    if not found then return false, "treasure_unavailable" end
+    self.lastMessage = "已展示记忆，记忆仍保留。"
+    return true, self.lastMessage, elderExchange(self, treasureId, "show", "展示记忆", self.lastMessage)
+end
+
 function Loop:BindRuntime(runtime)
+    if type(runtime) ~= "table" then return false, "runtime_required" end
+    local replaced = self.runtime ~= nil and self.runtime ~= runtime
+    if replaced then
+        local autoCancelled, autoCancelError = self:CancelAutoReturn("runtime_replaced")
+        if not autoCancelled then return false, autoCancelError or "auto_return_cancel_failed" end
+        local invalidated, invalidateError = self:InvalidateWorldContent("stale_generation")
+        if not invalidated then return false, invalidateError end
+    end
     self.runtime = runtime
     self.barrel:BindRuntime(runtime)
+    if not self.worldContentActions then
+        local loop = self
+        local adapter = {}
+        function adapter:GetContext()
+            local current = loop.runtime
+            if not current or type(current.GetFixedContentGeneration) ~= "function"
+                or type(current.GetWorldContentAccess) ~= "function" then
+                return nil, "runtime_unavailable"
+            end
+            local generation = current:GetFixedContentGeneration()
+            if generation == nil or type(current.world) ~= "table" then return nil, "runtime_identity_unavailable" end
+            return { player = loop.player, sessionGeneration = loop.generation,
+                runtimeIdentity = current.world, fixedContentGeneration = generation }
+        end
+        function adapter:GetWorldContentAccess(contentId)
+            local current = loop.runtime
+            if not current or type(current.GetWorldContentAccess) ~= "function" then
+                return nil, "world_content_access_unavailable"
+            end
+            return current:GetWorldContentAccess(contentId)
+        end
+        function adapter:IsWorldContentInScope(contentId)
+            local current = loop.runtime
+            if not current or type(current.IsWorldContentInScope) ~= "function" then
+                return nil, "scope_unavailable"
+            end
+            return current:IsWorldContentInScope(contentId)
+        end
+        local actions, actionError = WorldContentActions.New(adapter)
+        assert(actions, actionError or "world_content_initialization_failed")
+        self.worldContentActions, self.worldContentAdapter = actions, adapter
+    end
     self:SetupKnowledgeSystems()  -- runtime 就绪后补建 KS/AS（首帧 Init 时 runtime 可能尚未绑定）
+    return self
 end
 
 -- ②③ 构建认知度/成就执行器；runtime.surfaceSignals 与 player 就绪后才建（幂等，每次 NewRun 重建以绑定新 player）
@@ -1557,7 +1764,11 @@ function Loop:GiveTreasureToElder(id)
     return true, self.lastMessage, elderExchange(
         self, id, "show", "展示 望远镜透镜", self.lastMessage)
 end
-function Loop:BeginBarrelInspection() return self.barrel:Begin() end
+function Loop:BeginBarrelInspection()
+    local cancelled, reason = self:CancelAutoReturn("barrel_inspection")
+    if not cancelled then return false, reason end
+    return self.barrel:Begin()
+end
 function Loop:CancelBarrelInspection() return self.barrel:Cancel("cancelled") end
 function Loop:GetBarrelState() return self.barrel:GetState() end
 function Loop:HasLens() return Progress.HasLens(self.player) end
@@ -1613,6 +1824,8 @@ function Loop:BeginThrowItem(index)
         self.lastMessage = definition.name .. "是关键物品，不能投掷。"
         return false, "protected_item"
     end
+    local cancelled, cancelError = self:CancelAutoReturn("throw_selection")
+    if not cancelled then return false, cancelError or "auto_return_cancel_failed" end
     self.throwSelection = { index = index, itemId = item }
     if self.actions then self.actions:SetDropTarget(nil) end
     if self.runtime and type(self.runtime.ClearMovementTarget) == "function" then self.runtime:ClearMovementTarget() end

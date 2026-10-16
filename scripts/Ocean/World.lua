@@ -33,6 +33,8 @@ local BaseWorld = require("Game.World")
 ---@field scopeEnabled boolean
 ---@field fixedBarrel SeaEntity?
 ---@field fixedBarrelGeneration integer
+---@field fixedContentEntities table<string, SeaEntity>
+---@field fixedContentGeneration integer
 ---@field retired boolean
 local World = setmetatable({}, { __index = BaseWorld })
 World.__index = World
@@ -45,6 +47,7 @@ local VISIBILITY_EPSILON = Config.world.epsilon
 -- Process-local credentials, independent of fish refreshes and day seeds.
 -- A new World (including a separate Runtime.New) cannot reuse an old token.
 local barrelGenerationCounter = 0
+local fixedContentGenerationCounter = 0
 
 local function clearArray(values)
     for index = #values, 1, -1 do values[index] = nil end
@@ -134,10 +137,24 @@ function World:Init()
     self.overlaps = {}
     self.events = {}
     self.onOverlap = false
+    fixedContentGenerationCounter = fixedContentGenerationCounter + 1
+    self.fixedContentGeneration = fixedContentGenerationCounter
+    self.fixedContentEntities = {}
     for _, object in ipairs(Config.world.fixedObjects) do
-        self:spawn({ entityType = object.entityType, kind = "fixed", layer = "surface",
-            position = object.position, radius = object.radius, blocking = object.blocking })
+        local entity = self:spawn({ entityType = object.entityType, kind = "fixed", layer = "surface",
+            contentId = object.contentId, position = object.position, radius = object.radius, blocking = object.blocking })
+        if object.contentId then
+            assert(self.fixedContentEntities[object.contentId] == nil, "duplicate fixed contentId")
+            self.fixedContentEntities[object.contentId] = entity
+        end
     end
+    local treasure = Config.world.fixedTreasure
+    assert(treasure.contentId == "underwater_treasure_01", "fixed treasure content identity required")
+    assert(self.fixedContentEntities[treasure.contentId] == nil, "duplicate fixed contentId")
+    assert(self:isPositionFree(treasure.position, treasure.radius), "fixed treasure must be in open sea")
+    local treasureEntity = self:spawn({ entityType = treasure.entityType, kind = "fixed", layer = "underwater",
+        contentId = treasure.contentId, position = treasure.position, radius = treasure.radius, blocking = false })
+    self.fixedContentEntities[treasure.contentId] = treasureEntity
     barrelGenerationCounter = barrelGenerationCounter + 1
     self.fixedBarrelGeneration = barrelGenerationCounter
     local barrel = Config.world.fixedBarrel
@@ -269,6 +286,7 @@ function World:Retire()
     self.overlaps = {}
     self.events = {}
     self.fixedBarrel = nil
+    self.fixedContentEntities = {}
     self.systems = {}
     self.systemCadences = {}
     return true
@@ -430,6 +448,16 @@ function World:isVisible(entity)
         if M.distanceSquared(entity.position, reveal.center) <= reveal.radius^2 then return true end
     end
     return false
+end
+
+-- Use the live authorization wedge, never debug/reveal visibility.
+function World:IsEntityInScope(entity)
+    if self.retired or self.scopeEnabled ~= true then return false end
+    if type(entity) ~= "table" or entity.id == nil
+        or self:get(entity.id) ~= entity or entity.removed or entity.alive == false then
+        return nil, "content_unavailable"
+    end
+    return isInsideScope(self.scopeShip, entity)
 end
 
 -- Presentation reads the very same constants as isInsideScope; it cannot

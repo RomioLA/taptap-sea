@@ -44,6 +44,7 @@ function Runtime.New(settings)
         ship = { id = "ship-1", position = copyPoint(settings.shipPosition or { x = 0, y = 0 }), level = 1 },
         paused = true,
         generation = 1,
+        fixedContentGeneration = 1,
         time = 0,
         oceanTime = 0,
         currentFrameSea = 0,
@@ -137,6 +138,24 @@ end
 
 function Runtime:GetFishingGeneration()
     return self.generation
+end
+
+-- This fishing fixture has no fixed world content. Keep the new C adapter
+-- contract explicit so unrelated gameplay suites still exercise their scope.
+function Runtime:GetFixedContentGeneration()
+    return self.fixedContentGeneration
+end
+
+function Runtime:CancelAutoReturn()
+    return true
+end
+
+function Runtime:GetWorldContentAccess(contentId)
+    return nil, "content_unavailable"
+end
+
+function Runtime:IsWorldContentInScope(contentId)
+    return false
 end
 
 function Runtime:selectFishingTarget(center, radius, filter)

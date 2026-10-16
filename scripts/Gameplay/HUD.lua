@@ -53,6 +53,12 @@ local HUD = {}
 ---@field itemId string
 
 local presentation = require("Gameplay.HUDPresentation").Create(UI, Config, Items)
+local MEMORY_TREASURE_LABELS = {
+    memory_island_01 = "岛屿记忆一",
+    memory_island_02 = "岛屿记忆二",
+    memory_treasure_01 = "海底记忆",
+}
+local MEMORY_TREASURE_ORDER = { "memory_island_01", "memory_island_02", "memory_treasure_01" }
 -- A 任务：只读事实性现象文案（鸟影下的空隙 / 退潮的箭头）。仅消费 SurfaceSignals
 -- 公开读取接口，不写鱼/鸟/玩家状态；无信号时返回空串，HUD 不编造。
 local emCues = require("Gameplay.EMCues")
@@ -485,8 +491,58 @@ local header = UI.Panel {
         maxWidth = "100%",
         pointerEvents = "box-none",
     }
+    local function readReturnActionMode()
+        if type(loop.GetReturnActionMode) ~= "function" then return "return_to_port" end
+        local ok, mode = Diagnostics.Call("HUD", "return_action_mode", loop.GetReturnActionMode, loop)
+        if ok and (mode == "depart" or mode == "request_auto_return" or mode == "cancel_auto_return"
+            or mode == "return_to_port") then return mode end
+        return "return_to_port"
+    end
+    local function readWorldContentPrompt()
+        if type(loop.GetWorldContentPrompt) ~= "function" then return nil end
+        local ok, prompt = Diagnostics.Call("HUD", "world_content_prompt", loop.GetWorldContentPrompt, loop)
+        if ok and type(prompt) == "table" and prompt.enabled == true
+            and (prompt.operation == "begin" or prompt.operation == "cancel")
+            and type(prompt.text) == "string" and type(prompt.contentId) == "string" then
+            return prompt
+        end
+        return nil
+    end
+    local function readOwnedMemoryTreasures()
+        if type(loop.GetOwnedTreasures) ~= "function" then return {} end
+        local ok, owned = pcall(loop.GetOwnedTreasures, loop)
+        if not ok or type(owned) ~= "table" then return {} end
+        local ownedSet = {}
+        for _, treasureId in ipairs(owned) do
+            if MEMORY_TREASURE_LABELS[treasureId] then ownedSet[treasureId] = true end
+        end
+        local result = {}
+        for _, treasureId in ipairs(MEMORY_TREASURE_ORDER) do
+            if ownedSet[treasureId] then result[#result + 1] = treasureId end
+        end
+        return result
+    end
     refs.depart = makeButton("出航", function() invokeLoop("Depart") end, "primary", 80)
-    refs.returnToPort = makeButton("返港", function() invokeLoop("ReturnToPort") end, "secondary", 80)
+    refs.returnToPort = makeButton("返港", function()
+        local mode = readReturnActionMode()
+        if mode == "cancel_auto_return" then
+            invokeLoop("CancelAutoReturn", "user_cancel")
+        elseif mode == "request_auto_return" then
+            invokeLoop("RequestAutoReturn")
+        elseif mode == "return_to_port" then
+            invokeLoop("ReturnToPort")
+        end
+    end, "secondary", 80)
+    refs.worldContentAction = makeButton("探索岛屿", function()
+        local prompt = readWorldContentPrompt()
+        if not prompt then refresh(); return end
+        if prompt.operation == "cancel" then
+            invokeLoop("CancelWorldContentAction", prompt.token)
+        else
+            invokeLoop("BeginWorldContentAction", prompt.contentId, prompt.actionKind)
+        end
+    end, "primary", 104)
+    refs.worldContentAction:SetVisible(false)
     refs.endToday = makeButton("结束今日", function() invokeLoop("EndToday") end, "primary", 98)
     -- 读取云存档/开始新周目移入信息滚动屏（低频港口操作，见 portPanel 段）。
     -- 背包开关（v2.1 批B 真机图1 修复）：背包已迁入信息滚动屏，按钮不再开关
@@ -562,6 +618,7 @@ local header = UI.Panel {
     dock:AddChild(refs.compendiumToggle)
     dock:AddChild(refs.barrelToggle)
     dock:AddChild(refs.scopeToggleBar)
+    dock:AddChild(refs.worldContentAction)
     dock:AddChild(refs.inventoryToggle)
     dock:AddChild(refs.elderToggle)
     dock:AddChild(refs.depart)
@@ -580,6 +637,7 @@ local header = UI.Panel {
         { widget = refs.compendiumToggle, width = 72 },
         { widget = refs.barrelToggle,     width = 96 },
         { widget = refs.scopeToggleBar,   width = 104 },
+        { widget = refs.worldContentAction,width = 104 },
         { widget = refs.inventoryToggle,  width = 128 },
         { widget = refs.elderToggle,      width = 112 },
         { widget = refs.depart,           width = 80 },
@@ -1908,7 +1966,7 @@ local header = UI.Panel {
     -- 背包物品行默认底色（选中态时切到 palette.accentSoft，见 applyItemRowSelection）。
     local ITEM_ROW_BG = { 92, 70, 46, 34 }
 
-    local function rebuildItemRows(items, inPort, elderOpen, actionsBlocked)
+    local function rebuildItemRows(items, inPort, elderOpen, actionsBlocked, ownedMemories)
         local cargoRevision = loop:GetCargoRevision()
         destroyChildren(refs.inventoryRows)
         destroyChildren(refs.portSales)
@@ -2073,11 +2131,38 @@ local header = UI.Panel {
                 end
             end
         end
+        local memoryCount = 0
+        if elderOpen then
+            for _, treasureId in ipairs(ownedMemories or {}) do
+                local label = MEMORY_TREASURE_LABELS[treasureId]
+                if label then
+                    memoryCount = memoryCount + 1
+                    local memoryRow = UI.Panel {
+                        width = "100%", minHeight = 38, gap = 4, flexShrink = 0,
+                        flexDirection = "row", flexWrap = "wrap", alignItems = "center",
+                        backgroundColor = { 92, 70, 46, 24 }, borderRadius = 5,
+                        padding = { 3, 5, 3, 5 },
+                    }
+                    memoryRow:AddChild(makeLabel(label, UiKit.fontSize.teaching, UiKit.ink.body,
+                        "bold", { flexGrow = 1, flexBasis = 0 }))
+                    local showMemory = makeButton("展示", function()
+                        local succeeded, feedback, exchange = invokeLoop("ShowTreasureToElder", treasureId)
+                        if succeeded then recordElderExchange(exchange, "展示 " .. label, feedback) end
+                        refresh()
+                    end, "primary", 72)
+                    showMemory:SetDisabled(actionsBlocked)
+                    memoryRow:AddChild(showMemory)
+                    refs.elderShowRows:AddChild(memoryRow)
+                end
+            end
+        end
         if saleCount == 0 then addEmptyMessage(refs.portSales, "没有可出售的鱼。先去捕点鱼，再返港出售。") end
         -- v2.3：两个二级容器各自的空态说明
         if giftCount == 0 then
             addEmptyMessage(refs.elderGiveRows, "船舱里没有可以给老人的食物。")
-            addEmptyMessage(refs.elderShowRows, "船舱里没有可以展示的鱼或鱼饵。")
+            if memoryCount == 0 then
+                addEmptyMessage(refs.elderShowRows, "船舱里没有可以展示的鱼、鱼饵或记忆。")
+            end
         end
     end
 
@@ -2176,6 +2261,7 @@ local header = UI.Panel {
 
         local inPort = loop.inPort == true
         local items = copyItems(loop)
+        local ownedMemories = readOwnedMemoryTreasures()
         local capacity = player.inventory and player.inventory:GetCapacity() or 0
 
         -- 批2 水彩图标条：显隐随 StoryArt 开关（SeaDebug 面板可切），数值与状态行同源；
@@ -2476,9 +2562,20 @@ local header = UI.Panel {
             and string.format("夜航：还剩 %.0f 秒安全返港；夜尽将强制返港。", graceRemaining)
             or string.format("晚归处罚中：现在返港次日体力 %.1f/%s；夜尽仅恢复上限的%.0f%%。",
                 loop:GetNextDayStamina(false), tostring(player.maxStamina), Config.clock.forcedStaminaRatio * 100))
-        setText(refs.treasureSummary, "treasureSummary", hasLens
+        local treasureSummary = hasLens
             and "望远镜透镜 ×1 · 永久保留，不占船舱格，不能出售或丢弃。"
-            or "尚未获得宝物；取得的宝物单独保留，不占船舱格。")
+            or "尚未获得望远镜透镜。"
+        if #ownedMemories > 0 then
+            local names = {}
+            for _, treasureId in ipairs(ownedMemories) do
+                names[#names + 1] = MEMORY_TREASURE_LABELS[treasureId]
+            end
+            treasureSummary = treasureSummary .. " 记忆：" .. table.concat(names, "、")
+                .. "（永久保留，不占船舱格）。"
+        elseif not hasLens then
+            treasureSummary = treasureSummary .. " 已获得的记忆会单独保留，不占船舱格。"
+        end
+        setText(refs.treasureSummary, "treasureSummary", treasureSummary)
         -- 信息滚动屏开合（真机反馈 2026-10-05）：纯派生态，不写用户偏好——
         -- · 需要点击海面的流程（捕鱼选点/投放选点）强制收起（流程结束自动恢复）；
         -- · 用户未操作过（nil）时：在港默认展开（商店/读取可用），出海默认收起；
@@ -2511,6 +2608,19 @@ local header = UI.Panel {
         refs.depart:SetVisible(inPort)
         refs.returnToPort:SetVisible(not inPort)
         refs.endToday:SetVisible(inPort)
+        local returnActionLabels = {
+            depart = "出航", request_auto_return = "自动返航",
+            cancel_auto_return = "取消返航", return_to_port = "返港",
+        }
+        local returnActionMode = readReturnActionMode()
+        setText(refs.returnToPort, "returnActionLabel", returnActionLabels[returnActionMode] or "返港")
+        local contentPrompt = readWorldContentPrompt()
+        refs.worldContentAction:SetVisible(not inPort and contentPrompt ~= nil)
+        if contentPrompt then
+            setText(refs.worldContentAction, "worldContentActionLabel", contentPrompt.text)
+            refs.worldContentAction:SetDisabled(busy or (contentPrompt.operation == "begin"
+                and (not ready or fishingRestricted)))
+        end
         refs.elderToggle:SetVisible(inPort or bucketActiveForInput or loop.elderOpen == true)
         refs.depart:SetDisabled(not ready or busy or fishingRestricted or loop.inventoryOpen == true or loop.elderOpen == true)
         refs.returnToPort:SetDisabled(busy or not ready or fishingRestricted)
@@ -2693,13 +2803,15 @@ local header = UI.Panel {
         ---@type string[]
         local signatureParts = { tostring(loop:GetCargoRevision()), tostring(capacity), tostring(inPort), tostring(loop.elderOpen == true) }
         for _, itemId in ipairs(items) do signatureParts[#signatureParts + 1] = itemId end
+        for _, treasureId in ipairs(ownedMemories) do signatureParts[#signatureParts + 1] = treasureId end
         signatureParts[#signatureParts + 1] = tostring(busy or fishingRestricted)
         signatureParts[#signatureParts + 1] = tostring(elderPresent)
         local signature = table.concat(signatureParts, "|")
         if signature ~= state.inventorySignature then
             state.inventorySignature = signature
             state.selectedItemIndex = nil
-            rebuildItemRows(items, inPort, loop.elderOpen == true and elderPresent, busy or fishingRestricted)
+            rebuildItemRows(items, inPort, loop.elderOpen == true and elderPresent,
+                busy or fishingRestricted, ownedMemories)
         end
         -- v1.5 选中态：选择变化只改样式不重建行（见 applyItemRowSelection）。
         applyItemRowSelection()

@@ -5,6 +5,7 @@ local OceanConfig = require("Ocean.Config")
 ---@field runtime table
 ---@field loop GameplayLoop
 ---@field gameplaySystem table
+---@field afterWorldUpdate (fun())?
 local Game = {}
 Game.__index = Game
 
@@ -30,6 +31,7 @@ function Game:Init(runtime, loop)
         local frameDt = self._frameDt
         local seaSlice = frameDt > 0 and math.min(frameDt, OceanConfig.world.maxFrameSec) * (slice / frameDt) or 0
         self.runtime:Update(seaSlice, blocked and 0 or self._axisX, blocked and 0 or self._axisY)
+        if self.afterWorldUpdate then self.afterWorldUpdate() end
     end
 end
 
