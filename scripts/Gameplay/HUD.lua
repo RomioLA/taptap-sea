@@ -153,6 +153,11 @@ function HUD.Create(loop, parent, debugTools)
     local recordElderExchange = function() end
     ---@type fun(command: string, argument?: number|string)
     local invokeDebug = function(command, argument) end
+    local function bubbleTime()
+        if os and type(os.time) == "function" then return os.time() end
+        if os and type(os.clock) == "function" then return os.clock() end
+        return nil
+    end
 
     local function setText(widget, key, value)
         local text = tostring(value or "")
@@ -423,8 +428,24 @@ local header = UI.Panel {
     -- ② 收网状态/进度文字对玩法无增量（世界画面已表达），取消（A2）与重试清理
     --   统一收敛到按钮坞"捕鱼"键（Loop:BeginFishingSelection 单一入口），结果
     --   提示由中央结果气泡（catchBubble）承担。
+    local function showFishingSelectionHint()
+        local nowStamp = bubbleTime()
+        if not nowStamp then return end
+        local takeHint = loop.TakeFishingSelectionHint
+        if type(takeHint) ~= "function" then return end
+        local ok, shouldShow = Diagnostics.Call(
+            "HUD", "take_fishing_selection_hint", takeHint, loop)
+        if not ok or shouldShow ~= true then return end
+
+        -- 与捕鱼结果共用约 5 秒轻量气泡，不阻断海面选点。
+        state.bubbleText = "点击附近海面下网"
+        state.bubbleUntil = nowStamp + 5
+        refresh()
+    end
     refs.beginFishing = makeButton("捕鱼", function()
-        invokeLoop("BeginFishingSelection")
+        if invokeLoop("BeginFishingSelection") then
+            showFishingSelectionHint()
+        end
     end, "primary", 72)
 
     -- 真机反馈（2026-10-05）：按钮坞由三行收敛为单行操作。容器透明 +
@@ -914,10 +935,12 @@ local header = UI.Panel {
         local cargoItems = loop.player and loop.player.inventory and loop.player.inventory:GetItems() or {}
         local givenId = cargoItems[itemIndex]
         local givenDef = givenId and Items.GetDefinition(givenId)
-        invokeLoop("SetElderOpen", true)
-        if loop.elderOpen == true then
-            invokeLoop("GiveToElder", itemIndex)
-            recordElderExchange("给予 " .. (givenDef and givenDef.name or "物品"))
+        local opened = invokeLoop("SetElderOpen", true)
+        if opened and loop.elderOpen == true then
+            local succeeded, feedback, exchange = invokeLoop("GiveToElder", itemIndex)
+            if succeeded then
+                recordElderExchange(exchange, "给予 " .. (givenDef and givenDef.name or "物品"), feedback)
+            end
             refresh()
         end
     end, "primary", 72)
@@ -1369,8 +1392,7 @@ local header = UI.Panel {
     -- 尺寸**对齐背包卡**（用户指定参考对象）：同为 card() 默认 width=100%，
     -- 用 panel 档（slice=40）而非 parchment（粗羊皮纸边框留给剧情卡）。
     -- 契约约束（不可违反）：
-    --   ① GameLoopUISpec:82-84 点"拜访老人"后必须能点到"结束对话"→
-    --      本卡挂 infoLayer（常驻层，不受 infoOpen 牵连），按钮恒可见；
+    --   ① 老人卡挂 infoLayer（常驻层，不受 infoOpen 牵连），外部老人入口负责开合；
     --   ② Circle1B2UITests:244-253 老人态下要能点物品行"展示"→
     --      卡片不遮挡背包行（同层并列）；
     --   ③ 礼物区保持为 card 的直接后代（多包一层 ScrollView 会改变 UI 树
@@ -1384,25 +1406,22 @@ local header = UI.Panel {
     -- 现按评审 §4.2 落四段式，一级/二级/把手全部迁入 **options 选项区**
     -- （封顶 36% 卡高、内部滚动），footer 收回"只允许 1 行"硬规则：
     --
-    -- ┌─ 拜访老人 ────────────────────────────┐
+    -- ┌─ 老人 ────────────────────────────────┐
     -- │ header：对话反馈 + 老人进展（只读）      │
     -- ├─ body（flexGrow，唯一对话滚动区）────────┤
-    -- │  羊皮卷对话流 / 聊天记录（回看态）        │
+    -- │  羊皮卷 elderTranscript 对话流            │
     -- ├─ options（maxHeight 36%，内部滚动）──────┤
     -- │  一级键 [给予 ▸] [展示 ▸]              │
     -- │  或二级：[← 返回] + 标题 + 物品行        │
     -- │  或回看态把手 [选项 ▴]                  │
-    -- ├─ footer（恒定 1 行）────────────────────┤
-    -- │  [聊天记录]        [结束对话]           │
-    -- └────────────────────────────────────────┘
+    -- └─ 对话结束由外部「收起」入口控制 ──────────┘
     --
     -- 交互结构（v2.3 A 案，提问二级已于 2026-10-13 随智能体功能整体移除）：
     --   一级键（level1）：[给予 ▸] [展示 ▸]
     --   二级列表（level2）：点一级键展开，[← 返回] 回一级
     --     给予 → 可给予的食物行
     --     展示 → 可展示的鱼/饵行 + 透镜行（宝物卡融进此处）
-    --   回看态：点[聊天记录] → 记录展开、选项区收起为 [选项 ▴] 把手；
-    --           点把手展开选项区、再点收起；再点[收起记录]回常态。
+    --   对话始终保留在 elderTranscript 气泡流，不提供聊天记录回看入口。
     --
     -- 文案避撞（关键）：一级键带「 ▸」后缀，与二级物品按钮（精确文案
     -- "给予"/"展示"）不撞名 —— findButtons 的精确匹配因此可区分层级。
@@ -1410,12 +1429,12 @@ local header = UI.Panel {
     -- 契约（四套件，本次重排后全部复验通过）：
     --   ① B2UITests：打开 → 点[展示 ▸] → findButtons("展示")=2（物品按钮）
     --   ② SevenDays：打开 → 点[给予 ▸] → "01 · "前缀行的[给予]
-    --   ③ GameLoopUISpec：打开 → [给予 ▸] → [给予] → [结束对话]
+    --   ③ GameLoopUISpec：打开 → [给予 ▸] → [给予] → 外部[收起]
     --   行结构不变：带 %02d · 前缀的标签与按钮仍同处一个面板。
     --   ④ 二级操作后**不自动返回一级**（可连续展示多条鱼/给多个苹果），
     --     由[← 返回]手动回一级。
     refs.elderPanel, refs.elderBody, refs.elderFooter, refs.elderOptions =
-        sectionCard("拜访老人", { skin = "panel", options = true })
+        sectionCard("老人", { skin = "panel", options = true })
 
     -- 摘要头：对话反馈 + 进展（只读，永不滚动）
     refs.elderStatus = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
@@ -1581,8 +1600,8 @@ local header = UI.Panel {
     }
     refs.elderLensStatus = makeLabel("", UiKit.fontSize.small, UiKit.ink.dim)
     refs.elderLensGive = makeButton("展示透镜", function()
-        invokeLoop("GiveTreasureToElder", "scopeLens")
-        recordElderExchange("展示 望远镜透镜")
+        local succeeded, feedback, exchange = invokeLoop("GiveTreasureToElder", "scopeLens")
+        if succeeded then recordElderExchange(exchange, "展示 望远镜透镜", feedback) end
         refresh()
     end, "primary", 96)
     refs.elderLensRow:AddChild(makeLabel("望远镜透镜", UiKit.fontSize.teaching, UiKit.ink.body, "bold",
@@ -1592,28 +1611,8 @@ local header = UI.Panel {
     refs.elderLevel2:AddChild(refs.elderLensRow)
     refs.elderOptions:AddChild(refs.elderLevel2)
 
-    -- ── 操作条 footer（v3.2：恒定 1 行，只放全局键）──────────────────
-    -- 全局键行**常驻**（任何层级、回看态都可点）——"结束对话"是高频退出路径，
-    -- "收起记录"是回看态的唯一出口，不能被选项区收起。
-    refs.elderGlobalRow = UI.Panel {
-        width = "100%",
-        gap = 5,
-        flexShrink = 0,
-        flexDirection = "row",
-        flexWrap = "wrap",
-    }
-    -- v3.0 P0（用户拍板「去按钮化」）：这两个是次级动作，改文字链皮肤
-    -- （透明底 + 墨棕字，见 UiKit.button.link）。节点仍是 Button、文案不变，
-    -- findButtons("结束对话") / ("聊天记录") 照旧命中，四套件零改动。
-    refs.elderLogToggle = makeButton("聊天记录", function()
-        state.elderReviewOpen = not (state.elderReviewOpen == true)
-        state.elderOptionsExpanded = false
-        refresh()
-    end, "link", "46%")
-    refs.elderEnd = makeButton("结束对话", function() invokeLoop("SetElderOpen", false) end, "link", "46%")
-    refs.elderGlobalRow:AddChild(refs.elderLogToggle)
-    refs.elderGlobalRow:AddChild(refs.elderEnd)
-    refs.elderFooter:AddChild(refs.elderGlobalRow)
+    -- 老人卡不再提供聊天记录回看入口或自己的结束按钮；外部「收起」入口负责关闭。
+    -- elderTranscript 与对话流仍完整保留，供给予/展示后的气泡继续使用。
 
     refs.elderPanel:SetVisible(false)
     cardHost:AddChild(refs.elderPanel)
@@ -1761,14 +1760,14 @@ local header = UI.Panel {
     root:AddChild(refs.overlay)
 
     invokeLoop = function(methodName, ...)
-        if state.destroyed then return end
+        if state.destroyed then return false, "hud_destroyed" end
         local method = loop[methodName]
         if type(method) ~= "function" then
             state.localMessage = "当前玩法暂不支持：" .. methodName
             refresh()
-            return
+            return false, "unsupported_method"
         end
-        local ok, result, reason = Diagnostics.Call("HUD", "invoke_loop", method, loop, ...)
+        local ok, result, reason, detail = Diagnostics.Call("HUD", "invoke_loop", method, loop, ...)
         if not ok then
             state.localMessage = "操作失败，当前进度保留，请稍后重试。"
         elseif result == false then
@@ -1777,6 +1776,9 @@ local header = UI.Panel {
             state.localMessage = ""
         end
         refresh()
+        if not ok then return false, "operation_failed" end
+        if result == false then return false, reason end
+        return result == true, reason, detail
     end
 
     invokeDebug = function(command, argument)
@@ -1879,9 +1881,23 @@ local header = UI.Panel {
     -- 给予/展示交互记入对话流（羊皮卷）：玩家动作气泡 + 老人答复气泡。
     -- 答复与摘要头反馈同源（Loop.lastMessage）。自由问答移除（2026-10-13）
     -- 后，这是对话流唯一的追加来源——否则卷上只剩开场白一句。
-    recordElderExchange = function(playerText)
+    recordElderExchange = function(exchange, fallbackPlayerText, fallbackElderText)
         if state.destroyed then return end
-        local elderText = tostring(loop.lastMessage or "")
+        local playerText = fallbackPlayerText
+        local elderText = type(fallbackElderText) == "string" and fallbackElderText or ""
+        if type(exchange) == "table" then
+            if type(exchange.playerLine) == "string" and exchange.playerLine ~= "" then
+                playerText = exchange.playerLine
+            end
+            if type(exchange.elderLine) == "string" and exchange.elderLine ~= "" then
+                elderText = exchange.elderLine
+            end
+        elseif type(exchange) == "string" and fallbackPlayerText == nil then
+            -- 兼容仍只传玩家动作文字的旧调用点。
+            playerText = exchange
+        end
+        playerText = tostring(playerText or "")
+        if playerText == "" then return end
         state.elderTranscript[#state.elderTranscript + 1] = { who = "player", text = playerText }
         state.elderTranscript[#state.elderTranscript + 1] = {
             who = "elder",
@@ -2042,8 +2058,10 @@ local header = UI.Panel {
                     { flexGrow = 1, flexBasis = 0 }))
                 local giftButton = makeButton(isFood and "给予" or "展示",
                     function()
-                        invokeLoop("GiveToElder", itemIndex)
-                        recordElderExchange((isFood and "给予 " or "展示 ") .. name)
+                        local succeeded, feedback, exchange = invokeLoop("GiveToElder", itemIndex)
+                        if succeeded then
+                            recordElderExchange(exchange, (isFood and "给予 " or "展示 ") .. name, feedback)
+                        end
                         refresh()
                     end, "primary", 72)
                 giftButton:SetDisabled(actionsBlocked)
@@ -2364,7 +2382,7 @@ local header = UI.Panel {
         end
         -- 收网结果气泡：进入终态时记录文本并展示约 5 秒；离开终态后允许下次收网重弹。
         -- （os.time 缺失的运行时静默禁用气泡，结果仍见捕鱼小卡的结果行。）
-        local nowStamp = os and type(os.time) == "function" and os.time() or nil
+        local nowStamp = bubbleTime()
         if nowStamp then
             if fishingTerminal and resultText ~= "" then
                 local bubbleKey = fishingPhase .. "|" .. resultText
@@ -2485,6 +2503,8 @@ local header = UI.Panel {
         -- 总开合落在 cardHost：三卡（商店/背包/老人）一并收起/恢复，
         -- 各卡自身的互斥显隐逻辑不变（恢复时仍显示当前应显示的那张）。
         cardHost:SetVisible(infoOpen)
+        -- 这是港口商店入口；出航后必须彻底隐藏，避免海上出现无效港口按钮。
+        refs.infoToggle:SetVisible(inPort)
         refs.infoToggle:SetText(infoOpen and "收起信息" or "港口商店")
         refs.infoToggle:SetDisabled(busy or loop.loading == true)
 
@@ -2497,7 +2517,9 @@ local header = UI.Panel {
         refs.endToday:SetDisabled(busy or not ready or fishingRestricted)
         refs.inventoryToggle:SetDisabled(busy or fishingRestricted or pendingCatch
             or (not ready and loop.inventoryOpen ~= true and not bucketActiveForInput))
-        refs.inventoryToggle:SetText(pendingCatch and "船舱（收获待领）" or "船舱")
+        local inventoryToggleLabel = pendingCatch and "船舱（收获待领）"
+            or (loop.inventoryOpen == true and "收起船舱" or "船舱")
+        setText(refs.inventoryToggle, "inventoryToggleLabel", inventoryToggleLabel)
         refs.elderToggle:SetDisabled(busy or fishingRestricted
             or (not ready and not bucketActiveForInput and loop.elderOpen ~= true))
         local showInventory = loop.inventoryOpen == true or pendingCatch
@@ -2588,7 +2610,7 @@ local header = UI.Panel {
                 or noSpace and " · 船舱已满，先腾出一格" or ""
             refs.shopStockLabels[itemId]:SetText(definition.name .. "库存：" .. tostring(stock) .. reason)
         end
-        local elderToggleText = loop.elderOpen == true and "结束对话"
+        local elderToggleText = loop.elderOpen == true and "收起"
             or (elderPresent and "拜访老人" or "老人不在")
         refs.elderToggle:SetText(elderToggleText)
 
@@ -2825,7 +2847,8 @@ local header = UI.Panel {
             renderElderDialogue()
             -- v3.2 四段式选项区三态接线：
             --   review（回看记录）> level2（二级列表）> level1（一级键）
-            local elderReview = state.elderReviewOpen == true
+            -- 回看入口已按 R5 删除；transcript 仍由主对话卷轴完整承载。
+            local elderReview = false
             local elderExpanded = state.elderOptionsExpanded == true
             local elderLevel = state.elderMenuLevel or "root"
             local elderOptionsVisible = (not elderReview) or elderExpanded
@@ -2841,7 +2864,6 @@ local header = UI.Panel {
             refs.elderHandle:SetText(elderExpanded and "选项 ▾" or "选项 ▴")
             refs.elderCategoryRow:SetVisible(elderOptionsVisible and elderLevel == "root")
             refs.elderLevel2:SetVisible(elderOptionsVisible and elderLevel ~= "root")
-            refs.elderLogToggle:SetText(elderReview and "收起记录 ▾" or "聊天记录")
 
             -- 二级标题与内容（互斥二选一）
             local level2Titles = {
@@ -2902,19 +2924,16 @@ local header = UI.Panel {
         -- 老人卡头部只保留进展（elderStatus）；引导/说明文字按 UI精简 v1.0 §三 移除。
         -- 真实反馈（localMessage）已由 HUD 日志行与调试面板另行展示，不在此重复。
         if loop.elderOpen == true then
-            local elderProgressText = "老人进展暂不可用。"
-            if elderStatus then
-                local day = tonumber(player.day) or 1
-                if day <= 3 then
-                    elderProgressText = string.format("已给予老人苹果：%d/3", tonumber(elderStatus.applesGiven) or 0)
-                else
-                    local decisions = {
-                        pending = "待第4天判定",
-                        saved = "老人获救",
-                        dead = "老人已离世",
-                    }
-                    elderProgressText = decisions[elderStatus.decision] or "老人状态暂不可用。"
-                end
+            local day = tonumber(player.day) or 1
+            local elderProgressText = ""
+            refs.elderStatus:SetVisible(day >= 4)
+            if elderStatus and day >= 4 then
+                local decisions = {
+                    pending = "待第4天判定",
+                    saved = "老人获救",
+                    dead = "老人已离世",
+                }
+                elderProgressText = decisions[elderStatus.decision] or "老人状态暂不可用。"
             end
             setText(refs.elderStatus, "elderStatus", elderProgressText)
             refs.elderLensRow:SetVisible(hasLens)

@@ -501,6 +501,30 @@ function Tests.Run()
         assert(f.loop:CancelFishingAction())
     end)
 
+    test("fishing selection hint is pending only after first successful entry and never repeats", function()
+        local f = atSea()
+        assertEqual(Progress.IsFishingSelectionHintShown(f.loop.player), false)
+        f.loop.player.stamina = 0
+        assertEqual(f.loop:BeginFishingSelection(), false, "a rejected start is not a successful selection")
+        assertEqual(Progress.IsFishingSelectionHintShown(f.loop.player), false)
+        assertEqual(f.loop:TakeFishingSelectionHint(), false)
+
+        f.loop.player.stamina = 100
+        assert(f.loop:BeginFishingSelection())
+        assertEqual(f.loop:GetFishingState().state, "selecting")
+        assertEqual(Progress.IsFishingSelectionHintShown(f.loop.player), true)
+        assertEqual(f.loop:TakeFishingSelectionHint(), true)
+        assertEqual(f.loop:TakeFishingSelectionHint(), false, "the pending hint can be consumed once")
+
+        assert(f.loop:BeginFishingSelection()) -- A2 re-tap cancels the active selection.
+        assertEqual(f.loop:GetFishingState().state, "idle", "cancelling a selection leaves no fishing action")
+        assertEqual(f.loop:TakeFishingSelectionHint(), false, "cancellation does not enqueue a duplicate")
+        assert(f.loop:BeginFishingSelection())
+        assertEqual(f.loop:GetFishingState().state, "selecting")
+        assertEqual(f.loop:TakeFishingSelectionHint(), false, "a later selection in this run stays quiet")
+        assert(f.loop:CancelFishingAction())
+    end)
+
     -- A1（2026-10-05 用户裁决）：白名单制——动作中透镜开关可用，对话/船舱仍拒绝。
     test("A1 whitelist: scope toggle stays available and dialogs stay blocked mid-action", function()
         local f = atSea()

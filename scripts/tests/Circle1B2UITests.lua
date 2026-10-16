@@ -4,6 +4,7 @@ local Progress = require("Gameplay.Circle1B2Progress")
 
 local Tests = {}
 local PAPER_TEXT = "海岸边那只木桶，下面一定有什么东西，我想多打捞几次就能打捞上来吧。"
+local FISHING_HINT = "点击附近海面下网"
 local activeUI = nil
 
 local function eq(actual, expected, label)
@@ -143,6 +144,21 @@ local function exactLabel(root, text, visibleOnly)
     return found
 end
 
+local function findById(root, id)
+    if root.props and root.props.id == id then return root end
+    for _, child in ipairs(root.children or {}) do
+        local found = findById(child, id)
+        if found then return found end
+    end
+    return nil
+end
+
+local function dialogueBubbleCount(root)
+    local scroll = assert(findById(root, "elderDialogueScroll"), "elder dialogue scroll missing")
+    local rows = assert(scroll.children[1], "elder dialogue rows missing")
+    return #rows.children
+end
+
 local function atSea(settings)
     local fixture = Flow.Fixture(settings)
     assert(fixture.loop:Depart())
@@ -195,6 +211,22 @@ function Tests.Run()
         results[#results + 1] = { name = name, passed = ok, error = ok and "" or tostring(err) }
     end
 
+    test("first fishing selection shows a non-modal hint and still accepts the sea pointer", function()
+        local f = atSea()
+        withHUD(function(HUD)
+            local hud = HUD.Create(f.loop)
+            click(button(hud.root, "捕鱼", true))
+            eq(f.loop:GetFishingState().state, "selecting", "the button enters selection first")
+            assert(exactLabel(hud.root, FISHING_HINT, true), "the first selection must show the exact hint")
+            eq(f.loop:GetStoryDialog(), nil, "the hint must not open a modal story dialog")
+            eq(f.loop.clock:IsPaused(), false, "the hint must not pause the voyage")
+
+            assert(f.bridge:OnSeaPointer({ x = 0, y = 0 }), "the first legal sea tap must be accepted")
+            hud.Refresh()
+            eq(f.loop:GetFishingState().state, "casting", "the hint adds no confirmation step")
+        end)
+    end)
+
     test("scope toggle stays disabled without a lens and toggles through A without pausing", function()
         local f = atSea()
         bindScopeInterface(f.runtime)
@@ -241,7 +273,7 @@ function Tests.Run()
         local useButtons = findButtons(hud.root, "食用", true)
         assert(#useButtons == 0, "edible-only 食用 button must be hidden for non-food bait")
 
-            click(button(hud.root, "船舱", true))
+            click(button(hud.root, "收起船舱", true))
             click(button(hud.root, "拜访老人", true))
             -- v2.3 二级化：先点「展示 ▸」分类键展开物品列表，再找物品行的「展示」
             click(button(hud.root, "展示 ▸", true))
@@ -256,6 +288,83 @@ function Tests.Run()
             eq(#displays, 2)
             click(displays[2])
             items(f.loop.player.inventory:GetItems(), before, "displayed fish remains in cargo")
+        end)
+    end)
+
+    test("elder exchanges render both lines only on success and failed gifts add no false bubble", function()
+        local f = Flow.Fixture({ items = { "apple", "bait" } })
+        local observedExchange
+        local originalGive = f.loop.GiveToElder
+        f.loop.GiveToElder = function(loop, index)
+            local accepted, message, exchange = originalGive(loop, index)
+            observedExchange = exchange
+            return accepted, message, exchange
+        end
+
+        withHUD(function(HUD)
+            local hud = HUD.Create(f.loop)
+            click(button(hud.root, "拜访老人", true))
+            hud.Refresh()
+            local openingBubbles = dialogueBubbleCount(hud.root)
+
+            click(button(hud.root, "给予 ▸", true))
+            click(button(hud.root, "给予", true))
+            hud.Refresh()
+            assert(observedExchange and observedExchange.action == "give", "a successful gift must return a give exchange")
+            assert(type(observedExchange.playerLine) == "string" and observedExchange.playerLine ~= "")
+            assert(type(observedExchange.elderLine) == "string" and observedExchange.elderLine ~= "")
+            eq(dialogueBubbleCount(hud.root), openingBubbles + 2, "a successful gift appends one dialogue pair")
+            assert(exactLabel(hud.root, observedExchange.playerLine, true), "player action line must be visible")
+            assert(exactLabel(hud.root, observedExchange.elderLine, true), "elder response line must be visible")
+            eq(f.loop:GetElderStatus().applesGiven, 1)
+            eq(#f.loop.player.inventory:GetItems(), 1, "food is consumed by a successful give")
+
+            click(button(hud.root, "← 返回", true))
+            click(button(hud.root, "展示 ▸", true))
+            local beforeShow = f.loop.player.inventory:GetItems()
+            click(button(hud.root, "展示", true))
+            hud.Refresh()
+            assert(observedExchange and observedExchange.action == "show", "a successful display must return a show exchange")
+            eq(observedExchange.itemId, "bait")
+            items(f.loop.player.inventory:GetItems(), beforeShow, "displaying bait must not consume it")
+            eq(dialogueBubbleCount(hud.root), openingBubbles + 4, "a successful display appends another pair")
+
+            assert(f.loop.player.inventory:Add("apple"))
+            f.loop.options.elderReceiver = function() return false, "injected_elder_rejection" end
+            hud.Refresh()
+            click(button(hud.root, "← 返回", true))
+            click(button(hud.root, "给予 ▸", true))
+            observedExchange = nil
+            click(button(hud.root, "给予", true))
+            hud.Refresh()
+            eq(observedExchange, nil, "a rejected give must not return a successful exchange")
+            eq(dialogueBubbleCount(hud.root), openingBubbles + 4, "a rejected give must not add success bubbles")
+            eq(f.loop:GetElderStatus().applesGiven, 1, "a rejected apple must not increment progress")
+            eq(#f.loop.player.inventory:GetItems(), 2, "a rejected apple must be restored")
+
+            f.loop.options.elderReceiver = nil
+            click(button(hud.root, "← 返回", true))
+            click(button(hud.root, "展示 ▸", true))
+            local beforeFailedShow = f.loop.player.inventory:GetItems()
+            f.loop.GiveToElder = function() return false, "injected_show_rejection" end
+            click(button(hud.root, "展示", true))
+            hud.Refresh()
+            eq(dialogueBubbleCount(hud.root), openingBubbles + 4,
+                "a failed show must not add a false-success exchange")
+            items(f.loop.player.inventory:GetItems(), beforeFailedShow,
+                "a rejected show must leave the display item in cargo")
+
+            f.loop.GiveToElder = function() return nil, "no_explicit_business_success" end
+            click(button(hud.root, "展示", true))
+            hud.Refresh()
+            eq(dialogueBubbleCount(hud.root), openingBubbles + 4,
+                "a nil result is not an explicit success receipt")
+
+            f.loop.GiveToElder = function() error("injected_show_exception") end
+            click(button(hud.root, "展示", true))
+            hud.Refresh()
+            eq(dialogueBubbleCount(hud.root), openingBubbles + 4,
+                "a caught exception is not an explicit success receipt")
         end)
     end)
 

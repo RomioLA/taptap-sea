@@ -112,6 +112,40 @@ function Tests.Run()
         results[#results + 1] = { name = name, passed = ok, error = ok and "" or tostring(err) }
     end
 
+    test("fishing selection hint persists across day/load and resets for a new run", function()
+        local store = memoryStore()
+        local fixture = Flow.Fixture({ store = store })
+        local loop = fixture.loop
+        eq(Progress.IsFishingSelectionHintShown(loop.player), false)
+
+        assert(loop:Depart())
+        assert(loop:BeginFishingSelection())
+        eq(loop:GetFishingState().state, "selecting", "the hint trigger must enter selection")
+        eq(Progress.IsFishingSelectionHintShown(loop.player), true)
+        eq(loop:TakeFishingSelectionHint(), true, "first selection consumes the pending hint once")
+        eq(loop:TakeFishingSelectionHint(), false, "the pending hint is one-shot")
+        assert(loop:CancelFishingAction())
+        assert(loop:ReturnToPort())
+
+        advanceDay(loop, store)
+        eq(loop.player.day, 2)
+        eq(Progress.IsFishingSelectionHintShown(loop.player), true, "day settlement retains the marker")
+        assert(loop:LoadSaved())
+        eq(loop.player.day, 2)
+        eq(Progress.IsFishingSelectionHintShown(loop.player), true, "load retains the marker")
+
+        assert(loop:Depart())
+        assert(loop:BeginFishingSelection())
+        eq(loop:GetFishingState().state, "selecting")
+        eq(loop:TakeFishingSelectionHint(), false, "the same run must not show it again after load")
+        assert(loop:CancelFishingAction())
+        assert(loop:ReturnToPort())
+
+        assert(loop:NewRun())
+        eq(loop.player.day, 1)
+        eq(Progress.IsFishingSelectionHintShown(loop.player), false, "a new run restores the default marker")
+    end)
+
     test("elder counts food apples, displays other offerings without consuming them, and saves after three days", function()
         local fixture = Flow.Fixture({ items = { "apple", "bait", "sardine", "tuna", "sardine" } })
         local loop = fixture.loop
@@ -246,7 +280,7 @@ function Tests.Run()
         loop.player.elder.circle1B2.applesGiven = 3
         loop.player.elder.circle1B2.decision = "pending"
         loop.player.treasures.scopeLens = true
-        loop.player.story.circle1B2 = { barrelStage = 2, paperShown = false }
+        loop.player.story.circle1B2 = { barrelStage = 2, paperShown = false, fishingSelectionShown = false }
 
         for day = 1, 6 do
             eq(loop.player.day, day)
@@ -322,6 +356,8 @@ function Tests.Run()
                 mutate = function(data) data.story.circle1B2.paperShown = 0 end },
             { name = "paper shown before day seven", reason = "paper_shown_before_day_seven",
                 mutate = function(data) data.story.circle1B2.paperShown = true end },
+            { name = "nonboolean fishing selection hint", reason = "invalid_fishing_selection_hint",
+                mutate = function(data) data.story.circle1B2.fishingSelectionShown = 1 end },
             { name = "final barrel stage without lens", reason = "final_barrel_stage_requires_lens",
                 mutate = function(data) data.story.circle1B2.barrelStage = 3 end },
         }
@@ -352,6 +388,13 @@ function Tests.Run()
         positive.story.circle1B2.paperShown = true
         assert(Progress.Validate(positive))
         assert(Persistence.Restore(positive))
+
+        local legacyHint = copy(validSnapshot)
+        legacyHint.story.circle1B2.fishingSelectionShown = nil
+        local restoredLegacyHint, hintError = Persistence.Restore(legacyHint)
+        assert(restoredLegacyHint, tostring(hintError))
+        eq(Progress.IsFishingSelectionHintShown(restoredLegacyHint), false,
+            "same-schema saves without the optional hint flag migrate as not shown")
     end)
 
     test("legacy snapshots preserve unknown progress while filling missing circle records", function()
