@@ -191,6 +191,64 @@ local function drawFixedTreasure(ctx, runtime, entity, marked)
     end)
 end
 
+-- C2（2026-10-17）：主场景组件渲染（OceanComponents 藏品，World:Init 以 kind="scenery"
+-- 放置的固定装饰实体）。地表 oblique 组件（reef_rocks_v1 礁石群 / coast_base_v3 海岸补丁）
+-- 与海底沉船（shipwreck_v1 顶视）均走 SeaViewArt.Component 贴图（世界平面 Plane +
+-- ContentPlaneSize 内容比换算 + LOD + 懒加载），贴图失败回退矢量剪影，与生态层鱼/鸟/桶
+-- 的「贴图优先、失败回退」口径一致。实体校验走 fixedContentEntities 身份直查
+-- （scenery 不进 Runtime 快照接口），只读渲染，零世界状态改写。
+local COMPONENT_ENTITY_TYPES = { reef = true, coast = true }
+local WRECK_ENTITY_TYPE, WRECK_CONTENT_ID = "wreck", "shipwreck_v1"
+local SCENERY_FALLBACK_FILL = { 198, 188, 170, 205 }
+local SCENERY_FALLBACK_INK = { 150, 142, 126, 225 }
+
+local function sceneryEntityOk(world, entity)
+    return type(world) == "table" and type(world.fixedContentEntities) == "table"
+        and type(entity.contentId) == "string"
+        and world.fixedContentEntities[entity.contentId] == entity
+        and type(world.get) == "function" and world:get(entity.id) == entity
+        and not entity.removed and entity.alive ~= false
+        and finite(entity.position.x) and finite(entity.position.y)
+end
+
+local function drawSurfaceComponent(ctx, runtime, entity)
+    if entity.kind ~= "scenery" or entity.layer ~= "surface"
+        or not COMPONENT_ENTITY_TYPES[entity.entityType] then return end
+    if not sceneryEntityOk(runtime.world, entity) then return end
+    local radius = math.max(1, finite(entity.radius) and entity.radius or 1)
+    if Art.Component(ctx, entity.contentId, runtime.movement, entity.position,
+        radius * 2, 0, nil) then return end
+    Geometry.WorldCircle(ctx, runtime.movement, entity.position, radius,
+        SCENERY_FALLBACK_FILL, SCENERY_FALLBACK_INK, 1.4)
+end
+
+local function drawFixedWreck(ctx, runtime, entity)
+    if entity.kind ~= "scenery" or entity.entityType ~= WRECK_ENTITY_TYPE
+        or entity.layer ~= "underwater" or entity.contentId ~= WRECK_CONTENT_ID then return end
+    if not sceneryEntityOk(runtime.world, entity) then return end
+    local point = entity.position
+    -- 内容主体填满世界直径 2r（与 island/reef/coast 同一口径），海面微沉贴合水下观感。
+    local contentSize = math.max(2, (finite(entity.radius) and entity.radius or 1) * 2)
+    Presentation.Draw(ctx, runtime.movement, point, contentSize * 1.1, -0.8, function()
+        if Art.Component(ctx, WRECK_CONTENT_ID, runtime.movement, point, contentSize, 0, nil) then return end
+        local hull = {
+            { x = point.x - contentSize * 0.5, y = point.y },
+            { x = point.x - contentSize * 0.28, y = point.y - contentSize * 0.32 },
+            { x = point.x + contentSize * 0.28, y = point.y - contentSize * 0.32 },
+            { x = point.x + contentSize * 0.5, y = point.y },
+            { x = point.x + contentSize * 0.28, y = point.y + contentSize * 0.32 },
+            { x = point.x - contentSize * 0.28, y = point.y + contentSize * 0.32 },
+        }
+        Geometry.WorldPolygon(ctx, runtime.movement, hull, SCENERY_FALLBACK_FILL, SCENERY_FALLBACK_INK, 1.4)
+        worldLine(ctx, runtime.movement,
+            { x = point.x - contentSize * 0.18, y = point.y - contentSize * 0.2 },
+            { x = point.x - contentSize * 0.18, y = point.y + contentSize * 0.2 }, SCENERY_FALLBACK_INK, 1.1)
+        worldLine(ctx, runtime.movement,
+            { x = point.x + contentSize * 0.18, y = point.y - contentSize * 0.2 },
+            { x = point.x + contentSize * 0.18, y = point.y + contentSize * 0.2 }, SCENERY_FALLBACK_INK, 1.1)
+    end)
+end
+
 local function drawPerception(ctx, movement, entity)
     local data = FishData[entity.species]
     if not data then return end
@@ -457,6 +515,12 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
             if marked or isVisible(world, entity) then
                 drawFixedTreasure(ctx, runtime, entity, marked)
             end
+        elseif not entity.removed and entity.layer == "underwater" and entity.entityType == WRECK_ENTITY_TYPE
+            and entity.contentId == WRECK_CONTENT_ID then
+            -- C2：海底沉船残骸（纯景观，无 marked 常驻逻辑）：scope 楔形内或水下显示时绘制。
+            if isVisible(world, entity) then
+                drawFixedWreck(ctx, runtime, entity)
+            end
         end
     end
     Art.Wake(ctx, movement, movement.wake)
@@ -476,6 +540,8 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
                 if entry.kind == "entity" then
                     if entity.entityType == "island" then
                         Art.Island(ctx, movement, entity, time, appearance and appearance.airMix or 0)
+                    elseif COMPONENT_ENTITY_TYPES[entity.entityType] then
+                        drawSurfaceComponent(ctx, runtime, entity)
                     elseif entity.entityType == "float" then
                         if world and entity == world.fixedBarrel then
                             drawFixedBarrel(ctx, runtime, entity, snapshot, isLocationRecognized)

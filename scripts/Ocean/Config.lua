@@ -63,6 +63,25 @@ local Config = {
     -- 在返航点旁渲染为无意义圆形色块，已删除。
     fixedBarrel = { position = { x = 14, y = 6 }, radius = 2,
         tuningStatus = "TUTORIAL_PROVISIONAL_GEOMETRY" },
+    -- C2（2026-10-17）：主场景组件世界放置（assets/image/OceanComponents，oblique 海面组件）。
+    -- 与 fixedObjects（冻结的双岛集）/fixedTreasure 并列的独立清单：World:Init 以
+    -- kind="scenery" 注册的非阻挡装饰实体，不影响航行/捕鱼/交互，仅 SeaDraw 贴图渲染。
+    -- 礁石群：第一座岛 (35,25) 外侧近海浅滩（坐标避开岛/桶碰撞圈，满足 isPositionFree），
+    -- 出港即见；海岸补丁：第二处景观，island_02 (-80,90) 方向中途点。放置参数待真机观感调校。
+    fixedComponents = {
+        { entityType = "reef", contentId = "reef_rocks_v1",
+            position = { x = 16, y = 20 }, radius = 6, blocking = false },
+        { entityType = "coast", contentId = "coast_base_v3",
+            position = { x = 60, y = 40 }, radius = 14, blocking = false },
+    },
+    -- C2（2026-10-17）：海底沉船残骸（固定水下内容，与 fixedTreasure 同构：
+    -- layer="underwater"、非阻挡、望远镜 scope 楔形内可见时 SeaDraw 绘制顶视 sprite）。
+    -- 位于第一座岛南侧可航水域，距固定宝藏 (35,45) 15m，构成「宝藏海域」叙事。
+    fixedWrecks = {
+        { entityType = "wreck", contentId = "shipwreck_v1",
+            position = { x = 35, y = 60 }, radius = 3, blocking = false,
+            tuningStatus = "C2_PLAYTEST_GEOMETRY" },
+    },
 },
     camera = { tuningStatus = "SEA_VIEW_VISUAL_TEST_VALUE",
     minX = 0.35, maxX = 0.65, minY = 0.45, maxY = 0.75,

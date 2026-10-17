@@ -220,6 +220,30 @@ function World:Init()
     self.fixedBarrel = self:spawn({ entityType = "float", kind = "fixed", layer = "surface",
         contentId = "driftwood_barrel", position = barrel.position, radius = barrel.radius,
         blocking = true })
+    -- C2（2026-10-17）：主场景组件放置（OceanComponents：海面 oblique 组件 + 海底沉船）。
+    -- kind="scenery" 是有意的新种类：不进 fixedObjects 冻结集、不进 kind=="fixed" 实体
+    -- 计数（Circle1A2BarrelTests 守护），也不进 blockingList（非阻挡，航行零影响）；
+    -- contentId 仍登记进 fixedContentEntities 防重复放置。仅 SeaDraw 消费，纯展示。
+    for _, component in ipairs(Config.world.fixedComponents or {}) do
+        assert(type(component.contentId) == "string", "fixed component contentId required")
+        assert(self.fixedContentEntities[component.contentId] == nil, "duplicate fixed contentId")
+        assert(self:isPositionFree(component.position, component.radius),
+            "fixed component " .. component.contentId .. " must be in open sea")
+        local entity = self:spawn({ entityType = component.entityType, kind = "scenery", layer = "surface",
+            contentId = component.contentId, position = component.position,
+            radius = component.radius, blocking = false })
+        self.fixedContentEntities[component.contentId] = entity
+    end
+    for _, wreck in ipairs(Config.world.fixedWrecks or {}) do
+        assert(type(wreck.contentId) == "string", "fixed wreck contentId required")
+        assert(self.fixedContentEntities[wreck.contentId] == nil, "duplicate fixed contentId")
+        assert(self:isPositionFree(wreck.position, wreck.radius),
+            "fixed wreck " .. wreck.contentId .. " must be in open sea")
+        local entity = self:spawn({ entityType = wreck.entityType, kind = "scenery", layer = "underwater",
+            contentId = wreck.contentId, position = wreck.position,
+            radius = wreck.radius, blocking = false })
+        self.fixedContentEntities[wreck.contentId] = entity
+    end
 end
 
 ---Register one authored fixed content item in stable registration order.

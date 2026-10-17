@@ -2,7 +2,7 @@
   "schema_version": 1,
   "style": "读海日系水彩绘本风，主场景组件（海岸底图/浅滩礁石/海底沉船/告示牌替换元素），与 OceanDecor 同代同链派生",
   "format": "RGBA PNG，直通 Alpha；AI 抠图去底，透明边 RGB 保留主体色；入库后经 slim_ocean_art 256 色量化",
-  "placement": "C2（2026-10-17）：coast_base/reef_rocks 已有渲染入口 SeaViewArt.Component（世界平面 Plane + ContentPlaneSize + LOD + 懒加载），状态 renderer_ready_not_placed——渲染器就绪，世界生成放置（礁石群/海岸补丁位置与数量）由内容侧另行裁决，不擅自进场景；shipwreck 为海底严格顶视（透镜观察候选，待水下视觉）；sign_* 为告示牌矢量图替换元素（竖幅 Upright 候选，待告示牌 POI 接入）",
+  "placement": "C2（2026-10-17）：coast_base/reef_rocks 已世界放置并渲染——Config.world.fixedComponents 以 kind=\"scenery\" 非阻挡实体注册（礁石群 (16,20) r6m / 海岸补丁 (60,40) r14m），SeaDraw 地表分支经 SeaViewArt.Component 绘制，贴图失败回退矢量剪影；shipwreck_v1 已世界放置并渲染——Config.world.fixedWrecks 独立水下实体 (35,60) r3m（与 fixedTreasure 同构：layer=underwater、非阻挡、望远镜 scope 楔形内可见），SeaDraw 水下分支 Component 顶视 + 矢量兜底；sign_* 七件为告示牌矢量图替换元素，暂无告示牌 POI 设计，保持素材库候选（Upright 竖幅），不擅自进场景",
   "projection": "Ocean.Projection 世界平面分片投影（接入时与 island/boat 同构，0.88 画幅修正）",
   "references": [
     "assets/image/OceanDecor/manifest.json",
@@ -34,7 +34,7 @@
         0.5
       ],
       "layer": "component",
-      "status": "renderer_ready_not_placed"
+      "status": "placed"
     },
     "reef_rocks_v1": {
       "path": "image/OceanComponents/reef_rocks_v1.png",
@@ -60,7 +60,7 @@
         0.5
       ],
       "layer": "component",
-      "status": "renderer_ready_not_placed"
+      "status": "placed"
     },
     "shipwreck_v1": {
       "path": "image/OceanComponents/shipwreck_v1.png",
@@ -86,7 +86,7 @@
         0.5
       ],
       "layer": "component",
-      "status": "ready_not_placed"
+      "status": "placed"
     },
     "sign_broadleaf_v1": {
       "path": "image/OceanComponents/sign_broadleaf_v1.png",
