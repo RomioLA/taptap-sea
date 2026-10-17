@@ -2558,7 +2558,7 @@ local header = UI.Panel {
         -- 夜航警示行：条件显隐（夜+海上+未耗尽才出现），常日不占行。
         refs.nightRisk:SetVisible(clockState.phase == "night" and not inPort and not clockState.exhausted)
         local graceRemaining = math.max(0, Config.clock.graceSec - (clockState.elapsed or 0))
-        setText(refs.nightRisk, "nightRisk", graceRemaining > 0
+        setText(refs.nightRisk, "nightRisk", (clockState.elapsed or 0) <= Config.clock.graceSec
             and string.format("夜航：还剩 %.0f 秒安全返港；夜尽将强制返港。", graceRemaining)
             or string.format("晚归处罚中：现在返港次日体力 %.1f/%s；夜尽仅恢复上限的%.0f%%。",
                 loop:GetNextDayStamina(false), tostring(player.maxStamina), Config.clock.forcedStaminaRatio * 100))

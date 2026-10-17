@@ -35,9 +35,14 @@ def run_module(name, LuaRuntime):
     lua, log = make_runtime(LuaRuntime)
     try:
         report = plain(lua.eval(f'require("{name}").Run()'))
-        if not isinstance(report, dict):
+        if isinstance(report, list):
+            metadata = {}
+            rows = report
+        elif isinstance(report, dict):
+            metadata = report
+            rows = report.get("results", report.get("checks", []))
+        else:
             raise TypeError("suite did not return a result table")
-        rows = report.get("results", report.get("checks", []))
         if isinstance(rows, dict):
             rows = list(rows.values())
         skipped = [row for row in rows if row.get("skipped")]
@@ -45,11 +50,11 @@ def run_module(name, LuaRuntime):
             {"name": row.get("name", "unnamed"), "error": row.get("error", "failed")}
             for row in rows if not row.get("passed") and not row.get("skipped")
         ]
-        passed = not failures and (bool(rows) or report.get("passed") is True)
+        passed = not failures and (bool(rows) or metadata.get("passed") is True)
         return {
             "name": name,
             "passed": passed,
-            "testCount": int(report.get("total", len(rows))),
+            "testCount": int(metadata.get("total", len(rows))),
             "skippedCount": len(skipped),
             "tests": rows,
             "failures": failures,
@@ -121,6 +126,10 @@ def main():
     # Circle1B2 UI tests use an in-memory widget double; no engine or live UI is started.
     modules = (
         "tests.WorldContentTests",
+        "tests.Circle1C1EmergenceTests",
+        "tests.Circle1C2KeyCapabilityTests",
+        "tests.Circle1C3ContentCapabilityTests",
+        "tests.Circle1C4LensKeyCapabilityTests",
         "tests.Circle1B2BarrelTests",
         "tests.Circle1B2ProgressTests",
         "tests.Circle1B2ScopeTests",

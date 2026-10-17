@@ -27,6 +27,7 @@ local PREDICATE_WHITELIST = {
   attractOnBait      = { locked = true,  params = { minFish = "number?" } },
   chaseObserved      = { locked = true,  params = { minDuration = "number", requireStationary = "bool?" } },
   birdSignalCast     = { locked = true,  params = { hitRequired = "bool?" } },
+  hypothesisConfirmed = { locked = false, params = { hypothesisId = "string" } }, -- 由 EvidenceSystem 显式 Grant，不参与轮询
   fleeAvoid          = { locked = true,  params = { fleeBatchThreshold = TBD } },          -- U4：批量阈值未知
   splashPreemptCatch = { locked = true,  params = { withinSeconds = TBD, maxDist = TBD } }, -- U4：距离未知
   -- —— 以下 2 个首批 PROPOSED 类型，已于 2026-10-11 代码评审通过 (见对话评审结论)，改 locked=true 启用 ——
@@ -109,6 +110,21 @@ return {
           desc = "你看清水花的方向，提前把网撒在它前头，大鱼撞了进来——你学会了读海的「脚印」。",
           predicate = { type = "splashPreemptCatch", withinSeconds = TBD, maxDist = TBD }, -- U4 距离待实测
           unlockedBy = "水花预判捕鱼",
+          once = true, run = "run",
+        },
+      },
+    },
+
+    island = {
+      name = "陆地方位知识",
+      maxLv = 1,
+      entries = {
+        {
+          id = "K-isl-1", lv = 1,
+          name = "这个方向可能有陆地",
+          desc = "这些鸟总朝着相近的方向飞，也许那边有陆地。",
+          predicate = { type = "hypothesisConfirmed", hypothesisId = "H-isle-bearing-01" },
+          unlockedBy = "多日观察通勤海鸟",
           once = true, run = "run",
         },
       },

@@ -12,6 +12,7 @@ local Progress = require("Gameplay.Circle1B2Progress")
 local Barrel = require("Gameplay.Circle1B2Barrel")
 local WorldContentActions = require("Gameplay.WorldContentActions")
 local WorldContentProgress = require("Gameplay.WorldContentProgress")
+local EvidenceSystem = require("Gameplay.EvidenceSystem")
 -- ②③ 认知度/成就系统执行器 + 跨局存档层
 local KnowledgeSystem = require("Gameplay.KnowledgeSystem")
 local AchievementSystem = require("Gameplay.AchievementSystem")
@@ -120,6 +121,8 @@ function Loop:ResetState()
     Progress.Initialize(self.player)
     local contentInitialized, contentInitializeError = WorldContentProgress.Initialize(self.player)
     assert(contentInitialized, contentInitializeError or "invalid_world_content_progress")
+    local evidenceInitialized, evidenceInitializeError = EvidenceSystem.ResetRun(self.player)
+    assert(evidenceInitialized, evidenceInitializeError or "invalid_hypothesis_progress")
     Progress.OnDayStarted(self.player)
     -- ②③ 认知度/成就系统接线：profile 跨周目仅建一次；KS/AS 每局随 player 重建
     if not self.profileStore then
@@ -250,7 +253,7 @@ function Loop:Update(dt, advanceWorld)
             end
         end
         if previousPhase == "day" and clock.phase == "night" and not clock.exhausted then
-            self.lastMessage = "黄昏已至，请留意返港：夜晚前30秒返港体力全满；之后每晚归1秒次日少1体力，夜尽强返恢复上限的一半。"
+            self.lastMessage = "黄昏已至，请留意返港：夜晚前15秒返港体力全满；之后每晚归1秒次日少2体力，夜尽强返恢复上限的一半。"
         end
         local after = clock.elapsed + (clock.phase == "night" and clock.daySec or 0)
         local gameSeconds = math.max(0, after - before)
@@ -273,10 +276,70 @@ function Loop:Update(dt, advanceWorld)
         end
         remaining = math.max(0, remaining - slice)
     until remaining <= 1e-9
+    self:ProcessEmergenceEvents(dt > 0)
     if self.worldContentActions then
         Diagnostics.Call("Loop", "world_content_advance",
             self.worldContentActions.Advance, self.worldContentActions, worldContentElapsed)
     end
+end
+
+-- Only a fresh, currently observable commuter-flock event can enter the
+-- hypothesis. SurfaceSignals fishing birds do not use this path.
+function Loop:ProcessEmergenceEvents(allowObservation)
+    local runtime, player, clock = self.runtime, self.player, self.clock
+    local world = runtime and runtime.world
+    if not world or type(world.DrainEvents) ~= "function" then return false, "world_unavailable" end
+
+    local active = allowObservation == true and not self.closed and not self.inPort
+        and clock ~= nil and not clock:IsPaused() and not clock.exhausted
+        and player ~= nil and type(player.IsRecognized) == "function"
+        and runtime.movement ~= nil and runtime.movement.viewportReady == true
+        and type(runtime.BuildTraceObservation) == "function"
+    if active then
+        local state, stateError = EvidenceSystem.GetState(player, "H-isle-bearing-01")
+        local hasEvidence, evidenceError = EvidenceSystem.HasEvidenceForDay(
+            player, "H-isle-bearing-01", player.day)
+        if state and not state.confirmed and hasEvidence == false and not evidenceError
+            and not player:IsRecognized("island_02") then
+            local observation = runtime:BuildTraceObservation(
+                "flock_commute", player.day, false)
+            if observation then world:Emit(observation) end
+        elseif stateError or evidenceError then
+            Diagnostics.Event("Loop", "hypothesis_observation_rejected", {
+                reason = stateError or evidenceError, hypothesis_id = "H-isle-bearing-01",
+            })
+        end
+    end
+
+    local generation = type(runtime.GetFixedContentGeneration) == "function"
+        and runtime:GetFixedContentGeneration() or nil
+    for _, event in ipairs(world:DrainEvents()) do
+        if event.type == "observation_recorded" and active and event.traceId == "flock_commute"
+            and event.day == player.day and event.generation == generation then
+            local recognized = player:IsRecognized("island_02")
+            local current = runtime:BuildTraceObservation("flock_commute", player.day, recognized)
+            if current then
+                local bearingDelta = math.abs(event.bearing - current.bearing) % 360
+                if bearingDelta > 180 then bearingDelta = 360 - bearingDelta end
+                if bearingDelta <= 1e-9 and event.sourceContentId == current.sourceContentId
+                    and event.traceType == current.traceType and event.birdCount == current.birdCount
+                    and event.dives == current.dives and event.circlesFish == current.circlesFish
+                    and event.observable == true then
+                    local accepted, result, state = EvidenceSystem.RecordObservation(
+                        player, event, self.knowledge,
+                        { day = player.day, generation = generation })
+                    if accepted and result == "confirmed" and state then
+                        self.lastMessage = state.hint
+                        Diagnostics.Event("Loop", "hypothesis_confirmed", {
+                            hypothesis_id = state.hypothesisId, knowledge_id = "K-isl-1",
+                            distinct_days = state.distinctDays,
+                        })
+                    end
+                end
+            end
+        end
+    end
+    return true
 end
 
 function Loop:RefreshClockStatus()
@@ -1119,6 +1182,12 @@ function Loop:LoadSaved(done)
         if ok and data ~= nil then
             local restoreOk, player, err = Diagnostics.Call(
                 "Loop", "load_restore", Persistence.Restore, data)
+            if restoreOk and player then
+                local evidenceOk, evidenceError = EvidenceSystem.Validate(player)
+                if not evidenceOk then
+                    restoreOk, err = false, evidenceError or "invalid_hypothesis_progress"
+                end
+            end
             if restoreOk and player then
                 local prepared, prepareReason = self:PreparePort("restore")
                 if prepared and self.options.prepareLoadedWorld then

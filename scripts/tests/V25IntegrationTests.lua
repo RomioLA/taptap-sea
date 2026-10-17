@@ -763,6 +763,41 @@ function Tests.Run()
         assertAutoReturnCancelled(env, "night forced return result")
     end)
 
+    check("night end cancels in-progress exploration and salvage without charge or reward", function()
+        local cases = {
+            { contentId = "island_01", actionKind = "explore", memoryId = "memory_island_01" },
+            { contentId = "underwater_treasure_01", actionKind = "salvage", memoryId = "memory_treasure_01" },
+        }
+        for _, case in ipairs(cases) do
+            local env = case.actionKind == "salvage"
+                and fixtureAtTreasureScope() or fixtureAtContent(case.contentId)
+            depart(env)
+            if case.actionKind == "salvage" then
+                env.loop.player.treasures.scopeLens = true
+                assert(env.loop:ToggleScope())
+                assert(env.bridge:Update(1))
+                assert(progress(env.loop, case.contentId).marked,
+                    "salvage fixture must mark Treasure before the action starts")
+            end
+
+            local stamina = env.loop.player.stamina
+            local token = assert(env.bridge:BeginWorldContentAction(case.contentId, case.actionKind))
+            env.loop.clock:Seek("night", env.loop.clock.nightSec - 2)
+            assert(env.bridge:Update(2))
+
+            local receipt = actionReceipt(env.loop, token)
+            eq(receipt.status, "cancelled")
+            eq(receipt.cancelReason, "night_interrupted")
+            eq(env.loop:GetWorldContentActionState(), nil)
+            assert(env.loop.worldContentActions._active == nil and not env.loop.worldContentActions._busy,
+                "night interruption left the C action locked")
+            eq(env.loop.player.stamina, stamina, "night-interrupted action must be free")
+            assert(not progress(env.loop, case.contentId).completed)
+            assert(env.loop.player.treasures[case.memoryId] ~= true)
+            eq(ownedCount(env.bridge:GetOwnedTreasures(), case.memoryId), 0)
+        end
+    end)
+
     check("throw selection is assigned only after Runtime auto-return is cancelled", function()
         local env = autoReturnFixture()
         local cancelAutoReturn = env.loop.CancelAutoReturn
@@ -975,6 +1010,27 @@ function Tests.Run()
         for _ = 1, 4 do assert(env.bridge:Update(0.05)) end
         eq(returnCalls, 1, "consumed arrival must not repeat ReturnToPort")
         eq(env.loop.player.stamina, stamina, "auto-return must not charge stamina")
+    end)
+
+    check("night exhaustion takes priority over a same-frame AutoReturn arrival", function()
+        local env = fixture({ departure = { x = -10.4, y = 0 }, initializeRegions = false })
+        depart(env)
+        local returnCalls = 0
+        local original = env.loop.ReturnToPort
+        env.loop.ReturnToPort = function(loop, ...)
+            returnCalls = returnCalls + 1
+            return original(loop, ...)
+        end
+        local started, reason = env.bridge:RequestAutoReturn()
+        assert(started, tostring(reason or "auto-return request rejected"))
+        eq(env.bridge:GetAutoReturnState().phase, "active")
+
+        env.loop.clock:Seek("night", env.loop.clock.nightSec - 0.05)
+        local updated, updateReason = env.bridge:Update(0.05)
+        assert(updated, tostring(updateReason or "night-boundary update rejected"))
+        assert(env.loop.forcedReturnPending, "night exhaustion must establish forced return")
+        assertAutoReturnCancelled(env, "night exhaustion in the arrival frame")
+        eq(returnCalls, 0, "night exhaustion must bypass ordinary auto-arrival ReturnToPort")
     end)
 
     check("rejected arrival is marked failed and is not retried every frame", function()

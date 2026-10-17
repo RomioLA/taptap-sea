@@ -26,10 +26,11 @@ return {
     -- 用户确认木桶检查耗时4秒；进度使用昼夜游戏时钟，界面打开时随时钟暂停。
     barrel = { cost = 40, durationSec = 4, firstReward = { "apple", "bait" } },
     clock = {
-        daySec = 120,
-        nightSec = 60,
-        graceSec = 30,
-        penaltyPerSec = 1,
+        daySec = 60,
+        nightSec = 30,
+        graceSec = 15,
+        -- 昼夜时长减半；每个晚归秒对应旧规则的两个游戏秒，保持处罚总量一致。
+        penaltyPerSec = 2,
         forcedStaminaRatio = 0.5,
         -- T1（2026-10-06）：每轮 7 天；第 7 天结算即结局，不进入第 8 天。
         maxDay = 7,

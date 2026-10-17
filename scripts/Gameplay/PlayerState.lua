@@ -65,7 +65,7 @@ function PlayerState:init()
     self.boatSpeedLevel = 1
     self.inventory = inventory
     self.recognizedLocations = {}
-    self.treasures = {}
+    self.treasures = { keys = {} }
     self.story = {}
     self.elder = {}
     return Progress.Initialize(self)

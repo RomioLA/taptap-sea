@@ -115,7 +115,7 @@ test("single-config-prices-and-total-cost3900", function()
     local ok = l:UpgradeStamina(); Config.upgrades.stamina.prices[1] = original
     assert(ok); eq(l.player.money,99)
 end)
-test("forced-night60-proportional160-and200", function()
+test("forced-night-proportional160-and200", function()
     for _, maximum in ipairs({160,200}) do
         local l = newLoop(); l.player.maxStamina = maximum; l.player.stamina = maximum
         assert(l:Depart()); l:Update(Config.clock.daySec+Config.clock.nightSec)
@@ -149,7 +149,7 @@ test("persistence-levels-legacy-validation-and-new-run-reset", function()
     end
 end)
 test("balance-model-references-not-runtime-quotas", function()
-    eq(7*(Config.clock.daySec+Config.clock.nightSec)/60,21)
+    eq(7*(Config.clock.daySec+Config.clock.nightSec)/60,10.5)
     eq(21*Items.GetDefinition("sardine").sellPrice+9*Items.GetDefinition("tuna").sellPrice,2550)
     local cost = 2*Items.GetDefinition("apple").buyPrice
     eq(cost,60); eq(Items.GetDefinition("sardine").sellPrice-cost,10)

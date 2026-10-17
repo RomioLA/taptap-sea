@@ -27,7 +27,7 @@ local PREDICATE_WHITELIST = {
   appleCount     = { locked = true, params = { min = 3, withinDays = 3 } },           -- A3 前三天累计3苹果
   unusualBranch  = { locked = true, params = {} },                                   -- A4 事件状态机非常规结果 id
   bigFishRatio   = { locked = true, params = { gte = 0.6, minCount = 5 } },          -- A5 单日大鱼≥60% 且≥5条
-  noForceReturn  = { locked = true, params = { maxLateSeconds = 30 } },              -- A6 每日晚归≤30s (03页安全边界)
+  noForceReturn  = { locked = true, params = { maxLateSeconds = 15 } },              -- A6 每日晚归≤15s (03页安全边界)
   domainLv       = { locked = true, params = { domain = "fish|bird|anomaly", gte = "number" } }, -- C1~C3 派生
 }
 
@@ -68,7 +68,7 @@ return {
       reward = { type = "logLine" }, persist = "profile" },
     { id = "A6", name = "无强返通关",
       desc = "整整七天，没有一夜是被强行赶回港的。你把控住了自己的节奏。",
-      predicate = { type = "noForceReturn", maxLateSeconds = 30 },  -- 30s 为 03 页定稿值，非 TBD
+      predicate = { type = "noForceReturn", maxLateSeconds = 15 },  -- 15s 为 03 页定稿值，非 TBD
       reward = { type = "logLine" }, persist = "profile" },
   },
 

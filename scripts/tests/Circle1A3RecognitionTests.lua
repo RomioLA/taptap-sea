@@ -91,8 +91,11 @@ function Tests.Run(recorder)
         local runtime = Runtime.New({ initializeRegions = false })
         placeForRender(runtime, 60, 1920)
         local reads = 0
-        assert(render(recorder, runtime, function() reads = reads + 1; return true end, 1920) == 0)
-        assert(reads == 0, "offscreen location queried")
+        assert(render(recorder, runtime, function(id)
+            if id == CONTENT_ID then reads = reads + 1 end
+            return true
+        end, 1920) == 0)
+        assert(reads == 0, "offscreen barrel location queried")
         placeForRender(runtime, 25, 5000)
         runtime.world:spawn({ entityType = "float", kind = "fixed", layer = "surface",
             contentId = CONTENT_ID, position = { x = 88, y = 25 }, radius = 2, blocking = false })
@@ -100,7 +103,9 @@ function Tests.Run(recorder)
             position = { x = 90, y = 25 }, radius = 1, blocking = false })
         reads = 0
         assert(render(recorder, runtime, function(id)
-            assert(id == CONTENT_ID); reads = reads + 1; return true
+            assert(id == CONTENT_ID or id == "island_02")
+            if id == CONTENT_ID then reads = reads + 1 end
+            return true
         end) == 1)
         assert(reads == 1, "decoy or anonymous island acquired persistent identity")
     end)

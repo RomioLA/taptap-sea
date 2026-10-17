@@ -36,9 +36,12 @@ def plain(value):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, default=ROOT / 'scripts')
+    parser.add_argument('--repo-root', type=Path, default=ROOT,
+                        help='project root used to resolve ignored engine libraries')
     parser.add_argument('--phase', choices=('baseline', 'final', 'new'), default='final')
     args = parser.parse_args()
     source = args.source.resolve()
+    repo_root = args.repo_root.resolve()
     captured = []
     def log(*values):
         if len(captured) < 600:
@@ -48,9 +51,9 @@ def main():
         # 引擎库位于仓库根的 urhox-libs/（被 .gitignore 排除，不进 scripts/）；
         # Circle1HUDReviewTests 需要 require("urhox-libs/UI/Core/Transition")，
         # 故把仓库根加入 package.path（require 会自动拼出 urhox-libs/... 前缀）。
-        repo_root = ROOT.as_posix()
+        repo_path = repo_root.as_posix()
         lua.globals().package.path = (source / '?.lua').as_posix() + ';' + (source / '?/init.lua').as_posix() \
-            + ';' + repo_root + '/?.lua;' + repo_root + '/?/init.lua;' + lua.globals().package.path
+            + ';' + repo_path + '/?.lua;' + repo_path + '/?/init.lua;' + lua.globals().package.path
         lua.globals().print = log
         return lua
 
@@ -85,7 +88,11 @@ def main():
                              'Circle1A3RecognitionTests', 'SeaFusionRenderTests', 'Circle1B5PortDrawTests',
                              'SeaAtmosphereTests'}
             report = plain(module.Run(recorder_table) if name in render_suites else module.Run())
-            checks = report.get('results', report.get('checks', report.get('tests', []))) if isinstance(report, dict) else []
+            if isinstance(report, list):
+                checks = report
+                report = {}
+            else:
+                checks = report.get('results', report.get('checks', report.get('tests', []))) if isinstance(report, dict) else []
             if isinstance(checks, dict):
                 checks = list(checks.values())
             aggregate = str(report.get('status', '')).lower() in ('pass', 'passed', 'ok') if isinstance(report, dict) else False

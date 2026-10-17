@@ -17,7 +17,7 @@
 3. 每条数据的注释里注明**来源**：策划参数表的行名，或平衡目标表（例：`-- 来源：参数表「Sardine物品」`）。
 4. 数值单位：距离/速度 = 米、米/秒；时间 = 秒；角度 = 度；钱 = coins；体力 = stamina。
 5. 「没有该功能」一律用 `nil`（省略字段），不要填 0 或 -1 之类的魔法值。
-6. 提交前过一遍第 5 节自检清单。
+6. 提交前过一遍第 7 节自检清单。
 
 ---
 
@@ -203,13 +203,41 @@ return {
 4. 文案给玩家"可倒推的因果"：线索要能让玩家在二周目凭知识改变行为。
 5. 每条数据带来源注释（同总规则）。
 
-## 5. 变更流程
+## 5. `scripts/data/content.lua` — 世界固定内容表
+
+本表是 fixed content 的唯一 authored 数据来源，必须是纯 Lua 数据：只有表和注释，不写函数、不写逻辑、不 `require`。
+
+顶层 `fixed` 是稳定顺序数组；本轮正式记录仅有 `island_01`、`island_02`、`underwater_treasure_01`。所有坐标和关系属于世界定义，NewRun 不重写、不随机化。
+
+| 字段 | 类型 | 必填 | 说明 | 约束 |
+|---|---|---|---|---|
+| `contentId` | string | ✅ | 固定内容稳定身份 | 同表唯一 |
+| `entityType` | string | ✅ | 内容实体类型 | `island`、`treasure`、`wreck`、`reef`、`coral`；后 3 种本轮仅为 capability/fixture，不新增正式实例 |
+| `kind` | string | ✅ | 世界实体 kind | 当前 fixed content 为 `fixed` |
+| `position` | `{x:number,y:number}` | 有条件 | authored 世界位置 | 与 `at` 互斥；NewRun 前后不变 |
+| `radius` | number | ✅ | 内容范围半径，米 | `>= 0` |
+| `layer` | string | ✅ | 海面或水下层 | `surface` / `underwater` |
+| `blocking` | boolean | ✅ | 是否阻挡航行 | 必须保持既有 V2.6 行为 |
+| `actionKind` | string | 有条件 | 现有 Gameplay 操作类型 | 当前正式值为 `explore` / `salvage` |
+| `rewardId` | string | 有条件 | 现有直接 ownership 奖励字段 | 不扩展正式奖励体系；三枚 memory 不进入 Inventory |
+| `markable` | boolean | 有条件 | 是否支持 Mark | 只有明确支持标记的内容才为 true |
+| `at` | table | 有条件 | 宝藏容器关系 | 仅用于 `entityType=treasure`；`at.kind` 只允许 `island` / `wreck`；`at.contentId` 指定已注册且类型匹配的固定容器 |
+| `localOffset` | `{x:number,y:number}` | 有条件 | 相对容器中心的 authored 偏移，米 | 仅使用偏移时必须显式提供；省略表示容器中心；禁止运行时随机偏移 |
+| `keyRequired` | string | 可选 | 打捞所需 key ID | 无钥匙时必须在开始打捞前拒绝，不扣体力、不开始动作 |
+| `consumeKey` | boolean | 有条件 | 成功后是否消耗 key | 配置 `keyRequired` 时必填；不得有默认值；未配置 `keyRequired` 时省略 |
+| `revealMethod` | string | 有条件 | key source 的发现方式 | 仅允许 `lens`；复用现有 scope 连续 1 秒 Mark，不新增计时器 |
+
+`position` 与 `at` 必须且只能配置一个；`localOffset` 只能与 `at` 同用。`at` 不得创建或移动容器；容器必须先以匹配的 `contentId` 和 `entityType` 注册。偏移是 authored 的 x/y 相对位移，省略时宝藏位于容器中心，运行时不得随机生成或改写位置。Key source 的获取必须另有显式 action，并同时写明 `kind`、`duration`、`staminaCost`；Mark 只表示发现位置，不表示取得 key。珊瑚/礁石只注册和查询，可参与常规 location/scope 查询；不自动产生掉落、售价、heal、材料价值或鱼群吸引效果。
+
+本轮 `underwater_treasure_01` 必须保留绝对位置、`keyRequired=nil` 和现有 V2.6 流程。不得新增正式沉船、宝藏、reef、coral、key source 或奖励。
+
+## 6. 变更流程
 
 1. B 发现缺字段/缺表 → 在群里说明「哪张表、哪个字段、为什么、来源哪条设计」。
 2. A 修改本文件与加载代码 → 发布新版本号。
 3. B 再填数据。**B 不得通过改 `scripts/` 来"适配"自己的数据。**
 
-## 6. B 提交前自检清单
+## 7. B 提交前自检清单
 
 - [ ] 只改了 `data/` 和 `docs/` 下的文件（`git diff --stat` 确认）
 - [ ] 字段名与本文档逐字一致；没有新增字段

@@ -5,6 +5,7 @@ local Inventory = require("Gameplay.Inventory")
 local Items = require("data.items")
 local Progress = require("Gameplay.Circle1B2Progress")
 local WorldContentProgress = require("Gameplay.WorldContentProgress")
+local EvidenceSystem = require("Gameplay.EvidenceSystem")
 local Diagnostics = require("Gameplay.Diagnostics")
 local LocalSaveBackend = require("Gameplay.LocalSaveBackend")
 local Persistence = {}
@@ -46,6 +47,18 @@ function Persistence.Snapshot(player)
     assert(initialized, initializeError or "invalid_progress_state")
     local progressValid, progressError = WorldContentProgress.Validate(player)
     assert(progressValid, progressError or "invalid_progress_state")
+    local evidenceValid, evidenceError = EvidenceSystem.Validate(player)
+    assert(evidenceValid, evidenceError or "invalid_hypothesis_progress")
+    local treasures = rawget(player, "treasures")
+    assert(type(treasures) == "table", "invalid_key_progress")
+    if rawget(treasures, "keys") == nil then rawset(treasures, "keys", {}) end
+    assert(validMap(rawget(treasures, "keys"), true), "invalid_key_progress")
+    local story = copy(player.story)
+    if rawget(player.story, "hypotheses") ~= nil then
+        local hypotheses, snapshotError = EvidenceSystem.Snapshot(player)
+        assert(hypotheses, snapshotError or "invalid_hypothesis_progress")
+        story.hypotheses = hypotheses
+    end
     return {
         schemaVersion = Config.persistence.schemaVersion,
         day = player.day, maxStamina = player.maxStamina,
@@ -55,7 +68,7 @@ function Persistence.Snapshot(player)
         inventoryLevel = player.inventory:GetLevel(),
         inventoryCapacity = player.inventory:GetCapacity(),
         recognizedLocations = copy(player.recognizedLocations),
-        treasures = copy(player.treasures), story = copy(player.story), elder = copy(player.elder),
+        treasures = copy(player.treasures), story = story, elder = copy(player.elder),
     }
 end
 
@@ -97,13 +110,24 @@ local function restoreValidated(data)
     local treasures = data.treasures
     local story = data.story
     local elder = data.elder
-    if treasures == nil then treasures = {} end
+    if treasures == nil then
+        treasures = {}
+    elseif type(treasures) ~= "table" then
+        return nil, "invalid_progress_state"
+    else
+        treasures = copy(treasures)
+    end
+    -- 老存档没有 keys 子树时按未持有任何钥匙迁移。
+    if rawget(treasures, "keys") == nil then rawset(treasures, "keys", {}) end
     if story == nil then story = {} end
     if elder == nil then elder = {} end
     if not validMap(data.recognizedLocations, true) or not validMap(treasures, false)
+        or not validMap(rawget(treasures, "keys"), true)
         or not validMap(story, false) or not validMap(elder, false) then
         return nil, "invalid_progress_state"
     end
+    local evidenceValid, evidenceError = EvidenceSystem.Validate({ story = story, day = data.day })
+    if not evidenceValid then return nil, evidenceError or "invalid_hypothesis_progress" end
     local originalProgressValid, originalProgressError = Progress.Validate(data)
     if not originalProgressValid then
         return nil, originalProgressError or "invalid_progress_state"
@@ -117,6 +141,13 @@ local function restoreValidated(data)
     player.inventory = assert(Inventory.New(data.inventoryLevel, copy(data.inventory)))
     player.recognizedLocations, player.treasures = copy(data.recognizedLocations), copy(treasures)
     player.story, player.elder = copy(story), copy(elder)
+    if rawget(story, "hypotheses") ~= nil then
+        local restoredEvidence, evidenceRestoreError = EvidenceSystem.Restore(
+            player, rawget(story, "hypotheses"))
+        if not restoredEvidence then
+            return nil, evidenceRestoreError or "invalid_hypothesis_progress"
+        end
+    end
     local initialized, initializeError = Progress.Initialize(player)
     if not initialized then return nil, initializeError or "invalid_progress_state" end
     local worldContentInitialized, worldContentInitializeError = WorldContentProgress.Initialize(player)
@@ -125,6 +156,10 @@ local function restoreValidated(data)
     end
     local progressValid, progressError = WorldContentProgress.Validate(player)
     if not progressValid then return nil, progressError or "invalid_progress_state" end
+    local evidenceProgressValid, evidenceProgressError = EvidenceSystem.Validate(player)
+    if not evidenceProgressValid then
+        return nil, evidenceProgressError or "invalid_hypothesis_progress"
+    end
     return player
 end
 

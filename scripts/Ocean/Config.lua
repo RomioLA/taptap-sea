@@ -1,7 +1,19 @@
 -- Legacy illustration config plus centralized Sea Runtime values.
 -- World lengths are meters. Camera full height is stable; width derives from aspect.
 local FishRows = require("GeneratedData.Fish")
+local Content = require("data.content")
 local activityRange = FishRows[1].ai
+local fixedObjects, fixedTreasure = {}, nil
+for _, definition in ipairs(Content.fixed) do
+    if definition.entityType == "island" then
+        fixedObjects[#fixedObjects + 1] = definition
+    elseif definition.entityType == "treasure" then
+        assert(fixedTreasure == nil, "only the existing fixed treasure is production content")
+        fixedTreasure = definition
+    end
+end
+assert(#fixedObjects == 2 and fixedTreasure
+    and fixedTreasure.contentId == "underwater_treasure_01", "fixed content contract is incomplete")
 -- The existing world has one shared activity range, not per-species thresholds.
 for _, row in ipairs(FishRows) do
     assert(row.ai.fullRange == activityRange.fullRange and row.ai.freezeRange == activityRange.freezeRange,
@@ -44,14 +56,8 @@ local Config = {
     temporaryLifetimeSec = 20, activateRadius = activityRange.fullRange, freezeRadius = activityRange.freezeRange,
     maxStepSec = 0.05, maxFrameSec = 0.25, spawnAttempts = 1000, seed = 271828, spawnInset = 8,
     mapSize = 0, halfSize = 0, overlapRadius = 3, epsilon = 0.000001, regionSize = 120,
-    fixedObjects = {
-        { entityType = "island", contentId = "island_01", position = { x = 35, y = 25 }, radius = 12, blocking = true },
-        { entityType = "island", contentId = "island_02", position = { x = -80, y = 90 }, radius = 20, blocking = true },
-    },    -- 新手教程点位：出港点(0,0)右侧近海的固定木桶，出港即可见、抵达即教学。
-    -- V2.5 唯一固定海底宝藏；靠近第一座岛屿外侧的可航水域，实体不阻挡船只。
-    fixedTreasure = { entityType = "treasure", contentId = "underwater_treasure_01",
-        position = { x = 35, y = 45 }, radius = 0.5, blocking = false,
-        tuningStatus = "V25_INTEGRATION_PLAYTEST_GEOMETRY" },
+    fixedObjects = fixedObjects, -- 兼容视图；正式来源为 data.content。
+    fixedTreasure = fixedTreasure, -- 兼容视图；正式来源为 data.content。
     -- 非阻挡漂浮物，靠近 ≤ operateDistance(5m) 可检查（World:Init 注册）。
     -- 真机反馈（2026-10-05）：原演示漂浮物 float(10,0) 无任何玩法功能，
     -- 在返航点旁渲染为无意义圆形色块，已删除。
