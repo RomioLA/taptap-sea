@@ -1,0 +1,350 @@
+{
+  "schema_version": 1,
+  "style": "读海日系水彩绘本风，生态层组件（小鱼/大鱼/海鸟/木桶），锚点链派生自主场景昼夜套件",
+  "format": "RGBA PNG 直通 Alpha（256 色量化 P 模式等价语义）；帧间同画布坐标系不裁剪",
+  "projection": "Ocean.Projection 世界平面分片投影（ImageArt.Plane），鱼/鸟 heading 沿世界朝向，木桶 heading=0",
+  "placement": "C2（2026-10-17）已接入 SeaDraw：鱼（sardine→eco_fish_small / tuna→eco_fish_big）、海鸟、木桶三帧循环（6fps，鱼按实体 id 相位错相）；贴图失败逐级回退旧图/矢量，世界状态零改写。沉船顶视与告示牌替换元素不在这批（见 OceanComponents manifest）",
+  "references": [
+    "assets/image/OceanComponents/manifest.json",
+    "scripts/Ocean/SeaDraw.lua",
+    "scripts/Ocean/ImageArt.lua"
+  ],
+  "assets": {
+    "eco_fish_small_f1": {
+      "path": "image/OceanEco/eco_fish_small_f1.png",
+      "source": "E:/workbath/Fishing/_gen_eco_v2/final/fish_small_f1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        194,
+        266,
+        773,
+        747
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.9129629135131836,
+      "sha256": "845400407e95158458e869b9661e024258fc17a079d0b9be93400b36a5321e44",
+      "source_sha256": "e9e4c57a884ac2ca2cbd6289909c534fb01cbfe3c507c98d59cb6fe032efaf56",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "placed_in_seadraw",
+      "frame": 1
+    },
+    "eco_fish_small_f2": {
+      "path": "image/OceanEco/eco_fish_small_f2.png",
+      "source": "E:/workbath/Fishing/_gen_eco_v2/final/fish_small_f2.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        199,
+        270,
+        772,
+        735
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.91387939453125,
+      "sha256": "0c5871acce724ae9169a63c797049ff16590fb114e3f4d5a2e3d8a9994101fa4",
+      "source_sha256": "7479ea0590691aac1d9cf410b5ad61a8c3a77693908d6c21917f126a41f89098",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "placed_in_seadraw",
+      "frame": 2
+    },
+    "eco_fish_small_f3": {
+      "path": "image/OceanEco/eco_fish_small_f3.png",
+      "source": "E:/workbath/Fishing/_gen_eco_v2/final/fish_small_f3.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        194,
+        271,
+        778,
+        737
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.9125728607177734,
+      "sha256": "27ca4e89f489283987a60aa09e387046eed4f8ad30b24a12b2379e59eff86429",
+      "source_sha256": "f0bec460a6de55e2a1b8a1b78fef3f6d5e801d6db3a3ec024b5da50423f10660",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "placed_in_seadraw",
+      "frame": 3
+    },
+    "eco_fish_big_f1": {
+      "path": "image/OceanEco/eco_fish_big_f1.png",
+      "source": "E:/workbath/Fishing/_gen_eco_v2/final/fish_big_f1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        69,
+        154,
+        920,
+        841
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7240095138549805,
+      "sha256": "5b01278eefd05b7b52315ed786fdf7bb266fd0505fb9aa204d9c063033a4d19b",
+      "source_sha256": "9a38449783d3c39a78b8c2eeda02518e2163655fb558912f0709218b480a7c0b",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "placed_in_seadraw",
+      "frame": 1
+    },
+    "eco_fish_big_f2": {
+      "path": "image/OceanEco/eco_fish_big_f2.png",
+      "source": "E:/workbath/Fishing/_gen_eco_v2/final/fish_big_f2.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        81,
+        188,
+        919,
+        841
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7239675521850586,
+      "sha256": "bc8bd5a398d3d3ec1bdbe30fb7416b2503055cd14efe0660d70f259da161f94d",
+      "source_sha256": "220bd1e65810351596bb794201675d8677435202ca93a27c2d595c41bc9f15a3",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "placed_in_seadraw",
+      "frame": 2
+    },
+    "eco_fish_big_f3": {
+      "path": "image/OceanEco/eco_fish_big_f3.png",
+      "source": "E:/workbath/Fishing/_gen_eco_v2/final/fish_big_f3.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        84,
+        192,
+        920,
+        841
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7257556915283203,
+      "sha256": "b4ac378b25d27ef4ab17e4da4d6f4d4d53b7ed34f24aedb14175f0e1dd4075fb",
+      "source_sha256": "fd1a8cc75e86c3c535b13e49cdad4229eb9d09f56dd3430f43a5c4feef0490f6",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "placed_in_seadraw",
+      "frame": 3
+    },
+    "eco_bird_f1": {
+      "path": "image/OceanEco/eco_bird_f1.png",
+      "source": "E:/workbath/Fishing/_gen_eco_v2/final/bird_f1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        130,
+        158,
+        710,
+        682
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.8789815902709961,
+      "sha256": "f0d73a7872e4cdd1d5df8f3a23bf7f7dfa6253a45869f34a256d20b3fdf32eb9",
+      "source_sha256": "02970ad8f6249b5a77966bca020530b74f3481a1d1d3a27482d3e014d19517a6",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "placed_in_seadraw",
+      "frame": 1
+    },
+    "eco_bird_f2": {
+      "path": "image/OceanEco/eco_bird_f2.png",
+      "source": "E:/workbath/Fishing/_gen_eco_v2/final/bird_f2.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        81,
+        244,
+        865,
+        682
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.8998908996582031,
+      "sha256": "59edeadc5e98a04c67d37fe2322807730f490ab545d21062b2b49af4531f266b",
+      "source_sha256": "6303fc88f23a4dcf8601d6baddae4cfc98d8fc7368e1072f87785b346bcad1b1",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "placed_in_seadraw",
+      "frame": 2
+    },
+    "eco_bird_f3": {
+      "path": "image/OceanEco/eco_bird_f3.png",
+      "source": "E:/workbath/Fishing/_gen_eco_v2/final/bird_f3.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        0,
+        374,
+        760,
+        1024
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.8881902694702148,
+      "sha256": "7135c0cfae13763e51b73c5aa18cfa601797bce6842cbd52c29cc7f4593c9dbd",
+      "source_sha256": "4b03610e492675502a28aea1243b781c237a21cf1d5b1323ac78d7b93f0dcfd8",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "placed_in_seadraw",
+      "frame": 3
+    },
+    "eco_barrel_f1": {
+      "path": "image/OceanEco/eco_barrel_f1.png",
+      "source": "E:/workbath/Fishing/_gen_eco_v2/final/barrel_f1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        220,
+        255,
+        814,
+        819
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7675867080688477,
+      "sha256": "f8cc92835fb7dbfa08cc53b48d2a842fdca6a807e03adfaf6d1ca0b86d20a4e9",
+      "source_sha256": "81320ea494de760c0cf22d24f702497c67162a41f4fb83701e3d72aecb8075a5",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "placed_in_seadraw",
+      "frame": 1
+    },
+    "eco_barrel_f2": {
+      "path": "image/OceanEco/eco_barrel_f2.png",
+      "source": "E:/workbath/Fishing/_gen_eco_v2/final/barrel_f2.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        202,
+        255,
+        824,
+        824
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7520503997802734,
+      "sha256": "1b991bcb8303d11b1f54499316f103539c3f301ab05bcebd62de608cbfc30e0c",
+      "source_sha256": "ba86225666dd061fa63797c6c5dbc453016c92042307608da237ab5001cddbc6",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "placed_in_seadraw",
+      "frame": 2
+    },
+    "eco_barrel_f3": {
+      "path": "image/OceanEco/eco_barrel_f3.png",
+      "source": "E:/workbath/Fishing/_gen_eco_v2/final/barrel_f3.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        201,
+        265,
+        825,
+        823
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7558879852294922,
+      "sha256": "640303c70a9b951fd67521c3d3a6857e4ececefc6149b23150d63dcec3d5216c",
+      "source_sha256": "24e2998936cb86c34f579a1cf3d2d204eafa17d447cb1c3cd5d18fadeef1bf51",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "component",
+      "status": "placed_in_seadraw",
+      "frame": 3
+    }
+  }
+}

@@ -30,6 +30,36 @@ local function isVisible(world, entity)
     return entity.layer ~= "underwater"
 end
 
+-- C2（2026-10-17）生态层组件 v2（assets/image/OceanEco，锚点链派生自主场景昼夜套件）。
+-- 鱼/海鸟/木桶贴图三帧循环优先，加载失败逐级回退旧图/矢量，绘制口径与既有 PNG 路径同构
+-- （ImageArt.Plane 世界平面分片投影 + LOD + 懒加载）。帧选择只读 time/phase，不写任何状态。
+-- 鱼/鸟贴图头朝 +X（入库时水平翻转）：heading 直传实体世界朝向即鼻朝游向。
+local ECO_FRAME_COUNT, ECO_FRAME_FPS = 3, 6
+local ECO_SPECIES_BASE = { sardine = "eco_fish_small", tuna = "eco_fish_big" }
+
+local function ecoFrameName(base, time, phase)
+    local index = math.floor(((time or 0) * ECO_FRAME_FPS + (phase or 0) * ECO_FRAME_COUNT))
+        % ECO_FRAME_COUNT
+    return base .. "_f" .. (index + 1)
+end
+
+-- 实体稳定相位偏移：同帧循环下不同鱼不同相，避免全体同步摆尾。
+local function ecoEntityPhase(entity)
+    if type(entity.phase) == "number" then return entity.phase end
+    local id = type(entity.id) == "number" and entity.id or 0
+    return (id * 0.37) % 1
+end
+
+local function entityHeading(entity)
+    local heading = entity.rotation or 0
+    local direction = entity.direction
+    if type(direction) == "table" and type(direction.x) == "number" and type(direction.y) == "number"
+        and (math.abs(direction.x) + math.abs(direction.y)) > 0.000001 then
+        heading = math.atan(direction.y, direction.x)
+    end
+    return heading
+end
+
 -- Keep the existing vector silhouettes, projecting each meter-space path
 -- through the same surface and height occlusion as islands and water.
 local function groundFrame(ctx, movement, point, altitude, callback, extentMeters)
@@ -46,8 +76,13 @@ local function drawFloat(ctx, movement, entity, outlineOnly, recognized, time)
     -- 只缩小木桶的视觉尺寸，原radius/识别/交互/阻挡边界不变。
     local visualRadius = radius * 0.65
     ImageArt.ContactRipple(ctx, movement, point, time, visualRadius)
-    if not outlineOnly and ImageArt.Plane(ctx, "barrel", movement, point,
-        visualRadius * 2 / 0.88, visualRadius * 2 / 0.88, 0, 0) then return end
+    local barrelSize = visualRadius * 2 / 0.88
+    if not outlineOnly then
+        -- C2：生态层木桶三帧（浮起/半浸/下沉）循环优先；失败回退旧桶图，再回退矢量。
+        if ImageArt.Plane(ctx, ecoFrameName("eco_barrel", time, 0), movement, point,
+            barrelSize, barrelSize, 0, 0) then return end
+        if ImageArt.Plane(ctx, "barrel", movement, point, barrelSize, barrelSize, 0, 0) then return end
+    end
     Geometry.WorldCircle(ctx, movement, point, radius, outlineOnly and nil or Config.visual.float,
         { 225, 203, 156, 160 }, 1.5)
     if not recognized then return end
@@ -102,9 +137,17 @@ local function drawFish(ctx, movement, entity, showActivity, time)
         Geometry.WorldCircle(ctx, movement, entity.position, entity.radius or FishData[entity.species].radius,
             nil, tint, 1.3)
     end
+    local renderLength = FishData[entity.species].renderLength or 1
+    -- C2：生态层鱼贴图（sardine→小鱼 / tuna→大鱼）三帧摆尾优先，heading 直传实体朝向；
+    -- 贴图加载失败保持原矢量鱼体（含尾摆动画与 FSM 配色），零行为变化。
+    local base = ECO_SPECIES_BASE[entity.species]
+    if base and ImageArt.Plane(ctx, ecoFrameName(base, time, ecoEntityPhase(entity)), movement,
+        entity.position, renderLength, renderLength, entityHeading(entity), 0) then
+        return
+    end
     groundFrame(ctx, movement, entity.position, 0, function(scale, api)
         Draw.WorldFish(ctx, 0, 0, scale, entity, time, api)
-    end, (FishData[entity.species].renderLength or 1) * 1.2)
+    end, renderLength * 1.2)
 end
 
 -- Ocean validates fixed identity and visibility; Gameplay contributes only the
@@ -461,15 +504,22 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
                     end
                 elseif entry.kind == "bird" then
                     local birdAltitude = Config.visual.projection.birdAltitude * (1 - (entry.dive or 0))
-                    local flapScale = 1 + math.sin(time * 3.2) * 0.035
-                    local name = (entry.dive or 0) > 0.05 and ImageArt.IsLoaded(ctx, "gull_dive")
-                        and "gull_dive" or "gull"
-                    if not ImageArt.Sprite(ctx, name, movement, point, 3.2,
-                        entry.heading, birdAltitude, 1,
-                        3.2 * (1 - 0.62 * (entry.dive or 0)) * flapScale) then
-                        groundFrame(ctx, movement, point, birdAltitude, function(scale, api)
-                            Draw.WorldSeabird(ctx, 0, 0, scale, entry.heading, entry.dive, api)
-                        end)
+                    -- C2：生态层海鸟三帧（上张翅/展平/下张翅）循环优先；失败按俯冲态
+                    -- 回退 gull_dive（V26 俯冲贴图）或旧 gull 图，再回退矢量。
+                    -- flapScale 振翅节律只作用于回退链——生态三帧自身即振翅帧。
+                    local birdLength = 3.2
+                    local birdSpan = birdLength * (1 - 0.62 * (entry.dive or 0))
+                    if not ImageArt.Plane(ctx, ecoFrameName("eco_bird", time, 0), movement, point,
+                        birdLength, birdSpan, entry.heading, birdAltitude) then
+                        local flapScale = 1 + math.sin(time * 3.2) * 0.035
+                        local fallback = (entry.dive or 0) > 0.05
+                            and ImageArt.IsLoaded(ctx, "gull_dive") and "gull_dive" or "gull"
+                        if not ImageArt.Plane(ctx, fallback, movement, point, birdLength,
+                            birdSpan * flapScale, entry.heading, birdAltitude) then
+                            groundFrame(ctx, movement, point, birdAltitude, function(scale, api)
+                                Draw.WorldSeabird(ctx, 0, 0, scale, entry.heading, entry.dive, api)
+                            end)
+                        end
                     end
                 end
             end)

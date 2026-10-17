@@ -675,6 +675,29 @@ local function drawShoreFoam(ctx, movement, center, shorelineRadius, time, bound
     end
 end
 
+-- C2（2026-10-17）：海面组件渲染入口（OceanComponents 藏品：coast_base/reef_rocks 等
+-- oblique 海面组件）。此前这批素材只有 catalog 条目、无渲染器（status=ready_not_placed）；
+-- 本函数提供与 island/barrel 同构的世界平面放置能力：内容主体尺寸经
+-- ImageArt.ContentPlaneSize 按 catalog 内容比换算，走 Plane（懒加载 + LOD + 地平线裁剪），
+-- 不做世界生成/实体注册——放置决策（礁石群/海岸补丁放哪）由内容侧另行裁决。
+---@param ctx NVGContextWrapper
+---@param name string catalog 键（如 reef_rocks_v1）
+---@param movement table
+---@param center table 世界锚点（内容主体中心）
+---@param sizeMeters number 内容主体沿 +X 的世界长度（米）
+---@param heading number? 世界弧度，0 朝 +X
+---@param alpha number?
+---@return boolean 贴图是否绘制（false=目录缺失/尺寸非法/加载失败，调用方走矢量兜底）
+function SeaViewArt.Component(ctx, name, movement, center, sizeMeters, heading, alpha)
+    if not ctx or type(movement) ~= "table" or type(center) ~= "table" then return false end
+    if not finite(center.x) or not finite(center.y) then return false end
+    if type(name) ~= "string" or type(sizeMeters) ~= "number" or sizeMeters <= 0 then return false end
+    if not ImageArt.GetSpec(name) then return false end
+    local canvasLength, canvasWidth = ImageArt.ContentPlaneSize(name, sizeMeters)
+    if not canvasLength then return false end
+    return ImageArt.Plane(ctx, name, movement, center, canvasLength, canvasWidth, heading or 0, 0, alpha)
+end
+
 -- World-space island disc with a projected shoreline and raised, screen-scaled landmarks.
 -- Returns a screen-space envelope for optional depth/occlusion checks.
 function SeaViewArt.Island(ctx, movement, entity, time, airMix)

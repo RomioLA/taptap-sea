@@ -46,12 +46,16 @@ def catalog_text(manifest):
     story = json.loads((ROOT / "assets/image/OceanStoryLayer/manifest.json").read_text(encoding="utf-8"))
     decor = json.loads((ROOT / "assets/image/OceanDecor/manifest.json").read_text(encoding="utf-8"))
     components = json.loads((ROOT / "assets/image/OceanComponents/manifest.json").read_text(encoding="utf-8"))
+    eco = json.loads((ROOT / "assets/image/OceanEco/manifest.json").read_text(encoding="utf-8"))
     entries = {}
-    for collection, preload in ((existing["assets"], True), (manifest["assets"], False),
-                                (story["assets"], False), (decor["assets"], False),
-                                (components["assets"], False)):
+    # eco 合集按条目自带 preload（per-entry，如 sea_surface_day/dusk=true、
+    # night=false），其余合集沿用既有默认；W2 selected 覆盖保留（boat/island
+    # 保持向量绘制，W2 候选仍进 catalog 并被校验）。
+    for collection, preload, per_entry in ((existing["assets"], True, False), (manifest["assets"], False, False),
+                                           (story["assets"], False, False), (decor["assets"], False, False),
+                                           (components["assets"], False, False), (eco["assets"], False, True)):
         for name, entry in collection.items():
-            entries[name] = {**entry, "preload": preload}
+            entries[name] = {**entry, "preload": entry.get("preload", preload) if per_entry else preload}
     selected = json.loads((WAVE2_OUT / "manifest.json").read_text(encoding="utf-8"))["assets"] \
         if SELECTION.exists() else {}
     # Keep the current main-branch art decisions: the boat is vector-drawn, and
@@ -61,7 +65,7 @@ def catalog_text(manifest):
     for name, entry in selected.items():
         if name not in ("boat", "island"):
             entries[name] = entry
-    lines = ["-- 自动生成：python3 tests/prepare_ocean_ready_art.py；禁止手工编辑。",
+    lines = ["-- 自动生成：python3 tests/prepare_ocean_eco_art.py；禁止手工编辑。",
              "-- 只含图片规格，不含实体、玩法数值或更新逻辑。", "return {"]
     for name, entry in sorted(entries.items()):
         size, bounds = entry["size"], entry["content_bounds"]
@@ -74,7 +78,6 @@ def catalog_text(manifest):
             "        preload = " + str(entry["preload"]).lower() + ",",
             "        repeatTexture = " + str(name in ("waterpaper", "waterpaper_story", "ocean_tile")).lower() + ",",
             "        completeIsland = " + str(entry.get("complete_island", False)).lower() + ",",
-            "    },",
         ])
     lines.append("}")
     return "\n".join(lines) + "\n"
@@ -200,12 +203,14 @@ def check():
     story = json.loads((ROOT / "assets/image/OceanStoryLayer/manifest.json").read_text(encoding="utf-8"))
     decor = json.loads((ROOT / "assets/image/OceanDecor/manifest.json").read_text(encoding="utf-8"))
     components = json.loads((ROOT / "assets/image/OceanComponents/manifest.json").read_text(encoding="utf-8"))
+    eco = json.loads((ROOT / "assets/image/OceanEco/manifest.json").read_text(encoding="utf-8"))
     full_bleed = ("waterpaper", "waterpaper_story", "ocean_tile")  # 整幅材质，无透明留边契约
     selected = json.loads((WAVE2_OUT / "manifest.json").read_text(encoding="utf-8"))["assets"] if SELECTION.exists() else {}
     # Check legacy files too: overriding a catalog entry never deletes its fallback asset.
     all_assets = list(existing["assets"].items()) + list(manifest["assets"].items()) \
         + list(story["assets"].items()) + list(decor["assets"].items()) \
-        + list(components["assets"].items()) + list(selected.items())
+        + list(components["assets"].items()) + list(eco["assets"].items()) \
+        + list(selected.items())
     for name, entry in all_assets:
         path = ROOT / "assets" / entry["path"]
         if not path.resolve().is_relative_to((ROOT / "assets").resolve()):

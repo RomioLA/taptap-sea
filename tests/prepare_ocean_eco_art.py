@@ -1,0 +1,128 @@
+"""生态层组件 v2（OceanEco）入库：去底量化成稿 → assets/image/OceanEco/ + manifest + catalog 重生成。
+
+素材来源：E:/workbath/Fishing/_gen_eco_v2/final/（miora 生成 + .tmp/eco_v2_process.py 去底量化）。
+鱼/海鸟水平翻转：生成侧头朝左，翻转为头朝右（+X），与 ImageArt.Plane 的 heading 语义对齐
+（u=1 边缘映射到 +heading 方向）；木桶俯视径向对称，不翻转。
+帧对齐契约：保持 1024x1024 画布不裁剪，f1/f2/f3 同坐标系，动画不抖动。
+
+用法：
+  python3 tests/prepare_ocean_eco_art.py          # 入库并重生成 catalog
+  python3 tests/prepare_ocean_eco_art.py --check   # 只读校验（含源图 sha256）
+"""
+import argparse
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+
+from PIL import Image
+
+ROOT = Path(__file__).resolve().parents[1]
+OUT = ROOT / "assets/image/OceanEco"
+CATALOG = ROOT / "scripts/GeneratedData/OceanImageCatalog.lua"
+SOURCE_DIR = Path("E:/workbath/Fishing/_gen_eco_v2/final")
+# 基础名 -> 是否需要水平翻转（头朝左 -> 头朝右）
+FRAMES = {
+    "eco_fish_small": True,
+    "eco_fish_big": True,
+    "eco_bird": True,
+    "eco_barrel": False,
+}
+FRAME_COUNT = 3
+
+
+def importer():
+    spec = importlib.util.spec_from_file_location("ocean_art_import", ROOT / "tests/prepare_ocean_art.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def catalog_text():
+    loop = json.loads((ROOT / "assets/image/OceanLoop/manifest.json").read_text(encoding="utf-8"))
+    ready = json.loads((ROOT / "assets/image/OceanReady/manifest.json").read_text(encoding="utf-8"))
+    story = json.loads((ROOT / "assets/image/OceanStoryLayer/manifest.json").read_text(encoding="utf-8"))
+    decor = json.loads((ROOT / "assets/image/OceanDecor/manifest.json").read_text(encoding="utf-8"))
+    components = json.loads((ROOT / "assets/image/OceanComponents/manifest.json").read_text(encoding="utf-8"))
+    eco = json.loads((OUT / "manifest.json").read_text(encoding="utf-8"))
+    lines = ["-- 自动生成：python3 tests/prepare_ocean_eco_art.py；禁止手工编辑。",
+             "-- 只含图片规格，不含实体、玩法数值或更新逻辑。", "return {"]
+    for collection, preload in ((loop["assets"], True), (ready["assets"], False),
+                                (story["assets"], False), (decor["assets"], False),
+                                (components["assets"], False), (eco["assets"], False)):
+        for name, entry in sorted(collection.items()):
+            size, bounds = entry["size"], entry["content_bounds"]
+            lines.extend([
+                "    " + name + " = {",
+                "        path = " + json.dumps(entry["path"]) + ",",
+                f"        pixelWidth = {size[0]}, pixelHeight = {size[1]},",
+                f"        contentWidth = {bounds[2] - bounds[0]}, contentHeight = {bounds[3] - bounds[1]},",
+                "        anchorX = 0.5, anchorY = 0.5,",
+                "        preload = " + str(preload).lower() + ",",
+                "        repeatTexture = " + str(name in ("waterpaper", "waterpaper_story", "ocean_tile")).lower() + ",",
+                "    },",
+            ])
+    lines.append("}")
+    return "\n".join(lines) + "\n"
+
+
+def prepare():
+    module = importer()
+    OUT.mkdir(parents=True, exist_ok=True)
+    entries = {}
+    for base, flip in FRAMES.items():
+        for index in range(1, FRAME_COUNT + 1):
+            name = f"{base}_f{index}"
+            # 源目录命名为 fish_small_f1（无 eco_ 前缀）
+            source = SOURCE_DIR / f"{base[4:]}_f{index}.png"
+            image = Image.open(source).convert("RGBA")
+            if flip:
+                image = image.transpose(Image.FLIP_LEFT_RIGHT)
+            path = OUT / (name + ".png")
+            image.save(path, optimize=True)
+            entry = module.describe(path, source.as_posix())
+            entry.update({"source_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+                          "anchor": [0.5, 0.5], "layer": "component",
+                          "status": "ready_not_placed", "frame": index})
+            entries[name] = entry
+    manifest = {"schema_version": 1,
+                "style": "读海日系水彩绘本风，生态层组件（小鱼/大鱼/海鸟/木桶），锚点链派生自主场景昼夜套件",
+                "format": "RGBA PNG 直通 Alpha（256 色量化 P 模式等价语义）；帧间同画布坐标系不裁剪",
+                "projection": "Ocean.Projection 世界平面分片投影（ImageArt.Plane），鱼/鸟 heading 沿世界朝向，木桶 heading=0",
+                "placement": "SeaDraw 渲染接入：鱼（sardine→eco_fish_small / tuna→eco_fish_big）、海鸟、木桶三帧循环；加载失败保持矢量兜底",
+                "references": ["assets/image/OceanComponents/manifest.json",
+                               "scripts/Ocean/SeaDraw.lua", "scripts/Ocean/ImageArt.lua"],
+                "assets": entries}
+    (OUT / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    CATALOG.parent.mkdir(parents=True, exist_ok=True)
+    CATALOG.write_text(catalog_text(), encoding="utf-8")
+
+
+def check():
+    module = importer()
+    manifest = json.loads((OUT / "manifest.json").read_text(encoding="utf-8"))
+    for name, entry in manifest["assets"].items():
+        path = ROOT / "assets" / entry["path"]
+        assert path.is_file(), f"{name} 运行目录缺失"
+        with Image.open(path) as image:
+            assert image.mode in ("RGBA", "P"), f"{name} 非 RGBA/调色板直通 Alpha"
+            assert image.size == tuple(entry["size"]), f"{name} 尺寸不符（帧对齐契约）"
+        source = Path(entry["source"])
+        assert source.is_file(), f"{name} 源图缺失：{source}"
+        assert hashlib.sha256(source.read_bytes()).hexdigest() == entry["source_sha256"], f"{name} 源图变化，需重新导入"
+        actual = module.describe(path, entry["source"])
+        for key in ("size", "content_bounds", "alpha_range", "sha256"):
+            assert actual[key] == entry[key], f"{name} 的 {key} 与清单不一致"
+        assert actual["alpha_range"][0] == 0 and actual["transparent_ratio"] > 0.1, f"{name} 缺少透明留边"
+    assert CATALOG.read_text(encoding="utf-8") == catalog_text(), "运行目录与素材清单不同步"
+    print(json.dumps({"passed": True, "eco_assets": len(manifest["assets"]),
+                      "catalog": CATALOG.relative_to(ROOT).as_posix()}, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true", help="只读校验清单、PNG、源图与运行目录一致性")
+    args = parser.parse_args()
+    if not args.check:
+        prepare()
+    check()
