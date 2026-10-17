@@ -1,0 +1,22 @@
+{
+  "initialized": true,
+  "missingDiagnostics": [],
+  "configuredErrorCount": 8,
+  "rawErrorCount": 49,
+  "priorRawErrorCount": 41,
+  "newRawErrors": [
+    {
+      "file": "tests/Circle1A3RecognitionTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `x`. ",
+      "count": 4
+    },
+    {
+      "file": "tests/Circle1A3RecognitionTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `y`. ",
+      "count": 4
+    }
+  ],
+  "passed": false
+}

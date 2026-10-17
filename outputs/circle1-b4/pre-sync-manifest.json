@@ -1,0 +1,336 @@
+{
+  "createdAt": "2026-10-03T11:19:16.5788748+08:00",
+  "source": "D:/sillytavern-data/taptap-sea-B",
+  "target": "C:/codex/taptap-sea",
+  "snapshot": "outputs/circle1-b4/pre-sync/current-c",
+  "entries": [
+    {
+      "path": "scripts/Gameplay/Actions.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "5260D1089F2F95EBDBD22740A1B0A9737F3CEA8C7CAA231AA9EC5CBCF5F6EC57",
+      "sourceDExists": true,
+      "sourceDSha256": "6BBA20B4D926BA1FB4F6BF97DB853B3B6C483C0FF6A9B16004F8F6661A793E72"
+    },
+    {
+      "path": "scripts/Gameplay/Bootstrap.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "F66CB19E0CB9CB889579C73C388325F83EDB1A47664B8071B8F765F9B44EA2D6",
+      "sourceDExists": true,
+      "sourceDSha256": "C27437B0283201464F17F3BE6EB14BAACCFBF2BAD6CAC337F445BE15EA387E56"
+    },
+    {
+      "path": "scripts/Gameplay/UpdateSystem.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "79513CEBD48669606A6CA3FC728268BFCCB0570A25D607F2E440DE0CAD14F082",
+      "sourceDExists": true,
+      "sourceDSha256": "12A92A5C2117935FAF0393188E23A2440BEEE11999BA7F268210C4A5D26A2CD1"
+    },
+    {
+      "path": "scripts/Gameplay/PlayerState.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "348D4A4C64B816B84CBD1B93CEADD3C731F4F38F79C2546C9A2A557F2B97E537",
+      "sourceDExists": true,
+      "sourceDSha256": "F00092BEE77C5964550806E95B2B082A3E5E7E07B2E3D5DACA7F4E650BE149F4"
+    },
+    {
+      "path": "scripts/Gameplay/Persistence.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "ECD0A2F7183F95CE4B9F39475E9C428DC6FE2F8BEA5B76247004CDC2B9873805",
+      "sourceDExists": true,
+      "sourceDSha256": "C42172B7260F51E103B51FEF4CAEE268C59F5CFD27B6A2B07C0CAC4E07359034"
+    },
+    {
+      "path": "scripts/Gameplay/Loop.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "A419624DE95187B736076034BF30D0EE42A7183F993D4273D2E10F778A9D3293",
+      "sourceDExists": true,
+      "sourceDSha256": "1C2503CEB918A66193A9BBE40CE6AA1BE2A0A2A7E53ED224A56B9403235B8824"
+    },
+    {
+      "path": "scripts/Gameplay/Inventory.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "48397892D5BAFB7524DFE6D428FBFE8213E608F81880DC16FA33F6681C098C7B",
+      "sourceDExists": true,
+      "sourceDSha256": "1BAC7C8D4280CBCECA3B6461704AA625143E2D6743FF1C4D18B0F31D67C58D84"
+    },
+    {
+      "path": "scripts/Gameplay/HUD.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "CD39CD1FE738D55FDC198DCE8E70BB68494EFF89105E5E7A66AA63D592FC8B5B",
+      "sourceDExists": true,
+      "sourceDSha256": "EEF26ABEE6823E2B91771B798B73AAEB14C8E6B9442072EE7D27DA0F8CE4CDE9"
+    },
+    {
+      "path": "scripts/Gameplay/Circle1B2Progress.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "A49E1852B73304842F7A147B5B2846BF9A657D1F9A41E434A1177028F67B0D7A"
+    },
+    {
+      "path": "scripts/Gameplay/Circle1B2Barrel.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "1938A0294A63A5B8D14DAC7BE60D97CEFF90D3187DDBF61F802CF2D09F7C31EE"
+    },
+    {
+      "path": "scripts/Integration/Bridge.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "1140DB8AB5E407CF0DA55E3B8CEA2892B6CEF80119146F60D1AA1DA98DABA81B",
+      "sourceDExists": true,
+      "sourceDSha256": "528BD55BF63F9E90CF688F801D279DE123E5A767B4EE5D4D60BAF9A688C6FCA0"
+    },
+    {
+      "path": "scripts/Integration/Scene.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "3FCA7F66AAD6CF6439783BEEA2A41F3DAF9C388B0E3876B6057786DAADAF4735",
+      "sourceDExists": true,
+      "sourceDSha256": "3F46F8952C1015164E275377B7D124EE8358650E0C3D4C4E8501246021B62D97"
+    },
+    {
+      "path": "scripts/Integration/Circle1BInput.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "4C3F0EBF320EE3A1F392B0A7D1CD1A779AFAE591277B18BD9374ADC2770190AA"
+    },
+    {
+      "path": "scripts/Game/Game.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "440F54E1A0E7BCD9E207FE971CF3F33B923A739A3BF6C7EFD7AD54D6B4F9BCF1",
+      "sourceDExists": true,
+      "sourceDSha256": "C3C442D39140C47F27F840334B0104737EACCB13F23BC167EE956B9C77B0FDE4"
+    },
+    {
+      "path": "scripts/config/gameplay.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "3F22E5FB76C68C06E42BEEFCA2B988A8E698EBC4D04CDE0489111DD34512724C",
+      "sourceDExists": true,
+      "sourceDSha256": "5BD72D98B517AE3B3171876745F80251917CB3AE72106F4F37DD36D9DECB07E0"
+    },
+    {
+      "path": "scripts/Tests/ABIntegrationTests.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "84B8CBDD408085756D2329C8FE00D07DB08A1E6443EA9F8D27B9CD20C14AF50E",
+      "sourceDExists": true,
+      "sourceDSha256": "B69A55A6AACCE973875CB040FD026EAB964B18EED8E12D8D77285E9438B39975"
+    },
+    {
+      "path": "scripts/Tests/ArchitectureIntegrationTests.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "3423577120B27F5652CC6DDAE9F725B003680C0866661949897F7D3EF7B41525",
+      "sourceDExists": true,
+      "sourceDSha256": "AECA8B95918F02B42D5016B764252F643080F4C60CBE364B6885FDD75855012E"
+    },
+    {
+      "path": "scripts/Tests/check_game_loop_lsp.py",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "3BB4585811014D4602A8334DC35D3F11471DA033C743074A85F0A5CED111DE5C",
+      "sourceDExists": true,
+      "sourceDSha256": "4D83F568D94046C398FF5B9CCF06FBC99307C814260D8F2450E7A366B13C13DA"
+    },
+    {
+      "path": "scripts/Tests/Circle1B2BarrelTests.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "962B33F86E9694EBDDF152C6F9D1DD94F66D8BB3D620CD189FD455B9EEC1A814"
+    },
+    {
+      "path": "scripts/Tests/Circle1B2Lsp.py",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "9A37122BED3D71CCB6D3E28E4587FDDC2BCBAFC1E136787AB0643988572AF03F"
+    },
+    {
+      "path": "scripts/Tests/Circle1B2ProgressTests.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "212F035472EE02ACF2631E408835695CD72B56FD1B52C9FEE8EC199127232F5D"
+    },
+    {
+      "path": "scripts/Tests/Circle1B2Run.py",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "FDC8BB6C931CB2DEAD7FAB9E94E23F23557828ACE0C934A41D4228E1548ED873"
+    },
+    {
+      "path": "scripts/Tests/Circle1B2ScopeTests.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "F658F46E027B26E10E4E01ECFC8D3148C7D7F9BD0B81FB52A448DCB5F5B0C7F4"
+    },
+    {
+      "path": "scripts/Tests/Circle1B2ThrowTests.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "2A3A9A6A260E7A07EB0FB9BA911AB0CB35BF458036592B2680936C56125EE7A4"
+    },
+    {
+      "path": "scripts/Tests/Circle1B2UITests.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "B4F264EB50EA8F3E149F8230542076AE694D4E0E50A1F70CFCFC83261A202A58"
+    },
+    {
+      "path": "scripts/Tests/Circle1B3ClockAsyncTests.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "64BF42D835029B07CBC2B0FE9FEA075A496656A739F9B142BDDC460C5EA4E0C6"
+    },
+    {
+      "path": "scripts/Tests/Circle1B3CloudTests.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "1C9A626D9571C01415F8B920540C4618F986F725094C00B0AC4346A222943BEE"
+    },
+    {
+      "path": "scripts/Tests/Circle1B3EconomyTests.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "553032E4FF17DEE27A084C888EC7F3FDD89FBA3CD2AE97A81261A6BFEF27A5EF"
+    },
+    {
+      "path": "scripts/Tests/Circle1B3Lsp.py",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "60DFD4ABC7CC4ADA2A21FDFAAA6831C6EB15A989ECC18518C4C9EA3BEA2FC264"
+    },
+    {
+      "path": "scripts/Tests/Circle1B3Run.py",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "F192780B86E9171DEA1820C016F6AA0E25EC843F59C4A9D5BF6F89F61D0A696B"
+    },
+    {
+      "path": "scripts/Tests/Circle1B3SceneUITests.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "C78DBA6DF1666E3BDD8488AF2B76F8B50953E03DB9218E01CADD180A558E9EE7"
+    },
+    {
+      "path": "scripts/Tests/Circle1B3SevenDaysTests.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "26D77E316038D6F90EFC56CDC619AD43ED3B60BFF4F6CF4CD308E608AF75EA96"
+    },
+    {
+      "path": "scripts/Tests/Circle1B3SpatialTests.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "C3D9E3E5D0CA1917FFBAAD8C960C742BA2B9C99FAADD71478EC3420BC4914584"
+    },
+    {
+      "path": "scripts/Tests/Circle1BFishingFlowTests.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "6A97A2B36371F9921F42B1959231DFD606DF040C59473ACF12FF57FE8DBBC6B4"
+    },
+    {
+      "path": "scripts/Tests/Circle1BPendingCatchTests.lua",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "139371BE715977964DF734466B8F067D706B2CD8EB418C12B2A3A68692340159"
+    },
+    {
+      "path": "scripts/Tests/GameLoopSpec.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "78EE1BDCF440765C8D1CCDA9BB55E1990794F09B01744E12526CC7BB5CB5C454",
+      "sourceDExists": true,
+      "sourceDSha256": "5D8E95208E1A7CA621183BDD3D8B1F467F7A47C177920498769EC86EAFE3C27F"
+    },
+    {
+      "path": "scripts/Tests/GameLoopUISpec.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "F45ECBB96B9E1D8D92835EDE443CF35DA2B46BD470FDC63ED75C2004E733FC3E",
+      "sourceDExists": true,
+      "sourceDSha256": "4790F35844EAEA5024B066582C745D2F95D125192A5745EF7723A62AF205A8D1"
+    },
+    {
+      "path": "scripts/Tests/NumericEconomySpec.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "2EB39EA5F7B752480B4EF6D5ACE45B807C55E2A4B608053FAAF383FF2515946A",
+      "sourceDExists": true,
+      "sourceDSha256": "5C1BBC301F0B587F9AA9E3083D95AA022D187C52D4201F7845927B853522F49E"
+    },
+    {
+      "path": "scripts/Tests/PersistenceRegressionSpec.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "F997F99ACA35A140CFB96E0EC4123A89EAB42610CAE9E02EA7BD02FF8A3E7E18",
+      "sourceDExists": true,
+      "sourceDSha256": "3D62FA898ADFE0CBD3F4F9491ADD02C13B3389A207F9069A1971C8DA070106C6"
+    },
+    {
+      "path": "scripts/Tests/ShopStockSpec.lua",
+      "action": "sync-D",
+      "currentCExists": true,
+      "currentCSha256": "40BA4DCEB8B57EF0ED0BD76F94A4F02C9E5D0B558DEBB2578EF6A45A714E5BF0",
+      "sourceDExists": true,
+      "sourceDSha256": "B8CF3CA99E2BF412D4BAC6F6CD613718747E82F2BD011A59910868E0CCF96FCD"
+    },
+    {
+      "path": "tests/run_circle1_b.py",
+      "action": "copy-new",
+      "currentCExists": false,
+      "currentCSha256": null,
+      "sourceDExists": true,
+      "sourceDSha256": "9FC337A733D584910326CD301B74CCE8429D227368935D5FD608AE65DB8A9EE4"
+    }
+  ]
+}

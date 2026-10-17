@@ -1,0 +1,47 @@
+[
+  {
+    "file": "复查说明.md",
+    "bytes": 8343,
+    "sha256": "8A8BFCF95AECEEC6F50CD492EC27F16A511F2BA7220107F0E495C495B57FDBBA"
+  },
+  {
+    "file": "b-contract-review.md",
+    "bytes": 6718,
+    "sha256": "1F57E477AE85BDF653B571E8455721406752A88131CC253538764AC03FE31A54"
+  },
+  {
+    "file": "b-evidence-review.md",
+    "bytes": 9644,
+    "sha256": "4D762572DCE0DD4DFB3E26B263F34F9A5249FB0F67988B892F980B2FB2D2A8E8"
+  },
+  {
+    "file": "b-logic-review.md",
+    "bytes": 3883,
+    "sha256": "33331FC320DE6BC544875E1F6DDD57FFE977666DE872FA70F31BB4C1889C90C0"
+  },
+  {
+    "file": "composition-results.json",
+    "bytes": 269697,
+    "sha256": "94F4B0BB015DF2A0C0DD269FE4C9C0CFBD8735AA151D7CE37F48E9A0C4426334"
+  },
+  {
+    "file": "run_review.py",
+    "bytes": 11269,
+    "sha256": "7A3CAEF759E0311F7027F5F95EE59A745893E856E2DF2F9299028CA1D35A323A"
+  },
+  {
+    "file": "source-hashes.json",
+    "bytes": 11843,
+    "sha256": "11B1F7CF8558DE60818F249A653716A4FA955D65BDCA5D172E37B5586A969A9D"
+  },
+  {
+    "file": "summarize_review.py",
+    "bytes": 2061,
+    "sha256": "D0FB0CDCE464471ACBE4E7FE112C66A4A07AD555F13C8C45F9B7F013DDADF56F"
+  },
+  {
+    "file": "summary.json",
+    "bytes": 3459,
+    "sha256": "9A48F092B53D14EB60D2438F39D5AF62AFB830176E6D5CFE5B408DDFB816680C"
+  }
+]

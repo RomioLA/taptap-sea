@@ -1,0 +1,4965 @@
+{
+  "initialized": true,
+  "missingDiagnostics": [],
+  "errors": [],
+  "diagnostics": {
+    "file:///C:/codex/taptap-sea/scripts/tests/SeaNativeVoyageEntry.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/Math.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/data/items.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/Main.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/FishData.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/SceneState.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/Gameplay/Debug.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/State.lua": [
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 18,
+            "line": 34
+          },
+          "start": {
+            "character": 7,
+            "line": 34
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 18,
+            "line": 43
+          },
+          "start": {
+            "character": 7,
+            "line": 43
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 13,
+            "line": 46
+          },
+          "start": {
+            "character": 4,
+            "line": 46
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/Gameplay/GameClock.lua": [
+      {
+        "code": "missing-return",
+        "message": "Annotations specify that a return value is required here.",
+        "range": {
+          "end": {
+            "character": 3,
+            "line": 174
+          },
+          "start": {
+            "character": 0,
+            "line": 174
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/config/gameplay.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/HUD.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/Gameplay/Inventory.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/Gameplay/Persistence.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/tests/SeaEngineSmoke.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/SeaDraw.lua": [
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 14,
+            "line": 45
+          },
+          "start": {
+            "character": 10,
+            "line": 45
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 15,
+            "line": 197
+          },
+          "start": {
+            "character": 8,
+            "line": 197
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 15,
+            "line": 198
+          },
+          "start": {
+            "character": 8,
+            "line": 198
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/tests/SeaFusionRenderTests.lua": [
+      {
+        "code": "missing-fields",
+        "message": "Missing required fields in type `NVGContextWrapper`: `Dispose`, `GetBlockEvents`, `GetCategory`, `GetTypeName`, `GetType`, `HasSubscribedToEvent`, `SendEvent`, `SetBlockEvents`, `category`, `delete`, `typeName`, `type`",
+        "range": {
+          "end": {
+            "character": 24,
+            "line": 123
+          },
+          "start": {
+            "character": 22,
+            "line": 123
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "missing-fields",
+        "message": "Missing required fields in type `NVGContextWrapper`: `Dispose`, `GetBlockEvents`, `GetCategory`, `GetTypeName`, `GetType`, `HasSubscribedToEvent`, `SendEvent`, `SetBlockEvents`, `category`, `delete`, `typeName`, `type`",
+        "range": {
+          "end": {
+            "character": 24,
+            "line": 158
+          },
+          "start": {
+            "character": 22,
+            "line": 158
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/FusedScene.lua": [
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 65,
+            "line": 26
+          },
+          "start": {
+            "character": 15,
+            "line": 26
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 63,
+            "line": 35
+          },
+          "start": {
+            "character": 57,
+            "line": 35
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 36,
+            "line": 41
+          },
+          "start": {
+            "character": 34,
+            "line": 41
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 55,
+            "line": 44
+          },
+          "start": {
+            "character": 52,
+            "line": 44
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/Bootstrap.lua": [
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 58,
+            "line": 27
+          },
+          "start": {
+            "character": 4,
+            "line": 27
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 19,
+            "line": 69
+          },
+          "start": {
+            "character": 7,
+            "line": 69
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 19,
+            "line": 88
+          },
+          "start": {
+            "character": 7,
+            "line": 88
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Unnecessary `if` statement: this condition is always truthy",
+        "range": {
+          "end": {
+            "character": 22,
+            "line": 110
+          },
+          "start": {
+            "character": 7,
+            "line": 110
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 19,
+            "line": 117
+          },
+          "start": {
+            "character": 7,
+            "line": 117
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 53,
+            "line": 63
+          },
+          "start": {
+            "character": 45,
+            "line": 63
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/tests/SeaFusedSceneTests.lua": [
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 45,
+            "line": 34
+          },
+          "start": {
+            "character": 8,
+            "line": 34
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 89,
+            "line": 96
+          },
+          "start": {
+            "character": 8,
+            "line": 96
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 90,
+            "line": 127
+          },
+          "start": {
+            "character": 8,
+            "line": 127
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 67,
+            "line": 134
+          },
+          "start": {
+            "character": 8,
+            "line": 134
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 33,
+            "line": 136
+          },
+          "start": {
+            "character": 8,
+            "line": 136
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "roots"
+        },
+        "message": "Prefer use local alias variable 'roots'",
+        "range": {
+          "end": {
+            "character": 23,
+            "line": 134
+          },
+          "start": {
+            "character": 15,
+            "line": 134
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "initialized"
+        },
+        "message": "Prefer use local alias variable 'initialized'",
+        "range": {
+          "end": {
+            "character": 51,
+            "line": 134
+          },
+          "start": {
+            "character": 37,
+            "line": 134
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/World.lua": [
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 33,
+            "line": 218
+          },
+          "start": {
+            "character": 19,
+            "line": 218
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 11,
+            "line": 141
+          },
+          "start": {
+            "character": 10,
+            "line": 141
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 24,
+            "line": 151
+          },
+          "start": {
+            "character": 16,
+            "line": 151
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 34,
+            "line": 151
+          },
+          "start": {
+            "character": 26,
+            "line": 151
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 28,
+            "line": 152
+          },
+          "start": {
+            "character": 21,
+            "line": 152
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 37,
+            "line": 152
+          },
+          "start": {
+            "character": 30,
+            "line": 152
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 18,
+            "line": 173
+          },
+          "start": {
+            "character": 16,
+            "line": 173
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 22,
+            "line": 173
+          },
+          "start": {
+            "character": 20,
+            "line": 173
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/Config.lua": [
+      {
+        "code": "param-type-mismatch",
+        "message": "expected `integer` but found `number?`. ",
+        "range": {
+          "end": {
+            "character": 70,
+            "line": 65
+          },
+          "start": {
+            "character": 32,
+            "line": 65
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 21,
+            "line": 67
+          },
+          "start": {
+            "character": 0,
+            "line": 67
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/SeaPreviewEntry.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/Gameplay/Bootstrap.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/tests/SeaStabilityTests.lua": [
+      {
+        "code": "param-type-mismatch",
+        "message": "expected `(table<unknown,unknown>|unknown[]|{ [unknown]: unknown })` but found `nil`. ",
+        "range": {
+          "end": {
+            "character": 34,
+            "line": 151
+          },
+          "start": {
+            "character": 23,
+            "line": 151
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "ship may be nil",
+        "range": {
+          "end": {
+            "character": 54,
+            "line": 185
+          },
+          "start": {
+            "character": 50,
+            "line": 185
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/Gameplay/PlayerState.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/tests/GameLoopUISpec.lua": [
+      {
+        "code": "unused",
+        "message": "HUD is never used, if this is intentional, prefix it with an underscore: _HUD",
+        "range": {
+          "end": {
+            "character": 9,
+            "line": 41
+          },
+          "start": {
+            "character": 6,
+            "line": 41
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua",
+        "tags": [
+          1
+        ]
+      },
+      {
+        "code": "unused",
+        "message": "Implicit self is never used, if this is intentional, please use '.' instead of ':' to define the method",
+        "range": {
+          "end": {
+            "character": 18,
+            "line": 64
+          },
+          "start": {
+            "character": 17,
+            "line": 64
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua",
+        "tags": [
+          1
+        ]
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 50,
+            "line": 52
+          },
+          "start": {
+            "character": 4,
+            "line": 52
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 44,
+            "line": 147
+          },
+          "start": {
+            "character": 8,
+            "line": 147
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/tests/NumericEconomySpec.lua": [
+      {
+        "code": "need-check-nil",
+        "message": "Items.GetDefinition(\"sardine\") may be nil",
+        "range": {
+          "end": {
+            "character": 40,
+            "line": 147
+          },
+          "start": {
+            "character": 10,
+            "line": 147
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "Items.GetDefinition(\"tuna\") may be nil",
+        "range": {
+          "end": {
+            "character": 80,
+            "line": 147
+          },
+          "start": {
+            "character": 53,
+            "line": 147
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "Items.GetDefinition(\"apple\").buyPrice value may be nil",
+        "range": {
+          "end": {
+            "character": 56,
+            "line": 148
+          },
+          "start": {
+            "character": 19,
+            "line": 148
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "Items.GetDefinition(\"apple\") may be nil",
+        "range": {
+          "end": {
+            "character": 47,
+            "line": 148
+          },
+          "start": {
+            "character": 19,
+            "line": 148
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "Items.GetDefinition(\"sardine\") may be nil",
+        "range": {
+          "end": {
+            "character": 50,
+            "line": 149
+          },
+          "start": {
+            "character": 20,
+            "line": 149
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "Items.GetDefinition(\"tuna\") may be nil",
+        "range": {
+          "end": {
+            "character": 34,
+            "line": 150
+          },
+          "start": {
+            "character": 7,
+            "line": 150
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/Fish.lua": [
+      {
+        "code": "need-check-nil",
+        "message": "candidate may be nil",
+        "range": {
+          "end": {
+            "character": 21,
+            "line": 173
+          },
+          "start": {
+            "character": 12,
+            "line": 173
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "candidate may be nil",
+        "range": {
+          "end": {
+            "character": 21,
+            "line": 174
+          },
+          "start": {
+            "character": 12,
+            "line": 174
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "candidate may be nil",
+        "range": {
+          "end": {
+            "character": 21,
+            "line": 175
+          },
+          "start": {
+            "character": 12,
+            "line": 175
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "prey may be nil",
+        "range": {
+          "end": {
+            "character": 59,
+            "line": 198
+          },
+          "start": {
+            "character": 55,
+            "line": 198
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "prey may be nil",
+        "range": {
+          "end": {
+            "character": 79,
+            "line": 199
+          },
+          "start": {
+            "character": 75,
+            "line": 199
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "prey may be nil",
+        "range": {
+          "end": {
+            "character": 34,
+            "line": 201
+          },
+          "start": {
+            "character": 30,
+            "line": 201
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "prey may be nil",
+        "range": {
+          "end": {
+            "character": 16,
+            "line": 202
+          },
+          "start": {
+            "character": 12,
+            "line": 202
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "prey may be nil",
+        "range": {
+          "end": {
+            "character": 46,
+            "line": 209
+          },
+          "start": {
+            "character": 42,
+            "line": 209
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "prey may be nil",
+        "range": {
+          "end": {
+            "character": 19,
+            "line": 211
+          },
+          "start": {
+            "character": 15,
+            "line": 211
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-return-value",
+        "message": "Annotations specify that at most 1 return value(s) are required, found 2 returned here instead.",
+        "range": {
+          "end": {
+            "character": 8,
+            "line": 149
+          },
+          "start": {
+            "character": 11,
+            "line": 147
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-return-value",
+        "message": "Annotations specify that at most 1 return value(s) are required, found 2 returned here instead.",
+        "range": {
+          "end": {
+            "character": 8,
+            "line": 166
+          },
+          "start": {
+            "character": 11,
+            "line": 164
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-return-value",
+        "message": "Annotations specify that at most 1 return value(s) are required, found 2 returned here instead.",
+        "range": {
+          "end": {
+            "character": 8,
+            "line": 186
+          },
+          "start": {
+            "character": 11,
+            "line": 184
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/Integration/Scene.lua": [
+      {
+        "code": "unused",
+        "message": "Implicit self is never used, if this is intentional, please use '.' instead of ':' to define the method",
+        "range": {
+          "end": {
+            "character": 22,
+            "line": 21
+          },
+          "start": {
+            "character": 21,
+            "line": 21
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua",
+        "tags": [
+          1
+        ]
+      },
+      {
+        "code": "unused",
+        "message": "Implicit self is never used, if this is intentional, please use '.' instead of ':' to define the method",
+        "range": {
+          "end": {
+            "character": 22,
+            "line": 16
+          },
+          "start": {
+            "character": 21,
+            "line": 16
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua",
+        "tags": [
+          1
+        ]
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Unnecessary `if` statement: this condition is always truthy",
+        "range": {
+          "end": {
+            "character": 34,
+            "line": 145
+          },
+          "start": {
+            "character": 11,
+            "line": 145
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 26,
+            "line": 152
+          },
+          "start": {
+            "character": 23,
+            "line": 152
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 26,
+            "line": 159
+          },
+          "start": {
+            "character": 23,
+            "line": 159
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 22,
+            "line": 226
+          },
+          "start": {
+            "character": 19,
+            "line": 226
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "call-non-callable",
+        "message": "Cannot call expression of type `never`.",
+        "range": {
+          "end": {
+            "character": 23,
+            "line": 184
+          },
+          "start": {
+            "character": 12,
+            "line": 184
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 14,
+            "line": 140
+          },
+          "start": {
+            "character": 8,
+            "line": 140
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 37,
+            "line": 141
+          },
+          "start": {
+            "character": 31,
+            "line": 141
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 31,
+            "line": 142
+          },
+          "start": {
+            "character": 25,
+            "line": 142
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 26,
+            "line": 150
+          },
+          "start": {
+            "character": 20,
+            "line": 150
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 26,
+            "line": 151
+          },
+          "start": {
+            "character": 20,
+            "line": 151
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 45,
+            "line": 155
+          },
+          "start": {
+            "character": 39,
+            "line": 155
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 46,
+            "line": 156
+          },
+          "start": {
+            "character": 40,
+            "line": 156
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 26,
+            "line": 157
+          },
+          "start": {
+            "character": 20,
+            "line": 157
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 18,
+            "line": 183
+          },
+          "start": {
+            "character": 12,
+            "line": 183
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "hud may be nil",
+        "range": {
+          "end": {
+            "character": 15,
+            "line": 184
+          },
+          "start": {
+            "character": 12,
+            "line": 184
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 40,
+            "line": 187
+          },
+          "start": {
+            "character": 34,
+            "line": 187
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 29,
+            "line": 188
+          },
+          "start": {
+            "character": 23,
+            "line": 188
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 70,
+            "line": 188
+          },
+          "start": {
+            "character": 64,
+            "line": 188
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 22,
+            "line": 195
+          },
+          "start": {
+            "character": 16,
+            "line": 195
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 22,
+            "line": 204
+          },
+          "start": {
+            "character": 16,
+            "line": 204
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 26,
+            "line": 206
+          },
+          "start": {
+            "character": 20,
+            "line": 206
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 45,
+            "line": 210
+          },
+          "start": {
+            "character": 39,
+            "line": 210
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 46,
+            "line": 211
+          },
+          "start": {
+            "character": 40,
+            "line": 211
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 26,
+            "line": 212
+          },
+          "start": {
+            "character": 20,
+            "line": 212
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 26,
+            "line": 218
+          },
+          "start": {
+            "character": 20,
+            "line": 218
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 36,
+            "line": 224
+          },
+          "start": {
+            "character": 30,
+            "line": 224
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 21,
+            "line": 251
+          },
+          "start": {
+            "character": 15,
+            "line": 251
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "bridge may be nil",
+        "range": {
+          "end": {
+            "character": 14,
+            "line": 257
+          },
+          "start": {
+            "character": 8,
+            "line": 257
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 23,
+            "line": 144
+          },
+          "start": {
+            "character": 8,
+            "line": 144
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 35,
+            "line": 199
+          },
+          "start": {
+            "character": 20,
+            "line": 199
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/tests/PersistenceRegressionSpec.lua": [
+      {
+        "code": "param-type-mismatch",
+        "message": "expected `sync fun(var0: boolean, var1: table) -> R ...` but found `nil`. ",
+        "range": {
+          "end": {
+            "character": 28,
+            "line": 88
+          },
+          "start": {
+            "character": 21,
+            "line": 88
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "param-type-mismatch",
+        "message": "expected `sync fun(var0: boolean, var1: table) -> R ...` but found `nil`. ",
+        "range": {
+          "end": {
+            "character": 24,
+            "line": 91
+          },
+          "start": {
+            "character": 17,
+            "line": 91
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "param-type-mismatch",
+        "message": "expected `sync fun(var0: boolean, var1: string) -> R ...` but found `nil`. ",
+        "range": {
+          "end": {
+            "character": 24,
+            "line": 92
+          },
+          "start": {
+            "character": 17,
+            "line": 92
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "param-type-mismatch",
+        "message": "expected `sync fun(var0: boolean, var1: table) -> R ...` but found `nil`. ",
+        "range": {
+          "end": {
+            "character": 41,
+            "line": 121
+          },
+          "start": {
+            "character": 34,
+            "line": 121
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "function deliver may be nil",
+        "range": {
+          "end": {
+            "character": 11,
+            "line": 125
+          },
+          "start": {
+            "character": 4,
+            "line": 125
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "original"
+        },
+        "message": "Prefer use local alias variable 'original'",
+        "range": {
+          "end": {
+            "character": 30,
+            "line": 97
+          },
+          "start": {
+            "character": 19,
+            "line": 97
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "original"
+        },
+        "message": "Prefer use local alias variable 'original'",
+        "range": {
+          "end": {
+            "character": 49,
+            "line": 98
+          },
+          "start": {
+            "character": 38,
+            "line": 98
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "original"
+        },
+        "message": "Prefer use local alias variable 'original'",
+        "range": {
+          "end": {
+            "character": 26,
+            "line": 100
+          },
+          "start": {
+            "character": 15,
+            "line": 100
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "original"
+        },
+        "message": "Prefer use local alias variable 'original'",
+        "range": {
+          "end": {
+            "character": 76,
+            "line": 100
+          },
+          "start": {
+            "character": 65,
+            "line": 100
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "original"
+        },
+        "message": "Prefer use local alias variable 'original'",
+        "range": {
+          "end": {
+            "character": 18,
+            "line": 124
+          },
+          "start": {
+            "character": 7,
+            "line": 124
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/tests/ShopStockSpec.lua": [
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "money"
+        },
+        "message": "Prefer use local alias variable 'money'",
+        "range": {
+          "end": {
+            "character": 25,
+            "line": 22
+          },
+          "start": {
+            "character": 11,
+            "line": 22
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/SpawnStrategy.lua": [
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 87,
+            "line": 89
+          },
+          "start": {
+            "character": 4,
+            "line": 89
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 90,
+            "line": 90
+          },
+          "start": {
+            "character": 4,
+            "line": 90
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 15,
+            "line": 100
+          },
+          "start": {
+            "character": 10,
+            "line": 100
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 13,
+            "line": 101
+          },
+          "start": {
+            "character": 10,
+            "line": 101
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/Movement.lua": [
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 14,
+            "line": 213
+          },
+          "start": {
+            "character": 8,
+            "line": 213
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 18,
+            "line": 222
+          },
+          "start": {
+            "character": 12,
+            "line": 222
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 22,
+            "line": 226
+          },
+          "start": {
+            "character": 16,
+            "line": 226
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 13,
+            "line": 232
+          },
+          "start": {
+            "character": 8,
+            "line": 232
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 13,
+            "line": 233
+          },
+          "start": {
+            "character": 8,
+            "line": 233
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 17,
+            "line": 246
+          },
+          "start": {
+            "character": 12,
+            "line": 246
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 17,
+            "line": 247
+          },
+          "start": {
+            "character": 12,
+            "line": 247
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/tests/SeaNativeVoyage.lua": [],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/Draw.lua": [
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 19,
+            "line": 56
+          },
+          "start": {
+            "character": 10,
+            "line": 56
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 20,
+            "line": 61
+          },
+          "start": {
+            "character": 10,
+            "line": 61
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 15,
+            "line": 416
+          },
+          "start": {
+            "character": 10,
+            "line": 416
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua": [
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "generation"
+        },
+        "message": "Prefer use local alias variable 'generation'",
+        "range": {
+          "end": {
+            "character": 53,
+            "line": 175
+          },
+          "start": {
+            "character": 38,
+            "line": 175
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "generation"
+        },
+        "message": "Prefer use local alias variable 'generation'",
+        "range": {
+          "end": {
+            "character": 53,
+            "line": 208
+          },
+          "start": {
+            "character": 38,
+            "line": 208
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua": [
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 70,
+            "line": 41
+          },
+          "start": {
+            "character": 17,
+            "line": 41
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 18,
+            "line": 165
+          },
+          "start": {
+            "character": 7,
+            "line": 165
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Unnecessary `if` statement: this condition is always truthy",
+        "range": {
+          "end": {
+            "character": 27,
+            "line": 177
+          },
+          "start": {
+            "character": 19,
+            "line": 177
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 17,
+            "line": 169
+          },
+          "start": {
+            "character": 8,
+            "line": 169
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 17,
+            "line": 184
+          },
+          "start": {
+            "character": 8,
+            "line": 184
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/tests/GameLoopSpec.lua": [
+      {
+        "code": "unused",
+        "message": "Implicit self is never used, if this is intentional, please use '.' instead of ':' to define the method",
+        "range": {
+          "end": {
+            "character": 19,
+            "line": 219
+          },
+          "start": {
+            "character": 18,
+            "line": 219
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua",
+        "tags": [
+          1
+        ]
+      },
+      {
+        "code": "unused",
+        "message": "Implicit self is never used, if this is intentional, please use '.' instead of ':' to define the method",
+        "range": {
+          "end": {
+            "character": 19,
+            "line": 212
+          },
+          "start": {
+            "character": 18,
+            "line": 212
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua",
+        "tags": [
+          1
+        ]
+      },
+      {
+        "code": "call-non-callable",
+        "message": "Cannot call expression of type `never`.",
+        "range": {
+          "end": {
+            "character": 24,
+            "line": 234
+          },
+          "start": {
+            "character": 11,
+            "line": 234
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "call-non-callable",
+        "message": "Cannot call expression of type `never`.",
+        "range": {
+          "end": {
+            "character": 50,
+            "line": 234
+          },
+          "start": {
+            "character": 39,
+            "line": 234
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "call-non-callable",
+        "message": "Cannot call expression of type `never`.",
+        "range": {
+          "end": {
+            "character": 81,
+            "line": 234
+          },
+          "start": {
+            "character": 64,
+            "line": 234
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "Items.GetDefinition(\"apple\") may be nil",
+        "range": {
+          "end": {
+            "character": 35,
+            "line": 38
+          },
+          "start": {
+            "character": 7,
+            "line": 38
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "Items.GetDefinition(\"bait\") may be nil",
+        "range": {
+          "end": {
+            "character": 81,
+            "line": 38
+          },
+          "start": {
+            "character": 54,
+            "line": 38
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "Items.GetDefinition(\"sardine\") may be nil",
+        "range": {
+          "end": {
+            "character": 37,
+            "line": 39
+          },
+          "start": {
+            "character": 7,
+            "line": 39
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "Items.GetDefinition(\"tuna\") may be nil",
+        "range": {
+          "end": {
+            "character": 84,
+            "line": 39
+          },
+          "start": {
+            "character": 57,
+            "line": 39
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 16,
+            "line": 80
+          },
+          "start": {
+            "character": 7,
+            "line": 80
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 36,
+            "line": 81
+          },
+          "start": {
+            "character": 27,
+            "line": 81
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 17,
+            "line": 82
+          },
+          "start": {
+            "character": 8,
+            "line": 82
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 46,
+            "line": 82
+          },
+          "start": {
+            "character": 37,
+            "line": 82
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 30,
+            "line": 83
+          },
+          "start": {
+            "character": 21,
+            "line": 83
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 16,
+            "line": 84
+          },
+          "start": {
+            "character": 7,
+            "line": 84
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 16,
+            "line": 85
+          },
+          "start": {
+            "character": 7,
+            "line": 85
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 48,
+            "line": 85
+          },
+          "start": {
+            "character": 39,
+            "line": 85
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 20,
+            "line": 86
+          },
+          "start": {
+            "character": 11,
+            "line": 86
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 45,
+            "line": 86
+          },
+          "start": {
+            "character": 36,
+            "line": 86
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 20,
+            "line": 87
+          },
+          "start": {
+            "character": 11,
+            "line": 87
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 45,
+            "line": 87
+          },
+          "start": {
+            "character": 36,
+            "line": 87
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 20,
+            "line": 88
+          },
+          "start": {
+            "character": 11,
+            "line": 88
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 45,
+            "line": 88
+          },
+          "start": {
+            "character": 36,
+            "line": 88
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 16,
+            "line": 89
+          },
+          "start": {
+            "character": 7,
+            "line": 89
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "inventory may be nil",
+        "range": {
+          "end": {
+            "character": 48,
+            "line": 89
+          },
+          "start": {
+            "character": 39,
+            "line": 89
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "definition may be nil",
+        "range": {
+          "end": {
+            "character": 63,
+            "line": 165
+          },
+          "start": {
+            "character": 53,
+            "line": 165
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "definition may be nil",
+        "range": {
+          "end": {
+            "character": 42,
+            "line": 166
+          },
+          "start": {
+            "character": 32,
+            "line": 166
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "player may be nil",
+        "range": {
+          "end": {
+            "character": 39,
+            "line": 192
+          },
+          "start": {
+            "character": 33,
+            "line": 192
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "player may be nil",
+        "range": {
+          "end": {
+            "character": 71,
+            "line": 192
+          },
+          "start": {
+            "character": 65,
+            "line": 192
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "player may be nil",
+        "range": {
+          "end": {
+            "character": 10,
+            "line": 193
+          },
+          "start": {
+            "character": 4,
+            "line": 193
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "player may be nil",
+        "range": {
+          "end": {
+            "character": 41,
+            "line": 193
+          },
+          "start": {
+            "character": 35,
+            "line": 193
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "player may be nil",
+        "range": {
+          "end": {
+            "character": 67,
+            "line": 193
+          },
+          "start": {
+            "character": 61,
+            "line": 193
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "savedPlayer may be nil",
+        "range": {
+          "end": {
+            "character": 49,
+            "line": 221
+          },
+          "start": {
+            "character": 38,
+            "line": 221
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "savedPlayer may be nil",
+        "range": {
+          "end": {
+            "character": 74,
+            "line": 221
+          },
+          "start": {
+            "character": 63,
+            "line": 221
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "savedPlayer may be nil",
+        "range": {
+          "end": {
+            "character": 15,
+            "line": 222
+          },
+          "start": {
+            "character": 4,
+            "line": 222
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "function callback may be nil",
+        "range": {
+          "end": {
+            "character": 12,
+            "line": 223
+          },
+          "start": {
+            "character": 4,
+            "line": 223
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "function callback may be nil",
+        "range": {
+          "end": {
+            "character": 38,
+            "line": 225
+          },
+          "start": {
+            "character": 30,
+            "line": 225
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "function callback may be nil",
+        "range": {
+          "end": {
+            "character": 38,
+            "line": 226
+          },
+          "start": {
+            "character": 30,
+            "line": 226
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "loop may be nil",
+        "range": {
+          "end": {
+            "character": 15,
+            "line": 234
+          },
+          "start": {
+            "character": 11,
+            "line": 234
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "loop may be nil",
+        "range": {
+          "end": {
+            "character": 43,
+            "line": 234
+          },
+          "start": {
+            "character": 39,
+            "line": 234
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "loop may be nil",
+        "range": {
+          "end": {
+            "character": 68,
+            "line": 234
+          },
+          "start": {
+            "character": 64,
+            "line": 234
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/Ocean/SeaDebug.lua": [
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 31,
+            "line": 231
+          },
+          "start": {
+            "character": 7,
+            "line": 231
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 35,
+            "line": 415
+          },
+          "start": {
+            "character": 11,
+            "line": 415
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "entry may be nil",
+        "range": {
+          "end": {
+            "character": 24,
+            "line": 178
+          },
+          "start": {
+            "character": 19,
+            "line": 178
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "entry may be nil",
+        "range": {
+          "end": {
+            "character": 25,
+            "line": 179
+          },
+          "start": {
+            "character": 20,
+            "line": 179
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "entry may be nil",
+        "range": {
+          "end": {
+            "character": 25,
+            "line": 180
+          },
+          "start": {
+            "character": 20,
+            "line": 180
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "entry may be nil",
+        "range": {
+          "end": {
+            "character": 28,
+            "line": 182
+          },
+          "start": {
+            "character": 23,
+            "line": 182
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "entry may be nil",
+        "range": {
+          "end": {
+            "character": 58,
+            "line": 182
+          },
+          "start": {
+            "character": 53,
+            "line": 182
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "entry may be nil",
+        "range": {
+          "end": {
+            "character": 28,
+            "line": 183
+          },
+          "start": {
+            "character": 23,
+            "line": 183
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "entry may be nil",
+        "range": {
+          "end": {
+            "character": 48,
+            "line": 183
+          },
+          "start": {
+            "character": 43,
+            "line": 183
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "entry.y value may be nil",
+        "range": {
+          "end": {
+            "character": 84,
+            "line": 183
+          },
+          "start": {
+            "character": 77,
+            "line": 183
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "entry may be nil",
+        "range": {
+          "end": {
+            "character": 82,
+            "line": 183
+          },
+          "start": {
+            "character": 77,
+            "line": 183
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "entry may be nil",
+        "range": {
+          "end": {
+            "character": 25,
+            "line": 184
+          },
+          "start": {
+            "character": 20,
+            "line": 184
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "entry may be nil",
+        "range": {
+          "end": {
+            "character": 25,
+            "line": 185
+          },
+          "start": {
+            "character": 20,
+            "line": 185
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "entry may be nil",
+        "range": {
+          "end": {
+            "character": 34,
+            "line": 185
+          },
+          "start": {
+            "character": 29,
+            "line": 185
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "entry may be nil",
+        "range": {
+          "end": {
+            "character": 24,
+            "line": 187
+          },
+          "start": {
+            "character": 19,
+            "line": 187
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "entry may be nil",
+        "range": {
+          "end": {
+            "character": 25,
+            "line": 188
+          },
+          "start": {
+            "character": 20,
+            "line": 188
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "entry may be nil",
+        "range": {
+          "end": {
+            "character": 25,
+            "line": 189
+          },
+          "start": {
+            "character": 20,
+            "line": 189
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/Integration/Bridge.lua": [
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 36,
+            "line": 255
+          },
+          "start": {
+            "character": 7,
+            "line": 255
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "param-type-mismatch",
+        "message": "expected `IntegrationPoint` but found `IntegrationPoint?`. ",
+        "range": {
+          "end": {
+            "character": 37,
+            "line": 94
+          },
+          "start": {
+            "character": 31,
+            "line": 94
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "param-type-mismatch",
+        "message": "expected `string` but found `string?`. ",
+        "range": {
+          "end": {
+            "character": 81,
+            "line": 376
+          },
+          "start": {
+            "character": 75,
+            "line": 376
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "record.result may be nil",
+        "range": {
+          "end": {
+            "character": 59,
+            "line": 332
+          },
+          "start": {
+            "character": 46,
+            "line": 332
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "missing-return-value",
+        "message": "Annotations specify that at least 2 return value(s) are required, found 0 returned here instead.",
+        "range": {
+          "end": {
+            "character": 62,
+            "line": 332
+          },
+          "start": {
+            "character": 8,
+            "line": 332
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua": [
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 26,
+            "line": 434
+          },
+          "start": {
+            "character": 11,
+            "line": 434
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Unnecessary `if` statement: this condition is always truthy",
+        "range": {
+          "end": {
+            "character": 22,
+            "line": 438
+          },
+          "start": {
+            "character": 15,
+            "line": 438
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Unnecessary `if` statement: this condition is always truthy",
+        "range": {
+          "end": {
+            "character": 18,
+            "line": 449
+          },
+          "start": {
+            "character": 11,
+            "line": 449
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Unnecessary `if` statement: this condition is always truthy",
+        "range": {
+          "end": {
+            "character": 18,
+            "line": 463
+          },
+          "start": {
+            "character": 11,
+            "line": 463
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 26,
+            "line": 551
+          },
+          "start": {
+            "character": 11,
+            "line": 551
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 26,
+            "line": 660
+          },
+          "start": {
+            "character": 11,
+            "line": 660
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 65,
+            "line": 204
+          },
+          "start": {
+            "character": 57,
+            "line": 204
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 77,
+            "line": 205
+          },
+          "start": {
+            "character": 63,
+            "line": 205
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 71,
+            "line": 206
+          },
+          "start": {
+            "character": 61,
+            "line": 206
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 37,
+            "line": 208
+          },
+          "start": {
+            "character": 19,
+            "line": 208
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 71,
+            "line": 208
+          },
+          "start": {
+            "character": 39,
+            "line": 208
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 33,
+            "line": 211
+          },
+          "start": {
+            "character": 19,
+            "line": 211
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 63,
+            "line": 211
+          },
+          "start": {
+            "character": 35,
+            "line": 211
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 76,
+            "line": 236
+          },
+          "start": {
+            "character": 58,
+            "line": 236
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 83,
+            "line": 262
+          },
+          "start": {
+            "character": 67,
+            "line": 262
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 83,
+            "line": 263
+          },
+          "start": {
+            "character": 65,
+            "line": 263
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 72,
+            "line": 281
+          },
+          "start": {
+            "character": 67,
+            "line": 281
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 79,
+            "line": 281
+          },
+          "start": {
+            "character": 74,
+            "line": 281
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 39,
+            "line": 313
+          },
+          "start": {
+            "character": 28,
+            "line": 313
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 56,
+            "line": 313
+          },
+          "start": {
+            "character": 41,
+            "line": 313
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 83,
+            "line": 319
+          },
+          "start": {
+            "character": 70,
+            "line": 319
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 84,
+            "line": 320
+          },
+          "start": {
+            "character": 70,
+            "line": 320
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 81,
+            "line": 321
+          },
+          "start": {
+            "character": 70,
+            "line": 321
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 86,
+            "line": 322
+          },
+          "start": {
+            "character": 70,
+            "line": 322
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 33,
+            "line": 324
+          },
+          "start": {
+            "character": 24,
+            "line": 324
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 33,
+            "line": 327
+          },
+          "start": {
+            "character": 24,
+            "line": 327
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 74,
+            "line": 343
+          },
+          "start": {
+            "character": 65,
+            "line": 343
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 90,
+            "line": 343
+          },
+          "start": {
+            "character": 76,
+            "line": 343
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 76,
+            "line": 344
+          },
+          "start": {
+            "character": 65,
+            "line": 344
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 92,
+            "line": 344
+          },
+          "start": {
+            "character": 78,
+            "line": 344
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 76,
+            "line": 356
+          },
+          "start": {
+            "character": 67,
+            "line": 356
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 95,
+            "line": 356
+          },
+          "start": {
+            "character": 78,
+            "line": 356
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 78,
+            "line": 357
+          },
+          "start": {
+            "character": 67,
+            "line": 357
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 81,
+            "line": 358
+          },
+          "start": {
+            "character": 67,
+            "line": 358
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 87,
+            "line": 400
+          },
+          "start": {
+            "character": 66,
+            "line": 400
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 1",
+        "range": {
+          "end": {
+            "character": 89,
+            "line": 407
+          },
+          "start": {
+            "character": 70,
+            "line": 407
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 84,
+            "line": 424
+          },
+          "start": {
+            "character": 70,
+            "line": 424
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 91,
+            "line": 424
+          },
+          "start": {
+            "character": 86,
+            "line": 424
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 36,
+            "line": 433
+          },
+          "start": {
+            "character": 26,
+            "line": 433
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 41,
+            "line": 433
+          },
+          "start": {
+            "character": 38,
+            "line": 433
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 34,
+            "line": 452
+          },
+          "start": {
+            "character": 27,
+            "line": 452
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "redundant-parameter",
+        "message": "expected 0 parameters but found 2",
+        "range": {
+          "end": {
+            "character": 44,
+            "line": 452
+          },
+          "start": {
+            "character": 36,
+            "line": 452
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/tests/SeaRuntimeTests.lua": [
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 82,
+            "line": 29
+          },
+          "start": {
+            "character": 8,
+            "line": 28
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 99,
+            "line": 32
+          },
+          "start": {
+            "character": 8,
+            "line": 30
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 72,
+            "line": 34
+          },
+          "start": {
+            "character": 8,
+            "line": 34
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 92,
+            "line": 35
+          },
+          "start": {
+            "character": 8,
+            "line": 35
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 87,
+            "line": 120
+          },
+          "start": {
+            "character": 8,
+            "line": 120
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 69,
+            "line": 121
+          },
+          "start": {
+            "character": 8,
+            "line": 121
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 89,
+            "line": 123
+          },
+          "start": {
+            "character": 8,
+            "line": 123
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 110,
+            "line": 124
+          },
+          "start": {
+            "character": 8,
+            "line": 124
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 64,
+            "line": 126
+          },
+          "start": {
+            "character": 8,
+            "line": 126
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 61,
+            "line": 127
+          },
+          "start": {
+            "character": 8,
+            "line": 127
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 68,
+            "line": 128
+          },
+          "start": {
+            "character": 8,
+            "line": 128
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 69,
+            "line": 348
+          },
+          "start": {
+            "character": 45,
+            "line": 348
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 48,
+            "line": 349
+          },
+          "start": {
+            "character": 23,
+            "line": 349
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 77,
+            "line": 384
+          },
+          "start": {
+            "character": 8,
+            "line": 384
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 70,
+            "line": 386
+          },
+          "start": {
+            "character": 8,
+            "line": 385
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 94,
+            "line": 441
+          },
+          "start": {
+            "character": 78,
+            "line": 441
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "b.lastPreyPosition may be nil",
+        "range": {
+          "end": {
+            "character": 73,
+            "line": 347
+          },
+          "start": {
+            "character": 55,
+            "line": 347
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "fixed may be nil",
+        "range": {
+          "end": {
+            "character": 32,
+            "line": 480
+          },
+          "start": {
+            "character": 27,
+            "line": 480
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "ship may be nil",
+        "range": {
+          "end": {
+            "character": 64,
+            "line": 480
+          },
+          "start": {
+            "character": 60,
+            "line": 480
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "assign-type-mismatch",
+        "message": "Cannot assign `number` to `integer`. ",
+        "range": {
+          "end": {
+            "character": 41,
+            "line": 371
+          },
+          "start": {
+            "character": 34,
+            "line": 371
+          }
+        },
+        "severity": 1,
+        "source": "EmmyLua"
+      }
+    ],
+    "file:///C:/codex/taptap-sea/scripts/tests/ABIntegrationTests.lua": [
+      {
+        "code": "unused",
+        "message": "Implicit self is never used, if this is intentional, please use '.' instead of ':' to define the method",
+        "range": {
+          "end": {
+            "character": 27,
+            "line": 244
+          },
+          "start": {
+            "character": 26,
+            "line": 244
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua",
+        "tags": [
+          1
+        ]
+      },
+      {
+        "code": "unused",
+        "message": "Implicit self is never used, if this is intentional, please use '.' instead of ':' to define the method",
+        "range": {
+          "end": {
+            "character": 28,
+            "line": 251
+          },
+          "start": {
+            "character": 27,
+            "line": 251
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua",
+        "tags": [
+          1
+        ]
+      },
+      {
+        "code": "unused",
+        "message": "Implicit self is never used, if this is intentional, please use '.' instead of ':' to define the method",
+        "range": {
+          "end": {
+            "character": 28,
+            "line": 246
+          },
+          "start": {
+            "character": 27,
+            "line": 246
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua",
+        "tags": [
+          1
+        ]
+      },
+      {
+        "code": "unused",
+        "message": "context is never used, if this is intentional, prefix it with an underscore: _context",
+        "range": {
+          "end": {
+            "character": 21,
+            "line": 934
+          },
+          "start": {
+            "character": 14,
+            "line": 934
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua",
+        "tags": [
+          1
+        ]
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 96,
+            "line": 412
+          },
+          "start": {
+            "character": 8,
+            "line": 412
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 44,
+            "line": 751
+          },
+          "start": {
+            "character": 8,
+            "line": 751
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 69,
+            "line": 855
+          },
+          "start": {
+            "character": 8,
+            "line": 855
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 67,
+            "line": 872
+          },
+          "start": {
+            "character": 8,
+            "line": 872
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 73,
+            "line": 880
+          },
+          "start": {
+            "character": 8,
+            "line": 879
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 101,
+            "line": 890
+          },
+          "start": {
+            "character": 8,
+            "line": 890
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 99,
+            "line": 895
+          },
+          "start": {
+            "character": 8,
+            "line": 895
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Unnecessary assert: this expression is always truthy",
+        "range": {
+          "end": {
+            "character": 69,
+            "line": 906
+          },
+          "start": {
+            "character": 8,
+            "line": 905
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 67,
+            "line": 933
+          },
+          "start": {
+            "character": 8,
+            "line": 933
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 67,
+            "line": 955
+          },
+          "start": {
+            "character": 8,
+            "line": 955
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 86,
+            "line": 960
+          },
+          "start": {
+            "character": 8,
+            "line": 960
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-assert",
+        "message": "Impossible assert: this expression is always falsy; prefer `error()`",
+        "range": {
+          "end": {
+            "character": 71,
+            "line": 961
+          },
+          "start": {
+            "character": 8,
+            "line": 961
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Impossible `if` statement: this condition is always falsy",
+        "range": {
+          "end": {
+            "character": 33,
+            "line": 208
+          },
+          "start": {
+            "character": 19,
+            "line": 208
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "unnecessary-if",
+        "message": "Unnecessary `if` statement: this condition is always truthy",
+        "range": {
+          "end": {
+            "character": 46,
+            "line": 967
+          },
+          "start": {
+            "character": 7,
+            "line": 967
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "missing-fields",
+        "message": "Missing required fields in type `ClientCloud`: `Add`, `BatchGet`, `BatchSet`, `GetRankList`, `GetRankTotal`, `GetUserRank`, `SetInt`, `mapName`, `userId`",
+        "range": {
+          "end": {
+            "character": 9,
+            "line": 839
+          },
+          "start": {
+            "character": 25,
+            "line": 836
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "seaTime value may be nil",
+        "range": {
+          "end": {
+            "character": 38,
+            "line": 400
+          },
+          "start": {
+            "character": 31,
+            "line": 400
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "ship may be nil",
+        "range": {
+          "end": {
+            "character": 70,
+            "line": 753
+          },
+          "start": {
+            "character": 66,
+            "line": 753
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "need-check-nil",
+        "message": "ship may be nil",
+        "range": {
+          "end": {
+            "character": 70,
+            "line": 788
+          },
+          "start": {
+            "character": 66,
+            "line": 788
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "clockTime"
+        },
+        "message": "Prefer use local alias variable 'clockTime'",
+        "range": {
+          "end": {
+            "character": 35,
+            "line": 393
+          },
+          "start": {
+            "character": 13,
+            "line": 393
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "clockTime"
+        },
+        "message": "Prefer use local alias variable 'clockTime'",
+        "range": {
+          "end": {
+            "character": 35,
+            "line": 399
+          },
+          "start": {
+            "character": 13,
+            "line": 399
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "stamina"
+        },
+        "message": "Prefer use local alias variable 'stamina'",
+        "range": {
+          "end": {
+            "character": 62,
+            "line": 521
+          },
+          "start": {
+            "character": 39,
+            "line": 521
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "beforeStamina"
+        },
+        "message": "Prefer use local alias variable 'beforeStamina'",
+        "range": {
+          "end": {
+            "character": 38,
+            "line": 550
+          },
+          "start": {
+            "character": 15,
+            "line": 550
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "beforeStamina"
+        },
+        "message": "Prefer use local alias variable 'beforeStamina'",
+        "range": {
+          "end": {
+            "character": 38,
+            "line": 555
+          },
+          "start": {
+            "character": 15,
+            "line": 555
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "beforeStamina"
+        },
+        "message": "Prefer use local alias variable 'beforeStamina'",
+        "range": {
+          "end": {
+            "character": 38,
+            "line": 566
+          },
+          "start": {
+            "character": 15,
+            "line": 566
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "beforeStamina"
+        },
+        "message": "Prefer use local alias variable 'beforeStamina'",
+        "range": {
+          "end": {
+            "character": 38,
+            "line": 571
+          },
+          "start": {
+            "character": 15,
+            "line": 571
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "stamina"
+        },
+        "message": "Prefer use local alias variable 'stamina'",
+        "range": {
+          "end": {
+            "character": 38,
+            "line": 593
+          },
+          "start": {
+            "character": 15,
+            "line": 593
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "beforeStamina"
+        },
+        "message": "Prefer use local alias variable 'beforeStamina'",
+        "range": {
+          "end": {
+            "character": 59,
+            "line": 629
+          },
+          "start": {
+            "character": 36,
+            "line": 629
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "beforeStamina"
+        },
+        "message": "Prefer use local alias variable 'beforeStamina'",
+        "range": {
+          "end": {
+            "character": 59,
+            "line": 634
+          },
+          "start": {
+            "character": 36,
+            "line": 634
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "beforeStamina"
+        },
+        "message": "Prefer use local alias variable 'beforeStamina'",
+        "range": {
+          "end": {
+            "character": 55,
+            "line": 651
+          },
+          "start": {
+            "character": 32,
+            "line": 651
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "beforeStamina"
+        },
+        "message": "Prefer use local alias variable 'beforeStamina'",
+        "range": {
+          "end": {
+            "character": 52,
+            "line": 663
+          },
+          "start": {
+            "character": 29,
+            "line": 663
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "beforeStamina"
+        },
+        "message": "Prefer use local alias variable 'beforeStamina'",
+        "range": {
+          "end": {
+            "character": 55,
+            "line": 675
+          },
+          "start": {
+            "character": 32,
+            "line": 675
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "beforeStamina"
+        },
+        "message": "Prefer use local alias variable 'beforeStamina'",
+        "range": {
+          "end": {
+            "character": 55,
+            "line": 681
+          },
+          "start": {
+            "character": 32,
+            "line": 681
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "inventory"
+        },
+        "message": "Prefer use local alias variable 'inventory'",
+        "range": {
+          "end": {
+            "character": 41,
+            "line": 682
+          },
+          "start": {
+            "character": 16,
+            "line": 682
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "beforeStamina"
+        },
+        "message": "Prefer use local alias variable 'beforeStamina'",
+        "range": {
+          "end": {
+            "character": 56,
+            "line": 695
+          },
+          "start": {
+            "character": 31,
+            "line": 695
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "context"
+        },
+        "message": "Prefer use local alias variable 'context'",
+        "range": {
+          "end": {
+            "character": 57,
+            "line": 854
+          },
+          "start": {
+            "character": 44,
+            "line": 854
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "context"
+        },
+        "message": "Prefer use local alias variable 'context'",
+        "range": {
+          "end": {
+            "character": 57,
+            "line": 873
+          },
+          "start": {
+            "character": 44,
+            "line": 873
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "context"
+        },
+        "message": "Prefer use local alias variable 'context'",
+        "range": {
+          "end": {
+            "character": 57,
+            "line": 934
+          },
+          "start": {
+            "character": 44,
+            "line": 934
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "preferred-local-alias",
+        "data": {
+          "preferredAlias": "context"
+        },
+        "message": "Prefer use local alias variable 'context'",
+        "range": {
+          "end": {
+            "character": 57,
+            "line": 956
+          },
+          "start": {
+            "character": 44,
+            "line": 956
+          }
+        },
+        "severity": 4,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "global-in-non-module",
+        "message": "Global variable should only be defined in module scope",
+        "range": {
+          "end": {
+            "character": 22,
+            "line": 834
+          },
+          "start": {
+            "character": 8,
+            "line": 834
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      },
+      {
+        "code": "global-in-non-module",
+        "message": "Global variable should only be defined in module scope",
+        "range": {
+          "end": {
+            "character": 22,
+            "line": 940
+          },
+          "start": {
+            "character": 8,
+            "line": 940
+          }
+        },
+        "severity": 2,
+        "source": "EmmyLua"
+      }
+    ]
+  },
+  "configuration": {
+    "runtime": {
+      "version": "Lua5.4",
+      "requireLikeFunction": [
+        "tolua"
+      ],
+      "special": {
+        "tolua": "require"
+      },
+      "requirePattern": [
+        "?.lua",
+        "?/init.lua"
+      ]
+    },
+    "workspace": {
+      "library": [
+        "C:\\codex\\taptap-sea\\.emmylua"
+      ],
+      "packages": [
+        "C:\\codex\\taptap-sea\\urhox-libs"
+      ]
+    },
+    "diagnostics": {
+      "enable": true,
+      "globals": [
+        "tolua"
+      ],
+      "severity": {
+        "missing-parameter": "error",
+        "param-type-mismatch": "error",
+        "assign-type-mismatch": "error",
+        "return-type-mismatch": "error",
+        "type-not-found": "error",
+        "undefined-doc-param": "error",
+        "circle-doc-class": "error",
+        "enum-value-mismatch": "error",
+        "duplicate-index": "error",
+        "require-module-not-visible": "error",
+        "attribute-param-type-mismatch": "error",
+        "generic-constraint-mismatch": "error",
+        "undefined-field": "error",
+        "duplicate-set-field": "hint",
+        "redefined-local": "warning",
+        "call-non-callable": "warning",
+        "undefined-global": "error",
+        "undefined-doc-name": "error",
+        "undefined-doc-class": "error",
+        "redundant-parameter": "warning",
+        "unused-function": "warning",
+        "global-in-nil-env": "warning",
+        "redundant-value": "warning",
+        "unused-local": "hint",
+        "trailing-space": "hint",
+        "empty-block": "hint",
+        "inject-field": "hint",
+        "cast-local-type": "hint"
+      }
+    },
+    "completion": {
+      "autoRequire": false
+    },
+    "hint": {
+      "enable": true
+    }
+  },
+  "configurationRequests": [
+    {
+      "jsonrpc": "2.0",
+      "id": 0,
+      "method": "workspace/configuration",
+      "params": {
+        "items": [
+          {
+            "scopeUri": "file:///C:/codex/taptap-sea/scripts",
+            "section": "emmylua"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,1347 @@
+{
+  "checks": [
+    {
+      "module": "tests.Circle1A3StabilityTests",
+      "passed": true,
+      "results": [
+        {
+          "passed": true,
+          "error": "",
+          "name": "normal density multi-seed long out-and-back voyage never regenerates a visited region"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "new day clears ordinary fish and temporary items but keeps the exact fixed barrel"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "manual pause freezes ship, fish AI, bait lifetime, cooldowns, and surface signals"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "cancel, predation, catch removal, and reset leave no stale locks or signal cues"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "repeated Runtime rebuilds retire old worlds and never reschedule a shared frame System"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "ship levels 6, 8, and 10 use real configured speed, turning, and swept island collision"
+        }
+      ],
+      "metrics": {
+        "normalRuntimeFishLimitRaised": false,
+        "configuredDensityTargets": {
+          "tuna": 4,
+          "sardine": 20
+        },
+        "new day clears ordinary fish and temporary items but keeps the exact fixed barrel": {
+          "temporaryItemReason": "newDay",
+          "oldFishRemoved": "sea-6",
+          "seedAfter": 314160,
+          "seedBefore": 314159,
+          "fixedBarrelId": "sea-4",
+          "newDayFishCount": 64
+        },
+        "repeatedRebuilds": 5,
+        "cancel, predation, catch removal, and reset leave no stale locks or signal cues": {
+          "eatenHintCount": 0,
+          "resetSignalsCleared": true,
+          "cancelUnlocked": true,
+          "caughtHintCount": 0
+        },
+        "longVoyages": [
+          {
+            "caughtFishStayedRemoved": true,
+            "initialFishCount": 63,
+            "initialRegions": 9,
+            "totalSteps": 2446,
+            "removedFishId": "sea-6",
+            "initialSardines": 57,
+            "regionsVisited": 16,
+            "peakFishCount": 106,
+            "barrelGeneration": 1,
+            "simulatedSeconds": 122.2999999999952,
+            "maxGenerationCallsPerRegion": 1,
+            "seed": 271828,
+            "initialTuna": 6,
+            "barrelId": "sea-4",
+            "worldDaySeedMirror": 271828
+          },
+          {
+            "caughtFishStayedRemoved": true,
+            "initialFishCount": 64,
+            "initialRegions": 9,
+            "totalSteps": 2446,
+            "removedFishId": "sea-6",
+            "initialSardines": 59,
+            "regionsVisited": 16,
+            "peakFishCount": 111,
+            "barrelGeneration": 2,
+            "simulatedSeconds": 122.2999999999952,
+            "maxGenerationCallsPerRegion": 1,
+            "seed": 314159,
+            "initialTuna": 5,
+            "barrelId": "sea-4",
+            "worldDaySeedMirror": 271828
+          },
+          {
+            "caughtFishStayedRemoved": true,
+            "initialFishCount": 61,
+            "initialRegions": 9,
+            "totalSteps": 2446,
+            "removedFishId": "sea-6",
+            "initialSardines": 57,
+            "regionsVisited": 16,
+            "peakFishCount": 108,
+            "barrelGeneration": 3,
+            "simulatedSeconds": 122.2999999999952,
+            "maxGenerationCallsPerRegion": 1,
+            "seed": 161803,
+            "initialTuna": 4,
+            "barrelId": "sea-4",
+            "worldDaySeedMirror": 271828
+          }
+        ],
+        "repeated Runtime rebuilds retire old worlds and never reschedule a shared frame System": {
+          "rebuilds": 5,
+          "eachCurrentWorldSystemCount": 3,
+          "currentFrameAdvances": 5,
+          "staleFrameAdvances": 0,
+          "retiredEntityArraysEmpty": true
+        },
+        "ship levels 6, 8, and 10 use real configured speed, turning, and swept island collision": {
+          "levels": 3,
+          "speeds": [
+            6.0,
+            8.0,
+            10.0
+          ]
+        },
+        "manual pause freezes ship, fish AI, bait lifetime, cooldowns, and surface signals": {
+          "cooldownRemainingAtPause": 3.9499999999999993,
+          "pausedWallDelta": 2,
+          "splashCount": 1,
+          "worldDeltaWhilePaused": 0,
+          "birdCount": 2,
+          "baitAge": 1.1000000000000003
+        },
+        "longVoyageFailures": {},
+        "normal density multi-seed long out-and-back voyage never regenerates a visited region": {
+          "requestedSeeds": 3,
+          "completedSeeds": 3,
+          "totalUpdates": 7338
+        },
+        "speedAndCollision": [
+          {
+            "finalTurnRadians": 1.9080180628919194,
+            "speedMetersPerSecond": 6.0,
+            "level": 1,
+            "collisionCalls": 27,
+            "expectedQuarterSecondTravel": 1.5,
+            "islandClearance": 97.97211670351348
+          },
+          {
+            "finalTurnRadians": 1.9207818445201927,
+            "speedMetersPerSecond": 8.0,
+            "level": 2,
+            "collisionCalls": 31,
+            "expectedQuarterSecondTravel": 2.0,
+            "islandClearance": 98.35033258031375
+          },
+          {
+            "finalTurnRadians": 1.9524069261831896,
+            "speedMetersPerSecond": 10.0,
+            "level": 3,
+            "collisionCalls": 36,
+            "expectedQuarterSecondTravel": 2.5,
+            "islandClearance": 98.22420547164644
+          }
+        ]
+      }
+    },
+    {
+      "module": "tests.Circle1A3ExperienceTests",
+      "passed": true,
+      "results": [
+        {
+          "error": "",
+          "passed": true,
+          "name": "normal seeded barrel and open-sea route supports repeatable bird, fishing, and moving-lens feedback"
+        }
+      ],
+      "metrics": {
+        "normalVoyages": [
+          {
+            "report": {
+              "fixedBarrelGeneration": 1,
+              "finalFish": {
+                "tuna": 30,
+                "sardine": 169
+              },
+              "updateSteps": 2999,
+              "barrelRouteSignals": {
+                "activeNaturalSardineIds": [
+                  "sea-17",
+                  "sea-29",
+                  "sea-33",
+                  "sea-35",
+                  "sea-36",
+                  "sea-37",
+                  "sea-39",
+                  "sea-40",
+                  "sea-49",
+                  "sea-53",
+                  "sea-56",
+                  "sea-57",
+                  "sea-58",
+                  "sea-59",
+                  "sea-60",
+                  "sea-61",
+                  "sea-62",
+                  "sea-65",
+                  "sea-66",
+                  "sea-67"
+                ],
+                "birdSourceIds": [
+                  "sea-17",
+                  "sea-29",
+                  "sea-33",
+                  "sea-35",
+                  "sea-36",
+                  "sea-37",
+                  "sea-39",
+                  "sea-40",
+                  "sea-49",
+                  "sea-53",
+                  "sea-56",
+                  "sea-57",
+                  "sea-58",
+                  "sea-59",
+                  "sea-60",
+                  "sea-61",
+                  "sea-62",
+                  "sea-65",
+                  "sea-66",
+                  "sea-67"
+                ],
+                "splashSourceIds": {},
+                "nearbyNaturalTuna": 0
+              },
+              "syntheticFishOrSignalFixtureUsed": false,
+              "finalBirdSourceIds": [
+                "sea-154",
+                "sea-155",
+                "sea-156",
+                "sea-157",
+                "sea-159",
+                "sea-164",
+                "sea-166",
+                "sea-171",
+                "sea-176",
+                "sea-177",
+                "sea-178",
+                "sea-179",
+                "sea-180",
+                "sea-181",
+                "sea-188",
+                "sea-191",
+                "sea-192",
+                "sea-194",
+                "sea-199",
+                "sea-201",
+                "sea-202",
+                "sea-206"
+              ],
+              "initializedRegionCount": 29,
+              "waypoints": [
+                {
+                  "y": 5,
+                  "x": 35
+                },
+                {
+                  "y": 25,
+                  "x": 60
+                },
+                {
+                  "y": 25,
+                  "x": 85
+                },
+                {
+                  "y": 5,
+                  "x": 35
+                },
+                {
+                  "y": 0,
+                  "x": 0
+                }
+              ],
+              "normalStartFish": {
+                "tuna": 6,
+                "sardine": 57
+              },
+              "normalRuntimeFishLimitRaised": false,
+              "finalSplashSourceIds": [
+                "sea-182",
+                "sea-198"
+              ],
+              "experience": {
+                "queryDistanceMeters": 11.553207285641339,
+                "naturalSplashSourceIdsAfterFollow": {},
+                "shipAfterFollow": {
+                  "y": 28.35365636965294,
+                  "x": 84.61921365683621
+                },
+                "followStepsToCandidateVisibility": 15,
+                "shipFollowDistanceMeters": 3.5325905452033104,
+                "birdSourceId": "sea-61",
+                "queryTargetSpecies": "sardine",
+                "scopeShipIsCurrentShip": true,
+                "queryInputKind": "natural sardine current world position",
+                "birdSourceCount": 20,
+                "candidateVisibleAfterFollow": true,
+                "scopeEnabled": true,
+                "visibleNaturalFishIdsAfterFollow": [
+                  "sea-61"
+                ],
+                "queryTargetId": "sea-61"
+              },
+              "naturalLongRouteSignals": {
+                "splashSourceIds": [
+                  "sea-100",
+                  "sea-115",
+                  "sea-122",
+                  "sea-137",
+                  "sea-138",
+                  "sea-152",
+                  "sea-160",
+                  "sea-161",
+                  "sea-182",
+                  "sea-183",
+                  "sea-198",
+                  "sea-92"
+                ],
+                "splashSampleFrames": 386,
+                "onScreenSplashSampleCount": 100,
+                "sampleFrames": 480,
+                "maxNearbyNaturalTuna": 5,
+                "birdSourceIds": [
+                  "sea-103",
+                  "sea-104",
+                  "sea-105",
+                  "sea-106",
+                  "sea-108",
+                  "sea-109",
+                  "sea-110",
+                  "sea-111",
+                  "sea-112",
+                  "sea-113",
+                  "sea-114",
+                  "sea-117",
+                  "sea-119",
+                  "sea-120",
+                  "sea-121",
+                  "sea-123",
+                  "sea-130",
+                  "sea-131",
+                  "sea-132",
+                  "sea-133",
+                  "sea-134",
+                  "sea-135",
+                  "sea-136",
+                  "sea-14",
+                  "sea-144",
+                  "sea-147",
+                  "sea-149",
+                  "sea-153",
+                  "sea-154",
+                  "sea-155",
+                  "sea-156",
+                  "sea-157",
+                  "sea-158",
+                  "sea-159",
+                  "sea-162",
+                  "sea-164",
+                  "sea-165",
+                  "sea-166",
+                  "sea-167",
+                  "sea-169",
+                  "sea-17",
+                  "sea-170",
+                  "sea-171",
+                  "sea-176",
+                  "sea-177",
+                  "sea-178",
+                  "sea-179",
+                  "sea-18",
+                  "sea-180",
+                  "sea-181",
+                  "sea-188",
+                  "sea-189",
+                  "sea-19",
+                  "sea-191",
+                  "sea-192",
+                  "sea-194",
+                  "sea-199",
+                  "sea-201",
+                  "sea-202",
+                  "sea-206",
+                  "sea-22",
+                  "sea-23",
+                  "sea-25",
+                  "sea-26",
+                  "sea-30",
+                  "sea-33",
+                  "sea-35",
+                  "sea-36",
+                  "sea-37",
+                  "sea-38",
+                  "sea-39",
+                  "sea-40",
+                  "sea-41",
+                  "sea-42",
+                  "sea-43",
+                  "sea-44",
+                  "sea-45",
+                  "sea-46",
+                  "sea-47",
+                  "sea-53",
+                  "sea-57",
+                  "sea-58",
+                  "sea-59",
+                  "sea-61",
+                  "sea-62",
+                  "sea-64",
+                  "sea-67",
+                  "sea-85",
+                  "sea-86",
+                  "sea-87",
+                  "sea-88",
+                  "sea-89",
+                  "sea-90",
+                  "sea-91",
+                  "sea-93",
+                  "sea-94"
+                ],
+                "birdSampleFrames": 480,
+                "birds": {
+                  "sea-90": true,
+                  "sea-189": true,
+                  "sea-23": true,
+                  "sea-192": true,
+                  "sea-159": true,
+                  "sea-40": true,
+                  "sea-26": true,
+                  "sea-14": true,
+                  "sea-86": true,
+                  "sea-117": true,
+                  "sea-61": true,
+                  "sea-178": true,
+                  "sea-131": true,
+                  "sea-202": true,
+                  "sea-19": true,
+                  "sea-135": true,
+                  "sea-38": true,
+                  "sea-36": true,
+                  "sea-166": true,
+                  "sea-44": true,
+                  "sea-33": true,
+                  "sea-59": true,
+                  "sea-93": true,
+                  "sea-176": true,
+                  "sea-130": true,
+                  "sea-194": true,
+                  "sea-113": true,
+                  "sea-177": true,
+                  "sea-58": true,
+                  "sea-134": true,
+                  "sea-169": true,
+                  "sea-88": true,
+                  "sea-149": true,
+                  "sea-42": true,
+                  "sea-87": true,
+                  "sea-181": true,
+                  "sea-153": true,
+                  "sea-155": true,
+                  "sea-94": true,
+                  "sea-201": true,
+                  "sea-147": true,
+                  "sea-188": true,
+                  "sea-206": true,
+                  "sea-35": true,
+                  "sea-85": true,
+                  "sea-179": true,
+                  "sea-180": true,
+                  "sea-39": true,
+                  "sea-191": true,
+                  "sea-167": true,
+                  "sea-62": true,
+                  "sea-103": true,
+                  "sea-171": true,
+                  "sea-132": true,
+                  "sea-53": true,
+                  "sea-89": true,
+                  "sea-121": true,
+                  "sea-47": true,
+                  "sea-43": true,
+                  "sea-154": true,
+                  "sea-119": true,
+                  "sea-157": true,
+                  "sea-162": true,
+                  "sea-91": true,
+                  "sea-165": true,
+                  "sea-170": true,
+                  "sea-144": true,
+                  "sea-105": true,
+                  "sea-158": true,
+                  "sea-37": true,
+                  "sea-112": true,
+                  "sea-57": true,
+                  "sea-123": true,
+                  "sea-64": true,
+                  "sea-106": true,
+                  "sea-108": true,
+                  "sea-25": true,
+                  "sea-22": true,
+                  "sea-133": true,
+                  "sea-199": true,
+                  "sea-30": true,
+                  "sea-46": true,
+                  "sea-17": true,
+                  "sea-41": true,
+                  "sea-136": true,
+                  "sea-156": true,
+                  "sea-104": true,
+                  "sea-67": true,
+                  "sea-18": true,
+                  "sea-45": true,
+                  "sea-110": true,
+                  "sea-114": true,
+                  "sea-164": true,
+                  "sea-120": true,
+                  "sea-109": true,
+                  "sea-111": true
+                },
+                "onScreenSplashSamples": [
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 199.9901831425416,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 219.41348379299748,
+                      "x": 7.082302779230573
+                    },
+                    "step": 670,
+                    "screenPosition": {
+                      "y": 1.6411537823273648,
+                      "x": 856.0503650979791
+                    },
+                    "simulatedSeconds": 66.59999999999836
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 201.49018314254167,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.6671428506558,
+                      "x": 11.008306235456862
+                    },
+                    "step": 675,
+                    "screenPosition": {
+                      "y": 55.55333639852893,
+                      "x": 950.2744480474101
+                    },
+                    "simulatedSeconds": 66.84999999999835
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 202.99018314254172,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.6671428506558,
+                      "x": 11.008306235456862
+                    },
+                    "step": 680,
+                    "screenPosition": {
+                      "y": 91.55333639853029,
+                      "x": 950.2744480474101
+                    },
+                    "simulatedSeconds": 67.09999999999833
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 204.49018314254178,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.2538097131947,
+                      "x": 14.978949914416976
+                    },
+                    "step": 685,
+                    "screenPosition": {
+                      "y": 137.47333169759827,
+                      "x": 1045.569896342453
+                    },
+                    "simulatedSeconds": 67.34999999999832
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 205.99018314254184,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.2538097131947,
+                      "x": 14.978949914416976
+                    },
+                    "step": 690,
+                    "screenPosition": {
+                      "y": 173.47333169759963,
+                      "x": 1045.569896342453
+                    },
+                    "simulatedSeconds": 67.5999999999983
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 207.4901831425419,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.4709484567446,
+                      "x": 18.972229517453254
+                    },
+                    "step": 695,
+                    "screenPosition": {
+                      "y": 204.2620018524035,
+                      "x": 1141.4086068153235
+                    },
+                    "simulatedSeconds": 67.84999999999829
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 208.99018314254195,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.4709484567446,
+                      "x": 18.972229517453254
+                    },
+                    "step": 700,
+                    "screenPosition": {
+                      "y": 240.26200185240486,
+                      "x": 1141.4086068153235
+                    },
+                    "simulatedSeconds": 68.09999999999827
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 210.490183142542,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.65882068293806,
+                      "x": 22.9667952746596
+                    },
+                    "step": 705,
+                    "screenPosition": {
+                      "y": 271.7530684237631,
+                      "x": 1237.2781849882758
+                    },
+                    "simulatedSeconds": 68.34999999999826
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 211.99018314254207,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.65882068293806,
+                      "x": 22.9667952746596
+                    },
+                    "step": 710,
+                    "screenPosition": {
+                      "y": 307.7530684237645,
+                      "x": 1237.2781849882758
+                    },
+                    "simulatedSeconds": 68.59999999999825
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 213.49018314254212,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 219.77603288826413,
+                      "x": 26.78670103962297
+                    },
+                    "step": 715,
+                    "screenPosition": {
+                      "y": 316.9399754959402,
+                      "x": 1328.9559233473967
+                    },
+                    "simulatedSeconds": 68.84999999999823
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 214.99018314254218,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 219.77603288826413,
+                      "x": 26.78670103962297
+                    },
+                    "step": 720,
+                    "screenPosition": {
+                      "y": 352.93997549594155,
+                      "x": 1328.9559233473967
+                    },
+                    "simulatedSeconds": 69.09999999999822
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 216.49018314254224,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 221.96730443328403,
+                      "x": 30.12588133589747
+                    },
+                    "step": 725,
+                    "screenPosition": {
+                      "y": 336.3494584154653,
+                      "x": 1409.0962504579848
+                    },
+                    "simulatedSeconds": 69.3499999999982
+                  }
+                ],
+                "splashes": {
+                  "sea-198": true,
+                  "sea-115": true,
+                  "sea-183": true,
+                  "sea-138": true,
+                  "sea-100": true,
+                  "sea-182": true,
+                  "sea-92": true,
+                  "sea-122": true,
+                  "sea-152": true,
+                  "sea-160": true,
+                  "sea-137": true,
+                  "sea-161": true
+                }
+              },
+              "fixedBarrelId": "sea-4",
+              "simulatedSeconds": 153.10000000000056
+            },
+            "seed": 271828,
+            "passed": true,
+            "digest": "seed=271828\nstartFish=57/6\nbarrel=sea-4\nregions=6:10,6:11,6:12,6:13,6:14,6:6,6:7,6:8,6:9,7:10,7:11,7:12,7:13,7:14,7:6,7:7,7:8,7:9,8:10,8:11,8:12,8:13,8:14,8:6,8:7,8:8,8:9,9:7,9:8\nbarrelBirdSources=sea-17,sea-29,sea-33,sea-35,sea-36,sea-37,sea-39,sea-40,sea-49,sea-53,sea-56,sea-57,sea-58,sea-59,sea-60,sea-61,sea-62,sea-65,sea-66,sea-67\nbarrelSplashSources=\nbarrelNearbyTuna=0\nfishQuery=sea-61:sea-61\nscopeVisible=sea-61\nrouteBirdSources=sea-103,sea-104,sea-105,sea-106,sea-108,sea-109,sea-110,sea-111,sea-112,sea-113,sea-114,sea-117,sea-119,sea-120,sea-121,sea-123,sea-130,sea-131,sea-132,sea-133,sea-134,sea-135,sea-136,sea-14,sea-144,sea-147,sea-149,sea-153,sea-154,sea-155,sea-156,sea-157,sea-158,sea-159,sea-162,sea-164,sea-165,sea-166,sea-167,sea-169,sea-17,sea-170,sea-171,sea-176,sea-177,sea-178,sea-179,sea-18,sea-180,sea-181,sea-188,sea-189,sea-19,sea-191,sea-192,sea-194,sea-199,sea-201,sea-202,sea-206,sea-22,sea-23,sea-25,sea-26,sea-30,sea-33,sea-35,sea-36,sea-37,sea-38,sea-39,sea-40,sea-41,sea-42,sea-43,sea-44,sea-45,sea-46,sea-47,sea-53,sea-57,sea-58,sea-59,sea-61,sea-62,sea-64,sea-67,sea-85,sea-86,sea-87,sea-88,sea-89,sea-90,sea-91,sea-93,sea-94\nrouteSplashSources=sea-100,sea-115,sea-122,sea-137,sea-138,sea-152,sea-160,sea-161,sea-182,sea-183,sea-198,sea-92\nonScreenSplashSamples=100\nship=-0.58646,718.99018\nworldTime=153.10000\nfinalBirdSources=sea-154,sea-155,sea-156,sea-157,sea-159,sea-164,sea-166,sea-171,sea-176,sea-177,sea-178,sea-179,sea-180,sea-181,sea-188,sea-191,sea-192,sea-194,sea-199,sea-201,sea-202,sea-206\nfinalSplashSources=sea-182,sea-198\nfinalFish=169/30"
+          },
+          {
+            "report": {
+              "fixedBarrelGeneration": 2,
+              "finalFish": {
+                "tuna": 30,
+                "sardine": 169
+              },
+              "updateSteps": 2999,
+              "barrelRouteSignals": {
+                "activeNaturalSardineIds": [
+                  "sea-17",
+                  "sea-29",
+                  "sea-33",
+                  "sea-35",
+                  "sea-36",
+                  "sea-37",
+                  "sea-39",
+                  "sea-40",
+                  "sea-49",
+                  "sea-53",
+                  "sea-56",
+                  "sea-57",
+                  "sea-58",
+                  "sea-59",
+                  "sea-60",
+                  "sea-61",
+                  "sea-62",
+                  "sea-65",
+                  "sea-66",
+                  "sea-67"
+                ],
+                "birdSourceIds": [
+                  "sea-17",
+                  "sea-29",
+                  "sea-33",
+                  "sea-35",
+                  "sea-36",
+                  "sea-37",
+                  "sea-39",
+                  "sea-40",
+                  "sea-49",
+                  "sea-53",
+                  "sea-56",
+                  "sea-57",
+                  "sea-58",
+                  "sea-59",
+                  "sea-60",
+                  "sea-61",
+                  "sea-62",
+                  "sea-65",
+                  "sea-66",
+                  "sea-67"
+                ],
+                "splashSourceIds": {},
+                "nearbyNaturalTuna": 0
+              },
+              "syntheticFishOrSignalFixtureUsed": false,
+              "finalBirdSourceIds": [
+                "sea-154",
+                "sea-155",
+                "sea-156",
+                "sea-157",
+                "sea-159",
+                "sea-164",
+                "sea-166",
+                "sea-171",
+                "sea-176",
+                "sea-177",
+                "sea-178",
+                "sea-179",
+                "sea-180",
+                "sea-181",
+                "sea-188",
+                "sea-191",
+                "sea-192",
+                "sea-194",
+                "sea-199",
+                "sea-201",
+                "sea-202",
+                "sea-206"
+              ],
+              "initializedRegionCount": 29,
+              "waypoints": [
+                {
+                  "y": 5,
+                  "x": 35
+                },
+                {
+                  "y": 25,
+                  "x": 60
+                },
+                {
+                  "y": 25,
+                  "x": 85
+                },
+                {
+                  "y": 5,
+                  "x": 35
+                },
+                {
+                  "y": 0,
+                  "x": 0
+                }
+              ],
+              "normalStartFish": {
+                "tuna": 6,
+                "sardine": 57
+              },
+              "normalRuntimeFishLimitRaised": false,
+              "finalSplashSourceIds": [
+                "sea-182",
+                "sea-198"
+              ],
+              "experience": {
+                "queryDistanceMeters": 11.553207285641339,
+                "naturalSplashSourceIdsAfterFollow": {},
+                "shipAfterFollow": {
+                  "y": 28.35365636965294,
+                  "x": 84.61921365683621
+                },
+                "followStepsToCandidateVisibility": 15,
+                "shipFollowDistanceMeters": 3.5325905452033104,
+                "birdSourceId": "sea-61",
+                "queryTargetSpecies": "sardine",
+                "scopeShipIsCurrentShip": true,
+                "queryInputKind": "natural sardine current world position",
+                "birdSourceCount": 20,
+                "candidateVisibleAfterFollow": true,
+                "scopeEnabled": true,
+                "visibleNaturalFishIdsAfterFollow": [
+                  "sea-61"
+                ],
+                "queryTargetId": "sea-61"
+              },
+              "naturalLongRouteSignals": {
+                "splashSourceIds": [
+                  "sea-100",
+                  "sea-115",
+                  "sea-122",
+                  "sea-137",
+                  "sea-138",
+                  "sea-152",
+                  "sea-160",
+                  "sea-161",
+                  "sea-182",
+                  "sea-183",
+                  "sea-198",
+                  "sea-92"
+                ],
+                "splashSampleFrames": 386,
+                "onScreenSplashSampleCount": 100,
+                "sampleFrames": 480,
+                "maxNearbyNaturalTuna": 5,
+                "birdSourceIds": [
+                  "sea-103",
+                  "sea-104",
+                  "sea-105",
+                  "sea-106",
+                  "sea-108",
+                  "sea-109",
+                  "sea-110",
+                  "sea-111",
+                  "sea-112",
+                  "sea-113",
+                  "sea-114",
+                  "sea-117",
+                  "sea-119",
+                  "sea-120",
+                  "sea-121",
+                  "sea-123",
+                  "sea-130",
+                  "sea-131",
+                  "sea-132",
+                  "sea-133",
+                  "sea-134",
+                  "sea-135",
+                  "sea-136",
+                  "sea-14",
+                  "sea-144",
+                  "sea-147",
+                  "sea-149",
+                  "sea-153",
+                  "sea-154",
+                  "sea-155",
+                  "sea-156",
+                  "sea-157",
+                  "sea-158",
+                  "sea-159",
+                  "sea-162",
+                  "sea-164",
+                  "sea-165",
+                  "sea-166",
+                  "sea-167",
+                  "sea-169",
+                  "sea-17",
+                  "sea-170",
+                  "sea-171",
+                  "sea-176",
+                  "sea-177",
+                  "sea-178",
+                  "sea-179",
+                  "sea-18",
+                  "sea-180",
+                  "sea-181",
+                  "sea-188",
+                  "sea-189",
+                  "sea-19",
+                  "sea-191",
+                  "sea-192",
+                  "sea-194",
+                  "sea-199",
+                  "sea-201",
+                  "sea-202",
+                  "sea-206",
+                  "sea-22",
+                  "sea-23",
+                  "sea-25",
+                  "sea-26",
+                  "sea-30",
+                  "sea-33",
+                  "sea-35",
+                  "sea-36",
+                  "sea-37",
+                  "sea-38",
+                  "sea-39",
+                  "sea-40",
+                  "sea-41",
+                  "sea-42",
+                  "sea-43",
+                  "sea-44",
+                  "sea-45",
+                  "sea-46",
+                  "sea-47",
+                  "sea-53",
+                  "sea-57",
+                  "sea-58",
+                  "sea-59",
+                  "sea-61",
+                  "sea-62",
+                  "sea-64",
+                  "sea-67",
+                  "sea-85",
+                  "sea-86",
+                  "sea-87",
+                  "sea-88",
+                  "sea-89",
+                  "sea-90",
+                  "sea-91",
+                  "sea-93",
+                  "sea-94"
+                ],
+                "birdSampleFrames": 480,
+                "birds": {
+                  "sea-90": true,
+                  "sea-189": true,
+                  "sea-23": true,
+                  "sea-192": true,
+                  "sea-159": true,
+                  "sea-40": true,
+                  "sea-26": true,
+                  "sea-14": true,
+                  "sea-86": true,
+                  "sea-117": true,
+                  "sea-61": true,
+                  "sea-178": true,
+                  "sea-131": true,
+                  "sea-202": true,
+                  "sea-19": true,
+                  "sea-135": true,
+                  "sea-38": true,
+                  "sea-36": true,
+                  "sea-166": true,
+                  "sea-44": true,
+                  "sea-33": true,
+                  "sea-59": true,
+                  "sea-93": true,
+                  "sea-176": true,
+                  "sea-130": true,
+                  "sea-194": true,
+                  "sea-113": true,
+                  "sea-177": true,
+                  "sea-58": true,
+                  "sea-134": true,
+                  "sea-169": true,
+                  "sea-88": true,
+                  "sea-149": true,
+                  "sea-42": true,
+                  "sea-87": true,
+                  "sea-181": true,
+                  "sea-153": true,
+                  "sea-155": true,
+                  "sea-94": true,
+                  "sea-201": true,
+                  "sea-147": true,
+                  "sea-188": true,
+                  "sea-206": true,
+                  "sea-35": true,
+                  "sea-85": true,
+                  "sea-179": true,
+                  "sea-180": true,
+                  "sea-39": true,
+                  "sea-191": true,
+                  "sea-167": true,
+                  "sea-62": true,
+                  "sea-103": true,
+                  "sea-171": true,
+                  "sea-132": true,
+                  "sea-53": true,
+                  "sea-89": true,
+                  "sea-121": true,
+                  "sea-47": true,
+                  "sea-43": true,
+                  "sea-154": true,
+                  "sea-119": true,
+                  "sea-157": true,
+                  "sea-162": true,
+                  "sea-91": true,
+                  "sea-165": true,
+                  "sea-170": true,
+                  "sea-144": true,
+                  "sea-105": true,
+                  "sea-158": true,
+                  "sea-37": true,
+                  "sea-112": true,
+                  "sea-57": true,
+                  "sea-123": true,
+                  "sea-64": true,
+                  "sea-106": true,
+                  "sea-108": true,
+                  "sea-25": true,
+                  "sea-22": true,
+                  "sea-133": true,
+                  "sea-199": true,
+                  "sea-30": true,
+                  "sea-46": true,
+                  "sea-17": true,
+                  "sea-41": true,
+                  "sea-136": true,
+                  "sea-156": true,
+                  "sea-104": true,
+                  "sea-67": true,
+                  "sea-18": true,
+                  "sea-45": true,
+                  "sea-110": true,
+                  "sea-114": true,
+                  "sea-164": true,
+                  "sea-120": true,
+                  "sea-109": true,
+                  "sea-111": true
+                },
+                "onScreenSplashSamples": [
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 199.9901831425416,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 219.41348379299748,
+                      "x": 7.082302779230573
+                    },
+                    "step": 670,
+                    "screenPosition": {
+                      "y": 1.6411537823273648,
+                      "x": 856.0503650979791
+                    },
+                    "simulatedSeconds": 66.59999999999836
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 201.49018314254167,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.6671428506558,
+                      "x": 11.008306235456862
+                    },
+                    "step": 675,
+                    "screenPosition": {
+                      "y": 55.55333639852893,
+                      "x": 950.2744480474101
+                    },
+                    "simulatedSeconds": 66.84999999999835
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 202.99018314254172,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.6671428506558,
+                      "x": 11.008306235456862
+                    },
+                    "step": 680,
+                    "screenPosition": {
+                      "y": 91.55333639853029,
+                      "x": 950.2744480474101
+                    },
+                    "simulatedSeconds": 67.09999999999833
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 204.49018314254178,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.2538097131947,
+                      "x": 14.978949914416976
+                    },
+                    "step": 685,
+                    "screenPosition": {
+                      "y": 137.47333169759827,
+                      "x": 1045.569896342453
+                    },
+                    "simulatedSeconds": 67.34999999999832
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 205.99018314254184,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.2538097131947,
+                      "x": 14.978949914416976
+                    },
+                    "step": 690,
+                    "screenPosition": {
+                      "y": 173.47333169759963,
+                      "x": 1045.569896342453
+                    },
+                    "simulatedSeconds": 67.5999999999983
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 207.4901831425419,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.4709484567446,
+                      "x": 18.972229517453254
+                    },
+                    "step": 695,
+                    "screenPosition": {
+                      "y": 204.2620018524035,
+                      "x": 1141.4086068153235
+                    },
+                    "simulatedSeconds": 67.84999999999829
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 208.99018314254195,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.4709484567446,
+                      "x": 18.972229517453254
+                    },
+                    "step": 700,
+                    "screenPosition": {
+                      "y": 240.26200185240486,
+                      "x": 1141.4086068153235
+                    },
+                    "simulatedSeconds": 68.09999999999827
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 210.490183142542,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.65882068293806,
+                      "x": 22.9667952746596
+                    },
+                    "step": 705,
+                    "screenPosition": {
+                      "y": 271.7530684237631,
+                      "x": 1237.2781849882758
+                    },
+                    "simulatedSeconds": 68.34999999999826
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 211.99018314254207,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 218.65882068293806,
+                      "x": 22.9667952746596
+                    },
+                    "step": 710,
+                    "screenPosition": {
+                      "y": 307.7530684237645,
+                      "x": 1237.2781849882758
+                    },
+                    "simulatedSeconds": 68.59999999999825
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 213.49018314254212,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 219.77603288826413,
+                      "x": 26.78670103962297
+                    },
+                    "step": 715,
+                    "screenPosition": {
+                      "y": 316.9399754959402,
+                      "x": 1328.9559233473967
+                    },
+                    "simulatedSeconds": 68.84999999999823
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 214.99018314254218,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 219.77603288826413,
+                      "x": 26.78670103962297
+                    },
+                    "step": 720,
+                    "screenPosition": {
+                      "y": 352.93997549594155,
+                      "x": 1328.9559233473967
+                    },
+                    "simulatedSeconds": 69.09999999999822
+                  },
+                  {
+                    "sourceId": "sea-92",
+                    "shipPosition": {
+                      "y": 216.49018314254224,
+                      "x": -0.5864624331852288
+                    },
+                    "worldPosition": {
+                      "y": 221.96730443328403,
+                      "x": 30.12588133589747
+                    },
+                    "step": 725,
+                    "screenPosition": {
+                      "y": 336.3494584154653,
+                      "x": 1409.0962504579848
+                    },
+                    "simulatedSeconds": 69.3499999999982
+                  }
+                ],
+                "splashes": {
+                  "sea-198": true,
+                  "sea-115": true,
+                  "sea-183": true,
+                  "sea-138": true,
+                  "sea-100": true,
+                  "sea-182": true,
+                  "sea-92": true,
+                  "sea-122": true,
+                  "sea-152": true,
+                  "sea-160": true,
+                  "sea-137": true,
+                  "sea-161": true
+                }
+              },
+              "fixedBarrelId": "sea-4",
+              "simulatedSeconds": 153.10000000000056
+            },
+            "seed": 271828,
+            "passed": true,
+            "digest": "seed=271828\nstartFish=57/6\nbarrel=sea-4\nregions=6:10,6:11,6:12,6:13,6:14,6:6,6:7,6:8,6:9,7:10,7:11,7:12,7:13,7:14,7:6,7:7,7:8,7:9,8:10,8:11,8:12,8:13,8:14,8:6,8:7,8:8,8:9,9:7,9:8\nbarrelBirdSources=sea-17,sea-29,sea-33,sea-35,sea-36,sea-37,sea-39,sea-40,sea-49,sea-53,sea-56,sea-57,sea-58,sea-59,sea-60,sea-61,sea-62,sea-65,sea-66,sea-67\nbarrelSplashSources=\nbarrelNearbyTuna=0\nfishQuery=sea-61:sea-61\nscopeVisible=sea-61\nrouteBirdSources=sea-103,sea-104,sea-105,sea-106,sea-108,sea-109,sea-110,sea-111,sea-112,sea-113,sea-114,sea-117,sea-119,sea-120,sea-121,sea-123,sea-130,sea-131,sea-132,sea-133,sea-134,sea-135,sea-136,sea-14,sea-144,sea-147,sea-149,sea-153,sea-154,sea-155,sea-156,sea-157,sea-158,sea-159,sea-162,sea-164,sea-165,sea-166,sea-167,sea-169,sea-17,sea-170,sea-171,sea-176,sea-177,sea-178,sea-179,sea-18,sea-180,sea-181,sea-188,sea-189,sea-19,sea-191,sea-192,sea-194,sea-199,sea-201,sea-202,sea-206,sea-22,sea-23,sea-25,sea-26,sea-30,sea-33,sea-35,sea-36,sea-37,sea-38,sea-39,sea-40,sea-41,sea-42,sea-43,sea-44,sea-45,sea-46,sea-47,sea-53,sea-57,sea-58,sea-59,sea-61,sea-62,sea-64,sea-67,sea-85,sea-86,sea-87,sea-88,sea-89,sea-90,sea-91,sea-93,sea-94\nrouteSplashSources=sea-100,sea-115,sea-122,sea-137,sea-138,sea-152,sea-160,sea-161,sea-182,sea-183,sea-198,sea-92\nonScreenSplashSamples=100\nship=-0.58646,718.99018\nworldTime=153.10000\nfinalBirdSources=sea-154,sea-155,sea-156,sea-157,sea-159,sea-164,sea-166,sea-171,sea-176,sea-177,sea-178,sea-179,sea-180,sea-181,sea-188,sea-191,sea-192,sea-194,sea-199,sea-201,sea-202,sea-206\nfinalSplashSources=sea-182,sea-198\nfinalFish=169/30"
+          }
+        ],
+        "syntheticNormalRouteFishOrSignalsUsed": false,
+        "experienceSeed": 271828,
+        "repeatedDigestMatch": true,
+        "nativeHumanPlayMeasured": false
+      }
+    }
+  ],
+  "passed": true,
+  "verificationKind": "pure-Lua/Lupa runtime; no native player or engine UI"
+}

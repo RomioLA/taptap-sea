@@ -1,0 +1,300 @@
+{
+  "createdAtUtc": "2026-10-03T04:46:39.580505+00:00",
+  "status": "offline_composition_passed_native_and_cloud_pending",
+  "finalRegression": "final-checks/run-20261003T043853914928Z.json",
+  "sourceFreezeSha256": "d3e1826ce2e8c91a80bbee9b1c74decdce5aeed8f3950cbb284e97f1fed2cff1",
+  "files": [
+    {
+      "file": "outputs/circle1-ab-merge/a-protection.json",
+      "sha256": "af4ee47aa7c79e63e3e0ad6fe13f86f0d7af16276779f00b8d6ac803f804eaf9",
+      "bytes": 7703
+    },
+    {
+      "file": "outputs/circle1-ab-merge/ab-drop-diagnostic.json",
+      "sha256": "8d8f1d4e69a56e7ba73ecfdf743c8301314a0b382fe43e765509866688dde0ed",
+      "bytes": 5575
+    },
+    {
+      "file": "outputs/circle1-ab-merge/ab-migration-verification.json",
+      "sha256": "7f72be95c667fa315acf64ac3f1a14e92006d2f561cda4de95313d20ad7ac14b",
+      "bytes": 10461
+    },
+    {
+      "file": "outputs/circle1-ab-merge/accepted-shared-test-deltas.json",
+      "sha256": "e3baed8c164690df2eb6ab6ab520341537999935aec7ca5d5873aac809bcf0ed",
+      "bytes": 2151
+    },
+    {
+      "file": "outputs/circle1-ab-merge/b4-final-suite-manifest.json",
+      "sha256": "d878cf29fb915aa13ff2c62946c410f68c456a3e01dc71d1ceb8301af9b0a4d2",
+      "bytes": 1249
+    },
+    {
+      "file": "outputs/circle1-ab-merge/b4-logic-evidence/repro_b4_logic.py",
+      "sha256": "604717a4fc7bf1d664ca710b3964ca2b01b64c4fd51bd6b989e2f411d20e12ee",
+      "bytes": 6982
+    },
+    {
+      "file": "outputs/circle1-ab-merge/b4-logic-evidence/results.json",
+      "sha256": "bbe6b5faff3fa5c9679200925459ac1141e7364f01c39284a6ef8c65e3a83961",
+      "bytes": 2064
+    },
+    {
+      "file": "outputs/circle1-ab-merge/b4-suite-evidence.json",
+      "sha256": "2831efcfc8db2dbd84062ccab02fe0dd81379fc75816a275895d62d44eb1f83b",
+      "bytes": 11976
+    },
+    {
+      "file": "outputs/circle1-ab-merge/B4交付说明.md",
+      "sha256": "f289c81be718ce3da48434506dbfec1629ece9f01a93543b1f25eb68c8f65a18",
+      "bytes": 2173
+    },
+    {
+      "file": "outputs/circle1-ab-merge/B4存档复查.md",
+      "sha256": "42794910963df3f1f52137efb5b105ab5d0775a4fb869554a3555005571a4268",
+      "bytes": 5875
+    },
+    {
+      "file": "outputs/circle1-ab-merge/B4测试与范围复查.md",
+      "sha256": "3e71b1d686d40cbb294a3e3d8054e912b9784e3547d2c34e62d55799eb19e647",
+      "bytes": 12318
+    },
+    {
+      "file": "outputs/circle1-ab-merge/B4逻辑复查.md",
+      "sha256": "5f319e8e0b91c327dcb4d5f9393c0a37a5e149d36365ad388c55eee75f41eddb",
+      "bytes": 7810
+    },
+    {
+      "file": "outputs/circle1-ab-merge/check_final_lsp.py",
+      "sha256": "2340f649d206830a68b45ea2cb0a90469d50d2de751505678e8d084e30e099df",
+      "bytes": 6327
+    },
+    {
+      "file": "outputs/circle1-ab-merge/check_protection.py",
+      "sha256": "7fd10a810c67e18a7075338b58a2be75f1a3f75b7fde3dc514b3f28b33340919",
+      "bytes": 25671
+    },
+    {
+      "file": "outputs/circle1-ab-merge/contract-inventory.json",
+      "sha256": "da6d1ac0b20f21c4f811f4d7d087a55833ac0aa91179f6f99346b923994e6cc0",
+      "bytes": 12972
+    },
+    {
+      "file": "outputs/circle1-ab-merge/diagnose_ab_drop.py",
+      "sha256": "cc2ab7756f27dad67857b26149c5351059ffa48b0c20b0fad9d9e8908c7917de",
+      "bytes": 1550
+    },
+    {
+      "file": "outputs/circle1-ab-merge/final-checks/readiness-20261003T033349495486Z.json",
+      "sha256": "0f7a08ce38d2eee74a69c62e22223c6af4737dc17e46b65c00898a99b1175302",
+      "bytes": 10713
+    },
+    {
+      "file": "outputs/circle1-ab-merge/final-checks/run-20261003T042009544109Z.json",
+      "sha256": "66b81a8ec7c85592a46379108a09fd7860999df0ef9d6886bb7571c0c0b76820",
+      "bytes": 282262
+    },
+    {
+      "file": "outputs/circle1-ab-merge/final-checks/run-20261003T042203411851Z.json",
+      "sha256": "3e7808e603b1851941e6ede74abf233be39775347b0df0510b6dfb6a18795808",
+      "bytes": 26812
+    },
+    {
+      "file": "outputs/circle1-ab-merge/final-checks/run-20261003T043639742900Z.json",
+      "sha256": "a492a758bf3801ae6841bac2629d44c94e1ce7155a20eb67d0e149fe0490f9d0",
+      "bytes": 306245
+    },
+    {
+      "file": "outputs/circle1-ab-merge/final-checks/run-20261003T043853914928Z.json",
+      "sha256": "6f388f6262163017bee4b2e3080eede5094505710a6bea8a29812afe7ab46d98",
+      "bytes": 303372
+    },
+    {
+      "file": "outputs/circle1-ab-merge/final-source-ready.json",
+      "sha256": "d3e1826ce2e8c91a80bbee9b1c74decdce5aeed8f3950cbb284e97f1fed2cff1",
+      "bytes": 9860
+    },
+    {
+      "file": "outputs/circle1-ab-merge/final-summary.json",
+      "sha256": "10f0ac4be7597c6cdb43b950be188ddd4e9bbb2a262b13f3f7f2a8f24a9c7895",
+      "bytes": 2414
+    },
+    {
+      "file": "outputs/circle1-ab-merge/finish_review.py",
+      "sha256": "084488ee97a1c7ed4461fe72d0cec52e4a7a285e6423a4824a67db33a55556ad",
+      "bytes": 9600
+    },
+    {
+      "file": "outputs/circle1-ab-merge/frame-budget-after.json",
+      "sha256": "c23cab7aca38ebcc7e91045222d1e268546911a361b7aebca0e20b406391eac9",
+      "bytes": 1576
+    },
+    {
+      "file": "outputs/circle1-ab-merge/frame-budget-before.json",
+      "sha256": "1b7488ad58728efdb5e358859992993a0ab5cea03c8e197c6abaa3a8404deef6",
+      "bytes": 3874
+    },
+    {
+      "file": "outputs/circle1-ab-merge/historical-evidence-baseline.json",
+      "sha256": "686e5a6157803c170dea57e4ccfc9c000c5236777b10bb01a3e80e928ec854bb",
+      "bytes": 41004
+    },
+    {
+      "file": "outputs/circle1-ab-merge/lsp-before-test-signature-fix.json",
+      "sha256": "8af47ddd61078ecbaf73cb61124864d34e2f70d22a8b20ef5c5144b97275f22a",
+      "bytes": 16131
+    },
+    {
+      "file": "outputs/circle1-ab-merge/lsp-final-result.json",
+      "sha256": "49fdf893471830af7ab354e84a24edd745ccee84952b95cd1a9c3ae5c966774b",
+      "bytes": 16099
+    },
+    {
+      "file": "outputs/circle1-ab-merge/package_final_evidence.py",
+      "sha256": "37cf7765a4ed4fd24e561b6fa3bf5e6f0d80930e1b6a65345c11d5d6bf5f7c55",
+      "bytes": 5562
+    },
+    {
+      "file": "outputs/circle1-ab-merge/preparation-evidence-manifest.json",
+      "sha256": "c6ed2e8207ef3e031558a87ed94b935f1b5a3d0955d1a6c2babe1e15d287e35e",
+      "bytes": 3785
+    },
+    {
+      "file": "outputs/circle1-ab-merge/preview-status-after-final-fixes.json",
+      "sha256": "21ab336d70cae0267a5d0ec9153a833f7901027f49b288925a496014b15e220b",
+      "bytes": 3191
+    },
+    {
+      "file": "outputs/circle1-ab-merge/preview-status-final-review.json",
+      "sha256": "b8b0c114b0781c298825e8a6a5d01e66d567e900b182cc4ba34e553d8645f980",
+      "bytes": 3561
+    },
+    {
+      "file": "outputs/circle1-ab-merge/protection-audit.md",
+      "sha256": "6a83289529eb9d9e363bbb5f937596b98b8c274d83ea46975dbc7243fe6c9dbd",
+      "bytes": 839
+    },
+    {
+      "file": "outputs/circle1-ab-merge/protection-result.json",
+      "sha256": "4394ae763f90de312cb071bf51d0eef6f4b41377e112e5b1a2ea18b123f002c0",
+      "bytes": 24866
+    },
+    {
+      "file": "outputs/circle1-ab-merge/run_final_checks.py",
+      "sha256": "9d029487e4ed7ded502059cc7a1635e69849ceb6f9dfe6760e2f97d066c28e7b",
+      "bytes": 40964
+    },
+    {
+      "file": "outputs/circle1-ab-merge/runner-selfcheck.json",
+      "sha256": "6714183df60ed4ec9302dded27c05bea32efc8d721c45754a3ecdd77590bc92f",
+      "bytes": 11096
+    },
+    {
+      "file": "outputs/circle1-ab-merge/shared-architecture-change.json",
+      "sha256": "af1773a419062feeabe031a2c1f9b7aa67a06bdfff7d2d4c0fa9ba5e4d8391a7",
+      "bytes": 391
+    },
+    {
+      "file": "outputs/circle1-ab-merge/shared-dependencies.json",
+      "sha256": "1b559528c2a767177266aa5c22cbb75431c9ce8365c50fbe6eae0fbd0ccbfd32",
+      "bytes": 1924
+    },
+    {
+      "file": "outputs/circle1-ab-merge/shared-test-change.json",
+      "sha256": "33914d9064f564ad2be03b6eef3250df81f727cb83c6db97629bdae0bd8b75c9",
+      "bytes": 381
+    },
+    {
+      "file": "outputs/circle1-ab-merge/source-ready-before-validation-repair.json",
+      "sha256": "49028ea53b6c4e0bcbac273f2c3fe6f2f9220be74f3b7664a0a97afd2f6ed1cf",
+      "bytes": 9860
+    },
+    {
+      "file": "outputs/circle1-ab-merge/sources-before-final-review/scripts/Game/Game.lua",
+      "sha256": "c3c442d39140c47f27f840334b0104737eaccb13f23bc167ee956b9c77b0fde4",
+      "bytes": 2511
+    },
+    {
+      "file": "outputs/circle1-ab-merge/sources-before-final-review/scripts/Gameplay/Circle1B2Barrel.lua",
+      "sha256": "b0cab7be99073ae9687946a9b1aac683e82c28ac23d1d1bff903ce720aa18b09",
+      "bytes": 13710
+    },
+    {
+      "file": "outputs/circle1-ab-merge/sources-before-final-review/scripts/Gameplay/GameClock.lua",
+      "sha256": "09dbdb0783b279b9e3c92b407b7061635fbfec9e90344e6797b144fcee8af429",
+      "bytes": 7073
+    },
+    {
+      "file": "outputs/circle1-ab-merge/sources-before-final-review/scripts/Tests/ABIntegrationTests.lua",
+      "sha256": "b69a55a6aacce973875cb040fd026eab964b18eed8e12d8d77285e9438b39975",
+      "bytes": 54620
+    },
+    {
+      "file": "outputs/circle1-ab-merge/sources-before-final-review/scripts/Tests/ArchitectureIntegrationTests.lua",
+      "sha256": "aeca8b95918f02b42d5016b764252f643080f4c60cbe364b6885fdd75855012e",
+      "bytes": 12418
+    },
+    {
+      "file": "outputs/circle1-ab-merge/sources-before-final-review/scripts/Tests/Circle1B2BarrelTests.lua",
+      "sha256": "c3c8ed3d70023e055f3cb969840448253825b514d726da73ecbea578ca8c9967",
+      "bytes": 29180
+    },
+    {
+      "file": "outputs/circle1-ab-merge/supplemental-protection.json",
+      "sha256": "5a8da3e57cc75c13c1d0e9571b30c5b25c409319509442412fe6086d536136d2",
+      "bytes": 4684
+    },
+    {
+      "file": "outputs/circle1-ab-merge/syntax-final.json",
+      "sha256": "f84628d967a9dd2af8315d29f792df91042851081e52a67836d5e31a8e516c3b",
+      "bytes": 16969
+    },
+    {
+      "file": "outputs/circle1-ab-merge/whitespace-final.json",
+      "sha256": "2ba0db8ac431f93f43690222709ad5d4e767ddb8f25d6305329bb54e235f3891",
+      "bytes": 2874
+    },
+    {
+      "file": "outputs/circle1-ab-merge/共享测试差异待核对.md",
+      "sha256": "bcbeddd1b7bc9fc3d5f010be3cc94c50f4aeb1b6e6b5c2dbb0c1c5a1ee233318",
+      "bytes": 2447
+    },
+    {
+      "file": "outputs/circle1-ab-merge/准备交付.md",
+      "sha256": "1f0915cb7e9f8e1cf0a11e275be8208c9ddc5558952aae8a42fcb32b36d69ca6",
+      "bytes": 4505
+    },
+    {
+      "file": "outputs/circle1-ab-merge/合并准备.md",
+      "sha256": "d5f610a433035039672b8109cf64a711e021528a0f10faba43fef115f4fa6683",
+      "bytes": 3923
+    },
+    {
+      "file": "outputs/circle1-ab-merge/合并复查与交付.md",
+      "sha256": "9910515ab194a4ba168c1d2ccde01f03ec93908dac5ec3b4e2ec6438e57f49a3",
+      "bytes": 8395
+    },
+    {
+      "file": "outputs/circle1-ab-merge/接口验收矩阵.md",
+      "sha256": "fda49e8c9a905c1c1d13532a7fffabd7801b8d931e6849bacfd48b44517380bb",
+      "bytes": 15496
+    },
+    {
+      "file": "outputs/circle1-ab-merge/最终检查顺序.md",
+      "sha256": "561b87247843bdd7df980c590dc7bec68b48bbe62b04861cab48a0a28c0bb771",
+      "bytes": 3571
+    },
+    {
+      "file": "outputs/circle1-ab-merge/验证执行说明.md",
+      "sha256": "a2d15856b55f6013d562eb7e114848de481ef47730002d246379572711cc2629",
+      "bytes": 3082
+    }
+  ],
+  "nativeGuiPreviewVerified": false,
+  "realCloudSdkVerified": false,
+  "excludes": [
+    "evidence-manifest.json itself",
+    "__pycache__"
+  ],
+  "preparationManifestPreserved": "preparation-evidence-manifest.json"
+}

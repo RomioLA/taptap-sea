@@ -233,6 +233,8 @@ function GameClock:GetState()
     return {
         phase = self.phase,
         elapsed = self.elapsed,
+        duration = duration,
+        progress = math.max(0, math.min(1, self.elapsed / duration)),
         remaining = math.max(0, duration - self.elapsed),
         paused = self:IsPaused(),
         pauseReasons = self:GetPauseReasons(),

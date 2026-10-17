@@ -1,0 +1,33 @@
+{
+  "baselineUnchanged": true,
+  "rawCheckerStatus": "attention_required",
+  "rawCheckerExitCode": 1,
+  "unreviewedMismatchCount": 0,
+  "decisions": [
+    {
+      "file": "scripts/tests/ABIntegrationTests.lua",
+      "expected_sha256": "84B8CBDD408085756D2329C8FE00D07DB08A1E6443EA9F8D27B9CD20C14AF50E",
+      "actual_sha256": "de232115b234707f53eb87d980f1bd63672194a125f4b94586a578a11b40ab25",
+      "status": "changed",
+      "reviewDisposition": "accepted_shared_test_migration",
+      "reason": "Current timed fishing, actual port, explicit throw and cloud entry fixtures; 32 cases including formal-entry negative.",
+      "originalABackup": "outputs/circle1-b4/pre-sync/current-c/scripts/Tests/ABIntegrationTests.lua",
+      "originalABackupSha256": "84b8cbdd408085756d2329c8fe00d07db08a1e6443ea9f8d27b9cd20c14af50e",
+      "preFinalReviewB4Backup": "outputs/circle1-ab-merge/sources-before-final-review/scripts/Tests/ABIntegrationTests.lua",
+      "preFinalReviewB4BackupSha256": "b69a55a6aacce973875cb040fd026eab964b18eed8e12d8d77285e9438b39975"
+    },
+    {
+      "file": "scripts/tests/ArchitectureIntegrationTests.lua",
+      "expected_sha256": "3423577120B27F5652CC6DDAE9F725B003680C0866661949897F7D3EF7B41525",
+      "actual_sha256": "aeca8b95918f02b42d5016b764252f643080f4c60cbe364b6885fdd75855012e",
+      "status": "changed",
+      "reviewDisposition": "accepted_shared_test_migration",
+      "reason": "B integration/system architecture coverage retained; 12 cases pass including public-method facade and World lifecycle.",
+      "originalABackup": "outputs/circle1-b4/pre-sync/current-c/scripts/Tests/ArchitectureIntegrationTests.lua",
+      "originalABackupSha256": "3423577120b27f5652cc6ddae9f725b003680c0866661949897f7d3ef7b41525",
+      "preFinalReviewB4Backup": "outputs/circle1-ab-merge/sources-before-final-review/scripts/Tests/ArchitectureIntegrationTests.lua",
+      "preFinalReviewB4BackupSha256": "aeca8b95918f02b42d5016b764252f643080f4c60cbe364b6885fdd75855012e"
+    }
+  ],
+  "scopeLimit": "Only the two reviewed shared-test changes are accepted; no generic bypass or baseline rewrite."
+}

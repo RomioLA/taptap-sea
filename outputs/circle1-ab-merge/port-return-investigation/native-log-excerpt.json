@@ -1,0 +1,50 @@
+{
+  "session": "f5d82139-8fba-4e13-bbb7-e66fd587943f",
+  "sourceLog": "C:\\Users\\80739\\.taptap-maker\\preview\\2bed5a4a76dcbaf94d6f7afb1d99cabdc7b672d25909b5f3339cc9e23cfee9e0\\sessions\\f5d82139-8fba-4e13-bbb7-e66fd587943f\\0\\runtime.log",
+  "rows": [
+    {
+      "cursor": 372,
+      "text": "[lua] [2026-10-03 12_49_22_007][444][Script] [SeaV1] bootstrap ready; world height=45; local density=20/4\n"
+    },
+    {
+      "cursor": 373,
+      "text": "[lua] [2026-10-03 12_49_22_008][444][Script] [SeaV1] first frame rendered; underwater hidden=true\n"
+    },
+    {
+      "cursor": 374,
+      "text": "[lua] [2026-10-03 12_52_34_185][11923][Script] [SeaV1] bootstrap stopped\n"
+    },
+    {
+      "cursor": 405,
+      "text": "[2026-10-03 12_49_22_007][444][Script] [SeaV1] bootstrap ready; world height=45; local density=20/4\r"
+    },
+    {
+      "cursor": 406,
+      "text": "[2026-10-03 12_49_22_008][444] INFO: UrhoXRuntime: Game started successfully\r"
+    },
+    {
+      "cursor": 407,
+      "text": "[2026-10-03 12_49_22_008][444][Script] [SeaV1] first frame rendered; underwater hidden=true\r"
+    },
+    {
+      "cursor": 408,
+      "text": "[2026-10-03 12_49_22_014][445][Script] [ScrollView Warning] Zero height (0) with flex/flexGrow=1. Parent may be using maxHeight/maxWidth instead of height/width. flexGrow needs a parent with definite size (height/width, not maxHeight/maxWidth).\r"
+    },
+    {
+      "cursor": 409,
+      "text": "[2026-10-03 12_49_22_015][445][Script] [Layout Warning] Overflow in 'Panel': children=600x506, container=620x486. Consider: flexShrink=1 on children, or increase container size.\r"
+    },
+    {
+      "cursor": 410,
+      "text": "[2026-10-03 12_49_22_015][445][Script] [Layout Warning] Overflow in 'Panel': children=600x23, container=600x17. Consider: flexShrink=1 on children, or increase container size.\r"
+    },
+    {
+      "cursor": 413,
+      "text": "[2026-10-03 12_49_29_319][883] INFO: Graphics resized: 2880x1676 (logic=2880x1676, dpr=1.000000)\r"
+    },
+    {
+      "cursor": 416,
+      "text": "[2026-10-03 12_52_34_185][11923][Script] [SeaV1] bootstrap stopped\r"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "evidenceKind": "offline_lua54_nanovg_capture",
+  "engineScreenshot": false,
+  "scene": "SeaDraw.Scene",
+  "panelSize": {
+    "width": 640,
+    "height": 360
+  },
+  "contactSheetSize": {
+    "width": 1920,
+    "height": 776
+  },
+  "frames": [
+    {
+      "name": "day-12pct",
+      "phase": "day",
+      "progress": 0.11999999999999998,
+      "duration": 120.0,
+      "png": "day-12pct.png",
+      "recordedElements": 295,
+      "nanoVGCalls": 8394
+    },
+    {
+      "name": "day-50pct",
+      "phase": "day",
+      "progress": 0.5,
+      "duration": 120.0,
+      "png": "day-50pct.png",
+      "recordedElements": 295,
+      "nanoVGCalls": 8394
+    },
+    {
+      "name": "day-88pct",
+      "phase": "day",
+      "progress": 0.88,
+      "duration": 120.0,
+      "png": "day-88pct.png",
+      "recordedElements": 295,
+      "nanoVGCalls": 8394
+    },
+    {
+      "name": "night-12pct",
+      "phase": "night",
+      "progress": 0.11999999999999998,
+      "duration": 60.0,
+      "png": "night-12pct.png",
+      "recordedElements": 298,
+      "nanoVGCalls": 8406
+    },
+    {
+      "name": "night-50pct",
+      "phase": "night",
+      "progress": 0.5,
+      "duration": 60.0,
+      "png": "night-50pct.png",
+      "recordedElements": 298,
+      "nanoVGCalls": 8406
+    },
+    {
+      "name": "night-88pct",
+      "phase": "night",
+      "progress": 0.88,
+      "duration": 60.0,
+      "png": "night-88pct.png",
+      "recordedElements": 298,
+      "nanoVGCalls": 8406
+    }
+  ],
+  "contactSheet": "day-night-cycle-contact-sheet.png"
+}

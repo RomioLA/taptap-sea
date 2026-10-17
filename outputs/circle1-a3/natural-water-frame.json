@@ -1,0 +1,26 @@
+{
+  "shipPosition": {
+    "x": -0.5864624331852288,
+    "y": 228.4901831425427
+  },
+  "screenPosition": {
+    "x": 1652.8802245307706,
+    "y": 489.18359563363515
+  },
+  "seed": 271828,
+  "nativeScreenshot": false,
+  "worldTime": 71.34999999999809,
+  "syntheticFishOrSignalUsed": false,
+  "debugUnderwater": false,
+  "horizonY": 345.6,
+  "sourceId": "sea-92",
+  "routeModule": "tests.Circle1A3ExperienceTests",
+  "margin": 99.0,
+  "splashPosition": {
+    "x": 40.283546922263554,
+    "y": 227.5992153825274
+  },
+  "splashDrawCalls": 1,
+  "kind": "offline NanoVG capture during normal seeded input replay; not native play",
+  "png": "natural-water-splash.png"
+}

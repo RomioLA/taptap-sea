@@ -1,0 +1,70 @@
+Runtime: Lua 5.4
+Lua syntax PASS: 23 files
+PASS configuration values and four authoritative item definitions
+PASS stamina guards, complete action cost and zero stamina return
+PASS special events pause time and prevent starting full actions
+PASS food use, cap and no elder stamina reward
+PASS inventory one item per slot, capacity upgrades and defensive copies
+PASS multi reason pauses and day night boundaries
+PASS port pauses preserve elapsed and repeat departure
+PASS normal return penalties at 0 30 30.9 40 55 59.9
+PASS night 60 forced modal, proportional stamina and one settlement
+PASS save failure retry freezes state and does not advance day twice
+PASS transactions read item prices, reject invalid/full/sea without side effects
+PASS drop acceptance payloads and rejected/error receiver retains item
+PASS new run resets gameplay and never adds save points
+PASS snapshot round trip and invalid saves leave state intact
+PASS cloud callback mapping, timeout and duplicate completion
+PASS load success failure pending lock and late callbacks
+PASS drop callback reentry and elder rejection have no extra side effects
+PASS new day hooks fire once after successful save, never on failed retry
+PASS clock debug bounds scales sorted reasons and invalid inputs
+PASS only confirmed daily settlement writes, no manual sea save API
+GAME_LOOP_SPEC_PASS 20
+PASS HUD always visible information, host subtree and core button wiring
+PASS forced return modal and failed save retry through actual callbacks
+PASS debug restricted to development, config steps and freeze during save
+PASS development HUD controls configure actions without production debug
+PASS port upgrade buttons use config prices and refresh after purchase
+PASS daily shop stock sold-out UI and next-day refresh
+GAME_LOOP_UI_MOCK_PASS 6
+PERSISTENCE_REGRESSION_PASS 84
+PASS numeric stamina100-to160-cost400
+PASS numeric stamina160-to200-cost600
+PASS numeric upgrade-preserves-missing-stamina
+PASS numeric inventory-transition-1
+PASS numeric inventory-transition-2
+PASS numeric inventory-transition-3
+PASS numeric boat-speed-transition-1
+PASS numeric boat-speed-transition-2
+PASS numeric item-values-apple
+PASS numeric item-values-bait
+PASS numeric item-values-sardine
+PASS numeric item-values-tuna
+PASS numeric empty-net-cost-and-result-contract
+PASS numeric free-interactions-no-save-no-player-mutation
+PASS numeric event-operation-cost40-on-explicit-completion
+PASS numeric no-daily-fishing-limit-and-food-action-math
+PASS numeric single-config-prices-and-total-cost3900
+PASS numeric forced-night60-proportional160-and200
+PASS numeric upgrade-rejections-atomic-sea-busy-and-insufficient
+PASS numeric persistence-levels-legacy-validation-and-new-run-reset
+PASS numeric balance-model-references-not-runtime-quotas
+NUMERIC_ECONOMY_SPEC_PASS 21
+PASS stock apple-initial-stock2
+PASS stock apple-third-buy-rejected-without-charge
+PASS stock apple-new-day-restocks2
+PASS stock bait-initial-stock2
+PASS stock bait-third-buy-rejected-without-charge
+PASS stock bait-new-day-restocks2
+PASS stock full-inventory-no-money-or-stock-loss
+PASS stock insufficient-money-sea-and-busy-no-stock-loss
+PASS stock stock-does-not-reset-on-repeat-port-or-dialog
+PASS stock stock-independent-of-holding-and-apple-use
+PASS stock drop-world-rejection-keeps-inventory
+PASS stock fishing4sec-clock-runs-empty-catch-charged-once
+PASS stock new-run-and-successful-day-snapshot-load-restock
+PASS stock invalid-load-keeps-current-stock
+PASS stock save-retry-does-not-repeat-day-or-restock
+SHOP_STOCK_SPEC_PASS 15
+BALANCE_RUNTIME_QUOTA_AUDIT_PASS

@@ -1,0 +1,80 @@
+{
+  "dialogue_pause": {
+    "seaTimeAdvanced": 0,
+    "opened": true,
+    "runtimePaused": true,
+    "clockTimeAdvanced": 0,
+    "barrelActive": true
+  },
+  "single_4_second_frame": {
+    "seaTimeAdvanced": 0.25,
+    "actionActiveAfter": false,
+    "shipXBefore": 64,
+    "dt": 4,
+    "clockTimeAdvanced": 4,
+    "shipXAfter": 64,
+    "keyboardAxisX": 1,
+    "stage": 1,
+    "shipYBefore": 25,
+    "staminaSpent": 40,
+    "shipYAfter": 25
+  },
+  "final_0_1_frame": {
+    "seaTimeAdvanced": 0.1,
+    "actionActiveAfter": false,
+    "shipXBefore": 64,
+    "dt": 0.1,
+    "clockTimeAdvanced": 0.1,
+    "shipXAfter": 64,
+    "keyboardAxisX": 1,
+    "stage": 1,
+    "shipYBefore": 25,
+    "staminaSpent": 40,
+    "shipYAfter": 25,
+    "actionActiveBefore": true
+  },
+  "inventory_pause": {
+    "seaTimeAdvanced": 0,
+    "opened": true,
+    "runtimePaused": true,
+    "clockTimeAdvanced": 0,
+    "barrelActive": true
+  },
+  "night_tie_with_frame_remainder": {
+    "seaTimeAdvanced": 0.1,
+    "actionActiveAfter": true,
+    "guardCalls": 20,
+    "dt": 0.1000001,
+    "nightExhausted": false,
+    "stage": 0,
+    "error": "[string \"<python>\"]:165: instruction guard: likely non-progress update loop",
+    "updateReturned": false,
+    "staminaSpent": 0,
+    "clockTimeAdvanced": 0.10000000000000142,
+    "dayForcedReturn": false
+  },
+  "split_frame_budget": {
+    "oceanMaxFrameSec": 0.25,
+    "actionActiveAfter": false,
+    "dt": 0.5,
+    "actionCompletedAtGameSecond": 0.1,
+    "clockTimeAdvanced": 0.5,
+    "seaTimeAdvanced": 0.35
+  },
+  "exact_night_tie": {
+    "seaTimeAdvanced": 0.1,
+    "actionActiveAfter": true,
+    "dt": 0.1,
+    "recordElapsedAfter": 3.9999999999999942,
+    "runtimePausedAfter": false,
+    "forcedReturnPrepared": false,
+    "staminaSpent": 0,
+    "clockElapsedAfter": 60.0,
+    "stage": 0,
+    "clockTimeAdvanced": 0.10000000000000142,
+    "dayForcedReturn": false,
+    "nightExhausted": false,
+    "clockNightSec": 60,
+    "recordStateAfter": "waiting"
+  }
+}

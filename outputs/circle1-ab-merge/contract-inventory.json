@@ -1,0 +1,189 @@
+{
+  "purpose": "圈1 A/B 当前组合接口清单；离线验收结果见合并复查与交付.md，原生及真实云待验收",
+  "source_context": {
+    "a_workspace": "C:/codex/taptap-sea",
+    "b4_state": "B4 已交付；当前组合完成修复并冻结86份Lua源码",
+    "primary_sources": [
+      "AGENTS.md",
+      "docs/ARCHITECTURE_LAYOUT.md",
+      "outputs/circle1-ab-merge/合并准备.md",
+      "outputs/circle1-ab-review/复查说明.md",
+      "scripts/Ocean/SeaRuntime.lua",
+      "scripts/Ocean/Bootstrap.lua",
+      "scripts/Ocean/World.lua",
+      "scripts/Game/World.lua",
+      "scripts/Game/Game.lua",
+      "scripts/Systems/EntityStateSystem.lua",
+      "scripts/Ocean/SeaDraw.lua"
+    ]
+  },
+  "confirmed_rules": [
+    "木桶4秒动作期间 Ocean 与 Gameplay 昼夜继续；对话/背包打开时暂停",
+    "已完成但未领取的鱼获保留；未完成捕捞可在夜尽取消",
+    "圈1沿用基础存档契约并在新局建立时保存初始状态",
+    "图鉴、成就和正式结局延后，不在圈1增加对应存档字段"
+  ],
+  "ownership": {
+    "Gameplay": [
+      "玩家资源、昼夜和保存",
+      "永久透镜宝物及其进度；关闭 Ocean 观察不会扣除或移除此宝物",
+      "捕鱼 owner token、动作阶段、事务快照的短期持有、支付与奖励",
+      "固定木桶进度、地点识别状态与已完成待领取鱼获"
+    ],
+    "OceanRuntime": [
+      "船、鱼和其它海洋实体及其身份",
+      "船移动、捕获锁、实体移除/恢复、海洋模拟和持续水下视野",
+      "固定木桶实体及进程内 generation 凭证"
+    ],
+    "Integration": [
+      "场景装配、输入转发和跨模块调用顺序",
+      "允许持有 Game/Runtime 模块引用与接口回调；不直接写 Ocean World 注册表或另存跨帧玩法状态"
+    ],
+    "RenderCallbacks": [
+      "clock、fishingView、isLocationRecognized 为可选读取接口",
+      "绘制不推进、收费、奖励、修改存档或保存第二份进度"
+    ]
+  },
+  "contracts": [
+    {
+      "id": "port_reset",
+      "source": "scripts/Ocean/SeaRuntime.lua:128-179",
+      "methods": {
+        "GetShipPosition": "() -> OceanPoint copy",
+        "GetPortPosition": "() -> OceanPoint copy of Config.ship.start, independent of departure",
+        "ResetShipAtPort": "() -> true | false, reason"
+      },
+      "return_semantics": {
+        "success": "true after ResetAtPosition on the existing Movement/ship",
+        "failure_reasons": [
+          "ship_unavailable",
+          "invalid_port_position",
+          "port_out_of_bounds",
+          "port_unavailable",
+          "port_blocked"
+        ]
+      },
+      "side_effects": [
+        "Moves the current ship to the authored port",
+        "Clears movement target and collision push feedback; reanchors camera",
+        "Does not replace World/ship, settle a day, advance time, refresh fish, change pause/scope, replace signals, or remove/move the fixed barrel"
+      ],
+      "owner_boundary": "Gameplay decides whether a flow requires port reset; ordinary return must sail through the existing 10m gate"
+    },
+    {
+      "id": "fixed_barrel_credential",
+      "source": "scripts/Ocean/SeaRuntime.lua:181-241; scripts/Ocean/World.lua:119-151",
+      "methods": {
+        "GetFixedBarrel": "() -> nil | read-only snapshot {id, contentId, generation, position}",
+        "CanInteractWithBarrel": "(id, generation) -> true | false, reason"
+      },
+      "return_semantics": {
+        "success": "true, nil only for the exact live registered driftwood barrel, matching generation, valid ship point and distance <= configured operateDistance (5m)",
+        "failure_reasons": [
+          "barrel_generation_mismatch",
+          "barrel_unavailable",
+          "barrel_identity_mismatch",
+          "invalid_ship_position",
+          "barrel_out_of_range"
+        ]
+      },
+      "side_effects": [
+        "Getter returns copied values behind read-only proxies; no entity or mutable position leaks",
+        "Interaction check is spatial validation only and does not start an action, pause, charge, reward or save",
+        "World creation increments process-local barrelGeneration; daily ordinary-fish refresh and port reset preserve it"
+      ],
+      "owner_boundary": "Gameplay owns progress/payment/reward and should not serialize process-local generation"
+    },
+    {
+      "id": "fishing_capture_transaction",
+      "source": "scripts/Ocean/SeaRuntime.lua:263-394; scripts/Ocean/World.lua:172-184; scripts/Systems/EntityStateSystem.lua:1-13",
+      "methods": {
+        "selectFishingTarget": "(center, radius?, filter?) -> entity | nil, reason",
+        "SnapshotFishingTarget": "(target) -> ephemeral rollback snapshot",
+        "RestoreFishingTarget": "(target, snapshot) -> boolean",
+        "GetFishingTarget": "(id) -> current entity | nil; entity reference, read only by caller",
+        "GetFishingGeneration": "() -> integer; increments on fish reset/refresh and Runtime reset",
+        "LockFishingTarget": "(id, ownerToken: table) -> true | false, reason",
+        "UnlockFishingTarget": "(id, ownerToken: table) -> true | false, reason",
+        "RemoveFishingTarget": "(id, ownerToken?) -> boolean [, reason]"
+      },
+      "return_semantics": {
+        "selection": "Uses configured net radius and cast-distance validation; nearest eligible fish or nil; hidden/frozen fish remain eligible, locked fish do not",
+        "lock": "Requires exact table owner identity; repeat lock by same owner succeeds; other owner is rejected",
+        "unlock": "Valid token on missing/unlocked fish is idempotent true; mismatched token is false",
+        "remove": "Locked fish requires exact owner; successful removal is the only caught removal; wrong supplied owner is false",
+        "restore": "Only same World, fishing generation, and exact target object; refuses a conflicting current owner"
+      },
+      "side_effects": [
+        "Lock pauses fish FSM/movement, prevents predation and repeat selection, and clears the source's surface cues",
+        "Remove updates the one World registry, clears capture ownership/overlaps/cues, and marks the entity removed",
+        "Restore can reinsert the original fish and behavior after failed transaction; snapshot contains live World/entity references and is mutable"
+      ],
+      "owner_boundary": "Gameplay owns transaction/token/payment/reward and may hold snapshot only for same-transaction rollback; Ocean owns fish state and registry mutations"
+    },
+    {
+      "id": "scope_status_setter",
+      "source": "scripts/Ocean/SeaRuntime.lua:396-410; scripts/Ocean/World.lua:119-151",
+      "methods": {
+        "SetScopeEnabled": "(enabled) -> resulting boolean state",
+        "IsScopeEnabled": "() -> current boolean state"
+      },
+      "return_semantics": "Setter assigns enabled == true and returns the assigned state; false means a successful disable when false was requested, and also means malformed non-true inputs were safely closed",
+      "side_effects": "Persistent visibility only; no pause, clock, fish, or simulation update",
+      "owner_boundary": "Gameplay owns the permanent lens treasure/eligibility; Ocean is source of truth for current visibility. Closing observation does not consume or remove the treasure. Caller verifies desired state via IsScopeEnabled() == desired"
+    },
+    {
+      "id": "optional_read_only_render_callbacks",
+      "source": "scripts/Ocean/Bootstrap.lua:133-145; scripts/Ocean/SeaDraw.lua:266-294,384-390,525-528",
+      "methods": {
+        "getClock": "() -> optional read-only Gameplay clock view",
+        "getFishingView": "() -> optional read-only fishing view snapshot",
+        "isLocationRecognized": "(contentId) -> optional boolean query",
+        "SeaDraw.Scene": "(ctx, width, height, runtime, clock, fishingView, isLocationRecognized)"
+      },
+      "return_semantics": "Bootstrap reads callbacks during Render and forwards values in fixed fifth/sixth/seventh argument positions; each is optional",
+      "side_effects": "Clock phase selects night overlay; fishing phase/elapsed selects only visual depiction; recognition query selects visible barrel appearance only",
+      "owner_boundary": "Gameplay retains all live values and mutation rights; Draw/Render must not retain or mutate gameplay state"
+    },
+    {
+      "id": "pointer_consumption_and_stop",
+      "source": "scripts/Ocean/Bootstrap.lua:88-113,152-165",
+      "methods": {
+        "HandlePointer": "(physicalX, physicalY) -> boolean handled",
+        "beforePointer": "(runtime, bootstrap) -> optional synchronization hook",
+        "onSeaPointer": "(worldPosition, runtime, bootstrap) -> true consumes; false/nil permits navigation fallback",
+        "Stop": "() -> idempotently unsubscribe and release Bootstrap-owned resources"
+      },
+      "return_semantics": "Only exact callback result true consumes; a valid unconsumed sea point sets Movement target and HandlePointer returns true",
+      "side_effects": "Mouse/touch share pointer path; pause/viewport/UI/water guards run before interaction; consumed input prevents Bootstrap's click-to-move fallback, while the B callback may legitimately clear an existing target through ClearMovementTarget",
+      "owner_boundary": "Integration syncs pause before guard and owns interaction; Ocean input adapter owns only target fallback and its event subscriptions"
+    },
+    {
+      "id": "world_system_and_retirement",
+      "source": "scripts/Game/World.lua:12-35,82-95; scripts/Ocean/World.lua:119-151,247-285; scripts/Ocean/SeaRuntime.lua:20-48,421-449; scripts/Systems/EntityStateSystem.lua:1-13",
+      "methods": {
+        "Game.World:AddSystem": "(system, cadence?) -> true if newly registered; false if same object already registered",
+        "Game:GetWorld": "() -> current runtime.world; calls AddSystem(gameplaySystem, frame) as an idempotent registration side effect",
+        "Ocean.World:Retire": "() -> true once, false thereafter; clears entities/systems and detaches signal world",
+        "Ocean.World:Update": "(dt, cadence?) -> no-op when retired",
+        "Runtime:Reset": "() -> retires old World and creates a new Runtime World",
+        "Runtime:refreshOrdinaryFish": "(daySeed, departure?) -> refreshes fish/temporary objects within existing World"
+      },
+      "return_semantics": "Ocean.World inherits the single Game.World entity registry and scheduler. Runtime initialization adds EntityStateSystem and SurfaceSignals as simulation systems; AddSystem deduplicates by system object and rejects cadence changes",
+      "side_effects": "Game:GetWorld may add the one Gameplay frame system; repeated calls on same World are deduplicated. Current NewRun uses ResetShipAtPort plus ordinary-fish refresh and preserves World. An independent Runtime:Reset call retires old World; daily fish refresh does not replace World",
+      "owner_boundary": "Game/World owns scheduler; Gameplay clock advances once per frame; Ocean simulation may substep. Call Game:GetWorld only after Game initialization. Current NewRun must retain the same World; reacquire only after an independent Runtime.Reset replacement"
+    }
+  ],
+  "compatibility_check": {
+    "existing_path": "Bridge preparation receipt uses Runtime:GetFishingGeneration(); Game:GetWorld() separately ensures composition World/system registration.",
+    "getter_effect": "Returns the current runtime.world and idempotently ensures the already-created Gameplay frame system is registered; not a pure read",
+    "facade_fixture": "Construct Bridge.New with a real Runtime, then replace only bridge.runtime with a method-only proxy rejecting world/ship/movement reads. Keep bridge.game.runtime real. Execute the actual NewRun/preparation path; receipt obtains generation through GetFishingGeneration(). Architecture suite passes.",
+    "scope_limit": "Post-construction Bridge public-method compatibility only, not arbitrary facade injection during Bridge.New. Game:GetWorld lifecycle/deduplicated registration is tested separately. Formal NewRun preserves World; independent Runtime.Reset replaces it.",
+    "known_absence": "SeaRuntime has no generic public GetWorld/GetWorldIdentity. Prepared receipts need only the provided GetFishingGeneration method; Game:GetWorld is the composition current-World getter with deduplicated registration."
+  },
+  "deferred_acceptance": [
+    "Native GUI/input/resize/DPR and real cloud cross-launch restore remain untested.",
+    "Local run/session guards reject stale local callback application; remote same-key write ordering requires real-service evidence.",
+    "No preview start, real-cloud operation, build, submit, commit or push was performed by this final review."
+  ]
+}

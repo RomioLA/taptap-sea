@@ -1,0 +1,25 @@
+{
+  "checkedCount": 285,
+  "authorizedPlayerTestChanges": [
+    {
+      "path": "scripts\\Tests\\Circle1BFishingFlowTests.lua",
+      "before": "9EEE49DE71466B223EC0AA4B6808F082BC76857A09CB4A56DA48E7B351F00A85",
+      "after": "6A97A2B36371F9921F42B1959231DFD606DF040C59473ACF12FF57FE8DBBC6B4",
+      "authorizedPlayerTestChange": true
+    },
+    {
+      "path": "scripts\\Tests\\GameLoopSpec.lua",
+      "before": "CF718248FDFC42914D96107DFA68AFA55D909E80FA80F7F1FCBF709B898E6F32",
+      "after": "5D8E95208E1A7CA621183BDD3D8B1F467F7A47C177920498769EC86EAFE3C27F",
+      "authorizedPlayerTestChange": true
+    },
+    {
+      "path": "scripts\\Tests\\GameLoopUISpec.lua",
+      "before": "60847C8E26570B3D2C752A3E9E4E53DF29F7C7E122A745DF6BA8856CB446F5F7",
+      "after": "4790F35844EAEA5024B066582C745D2F95D125192A5745EF7723A62AF205A8D1",
+      "authorizedPlayerTestChange": true
+    }
+  ],
+  "prohibitedChanges": [],
+  "priorEvidencePreserved": true
+}

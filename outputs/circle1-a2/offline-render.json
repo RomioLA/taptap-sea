@@ -1,0 +1,30 @@
+{
+  "engineScreenshot": false,
+  "realBConnectionVerified": false,
+  "images": [
+    {
+      "name": "aim",
+      "file": "outputs/circle1-a2/aim.png",
+      "sha256": "de7db60c4884dae2e809679177f4cf16e30fddfca72a14ce7facc4113a46749e",
+      "nvgCalls": 1280
+    },
+    {
+      "name": "casting-flight",
+      "file": "outputs/circle1-a2/casting-flight.png",
+      "sha256": "6eeed78ced79860cf9237a4a5a108fa67904fccfb72a82cd1a461c8327f6bfb3",
+      "nvgCalls": 1273
+    },
+    {
+      "name": "landing",
+      "file": "outputs/circle1-a2/landing.png",
+      "sha256": "7a417bf20908acc559241b6341a20c4fd3e7b5b441fad744f29aa165759e5e96",
+      "nvgCalls": 1302
+    },
+    {
+      "name": "reeling",
+      "file": "outputs/circle1-a2/reeling.png",
+      "sha256": "bb28405ccedafc11062181c54eb3e85ab1478d44a213b7f19dafd73c73fa633d",
+      "nvgCalls": 1303
+    }
+  ]
+}

@@ -1,0 +1,266 @@
+{
+  "filesExpected": 10,
+  "filesDiagnosed": 10,
+  "missing": [],
+  "errors": [],
+  "warnings": [
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/GameClock.lua",
+      "line": 175,
+      "code": "missing-return",
+      "message": "Annotations specify that a return value is required here."
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 435,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 439,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 450,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 464,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 552,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 661,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 205,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 206,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 207,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 209,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 209,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 212,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 212,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 237,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 263,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 264,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 282,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 282,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 314,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 314,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 320,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 321,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 322,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 323,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 325,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 328,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 344,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 344,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 345,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 345,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 357,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 357,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 358,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 359,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 401,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 408,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 1"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 425,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 425,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 434,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 434,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 453,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 453,
+      "code": "redundant-parameter",
+      "message": "expected 0 parameters but found 2"
+    }
+  ]
+}

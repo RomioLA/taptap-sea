@@ -1,0 +1,42 @@
+{
+  "scripts/Ocean/Bootstrap.lua": {
+    "beforeSha256": "3b8a0402e3a2e77f5846830e0573dde0118121858bf850645b2c976894b79d54",
+    "sha256": "ba3779103cba2f02c3c463f657553b7dbffb38719b6edcd0fa94d126a82c3268"
+  },
+  "scripts/Ocean/SeaDraw.lua": {
+    "beforeSha256": "489541f4f18ced5533211bbe9706a7c35e95fe59f33660acab0a0fd7b90d2f03",
+    "sha256": "ec13456893379f7aeb238f3a3485e31f52fb4bf1b3b38e05ec17d13fe39b43c4"
+  },
+  "scripts/Ocean/SeaRuntime.lua": {
+    "beforeSha256": "9993f879b44c38f687741544255742d7a7bf7835c337673aeb28c562163b4ab6",
+    "sha256": "e39f61f2548dea950c1243f222fee8fde4723f00efb6415d01a6ab2cbde5208c"
+  },
+  "scripts/Ocean/SurfaceSignals.lua": {
+    "beforeSha256": "5e35eae89efe30100c2dabf741ba7c151c2dec31c76c4d65087a8e292f877ca4",
+    "sha256": "2e9562a69d54085bd94526569e66cd582a7a4cd78e378c8bbd9d96f5c4726d42"
+  },
+  "scripts/Ocean/World.lua": {
+    "beforeSha256": "30c808ca62bca5544b86abf64c8d8c17dbe42c672b9164b88b944339290e478a",
+    "sha256": "ea5c288f96788469fc5d98974a1cce45c9ea0e403aa7ce3589ae5a6cbf30fd8f"
+  },
+  "scripts/tests/Circle1A2FishingTests.lua": {
+    "beforeSha256": null,
+    "sha256": "784e75b131406ec8c858fe50ddd86bb311977bb8841f8bd3f4313755dcb1e7c4"
+  },
+  "scripts/tests/Circle1A2ScopeTests.lua": {
+    "beforeSha256": null,
+    "sha256": "a0993ca2011c8c07d0ec4b931ea7e1f286b8b86e88af10724362e2e2d3d8a8c8"
+  },
+  "scripts/tests/Circle1A2SignalsTests.lua": {
+    "beforeSha256": null,
+    "sha256": "91ca8d70b764779e8a7c87276609841d174c179c371447bdbf0dbdbe3c946816"
+  },
+  "scripts/tests/SurfaceSignalsTests.lua": {
+    "beforeSha256": "cabfbebbe86e450e9b47acc9bdf3be9fac3bfe4657503a77924394387361d450",
+    "sha256": "077ed8223e39a150ebfa50e186bff9b7eeaca4946fb7291838862dccf78545f8"
+  },
+  "tests/run_circle1_a2.py": {
+    "beforeSha256": null,
+    "sha256": "63a160e6ebffc1ef5db32d068e9988b6795d73d6afe0dbaebf187cb5e20a8a64"
+  }
+}

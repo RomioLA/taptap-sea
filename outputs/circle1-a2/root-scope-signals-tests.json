@@ -1,0 +1,107 @@
+{
+  "tests.Circle1A2ScopeTests": [
+    {
+      "name": "persistent scope defaults off and accepts only explicit true",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "scope includes the 20m forward edge and inclusive 45 degree sides",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "scope follows ship movement and keeps its last heading while stopped",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "scope toggle changes visibility only and leaves fish eligible",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "scope does not change same-seed fish behavior",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "pause retains scope without advancing boat and reset disables it",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "legacy timed circular reveal remains independent and compatible",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "scope safely rejects invalid transforms and tight outside boundaries",
+      "error": "",
+      "passed": true
+    }
+  ],
+  "tests.Circle1A2SignalsTests": [
+    {
+      "name": "Circle1A2 birds preserve confirmed geometry and legal water",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "Circle1A2 first bird dive lasts 1.5 seconds and getters are read-only",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "Circle1A2 getters reject stale or illegal current fish positions",
+      "error": "C:/codex/taptap-sea/scripts/tests\\Circle1A2SignalsTests.lua:110: fish outside legal water cannot keep an old surface clue visible",
+      "passed": false
+    },
+    {
+      "name": "Circle1A2 locked, frozen, inactive, invalid, and removed sources lose cues",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "Circle1A2 pause freezes splash timers and reset clears cues",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "Circle1A2 chase splashes follow the confirmed half-second cadence",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "Circle1A2 clearing cues does not advance or reset world time",
+      "error": "",
+      "passed": true
+    }
+  ],
+  "tests.SurfaceSignalsTests": [
+    {
+      "name": "active sardines receive deterministic read-only bird groups",
+      "passed": true
+    },
+    {
+      "name": "bird polling is bounded and invalid sources disappear immediately",
+      "passed": true
+    },
+    {
+      "name": "normal tuna splash cadence snapshots position and expires after removal",
+      "passed": true
+    },
+    {
+      "name": "chasing tuna splash twice per second and zero dt never emits",
+      "passed": true
+    },
+    {
+      "name": "frozen tuna stops emitting while clear empties signal state",
+      "passed": true
+    },
+    {
+      "name": "missing signal config stays disabled for legacy worlds",
+      "passed": true
+    }
+  ]
+}

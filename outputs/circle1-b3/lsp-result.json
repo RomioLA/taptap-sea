@@ -1,0 +1,152 @@
+{
+  "filesExpected": 19,
+  "filesDiagnosed": 19,
+  "missing": [],
+  "errors": [],
+  "warnings": [
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Actions.lua",
+      "line": 229,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 49,
+      "code": "unnecessary-assert",
+      "message": "Unnecessary assert: this expression is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 212,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 213,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 252,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 104,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 256,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 266,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/GameClock.lua",
+      "line": 175,
+      "code": "missing-return",
+      "message": "Annotations specify that a return value is required here."
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Integration/Scene.lua",
+      "line": 226,
+      "code": "unnecessary-assert",
+      "message": "Unnecessary assert: this expression is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 65,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 122,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 383,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 412,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 466,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 475,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 480,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 594,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 603,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 1210,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 1177,
+      "code": "param-type-mismatch",
+      "message": "expected `boolean` but found `(false|true)?`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 1190,
+      "code": "param-type-mismatch",
+      "message": "expected `boolean` but found `false?`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 1211,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `string` to `never`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 1215,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `string` to `never`. "
+    }
+  ]
+}

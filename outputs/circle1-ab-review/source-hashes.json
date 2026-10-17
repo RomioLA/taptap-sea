@@ -1,0 +1,226 @@
+{
+  "scripts/config/gameplay.lua": {
+    "aSha256": "3f22e5fb76c68c06e42beefca2b988a8e698ebc4d04cde0489111dd34512724c",
+    "bSha256": "5bd72d98b517ae3b3171876745f80251917cb3ae72106f4f37dd36d9decb07e0"
+  },
+  "scripts/data/items.lua": {
+    "aSha256": "e0e74b36fa1fe33e17e5ac6797d37c9bbc2047ebcff64a5dedaab35ef9ae6eca",
+    "bSha256": "e0e74b36fa1fe33e17e5ac6797d37c9bbc2047ebcff64a5dedaab35ef9ae6eca"
+  },
+  "scripts/Entities/EntityFactory.lua": {
+    "aSha256": "78a35ffc54ab3ed6642de732ec3d7af389183690ea2a3f8c5337d09e60e4ad34",
+    "bSha256": "78a35ffc54ab3ed6642de732ec3d7af389183690ea2a3f8c5337d09e60e4ad34"
+  },
+  "scripts/FSM/StateMachine.lua": {
+    "aSha256": "34376bb99d73878a4ea8b042ac810e0940f6549c0e67339dab042b9cdd003ee4",
+    "bSha256": "34376bb99d73878a4ea8b042ac810e0940f6549c0e67339dab042b9cdd003ee4"
+  },
+  "scripts/Game/Game.lua": {
+    "aSha256": "440f54e1a0e7bcd9e207fe971cf3f33b923a739a3bf6c7efd7ad54d6b4f9bcf1",
+    "bSha256": "c3c442d39140c47f27f840334b0104737eaccb13f23bc167ee956b9c77b0fde4"
+  },
+  "scripts/Game/World.lua": {
+    "aSha256": "566adfe3c4560b6f55d38059c72514b710485a290112e40172fa650b694c6ded",
+    "bSha256": "566adfe3c4560b6f55d38059c72514b710485a290112e40172fa650b694c6ded"
+  },
+  "scripts/Gameplay/Actions.lua": {
+    "aSha256": "5260d1089f2f95ebdbd22740a1b0a9737f3cea8c7caa231aa9ec5cbcf5f6ec57",
+    "bSha256": "6bba20b4d926ba1fb4f6bf97db853b3b6c483c0ff6a9b16004f8f6661a793e72"
+  },
+  "scripts/Gameplay/Bootstrap.lua": {
+    "aSha256": "f66cb19e0cb9cb889579c73c388325f83edb1a47664b8071b8f765f9b44ea2d6",
+    "bSha256": "c27437b0283201464f17f3be6eb14baaccfbf2bad6cac337f445be15ea387e56"
+  },
+  "scripts/Gameplay/Debug.lua": {
+    "aSha256": "855e27643e641c7dbe25f45b3427ad4c8086161e7444607282cfa8b028e0dd3b",
+    "bSha256": "855e27643e641c7dbe25f45b3427ad4c8086161e7444607282cfa8b028e0dd3b"
+  },
+  "scripts/Gameplay/GameClock.lua": {
+    "aSha256": "09dbdb0783b279b9e3c92b407b7061635fbfec9e90344e6797b144fcee8af429",
+    "bSha256": "09dbdb0783b279b9e3c92b407b7061635fbfec9e90344e6797b144fcee8af429"
+  },
+  "scripts/Gameplay/HUD.lua": {
+    "aSha256": "cd39cd1fe738d55fdc198dce8e70bb68494eff89105e5e7a66aa63d592fc8b5b",
+    "bSha256": "eef26abee6823e2b91771b798b73aaeb14c8e6b9442072ee7d27da0f8ce4cde9"
+  },
+  "scripts/Gameplay/Inventory.lua": {
+    "aSha256": "48397892d5bafb7524dfe6d428fbfe8213e608f81880dc16fa33f6681c098c7b",
+    "bSha256": "1bac7c8d4280cbceca3b6461704aa625143e2d6743ff1c4d18b0f31d67c58d84"
+  },
+  "scripts/Gameplay/Loop.lua": {
+    "aSha256": "a419624de95187b736076034bf30d0ee42a7183f993d4273d2e10f778a9d3293",
+    "bSha256": "1c2503ceb918a66193a9bbe40ce6aa1be2a0a2a7e53ed224a56b9403235b8824"
+  },
+  "scripts/Gameplay/Persistence.lua": {
+    "aSha256": "ecd0a2f7183f95ce4b9f39475e9c428dc6fe2f8bea5b76247004cdc2b9873805",
+    "bSha256": "c42172b7260f51e103b51fef4caee268c59f5cfd27b6a2b07c0cac4e07359034"
+  },
+  "scripts/Gameplay/PlayerState.lua": {
+    "aSha256": "348d4a4c64b816b84cbd1b93ceadd3c731f4f38f79c2546c9a2a557f2b97e537",
+    "bSha256": "f00092bee77c5964550806e95b2b082a3e5e7e07b2e3d5daca7f4e650be149f4"
+  },
+  "scripts/Gameplay/UpdateSystem.lua": {
+    "aSha256": "79513cebd48669606a6ca3fc728268bfccb0570a25d607f2e440de0cad14f082",
+    "bSha256": "12a92a5c2117935faf0393188e23a2440beee11999ba7f268210c4a5d26a2cd1"
+  },
+  "scripts/GeneratedData/Fish.lua": {
+    "aSha256": "65e35588f19ac41d1b6594294fe47eb5802258753dd309510b9b66c73d9fe9fb",
+    "bSha256": "65e35588f19ac41d1b6594294fe47eb5802258753dd309510b9b66c73d9fe9fb"
+  },
+  "scripts/GeneratedData/Items.lua": {
+    "aSha256": "33faef6384ff84bc973f2d0ba964f7b1a9572f886a39755dcdd53bef010433ec",
+    "bSha256": "33faef6384ff84bc973f2d0ba964f7b1a9572f886a39755dcdd53bef010433ec"
+  },
+  "scripts/Integration/Bridge.lua": {
+    "aSha256": "1140db8ab5e407cf0da55e3b8cea2892b6cef80119146f60d1aa1da98daba81b",
+    "bSha256": "528bd55bf63f9e90cf688f801d279de123e5a767b4ee5d4d60baf9a688c6fca0"
+  },
+  "scripts/Integration/Scene.lua": {
+    "aSha256": "3fca7f66aad6cf6439783beea2a41f3daf9c388b0e3876b6057786daadaf4735",
+    "bSha256": "3f46f8952c1015164e275377b7d124ee8358650e0c3d4c4e8501246021b62d97"
+  },
+  "scripts/Main.lua": {
+    "aSha256": "7b14e1225833ed502b329a78681c5257fb1db75dcb72e1cccb6da906e322b7c2",
+    "bSha256": "7b14e1225833ed502b329a78681c5257fb1db75dcb72e1cccb6da906e322b7c2"
+  },
+  "scripts/Ocean/Bootstrap.lua": {
+    "aSha256": "dc6da15e2d8c3cf622591a757a81cc77f2c25f822856eb172e025514f36cf161",
+    "bSha256": "3b8a0402e3a2e77f5846830e0573dde0118121858bf850645b2c976894b79d54"
+  },
+  "scripts/Ocean/Config.lua": {
+    "aSha256": "ddcb679f469f11dca03fff62b2872278ee186c73b4f96fd93a96a869073df046",
+    "bSha256": "06efcd4f858673547dc402974582c57fd0c414d88a84ed9075ec71144a2ac135"
+  },
+  "scripts/Ocean/Draw.lua": {
+    "aSha256": "8e2a8871ade22c2f35b196b81d5fab1fd1df15d17c3404f7769e22304b7adc10",
+    "bSha256": "8e2a8871ade22c2f35b196b81d5fab1fd1df15d17c3404f7769e22304b7adc10"
+  },
+  "scripts/Ocean/Fish.lua": {
+    "aSha256": "aaf4ccd132480cbf50dc8a502b8de1d2c2ab88275f1092bc8f7ee481a8983b41",
+    "bSha256": "a4967af9c27372a617fc5c591ee2d63823278c21d086ea670e25e8e109b9324a"
+  },
+  "scripts/Ocean/FishData.lua": {
+    "aSha256": "f8d494aa7cc8f5af357e8a8afe894be6f824ee2ae42802c762ad8ed9725bd299",
+    "bSha256": "f8d494aa7cc8f5af357e8a8afe894be6f824ee2ae42802c762ad8ed9725bd299"
+  },
+  "scripts/Ocean/FusedScene.lua": {
+    "aSha256": "8bfb660db1d2b5dd2e0b7a9eabe4e0f9b539b741fac9026ac7a55c9c8f81d6bf",
+    "bSha256": "8bfb660db1d2b5dd2e0b7a9eabe4e0f9b539b741fac9026ac7a55c9c8f81d6bf"
+  },
+  "scripts/Ocean/HUD.lua": {
+    "aSha256": "3e54576096a956becc6890a9aae91d1c1b2a781e62afd366658500cc31fff625",
+    "bSha256": "f9e0ebeb6704bef7f03891b062967a06f32fb78e7628e2e35f80936ea6ad040a"
+  },
+  "scripts/Ocean/Math.lua": {
+    "aSha256": "9cb75e3c99f667e1529944db1f777a99cd3a9eab3e45ebed631776b0a22e1a5d",
+    "bSha256": "9cb75e3c99f667e1529944db1f777a99cd3a9eab3e45ebed631776b0a22e1a5d"
+  },
+  "scripts/Ocean/Movement.lua": {
+    "aSha256": "50b6ff818f1d37142c0977b4855ea40e062be8c3b7c0f16b8b1826ade79a158d",
+    "bSha256": "04f424d10c1dba1987fbeed0f0bedc63265d7ec94649d4c29559ed3c0121e8df"
+  },
+  "scripts/Ocean/SceneState.lua": {
+    "aSha256": "f78aab095bd890f968564c05426cab843a5344aad519edbf724bbf49b5c3c5be",
+    "bSha256": "f78aab095bd890f968564c05426cab843a5344aad519edbf724bbf49b5c3c5be"
+  },
+  "scripts/Ocean/SeaDebug.lua": {
+    "aSha256": "9645d0673d933bdb9e3b50ac0dd0d3be436fed113875bbef23ba9c20fb4a0c31",
+    "bSha256": "9645d0673d933bdb9e3b50ac0dd0d3be436fed113875bbef23ba9c20fb4a0c31"
+  },
+  "scripts/Ocean/SeaDraw.lua": {
+    "aSha256": "a6245cbb49cb74efa28defb63d7546bd87f6b6c990a79e9af18c95888193534a",
+    "bSha256": "489541f4f18ced5533211bbe9706a7c35e95fe59f33660acab0a0fd7b90d2f03"
+  },
+  "scripts/Ocean/SeaRuntime.lua": {
+    "aSha256": "b914c87a2557ff528426f7c587d92638f96c66ce6956054a609104f1fa78219f",
+    "bSha256": "f3884bcede776cf57c821d4a240a2a15249471cc035609c39d75660b1ef51ade"
+  },
+  "scripts/Ocean/SpawnStrategy.lua": {
+    "aSha256": "dbb5b67e46b21b00f6d9a86f5de806bcb70d233678f59a7f1d730e3f484a5b9f",
+    "bSha256": "dbb5b67e46b21b00f6d9a86f5de806bcb70d233678f59a7f1d730e3f484a5b9f"
+  },
+  "scripts/Ocean/State.lua": {
+    "aSha256": "cb95df6447bd3ba046a1d4f1b25d84ec6014756422b9bc7abc46dc0a8ad1db52",
+    "bSha256": "cb95df6447bd3ba046a1d4f1b25d84ec6014756422b9bc7abc46dc0a8ad1db52"
+  },
+  "scripts/Ocean/SurfaceSignals.lua": {
+    "aSha256": "724390ae99c892205fd8606ed220dbf42d40cc8faad8cd0bd0feaba67a9fcbb3",
+    "bSha256": "f341aa49bc8a35b2218319a07c0d6f0c7c3a5bb124ba75f9f17d27fe61f214b0"
+  },
+  "scripts/Ocean/World.lua": {
+    "aSha256": "4c4f98ee088e30718c18886d80c6d014712a3dd4407d5a90412b646c6b49ed9b",
+    "bSha256": "1c178b6654ab712669da5e7f57ca91269ac527f0ac4ba9cae6d9c5652c9f4791"
+  },
+  "scripts/SeaPreviewEntry.lua": {
+    "aSha256": "6bd8f0140b149d75628424806f3eaf2950f7bfe40d8e9b95614d1b77ce6553fa",
+    "bSha256": "6bd8f0140b149d75628424806f3eaf2950f7bfe40d8e9b95614d1b77ce6553fa"
+  },
+  "scripts/Systems/EntityStateSystem.lua": {
+    "aSha256": "2c44801d07e2921c3d5a5492faf0832d2b86890a759d11e9ec23b597ec3e8f18",
+    "bSha256": "af2a94dece7b1831eef7e8c4719fa67443a48a1ea6c8fea24d54ca7e7bfab99a"
+  },
+  "scripts/tests/ABIntegrationTests.lua": {
+    "aSha256": "84b8cbdd408085756d2329c8fe00d07db08a1e6443ea9f8d27b9cd20c14af50e",
+    "bSha256": "b69a55a6aacce973875cb040fd026eab964b18eed8e12d8d77285e9438b39975"
+  },
+  "scripts/tests/ArchitectureIntegrationTests.lua": {
+    "aSha256": "3423577120b27f5652cc6ddae9f725b003680c0866661949897f7d3ef7b41525",
+    "bSha256": "aeca8b95918f02b42d5016b764252f643080f4c60cbe364b6885fdd75855012e"
+  },
+  "scripts/tests/GameLoopSpec.lua": {
+    "aSha256": "78ee1bdcf440765c8d1ccda9bb55e1990794f09b01744e12526cc7bb5cb5c454",
+    "bSha256": "5d8e95208e1a7ca621183bdd3d8b1f467f7a47c177920498769ec86eafe3c27f"
+  },
+  "scripts/tests/GameLoopUISpec.lua": {
+    "aSha256": "f45ecbb96b9e1d8d92835ede443cf35da2b46bd470fdc63ed75c2004e733fc3e",
+    "bSha256": "4790f35844eaea5024b066582c745d2f95d125192a5745ef7723a62af205a8d1"
+  },
+  "scripts/tests/NumericEconomySpec.lua": {
+    "aSha256": "2eb39ea5f7b752480b4ef6d5ace45b807c55e2a4b608053faaf383ff2515946a",
+    "bSha256": "5c1bbc301f0b587f9aa9e3083d95aa022d187c52d4201f7845927b853522f49e"
+  },
+  "scripts/tests/PersistenceRegressionSpec.lua": {
+    "aSha256": "f997f99aca35a140cfb96e0ec4123a89eab42610cae9e02ea7bd02ff8a3e7e18",
+    "bSha256": "3d62fa898adfe0cbd3f4f9491add02c13b3389a207f9069a1971c8da070106c6"
+  },
+  "scripts/tests/SeaEngineSmoke.lua": {
+    "aSha256": "700bdf37e55a805b33eb1950ff73f4110c611637e6dae42a0f85b74efdee6be7",
+    "bSha256": "700bdf37e55a805b33eb1950ff73f4110c611637e6dae42a0f85b74efdee6be7"
+  },
+  "scripts/tests/SeaFusedSceneTests.lua": {
+    "aSha256": "8bff4d6069b16417028880ee0223169006a58fb75f914196904230f35ead5cec",
+    "bSha256": "8bff4d6069b16417028880ee0223169006a58fb75f914196904230f35ead5cec"
+  },
+  "scripts/tests/SeaFusionRenderTests.lua": {
+    "aSha256": "44e322cf5b3e6a52f221a480f7faf42b38c522f9854f5acdbebbeb8eed702580",
+    "bSha256": "44e322cf5b3e6a52f221a480f7faf42b38c522f9854f5acdbebbeb8eed702580"
+  },
+  "scripts/tests/SeaNativeVoyage.lua": {
+    "aSha256": "97927d01a089a7a186631fe09d398e48c6af598fd9a26852e8fba7a53485a145",
+    "bSha256": "97927d01a089a7a186631fe09d398e48c6af598fd9a26852e8fba7a53485a145"
+  },
+  "scripts/tests/SeaNativeVoyageEntry.lua": {
+    "aSha256": "3d189d95774b774b3088268800b99785a6862934d9f988028a78df3b292d7faa",
+    "bSha256": "3d189d95774b774b3088268800b99785a6862934d9f988028a78df3b292d7faa"
+  },
+  "scripts/tests/SeaRuntimeTests.lua": {
+    "aSha256": "2f2e2297b049e9743bb22f465e96c2d7abfc1afccf10d339ef796acf10cd5983",
+    "bSha256": "2f2e2297b049e9743bb22f465e96c2d7abfc1afccf10d339ef796acf10cd5983"
+  },
+  "scripts/tests/SeaStabilityTests.lua": {
+    "aSha256": "464e66542dd485ca6f4417a2a486cb199db5bf5dfbadcf39b077198d2c7a9809",
+    "bSha256": "464e66542dd485ca6f4417a2a486cb199db5bf5dfbadcf39b077198d2c7a9809"
+  },
+  "scripts/tests/ShopStockSpec.lua": {
+    "aSha256": "40ba4dceb8b57ef0ed0bd76f94a4f02c9e5d0b558debb2578ef6a45a714e5bf0",
+    "bSha256": "b8cf3ca99e2bf412d4bac6f6cd613718747e82f2bd011a59910868e0ccf96fcd"
+  },
+  "scripts/tests/SurfaceRiseTests.lua": {
+    "aSha256": "092002a2f7aa9bc4937cd2aee927a6b6a5fd54fda83a2a784673f334027dc86c",
+    "bSha256": "092002a2f7aa9bc4937cd2aee927a6b6a5fd54fda83a2a784673f334027dc86c"
+  },
+  "scripts/tests/SurfaceSignalsTests.lua": {
+    "aSha256": "077ed8223e39a150ebfa50e186bff9b7eeaca4946fb7291838862dccf78545f8",
+    "bSha256": "cabfbebbe86e450e9b47acc9bdf3be9fac3bfe4657503a77924394387361d450"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "task": "TAPTAP-SEA-AB-OFFLINE-INTEGRATION-01",
+  "cwd": "C:\\codex\\taptap-sea",
+  "title": "渔夫漂流记",
+  "localProjectId": "m_009f",
+  "makerBinding": "6fb01c73-66b3-4356-b987-3669be7f8a44",
+  "aOriginalHead": "3baeb5bf5c5075e0a1da81fab143a8f0c88449b8",
+  "aCheckpointHead": "7dfc7d6eaa5d2246057a42cebc6b4458a17e0636",
+  "bOriginalCommit": "f69ec1d09cc98ec5da999acf50bb24a5ca166162",
+  "mergedHead": "799415aa22074b086cb34cf0da9bb0da28132ce0",
+  "bAuthorRetained": "RomioLA <romiosteam1@gmail.com>",
+  "handoffDirectory": "D:\\SillyTavern-Data\\taptap-sea-transfer\\B_TO_A_GAME_LOOP_V1_20261002_125151_787571",
+  "patchSHA256": "708f4583296325ad5a036605bdcbcd60763cfa244939a4001fbd008b7bddf179",
+  "patchHashMatches": true,
+  "protectedFiles": {
+    "AGENTS.md": {
+      "before": "2f7d49f8cf1b642f4590d6cf7c932426c3f49ef1ae6fe08a62eec8fed888fcbf",
+      "after": "2f7d49f8cf1b642f4590d6cf7c932426c3f49ef1ae6fe08a62eec8fed888fcbf",
+      "unchanged": true
+    },
+    ".gitignore": {
+      "before": "e2cd43688b5d1486af4a750cf2e0a2485f0593d4a12326cf38d80567c7c03295",
+      "after": "e2cd43688b5d1486af4a750cf2e0a2485f0593d4a12326cf38d80567c7c03295",
+      "unchanged": true
+    },
+    ".project/project.json": {
+      "before": "fb71fc676ec750345b35fb1195227f6a18f62c98026d746da93515e9d9b59f2e",
+      "after": "fb71fc676ec750345b35fb1195227f6a18f62c98026d746da93515e9d9b59f2e",
+      "unchanged": true
+    },
+    ".maker-mcp/config.json": {
+      "before": "7fa72de02e703af6ab252f8cb76f2c41b6aa2fb8ff9410865eb3d3b9b0cfe3db",
+      "after": "7fa72de02e703af6ab252f8cb76f2c41b6aa2fb8ff9410865eb3d3b9b0cfe3db",
+      "unchanged": true
+    }
+  },
+  "changedASources": [
+    "scripts/Main.lua",
+    "scripts/Ocean/Bootstrap.lua",
+    "scripts/Ocean/SeaDebug.lua"
+  ],
+  "unexpectedChangedASources": [],
+  "unmergedPaths": {
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": "warning: in the working copy of '.gitignore', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'scripts/Main.lua', LF will be replaced by CRLF the next time Git touches it"
+  },
+  "diffCheck": {
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": "warning: in the working copy of '.gitignore', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'scripts/Main.lua', LF will be replaced by CRLF the next time Git touches it"
+  },
+  "workspace": {
+    "exitCode": 0,
+    "stdout": "M .gitignore\n M screenshots/sea-fusion-render-qa.json\n M screenshots/sea-v1-logic-tests.json\n M screenshots/sea-v1-lsp.json\n M screenshots/sea-v1-stability-tests.json\n M scripts/Gameplay/HUD.lua\n M scripts/Main.lua\n M scripts/Ocean/Bootstrap.lua\n M scripts/Ocean/SeaDebug.lua\n M scripts/Tests/GameLoopSpec.lua\n M scripts/Tests/GameLoopUISpec.lua\n M scripts/Tests/NumericEconomySpec.lua\n M scripts/Tests/check_game_loop_lsp.py\n?? docs/AB_LOCAL_INTEGRATION_01.md\n?? screenshots/ab-b-baseline-lsp.txt\n?? screenshots/ab-b-baseline-tests.txt\n?? screenshots/ab-b-final-lsp.json\n?? screenshots/ab-b-final-tests.txt\n?? screenshots/ab-integration-tests.json\n?? screenshots/ab-local-integration-acceptance.json\n?? screenshots/ab-local-integration-audit.json\n?? screenshots/ab-native-check.json\n?? screenshots/ab-native-logs-after-100.json\n?? screenshots/ab-native-logs.json\n?? screenshots/ab-native-run.json\n?? screenshots/ab-native-source-hashes.json\n?? screenshots/ab-native-status.json\n?? scripts/Integration/\n?? scripts/tests/ABIntegrationTests.lua\n?? tests/run_ab_integration.py",
+    "stderr": ""
+  },
+  "noPush": true,
+  "noFetchPull": true,
+  "noRemoteBuild": true,
+  "noPRMR": true,
+  "dependenciesInstalled": false,
+  "integrationEditsCommitted": false,
+  "passed": true
+}

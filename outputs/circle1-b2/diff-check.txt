@@ -1,0 +1,22 @@
+warning: in the working copy of '.gitignore', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AGENTS.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Entities/EntityFactory.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/FSM/StateMachine.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Game/Game.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Game/World.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Gameplay/Bootstrap.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Gameplay/HUD.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Gameplay/Inventory.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Gameplay/Loop.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Gameplay/Persistence.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Gameplay/PlayerState.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Main.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Systems/EntityStateSystem.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Tests/GameLoopSpec.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Tests/GameLoopUISpec.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Tests/NumericEconomySpec.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Tests/PersistenceRegressionSpec.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Tests/ShopStockSpec.lua', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/Tests/check_game_loop_lsp.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/config/gameplay.lua', LF will be replaced by CRLF the next time Git touches it
+

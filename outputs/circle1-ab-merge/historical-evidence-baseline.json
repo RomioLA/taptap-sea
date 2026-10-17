@@ -1,0 +1,1083 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-10-03T03:20:08Z",
+  "repository_root_at_capture": "C:/codex/taptap-sea",
+  "scope": {
+    "include_glob": "outputs/circle1-a*",
+    "explicit_include": [
+      "outputs/circle1-ab-review"
+    ],
+    "exclude": [
+      "outputs/circle1-ab-merge"
+    ]
+  },
+  "directories": [
+    "outputs/circle1-a",
+    "outputs/circle1-a2",
+    "outputs/circle1-a3",
+    "outputs/circle1-ab-review"
+  ],
+  "file_count": 212,
+  "files": [
+    {
+      "path": "outputs/circle1-a/交付说明.md",
+      "size_bytes": 8853,
+      "sha256": "55a18d58ce5572a9211a062511f19c1772633a5aac2d32fdbb72b94f20eb9a2d"
+    },
+    {
+      "path": "outputs/circle1-a3/preview-before.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/preview-final.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/recognition-tests.json",
+      "size_bytes": 1632,
+      "sha256": "4c2aa5fb15f2890ccd16e4311305b9f40cc5cd3937db343d6728481da65e831a"
+    },
+    {
+      "path": "outputs/circle1-a3/regressions.json",
+      "size_bytes": 102211,
+      "sha256": "717f468149447166c9a19296d2359239744b3f4ef920d3d900bfeae57011ee94"
+    },
+    {
+      "path": "outputs/circle1-a3/render-contracts.json",
+      "size_bytes": 7453,
+      "sha256": "ace74e71eb6f2cdeab06c506b844458873332cf67cfb28972e298f6e9d6008d0"
+    },
+    {
+      "path": "outputs/circle1-a3/run_validation.py",
+      "size_bytes": 9708,
+      "sha256": "03d71000dd7e978416d92cd2b5181c00c05ee31c39943864a6134c106b1b93ef"
+    },
+    {
+      "path": "outputs/circle1-a3/signals-draw-after.png",
+      "size_bytes": 79748,
+      "sha256": "08b0c2e420a67f583f4bb2f4d980b82f843541bffff55eeb8e5bf9dfbf222401"
+    },
+    {
+      "path": "outputs/circle1-a3/signals-draw-after.svg",
+      "size_bytes": 35024,
+      "sha256": "040fc0c30e365042479f8816a7b9bd5165f8e5fbe9d27adf48c7b429c9639c3f"
+    },
+    {
+      "path": "outputs/circle1-a3/signals-draw-before.png",
+      "size_bytes": 79748,
+      "sha256": "08b0c2e420a67f583f4bb2f4d980b82f843541bffff55eeb8e5bf9dfbf222401"
+    },
+    {
+      "path": "outputs/circle1-a3/signals-draw-before.svg",
+      "size_bytes": 35024,
+      "sha256": "040fc0c30e365042479f8816a7b9bd5165f8e5fbe9d27adf48c7b429c9639c3f"
+    },
+    {
+      "path": "outputs/circle1-a3/preview-after-test-types.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/syntax.json",
+      "size_bytes": 7624,
+      "sha256": "1034f4ce8d30f21f2fa43c6ee0dc34f4ed17c6a444201bcb453e5d10b15b5938"
+    },
+    {
+      "path": "outputs/circle1-a3/validation-boundary.json",
+      "size_bytes": 697,
+      "sha256": "46a254075151f89955c7fbec8105719999f065a05008bf664b8bbd48bc2b6d96"
+    },
+    {
+      "path": "outputs/circle1-a3/validation-draw.json",
+      "size_bytes": 3280,
+      "sha256": "417b3b8a6c924a15e6538f191af2de2e2103a877aa3b13f5c193c07797b72615"
+    },
+    {
+      "path": "outputs/circle1-a3/validation-lsp.json",
+      "size_bytes": 2685,
+      "sha256": "e4e8128d6fd214559cf6096dd1f315a803dd7dc3595b3542aeb6e1ac164cbe17"
+    },
+    {
+      "path": "outputs/circle1-a3/validation-pictures.json",
+      "size_bytes": 60,
+      "sha256": "29db7f1b57fd84d5a95ef1542bd1ed1150a2358f581b0e21ea7c72bf617c3d63"
+    },
+    {
+      "path": "outputs/circle1-a3/validation-tests.json",
+      "size_bytes": 108435,
+      "sha256": "dbfbc7524d45ce6aacac8e62662c3b48515b9e779a568060e8df57509b1dc644"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/Bootstrap.lua",
+      "size_bytes": 6315,
+      "sha256": "ba3779103cba2f02c3c463f657553b7dbffb38719b6edcd0fa94d126a82c3268"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/Config.lua",
+      "size_bytes": 5226,
+      "sha256": "ddcb679f469f11dca03fff62b2872278ee186c73b4f96fd93a96a869073df046"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/Config.lua.meta",
+      "size_bytes": 42,
+      "sha256": "c49ca4fe2c65dba3f2183c56f5e65660a4ded77c6519ed6dd5f6ec6e43527571"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/Draw.lua",
+      "size_bytes": 23323,
+      "sha256": "8e2a8871ade22c2f35b196b81d5fab1fd1df15d17c3404f7769e22304b7adc10"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/Draw.lua.meta",
+      "size_bytes": 42,
+      "sha256": "80ce5f411043878b96e95c2482847b45c30b4c17c1bf7ee8987a3d985df14109"
+    },
+    {
+      "path": "outputs/circle1-a3/validation-all.json",
+      "size_bytes": 135566,
+      "sha256": "2394aad25a115c5c221a09ab02f2775995cfa8f1db21cffa7ddf01c21334721b"
+    },
+    {
+      "path": "outputs/circle1-a3/preview-after-scalar-draw.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/preview-after-runner.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/preview-after-recognition.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/finalize_delivery.py",
+      "size_bytes": 7376,
+      "sha256": "c47df3c5506c05f1d9f30377310a807c6ab62bbc379a903f32c0adaf8c7faadd"
+    },
+    {
+      "path": "outputs/circle1-a3/lsp-before-annotation-repair-summary.json",
+      "size_bytes": 3851,
+      "sha256": "7b8cb10701dd2656c711aed6925f1cebf43e93dc2704e505adc3b14fd5de45c6"
+    },
+    {
+      "path": "outputs/circle1-a3/lsp-before-annotation-repair.json",
+      "size_bytes": 207901,
+      "sha256": "40c43c14c08357282bfe5dc3f14476601b494042a4fb8be4a649f438c543c5d6"
+    },
+    {
+      "path": "outputs/circle1-a3/lsp-before-final-record-field-repair.json",
+      "size_bytes": 180258,
+      "sha256": "013f88b12511116809098177fd659e0e2ec29b240389faad1cda53ac41bd8ba4"
+    },
+    {
+      "path": "outputs/circle1-a3/lsp-before-raw-type-repair-summary.json",
+      "size_bytes": 949,
+      "sha256": "ed2291ad6f83c1845c1918c383ac0faf9f5176b1aa9611210f0f772509249fc9"
+    },
+    {
+      "path": "outputs/circle1-a3/lsp-before-raw-type-repair.json",
+      "size_bytes": 184466,
+      "sha256": "f593bcfbb4410ace309b3977485a14122c6157dee96f455334fbc9237e6bd114"
+    },
+    {
+      "path": "outputs/circle1-a3/lsp-before-record-narrowing-summary.json",
+      "size_bytes": 2440,
+      "sha256": "ca2776f4e2bd92b127388ea9932bc084bbc29d853edd0328d36c1c1c37ae5707"
+    },
+    {
+      "path": "outputs/circle1-a3/lsp-before-record-narrowing.json",
+      "size_bytes": 194303,
+      "sha256": "323207f8f6d298e7e8652ce026b536e66a21962a94523eaab6ca0de118ba671c"
+    },
+    {
+      "path": "outputs/circle1-a3/lsp-initial-summary.json",
+      "size_bytes": 515,
+      "sha256": "1b14bc443e6f9e001ef9dd96f3be278944bb81d4b5e2770a91fca73212e02513"
+    },
+    {
+      "path": "outputs/circle1-a3/lsp-initial.json",
+      "size_bytes": 167975,
+      "sha256": "2ad0ca9ab7cf314811226eb38e4772848448a375ebdcc2633cff5f496e489207"
+    },
+    {
+      "path": "outputs/circle1-a3/lsp-summary.json",
+      "size_bytes": 183,
+      "sha256": "e8d704d6f7ece5cb5755806864746148ce6b51604cdf145e9ac88cfea16bc9df"
+    },
+    {
+      "path": "outputs/circle1-a3/lsp.json",
+      "size_bytes": 178670,
+      "sha256": "0f37ab0cc471b45c8b4faf16621a80a5a8afc625c08c573d9af08121b0a77d6f"
+    },
+    {
+      "path": "outputs/circle1-a3/natural-water-frame.json",
+      "size_bytes": 687,
+      "sha256": "2fe1430fffe95487b077adc4a0060ba9602a8b2461bab024cd7077b480494fbc"
+    },
+    {
+      "path": "outputs/circle1-a3/natural-water-splash.png",
+      "size_bytes": 77420,
+      "sha256": "a955cd2100c26fcc82f6db40c33a350cccf52f021fc4979d2c58477ac68bb235"
+    },
+    {
+      "path": "outputs/circle1-a3/natural-water-splash.svg",
+      "size_bytes": 31192,
+      "sha256": "790a147baa4ad4bb114b72aa2d0b632d65d3f53ef679fb97c64bdb27f6d778cb"
+    },
+    {
+      "path": "outputs/circle1-a3/ocean-changes.patch",
+      "size_bytes": 31265,
+      "sha256": "d9abc040cdba25ffa6dc5d7ed10c5aae76bb5283b47bab9a59691c90815faaa0"
+    },
+    {
+      "path": "outputs/circle1-a3/offline-images.json",
+      "size_bytes": 422,
+      "sha256": "09384c2fc33f0e3380344b78e3893a7adfadc5c3aaabf699e8cc5783d510f1d2"
+    },
+    {
+      "path": "outputs/circle1-a3/preview-after-draw-route.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/preview-after-draw-validation.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/preview-after-evidence-scene.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/preview-after-final-draw.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/preview-after-manifest-runner.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/preview-after-natural-frame-and-report.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/Fish.lua",
+      "size_bytes": 18926,
+      "sha256": "aaf4ccd132480cbf50dc8a502b8de1d2c2ab88275f1092bc8f7ee481a8983b41"
+    },
+    {
+      "path": "outputs/circle1-a3/final-summary.json",
+      "size_bytes": 476,
+      "sha256": "5c64109de86254eab564b257a1aafd58fce7c62d1a073c98717bd31be02ae803"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/FishData.lua",
+      "size_bytes": 1980,
+      "sha256": "f8d494aa7cc8f5af357e8a8afe894be6f824ee2ae42802c762ad8ed9725bd299"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/HUD.lua",
+      "size_bytes": 5437,
+      "sha256": "3e54576096a956becc6890a9aae91d1c1b2a781e62afd366658500cc31fff625"
+    },
+    {
+      "path": "outputs/circle1-a3/stability/preview-after-final-record-fields.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/stability/preview-after-record-types.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/stability/preview-after-route-update.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/stability/preview-after-stability-tests.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/stability/preview-before-raw-type-repair-run.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/stability/preview-before-second-run.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/stability/preview-before-water-scissor-rerun.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/stability/REPORT.md",
+      "size_bytes": 6826,
+      "sha256": "776de25cb4b7b74c9942f7f6c06a82741c308c46f501be12ff8c7ea20d7998db"
+    },
+    {
+      "path": "outputs/circle1-a3/stability/results-before-seadraw-water-check.json",
+      "size_bytes": 49278,
+      "sha256": "6908c1645ee29fd5b4989c09f7ad76fc410357bd8dfcbe6d652e67756ff0cb18"
+    },
+    {
+      "path": "outputs/circle1-a3/stability/results-first-attempt.json",
+      "size_bytes": 5752,
+      "sha256": "08925fa1ca8dab18c19894907a6cbb57075f89bf05529ab1e439c5a995b38c11"
+    },
+    {
+      "path": "outputs/circle1-a3/stability/preview-after-experience-tests.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/stability/results.json",
+      "size_bytes": 70198,
+      "sha256": "41c417d40800ea110b2bae04cb80289b1e53e45269cd738243d7e4f258a64252"
+    },
+    {
+      "path": "outputs/circle1-a3/stability/syntax.json",
+      "size_bytes": 310,
+      "sha256": "d411bd74a2b93d4efaf6de689759fcdc4751b92bfc67828a5467f63758eda30b"
+    },
+    {
+      "path": "outputs/circle1-a3/stability/validation.json",
+      "size_bytes": 74335,
+      "sha256": "ff0365f34203b99cc82b8261f537b43c986e6f75c93d92e327cc727c67a349db"
+    },
+    {
+      "path": "outputs/circle1-ab-review/复查说明.md",
+      "size_bytes": 8343,
+      "sha256": "8a8bfcf95aeceec6f50cd492ec27f16a511f2ba7220107f0e495c495b57fdbba"
+    },
+    {
+      "path": "outputs/circle1-ab-review/b-contract-review.md",
+      "size_bytes": 6718,
+      "sha256": "1f57e477ae85bdf653b571e8455721406752a88131cc253538764ac03fe31a54"
+    },
+    {
+      "path": "outputs/circle1-ab-review/b-evidence-review.md",
+      "size_bytes": 9644,
+      "sha256": "4d762572dce0dd4dfb3e26b263f34f9a5249fb0f67988b892f980b2fb2d2a8e8"
+    },
+    {
+      "path": "outputs/circle1-ab-review/b-logic-review.md",
+      "size_bytes": 3883,
+      "sha256": "33331fc320de6bc544875e1f6ddd57ffe977666de872fa70f31bb4c1889c90c0"
+    },
+    {
+      "path": "outputs/circle1-ab-review/composition-results.json",
+      "size_bytes": 269697,
+      "sha256": "94f4b0bb015df2a0c0dd269fe4c9c0cfbd8735aa151d7ce37f48e9a0c4426334"
+    },
+    {
+      "path": "outputs/circle1-ab-review/evidence-manifest.json",
+      "size_bytes": 1337,
+      "sha256": "cee468d883afe31e75905a25911c366c87c4e4f645c778f6745dce6e239166b7"
+    },
+    {
+      "path": "outputs/circle1-ab-review/run_review.py",
+      "size_bytes": 11269,
+      "sha256": "7a3caef759e0311f7027f5f95ee59a745893e856e2df2f9299028ca1d35a323a"
+    },
+    {
+      "path": "outputs/circle1-ab-review/source-hashes.json",
+      "size_bytes": 11843,
+      "sha256": "11b1f7cf8558de60818f249a653716a4fa955d65bdca5d172e37b5586a969a9d"
+    },
+    {
+      "path": "outputs/circle1-a3/stability/run_validation.py",
+      "size_bytes": 3043,
+      "sha256": "e4cce25724ce098ca229cda5c3b7851bb8000d05a1b72689742d2a4e2e68d6bb"
+    },
+    {
+      "path": "outputs/circle1-a3/space-input/REPORT.md",
+      "size_bytes": 2995,
+      "sha256": "1ea474f639598118cf9f622bada64a0e16c6452e0f69426cd51a24f79c106ff0"
+    },
+    {
+      "path": "outputs/circle1-a3/performance/single-pass-blocked-order.json",
+      "size_bytes": 13604,
+      "sha256": "c7c3332098e6174d8ef0808c6913c0bb6c0cf4aa6753f584d0bcdd1dff14476f"
+    },
+    {
+      "path": "outputs/circle1-a3/performance/signals-performance-report.md",
+      "size_bytes": 6215,
+      "sha256": "12c2b20556f53c1dd191be076ab724e68cde6b772f8c9be94682f748a30a774a"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/HUD.lua.meta",
+      "size_bytes": 42,
+      "sha256": "d20136f9a16280b69f7d6010417e169d4d84a05b695b29a188001ce920173006"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/Math.lua",
+      "size_bytes": 981,
+      "sha256": "9cb75e3c99f667e1529944db1f777a99cd3a9eab3e45ebed631776b0a22e1a5d"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/Movement.lua",
+      "size_bytes": 11462,
+      "sha256": "04f424d10c1dba1987fbeed0f0bedc63265d7ec94649d4c29559ed3c0121e8df"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/SceneState.lua",
+      "size_bytes": 1444,
+      "sha256": "f78aab095bd890f968564c05426cab843a5344aad519edbf724bbf49b5c3c5be"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/SeaDebug.lua",
+      "size_bytes": 19214,
+      "sha256": "9645d0673d933bdb9e3b50ac0dd0d3be436fed113875bbef23ba9c20fb4a0c31"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/SeaDraw.lua",
+      "size_bytes": 21650,
+      "sha256": "b4273b63ae9dd519c446cbd64d82b63e66cf85d3ecccec3923b0b5d3168dad54"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/SeaRuntime.lua",
+      "size_bytes": 17174,
+      "sha256": "5f979b096727cd9139ad2f6f9f2c83e101756b86f02e480d7df8921dccd58d67"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/SpawnStrategy.lua",
+      "size_bytes": 6968,
+      "sha256": "dbb5b67e46b21b00f6d9a86f5de806bcb70d233678f59a7f1d730e3f484a5b9f"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/State.lua",
+      "size_bytes": 1633,
+      "sha256": "cb95df6447bd3ba046a1d4f1b25d84ec6014756422b9bc7abc46dc0a8ad1db52"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/State.lua.meta",
+      "size_bytes": 42,
+      "sha256": "a165279f14b4a9108a5a462be800d0c0352aab73c28f1ef3ad61913de61d53f3"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/SurfaceSignals.lua",
+      "size_bytes": 20044,
+      "sha256": "2e9562a69d54085bd94526569e66cd582a7a4cd78e378c8bbd9d96f5c4726d42"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/World.lua",
+      "size_bytes": 16945,
+      "sha256": "7fbd50a4ce1821a2ca7b62276281cc5ab50cb28d5b7e3ded31e494a8ad3ff97f"
+    },
+    {
+      "path": "outputs/circle1-a3/performance/pre-single-membership-pass.json",
+      "size_bytes": 13627,
+      "sha256": "7ffbb253b3317a290e07fb8c5b0e056765e309613530277ec3704731d4b53596"
+    },
+    {
+      "path": "outputs/circle1-a3/performance/preview-status-after-benchmark-fix.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/performance/preview-status-after-benchmark-harness.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/performance/preview-status-after-code.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/performance/preview-status-after-interleaved-runner.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/performance/preview-status-after-lsp-annotations.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/performance/preview-status-after-map-fix.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/performance/preview-status-after-single-membership-pass.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/performance/preview-status-after-test-local-types.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a3/performance/run_signals_benchmark.py",
+      "size_bytes": 16394,
+      "sha256": "fd5d43967f07a00e968fac8256b9df62abb624bb4dfbceddffd70766776a20a5"
+    },
+    {
+      "path": "outputs/circle1-a3/performance/signals-benchmark.json",
+      "size_bytes": 34241,
+      "sha256": "139bbbed50cab66968d8baad11323a210b9ab152723b9e5b8c5a6c2347584fad"
+    },
+    {
+      "path": "outputs/circle1-a3/baseline/Ocean/FusedScene.lua",
+      "size_bytes": 2749,
+      "sha256": "8bfb660db1d2b5dd2e0b7a9eabe4e0f9b539b741fac9026ac7a55c9c8f81d6bf"
+    },
+    {
+      "path": "outputs/circle1-a3/evidence-manifest.json",
+      "size_bytes": 15550,
+      "sha256": "432f4b4840d3b4f46cbf245349a8e64e4ca9e6611fa139b1646bd2277a4076a8"
+    },
+    {
+      "path": "outputs/circle1-a3/draw-equivalence.json",
+      "size_bytes": 2988,
+      "sha256": "1d03a1f66d5a2c3927cd5d31cc7f8eedae644a5093722b7285398c0cf2efa081"
+    },
+    {
+      "path": "outputs/circle1-a3/draw-equivalence-initial-failure.json",
+      "size_bytes": 2989,
+      "sha256": "90e488a7f2b54eccfb743dcd1cdf03b8ea8f082de20fd63f1b8b2de046117893"
+    },
+    {
+      "path": "outputs/circle1-a2/lsp-summary.json",
+      "size_bytes": 430,
+      "sha256": "09d6f593f53a634c3764a971ca4b5eb2b36f84478922c455af34307c2aec51b4"
+    },
+    {
+      "path": "outputs/circle1-a2/lsp.json",
+      "size_bytes": 149609,
+      "sha256": "e9490fc7e12628cf7b177e1ce64002ab3257bcd5a429e8ad8f64a9ca8e553195"
+    },
+    {
+      "path": "outputs/circle1-a2/offline-render.json",
+      "size_bytes": 892,
+      "sha256": "ba2ca61fc33a6a1d7a76732a253b25c6785fbca2e993390c93d250b64e483ca2"
+    },
+    {
+      "path": "outputs/circle1-a2/performance-after.json",
+      "size_bytes": 10048,
+      "sha256": "d32e6b261b46c21006c98d21185a24ba90218d9cb1074ae2ce5cf68f868cefad"
+    },
+    {
+      "path": "outputs/circle1-a2/performance-before.json",
+      "size_bytes": 10055,
+      "sha256": "04a0e2b9ea673a5f5c6f835dc968b3c65a2cfc1e61b695cfc5a30204155b44cc"
+    },
+    {
+      "path": "outputs/circle1-a2/performance-comparison.json",
+      "size_bytes": 2533,
+      "sha256": "7e98d51ba3468b9431236243e1b9230ddf4b1844b05f834a0e37f2bb404acab6"
+    },
+    {
+      "path": "outputs/circle1-a2/preview-after-final-test-batch.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a2/preview-after-fishing-tests.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a2/preview-after-render-batch.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a2/preview-after-scope-batch.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a2/landing.svg",
+      "size_bytes": 61773,
+      "sha256": "b287f2c746741de63304b9b4cc858a2188b86459ada550aa49ec958f3fee0416"
+    },
+    {
+      "path": "outputs/circle1-a2/preview-after-signals-batch.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a2/preview-before.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a2/preview-status-final.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a2/reeling.png",
+      "size_bytes": 116582,
+      "sha256": "bb28405ccedafc11062181c54eb3e85ab1478d44a213b7f19dafd73c73fa633d"
+    },
+    {
+      "path": "outputs/circle1-a2/reeling.svg",
+      "size_bytes": 61619,
+      "sha256": "f0545e3b4c60b25825dfa2488faaf3dd98c31854befac919f959a94130b79e3a"
+    },
+    {
+      "path": "outputs/circle1-a2/REPORT.md",
+      "size_bytes": 7331,
+      "sha256": "6e1928f0b290b04cfbf21609dd20ab0e16013113c572fb82bb6d84896873210a"
+    },
+    {
+      "path": "outputs/circle1-a2/root-render-tests.json",
+      "size_bytes": 2057,
+      "sha256": "f1a7674685d79016149a461ca8805d75ec0a51f46394c3f2b2ff7d504731a070"
+    },
+    {
+      "path": "outputs/circle1-a2/root-scope-signals-tests.json",
+      "size_bytes": 3041,
+      "sha256": "3b67ba76f5ae092e1a6cc323beb00cd025dcb2f8c75506df2097ff4fa3e0f942"
+    },
+    {
+      "path": "outputs/circle1-a2/scope-off.png",
+      "size_bytes": 99237,
+      "sha256": "76786522e8b75ce23ff6dca240b5594f746f1c8b024facdcfc83c45a4d376ea7"
+    },
+    {
+      "path": "outputs/circle1-a2/scope-off.svg",
+      "size_bytes": 60312,
+      "sha256": "cea5f067500605bb0a1511ed870ca30354962dd88b53b67103d71c68feb80b62"
+    },
+    {
+      "path": "outputs/circle1-a2/scope-on.png",
+      "size_bytes": 106328,
+      "sha256": "aabf6dfdb6be5aa7d0f508f613a5ed400730824ac62f88b32771d9160c1922a2"
+    },
+    {
+      "path": "outputs/circle1-a2/preview-after-water-query-batch.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a2/landing.png",
+      "size_bytes": 125819,
+      "sha256": "7a417bf20908acc559241b6341a20c4fd3e7b5b441fad744f29aa165759e5e96"
+    },
+    {
+      "path": "outputs/circle1-a2/equivalence-portrait-before.png",
+      "size_bytes": 75561,
+      "sha256": "1fb3e756b3b7c75141c073997684ed1e2a7909b3dd710bab8baf23d5fc5381a0"
+    },
+    {
+      "path": "outputs/circle1-a2/equivalence-portrait-after.png",
+      "size_bytes": 75561,
+      "sha256": "1fb3e756b3b7c75141c073997684ed1e2a7909b3dd710bab8baf23d5fc5381a0"
+    },
+    {
+      "path": "outputs/circle1-a/before.json",
+      "size_bytes": 41077,
+      "sha256": "418966d84d1acb80160864b2f6d7c82970013820e04a780a9ad2a84282dfd71f"
+    },
+    {
+      "path": "outputs/circle1-a/boundary.json",
+      "size_bytes": 440,
+      "sha256": "a26f31cbe493eee7b8870005387eadcd0b2c72e31a8bb4323ea5336d3ceaf9dc"
+    },
+    {
+      "path": "outputs/circle1-a/delivery-manifest.json",
+      "size_bytes": 1767,
+      "sha256": "1283187e84840e9ede8046062edf340d595ee2cc5595dee1dac965dcd851d093"
+    },
+    {
+      "path": "outputs/circle1-a/lsp-summary.json",
+      "size_bytes": 318,
+      "sha256": "87ea7b84120cc6c57871a19b469aca91b8a5012ccd1f16637aab93d3ba3ab17b"
+    },
+    {
+      "path": "outputs/circle1-a/lsp.json",
+      "size_bytes": 144394,
+      "sha256": "5bd73594be72aa9ac66aff88f7c6795be90fb8bc23fbafea673c4eecac468f2b"
+    },
+    {
+      "path": "outputs/circle1-a/preview-status-after-code.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a/preview-status-after-nil-types.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a/preview-status-after-owner.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a/preview-status-after-types.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a/preview-status-final.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a/validation.json",
+      "size_bytes": 28724,
+      "sha256": "ca809681b4e466119deff655627e90bd70c445fd6be554b46fd98306525fc87d"
+    },
+    {
+      "path": "outputs/circle1-a2/交付说明.md",
+      "size_bytes": 9688,
+      "sha256": "4a52eeaced6e5f4958e84cb0a0020bc727f7c614616ba7872c138471dd87621d"
+    },
+    {
+      "path": "outputs/circle1-a2/aim.png",
+      "size_bytes": 117491,
+      "sha256": "de7db60c4884dae2e809679177f4cf16e30fddfca72a14ce7facc4113a46749e"
+    },
+    {
+      "path": "outputs/circle1-a2/aim.svg",
+      "size_bytes": 61060,
+      "sha256": "cc013bd96c46677fb83909e5930f9c3f1cccc433d8ecd11bbc446c8287942d69"
+    },
+    {
+      "path": "outputs/circle1-a2/before.json",
+      "size_bytes": 42277,
+      "sha256": "189f034134d5c59ed3d3d3e39d953bfb8bdb3cb7be9221e45f3a8fb4204efbfb"
+    },
+    {
+      "path": "outputs/circle1-a2/boundary.json",
+      "size_bytes": 2340,
+      "sha256": "5b059eff62a123229ab991900307124d946decbb0e23dc06304bfb52e81ab723"
+    },
+    {
+      "path": "outputs/circle1-a2/casting-flight.png",
+      "size_bytes": 109157,
+      "sha256": "6eeed78ced79860cf9237a4a5a108fa67904fccfb72a82cd1a461c8327f6bfb3"
+    },
+    {
+      "path": "outputs/circle1-a2/casting-flight.svg",
+      "size_bytes": 60763,
+      "sha256": "912757e3345bea336956341017b721cb4e7ec8f5796806122c10e936e3537524"
+    },
+    {
+      "path": "outputs/circle1-a2/check_render.py",
+      "size_bytes": 4219,
+      "sha256": "482d2835279f5103f7c66976bc29c1be7378b9d709d9053c21a4a55d9a80a733"
+    },
+    {
+      "path": "outputs/circle1-a2/delivery-manifest.json",
+      "size_bytes": 1927,
+      "sha256": "70ee88cf56317a28798d3c526193c974d0e70c6a7735d7dfd0f5296f88f3c0b1"
+    },
+    {
+      "path": "outputs/circle1-a2/draw-equivalence.json",
+      "size_bytes": 834,
+      "sha256": "c31f4a67634ec5db996f09647b515818fce035d57c48a813b8076defb055f430"
+    },
+    {
+      "path": "outputs/circle1-a2/equivalence-landscape-after.png",
+      "size_bytes": 84069,
+      "sha256": "ed323de7c6e29bfc4cb2f82dcb7ee13eb7ebb115f6987322510100480bb021e5"
+    },
+    {
+      "path": "outputs/circle1-a2/equivalence-landscape-before.png",
+      "size_bytes": 84069,
+      "sha256": "ed323de7c6e29bfc4cb2f82dcb7ee13eb7ebb115f6987322510100480bb021e5"
+    },
+    {
+      "path": "outputs/circle1-a2/scope-on.svg",
+      "size_bytes": 65497,
+      "sha256": "a707cc81e95d327b060a65b5d8eaea1dbc77a14eac5f3ea0a1be0d675f3da833"
+    },
+    {
+      "path": "outputs/circle1-a2/scope-render.json",
+      "size_bytes": 451,
+      "sha256": "04fcaed6947dc649864500480bb9b01a5b51bb430fae2116c147528f84e1b17e"
+    },
+    {
+      "path": "outputs/circle1-a2/scope-tests.json",
+      "size_bytes": 1027,
+      "sha256": "9e73c5243d1670a57649ff6577640f6aba460967e29629e84c89f71d0c7d23d2"
+    },
+    {
+      "path": "outputs/circle1-a2/validation-console.txt",
+      "size_bytes": 5470,
+      "sha256": "42805072a28ef5c5fd4f43db1fd9b5154b2fe4295d520defb325782d1df80bdc"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/FusedScene.lua",
+      "size_bytes": 2749,
+      "sha256": "8bfb660db1d2b5dd2e0b7a9eabe4e0f9b539b741fac9026ac7a55c9c8f81d6bf"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/HUD.lua",
+      "size_bytes": 5437,
+      "sha256": "3e54576096a956becc6890a9aae91d1c1b2a781e62afd366658500cc31fff625"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/HUD.lua.meta",
+      "size_bytes": 42,
+      "sha256": "d20136f9a16280b69f7d6010417e169d4d84a05b695b29a188001ce920173006"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/Math.lua",
+      "size_bytes": 981,
+      "sha256": "9cb75e3c99f667e1529944db1f777a99cd3a9eab3e45ebed631776b0a22e1a5d"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/Movement.lua",
+      "size_bytes": 11462,
+      "sha256": "04f424d10c1dba1987fbeed0f0bedc63265d7ec94649d4c29559ed3c0121e8df"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/SceneState.lua",
+      "size_bytes": 1444,
+      "sha256": "f78aab095bd890f968564c05426cab843a5344aad519edbf724bbf49b5c3c5be"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/SeaDebug.lua",
+      "size_bytes": 19214,
+      "sha256": "9645d0673d933bdb9e3b50ac0dd0d3be436fed113875bbef23ba9c20fb4a0c31"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/SeaDraw.lua",
+      "size_bytes": 12665,
+      "sha256": "489541f4f18ced5533211bbe9706a7c35e95fe59f33660acab0a0fd7b90d2f03"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/SeaRuntime.lua",
+      "size_bytes": 13842,
+      "sha256": "9993f879b44c38f687741544255742d7a7bf7835c337673aeb28c562163b4ab6"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/SpawnStrategy.lua",
+      "size_bytes": 6968,
+      "sha256": "dbb5b67e46b21b00f6d9a86f5de806bcb70d233678f59a7f1d730e3f484a5b9f"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/State.lua",
+      "size_bytes": 1633,
+      "sha256": "cb95df6447bd3ba046a1d4f1b25d84ec6014756422b9bc7abc46dc0a8ad1db52"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/State.lua.meta",
+      "size_bytes": 42,
+      "sha256": "a165279f14b4a9108a5a462be800d0c0352aab73c28f1ef3ad61913de61d53f3"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/SurfaceSignals.lua",
+      "size_bytes": 12115,
+      "sha256": "5e35eae89efe30100c2dabf741ba7c151c2dec31c76c4d65087a8e292f877ca4"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/World.lua",
+      "size_bytes": 12670,
+      "sha256": "30c808ca62bca5544b86abf64c8d8c17dbe42c672b9164b88b944339290e478a"
+    },
+    {
+      "path": "outputs/circle1-a3/交付说明.md",
+      "size_bytes": 16681,
+      "sha256": "81a0c20e0729199cbc53ed16df9d1369abe91e32f334ea366191b7140bb4dae1"
+    },
+    {
+      "path": "outputs/circle1-a3/barrel-25m-remembered.png",
+      "size_bytes": 88796,
+      "sha256": "d1c84ce219fb247f6e40e4c36bf3700c306fb96d2c5bed368beaea52c2db99b9"
+    },
+    {
+      "path": "outputs/circle1-a3/barrel-25m-remembered.svg",
+      "size_bytes": 45141,
+      "sha256": "068e57b31826571e062c522ea679a2609313d3dacf0869bfd94e8b0a574f73c2"
+    },
+    {
+      "path": "outputs/circle1-a3/barrel-25m-unknown.png",
+      "size_bytes": 83588,
+      "sha256": "937d8459790778d37f2e4732076e3151fff05ac6b459d3d19293b295a25c38b1"
+    },
+    {
+      "path": "outputs/circle1-a3/barrel-25m-unknown.svg",
+      "size_bytes": 43958,
+      "sha256": "f70169fba4b93a6974ad3f2ccdb9d9c7f5571c316343b3d252400e8d36c186d9"
+    },
+    {
+      "path": "outputs/circle1-a3/before.json",
+      "size_bytes": 79495,
+      "sha256": "c0604c5d04bf425ead36d6bdb72c056ef74f8e2b022c57f5faae6fbee924be39"
+    },
+    {
+      "path": "outputs/circle1-a3/boundary.json",
+      "size_bytes": 685,
+      "sha256": "d39882c03ee3153503f7b3b5633360d61355559c2302ecd8225406714c4178ab"
+    },
+    {
+      "path": "outputs/circle1-a3/capture_natural_frame.py",
+      "size_bytes": 3543,
+      "sha256": "3499d57079abf321beead4a0f9475087ecd05193fe4f70ca00fdf77580cdbeb3"
+    },
+    {
+      "path": "outputs/circle1-a3/delivery-manifest.json",
+      "size_bytes": 2264,
+      "sha256": "61a3d487be24bd40d5c9c9fa4f778057b75ae95b5c06e955714ac362655831a1"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/FishData.lua",
+      "size_bytes": 1980,
+      "sha256": "f8d494aa7cc8f5af357e8a8afe894be6f824ee2ae42802c762ad8ed9725bd299"
+    },
+    {
+      "path": "outputs/circle1-ab-review/summarize_review.py",
+      "size_bytes": 2061,
+      "sha256": "d0fb0cdce464471acbe4e7fe112c66a4a07ad555f13c8c45f9b7f013ddadf56f"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/Fish.lua",
+      "size_bytes": 18926,
+      "sha256": "aaf4ccd132480cbf50dc8a502b8de1d2c2ab88275f1092bc8f7ee481a8983b41"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/Draw.lua",
+      "size_bytes": 23323,
+      "sha256": "8e2a8871ade22c2f35b196b81d5fab1fd1df15d17c3404f7769e22304b7adc10"
+    },
+    {
+      "path": "outputs/circle1-a2/validation.json",
+      "size_bytes": 52877,
+      "sha256": "8d4e11cbcb7925405425dcaef058c84be8cde9f0e09993df18a5a87f14eeba0e"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/barrel-outline.png",
+      "size_bytes": 83588,
+      "sha256": "937d8459790778d37f2e4732076e3151fff05ac6b459d3d19293b295a25c38b1"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/barrel-outline.svg",
+      "size_bytes": 43936,
+      "sha256": "032f0b5fad6145217772195f40f788d20c7fa43033c252a5b48f8d217bb5eda1"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/barrel-recognized.png",
+      "size_bytes": 133722,
+      "sha256": "7186f25d3c8d4b5266fad89422c611e311b125ae0d87e16ab310cc4c0febde33"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/barrel-recognized.svg",
+      "size_bytes": 44811,
+      "sha256": "a9f4b968df2756a23f5ca783bd4f5623837bbac6d9186486a9bfb698cea02c83"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/barrel-render-contracts.json",
+      "size_bytes": 1332,
+      "sha256": "cd324c170450647419e05cb8a2467b1cd5c872c697eae9b77434b9cbe54783e4"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/before.json",
+      "size_bytes": 67749,
+      "sha256": "89b3236b21d9a48aeaefc57e1c2b76fed6b48863b9a43013b1949f6bf1ee1f66"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/boundary.json",
+      "size_bytes": 406,
+      "sha256": "04f6e5746f4bec0020d79af4f02b1404cc1ca1631d6cbb042b89c5fdc90cd7cf"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/delivery-manifest.json",
+      "size_bytes": 1404,
+      "sha256": "9febd6dd4764994bc7c20cb33290f7d2415bf2e09177d3d4fd98ffcee996cc5a"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/existing-a2-regression.json",
+      "size_bytes": 30968,
+      "sha256": "9edc57e6c7e764f98baf74eb41dc6b9644606839a41d0b04b34f5178eca999f4"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/lsp-summary.json",
+      "size_bytes": 183,
+      "sha256": "e8d704d6f7ece5cb5755806864746148ce6b51604cdf145e9ac88cfea16bc9df"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/lsp.json",
+      "size_bytes": 153051,
+      "sha256": "e814af4d96a3e7a8ddc280dafb49964d134aa7e23bf39ab5a4de49e7a7931ee4"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/offline-images.json",
+      "size_bytes": 264,
+      "sha256": "d4b43ef3d107e56df789ef27d7cbe93b20c04e5f27783f92d1a89bc47c853e95"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/preview-after-entity.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/preview-after-render.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/preview-after-test-compatibility.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/preview-final.json",
+      "size_bytes": 2812,
+      "sha256": "f2dfde63f7b0ffef7e662db66ba68b58675b6a9f4e1d795d37e246f36adf1d1b"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/run_validation.py",
+      "size_bytes": 7204,
+      "sha256": "fcd6815559b9d2550b800a3412be506045f33e941958c855ee783ee5a9c12f65"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/validation-console.txt",
+      "size_bytes": 768,
+      "sha256": "de29c376238ac0c5976ad57360be0b3d68e5c157d2ddc8a7159fd85b500e6534"
+    },
+    {
+      "path": "outputs/circle1-a2/barrel-addon/validation.json",
+      "size_bytes": 45769,
+      "sha256": "df8756b37bef10618fd00680e086432f12e1fe065198ee82c610b2ac9c0e1977"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/Bootstrap.lua",
+      "size_bytes": 6036,
+      "sha256": "3b8a0402e3a2e77f5846830e0573dde0118121858bf850645b2c976894b79d54"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/Config.lua",
+      "size_bytes": 4770,
+      "sha256": "0e260fd182d2d5a13aa5b3de7ebe15346db3863cccfbe40779f283293b5a7e25"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/Config.lua.meta",
+      "size_bytes": 42,
+      "sha256": "c49ca4fe2c65dba3f2183c56f5e65660a4ded77c6519ed6dd5f6ec6e43527571"
+    },
+    {
+      "path": "outputs/circle1-a2/baseline/Ocean/Draw.lua.meta",
+      "size_bytes": 42,
+      "sha256": "80ce5f411043878b96e95c2482847b45c30b4c17c1bf7ee8987a3d985df14109"
+    },
+    {
+      "path": "outputs/circle1-ab-review/summary.json",
+      "size_bytes": 3459,
+      "sha256": "9a48f092b53d14eb60d2438f39d5af62afb830176e6d5cfe5b408ddfb816680c"
+    }
+  ]
+}

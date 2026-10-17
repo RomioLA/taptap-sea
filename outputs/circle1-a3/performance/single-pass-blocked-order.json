@@ -1,0 +1,400 @@
+{
+  "schemaVersion": 1,
+  "purpose": "same-seed fixed-route A3 Lua signals before/after benchmark",
+  "environment": {
+    "nativeFrameRateMeasured": false,
+    "engine": "Lupa Lua 5.4 helper from tests/run_circle1_a2.py",
+    "route": "normal runtime initialization, departure (0,0), level 1 straight north 120s; signals sampled every 0.25s",
+    "steps": 2400,
+    "dtSeconds": 0.05,
+    "signalSampleIntervalSteps": 5,
+    "getterAndVisitorLoops": 1200,
+    "repetitions": 3,
+    "seeds": [
+      271828,
+      314159
+    ],
+    "population": "normal Config, generated regional population, no signal/fish fixture",
+    "memoryMetricNote": "getter/visitor pre-GC delta measures allocation while Lua GC is stopped; post-GC delta is retained heap after full collect; run pre/post values are net heap, not total traffic"
+  },
+  "baselineRoot": "outputs/circle1-a3/baseline",
+  "sources": {
+    "before": {
+      "271828": {
+        "summary": {
+          "repetitions": 3,
+          "initCpuSec": {
+            "median": 0.009000000000000008,
+            "min": 0.008999999999999897,
+            "max": 0.009000000000000341
+          },
+          "updateCpuSec": {
+            "median": 2.6810000000000045,
+            "min": 2.591000000000012,
+            "max": 3.689999999999996
+          },
+          "checkpointGetterCpuSec": {
+            "median": 0.11199999999999921,
+            "min": 0.09699999999999775,
+            "max": 0.13099999999999845
+          },
+          "getter.cpuSec": {
+            "median": 0.14499999999999957,
+            "min": 0.10599999999999987,
+            "max": 0.17600000000000016
+          },
+          "getter.preGcAllocationDeltaKiB": {
+            "median": 20907.921875,
+            "min": 20907.921875,
+            "max": 20907.921875
+          },
+          "getter.postGcRetainedDeltaKiB": {
+            "median": 18.421875,
+            "min": 18.421875,
+            "max": 18.421875
+          },
+          "runRetainedDeltaKiB": {
+            "median": 4750.0048828125,
+            "min": 4750.0048828125,
+            "max": 4750.0048828125
+          }
+        },
+        "sample": {
+          "getterLoops": 1200,
+          "getter": {
+            "birdsVisited": 50400,
+            "cpuSec": 0.10599999999999987,
+            "postGcRetainedDeltaKiB": 18.421875,
+            "collectedDeltaKiB": 20889.5,
+            "preGcAllocationDeltaKiB": 20907.921875,
+            "splashesVisited": 4800
+          },
+          "tunaCount": 28,
+          "steps": 2400,
+          "route": "normal-runtime, level-1 straight north, dt=0.05s, signals sampled every 0.25s; no injected fish/signals",
+          "checkpointGetterCpuSec": 0.11199999999999921,
+          "finalBirds": 42,
+          "updateCpuSec": 2.591000000000012,
+          "runRetainedDeltaKiB": 4750.0048828125,
+          "sardineCount": 156,
+          "entityCount": 189,
+          "visitorAvailable": false,
+          "finalSplashes": 4,
+          "frozenFish": 159,
+          "activeFish": 25,
+          "runPostGcRetainedHeapKiB": 4963.296875,
+          "seed": 271828,
+          "runPreGcHeapKiB": 4963.953125,
+          "initCpuSec": 0.009000000000000008
+        },
+        "digests": {
+          "worldSha256": "8082ddf887c3e09d7f0e689e36adfe1225cbff44f7876fa70dbd834af329d82e",
+          "signalSha256": "2c15c997106fbe9147f901d61fc06caf457e3904ccdd9a7baf5fb06d86215498"
+        }
+      },
+      "314159": {
+        "summary": {
+          "repetitions": 3,
+          "initCpuSec": {
+            "median": 0.012000000000000455,
+            "min": 0.012000000000000455,
+            "max": 0.0129999999999999
+          },
+          "updateCpuSec": {
+            "median": 3.0380000000000074,
+            "min": 2.9449999999999754,
+            "max": 3.2020000000000124
+          },
+          "checkpointGetterCpuSec": {
+            "median": 0.12299999999998512,
+            "min": 0.12199999999998568,
+            "max": 0.12600000000000477
+          },
+          "getter.cpuSec": {
+            "median": 0.14699999999999847,
+            "min": 0.12399999999999878,
+            "max": 0.1980000000000004
+          },
+          "getter.preGcAllocationDeltaKiB": {
+            "median": 17495.421875,
+            "min": 17495.421875,
+            "max": 17495.421875
+          },
+          "getter.postGcRetainedDeltaKiB": {
+            "median": 15.578125,
+            "min": 15.578125,
+            "max": 15.578125
+          },
+          "runRetainedDeltaKiB": {
+            "median": 4145.640625,
+            "min": 4145.640625,
+            "max": 4145.640625
+          }
+        },
+        "sample": {
+          "runRetainedDeltaKiB": 4145.640625,
+          "runPreGcHeapKiB": 4359.5888671875,
+          "seed": 314159,
+          "frozenFish": 159,
+          "visitorAvailable": false,
+          "steps": 2400,
+          "checkpointGetterCpuSec": 0.12299999999998512,
+          "route": "normal-runtime, level-1 straight north, dt=0.05s, signals sampled every 0.25s; no injected fish/signals",
+          "tunaCount": 28,
+          "initCpuSec": 0.0129999999999999,
+          "finalBirds": 32,
+          "getterLoops": 1200,
+          "runPostGcRetainedHeapKiB": 4358.9326171875,
+          "updateCpuSec": 3.0380000000000074,
+          "entityCount": 185,
+          "finalSplashes": 7,
+          "sardineCount": 152,
+          "activeFish": 21,
+          "getter": {
+            "splashesVisited": 8400,
+            "cpuSec": 0.14699999999999847,
+            "preGcAllocationDeltaKiB": 17495.421875,
+            "birdsVisited": 38400,
+            "collectedDeltaKiB": 17479.84375,
+            "postGcRetainedDeltaKiB": 15.578125
+          }
+        },
+        "digests": {
+          "worldSha256": "ad28233e9dead38f33baa316085fc41230a98f2951c262872c6a8e607ebd2a01",
+          "signalSha256": "121ed4aa1a25a8daab6526c3e619f3e73ede7953af624b28ee7a15f4bfdc75f4"
+        }
+      }
+    },
+    "after": {
+      "271828": {
+        "summary": {
+          "repetitions": 3,
+          "initCpuSec": {
+            "median": 0.022000000000002018,
+            "min": 0.015000000000000568,
+            "max": 0.028000000000002245
+          },
+          "updateCpuSec": {
+            "median": 4.95599999999996,
+            "min": 4.503,
+            "max": 5.03400000000002
+          },
+          "checkpointGetterCpuSec": {
+            "median": 0.19500000000000028,
+            "min": 0.18500000000000227,
+            "max": 0.20699999999998653
+          },
+          "getter.cpuSec": {
+            "median": 0.20500000000000185,
+            "min": 0.20000000000000284,
+            "max": 0.21699999999999875
+          },
+          "getter.preGcAllocationDeltaKiB": {
+            "median": 20382.953125,
+            "min": 20382.953125,
+            "max": 20382.953125
+          },
+          "getter.postGcRetainedDeltaKiB": {
+            "median": 17.359375,
+            "min": 17.359375,
+            "max": 17.359375
+          },
+          "runRetainedDeltaKiB": {
+            "median": 4750.8564453125,
+            "min": 4750.8564453125,
+            "max": 4750.8564453125
+          },
+          "visitor.cpuSec": {
+            "median": 0.16300000000000026,
+            "min": 0.14499999999999957,
+            "max": 0.17200000000000415
+          },
+          "visitor.preGcAllocationDeltaKiB": {
+            "median": 0.25,
+            "min": 0.25,
+            "max": 0.25
+          },
+          "visitor.postGcRetainedDeltaKiB": {
+            "median": 0.125,
+            "min": 0.125,
+            "max": 0.125
+          }
+        },
+        "sample": {
+          "sardineCount": 156,
+          "initCpuSec": 0.022000000000002018,
+          "tunaCount": 28,
+          "seed": 271828,
+          "getterLoops": 1200,
+          "updateCpuSec": 4.503,
+          "runRetainedDeltaKiB": 4750.8564453125,
+          "finalSplashes": 4,
+          "route": "normal-runtime, level-1 straight north, dt=0.05s, signals sampled every 0.25s; no injected fish/signals",
+          "runPostGcRetainedHeapKiB": 4975.158203125,
+          "entityCount": 189,
+          "frozenFish": 159,
+          "visitor": {
+            "checksum": 75.35135658773765,
+            "splashesVisited": 4800,
+            "birdsVisited": 50400,
+            "preGcAllocationDeltaKiB": 0.25,
+            "postGcRetainedDeltaKiB": 0.125,
+            "collectedDeltaKiB": 0.125,
+            "cpuSec": 0.14499999999999957
+          },
+          "checkpointGetterCpuSec": 0.19500000000000028,
+          "visitorAvailable": true,
+          "getter": {
+            "preGcAllocationDeltaKiB": 20382.953125,
+            "splashesVisited": 4800,
+            "birdsVisited": 50400,
+            "postGcRetainedDeltaKiB": 17.359375,
+            "collectedDeltaKiB": 20365.59375,
+            "cpuSec": 0.20500000000000185
+          },
+          "finalBirds": 42,
+          "runPreGcHeapKiB": 5506.3388671875,
+          "activeFish": 25,
+          "steps": 2400
+        },
+        "digests": {
+          "worldSha256": "8082ddf887c3e09d7f0e689e36adfe1225cbff44f7876fa70dbd834af329d82e",
+          "signalSha256": "2c15c997106fbe9147f901d61fc06caf457e3904ccdd9a7baf5fb06d86215498"
+        }
+      },
+      "314159": {
+        "summary": {
+          "repetitions": 3,
+          "initCpuSec": {
+            "median": 0.016999999999995907,
+            "min": 0.015000000000000568,
+            "max": 0.021000000000000796
+          },
+          "updateCpuSec": {
+            "median": 3.735999999999983,
+            "min": 3.3319999999999794,
+            "max": 3.921999999999983
+          },
+          "checkpointGetterCpuSec": {
+            "median": 0.15300000000002,
+            "min": 0.1430000000000149,
+            "max": 0.15500000000001535
+          },
+          "getter.cpuSec": {
+            "median": 0.1559999999999988,
+            "min": 0.12599999999999767,
+            "max": 0.18999999999999773
+          },
+          "getter.preGcAllocationDeltaKiB": {
+            "median": 16970.453125,
+            "min": 16970.453125,
+            "max": 16970.453125
+          },
+          "getter.postGcRetainedDeltaKiB": {
+            "median": 14.515625,
+            "min": 14.515625,
+            "max": 14.515625
+          },
+          "runRetainedDeltaKiB": {
+            "median": 4146.4921875,
+            "min": 4146.4921875,
+            "max": 4146.4921875
+          },
+          "visitor.cpuSec": {
+            "median": 0.12699999999999534,
+            "min": 0.10799999999999699,
+            "max": 0.13999999999999346
+          },
+          "visitor.preGcAllocationDeltaKiB": {
+            "median": 0.25,
+            "min": 0.25,
+            "max": 0.25
+          },
+          "visitor.postGcRetainedDeltaKiB": {
+            "median": 0.125,
+            "min": 0.125,
+            "max": 0.125
+          }
+        },
+        "sample": {
+          "seed": 314159,
+          "initCpuSec": 0.015000000000000568,
+          "tunaCount": 28,
+          "sardineCount": 152,
+          "visitorAvailable": true,
+          "route": "normal-runtime, level-1 straight north, dt=0.05s, signals sampled every 0.25s; no injected fish/signals",
+          "activeFish": 21,
+          "finalBirds": 32,
+          "visitor": {
+            "splashesVisited": 8400,
+            "postGcRetainedDeltaKiB": 0.125,
+            "cpuSec": 0.13999999999999346,
+            "collectedDeltaKiB": 0.125,
+            "birdsVisited": 38400,
+            "preGcAllocationDeltaKiB": 0.25,
+            "checksum": 66.70037669974286
+          },
+          "entityCount": 185,
+          "getterLoops": 1200,
+          "getter": {
+            "splashesVisited": 8400,
+            "postGcRetainedDeltaKiB": 14.515625,
+            "cpuSec": 0.18999999999999773,
+            "birdsVisited": 38400,
+            "collectedDeltaKiB": 16955.9375,
+            "preGcAllocationDeltaKiB": 16970.453125
+          },
+          "finalSplashes": 7,
+          "checkpointGetterCpuSec": 0.15500000000001535,
+          "runPreGcHeapKiB": 5305.4462890625,
+          "updateCpuSec": 3.921999999999983,
+          "frozenFish": 159,
+          "runRetainedDeltaKiB": 4146.4921875,
+          "steps": 2400,
+          "runPostGcRetainedHeapKiB": 4370.7939453125
+        },
+        "digests": {
+          "worldSha256": "ad28233e9dead38f33baa316085fc41230a98f2951c262872c6a8e607ebd2a01",
+          "signalSha256": "121ed4aa1a25a8daab6526c3e619f3e73ede7953af624b28ee7a15f4bfdc75f4"
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "271828": {
+      "worldDigestEqual": true,
+      "signalDigestEqual": true,
+      "beforeFinalSignals": {
+        "birds": 42,
+        "splashes": 4,
+        "sardines": 156,
+        "tuna": 28
+      },
+      "afterFinalSignals": {
+        "birds": 42,
+        "splashes": 4,
+        "sardines": 156,
+        "tuna": 28
+      }
+    },
+    "314159": {
+      "worldDigestEqual": true,
+      "signalDigestEqual": true,
+      "beforeFinalSignals": {
+        "birds": 32,
+        "splashes": 7,
+        "sardines": 152,
+        "tuna": 28
+      },
+      "afterFinalSignals": {
+        "birds": 32,
+        "splashes": 7,
+        "sardines": 152,
+        "tuna": 28
+      }
+    }
+  },
+  "allWorldDigestsEqual": true,
+  "allSignalDigestsEqual": true,
+  "naturalSplashObserved": true
+}

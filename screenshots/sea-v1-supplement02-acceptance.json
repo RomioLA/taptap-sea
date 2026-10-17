@@ -1,0 +1,88 @@
+{
+  "A_NUMERIC_SUPPLEMENT_02": "PARTIAL",
+  "automaticChecks": "PASS",
+  "checkedAt": "2026-10-02T11:41:22.098088+08:00",
+  "checks": {
+    "1_cameraHeight": true,
+    "2_cameraWidth16_9": true,
+    "3_maxCast": true,
+    "4_netRadius": true,
+    "5_maxSingleTarget": true,
+    "6_actionDurationContract": true,
+    "7_operationContract": true,
+    "8_portContract": true,
+    "9_maxThrow": true,
+    "10_locationContract": true,
+    "11_sardineAvoid": true,
+    "12_tunaAvoid": true,
+    "13_sardineBirth": true,
+    "14_tunaBirth": true,
+    "15_tunaDeparture": true,
+    "16_scopeRadius": true,
+    "17_visibilityOnly": true,
+    "18_noTwoPerNet": true,
+    "19_localDensityNoGlobalQuota": true,
+    "20_noDuplicateCameraOrRevealConfig": true
+  },
+  "gates": {
+    "logic53": true,
+    "syntax21": true,
+    "stability3": true,
+    "static0": true,
+    "protectedFiles": true,
+    "meter": true
+  },
+  "contractOnlyRequirements": [
+    6,
+    7,
+    8,
+    10
+  ],
+  "contractOnlyFeatures": [
+    "4-second full fishing action and CompleteFishing(0/1)",
+    "ordinary sea operation within5",
+    "port enter within10",
+    "location silhouette80 / recognize20 / markRecognized callback and saved state"
+  ],
+  "executedTests": {
+    "behavior": 53,
+    "syntax": 21,
+    "stability": 3,
+    "lspErrors": 0
+  },
+  "nativePreviewThisRound": "not run; stopped session not revived",
+  "previousNativeEvidence": "historical only",
+  "FSM": "Avoid > Danger/Flee or Chase > Attracted > Wander; supplement02 overrides older attraction priority",
+  "authoritativeConfig": [
+    "scripts/Ocean/Config.lua",
+    "scripts/Ocean/FishData.lua"
+  ],
+  "sourceSHA256": {
+    "scripts\\Main.lua": "45dfcaba2a0f31975db4998debdd5929416ac6f249c5cf113b0e422ec0be6f68",
+    "scripts\\Ocean\\Bootstrap.lua": "953599a02991d55a3d59c28219761972a74e96af741cd78821efcdb162e9e4b5",
+    "scripts\\Ocean\\Config.lua": "acb2cd4aeb069b0393cc30b001e99bd889610ffc9d5e05d1abedec79218f8cd8",
+    "scripts\\Ocean\\Draw.lua": "bd4d4fea3d8d0184b56d772361fcaed004bbd4b03879df75f5e784f454d6f3b3",
+    "scripts\\Ocean\\Fish.lua": "bf50b7f35f7a5eb7725bcf6376de026c057dfe84edb750899f27a7b892d80d1d",
+    "scripts\\Ocean\\FishData.lua": "4ce5b97f7d49df29d010c51fb26e1f2b915b1f163fae47ef1814213ec0bec2d3",
+    "scripts\\Ocean\\HUD.lua": "3e54576096a956becc6890a9aae91d1c1b2a781e62afd366658500cc31fff625",
+    "scripts\\Ocean\\Math.lua": "9cb75e3c99f667e1529944db1f777a99cd3a9eab3e45ebed631776b0a22e1a5d",
+    "scripts\\Ocean\\Movement.lua": "53e54955b4f4c596cfc1a65f1840c4edcfc31a998727172dee1656bd1b513dab",
+    "scripts\\Ocean\\SeaDebug.lua": "2a9651542b7eb2ee49bf076eeb0a77818f13a92aa8451d5fd3560f457dfca57b",
+    "scripts\\Ocean\\SeaDraw.lua": "f9e21e155eeaf61fe16194662221fcd61ea56d8c30c7c90c96d67fb8aef52457",
+    "scripts\\Ocean\\SeaRuntime.lua": "8e5abb274bd2495c8160f70b5835889a2274ac52b27fdeda0d980eb88df67f31",
+    "scripts\\Ocean\\SpawnStrategy.lua": "dbb5b67e46b21b00f6d9a86f5de806bcb70d233678f59a7f1d730e3f484a5b9f",
+    "scripts\\Ocean\\State.lua": "cb95df6447bd3ba046a1d4f1b25d84ec6014756422b9bc7abc46dc0a8ad1db52",
+    "scripts\\Ocean\\World.lua": "4154ccdcb4021e8161e08d87987b6f3263fcc2efed4897e840cd041b81d4defe",
+    "scripts\\SeaPreviewEntry.lua": "6bd8f0140b149d75628424806f3eaf2950f7bfe40d8e9b95614d1b77ce6553fa",
+    "scripts\\tests\\SeaEngineSmoke.lua": "700bdf37e55a805b33eb1950ff73f4110c611637e6dae42a0f85b74efdee6be7",
+    "scripts\\tests\\SeaNativeVoyage.lua": "97927d01a089a7a186631fe09d398e48c6af598fd9a26852e8fba7a53485a145",
+    "scripts\\tests\\SeaNativeVoyageEntry.lua": "3d189d95774b774b3088268800b99785a6862934d9f988028a78df3b292d7faa",
+    "scripts\\tests\\SeaRuntimeTests.lua": "2f2e2297b049e9743bb22f465e96c2d7abfc1afccf10d339ef796acf10cd5983",
+    "scripts\\tests\\SeaStabilityTests.lua": "464e66542dd485ca6f4417a2a486cb199db5bf5dfbadcf39b077198d2c7a9809"
+  },
+  "ENVIRONMENT_RUNTIME_ISSUE": [
+    "Cube/Day/DaySpecularHDR.dds",
+    "themis_x64.dll"
+  ],
+  "workspace": "local uncommitted; protected files/B modules unchanged; previous .gitignore retained; no push"
+}

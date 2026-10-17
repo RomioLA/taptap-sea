@@ -1,0 +1,297 @@
+{
+  "luaVersion": "Lua 5.4",
+  "syntax": [
+    {
+      "file": "scripts\\Main.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\Bootstrap.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\Config.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\Draw.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\Fish.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\FishData.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\HUD.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\Math.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\Movement.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\SeaDebug.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\SeaDraw.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\SeaRuntime.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\SpawnStrategy.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\State.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\World.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\SeaPreviewEntry.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaEngineSmoke.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaNativeVoyage.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaNativeVoyageEntry.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaRuntimeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaStabilityTests.lua",
+      "passed": true,
+      "error": null
+    }
+  ],
+  "tests": [
+    {
+      "error": "",
+      "name": "derived map and provisional values",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "ship straight speed and max clamp",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "diagonal travel no speed boost",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "keyboard cancels click target; opposite key axes stop",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "ship turn speed bound",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "click arrival and no movement within arrival radius",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "viewport width100, anchor, inverse coordinates across aspects",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "camera deadzone stays still then smooth follows",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "all world edges block and outward intent produces feedback",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "held outward input still visibly pushes inward",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "swept island collision no tunnelling",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "small floats overlap without blocking",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "unique IDs and removed query exclusion",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "underwater hidden yet queryable; reveal changes visibility only",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "visibility switch does not change AI trajectory",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "sardine wander speed and timed direction choice",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "effect-based sardine attraction and priority over wander",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "NONE effect ignored; temporary TTL and payload copy",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "predator sees prey before sardine senses danger",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "danger outranks attraction; flee jitter remains away",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "avoid outranks danger and attraction",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "tuna true predation removes entity and query membership",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "tuna chase tracks moved prey; loss grace >2 sec",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "tuna displacement respects configured turn rate",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "moving predator and prey complete chase flee and real capture",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "big fish attraction awaits explicit tuning",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "big effect uses supplied config and outranks prey chase",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "activity hysteresis and frozen state retention",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "region seeds reproducible independent of exploration order",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "tuna first spawn exclusion on all initialized regions",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "same-day regions do not refill after catch/clear/return",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "daily refresh clears temps/fish preserves fixed objects/ship",
+      "passed": true
+    },
+    {
+      "error": "",
+      "name": "local density measured across 100 day seeds away from departure",
+      "passed": true
+    },
+    {
+      "error": "C:/codex/taptap-sea/scripts/tests\\SeaRuntimeTests.lua:333: removed object retained overlap marker",
+      "name": "overlap callback removal leaves no stale entries after repeated collection",
+      "passed": false
+    }
+  ],
+  "metrics": {
+    "movingCaptureMaxSec": 11.600000000000001,
+    "hiddenViewportFish": 0,
+    "startSardineIn120": 19.35,
+    "tunaRunning": 3.99,
+    "startTunaIn120": 0.0,
+    "sardineRunning": 19.32,
+    "tunaIn120": 3.99,
+    "sardineIn120": 19.32,
+    "movingCaptureMeanSec": 10.046875,
+    "debugViewportSardine": 2.23,
+    "movingCaptureMinSec": 8.5,
+    "debugViewportTuna": 0.5
+  },
+  "passed": false
+}

@@ -1,0 +1,16 @@
+{
+  "changed": [
+    "scripts/Ocean/Config.lua",
+    "scripts/tests/Circle1A2FishingTests.lua",
+    "scripts/Ocean/SeaRuntime.lua",
+    "scripts/Ocean/SeaDraw.lua",
+    "scripts/Ocean/World.lua"
+  ],
+  "added": [
+    "scripts/tests/Circle1A2BarrelRenderTests.lua",
+    "scripts/tests/Circle1A2BarrelTests.lua"
+  ],
+  "violations": [],
+  "passed": true,
+  "priorA2EvidencePreserved": true
+}

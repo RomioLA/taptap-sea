@@ -1,0 +1,32 @@
+{
+  "status": "reviewed",
+  "reason": "B4 modified existing B2/B3 suites, with exact current hashes; player scripts run separately in players",
+  "evidence": "outputs/circle1-ab-merge/b4-suite-evidence.json",
+  "modules": [
+    {
+      "file": "scripts/Tests/Circle1B2BarrelTests.lua",
+      "module": "Tests.Circle1B2BarrelTests",
+      "sha256": "4E8ECF17C6B38553DBB8A5690D262B7538633A62306A10D6D45FC8FD79F7CA0D"
+    },
+    {
+      "file": "scripts/Tests/Circle1B2ScopeTests.lua",
+      "module": "Tests.Circle1B2ScopeTests",
+      "sha256": "7EC34542698CFAA77FEA6C07FC9A98287D6CE95C9DC48F56EB4F98A32BF26097"
+    },
+    {
+      "file": "scripts/Tests/Circle1B2UITests.lua",
+      "module": "Tests.Circle1B2UITests",
+      "sha256": "5B3601E87DAAB21D30583E5E810DA1B204A27B482ABF84BDA11991A737D08CF0"
+    },
+    {
+      "file": "scripts/Tests/Circle1B3ClockAsyncTests.lua",
+      "module": "Tests.Circle1B3ClockAsyncTests",
+      "sha256": "4C64023790A655A9F236D5BE85DF3409EE0C0D92C31098720016F1AE279B0FC0"
+    },
+    {
+      "file": "scripts/Tests/Circle1B3SceneUITests.lua",
+      "module": "Tests.Circle1B3SceneUITests",
+      "sha256": "7E3246F20DE7F7EE94F62E027B2591C1DFD40D16184378AD1B359CC41872CF2F"
+    }
+  ]
+}

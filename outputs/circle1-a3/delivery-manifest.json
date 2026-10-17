@@ -1,0 +1,50 @@
+{
+  "scripts/Ocean/Bootstrap.lua": {
+    "beforeSha256": "BA3779103CBA2F02C3C463F657553B7DBFFB38719B6EDCD0FA94D126A82C3268",
+    "sha256": "dc6da15e2d8c3cf622591a757a81cc77f2c25f822856eb172e025514f36cf161"
+  },
+  "scripts/Ocean/Movement.lua": {
+    "beforeSha256": "04F424D10C1DBA1987FBEED0F0BEDC63265D7EC94649D4C29559ED3C0121E8DF",
+    "sha256": "50b6ff818f1d37142c0977b4855ea40e062be8c3b7c0f16b8b1826ade79a158d"
+  },
+  "scripts/Ocean/SeaDraw.lua": {
+    "beforeSha256": "B4273B63AE9DD519C446CBD64D82B63E66CF85D3ECCCEC3923B0B5D3168DAD54",
+    "sha256": "a6245cbb49cb74efa28defb63d7546bd87f6b6c990a79e9af18c95888193534a"
+  },
+  "scripts/Ocean/SeaRuntime.lua": {
+    "beforeSha256": "5F979B096727CD9139AD2F6F9F2C83E101756B86F02E480D7DF8921DCCD58D67",
+    "sha256": "b914c87a2557ff528426f7c587d92638f96c66ce6956054a609104f1fa78219f"
+  },
+  "scripts/Ocean/SurfaceSignals.lua": {
+    "beforeSha256": "2E9562A69D54085BD94526569E66CD582A7A4CD78E378C8BBD9D96F5C4726D42",
+    "sha256": "724390ae99c892205fd8606ed220dbf42d40cc8faad8cd0bd0feaba67a9fcbb3"
+  },
+  "scripts/Ocean/World.lua": {
+    "beforeSha256": "7FBD50A4CE1821A2CA7B62276281CC5AB50CB28D5B7E3DED31E494A8AD3FF97F",
+    "sha256": "4c4f98ee088e30718c18886d80c6d014712a3dd4407d5a90412b646c6b49ed9b"
+  },
+  "scripts/tests/Circle1A3ExperienceTests.lua": {
+    "beforeSha256": null,
+    "sha256": "239252880bdf1953e840a99d07fd49bffc6e81c3aa1dbc13b07e6afe5264e6ac"
+  },
+  "scripts/tests/Circle1A3InputTests.lua": {
+    "beforeSha256": null,
+    "sha256": "b86aa2fe35cfde09abb41ac0ac5b7dac57fd3117ba952a0c7813605658f68174"
+  },
+  "scripts/tests/Circle1A3PortTests.lua": {
+    "beforeSha256": null,
+    "sha256": "3626dc7e0a9f344cb56672007f1eaafadbab887832b2afdaae34500387831f8d"
+  },
+  "scripts/tests/Circle1A3RecognitionTests.lua": {
+    "beforeSha256": null,
+    "sha256": "81b41bef5416b0b5e6bb2690d70190036fd22e43c5b6929df9d47708ed9478bf"
+  },
+  "scripts/tests/Circle1A3SignalsTests.lua": {
+    "beforeSha256": null,
+    "sha256": "2e131a4db6a298355b6961012711e3205584f557d519d27ee95af890dd15bc60"
+  },
+  "scripts/tests/Circle1A3StabilityTests.lua": {
+    "beforeSha256": null,
+    "sha256": "87a7559ff7a6c55d005b7084dca21dc270ec7e100f233b6be0354f67ba0a5d0f"
+  }
+}
