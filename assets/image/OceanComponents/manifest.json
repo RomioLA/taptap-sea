@@ -2,7 +2,7 @@
   "schema_version": 1,
   "style": "读海日系水彩绘本风，主场景组件（海岸底图/浅滩礁石/海底沉船/告示牌替换元素），与 OceanDecor 同代同链派生",
   "format": "RGBA PNG，直通 Alpha；AI 抠图去底，透明边 RGB 保留主体色；入库后经 slim_ocean_art 256 色量化",
-  "placement": "C2（2026-10-17）：coast_base/reef_rocks 已世界放置并渲染——Config.world.fixedComponents 以 kind=\"scenery\" 非阻挡实体注册（礁石群 (16,20) r6m / 海岸补丁 (60,40) r14m），SeaDraw 地表分支经 SeaViewArt.Component 绘制，贴图失败回退矢量剪影；shipwreck_v1 已世界放置并渲染——Config.world.fixedWrecks 独立水下实体 (35,60) r3m（与 fixedTreasure 同构：layer=underwater、非阻挡、望远镜 scope 楔形内可见），SeaDraw 水下分支 Component 顶视 + 矢量兜底；sign_* 七件为告示牌矢量图替换元素，暂无告示牌 POI 设计，保持素材库候选（Upright 竖幅），不擅自进场景",
+  "placement": "C2（2026-10-17）：coast_base/reef_rocks 已世界放置并渲染——Config.world.fixedComponents 以 kind=\"scenery\" 非阻挡实体注册（礁石群 (16,20) r6m / 海岸补丁 (60,40) r14m），SeaDraw 地表分支经 SeaViewArt.Component 绘制，贴图失败回退矢量剪影；shipwreck_v1 已世界放置并渲染——Config.world.fixedWrecks 独立水下实体 (35,60) r3m（与 fixedTreasure 同构：layer=underwater、非阻挡、望远镜 scope 楔形内可见），SeaDraw 水下分支 Component 顶视 + 矢量兜底；sign_* 七件已作为 island_01（设计宝藏岛 (35,25) r12m）固定岛饰接入（2026-10-17 深夜用户仲裁批准，解除 D3-A）——SeaViewArt.Island 内 Component oblique 放置（宝箱/金币/破木板/岩石/海草 + 棕榈/阔叶点缀，避让 TREE_LAYOUT 树位、落在 0.89r 陆地圈内），纯装饰零碰撞/半径/玩法改动，加载失败静默跳过",
   "projection": "Ocean.Projection 世界平面分片投影（接入时与 island/boat 同构，0.88 画幅修正）",
   "references": [
     "assets/image/OceanDecor/manifest.json",
@@ -86,6 +86,7 @@
         0.5
       ],
       "layer": "component",
+      "placement": "固定沉船残骸（Config.world.fixedWrecks (35,60) r3 水下 kind=scenery，SeaDraw.drawFixedWreck 顶视 2r，失败回退矢量船体剪影；距水下宝藏 (35,45) 15m 构成宝藏海域叙事，禁止再叠加到宝藏位）",
       "status": "placed"
     },
     "sign_broadleaf_v1": {
@@ -112,7 +113,8 @@
         0.5
       ],
       "layer": "component",
-      "status": "ready_not_placed"
+      "placement": "island_01 固定岛饰（SeaViewArt.Island，Component oblique，避让 TREE_LAYOUT 树位、0.89r 陆地圈内，纯装饰零玩法改动）",
+      "status": "placed"
     },
     "sign_chest_v1": {
       "path": "image/OceanComponents/sign_chest_v1.png",
@@ -138,7 +140,8 @@
         0.5
       ],
       "layer": "component",
-      "status": "ready_not_placed"
+      "placement": "island_01 固定岛饰（SeaViewArt.Island，Component oblique，避让 TREE_LAYOUT 树位、0.89r 陆地圈内，纯装饰零玩法改动）",
+      "status": "placed"
     },
     "sign_coins_v1": {
       "path": "image/OceanComponents/sign_coins_v1.png",
@@ -164,7 +167,8 @@
         0.5
       ],
       "layer": "component",
-      "status": "ready_not_placed"
+      "placement": "island_01 固定岛饰（SeaViewArt.Island，Component oblique，避让 TREE_LAYOUT 树位、0.89r 陆地圈内，纯装饰零玩法改动）",
+      "status": "placed"
     },
     "sign_palm_v1": {
       "path": "image/OceanComponents/sign_palm_v1.png",
@@ -190,7 +194,8 @@
         0.5
       ],
       "layer": "component",
-      "status": "ready_not_placed"
+      "placement": "island_01 固定岛饰（SeaViewArt.Island，Component oblique，避让 TREE_LAYOUT 树位、0.89r 陆地圈内，纯装饰零玩法改动）",
+      "status": "placed"
     },
     "sign_planks_v1": {
       "path": "image/OceanComponents/sign_planks_v1.png",
@@ -216,7 +221,8 @@
         0.5
       ],
       "layer": "component",
-      "status": "ready_not_placed"
+      "placement": "island_01 固定岛饰（SeaViewArt.Island，Component oblique，避让 TREE_LAYOUT 树位、0.89r 陆地圈内，纯装饰零玩法改动）",
+      "status": "placed"
     },
     "sign_rock_v1": {
       "path": "image/OceanComponents/sign_rock_v1.png",
@@ -242,7 +248,8 @@
         0.5
       ],
       "layer": "component",
-      "status": "ready_not_placed"
+      "placement": "island_01 固定岛饰（SeaViewArt.Island，Component oblique，避让 TREE_LAYOUT 树位、0.89r 陆地圈内，纯装饰零玩法改动）",
+      "status": "placed"
     },
     "sign_seaweed_v1": {
       "path": "image/OceanComponents/sign_seaweed_v1.png",
@@ -268,7 +275,8 @@
         0.5
       ],
       "layer": "component",
-      "status": "ready_not_placed"
+      "placement": "island_01 固定岛饰（SeaViewArt.Island，Component oblique，避让 TREE_LAYOUT 树位、0.89r 陆地圈内，纯装饰零玩法改动）",
+      "status": "placed"
     }
   }
 }

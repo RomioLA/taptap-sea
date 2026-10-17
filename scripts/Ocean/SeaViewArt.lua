@@ -610,6 +610,25 @@ local TREE_LAYOUT = {
     { x = 0.43, y = -0.08, size = 0.79 },
 }
 
+-- C2（2026-10-17）：island_01（设计宝藏岛）固定岛饰——OceanComponents sign_* 七件
+-- oblique 海面组件（宝箱/金币/破木板/岩石/海草 + 棕榈/阔叶点缀）。2026-10-17 深夜
+-- 用户仲裁批准「sign_* 作岛饰」方案：此前的 D3-A「保持素材库不放置」经人类裁决
+-- 解除，跨渠道指令冲突（另一渠道宽口径「海面以外其他的组件进入c2渲染」）以本
+-- 裁定为准。坐标为岛半径归一化（乘 r 得世界偏移）：全部落在陆地圈 0.89r 内，
+-- 且与 TREE_LAYOUT 四个树位保持 ≥1.4m 间距（r=12 口径实测）；size 为内容主体
+-- 沿 +X 的世界长度（米）。
+-- 纯装饰：零碰撞、零半径、零玩法改动；单件加载失败由 Component 返回 false 静默跳过，
+-- 不影响其余饰件与矢量岛体（守卫见 Circle1B5ComponentPlacementTests）。
+local ISLAND_01_DECOR = {
+    { name = "sign_chest_v1",     x =  0.02, y =  0.40, size = 1.6 },
+    { name = "sign_coins_v1",     x = -0.30, y =  0.34, size = 1.1 },
+    { name = "sign_planks_v1",    x =  0.34, y =  0.05, size = 1.8 },
+    { name = "sign_rock_v1",      x =  0.12, y = -0.42, size = 1.5 },
+    { name = "sign_seaweed_v1",   x =  0.46, y =  0.30, size = 1.2 },
+    { name = "sign_palm_v1",      x = -0.38, y = -0.30, size = 2.2 },
+    { name = "sign_broadleaf_v1", x = -0.10, y =  0.52, size = 1.8 },
+}
+
 local function treeShape(base,heightMeters)
     local crownWidth = heightMeters * 0.38
     local function raised(x,h) return {x=base.x+x,y=base.y,altitude=h} end
@@ -805,6 +824,17 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     drawHill(ctx, movement, center, radius, bounds, airMix,geometry.hills,frame,geometry.hillName)
     for _,tree in ipairs(geometry.trees) do
         drawTree(ctx,movement,tree.base,tree.height,bounds,tree.palette,airMix,tree.shape,frame,tree.name)
+    end
+    -- C2（2026-10-17，用户仲裁批准）：island_01 固定岛饰（sign_* oblique 组件，Component
+    -- 入口=ContentPlaneSize 内容比换算 + Plane 懒加载/LOD/地平线裁剪）。仅 island_01 装配，
+    -- island_02 与其他岛零改动；绘于树后（饰件与树位空间避让，压序无歧义）。
+    -- 与 SeaDraw 的 scenery 体系（reef/coast/wreck，World:Init 注册）互补：不新增实体、
+    -- 不碰 fixedContentEntities，资产作用域互不重叠（sign_* vs reef/coast/shipwreck）。
+    if entity.contentId == "island_01" and radius >= 5 then
+        for _, decor in ipairs(ISLAND_01_DECOR) do
+            SeaViewArt.Component(ctx, decor.name, movement,
+                localIslandPoint(center, decor.x * radius, decor.y * radius), decor.size, 0)
+        end
     end
     PerfProbe.Sample("islandVector", probeVectorStop())
     PerfProbe.Sample("islandTotal", probeTotalStop())

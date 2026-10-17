@@ -87,7 +87,8 @@ def main():
             render_suites = {'Circle1A2BarrelRenderTests', 'Circle1A2FishingTests',
                              'Circle1A3RecognitionTests', 'SeaFusionRenderTests', 'Circle1B5PortDrawTests',
                              'SeaAtmosphereTests', 'Circle1B5EcoArtRenderTests',
-                             'Circle1B6SceneComponentRenderTests'}
+                             'Circle1B6SceneComponentRenderTests',
+                             'Circle1B5ComponentPlacementTests'}
             report = plain(module.Run(recorder_table) if name in render_suites else module.Run())
             if isinstance(report, list):
                 checks = report
