@@ -186,7 +186,11 @@ function SeaViewArt.Backdrop(ctx, width, height, time, clock, movement)
             return nil
         end
     end
-    Draw.SceneBackdrop(ctx, width, height, time, true, clock, horizonAtX)
+    -- 天空图图层（2026-10-18 读海美术接入）：绘于渐变之上、日月云鸟之下（方案 B）。
+    local function drawSky(c, w, h)
+        SeaViewArt.Sky(c, movement, w, h, time, clock)
+    end
+    Draw.SceneBackdrop(ctx, width, height, time, true, clock, horizonAtX, drawSky)
 end
 
 local function getSurfaceSettings()
@@ -495,6 +499,59 @@ function SeaViewArt.SeaSurfaceFrame(clock)
     local blend = 1 - smoothstep(progress / fade)
     if blend <= 0 then return { base = "sea_surface_day", over = nil, blend = 0 } end
     return { base = "sea_surface_day", over = "sea_surface_dusk", blend = blend }
+end
+
+-- 天空图相位（2026-10-18 读海美术接入）：直接复用海面相位映射（SeaSurfaceFrame），
+-- 仅把键名 sea_surface_day/dusk 改写为天空资产 sky_day/sky_dusk。夜间海面回落到
+-- 昼图、由夜罩统一染色，故天空同步用 sky_day 过夜罩，无独立夜天图（catalog 无
+-- sky_night，加载失败静默回退渐变）。纯函数，不读 nvg。
+---@param clock table?
+---@return {base: string, over: string?, blend: number}
+function SeaViewArt.SkyFrame(clock)
+    local frame = SeaViewArt.SeaSurfaceFrame(clock)
+    local function mapKey(key)
+        if key == "sea_surface_dusk" then return "sky_dusk" end
+        return "sky_day"  -- sea_surface_day 与回落夜态均用昼天图
+    end
+    return { base = mapKey(frame.base), over = frame.over and mapKey(frame.over) or nil, blend = frame.blend }
+end
+
+-- 天空图图层绘制（2026-10-18 读海美术接入）：满幅天空贴图，绘于 Draw.Background
+-- 的渐变之后、日月云鸟之前（方案 B，零 scissor）。base/over 交叉淡入复用 SkyFrame，
+-- 由 Config.visual.skyLayer 门控（enabled=false 时整层跳过，回退程序渐变）。
+-- scroll 默认开启、scrollScale 提供视差（天空无天区世界实体，横移仅微移纹理）。
+-- 复用 Art.Sky 懒加载口径；零状态改写（不触碰相机/世界）。
+---@param ctx NVGContextWrapper
+---@param movement table
+---@param width number
+---@param height number
+---@param time number
+---@param clock table?
+function SeaViewArt.Sky(ctx, movement, width, height, time, clock)
+    local cfg = (Config.visual and Config.visual.skyLayer) or {}
+    if cfg.enabled == false then return false end
+    if not ctx or not finite(width) or not finite(height) or width <= 0 or height <= 0 then return false end
+    local frame = SeaViewArt.SkyFrame(clock)
+    local baseName, overName = frame.base, frame.over
+    if not ImageArt.GetSpec(baseName) then return false end
+    local layerAlpha = finite(cfg.alpha) and cfg.alpha or 1.0
+    local scrollX = 0
+    if cfg.scroll ~= false then
+        local camera = movement and movement.camera
+        local cameraX = type(camera) == "table" and camera.x or 0
+        if not finite(cameraX) then cameraX = 0 end
+        local scale = finite(cfg.scrollScale) and cfg.scrollScale or 1
+        local base = height / (Config.camera.viewHeight or 45)
+        scrollX = -((cameraX * base * scale) % width)
+    end
+    -- 交叉淡入与海面同构（方案 A 夜罩不动）：base 满幅、over 按 blend 叠加，
+    -- 由 Art.Sky 的 alpha 控制；blend 越界已由 SeaSurfaceFrame 钳制在 [0,1]。
+    local drew = false
+    drew = ImageArt.Sky(ctx, baseName, width, height, layerAlpha, scrollX) or drew
+    if overName and frame.blend and frame.blend > 0 then
+        drew = ImageArt.Sky(ctx, overName, width, height, layerAlpha * frame.blend, scrollX) or drew
+    end
+    return drew
 end
 
 -- A screen-fixed gradient follows the projected horizon; the tiled ripple layer

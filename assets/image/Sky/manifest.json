@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "style": "读海日系水彩绘本风，天空图满幅（上蓝下白近海雾、底边 alpha 渐隐），锚点链派生：风格参考图→日间锚点→黄昏",
+  "format": "RGBA PNG 直通 Alpha；上 26% 实天空、26%→40% 渐隐为 0；左右边缘无缝可横向循环拼接",
+  "projection": "屏幕空间材质层（ImageArt.Sky）：满幅 imagePattern + 相机横向视差，非世界平面",
+  "placement": "SeaViewArt.Sky 相位映射（委托 SeaSurfaceFrame，键名 sky_day/sky_dusk）：昼夜与海面同步交叉淡入；夜间沿用昼天图过夜罩（方案 A 夜罩不动）",
+  "references": [
+    "scripts/Ocean/SeaViewArt.lua",
+    "scripts/Ocean/ImageArt.lua",
+    "scripts/Ocean/Draw.lua",
+    "scripts/Ocean/SeaDraw.lua"
+  ],
+  "assets": {
+    "sky_day": {
+      "path": "image/Sky/sky_day.png",
+      "source": "E:/workbath/Fishing/_gen_pure_sea/pure_sky_day_v1.png",
+      "size": [
+        1920,
+        1080
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1920,
+        432
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.6,
+      "sha256": "9471d5bfe96efc51de6ab4ad104aafe779f770638bad0ad74c562ce73d2b7356",
+      "source_sha256": "55928c4f4be3026d897de676e87080caa84c478b4499c8477907c11d94b0aa22",
+      "preload": false,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "sky",
+      "status": "ready_wired",
+      "period": "day"
+    },
+    "sky_dusk": {
+      "path": "image/Sky/sky_dusk.png",
+      "source": "E:/workbath/Fishing/_gen_pure_sea/pure_sky_dusk_v1.png",
+      "size": [
+        1920,
+        1080
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1920,
+        432
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.6,
+      "sha256": "6611c470036f3b2d88749e264ba589442fc6b14a21d17751cb8b0c585a369983",
+      "source_sha256": "b8f79478536ff26e76940f919d735c016d76828ec5b2bbf66dc26a8a728ba9bf",
+      "preload": false,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "sky",
+      "status": "ready_wired",
+      "period": "dusk"
+    }
+  }
+}

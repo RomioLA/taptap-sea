@@ -146,6 +146,13 @@ local Config = {
     -- alpha 为叠加不透明度（纹理近白，偏低值即可显纹）；tileScale 为瓦片缩放
     -- （1=资产原生 512×288，调大=波纹更稀）。
     seaRipple = { enabled = true, alpha = 0.28, tileScale = 1.0 },
+    -- 天空图图层（2026-10-18 读海美术接入）：屏幕空间满幅天空贴图，绘于背景渐变
+    -- 之上、日月云鸟之下（方案 B：不依赖 scissor，零回归）。昼夜相位复用 seaSurface
+    -- 的 duskFrom/duskSpan/nightFade 映射（SkyFrame 委托 SeaSurfaceFrame，仅改写键名
+    -- 为 sky_day/sky_dusk）；夜间沿用昼天图过夜罩（方案 A 夜罩不动）。preload=false
+    -- （画面贴图懒加载，首个 Backdrop 帧按需加载一次，句柄缓存）；scroll 默认开启、
+    -- scrollScale 提供视差（天空无天区世界实体，横移仅微移纹理，与用户"随镜头横滚"一致）。
+    skyLayer = { enabled = true, alpha = 1.0, scroll = true, scrollScale = 0.35 },
     wake = { lifetimeSec = 3, spacingMeters = 0.6, minSpeed = 0.15, maxSamples = 96,
         initialWidth = 0.65, spreadPerSec = 0.45, sternOffset = 2.5, opacity = 125 },
     projection = { circleSegments = 48, sectorSegments = 32, birdAltitude = 1.2 },

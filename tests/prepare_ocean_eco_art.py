@@ -52,6 +52,9 @@ def catalog_text():
     # 清单缺失时按空合集处理（尚未入库的旧工作区可直接跑本脚本的 eco 部分）。
     sea_manifest = ROOT / "assets/image/SeaSurface/manifest.json"
     sea = json.loads(sea_manifest.read_text(encoding="utf-8")) if sea_manifest.exists() else {"assets": {}}
+    # Sky（2026-10-18 读海美术接入）：屏幕空间满幅天空贴图；清单缺失时按空合集处理。
+    sky_manifest = ROOT / "assets/image/Sky/manifest.json"
+    sky = json.loads(sky_manifest.read_text(encoding="utf-8")) if sky_manifest.exists() else {"assets": {}}
     entries = {}
     # eco/SeaSurface 合集按条目自带 preload（per-entry，如 sea_surface_day/dusk=true、
     # night=false），其余合集沿用既有默认；与 prepare_ocean_ready_art.py 的 catalog_text
@@ -61,7 +64,8 @@ def catalog_text():
                                            (story["assets"], False, False), (decor["assets"], False, False),
                                            (components["assets"], False, False), (islands["assets"], False, False),
                                            (eco["assets"], False, True),
-                                           (sea["assets"], False, True)):
+                                           (sea["assets"], False, True),
+                                           (sky["assets"], False, True)):
         for name, entry in collection.items():
             entries[name] = {**entry, "preload": entry.get("preload", preload) if per_entry else preload}
     selected = json.loads((WAVE2_OUT / "manifest.json").read_text(encoding="utf-8"))["assets"] \
@@ -75,7 +79,7 @@ def catalog_text():
             entries[name] = entry
     repeat_names = ("waterpaper", "waterpaper_story", "ocean_tile",
                     "sea_surface_day", "sea_surface_dusk", "sea_surface_night",
-                    "sea_ripple_overlay")
+                    "sea_ripple_overlay", "sky_day", "sky_dusk")
     lines = ["-- 自动生成：python3 tests/prepare_ocean_eco_art.py；禁止手工编辑。",
              "-- 只含图片规格，不含实体、玩法数值或更新逻辑。", "return {"]
     for name, entry in sorted(entries.items()):

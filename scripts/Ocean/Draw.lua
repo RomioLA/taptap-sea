@@ -134,7 +134,7 @@ local function drawMoon(ctx, x, y, radius)
         radius * 0.09, radius * 0.09, { 180, 198, 224, 76 })
 end
 
-local function Background(ctx, w, h, time, clock, horizonAtX)
+local function Background(ctx, w, h, time, clock, horizonAtX, skyDrawer)
     local phase, progress = Draw.ClockVisualState(clock)
     -- Keep the current Integration palette and apply only the source branch's
     -- restrained dawn/dusk warmth.
@@ -153,6 +153,10 @@ local function Background(ctx, w, h, time, clock, horizonAtX)
     nvgFillPaint(ctx, nvgLinearGradient(ctx, 0, 0, 0, h,
         nvgRGBA(topR, topG, topB, 255), nvgRGBA(bottomR, bottomG, bottomB, 255)))
     nvgFill(ctx)
+
+    -- 天空图图层（2026-10-18 读海美术接入）：绘于渐变之上、日月云鸟之下（方案 B）。
+    -- 天空图自带底边 alpha 渐隐，柔化处交由海面底图覆盖，无需 scissor 裁剪。
+    if type(skyDrawer) == "function" then skyDrawer(ctx, w, h) end
 
     local sunRadius = math.min(w * 0.055, h * 0.065)
     if phase == "day" then
@@ -666,11 +670,15 @@ end
 ---@param w number
 ---@param h number
 ---@param time number
-function Draw.SceneBackdrop(ctx, w, h, time, skyOnly, clock, horizonAtX)
+---@param skyOnly boolean?
+---@param clock table?
+---@param horizonAtX (fun(x: number): number?)?
+---@param skyDrawer (fun(ctx: any, w: number, h: number)?)?
+function Draw.SceneBackdrop(ctx, w, h, time, skyOnly, clock, horizonAtX, skyDrawer)
     if not ctx or w <= 0 or h <= 0 then return end
     time = time or 0
     local scale = math.min(w / 520, h / 800)
-    Background(ctx, w, h, time, clock, horizonAtX)
+    Background(ctx, w, h, time, clock, horizonAtX, skyDrawer)
     if not skyOnly then Sea(ctx, w, h, time) end
     for _, bird in ipairs(Config.birds) do
         local x = w * bird.x + math.sin(time * 0.4 + bird.phase) * 15 * scale

@@ -407,6 +407,38 @@ function Art.SeaSurface(ctx, movement, width, height, name, alpha, scrollX)
     return true
 end
 
+-- 天空图图层（2026-10-18 读海美术接入）：屏幕空间满幅天空贴图（地平线约在
+-- 25%，与 horizonY≈0.24 吻合；其下 alpha 渐隐为 0，交由海面底图覆盖），无地平线
+-- 裁剪——天空本就是全屏材质层，柔化底边由贴图自身 alpha 过渡承担。复用 Plane 懒加载
+-- 口径：加载失败返回 false，由 Draw.Background 渐变兜底；失败句柄 -1 已缓存，不重试。
+-- 满幅 cell = 视口尺寸（与 SeaSurface 同构），REPEATX 横向无缝；scrollX 缺省静止。
+---@param ctx NVGContextWrapper
+---@param name string
+---@param width number
+---@param height number
+---@param alpha number?
+---@param scrollX number?
+function Art.Sky(ctx, name, width, height, alpha, scrollX)
+    name = ArtVariants.Resolve(name)
+    local images = contexts[ctx]
+    local image = images and images[name] or 0
+    if image <= 0 then
+        Art.LoadImage(ctx, name)
+        images = contexts[ctx]
+        image = images and images[name] or 0
+        if image <= 0 then return false end
+    end
+    nvgSave(ctx)
+    nvgBeginPath(ctx)
+    nvgRect(ctx, 0, 0, width, height)
+    nvgClosePath(ctx)
+    nvgFillPaint(ctx, nvgImagePattern(ctx, scrollX or 0, 0, width, height, 0, image, alpha or 1))
+    fillCounter = fillCounter + 1
+    nvgFill(ctx)
+    nvgRestore(ctx)
+    return true
+end
+
 -- 海面波纹平铺层（2026-10-18 C4，用户提供水彩波纹纹理 sea_ripple_serene_v1）：
 -- 屏幕空间材质层，地平线 48 段裁剪 + imagePattern 双向平铺（REPEATX|REPEATY），
 -- 叠加于海面底图之上、替换程序 crest marks（Surface 门控：本层绘制成功即跳过
