@@ -150,7 +150,13 @@ local Config = {
     -- 2026-10-18 晚修复：素材原为 RGB 无 alpha（白底不透明平铺→海面发白雾、
     -- 波纹不可见），已去白底提取浪花白沫 alpha 通道（RGBA，.tmp/ripple_alpha_fix.py，
     -- 接缝保持 0.0）；素材自持透明度后 0.28 压雾保守值上调 0.5 恢复波纹可见度。
-    seaRipple = { enabled = true, alpha = 0.5, tileScale = 1.0 },
+    -- 2026-10-19 真机二次修复：源图白底白波纹笔画色距极浅（raw max 78、p99=19），
+    -- 旧线性 GAIN=3.2 提取后 93.7% 像素 alpha=0 → 贴图不可见且 crests 被跳过
+    -- （两者同时消失的根因）。重提取改伽马 0.55 按源图动态范围归一
+    -- （.tmp/ripple_alpha_boost.py，笔画核心 alpha>160、接缝保持 0.0），alpha 0.5→0.6。
+    -- 随船移动：scrollScale=1 按近水速率随相机横移（与 SeaSurface scroll 同口径，
+    -- 1 世界米 = height/viewHeight 屏距）；0=钉死屏幕。
+    seaRipple = { enabled = true, alpha = 0.6, tileScale = 1.0, scrollScale = 1.0 },
     -- 天空图图层（2026-10-18 读海美术接入）：屏幕空间满幅天空贴图，绘于背景渐变
     -- 之上、日月云鸟之下（方案 B：不依赖 scissor，零回归）。昼夜相位复用 seaSurface
     -- 的 duskFrom/duskSpan/nightFade 映射（SkyFrame 委托 SeaSurfaceFrame，仅改写键名

@@ -444,6 +444,9 @@ end
 -- 叠加于海面底图之上、替换程序 crest marks（Surface 门控：本层绘制成功即跳过
 -- crests，失败回退 crests）。瓦片尺寸=catalog 像素尺寸×tileScale，alpha 透传；
 -- 懒加载/失败缓存与 Plane、SeaSurface 同口径。
+-- 随船移动（2026-10-19 真机反馈）：pattern 原点按相机横移偏移（近水速率
+-- 1 世界米 = height/viewHeight 屏距，与 SeaSurface scroll 同口径），对 tileWidth
+-- 取模保证 REPEAT 无缝循环；scrollScale 经 Config.visual.seaRipple 透传，0=钉死屏幕。
 ---@param tileScale number? 瓦片缩放（1=资产原生像素；非法值回退 1）
 function Art.SeaRipple(ctx, movement, width, height, alpha, tileScale)
     local name = "sea_ripple_overlay"
@@ -467,6 +470,17 @@ function Art.SeaRipple(ctx, movement, width, height, alpha, tileScale)
     if type(rippleAlpha) ~= "number" or rippleAlpha < 0 or rippleAlpha > 1 then
         rippleAlpha = 0.28
     end
+    local scrollScale = Config.visual.seaRipple and Config.visual.seaRipple.scrollScale or 1
+    if type(scrollScale) ~= "number" or scrollScale < 0 then scrollScale = 1 end
+    local originX = 0
+    if scrollScale > 0 then
+        local camera = movement.camera
+        local cameraX = type(camera) == "table" and camera.x or 0
+        if not finite(cameraX) then cameraX = 0 end
+        local viewHeight = Config.camera and Config.camera.viewHeight or 45
+        local base = height / viewHeight
+        originX = -((cameraX * base * scrollScale) % tileWidth)
+    end
     nvgSave(ctx)
     nvgBeginPath(ctx)
     nvgMoveTo(ctx, 0, horizon(0))
@@ -477,7 +491,7 @@ function Art.SeaRipple(ctx, movement, width, height, alpha, tileScale)
     nvgLineTo(ctx, width, height)
     nvgLineTo(ctx, 0, height)
     nvgClosePath(ctx)
-    nvgFillPaint(ctx, nvgImagePattern(ctx, 0, 0, tileWidth, tileHeight, 0, image, rippleAlpha))
+    nvgFillPaint(ctx, nvgImagePattern(ctx, originX, 0, tileWidth, tileHeight, 0, image, rippleAlpha))
     fillCounter = fillCounter + 1
     nvgFill(ctx)
     nvgRestore(ctx)

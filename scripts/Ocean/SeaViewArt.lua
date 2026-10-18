@@ -629,8 +629,9 @@ function SeaViewArt.Surface(ctx, movement, time, clock)
     end
     -- 波纹平铺层（2026-10-18 C4，用户提供水彩波纹纹理 sea_ripple_overlay）：
     -- 屏幕空间双向平铺，叠加于海面底图之上，替换程序 crest marks——本层绘制
-    -- 成功即跳过 crests（静态水彩波纹让位），加载失败/显式关闭则 crests 照旧
-    -- （贴图优先、失败回退，零回归）。alpha/瓦片缩放经 Config.visual.seaRipple 透传。
+    -- 成功即跳过 crests（2026-10-19 起波纹按近水速率随船横移，scrollScale 可关），
+    -- 加载失败/显式关闭则 crests 照旧（贴图优先、失败回退，零回归）。
+    -- alpha/瓦片缩放/滚动速率经 Config.visual.seaRipple 透传。
     local rippleDrawn = false
     local rippleSettings = Config.visual.seaRipple or {}
     if rippleSettings.enabled ~= false and type(ImageArt.SeaRipple) == "function" then
