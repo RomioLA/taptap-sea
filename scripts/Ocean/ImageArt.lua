@@ -284,8 +284,19 @@ function Art.UprightCover(ctx, name, cover, alpha)
     local coverWidth = cover.maxX - cover.minX
     local coverHeight = cover.maxY - cover.minY
     if coverWidth < 1 or coverHeight < 1 then return false end
-    -- 内容主体铺满 cover 矩形，画布按 catalog 像素/内容比外扩透明留边。
-    local canvasHeight = coverHeight * spec.pixelHeight / spec.contentHeight
+    -- 内容主体须「包住」cover 矩形（等比不变形）：按两轴中更紧的一轴定尺。
+    -- 远处岛的投影包围盒又宽又扁，若一律按高定尺，左右两翼会盖不满。
+    local contentAspect = spec.contentWidth / spec.contentHeight
+    local contentWidth, contentHeight
+    if coverWidth / coverHeight >= contentAspect then
+        contentWidth = coverWidth
+        contentHeight = contentWidth / contentAspect
+    else
+        contentHeight = coverHeight
+        contentWidth = contentHeight * contentAspect
+    end
+    -- 画布按 catalog 像素/内容比外扩透明留边，内容主体在画布内居中。
+    local canvasHeight = contentHeight * spec.pixelHeight / spec.contentHeight
     local canvasWidth = canvasHeight * spec.pixelWidth / spec.pixelHeight
     local boxX = (cover.minX + cover.maxX) * 0.5 - canvasWidth * 0.5
     local boxY = (cover.minY + cover.maxY) * 0.5 - canvasHeight * 0.5
