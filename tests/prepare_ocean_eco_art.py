@@ -55,6 +55,9 @@ def catalog_text():
     # Sky（2026-10-18 读海美术接入）：屏幕空间满幅天空贴图；清单缺失时按空合集处理。
     sky_manifest = ROOT / "assets/image/Sky/manifest.json"
     sky = json.loads(sky_manifest.read_text(encoding="utf-8")) if sky_manifest.exists() else {"assets": {}}
+    # SkyDecor（2026-10-19 日月云贴图）：屏幕空间装饰层；清单缺失时按空合集处理。
+    skydecor_manifest = ROOT / "assets/image/SkyDecor/manifest.json"
+    skydecor = json.loads(skydecor_manifest.read_text(encoding="utf-8")) if skydecor_manifest.exists() else {"assets": {}}
     entries = {}
     # eco/SeaSurface 合集按条目自带 preload（per-entry，如 sea_surface_day/dusk=true、
     # night=false），其余合集沿用既有默认；与 prepare_ocean_ready_art.py 的 catalog_text
@@ -65,7 +68,8 @@ def catalog_text():
                                            (components["assets"], False, False), (islands["assets"], False, False),
                                            (eco["assets"], False, True),
                                            (sea["assets"], False, True),
-                                           (sky["assets"], False, True)):
+                                           (sky["assets"], False, True),
+                                           (skydecor["assets"], False, True)):
         for name, entry in collection.items():
             entries[name] = {**entry, "preload": entry.get("preload", preload) if per_entry else preload}
     selected = json.loads((WAVE2_OUT / "manifest.json").read_text(encoding="utf-8"))["assets"] \

@@ -164,6 +164,11 @@ local Config = {
     -- （画面贴图懒加载，首个 Backdrop 帧按需加载一次，句柄缓存）；scroll 默认开启、
     -- scrollScale 提供视差（天空无天区世界实体，横移仅微移纹理，与用户"随镜头横滚"一致）。
     skyLayer = { enabled = true, alpha = 1.0, scroll = true, scrollScale = 0.35 },
+    -- 日月云贴图层（2026-10-19 读海美术接入）：屏幕空间装饰精灵（ImageArt.ScreenSprite），
+    -- 替换矢量日/月/云（day=sky_sun+sky_cloud_light、night=sky_moon+sky_cloud_dark、
+    -- day 末段按 seaSurface 同源 blend 交叉淡入夜云）。贴图优先、加载失败回退矢量
+    -- （零回归）；preload=false 懒加载；enabled=false 整层回退矢量旧观感。
+    skyDecor = { enabled = true, alpha = 1.0 },
     wake = { lifetimeSec = 3, spacingMeters = 0.6, minSpeed = 0.15, maxSamples = 96,
         initialWidth = 0.65, spreadPerSec = 0.45, sternOffset = 2.5, opacity = 125 },
     projection = { circleSegments = 48, sectorSegments = 32, birdAltitude = 1.2 },

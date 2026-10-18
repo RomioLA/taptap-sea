@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "style": "读海日系水彩绘本风，日月单件水彩（含光晕）+ 日/夜两态积云，棋盘格去底 + 径向光晕重建",
+  "format": "RGBA PNG 直通 Alpha；水彩软边保留；单件精灵不循环",
+  "projection": "屏幕空间装饰层（ImageArt.ScreenSprite）：居中 imagePattern，非世界平面",
+  "placement": "Draw.Background 日/月/云贴图优先（day=sky_sun+sky_cloud_light、night=sky_moon+sky_cloud_dark、day 末段交叉淡入），加载失败回退矢量（零回归）",
+  "references": [
+    "scripts/Ocean/Draw.lua",
+    "scripts/Ocean/ImageArt.lua",
+    "scripts/Ocean/Config.lua",
+    "scripts/Ocean/SeaViewArt.lua"
+  ],
+  "assets": {
+    "sky_sun": {
+      "path": "image/SkyDecor/sky_sun.png",
+      "source": "E:/workbath/Fishing/_gen_sky_decor/sky_sun_v1.png",
+      "size": [
+        512,
+        511
+      ],
+      "content_bounds": [
+        4,
+        4,
+        508,
+        507
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.23647718933463796,
+      "sha256": "f481047cc69ab68c49c8fde1964a1ecf6f11c152ea94c2950d43d342be2251bc",
+      "source_sha256": "f481047cc69ab68c49c8fde1964a1ecf6f11c152ea94c2950d43d342be2251bc",
+      "preload": false,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "sky",
+      "status": "ready_wired",
+      "period": "day"
+    },
+    "sky_moon": {
+      "path": "image/SkyDecor/sky_moon.png",
+      "source": "E:/workbath/Fishing/_gen_sky_decor/sky_moon_v1.png",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        3,
+        3,
+        509,
+        509
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.23517608642578125,
+      "sha256": "cee2ae412398e9ee7d9d12926972ab7540fd2eb2c435319dad69da0ef66a3e1b",
+      "source_sha256": "cee2ae412398e9ee7d9d12926972ab7540fd2eb2c435319dad69da0ef66a3e1b",
+      "preload": false,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "sky",
+      "status": "ready_wired",
+      "period": "night"
+    },
+    "sky_cloud_dark": {
+      "path": "image/SkyDecor/sky_cloud_dark.png",
+      "source": "E:/workbath/Fishing/_gen_sky_decor/sky_cloud_dark_v1.png",
+      "size": [
+        512,
+        234
+      ],
+      "content_bounds": [
+        1,
+        1,
+        510,
+        231
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.5066856971153846,
+      "sha256": "11f0f08992e81cea479fa1f846bd392cf481f44e4881a3ab719717e03c2b48c8",
+      "source_sha256": "11f0f08992e81cea479fa1f846bd392cf481f44e4881a3ab719717e03c2b48c8",
+      "preload": false,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "sky",
+      "status": "ready_wired",
+      "period": "night"
+    },
+    "sky_cloud_light": {
+      "path": "image/SkyDecor/sky_cloud_light.png",
+      "source": "E:/workbath/Fishing/_gen_sky_decor/sky_cloud_light_v1.png",
+      "size": [
+        512,
+        224
+      ],
+      "content_bounds": [
+        1,
+        1,
+        511,
+        223
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.48946707589285715,
+      "sha256": "e37271ae6d71bc2d26c5cb67059902115547c8bed312f8aaf78b74d86c002b82",
+      "source_sha256": "e37271ae6d71bc2d26c5cb67059902115547c8bed312f8aaf78b74d86c002b82",
+      "preload": false,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "sky",
+      "status": "ready_wired",
+      "period": "day"
+    }
+  }
+}

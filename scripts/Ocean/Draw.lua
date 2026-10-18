@@ -1,6 +1,7 @@
 -- 矢量场景绘制模块：只负责画面，不修改游戏状态，也不依赖外部图片。
 local Config = require("Ocean.Config")
 local FishData = require("Ocean.FishData")
+local ImageArt = require("Ocean.ImageArt")
 local Draw = {}
 
 ---@param ctx NVGContextWrapper
@@ -124,6 +125,14 @@ local function drawSun(ctx, x, y, radius, progress)
         { 255, mixChannel(237, 207, warmth), mixChannel(177, 136, warmth), 255 })
 end
 
+-- 日月云贴图常量（2026-10-19 读海美术接入，assets/image/SkyDecor）：
+-- 键名与 catalog 一致；核心盘占裁剪画宽比例按源图 alpha 实测。
+local SKY_SUN_NAME, SKY_MOON_NAME = "sky_sun", "sky_moon"
+local SKY_CLOUD_DAY, SKY_CLOUD_NIGHT = "sky_cloud_light", "sky_cloud_dark"
+local SKY_SUN_CORE, SKY_MOON_CORE = 0.72, 0.80
+-- 矢量云身宽 141 单位 × cloudScale；贴图放宽 1.5 倍以承载水彩软边
+local SKY_CLOUD_WIDTH_RATIO = 1.5
+
 local function drawMoon(ctx, x, y, radius)
     Ellipse(ctx, x, y, radius * 1.7, radius * 1.7, { 169, 207, 250, 24 })
     Ellipse(ctx, x, y, radius * 1.28, radius * 1.28, { 185, 218, 252, 48 })
@@ -159,24 +168,75 @@ local function Background(ctx, w, h, time, clock, horizonAtX, skyDrawer)
     if type(skyDrawer) == "function" then skyDrawer(ctx, w, h) end
 
     local sunRadius = math.min(w * 0.055, h * 0.065)
+    -- 日月云贴图（2026-10-19 读海美术接入）：贴图优先、加载失败回退下方矢量路径
+    -- （零回归）。宽度按“不透明核心盘占裁剪画宽比例”反推，使核心盘与原矢量
+    -- 同尺寸，光晕超出核心自然外溢（源图实测：太阳核心 0.72、月亮核心 0.80）。
+    local decor = Config.visual and Config.visual.skyDecor or {}
+    local decorOn = decor.enabled ~= false
+    local decorAlpha = finiteNumber(decor.alpha) and math.max(0, math.min(1, decor.alpha)) or 1
+    local sunDrawn, moonDrawn = false, false
     if phase == "day" then
         local sunX, sunY = celestialPosition(w, h, phase, progress, sunRadius, horizonAtX)
-        drawSun(ctx, sunX, sunY, sunRadius, progress)
+        if decorOn then
+            sunDrawn = ImageArt.ScreenSprite(ctx, SKY_SUN_NAME, sunX, sunY,
+                2 * sunRadius / SKY_SUN_CORE, decorAlpha)
+        end
+        if not sunDrawn then drawSun(ctx, sunX, sunY, sunRadius, progress) end
     elseif phase == "night" then
         local moonRadius = sunRadius * 0.78
         local moonX, moonY = celestialPosition(w, h, phase, progress, moonRadius, horizonAtX)
-        drawMoon(ctx, moonX, moonY, moonRadius)
+        if decorOn then
+            moonDrawn = ImageArt.ScreenSprite(ctx, SKY_MOON_NAME, moonX, moonY,
+                2 * moonRadius / SKY_MOON_CORE, decorAlpha)
+        end
+        if not moonDrawn then drawMoon(ctx, moonX, moonY, moonRadius) end
     else
         -- Keep the fixed sun for headless rendering and legacy art previews.
         local sunX, sunY = w * 0.76, h * 0.13
-        Ellipse(ctx, sunX, sunY, sunRadius * 1.7, sunRadius * 1.7, { 250, 229, 164, 18 })
-        Ellipse(ctx, sunX, sunY, sunRadius * 1.28, sunRadius * 1.28, { 250, 229, 164, 32 })
-        Ellipse(ctx, sunX, sunY, sunRadius, sunRadius, { 251, 221, 139, 255 })
+        if decorOn then
+            sunDrawn = ImageArt.ScreenSprite(ctx, SKY_SUN_NAME, sunX, sunY,
+                2 * sunRadius / SKY_SUN_CORE, decorAlpha)
+        end
+        if not sunDrawn then
+            Ellipse(ctx, sunX, sunY, sunRadius * 1.7, sunRadius * 1.7, { 250, 229, 164, 18 })
+            Ellipse(ctx, sunX, sunY, sunRadius * 1.28, sunRadius * 1.28, { 250, 229, 164, 32 })
+            Ellipse(ctx, sunX, sunY, sunRadius, sunRadius, { 251, 221, 139, 255 })
+        end
+    end
+
+    -- 夜云混合系数：夜间恒 1；昼相末段按 seaSurface 同源 smoothstep 交叉淡入，
+    -- 与天空图/海面贴图的黄昏淡入保持同一时间轴。
+    local nightMix = 0
+    if phase == "night" then
+        nightMix = 1
+    elseif phase == "day" then
+        local surface = Config.visual and Config.visual.seaSurface or {}
+        local from = finiteNumber(surface.duskFrom) and surface.duskFrom or 0.8
+        local span = finiteNumber(surface.duskSpan) and math.max(surface.duskSpan, 0.001) or 0.2
+        local t = (progress - from) / span
+        t = math.max(0, math.min(1, t))
+        nightMix = t * t * (3 - 2 * t)
     end
 
     local cloudScale = math.min(w / 560, h / 680)
-    Cloud(ctx, w * 0.2 + math.sin(time * 0.12) * 8, h * 0.15, cloudScale)
-    Cloud(ctx, w * 0.86 + math.sin(time * 0.1 + 2) * 6, h * 0.25, cloudScale * 0.67)
+    local cloudWidth = 141 * cloudScale * SKY_CLOUD_WIDTH_RATIO
+    local function drawCloudAt(x, y, widthPx, mix)
+        local drawn = false
+        if decorOn then
+            if mix < 1 then
+                drawn = ImageArt.ScreenSprite(ctx, SKY_CLOUD_DAY, x, y,
+                    widthPx, decorAlpha * (1 - mix)) or drawn
+            end
+            if mix > 0 then
+                drawn = ImageArt.ScreenSprite(ctx, SKY_CLOUD_NIGHT, x, y,
+                    widthPx, decorAlpha * mix) or drawn
+            end
+        end
+        -- 贴图失败（含未知名/加载失败）回退矢量云：换算回原矢量缩放口径
+        if not drawn then Cloud(ctx, x, y, widthPx / (141 * SKY_CLOUD_WIDTH_RATIO)) end
+    end
+    drawCloudAt(w * 0.2 + math.sin(time * 0.12) * 8, h * 0.15, cloudWidth, nightMix)
+    drawCloudAt(w * 0.86 + math.sin(time * 0.1 + 2) * 6, h * 0.25, cloudWidth * 0.67, nightMix)
 
     -- 远景的浅色海岸剪影，衬托中央五层场景。
     nvgBeginPath(ctx)

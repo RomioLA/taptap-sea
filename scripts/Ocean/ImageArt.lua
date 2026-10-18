@@ -498,6 +498,41 @@ function Art.SeaRipple(ctx, movement, width, height, alpha, tileScale)
     return true
 end
 
+-- 屏幕空间居中精灵（2026-10-19 日月云接入）：不经世界投影，直接以屏幕像素
+-- 中心点绘制；宽度=目标像素宽，高度按源图宽高比推导。懒加载/失败缓存与
+-- Plane 同口径；decor 素材 preload=false 首帧按需加载一次。
+---@param ctx NVGContextWrapper
+---@param name string
+---@param cx number 屏幕中心 x
+---@param cy number 屏幕中心 y
+---@param widthPx number 目标像素宽
+---@param alpha number?
+function Art.ScreenSprite(ctx, name, cx, cy, widthPx, alpha)
+    name = ArtVariants.Resolve(name)
+    local spec = catalog[name]
+    if not spec or type(widthPx) ~= "number" or widthPx <= 0
+        or not finite(cx) or not finite(cy) then return false end
+    local images = contexts[ctx]
+    local image = images and images[name] or 0
+    if image <= 0 then
+        Art.LoadImage(ctx, name)
+        images = contexts[ctx]
+        image = images and images[name] or 0
+        if image <= 0 then return false end
+    end
+    local heightPx = widthPx * (spec.pixelHeight or 1) / math.max(spec.pixelWidth or 1, 1)
+    local x, y = cx - widthPx * 0.5, cy - heightPx * 0.5
+    nvgSave(ctx)
+    nvgBeginPath(ctx)
+    nvgRect(ctx, x, y, widthPx, heightPx)
+    nvgClosePath(ctx)
+    nvgFillPaint(ctx, nvgImagePattern(ctx, x, y, widthPx, heightPx, 0, image, alpha or 1))
+    fillCounter = fillCounter + 1
+    nvgFill(ctx)
+    nvgRestore(ctx)
+    return true
+end
+
 -- 波纹只读现有 voyage time；暂停自然冻结，不生成粒子或寿命表。
 function Art.ContactRipple(ctx, movement, position, time, radius)
     local phase = ((time or 0) * 0.48) % 1
