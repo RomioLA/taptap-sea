@@ -7,6 +7,7 @@ local Geometry = require("Ocean.ProjectedGeometry")
 local Presentation = require("Ocean.SeaPresentation")
 local Atmosphere = require("Ocean.SeaAtmosphere")
 local ImageArt = require("Ocean.ImageArt")
+local Projection = require("Ocean.Projection")
 local PerfProbe = require("Ocean.PerfProbe")
 local SeaDraw = {}
 local FIXED_BARREL_CONTENT_ID = "driftwood_barrel"
@@ -64,6 +65,12 @@ end
 -- 取 1.8m 与旧 Plane 口径的实际可见翼展对齐（3.2m 画布 × 580/1024 ≈ 1.81m），
 -- 保证本次改造只改投影模式、不改海鸟在画面里的体量，便于真机直接对比。
 local BIRD_SPAN_METERS = 1.8
+-- 海鸥立牌的屏幕空间最小翼展（像素）。2026-10-19 真机二轮反馈：俯冲姿态下翼展
+-- 缩到 0.68m，远处按透视折算后不足 ImageArt.UPRIGHT_MIN_PX=2 亚像素剔除线，
+-- 立牌返回 false 回退 WorldSeabird 矢量折线鸟——真机天空呈现三只白色折线鸟。
+-- 给一个可见下限（略高于剔除线，保证 nvgImagePattern 取到有效像素），远处海鸥
+-- 即便透视缩到亚像素也照常贴水彩立牌，不再掉回矢量。
+local BIRD_MIN_SCREEN_SPAN_PX = 3
 -- 立牌水平镜像死区（cos heading 的绝对值）：正前/正后飞时 cos≈0，若跟随符号翻转
 -- 会每帧抖动，故 ±0.26 内一律不翻转（≈ ±15°），保留"明显朝左/朝右"的朝向可读性。
 local BIRD_FLIP_DEADZONE = 0.26
@@ -612,6 +619,18 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
                     local dive = entry.dive or 0
                     local birdAltitude = Config.visual.projection.birdAltitude * (1 - dive)
                     local birdWidth = BIRD_SPAN_METERS * (1 - 0.62 * dive)
+                    -- 2026-10-19 真机二轮反馈（红框截图：天空三只海鸥是白色折线鸟）：
+                    -- 俯冲时翼展缩到 0.68m，远处 screenWidth 跌破 ImageArt 的
+                    -- UPRIGHT_MIN_PX=2 亚像素剔除线 → Upright 返回 false，回退
+                    -- WorldSeabird 矢量折线鸟（水彩立牌失效，即用户红框所见）。
+                    -- 立牌在此按屏幕像素给一个可见下限：远处海鸥即便按透视缩到
+                    -- 亚像素也照常贴水彩图，只有完全不可见时才交给矢量兜底。
+                    -- 换算回世界米制需除以该深度的投影 scale（Projection.Project
+                    -- 第三返回值即米→像素的 scale），故先取 scale。
+                    local _, _, spanScale = Projection.Project(movement, point, birdAltitude)
+                    if type(spanScale) == "number" and spanScale > 0 then
+                        birdWidth = math.max(birdWidth, BIRD_MIN_SCREEN_SPAN_PX / spanScale)
+                    end
                     if not ImageArt.Upright(ctx, ecoFrameName("eco_bird", time, 0), movement,
                         point, nil, 1, birdWidth, birdAltitude, birdFlipsScreen(entry.heading)) then
                         local flapScale = 1 + math.sin(time * 3.2) * 0.035

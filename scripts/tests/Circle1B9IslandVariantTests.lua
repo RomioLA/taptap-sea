@@ -366,6 +366,42 @@ function Tests.Run(recorder)
         end
     end)
 
+    check("variant_vector_shore_is_not_painted_under_covering_billboard", function()
+        -- 2026-10-19 真机二轮红框（沙洲/岩岛背后大块土黄矩形）：矢量岸块
+        -- （SAND_SHORE 外框 + SAGE_LAND 内芯）先填色，覆盖立牌随后绘制——贴图
+        -- 内容主体的透明留边压不住下层色块，真机呈现「岛心一小团贴图 + 四周大块
+        -- 土黄/橄榄矩形」。修法：填色延后到立牌判定之后，覆盖成功即抑制。
+        -- 桩环境无图会走 Upright 返回 false 的回退路径，故此处显式注入一个
+        -- 「覆盖成功」的假 UprightCover，验证该分支下矢量岸块零填色。
+        for _, variant in ipairs(VARIANT_MIRROR) do
+            local entry = assert(fixedIsland(variant.contentId), variant.contentId .. " missing")
+            local runtime = makeRuntime(vantageOf(entry))
+            local original = ImageArt.UprightCover
+            local coverCalls, coverError = 0, nil
+            ImageArt.UprightCover = function(_, name, cover)
+                coverCalls = coverCalls + 1
+                local ok, err = pcall(function()
+                    assert(name == variant.contentId,
+                        "cover billboard must use the island content id, got " .. tostring(name))
+                    assert(cover and cover.minX < cover.maxX and cover.minY < cover.maxY,
+                        "cover billboard needs a valid projected bounds rectangle")
+                end)
+                if not ok then coverError = err end
+                return true -- 模拟覆盖成功
+            end
+            recorder.reset()
+            SeaViewArt.Island({}, runtime.movement, islandEntity(entry), 0, 0)
+            ImageArt.UprightCover = original
+            assert(not coverError, tostring(coverError))
+            assert(coverCalls == 1,
+                variant.contentId .. " must attempt the covering billboard exactly once, got "
+                    .. coverCalls)
+            assert(recorder.callCount("nvgFill") == 0,
+                variant.contentId .. " painted vector shore under a covering billboard: "
+                    .. recorder.callCount("nvgFill") .. " fills (expected 0)")
+        end
+    end)
+
     check("variant_draw_is_read_only", function()
         for _, variant in ipairs(VARIANT_MIRROR) do
             local entry = assert(fixedIsland(variant.contentId), variant.contentId .. " missing")

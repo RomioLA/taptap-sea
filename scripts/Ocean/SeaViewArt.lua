@@ -1109,8 +1109,55 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
         end
     end
     PerfProbe.Sample("islandPng", probePngStop())
+    -- 矢量岸块。变体岛先用「只投影不填色」探测矢量轮廓的屏幕包围盒（shore+land
+    -- 两层都要，外框比内芯大），据此给覆盖立牌定尺（用户指令「矢量图做尺寸的
+    -- 标准」）；填色延后到立牌判定之后——覆盖成功则不填，否则贴图内容主体的透明
+    -- 留边压不住下层色块，真机呈现「岛心一团贴图 + 四周大块土黄/橄榄矩形」。
+    -- 非变体岛（无覆盖立牌）与覆盖失败回退路径仍走原矢量填色。
     local probeVectorStop = PerfProbe.Timer()
-    if not hasImage then
+    local vectorBounds
+    if variant then
+        local probe = newScreenBounds()
+        local collect = function(polys)
+            for _, poly in ipairs(polys) do
+                if Geometry.WorldBoundsVisible(movement, poly) then
+                    for _, point in ipairs(Geometry.ProjectPolygon(movement, poly, 0, nil, frame)) do
+                        includeScreenPoint(probe, point)
+                        includeScreenPoint(bounds, point)
+                    end
+                end
+            end
+        end
+        collect(outerPolys)
+        collect(landPolys)
+        vectorBounds = probe
+    end
+    -- 变体岛贴图=竖幅公告板（覆盖模式，以矢量轮廓投影包围盒为尺寸标准）。
+    -- 2026-10-19 真机二轮反馈（新接入岛屿全数命中）：上一版无论立牌成败都先填矢量
+    -- 岸块，贴图内容主体的透明留边压不住下层色块，真机呈现「岛心一小团贴图 + 四周
+    -- 大块土黄(SAND_SHORE)/橄榄(SAGE_LAND)矩形」。现改为：矢量岸块延后到本段之后
+    -- 填色——覆盖立牌成功即抑制（贴图自身即完整岛体），失败才回落矢量轮廓。
+    local variantBillboard = false
+    if variant then
+        -- 尺寸标准=矢量岸块（shore+land 外扩）的屏幕包围盒，外扩 4% 掩边。
+        local cover
+        if vectorBounds.minX ~= math.huge and vectorBounds.minY ~= math.huge then
+            local pad = math.max(2, (vectorBounds.maxY - vectorBounds.minY) * VARIANT_BILLBOARD_COVER_PAD)
+            cover = {
+                minX = vectorBounds.minX - pad, maxX = vectorBounds.maxX + pad,
+                minY = vectorBounds.minY - pad, maxY = vectorBounds.maxY + pad,
+            }
+        end
+        if cover and type(ImageArt.UprightCover) == "function" then
+            variantBillboard = ImageArt.UprightCover(ctx, entity.contentId, cover, 1)
+        end
+        if not variantBillboard then
+            variantBillboard = ImageArt.Upright(ctx, entity.contentId, movement, center,
+                clamp(radius * VARIANT_BILLBOARD_RATIO, VARIANT_BILLBOARD_MIN, VARIANT_BILLBOARD_MAX), 1)
+        end
+    end
+    -- 矢量岸块填色：变体岛延后至此，覆盖立牌成功则跳过（贴图即岛体）。
+    if not hasImage and not (variant and variantBillboard) then
         for _, poly in ipairs(outerPolys) do
             local outerScreen = fillWorldPolygon(ctx, movement, poly, shoreColor, bounds, nil, frame)
             if #outerScreen >= 3 then
@@ -1123,41 +1170,11 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
                 strokeWorldPolygon(ctx,movement,poly,rgba({107,131,101,170},nil,nil,airMix),1,bounds,0,frame)
             end
         end
-    else
+    elseif hasImage then
         for _, poly in ipairs(outerPolys) do
             for _, point in ipairs(Geometry.ProjectPolygon(movement, poly, 0, nil, frame)) do
                 includeScreenPoint(bounds, point)
             end
-        end
-    end
-    -- 变体岛贴图=竖幅公告板（Upright，与 sign_* 岛饰/丘/树同一投影口径）：
-    -- 底沿坐岛心，高度按岛半径比例 clamp（r=9→4.95m、r=4→2.6m）；成功时抑制
-    -- 矢量丘/树/散石/石柱（贴图完整顶视图自带，避免叠加错位）；加载失败回退
-    -- 全矢量轮廓。俯视岸块保留作水面基座（实体感，与映射岛贴图+矢量并存同构）。
-    -- 2026-10-18 真机反馈：岛外围白色泡沫观感不佳，全体岛屿移除（drawShoreFoam
-    -- 调用与 foam_ring 贴图一并下线；ShoreFoamArc 数学函数保留由 SeaMotionEffects
-    -- 契约直测）。
-    local variantBillboard = false
-    if variant then
-        -- 2026-10-19 真机反馈（红框截图，新接入岛屿全数命中）：按岛半径比例给
-        -- 立牌定高，贴图既盖不住矢量岛、又会随深度缩小成「漂浮贴图块」。改以
-        -- 矢量岛投影包围盒为尺寸标准（用户指令「矢量图做尺寸的标准」）：屏幕
-        -- 空间覆盖模式让贴图内容主体精确铺满矢量轮廓并居中，外扩 4% 掩边；
-        -- 覆盖模式不可用（目录缺失/加载失败）时回退按半径定高的旧立牌口径。
-        local cover
-        if bounds.minX ~= math.huge and bounds.minY ~= math.huge then
-            local pad = math.max(2, (bounds.maxY - bounds.minY) * VARIANT_BILLBOARD_COVER_PAD)
-            cover = {
-                minX = bounds.minX - pad, maxX = bounds.maxX + pad,
-                minY = bounds.minY - pad, maxY = bounds.maxY + pad,
-            }
-        end
-        if cover and type(ImageArt.UprightCover) == "function" then
-            variantBillboard = ImageArt.UprightCover(ctx, entity.contentId, cover, 1)
-        end
-        if not variantBillboard then
-            variantBillboard = ImageArt.Upright(ctx, entity.contentId, movement, center,
-                clamp(radius * VARIANT_BILLBOARD_RATIO, VARIANT_BILLBOARD_MIN, VARIANT_BILLBOARD_MAX), 1)
         end
     end
     local vectorDecorSuppressed = variant and variantBillboard
