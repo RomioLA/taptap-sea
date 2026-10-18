@@ -461,9 +461,45 @@ local function surfaceHorizonAt(movement, x, width, height, fallback)
     return fallback
 end
 
+-- 纯海面贴图相位选择（2026-10-17 C2，方案 A 夜罩不动）：纯函数，不读 nvg。
+-- day 相 progress<duskFrom：昼图独显；[duskFrom,1] smoothstep 交叉淡入黄昏图；
+-- night 相前 nightFade 段由黄昏图 smoothstep 淡回昼图——夜罩瞬间全量叠加时
+-- 海面已回到昼图状态，与全体实体染色一致（overlay(昼图)≈正确夜间水色，
+-- overlay(预调色夜图)≈死黑），无跳变；nightFade 之后昼图直接过夜罩。
+-- 夜图（sea_surface_night）不接入自动映射，留作 SeaDebug/后续方案
+-- （catalog preload=false，无自动加载路径）。无 clock / 非法相位退化为
+-- 昼图独显：headless 与三参旧调用路径零回归。
+---@param clock table?
+---@return {base: string, over: string?, blend: number}
+function SeaViewArt.SeaSurfaceFrame(clock)
+    local phase, progress = Draw.ClockVisualState(clock)
+    if not phase then
+        return { base = "sea_surface_day", over = nil, blend = 0 }
+    end
+    local settings = Config.visual.seaSurface or {}
+    local function smoothstep(t)
+        t = clamp(t, 0, 1)
+        return t * t * (3 - 2 * t)
+    end
+    if phase == "day" then
+        local from = clamp(settings.duskFrom or 0.8, 0, 1)
+        local span = math.max(0.001, clamp(settings.duskSpan or 0.2, 0.001, 1))
+        local blend = smoothstep((progress - from) / span)
+        if blend <= 0 then return { base = "sea_surface_day", over = nil, blend = 0 } end
+        return { base = "sea_surface_day", over = "sea_surface_dusk", blend = blend }
+    end
+    local fade = math.max(0, settings.nightFade or 0.1)
+    if fade <= 0 or progress >= fade then
+        return { base = "sea_surface_day", over = nil, blend = 0 }
+    end
+    local blend = 1 - smoothstep(progress / fade)
+    if blend <= 0 then return { base = "sea_surface_day", over = nil, blend = 0 } end
+    return { base = "sea_surface_day", over = "sea_surface_dusk", blend = blend }
+end
+
 -- A screen-fixed gradient follows the projected horizon while world-grid
 -- crests transition from broad near marks to finer distant detail.
-function SeaViewArt.Surface(ctx, movement, time)
+function SeaViewArt.Surface(ctx, movement, time, clock)
     if not ctx or type(movement) ~= "table" then return end
     local width, height = movement.viewportWidth, movement.viewportHeight
     if not finite(width) or not finite(height) or width <= 0 or height <= 0 then return end
@@ -499,9 +535,36 @@ function SeaViewArt.Surface(ctx, movement, time)
     nvgFillPaint(ctx, nvgLinearGradient(ctx, 0, centerHorizon, 0, height,
         nvgRGBA(86, 178, 180, 255), nvgRGBA(43, 148, 162, 255)))
     nvgFill(ctx)
+    -- 纯海面贴图层（2026-10-17 C2，方案 A）：渐变保留为最终兜底；贴图可用时
+    -- 叠加（base + 按相位交叉淡入的 over），只有加载失败/显式关闭才走纸纹层，
+    -- 避免贴图与纸纹双重颗粒叠加。滚动只读相机 x：近水速率 1 世界米 = base
+    -- 屏距（anchor 深度 q=1，与 Projection.parameters 同口径），负向偏移，
+    -- REPEATX 横向无缝循环；暂停时相机冻结，偏移自然静止。
+    local seaSettings = Config.visual.seaSurface or {}
+    local seaDrawn = false
+    if seaSettings.enabled ~= false and type(ImageArt.SeaSurface) == "function" then
+        local frame = SeaViewArt.SeaSurfaceFrame(clock)
+        local alpha = seaSettings.alpha
+        if type(alpha) ~= "number" or alpha < 0 or alpha > 1 then alpha = 1 end
+        local scrollX = 0
+        if seaSettings.scroll ~= false then
+            local camera = movement.camera
+            local cameraX = type(camera) == "table" and camera.x or 0
+            if not finite(cameraX) then cameraX = 0 end
+            local scale = seaSettings.scrollScale
+            if type(scale) ~= "number" or scale < 0 then scale = 1 end
+            local viewHeight = Config.camera and Config.camera.viewHeight or 45
+            local base = height / viewHeight
+            scrollX = -((cameraX * base * scale) % width)
+        end
+        seaDrawn = ImageArt.SeaSurface(ctx, movement, width, height, frame.base, alpha, scrollX)
+        if seaDrawn and frame.over and frame.blend > 0 then
+            ImageArt.SeaSurface(ctx, movement, width, height, frame.over, alpha * frame.blend, scrollX)
+        end
+    end
     -- Optional flat paper material supplied by ImageArt; world crests below
     -- still own motion, fixed cell density and the bounded mark budget.
-    if type(ImageArt.WaterPaper) == "function" then
+    if not seaDrawn and type(ImageArt.WaterPaper) == "function" then
         ImageArt.WaterPaper(ctx, movement, width, height)
     end
 

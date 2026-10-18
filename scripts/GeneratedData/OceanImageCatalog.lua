@@ -376,4 +376,28 @@ return {
         preload = false,
         repeatTexture = false,
     },
+    sea_surface_day = {
+        path = "image/SeaSurface/sea_surface_day.png",
+        pixelWidth = 1920, pixelHeight = 1080,
+        contentWidth = 1920, contentHeight = 1080,
+        anchorX = 0.5, anchorY = 0.5,
+        preload = true,
+        repeatTexture = true,
+    },
+    sea_surface_dusk = {
+        path = "image/SeaSurface/sea_surface_dusk.png",
+        pixelWidth = 1920, pixelHeight = 1080,
+        contentWidth = 1920, contentHeight = 1080,
+        anchorX = 0.5, anchorY = 0.5,
+        preload = true,
+        repeatTexture = true,
+    },
+    sea_surface_night = {
+        path = "image/SeaSurface/sea_surface_night.png",
+        pixelWidth = 1920, pixelHeight = 1080,
+        contentWidth = 1920, contentHeight = 1080,
+        anchorX = 0.5, anchorY = 0.5,
+        preload = false,
+        repeatTexture = true,
+    },
 }

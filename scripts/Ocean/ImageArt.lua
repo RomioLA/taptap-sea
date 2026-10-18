@@ -363,6 +363,50 @@ function Art.WaterPaper(ctx, movement, width, height)
     return true
 end
 
+-- 纯海面贴图层（2026-10-17 C2，方案 A）：屏幕空间材质层，与 WaterPaper
+-- 同构——只用一条地平线折线遮罩，不作为世界地标或动态波浪。差异点：
+-- ①满幅 16:9 贴图（地平线约在其 25% 处，与游戏 horizonY≈0.24 吻合），
+--   cell 取视口尺寸使全图恰好铺满可见水域，竖向上沿即裁剪区不会回绕；
+-- ②REPEATX 横向无缝循环 + scrollX 偏移实现相机横移视差（近水速率由
+--   调用方按 base=height/camera.viewHeight 折算后传入，负向偏移）。
+-- 懒加载同 Plane 口径：加载失败返回 false，由调用方走渐变/纸纹兜底；
+-- 失败句柄 -1 已缓存，不会每帧重试。scrollX 缺省 0（静止满幅）。
+---@param ctx NVGContextWrapper
+---@param name string
+---@param movement table
+---@param width number
+---@param height number
+---@param alpha number?
+---@param scrollX number?
+function Art.SeaSurface(ctx, movement, width, height, name, alpha, scrollX)
+    name = ArtVariants.Resolve(name)
+    local images = contexts[ctx]
+    local image = images and images[name] or 0
+    if image <= 0 then
+        Art.LoadImage(ctx, name)
+        images = contexts[ctx]
+        image = images and images[name] or 0
+        if image <= 0 then return false end
+    end
+    local horizon = Projection.HorizonFunction(movement)
+    if not horizon then return false end
+    nvgSave(ctx)
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, 0, horizon(0))
+    for index = 1, 48 do
+        local x = width * index / 48
+        nvgLineTo(ctx, x, horizon(x))
+    end
+    nvgLineTo(ctx, width, height)
+    nvgLineTo(ctx, 0, height)
+    nvgClosePath(ctx)
+    nvgFillPaint(ctx, nvgImagePattern(ctx, scrollX or 0, 0, width, height, 0, image, alpha or 1))
+    fillCounter = fillCounter + 1
+    nvgFill(ctx)
+    nvgRestore(ctx)
+    return true
+end
+
 -- 波纹只读现有 voyage time；暂停自然冻结，不生成粒子或寿命表。
 function Art.ContactRipple(ctx, movement, position, time, radius)
     local phase = ((time or 0) * 0.48) % 1

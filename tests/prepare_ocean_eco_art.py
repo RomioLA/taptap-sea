@@ -45,13 +45,21 @@ def catalog_text():
     decor = json.loads((ROOT / "assets/image/OceanDecor/manifest.json").read_text(encoding="utf-8"))
     components = json.loads((ROOT / "assets/image/OceanComponents/manifest.json").read_text(encoding="utf-8"))
     eco = json.loads((OUT / "manifest.json").read_text(encoding="utf-8"))
+    # SeaSurface（纯海面 v2，2026-10-17）：屏幕空间材质层，由 tests/prepare_ocean_sea_art.py 入库；
+    # 清单缺失时按空合集处理（尚未入库的旧工作区可直接跑本脚本的 eco 部分）。
+    sea_manifest = ROOT / "assets/image/SeaSurface/manifest.json"
+    sea = json.loads(sea_manifest.read_text(encoding="utf-8")) if sea_manifest.exists() else {"assets": {}}
+    repeat_names = ("waterpaper", "waterpaper_story", "ocean_tile",
+                    "sea_surface_day", "sea_surface_dusk", "sea_surface_night")
     lines = ["-- 自动生成：python3 tests/prepare_ocean_eco_art.py；禁止手工编辑。",
              "-- 只含图片规格，不含实体、玩法数值或更新逻辑。", "return {"]
-    for collection, preload in ((loop["assets"], True), (ready["assets"], False),
-                                (story["assets"], False), (decor["assets"], False),
-                                (components["assets"], False), (eco["assets"], False)):
+    for collection, default_preload in ((loop["assets"], True), (ready["assets"], False),
+                                        (story["assets"], False), (decor["assets"], False),
+                                        (components["assets"], False), (eco["assets"], False),
+                                        (sea["assets"], False)):
         for name, entry in sorted(collection.items()):
             size, bounds = entry["size"], entry["content_bounds"]
+            preload = entry.get("preload", default_preload)
             lines.extend([
                 "    " + name + " = {",
                 "        path = " + json.dumps(entry["path"]) + ",",
@@ -59,7 +67,7 @@ def catalog_text():
                 f"        contentWidth = {bounds[2] - bounds[0]}, contentHeight = {bounds[3] - bounds[1]},",
                 "        anchorX = 0.5, anchorY = 0.5,",
                 "        preload = " + str(preload).lower() + ",",
-                "        repeatTexture = " + str(name in ("waterpaper", "waterpaper_story", "ocean_tile")).lower() + ",",
+                "        repeatTexture = " + str(name in repeat_names).lower() + ",",
                 "    },",
             ])
     lines.append("}")

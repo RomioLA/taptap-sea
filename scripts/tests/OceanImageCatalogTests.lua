@@ -18,7 +18,8 @@ function Tests.Run()
     -- 基础 preload + W2 海鸥/浪花候选 + 四个 story 目标；船贴图与完整岛屿
     -- 候选保留在素材清单，但不替换主线矢量船和分层岛屿的运行目录项。
     local startupNames = { "island", "barrel", "gull", "ripple", "waterpaper",
-        "gull_dive", "splash", "island_story", "barrel_story", "gull_story", "waterpaper_story" }
+        "gull_dive", "splash", "island_story", "barrel_story", "gull_story", "waterpaper_story",
+        "sea_surface_day", "sea_surface_dusk" }
     local startupCount = #startupNames
     local a, b, c = {}, {}, {}
     NVG_IMAGE_GENERATE_MIPMAPS, NVG_IMAGE_REPEATX, NVG_IMAGE_REPEATY = 1, 2, 4
@@ -59,8 +60,12 @@ function Tests.Run()
             assert(Art.IsLoaded(a, name), name .. " 必须随变体开启预载")
         end
         assert(not Art.IsLoaded(a, "reef") and not Art.IsLoaded(a, "sardine"))
+        assert(not Art.IsLoaded(a, "sea_surface_night"),
+            "夜图 preload=false：不随场景启动加载（SeaDebug/后续方案）")
         for _, entry in ipairs(created) do
-            assert(entry.flags == (entry.path:find("waterpaper", 1, true) and 7 or 1))
+            local repeated = entry.path:find("waterpaper", 1, true)
+                or entry.path:find("sea_surface", 1, true)
+            assert(entry.flags == (repeated and 7 or 1))
         end
     end)
     check("story 变体目标清单与 catalog 一一对应", function()

@@ -104,6 +104,12 @@ local Config = {
         amplitudeMeters = 0.18, periodSec = 5, maxMarks = 1800,
         nearSpacingMeters = 12, farSpacingMeters = 6,
         detailTransitionStartMeters = 35, detailTransitionEndMeters = 110 },
+    -- 纯海面贴图层（2026-10-17 C2，方案 A 夜罩不动）：屏幕空间材质层，
+    -- 参数仅影响表现，不触碰世界/玩法。duskFrom/duskSpan 控制昼相末段向
+    -- 黄昏图交叉淡入；nightFade 控制入夜前 10% 淡回昼图（夜罩瞬间叠加
+    -- 不跳变）；scroll 关闭后贴图静止（仅 gradient/纸纹兜底时等同旧观感）。
+    seaSurface = { enabled = true, alpha = 1.0, duskFrom = 0.8, duskSpan = 0.2,
+        nightFade = 0.1, scroll = true, scrollScale = 1.0 },
     wake = { lifetimeSec = 3, spacingMeters = 0.6, minSpeed = 0.15, maxSamples = 96,
         initialWidth = 0.65, spreadPerSec = 0.45, sternOffset = 2.5, opacity = 125 },
     projection = { circleSegments = 48, sectorSegments = 32, birdAltitude = 1.2 },

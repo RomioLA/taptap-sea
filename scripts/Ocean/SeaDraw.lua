@@ -486,7 +486,9 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
     PerfProbe.Frame()
     local horizon = movement:GetHorizonY()
     Art.Backdrop(ctx, width, height, time, clock, movement)
-    Art.Surface(ctx, movement, time)
+    -- C2（2026-10-17）：海面贴图相位映射需要 clock（昼/夜 progress）；
+    -- SeaViewArt.Surface 对缺省 clock 退化为昼图独显，三参旧调用零回归。
+    Art.Surface(ctx, movement, time, clock)
     -- T5（2026-10-06 美术审核确认）：昼夜色罩移到世界实体之后统一染色——
     -- 旧层级（实体前）导致 PNG 船/岛/木桶等贴图实体夜间不被染暗。
     -- 层级：天空海面 → 世界实体 → 昼夜罩 → 雾/港口标记/功能信号（保持可读）。

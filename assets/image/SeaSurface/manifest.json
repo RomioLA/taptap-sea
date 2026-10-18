@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "style": "读海日系水彩绘本风，纯海面满幅（无天空/地平线），锚点链派生：风格参考图→日间锚点→黄昏/夜晚",
+  "format": "不透明 RGB PNG 满幅；上浅下深纵深过渡；左右边缘无缝可横向循环拼接",
+  "projection": "屏幕空间材质层（ImageArt.SeaSurface）：地平线裁剪 + imagePattern + 相机横向滚动，非世界平面",
+  "placement": "SeaViewArt.Surface 相位映射（方案 A 夜罩不动）：day 承载日间与夜间（夜间=昼图过夜罩），dusk 用于昼相 progress≥0.8 交叉淡入，night 留 SeaDebug/后续方案",
+  "references": [
+    "scripts/Ocean/SeaViewArt.lua",
+    "scripts/Ocean/ImageArt.lua",
+    "scripts/Ocean/SeaDraw.lua"
+  ],
+  "assets": {
+    "sea_surface_day": {
+      "path": "image/SeaSurface/sea_surface_day.png",
+      "source": "E:/workbath/Fishing/_gen_pure_sea/pure_sea_day_v2.png",
+      "size": [
+        1920,
+        1080
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "363aa32dcc53b2f0d9e79f8dc2c7f11007b67c89f09a1aa38e110ba7f088cfe2",
+      "source_sha256": "a485f7e00b4548dbbc66e66fc3c637f52c5681615b24b0ba567b57c7539654b1",
+      "preload": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "sea_surface",
+      "status": "ready_wired",
+      "period": "day"
+    },
+    "sea_surface_dusk": {
+      "path": "image/SeaSurface/sea_surface_dusk.png",
+      "source": "E:/workbath/Fishing/_gen_pure_sea/pure_sea_dusk_v2.png",
+      "size": [
+        1920,
+        1080
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "1318be85a590d59f08fc6876c8ac4791d8b7b574bcc9e3b33e389c22555fa448",
+      "source_sha256": "78e5fc0237b1c0549a291ad146c2cbe6739b69bbabb79ebeb94b63769243c06e",
+      "preload": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "sea_surface",
+      "status": "ready_wired",
+      "period": "dusk"
+    },
+    "sea_surface_night": {
+      "path": "image/SeaSurface/sea_surface_night.png",
+      "source": "E:/workbath/Fishing/_gen_pure_sea/pure_sea_night_v2.png",
+      "size": [
+        1920,
+        1080
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "5870b452486f51f70040dcd2c902c91ad0ff1bf8d791d8b50cc62c869542475c",
+      "source_sha256": "a43d00674c410fe889f08adc629fe236c2d5c52489cc4e48dcbcd13f1b4e4904",
+      "preload": false,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "sea_surface",
+      "status": "ready_wired",
+      "period": "night"
+    }
+  }
+}

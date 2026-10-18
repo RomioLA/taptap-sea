@@ -63,7 +63,11 @@ local function finiteNumber(value)
 end
 
 -- Read only the existing Gameplay clock; rendering never advances or caches it.
-local function clockVisualState(clock)
+-- 公开供海面相位映射（SeaViewArt.SeaSurfaceFrame）等表现层复用同一套
+-- phase/progress 推导口径，避免各层各写一份产生漂移。
+---@param clock table?
+---@return string?, number?
+function Draw.ClockVisualState(clock)
     if type(clock) ~= "table" then return nil, nil end
     local phase = clock.phase
     if phase ~= "day" and phase ~= "night" then return nil, nil end
@@ -131,7 +135,7 @@ local function drawMoon(ctx, x, y, radius)
 end
 
 local function Background(ctx, w, h, time, clock, horizonAtX)
-    local phase, progress = clockVisualState(clock)
+    local phase, progress = Draw.ClockVisualState(clock)
     -- Keep the current Integration palette and apply only the source branch's
     -- restrained dawn/dusk warmth.
     local topR, topG, topB = 184, 224, 216
