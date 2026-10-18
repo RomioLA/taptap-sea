@@ -2,13 +2,20 @@
 local Progress = {}
 
 local RECORD_KEY = "circle1B2"
-local ELDER_DEFAULTS = { applesGiven = 0, decision = "pending", teachingDone = false }
+-- V2.7：教学分三条独立 shown 标记（D1 基础 / D2 起海鸟 / D3 起水花），
+-- 每条只在「真实看到对应现象」时置位，跨日保留，NewRun 重置。
+-- advancedTeachingDay：救活路线 D4～D7 每天一条进阶短教学的 shown 日期（0 = 未显示）。
+local ELDER_DEFAULTS = { applesGiven = 0, decision = "pending", teachingDone = false,
+    basicTeachingShown = false, birdTeachingShown = false, splashTeachingShown = false,
+    advancedTeachingDay = 0 }
 local STORY_DEFAULTS = {
     barrelStage = 0,
     elderFateShown = false,
     paperShown = false,
     runCompleted = false,
     fishingSelectionShown = false,
+    -- V2.7：D6 未救路线苹果篮回想（一次性）。
+    appleBasketRecallShown = false,
 }
 
 local function finite(value)
@@ -94,6 +101,15 @@ function Progress.Validate(data)
         if elder.teachingDone ~= nil and type(elder.teachingDone) ~= "boolean" then
             return false, "invalid_elder_teaching_done"
         end
+        for _, flag in ipairs({ "basicTeachingShown", "birdTeachingShown", "splashTeachingShown" }) do
+            if elder[flag] ~= nil and type(elder[flag]) ~= "boolean" then
+                return false, "invalid_elder_teaching_flag"
+            end
+        end
+        if elder.advancedTeachingDay ~= nil
+            and (not integer(elder.advancedTeachingDay, 0) or elder.advancedTeachingDay > 7) then
+            return false, "invalid_elder_advanced_teaching_day"
+        end
 
         if decision == "saved" or decision == "dead" then
             local day = data.day
@@ -130,6 +146,9 @@ function Progress.Validate(data)
         -- 兼容本轮之前的同 schema 存档；Restore 后 Initialize 会补默认标记。
         if story.fishingSelectionShown ~= nil and type(story.fishingSelectionShown) ~= "boolean" then
             return false, "invalid_fishing_selection_hint"
+        end
+        if story.appleBasketRecallShown ~= nil and type(story.appleBasketRecallShown) ~= "boolean" then
+            return false, "invalid_apple_basket_recall_shown"
         end
         if story.paperShown and (not integer(data.day, 1) or data.day < 7) then
             return false, "paper_shown_before_day_seven"
@@ -268,6 +287,113 @@ function Progress.MarkTeachingDone(player)
     end
     record.teachingDone = true
     return true
+end
+
+-- V2.7 同行情境教学：三条独立 shown 标记。
+-- 规则（系统规则 A26 / 剧情与事件 R34）：
+--   basic   D1 首次出航进入海上时一次性教停船投饵 + 晚归规则
+--   bird    D2 起本周目第一次真正看到捕鱼海鸟时教海鸟（未看到顺延）
+--   splash  D3 起本周目第一次真正看到大鱼水花时教水花（未看到顺延）
+local TEACHING_FLAGS = {
+    basic = "basicTeachingShown",
+    bird = "birdTeachingShown",
+    splash = "splashTeachingShown",
+}
+
+---查询某条情境教学是否已显示。
+---@param player table
+---@param kind "basic"|"bird"|"splash"
+---@return boolean, string|nil
+function Progress.IsTeachingShown(player, kind)
+    local flag = TEACHING_FLAGS[kind]
+    if not flag then return false, "invalid_teaching_kind" end
+    if type(player) ~= "table" then return false, "invalid_player_state" end
+    local record, reason = getRecord(player, "elder", "elder_progress")
+    if reason then return false, reason end
+    if not record then return false end
+    if record[flag] ~= nil and type(record[flag]) ~= "boolean" then
+        return false, "invalid_elder_teaching_flag"
+    end
+    return record[flag] == true
+end
+
+---标记某条情境教学已显示；重复标记幂等。第二返回值仅在本次首次置位时为 true。
+---@param player table
+---@param kind "basic"|"bird"|"splash"
+---@return boolean, boolean|string
+function Progress.MarkTeachingShown(player, kind)
+    local flag = TEACHING_FLAGS[kind]
+    if not flag then return false, "invalid_teaching_kind" end
+    if type(player) ~= "table" or not integer(player.day, 1) then return false, "invalid_day" end
+    local record, reason = ensureRecord(player, "elder", ELDER_DEFAULTS, "elder_progress")
+    if not record then return false, reason or "invalid_elder_progress" end
+    if record[flag] ~= nil and type(record[flag]) ~= "boolean" then
+        return false, "invalid_elder_teaching_flag"
+    end
+    local newlyShown = record[flag] ~= true
+    record[flag] = true
+    return true, newlyShown
+end
+
+---救活路线 D4～D7 进阶短教学：每个游戏日最多一条。
+---@param player table
+---@param day integer
+---@return boolean, string|nil
+function Progress.IsAdvancedTeachingShownForDay(player, day)
+    if type(player) ~= "table" then return false, "invalid_player_state" end
+    local record, reason = getRecord(player, "elder", "elder_progress")
+    if reason then return false, reason end
+    if not record then return false end
+    local shownDay = record.advancedTeachingDay
+    if shownDay ~= nil and (not integer(shownDay, 0) or shownDay > 7) then
+        return false, "invalid_elder_advanced_teaching_day"
+    end
+    return tonumber(shownDay) == tonumber(day)
+end
+
+---@param player table
+---@param day integer
+---@return boolean, boolean|string
+function Progress.MarkAdvancedTeachingShown(player, day)
+    if type(player) ~= "table" or not integer(player.day, 1) then return false, "invalid_day" end
+    if not integer(day, 1) or day > 7 then return false, "invalid_advanced_teaching_day" end
+    local record, reason = ensureRecord(player, "elder", ELDER_DEFAULTS, "elder_progress")
+    if not record then return false, reason or "invalid_elder_progress" end
+    if record.advancedTeachingDay ~= nil
+        and (not integer(record.advancedTeachingDay, 0) or record.advancedTeachingDay > 7) then
+        return false, "invalid_elder_advanced_teaching_day"
+    end
+    local newlyShown = tonumber(record.advancedTeachingDay) ~= tonumber(day)
+    record.advancedTeachingDay = day
+    return true, newlyShown
+end
+
+---D6 未救路线苹果篮回想（一次性）。
+---@param player table
+---@return boolean, string|nil
+function Progress.IsAppleBasketRecallShown(player)
+    if type(player) ~= "table" then return false, "invalid_player_state" end
+    local record, reason = getRecord(player, "story", "story_progress")
+    if reason then return false, reason end
+    if not record or record.appleBasketRecallShown == nil then return false end
+    if type(record.appleBasketRecallShown) ~= "boolean" then
+        return false, "invalid_apple_basket_recall_shown"
+    end
+    return record.appleBasketRecallShown
+end
+
+---@param player table
+---@return boolean, boolean|string
+function Progress.MarkAppleBasketRecallShown(player)
+    if type(player) ~= "table" or not integer(player.day, 1) then return false, "invalid_day" end
+    local record, reason = ensureRecord(player, "story", STORY_DEFAULTS, "story_progress")
+    if not record then return false, reason or "invalid_story_progress" end
+    if type(record.appleBasketRecallShown) ~= "boolean" then
+        return false, "invalid_apple_basket_recall_shown"
+    end
+    local newlyShown = record.appleBasketRecallShown ~= true
+    record.appleBasketRecallShown = true
+    return true, newlyShown
 end
 
 ---查询本周目是否已经展示过捕鱼选点提示。

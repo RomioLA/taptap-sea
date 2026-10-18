@@ -144,6 +144,7 @@ function HUD.Create(loop, parent, debugTools)
         achievementToastUntil = nil,
         -- v1.5 选中态接线：物品行样式登记表 + tab 皮肤去重键（见
         -- applyItemRowSelection / applyCompendiumTabSkin）。
+        throwPickerOpen = false,
         itemRowRecords = {},
         tabSkinApplied = nil,
     }
@@ -157,6 +158,11 @@ function HUD.Create(loop, parent, debugTools)
     -- Lua 的 local function 不提升作用域，不加声明会退化成全局 nil
     -- （"attempt to call a nil value"，同 destroyChildren 的历史踩坑）。
     local recordElderExchange = function() end
+    -- V2.7（W-06）：NewRun 统一走二次确认；结局页/港口/入口屏共用。
+    -- 前置声明（与 recordElderExchange 同理：按钮创建早于定义处）。
+    local requestNewRun = function() end
+    -- V2.7（S-01）：底部【投放】列表弹出与选择。
+    local openThrowPicker = function() end
     ---@type fun(command: string, argument?: number|string)
     local invokeDebug = function(command, argument) end
     local function bubbleTime()
@@ -446,6 +452,10 @@ local header = UI.Panel {
         state.bubbleUntil = nowStamp + 5
         refresh()
     end
+    refs.beginThrow = makeButton("投放", function()
+        openThrowPicker()
+    end, "secondary", 80)
+
     refs.beginFishing = makeButton("捕鱼", function()
         if invokeLoop("BeginFishingSelection") then
             showFishingSelectionHint()
@@ -579,8 +589,8 @@ local header = UI.Panel {
     end, "secondary", 132)
     refs.barrelToggle:SetVisible(false)
     -- v2.1 §7.9（真机 21:10"镇模未获得"被截断）：文案会变
-    -- "透镜未获得"/"关闭望远镜"（5~6 字），固定 80px 装不下 → 放宽到 104。
-    refs.scopeToggleBar = makeButton("望远镜", function()
+    -- "探海镜未获得"/"关闭探海镜"（5~6 字），固定 80px 装不下 → 放宽到 104。
+    refs.scopeToggleBar = makeButton("探海镜", function()
         invokeLoop(loop.scopeSyncError and "DisableScope" or "ToggleScope")
     end, "secondary", 104)
     refs.scopeToggleBar:SetVisible(false)
@@ -627,6 +637,7 @@ local header = UI.Panel {
     dock:AddChild(refs.depart)
     dock:AddChild(refs.returnToPort)
     dock:AddChild(refs.endToday)
+    dock:AddChild(refs.beginThrow)
     dock:AddChild(refs.beginFishing)
 
     -- v3.0 P0-1（评审 §二 P0-1）：按钮坞换行会压住卡片底部操作条。
@@ -646,6 +657,7 @@ local header = UI.Panel {
         { widget = refs.depart,           width = 80 },
         { widget = refs.returnToPort,     width = 80 },
         { widget = refs.endToday,         width = 98 },
+        { widget = refs.beginThrow,       width = 80 },
         { widget = refs.beginFishing,     width = 132 },
     }
     local dockReserve = 60
@@ -862,6 +874,17 @@ local header = UI.Panel {
     -- 真机反馈（2026-10-05）：投掷/木桶提示是"过程提示"，不进可开合的信息滚动屏，
     -- 直接挂在根流（与捕鱼小卡同级），保证进行中流程始终可见。
     -- 屏内不再放重复入口按钮：检查入口走按钮坞"检查木桶"。
+    -- V2.7（S-01）：底部【投放】列表（合并同类数量）。
+    refs.throwPickerPanel = card("选择要投放的物品")
+    refs.throwPickerRows = UI.Panel { width = "100%", gap = 4, flexDirection = "column" }
+    refs.throwPickerPanel:AddChild(refs.throwPickerRows)
+    refs.throwPickerPanel:AddChild(makeButton("取消", function()
+        if type(loop.CloseThrowPicker) == "function" then invokeLoop("CloseThrowPicker") else loop.throwPicker = nil end
+        refresh()
+    end, "secondary", 80))
+    refs.throwPickerPanel:SetVisible(false)
+    root:AddChild(refs.throwPickerPanel)
+
     refs.throwSelectionPanel = card("投掷物品")
     refs.throwSelectionText = makeLabel("", UiKit.fontSize.body, UiKit.ink.title, "bold")
     refs.throwSelectionPanel:AddChild(refs.throwSelectionText)
@@ -893,9 +916,9 @@ local header = UI.Panel {
     refs.scopeStatus = makeInfoLabel("", 12, UI_PALETTE.seaTextMuted)
     refs.scopePanel:AddChild(refs.scopeStatus)
     content:AddChild(refs.scopePanel)
-    -- 宝物是既有player.treasures状态，不占有限格inventory；开关复用既有望远镜入口。
-    refs.treasurePanel = card("记忆与透镜")
-    refs.treasureSummary = makeLabel("已获得的记忆与透镜会在此显示，不占船舱格。",
+    -- 宝物是既有player.treasures状态，不占有限格inventory；开关复用既有探海镜入口。
+    refs.treasurePanel = card("记忆与探海镜")
+    refs.treasureSummary = makeLabel("已获得的记忆与探海镜会在此显示，不占船舱格。",
         UiKit.fontSize.teaching, UiKit.ink.dim)
     refs.treasurePanel:AddChild(refs.treasureSummary)
     drawerContent:AddChild(refs.treasurePanel)
@@ -987,7 +1010,7 @@ local header = UI.Panel {
         alignItems = "center",
         gap = 5,
     }
-    refs.itemUse = makeButton("食用", function()
+    refs.itemUse = makeButton("使用", function()
         if state.selectedItemIndex then invokeLoop("UseItem", state.selectedItemIndex) end
     end, "success", 56)
     refs.itemGive = makeButton("给予", function()
@@ -1009,14 +1032,7 @@ local header = UI.Panel {
     refs.itemDrop = makeButton("丢弃", function()
         if state.selectedItemIndex then invokeLoop("DropItem", state.selectedItemIndex) end
     end, "danger", 56)
-    refs.itemThrow = makeButton("投掷", function()
-        local itemIndex = state.selectedItemIndex
-        if not itemIndex then return end
-        -- 真机反馈（2026-10-05）：背包内点"投掷"直接以船当前位置投放并收起背包，
-        -- 不再要求点击海面（抽屉遮罩会挡住海面导致卡死在背包页）。
-        invokeLoop("SetInventoryOpen", false)
-        invokeLoop("ThrowItemAtShip", itemIndex)
-    end, "secondary", 56)
+    -- V2.7：物品菜单固定三个操作；投海统一走底部【投放】。
     refs.itemMenuBack = makeButton("返回", function()
         state.selectedItemIndex = nil
         refresh()
@@ -1024,7 +1040,6 @@ local header = UI.Panel {
     itemMenuActions:AddChild(refs.itemUse)
     itemMenuActions:AddChild(refs.itemGive)
     itemMenuActions:AddChild(refs.itemDrop)
-    itemMenuActions:AddChild(refs.itemThrow)
     itemMenuActions:AddChild(refs.itemMenuBack)
     refs.itemMenu:AddChild(itemMenuActions)
     refs.itemMenu:SetVisible(false)
@@ -1179,7 +1194,7 @@ local header = UI.Panel {
         alignItems = "center",
     }
     refs.loadSaved = makeButton("读取云存档", function() invokeLoop("LoadSaved") end, "secondary", "46%")
-    refs.newRun = makeButton("开始新周目", function() invokeLoop("NewRun") end, "secondary", "46%")
+    refs.newRun = makeButton("开始新周目", function() requestNewRun() end, "secondary", "46%")
     portUtilityRow:AddChild(refs.loadSaved)
     portUtilityRow:AddChild(refs.newRun)
     refs.portBody:AddChild(portUtilityRow)
@@ -1407,7 +1422,7 @@ local header = UI.Panel {
     refs.entryText = makeLabel("正在读取云存档…", 14)
     refs.entryBody:AddChild(refs.entryText)
     refs.entryLoad = makeButton("重试读取", function() invokeLoop("LoadSaved") end, "primary", 130)
-    refs.entryNew = makeButton("开始新周目", function() invokeLoop("NewRun") end, "secondary", 130)
+    refs.entryNew = makeButton("开始新周目", function() requestNewRun() end, "secondary", 130)
     refs.entryRetrySave = makeButton("重试初始保存", function() invokeLoop("RetryInitialSave") end, "primary", 150)
     refs.entryContinue = makeButton("不保存继续", function() invokeLoop("ContinueWithoutSaving") end, "secondary", 150)
     refs.entryRetrySave:Hide()
@@ -1441,9 +1456,26 @@ local header = UI.Panel {
     refs.endingBody = UI.Panel { width = "100%", flexGrow = 1, gap = 12 }
     refs.endingText = makeLabel("", 14)
     refs.endingBody:AddChild(refs.endingText)
-    refs.endingNewRun = makeButton("开始新周目", function() invokeLoop("NewRun") end, "primary", 130)
+    refs.endingNewRun = makeButton("重新开始", function() requestNewRun() end, "primary", 130)
     refs.endingBody:AddChild(refs.endingNewRun)
     refs.modalCard:AddChild(refs.endingBody)
+
+    -- V2.7（W-06）：NewRun 二次确认共用页（结局页 / 港口 / 入口屏共用）。
+    refs.newRunConfirmBody = UI.Panel { width = "100%", flexGrow = 1, justifyContent = "center", gap = 12 }
+    refs.newRunConfirmText = makeLabel(
+        "重新开始会开启新的7天，并用新周目D1初始存档覆盖本周目存档。确定重新开始吗？", 14)
+    refs.newRunConfirmBody:AddChild(refs.newRunConfirmText)
+    refs.newRunConfirmYes = makeButton("确定重新开始", function()
+        state.newRunConfirmOpen = false
+        invokeLoop("NewRun")
+    end, "primary", 150)
+    refs.newRunConfirmBody:AddChild(refs.newRunConfirmYes)
+    refs.newRunConfirmNo = makeButton("取消", function()
+        state.newRunConfirmOpen = false
+        refresh()
+    end, "secondary", 100)
+    refs.newRunConfirmBody:AddChild(refs.newRunConfirmNo)
+    refs.modalCard:AddChild(refs.newRunConfirmBody)
 
     -- v2.1 §7.9 修订（真机 21:46 文字溢出卡外）：老人对话是内容最多的一页
     -- v2.1 §7.11（用户 23:15「拜访老人也放进滚动屏，和商店一起参考背包页面
@@ -1661,12 +1693,12 @@ local header = UI.Panel {
         padding = { 3, 5, 3, 5 },
     }
     refs.elderLensStatus = makeLabel("", UiKit.fontSize.small, UiKit.ink.dim)
-    refs.elderLensGive = makeButton("展示透镜", function()
+    refs.elderLensGive = makeButton("展示探海镜", function()
         local succeeded, feedback, exchange = invokeLoop("GiveTreasureToElder", "scopeLens")
-        if succeeded then recordElderExchange(exchange, "展示 望远镜透镜", feedback) end
+        if succeeded then recordElderExchange(exchange, "展示 探海镜", feedback) end
         refresh()
     end, "primary", 96)
-    refs.elderLensRow:AddChild(makeLabel("望远镜透镜", UiKit.fontSize.teaching, UiKit.ink.body, "bold",
+    refs.elderLensRow:AddChild(makeLabel("探海镜", UiKit.fontSize.teaching, UiKit.ink.body, "bold",
         { flexGrow = 1, flexBasis = 0 }))
     refs.elderLensRow:AddChild(refs.elderLensGive)
     refs.elderLensRow:AddChild(refs.elderLensStatus)
@@ -1746,6 +1778,7 @@ local header = UI.Panel {
     refs.forcedBody:Hide()
     refs.settlementBody:Hide()
     refs.endingBody:Hide()
+    refs.newRunConfirmBody:Hide()
     refs.elderPanel:Hide()
     refs.storyBody:Hide()
     -- 成就解锁 toast（v2.0 §7.4，D6=A：圈1 先行试水）：落区① 顶带右上，
@@ -1833,7 +1866,25 @@ local header = UI.Panel {
         if not ok then
             state.localMessage = "操作失败，当前进度保留，请稍后重试。"
         elseif result == false then
-            state.localMessage = "操作未完成：" .. userMessage(reason)
+            -- V2.7：拒绝反馈优先用玩法层给出的自然语言句子；
+            -- 只有没有可用句子时才回退到“操作未完成：…” + 码字映射。
+            local natural = loop.lastMessage
+            local reasonIsCode = type(reason) == "string" and reason:find("^[a-z0-9_]+$") ~= nil
+            -- 逐字节检测是否含非 ASCII（中文），避免正则里写字节范围。
+            local function hasWideChars(text)
+                if type(text) ~= "string" then return false end
+                for index = 1, #text do
+                    if text:byte(index) > 127 then return true end
+                end
+                return false
+            end
+            -- V2.7：玩法层已经给出中文句子时直接展示它，
+            -- 不再拼接“操作未完成：”前缀（否则与拒绝语重复）。
+            if reasonIsCode and hasWideChars(natural) then
+                state.localMessage = natural
+            else
+                state.localMessage = "操作未完成：" .. userMessage(reason)
+            end
         else
             state.localMessage = ""
         end
@@ -1841,6 +1892,29 @@ local header = UI.Panel {
         if not ok then return false, "operation_failed" end
         if result == false then return false, reason end
         return result == true, reason, detail
+    end
+
+    -- V2.7（W-06）：所有 NewRun 入口都先打开二次确认；只有确认后才真正覆盖存档。
+    requestNewRun = function()
+        state.newRunConfirmOpen = true
+        state.localMessage = ""
+        refresh()
+    end
+
+    -- V2.7（S-01）：【投放】——列表为空时只给顶部轻提示，不弹模态。
+    openThrowPicker = function()
+        if type(loop.OpenThrowPicker) ~= "function" then
+            state.localMessage = "投放暂不可用。"
+            refresh()
+            return
+        end
+        local ok, result = invokeLoop("OpenThrowPicker")
+        if ok and type(result) == "table" then
+            state.throwPickerOpen = true
+        else
+            state.throwPickerOpen = false
+        end
+        refresh()
     end
 
     invokeDebug = function(command, argument)
@@ -2356,7 +2430,17 @@ local header = UI.Panel {
         elseif loop.loading == true or saveStatus == "loading" or saveStatus == "saving" then
             logText = saveText(loop)
         elseif portHintActive then
-            logSlot = "port"
+            -- V2.7：港口常驻提示不得吞掉刚发生的玩家反馈（如老人已离世的拒绝语）。
+            -- 只有确实没有新反馈时，才把日志槽让给港口提示。
+            if type(lastMessageText) == "string" and lastMessageText ~= ""
+                and lastMessageText ~= "出海采集，返港交易与结算。"
+                and lastMessageText ~= "已返港，可交易、结束今天或再次出航"
+                and lastMessageText ~= "新周目已开始"
+                and lastMessageText ~= "已出航" then
+                logText = lastMessageText
+            else
+                logSlot = "port"
+            end
         elseif oceanCue and oceanCue ~= "" then
             logText = oceanCue
         else
@@ -2419,7 +2503,8 @@ local header = UI.Panel {
         if type(loop.GetStoryDialog) == "function" then
             local ok, value = pcall(loop.GetStoryDialog, loop)
             if ok and type(value) == "table"
-                and (value.kind == "paper" or value.kind == "elder" or value.kind == "elder_fate")
+                and (value.kind == "paper" or value.kind == "elder" or value.kind == "elder_fate"
+                    or value.kind == "teaching" or value.kind == "apple_basket")
                 and type(value.token) == "table" and type(value.text) == "string" then
                 storyDialog = value
             end
@@ -2548,6 +2633,14 @@ local header = UI.Panel {
         end
         refs.beginFishing:SetDisabled((not ready and not fishingCancellable) or busy or inPort
             or loop.inventoryOpen == true or loop.elderOpen == true)
+        -- V2.7（P-06/S-01）：海上底部【投放】独立入口。
+        -- 与捕鱼/投放选点互斥；4 秒事务期间禁用（同一动作门禁）。
+        refs.beginThrow:SetVisible(not inPort)
+        local throwPickerOpen = state.throwPickerOpen == true
+        refs.beginThrow:SetText(throwPickerOpen and "取消投放" or "投放")
+        refs.beginThrow:SetDisabled(busy or inPort or pendingCatch
+            or loop.inventoryOpen == true or loop.elderOpen == true
+            or (fishingRestricted and not throwPickerOpen and throwSelection == nil))
         -- 新手教程点位：靠近出港点右侧木桶（≤操作距离+3m 余量）时出现 检查木桶/望远镜；
         -- 望远镜获得后常驻（设定集：窥视镜=看海面下）。
         local barrelNearForDock, barrelDistanceForDock = false, nil
@@ -2570,7 +2663,7 @@ local header = UI.Panel {
         -- 海上常驻；无透镜时按 B 侧契约显示禁用的"透镜未获得"。
         refs.scopeToggleBar:SetVisible(not inPort and hasLens)
         refs.scopeToggleBar:SetText(hasLens
-            and (scopeEnabled and "关闭望远镜" or "开启望远镜") or "透镜未获得")
+            and (scopeEnabled and "关闭探海镜" or "开启探海镜") or "探海镜未获得")
         -- A1（2026-10-05 用户裁决）：白名单制——捕鱼动作期间允许透镜开关
         -- （ToggleScope 不暂停世界、不触碰捕获锁定），只禁移动/背包/投放/打捞/交谈/进港。
         refs.scopeToggleBar:SetDisabled(busy
@@ -2589,7 +2682,7 @@ local header = UI.Panel {
         end
         -- 模式并入状态行（追加在暂停态之后）：跟随真实状态（B 侧 review 契约）。
         local modeSuffix = " · 模式：" .. modeText(loop, fishingPhase, pendingCatch, throwSelection)
-            .. (scopeEnabled and " · 望远镜开启" or "")
+            .. (scopeEnabled and " · 探海镜开启" or "")
         -- v2.1 §7.15：距港距离并入顶部状态栏左列（用户 13:03 要求显示）。
         -- portDistance 在本行之前已算出，可直接取值。
         local portDistanceText = type(portDistance) == "number"
@@ -2609,8 +2702,8 @@ local header = UI.Panel {
             or string.format("晚归处罚中：现在返港次日体力 %.1f/%s；夜尽仅恢复上限的%.0f%%。",
                 loop:GetNextDayStamina(false), tostring(player.maxStamina), Config.clock.forcedStaminaRatio * 100))
         local treasureSummary = hasLens
-            and "望远镜透镜 ×1 · 永久保留，不占船舱格，不能出售或丢弃。"
-            or "尚未获得望远镜透镜。"
+            and "探海镜 ×1 · 永久保留，不占船舱格，不能出售或丢弃。"
+            or "尚未获得探海镜。"
         if #ownedMemories > 0 then
             local names = {}
             for _, treasureId in ipairs(ownedMemories) do
@@ -2667,7 +2760,10 @@ local header = UI.Panel {
             refs.worldContentAction:SetDisabled(busy or (contentPrompt.operation == "begin"
                 and (not ready or fishingRestricted)))
         end
-        refs.elderToggle:SetVisible(inPort or bucketActiveForInput or loop.elderOpen == true)
+        -- V2.7（审查闭环 3-1 / 视听与交互 R12）：老人只要在世就始终与少年同行，
+        -- 因此港口与海上都应提供「拜访老人」入口；离世后仍显示但只说明原因。
+        refs.elderToggle:SetVisible(not pendingCatch and loop.storyDialog == nil
+            or loop.elderOpen == true)
         refs.depart:SetDisabled(not ready or busy or fishingRestricted or loop.inventoryOpen == true or loop.elderOpen == true)
         refs.returnToPort:SetDisabled(busy or not ready or fishingRestricted)
         refs.endToday:SetDisabled(busy or not ready or fishingRestricted)
@@ -2802,16 +2898,51 @@ local header = UI.Panel {
         if not hasLens then
             setText(refs.scopeStatus, "scopeStatus", "")
         elseif not scopeApiAvailable or loop.scopeSyncError == "scope_interface_unavailable" then
-            setText(refs.scopeStatus, "scopeStatus", "望远镜功能接口暂不可用。")
+            setText(refs.scopeStatus, "scopeStatus", "探海镜功能接口暂不可用。")
         elseif loop.scopeSyncError then
-            setText(refs.scopeStatus, "scopeStatus", "望远镜状态同步失败，请重试关闭。")
+            setText(refs.scopeStatus, "scopeStatus", "探海镜状态同步失败，请重试关闭。")
         else
-            setText(refs.scopeStatus, "scopeStatus", scopeEnabled and "望远镜设置：开启。" or "望远镜设置：关闭。")
+            setText(refs.scopeStatus, "scopeStatus", scopeEnabled and "探海镜设置：开启。" or "探海镜设置：关闭。")
         end
 
         -- 注：scopePanel（望远镜条目）仅在获得透镜后显示；无透镜时整条隐藏，
         -- 不在信息屏或坞内出现"尚未获得透镜／透镜未获得"等提示（UI精简 v1.0 §六）。
 
+        -- V2.7（S-01）：投放列表（按类型合并显示数量）。
+        local throwCandidates = nil
+        if type(loop.GetThrowPicker) == "function" then
+            local okPick, value = pcall(loop.GetThrowPicker, loop)
+            if okPick and type(value) == "table" and #value > 0 then throwCandidates = value end
+        end
+        if throwCandidates == nil then state.throwPickerOpen = false end
+        local pickerOpen = state.throwPickerOpen == true and throwCandidates ~= nil
+        refs.throwPickerPanel:SetVisible(pickerOpen and not inPort)
+        if pickerOpen then
+            local signature = {}
+            for _, entry in ipairs(throwCandidates) do
+                signature[#signature + 1] = tostring(entry.itemId) .. ":" .. tostring(entry.count)
+                    .. "@" .. tostring(entry.index)
+            end
+            local key = table.concat(signature, "|")
+            if state.throwPickerSignature ~= key then
+                state.throwPickerSignature = key
+                for index = #refs.throwPickerRows:GetChildren(), 1, -1 do
+                    refs.throwPickerRows:RemoveChild(refs.throwPickerRows:GetChildren()[index])
+                end
+                for _, entry in ipairs(throwCandidates) do
+                    local itemIndex = entry.index
+                    refs.throwPickerRows:AddChild(makeButton(
+                        string.format("%s(%d)", tostring(entry.name), tonumber(entry.count) or 1),
+                        function()
+                            state.throwPickerOpen = false
+                            invokeLoop("BeginThrowItem", itemIndex)
+                            refresh()
+                        end, "secondary", 148))
+                end
+            end
+        else
+            state.throwPickerSignature = nil
+        end
         refs.throwSelectionPanel:SetVisible(throwSelection ~= nil)
         if throwSelection then
             setText(refs.throwSelectionText, "throwSelectionText",
@@ -2869,16 +3000,15 @@ local header = UI.Panel {
         if selectedItem then
             setText(refs.itemMenuTitle, "itemMenuTitle", string.format("%02d · %s", state.selectedItemIndex, itemName(selectedItem)))
         end
-        refs.itemUse:SetVisible(selectedDefinition ~= nil and selectedDefinition.canEat == true)
-        refs.itemGive:SetVisible(selectedDefinition ~= nil and selectedDefinition.canGive == true)
-        refs.itemThrow:SetVisible(selectedDefinition ~= nil and selectedDefinition.category ~= "treasure")
+        -- V2.7：所有可持有物品固定显示「使用／给老人／丢弃」三个入口；
+        -- 不能执行时不置灰、不隐藏，由 Loop 返回清晰原因。
+        refs.itemUse:SetVisible(selectedDefinition ~= nil)
+        refs.itemGive:SetVisible(selectedDefinition ~= nil)
+        refs.itemDrop:SetVisible(selectedDefinition ~= nil)
         refs.itemUse:SetDisabled(busy or fishingRestricted or not itemUseAvailable)
         refs.itemGive:SetText(selectedDefinition and selectedDefinition.category == "food" and "给予" or "展示")
         refs.itemGive:SetDisabled(busy or fishingRestricted)
-        refs.itemDrop:SetVisible(selectedDefinition ~= nil and selectedDefinition.category ~= "treasure")
-        refs.itemDrop:SetDisabled(busy or fishingRestricted or selectedDefinition == nil or selectedDefinition.category == "treasure")
-        refs.itemThrow:SetDisabled(busy or fishingRestricted or inPort or not ready
-            or selectedDefinition == nil or selectedDefinition.category == "treasure")
+        refs.itemDrop:SetDisabled(busy or fishingRestricted or selectedDefinition == nil)
         refs.itemMenuBack:SetDisabled(false)
 
         local pendingIds = pendingData and pendingData.itemIds or {}
@@ -2935,17 +3065,24 @@ local header = UI.Panel {
             state.compendiumOpen = false
         end
         -- v2.1 §7.11：showElder 已改为信息滚动屏卡片，不再触发模态遮罩。
+                -- V2.7（W-06）：NewRun 二次确认页。优先级高于结局/入口页，但低于保存失败类页面。
+        local showNewRunConfirm = state.newRunConfirmOpen == true
+            and not showForced and not showSettlement and not showStory
         local overlayShown = showEntry or showForced or showSettlement or showStory
-            or showEnding or showOpening or showCompendium
+            or showEnding or showOpening or showCompendium or showNewRunConfirm
         refs.overlay:SetVisible(overlayShown)
         fadeOpacity(refs.modalCard, overlayShown and 1 or 0)
+        -- V2.7：教学提示/回想与其它剧情结果共用同一单一模态（不并发）。
         local storyTitle = storyDialog and storyDialog.kind == "elder_fate" and "第4天 · 老人"
+            or storyDialog and storyDialog.kind == "apple_basket" and "第6天 · 船舱"
+            or storyDialog and storyDialog.kind == "teaching" and "老人"
             or storyDialog and storyDialog.kind == "elder" and "海岸边的老人"
             or "漂流瓶里的纸条"
         local overlayTitle = showEntry and "云存档" or showForced and "夜晚返港"
+            or (showNewRunConfirm and "重新开始"
             or (showSettlement and "每日结算" or (showOpening and "海岸边的老人")
             or (showEnding and "第 7 天 · 结局" or (showStory and storyTitle
-            or (showCompendium and "图鉴 · 成就" or ""))))
+            or (showCompendium and "图鉴 · 成就" or "")))))
         setText(refs.modalTitle, "modalTitle", overlayTitle)
         refs.entryBody:SetVisible(showEntry)
         if showEntry then
@@ -2969,6 +3106,7 @@ local header = UI.Panel {
         refs.forcedBody:SetVisible(showForced)
         refs.settlementBody:SetVisible(showSettlement)
         refs.endingBody:SetVisible(showEnding)
+        refs.newRunConfirmBody:SetVisible(showNewRunConfirm)
         refs.storyBody:SetVisible(showStory or showOpening)
         -- v2.1 §7.13（用户 23:48「三个显示均独占，滚动屏不一起显示」）：
         -- 滚动屏三卡改为互斥，同一时刻只显示一张，避免并排挤占海面视野。

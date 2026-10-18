@@ -10,7 +10,7 @@ local Achievements = {
 
 -- 最小集 6 条定义（名称/文案为占位，正式文案待 B 侧 Q-006 定稿）。
 local DEFINITIONS = {
-    { id = "first_lens",    name = "初见透镜",   desc = "首日获得透镜" },
+    { id = "first_lens",    name = "初见探海镜", desc = "首日获得探海镜" },
     { id = "zero_skunk",    name = "满载而归",   desc = "单日零空网" },
     { id = "save_elder",    name = "救命之饵",   desc = "救下老人" },
     { id = "alt_branch",    name = "非常规之路", desc = "触发非常规分支" },

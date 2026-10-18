@@ -158,6 +158,7 @@ function Loop:ResetState()
     self.endingPending, self.endingKind = false, nil
     self.endingAchievementsSettled, self.endingProfileSaveDispatched = false, false
     self.throwSelection, self.storyDialog, self.scopeEnabled = nil, nil, false
+    self.throwPicker = nil
     self.fishingSelectionHintPending = false
     self.scopeSyncError = nil
     self.closed = false
@@ -263,9 +264,9 @@ function Loop:Update(dt, advanceWorld)
                 self.lastMessage = "音频：" .. diag
             end
         end
-        if previousPhase == "day" and clock.phase == "night" and not clock.exhausted then
-            self.lastMessage = "黄昏已至，请留意返港：夜晚前15秒返港体力全满；之后每晚归1秒次日少2体力，夜尽强返恢复上限的一半。"
-        end
+        -- V2.7（W-15 废止）：入夜不再自动弹系统文字报时；时间判断交给太阳/月亮/天空
+        -- 与现有 HUD 时间信息。D1 老人一次性讲清 15/30 秒规则（见 D1 教学）。
+        -- 夜尽到港/日结仍可显示客观结果反馈（不在此处提前倒计时）。
         local after = clock.elapsed + (clock.phase == "night" and clock.daySec or 0)
         local gameSeconds = math.max(0, after - before)
         if not clock:IsPaused() and not clock.exhausted and not self.inPort then
@@ -288,6 +289,7 @@ function Loop:Update(dt, advanceWorld)
         remaining = math.max(0, remaining - slice)
     until remaining <= 1e-9
     self:ProcessEmergenceEvents(dt > 0)
+    self:ProcessContextTeaching(dt > 0)
     if self.worldContentActions then
         local token = self.worldContentFeedbackToken
         local callOk, advanced, result = Diagnostics.Call("Loop", "world_content_advance",
@@ -374,6 +376,47 @@ function Loop:ProcessEmergenceEvents(allowObservation)
         end
     end
     return true
+end
+
+-- V2.7 同行情境教学（D2 海鸟 / D3 水花）：只在玩家真实看到对应现象时触发。
+-- 判定依据：runtime.surfaceSignals 的 GetBirds / GetSplashes 返回的是
+-- 当前真实活跃且已进入可见状态的信号（不是装饰物）。对应日未看到则
+-- 保持未置位，顺延到以后第一次真实看到时再触发。
+-- 世界暂停/在港/已耗尽/已有剧情模态时不判定，避免在错误时机弹出。
+local MIN_TEACHING_DAY = { bird = 2, splash = 3 }
+
+---@param allowObservation boolean
+---@return boolean
+function Loop:ProcessContextTeaching(allowObservation)
+    if allowObservation ~= true then return false end
+    if self.inPort or self.closed then return false end
+    local clock = self.clock
+    if not clock or clock:IsPaused() or clock.exhausted then return false end
+    if self.storyDialog or self:HasPendingCatch() then return false end
+    if not self:IsElderPresent() then return false end
+    local runtime = self.runtime
+    local signals = runtime and runtime.surfaceSignals
+    if not signals then return false end
+
+    local day = tonumber(self.player.day) or 1
+    -- 海鸟优先于水花（剧情与事件 R34：前期海鸟教学先于水花教学）。
+    if day >= (MIN_TEACHING_DAY.bird or 2)
+        and Progress.IsTeachingShown(self.player, "bird") == false
+        and type(signals.GetBirds) == "function" then
+        local ok, birds = pcall(signals.GetBirds, signals)
+        if ok and type(birds) == "table" and #birds > 0 then
+            if self:TryShowContextTeaching("bird") then return true end
+        end
+    end
+    if day >= (MIN_TEACHING_DAY.splash or 3)
+        and Progress.IsTeachingShown(self.player, "splash") == false
+        and type(signals.GetSplashes) == "function" then
+        local ok, splashes = pcall(signals.GetSplashes, signals)
+        if ok and type(splashes) == "table" and #splashes > 0 then
+            if self:TryShowContextTeaching("splash") then return true end
+        end
+    end
+    return false
 end
 
 function Loop:RefreshClockStatus()
@@ -608,7 +651,11 @@ end
 
 function Loop:SetElderOpen(open)
     local present, reason = self:IsElderPresent()
-    if open and not present then return false, reason or "elder_not_present" end
+    if open and not present then
+        -- V2.7：老人离世后入口仍可点，只说明原因且不消耗。
+        self.lastMessage = "老人已经不在了，无法再把东西交给他。"
+        return false, reason or "elder_not_present"
+    end
     if type(open) ~= "boolean" then return false, "busy" end
     local bucketOnlyBusy = self.barrel and self.barrel:IsBusy() and (open or self.elderOpen)
         and not self.closed and not self.entryPending and not self.busy and not self.loading
@@ -812,6 +859,80 @@ function Loop:Depart()
     self.clock:Resume("port")
     SoundSystem.SyncAmbient(self.clock.phase, true)
     self.lastMessage = "已出航"
+    -- V2.7：D1 首次出航进入海上时，由同行老人一次性教停船投饵 + 晚归规则。
+    -- 用顶部轻量提示（05 页 R14：教学/知识提示不进模态队列、不暂停世界），
+    -- 因此不破坏「出航解除港口暂停」的既有契约。
+    self:TryShowContextTeaching("basic")
+    self:TryShowAdvancedTeaching()
+    return true
+end
+
+-- V2.7（W-03）：救活路线 D4～D7，老人继续同行并每天给一条进阶短教学。
+-- 只在当天首次出航时提一次；不要求玩家已取得探海镜或探索成功。
+local ADVANCED_TEACHING_TEXT = {
+    [4] = "远远看见个影子，不等于知道它是什么。得靠近到二十来米，才认得出来。",
+    [5] = "认出来了，再想想能不能动手探索。岛上的东西，可不会自己跑到你船上。",
+    [6] = "这片海不会替你做决定。看见、猜一猜，再自己去试。",
+    [7] = "这么些天，你已经能自己读懂这片海了。剩下的，往后慢慢看。",
+}
+
+---@return boolean
+function Loop:TryShowAdvancedTeaching()
+    local day = tonumber(self.player.day) or 1
+    local text = ADVANCED_TEACHING_TEXT[day]
+    if not text then return false end
+    if not self:IsElderPresent() then return false end
+    if Progress.IsAdvancedTeachingShownForDay(self.player, day) ~= false then return false end
+    local marked, newlyShown = Progress.MarkAdvancedTeachingShown(self.player, day)
+    if marked ~= true or newlyShown ~= true then return false end
+    self.lastMessage = "老人：" .. text
+    return true
+end
+
+---情境教学：按 V2.7 规则在真实条件满足时给一次老人提示，并标记 shown。
+---呈现方式：顶部轻量提示（不暂停世界、不进模态队列，05 页 R14）。
+---条件：老人仍同行；本周目该条未显示；当前无剧情模态。
+---@param kind "basic"|"bird"|"splash"
+---@return boolean
+function Loop:TryShowContextTeaching(kind)
+    if kind ~= "basic" and kind ~= "bird" and kind ~= "splash" then return false end
+    if not self:IsElderPresent() then return false end
+    if self.storyDialog then return false end
+    local shown = Progress.IsTeachingShown(self.player, kind)
+    if shown ~= false then return false end
+    -- D1 基础教学在首次出航时无条件触发；海鸟/水花按真实看到现象触发（调用方已判定）。
+    local text
+    if kind == "basic" then
+        text = "风挺大啊……老头子这两天有些乏，不碍事。记住两件事："
+            .. "船一动，小鱼就躲你，想投饵先把船停稳；"
+            .. "还有，天黑后头15秒赶回来还算安全，再拖就会影响明天的体力，真熬到夜深就只能强制返港了。"
+    elseif kind == "bird" then
+        text = "鸟在那边盘旋，附近应该有小鱼，投点饵试试。"
+    else
+        text = "留意水花留下的方向，那是大鱼经过的痕迹。"
+    end
+    local marked, newlyShown = Progress.MarkTeachingShown(self.player, kind)
+    if marked ~= true or newlyShown ~= true then return false end
+    -- 顶部轻量提示（状态行），不占用捕鱼/木桶/探索的结果 toast 通道。
+    self.lastMessage = "老人：" .. text
+    return true
+end
+
+---D6 未救路线：日初一次苹果篮回想。
+---@return boolean
+function Loop:TryOpenAppleBasketRecall()
+    if self.player.day ~= 6 then return false, "recall_day_required" end
+    if self:IsElderPresent() then return false, "elder_present" end
+    local shown = Progress.IsAppleBasketRecallShown(self.player)
+    if shown ~= false then return false, "recall_already_shown" end
+    if self.storyDialog then return false end
+    if not self.inPort or not self:Ready() or self:HasPendingCatch() then return false, "busy" end
+    local marked, newlyShown = Progress.MarkAppleBasketRecallShown(self.player)
+    if marked ~= true or newlyShown ~= true then return false, "recall_already_shown" end
+    self.storyDialog = { token = {}, kind = "apple_basket",
+        text = "整理船舱时，你看见角落那只装苹果的旧篮子。前几天，老人有几次望着它出神，"
+            .. "那时你没多想。要是当时……你没再想下去。" }
+    self.clock:Pause("story")
     return true
 end
 
@@ -949,6 +1070,11 @@ function Loop:BeginNewDay()
     self.inPort, self.dayExhausted = true, false
     self.inventoryOpen, self.elderOpen = false, false
     SoundSystem.ExitElder()  -- 安全网：切日/回港时若残留老人声床则切回世界声床
+    -- V2.7：探海镜开关在换日时重置为关闭（持有权不变）。
+    if self.scopeEnabled then
+        self.scopeEnabled = false
+        self:SyncScope()
+    end
     self.portNightElapsed = 0
     self:CancelThrowSelection()
     self.settlementApplied = true
@@ -1005,11 +1131,7 @@ local function finishSettlement(self, saved)
         self.lastMessage = "已跳过本次保存等待，下一天已就绪；未保存进度可能在退出后丢失，已发出的保存请求仍可能稍后写入。"
     end
     if self.inPort and not self.endingPending then
-        if self.player.day == 4 then
-            self:OpenDay4ElderFate()
-        elseif self.player.day == 7 then
-            self:OpenDay7PaperBeforeEnding()
-        end
+        self:OpenDayEntryStory()
     end
     emit(self, "new_day_preparation", {
         kind = "operation", result = "ready", reason = saved and "saved" or "explicitly_skipped",
@@ -1373,11 +1495,7 @@ function Loop:LoadSaved(done)
                 self.loadStatus, self.saveStatus = "loaded", "saved"
                 self.lastMessage = "已加载每日结算存档"
                 if not runCompleted then
-                    if self.player.day == 4 then
-                        self:OpenDay4ElderFate()
-                    elseif self.player.day == 7 then
-                        self:OpenDay7PaperBeforeEnding()
-                    end
+                    self:OpenDayEntryStory()
                 end
             else ok, data = false, restoreOk and err or player end
         end
@@ -1492,11 +1610,21 @@ function Loop:CompleteAction(action)
 end
 
 function Loop:UseItem(index)
-    if not self:CanManageInventory() then return false, "busy" end
+    if not self:CanManageInventory() then
+        self.lastMessage = "现在不能使用物品，请先完成或取消当前动作。"
+        return false, "busy"
+    end
     local id = self.player.inventory:GetItems()[index]
     local definition = id and Items.GetDefinition(id)
-    if not definition then return false, "invalid_item" end
-    if not definition.heal or definition.heal <= 0 then return false, "item_has_no_use" end
+    if not definition then
+        self.lastMessage = "物品已不存在。"
+        return false, "invalid_item"
+    end
+    if not definition.heal or definition.heal <= 0 then
+        -- V2.7：每个物品的每个选项都有反馈，不用置灰代替。
+        self.lastMessage = definition.name .. "没有可用的使用效果。"
+        return false, "item_has_no_use"
+    end
     self.dropInFlight = true
     local removed, previous, stamina = self:RemoveCargo(index)
     if not removed then self.dropInFlight = false; return false, previous end
@@ -1510,16 +1638,35 @@ function Loop:UseItem(index)
 end
 
 function Loop:DropItem(index)
-    if not self:CanManageInventory() or self.inPort then return false, "sea_required" end
+    if not self:CanManageInventory() then
+        self.lastMessage = "现在不能丢弃物品，请先完成或取消当前动作。"
+        return false, "busy"
+    end
+    if self.inPort then
+        -- V2.7：港内丢弃被拒绝时也要给出原因（不用置灰代替反馈）。
+        self.lastMessage = "船上才能丢弃物品，请先出海。"
+        return false, "sea_required"
+    end
     local id = self.player.inventory:GetItems()[index]
     local definition = id and Items.GetDefinition(id)
-    if not definition then return false, "invalid_item" end
+    if not definition then
+        self.lastMessage = "物品已不存在。"
+        return false, "invalid_item"
+    end
     -- A9（S3）：关键物品不可丢弃（05 页），给明确解释且不消耗。
     if definition.protected then
         self.lastMessage = definition.name .. "是关键物品，不能丢弃。"
         return false, "protected_item"
     end
-    if not self.options.dropReceiver then return false, "drop_receiver_unavailable" end
+    if definition.category == "treasure" then
+        -- V2.7：宝藏不占船舱格，丢弃不能腾格；给客观原因。
+        self.lastMessage = definition.name .. "是宝藏，不能丢弃。"
+        return false, "treasure_protected"
+    end
+    if not self.options.dropReceiver then
+        self.lastMessage = "附近没有接收地点，物品仍保留在船舱里。"
+        return false, "drop_receiver_unavailable"
+    end
     local payload = { itemId = id, category = definition.category,
         worldEffect = definition.worldEffect, lifetimeSec = definition.lifetimeSec }
     self.dropInFlight = true
@@ -1539,12 +1686,27 @@ end
 
 function Loop:GiveToElder(index)
     local present, presenceReason = self:IsElderPresent()
-    if not present then return false, presenceReason or "elder_not_present" end
+    if not present then
+        -- V2.7：老人离世后入口仍可点，只说明原因且不消耗。
+        self.lastMessage = "老人已经不在了，无法再把东西交给他。"
+        return false, presenceReason or "elder_not_present"
+    end
     if self:HasPendingCatch() and not self.elderOpen then return false, "elder_dialog_required" end
-    if not self:CanManageInventory() or not self.elderOpen then return false, "elder_dialog_required" end
+    if not self:CanManageInventory() or not self.elderOpen then
+        self.lastMessage = "现在不能与老人交接物品，请先完成或取消当前动作。"
+        return false, "elder_dialog_required"
+    end
     local id = self.player.inventory:GetItems()[index]
     local definition = id and Items.GetDefinition(id)
-    if not definition or not definition.canGive then return false, "invalid_item" end
+    if not definition then
+        self.lastMessage = "物品已不存在。"
+        return false, "invalid_item"
+    end
+    if not definition.canGive then
+        -- V2.7：三个选项固定展示，不能执行时给出原因。
+        self.lastMessage = definition.name .. "不适合交给老人。"
+        return false, "cannot_give_item"
+    end
     if definition.category ~= "food" then
         self.lastMessage = "向老人展示了" .. definition.name .. "，物品仍保留，没有额外奖励。"
         return true, self.lastMessage, elderExchange(
@@ -2001,9 +2163,9 @@ function Loop:GiveTreasureToElder(id)
     if not self.elderOpen then return false, "elder_dialog_required" end
     if not self:CanManageInventory() then return false, "busy" end
     if id ~= "scopeLens" or not self:HasLens() then return false, "treasure_unavailable" end
-    self.lastMessage = "向老人展示了透镜，宝物仍保留，没有额外奖励。"
+    self.lastMessage = "向老人展示了探海镜，宝物仍保留，没有额外奖励。"
     return true, self.lastMessage, elderExchange(
-        self, id, "show", "展示 望远镜透镜", self.lastMessage)
+        self, id, "show", "展示 探海镜", self.lastMessage)
 end
 function Loop:BeginBarrelInspection()
     local cancelled, reason = self:CancelAutoReturn("barrel_inspection")
@@ -2068,6 +2230,7 @@ function Loop:BeginThrowItem(index)
     local cancelled, cancelError = self:CancelAutoReturn("throw_selection")
     if not cancelled then return false, cancelError or "auto_return_cancel_failed" end
     self.throwSelection = { index = index, itemId = item }
+    self.throwPicker = nil
     if self.actions then self.actions:SetDropTarget(nil) end
     if self.runtime and type(self.runtime.ClearMovementTarget) == "function" then self.runtime:ClearMovementTarget() end
     self:SetMessage("已选择" .. definition.name .. "，请点击12米内海面投掷；也可以取消。")
@@ -2076,6 +2239,56 @@ end
 function Loop:GetThrowSelection()
     local selected = self.throwSelection
     return selected and { index = selected.index, itemId = selected.itemId } or nil
+end
+
+---V2.7（P-06/S-01）：底部【投放】列表 —— 按物品类型合并同类数量。
+---仅列出世界接受的普通可投放物（不含宝藏/关键物品）；每项带最靠前一格的库位索引。
+---@return table[]
+function Loop:GetThrowCandidates()
+    local result = {}
+    if not self.player or not self.player.inventory then return result end
+    local byId, order = {}, {}
+    local items = self.player.inventory:GetItems()
+    for index = 1, #items do
+        local itemId = items[index]
+        local definition = Items.GetDefinition(itemId)
+        if definition and definition.category ~= "treasure" and not definition.protected then
+            if not byId[itemId] then
+                byId[itemId] = { itemId = itemId, name = definition.name,
+                    category = definition.category, count = 0, index = index }
+                order[#order + 1] = itemId
+            end
+            byId[itemId].count = byId[itemId].count + 1
+        end
+    end
+    for _, itemId in ipairs(order) do result[#result + 1] = byId[itemId] end
+    return result
+end
+
+---V2.7（S-01）：点击底部【投放】。
+---列表为空时不弹模态，用顶部轻量文字提示“船舱里没有可以投放的物品。”。
+---@return boolean, string|table
+function Loop:OpenThrowPicker()
+    if self.inPort then return false, "sea_required" end
+    if not self:CanManageInventory() then return false, "busy" end
+    if self:GetThrowSelection() then return self:CancelThrowSelection(), "cancelled" end
+    local candidates = self:GetThrowCandidates()
+    if #candidates == 0 then
+        self.lastMessage = "船舱里没有可以投放的物品。"
+        return false, "no_throwable_item"
+    end
+    self.throwPicker = candidates
+    return true, candidates
+end
+
+---@return table[]|nil
+function Loop:GetThrowPicker()
+    return self.throwPicker
+end
+
+function Loop:CloseThrowPicker()
+    self.throwPicker = nil
+    return true
 end
 function Loop:CancelThrowSelection() self.throwSelection = nil; return true end
 
@@ -2107,7 +2320,9 @@ function Loop:ThrowItemAtShip(index)
     return ok, reason
 end
 function Loop:OpenDay4ElderFate()
-    if self.player.day ~= 4 then return false, "elder_fate_day_required" end
+    -- V2.7：D4 结果模态每周目只弹一次，不限制“必须是 day==4”才能补显：
+    -- 若 D4 日结被“放弃保存”后玩家在 D5/D6 读旧检查点，仍应能补看这一次结果。
+    if (tonumber(self.player.day) or 1) < 4 then return false, "elder_fate_day_required" end
     local status = self:GetElderStatus()
     if status.decision ~= "saved" and status.decision ~= "dead" then
         return false, "elder_decision_pending"
@@ -2117,12 +2332,48 @@ function Loop:OpenDay4ElderFate()
     if shown then return false, "elder_fate_already_shown" end
     if self.storyDialog then return true end
     if not self.inPort or not self:Ready() or self:HasPendingCatch() then return false, "busy" end
-    local text = status.decision == "saved"
-        and "第四天清晨，老人还在。\n他望着你说：“多亏这几天你一直照顾我。”\n这趟航行，你们还能继续同行。"
-        or "第四天清晨，老人再也没有醒来。\n往后的航行，只剩你一个人。"
+    local text
+    if status.decision == "saved" then
+        -- V2.7（W-03）：救活结果必须明确告知“状态转好”，不直接暴露 3 苹果条件。
+        text = "第四天清晨，老人还在。\n"
+            .. "他缓缓坐起身，眼里恢复了些神气：“缓过来了……这天，还能跟你一起出海。”\n"
+            .. "这趟航行，你们还能继续同行。"
+    else
+        -- V2.7（W-02，文案回审已采纳）：离世结果 + 随后一句自然语言润色。
+        text = "清晨，船边安静得出奇。老人没像往常那样叫你起身。你走近时才发现，他已经没有了呼吸。\n"
+            .. "海浪依旧拍着船舷，仿佛不知道少了一个人。\n"
+            .. "你独自把船整理好，甲板上静悄悄的……日子还是得照样过。"
+    end
     self.storyDialog = { token = {}, kind = "elder_fate", text = text }
     self.clock:Pause("story")
     return true
+end
+
+---日初剧情入口：D4 老人命运 → D6 未救苹果篮回想 → D7 纸条。
+---同一时刻只开一个；已有剧情模态时不排队（下一次日结/读档会再尝试）。
+---@return boolean
+function Loop:OpenDayEntryStory()
+    if self.storyDialog then return false end
+    if self.endingPending then return false end
+    local day = tonumber(self.player.day) or 1
+    -- V2.7：日初剧情属于当天，不跨日补显。
+    -- D4 结果只在 D4 日初（含 D3→D4 换日、D4 读档）打开；
+    -- 若 D4 日结放弃保存后重启，读回的是 D3 检查点，D4 会整体重演。
+    if day == 4 then
+        local status = self:GetElderStatus()
+        if status.decision == "saved" or status.decision == "dead" then
+            if Progress.IsElderFateShown(self.player) == false then
+                if self:OpenDay4ElderFate() then return true end
+            end
+        end
+    end
+    if day == 6 and self:TryOpenAppleBasketRecall() then return true end
+    if day == 7 then
+        if Progress.IsPaperShown(self.player) == false then
+            if self:OpenDay7PaperBeforeEnding() then return true end
+        end
+    end
+    return false
 end
 
 function Loop:OpenDay7PaperBeforeEnding()
@@ -2146,12 +2397,18 @@ function Loop:OpenDay7PaperBeforeEnding()
 end
 function Loop:GetStoryDialog()
     local dialog = self.storyDialog
-    return dialog and { token = dialog.token, kind = dialog.kind, text = dialog.text } or nil
+    if not dialog then return nil end
+    return { token = dialog.token, kind = dialog.kind, text = dialog.text,
+        teachingKind = dialog.teachingKind }
 end
 function Loop:NotifyStoryShown(token)
     if not self.storyDialog or token ~= self.storyDialog.token then return false, "stale_story_dialog" end
     if self.storyDialog.kind == "paper" then return Progress.MarkPaperShown(self.player) end
     if self.storyDialog.kind == "elder_fate" then return Progress.MarkElderFateShown(self.player) end
+    -- V2.7：教学/回想类只在打开时标记 shown（由 TryOpen* 完成），关闭不额外写盘。
+    if self.storyDialog.kind == "teaching" or self.storyDialog.kind == "apple_basket" then
+        return true
+    end
     return false, "unknown_story_kind"
 end
 function Loop:CloseStoryDialog()

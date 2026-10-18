@@ -132,12 +132,16 @@ function Tests.Run()
             eq(loop.player.day, day)
             eq(loop.endingPending, false)
             eq(loop.player.story.circle1B2.runCompleted, false)
-            if loop:GetStoryDialog() then
-                local dialog = loop:GetStoryDialog()
-                eq(day, 4)
-                eq(dialog.kind, "elder_fate")
+            -- V2.7：日初剧情属于当天 —— D4 老人结果只在 D4，D6 未救回想只在 D6。
+            local dialog = loop:GetStoryDialog()
+            if dialog then
+                if day == 4 then eq(dialog.kind, "elder_fate")
+                elseif day == 6 then eq(dialog.kind, "apple_basket")
+                else assert(false, "days one to three, five and seven open no entry story here") end
                 assert(loop:NotifyStoryShown(dialog.token))
                 assert(loop:CloseStoryDialog())
+            else
+                assert(day ~= 4 and day ~= 6, "day four and day six must open their entry story")
             end
             assert(loop:Ready())
         end
@@ -149,6 +153,17 @@ function Tests.Run()
         local loop = loadSnapshot(oldCompleted)
         eq(loop.endingPending, false)
         eq(loop.player.day, 7)
+        -- V2.7：D7 读档仍先展示一次纸条（若尚未记录 shown）。
+        -- 关闭后当天仍可继续玩；不会仅凭 day/paper/fate 推断已完结。
+        -- 顺序：先补显 D4 老人结果，再纸条。
+        local legacyDialog = loop:GetStoryDialog()
+        while legacyDialog do
+            assert(legacyDialog.kind == "elder_fate" or legacyDialog.kind == "paper")
+            assert(loop:NotifyStoryShown(legacyDialog.token))
+            assert(loop:CloseStoryDialog())
+            loop:OpenDayEntryStory()  -- 没有剩余日初剧情时返回 false
+            legacyDialog = loop:GetStoryDialog()
+        end
         assert(loop:Ready(), "legacy completion cannot be inferred from day, paper, or fate")
     end)
 

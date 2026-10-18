@@ -46,8 +46,8 @@ return {
 
   -- 行为成就 6 条 (圈2 已锁定，不改)
   behavior = {
-    { id = "A1", name = "首日透镜",
-      desc = "出海第一天，你就把透镜捞出了木桶。眼界，从这一刻开了。",
+    { id = "A1", name = "首日探海镜",
+      desc = "出海第一天，你就把探海镜捞出了木桶。眼界，从这一刻开了。",
       predicate = { type = "firstDayLens" },
       reward = { type = "logLine" }, persist = "profile" },
     { id = "A2", name = "单日零空网",
