@@ -108,8 +108,11 @@ local Config = {
     -- 参数仅影响表现，不触碰世界/玩法。duskFrom/duskSpan 控制昼相末段向
     -- 黄昏图交叉淡入；nightFade 控制入夜前 10% 淡回昼图（夜罩瞬间叠加
     -- 不跳变）；scroll 关闭后贴图静止（仅 gradient/纸纹兜底时等同旧观感）。
+    -- 纯海面 v2 贴图层（C2，方案 A 夜罩不动）。scroll=false（2026-10-18 真机
+    -- 验收裁定）：底图固定不跟随船移动——海面为屏幕空间材质层，横移视差会让
+    -- 世界实体（岛/桶/波纹）与贴图速率脱节；保留开关供 SeaDebug/后续方案回退。
     seaSurface = { enabled = true, alpha = 1.0, duskFrom = 0.8, duskSpan = 0.2,
-        nightFade = 0.1, scroll = true, scrollScale = 1.0 },
+        nightFade = 0.1, scroll = false, scrollScale = 1.0 },
     wake = { lifetimeSec = 3, spacingMeters = 0.6, minSpeed = 0.15, maxSamples = 96,
         initialWidth = 0.65, spreadPerSec = 0.45, sternOffset = 2.5, opacity = 125 },
     projection = { circleSegments = 48, sectorSegments = 32, birdAltitude = 1.2 },

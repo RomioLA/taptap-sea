@@ -3,9 +3,11 @@
 --   1) 帧循环：鱼/海鸟/木桶按 time 走 eco_*_f1→f2→f3（6fps），鸟/桶相位 0 帧序精确可算；
 --   2) 物种映射：sardine→eco_fish_small（renderLength 1.8）、tuna→eco_fish_big（3.8）；
 --   3) heading 直传：贴图头朝 +X（入库水平翻转），鱼 heading=实体朝向；
---   4) 兜底等价：Plane 失败（返回 false）时全部 nvg 计数与未接入基线完全一致（矢量回退零回归）；
+--   4) 兜底等价：Plane/Upright 失败（返回 false）时全部 nvg 计数与未接入基线完全一致（矢量回退零回归）；
 --   5) 零状态改写：Scene 不推进 time/世界/船/相机/实体；
 --   6) SeaViewArt.Component：尺寸换算、heading/alpha 透传、非法输入与未知目录名返回 false。
+-- 2026-10-18 真机验收：木桶由平铺（Plane）改竖幅公告板投影（Upright）——预烘焙斜视
+-- 资产平铺在世界平面会被引擎斜投影二次压扁；鱼/海鸟保持平铺口径不变。
 local Tests = {}
 
 local Runtime = require("Ocean.SeaRuntime")
@@ -26,18 +28,25 @@ local function near(a, b, tolerance)
         and math.abs(a - b) <= (tolerance or 0.001)
 end
 
--- 记录 ImageArt.Plane 调用；result 控制返回值（true=贴图可用 / false=加载失败）。
+-- 记录 ImageArt.Plane / ImageArt.Upright 调用；result 控制返回值（true=贴图可用 / false=加载失败）。
+-- 2026-10-18 真机验收：木桶由平铺（Plane）改竖幅公告板投影（Upright），录制器须同时
+-- 覆盖两个入口，否则桶绘制不被记录（生态帧循环/尺寸契约会静默失守）。
 local function withPlaneRecorder(result, fn)
     local calls = {}
-    local original = ImageArt.Plane
+    local originalPlane, originalUpright = ImageArt.Plane, ImageArt.Upright
     ImageArt.Plane = function(ctx, name, movement, origin, length, width, heading, altitude, alpha)
-        calls[#calls + 1] = { name = name, x = origin.x, y = origin.y,
+        calls[#calls + 1] = { mode = "plane", name = name, x = origin.x, y = origin.y,
             length = length, width = width, heading = heading,
             altitude = altitude, alpha = alpha }
         return result
     end
+    ImageArt.Upright = function(ctx, name, movement, position, worldHeight, alpha)
+        calls[#calls + 1] = { mode = "upright", name = name, x = position.x, y = position.y,
+            height = worldHeight, alpha = alpha }
+        return result
+    end
     local ok, err = pcall(fn)
-    ImageArt.Plane = original
+    ImageArt.Plane, ImageArt.Upright = originalPlane, originalUpright
     if not ok then error(err) end
     return calls
 end
@@ -176,11 +185,12 @@ function Tests.Run(recorder)
         assert(near(bird.altitude, birdAltitude), "bird altitude did not follow the dive contract")
         local barrel = findCall(calls, "eco_barrel_f1")
         assert(barrel, "fixed barrel did not draw through the eco barrel art")
+        -- 2026-10-18 真机验收：平铺被斜投影二次压扁 → 竖幅公告板投影立起。
+        assert(barrel.mode == "upright",
+            "barrel must draw through the upright billboard projection, got " .. tostring(barrel.mode))
         local radius = Config.world.fixedBarrel.radius * 0.65
-        local barrelSize = radius * 2 / 0.88
-        assert(near(barrel.length, barrelSize) and near(barrel.width, barrelSize),
-            "barrel plane size did not follow the visual radius contract")
-        assert(near(barrel.heading, 0), "barrel heading should stay 0 (radially symmetric)")
+        assert(near(barrel.height, radius * 2),
+            "barrel upright height did not follow the visual radius contract")
         assert(countCalls(calls, "eco_") == 4,
             "expected exactly 2 fish + 1 bird + 1 barrel eco draws, got " .. countCalls(calls, "eco_"))
     end)

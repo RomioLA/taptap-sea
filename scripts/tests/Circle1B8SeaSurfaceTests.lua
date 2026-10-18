@@ -257,14 +257,16 @@ function Tests.Run(recorder)
     check("Surface 接入：滚动偏移随 camera.x，scroll=false 静止，alpha 经 config 透传", function()
         local ctx = {}
         local base = HEIGHT / Config.camera.viewHeight
+        local oldScroll = Config.visual.seaSurface.scroll
+        Config.visual.seaSurface.scroll = true
         SeaViewArt.Surface(ctx, makeMovement(100), 1.5)
         near(patterns[1].ox, -((100 * base) % WIDTH), 1e-9,
             "近水速率：1 世界米 = base 屏距（与 Projection 同口径）")
-        local oldScroll = Config.visual.seaSurface.scroll
         Config.visual.seaSurface.scroll = false
         patterns = {}
         SeaViewArt.Surface(ctx, makeMovement(100), 1.5)
-        near(patterns[1].ox, 0, 1e-9)
+        near(patterns[1].ox, 0, 1e-9,
+            "scroll=false 底图固定（2026-10-18 真机验收默认口径：不跟随船移动）")
         Config.visual.seaSurface.scroll = oldScroll
         local oldAlpha = Config.visual.seaSurface.alpha
         Config.visual.seaSurface.alpha = 0.8

@@ -76,12 +76,18 @@ local function drawFloat(ctx, movement, entity, outlineOnly, recognized, time)
     -- 只缩小木桶的视觉尺寸，原radius/识别/交互/阻挡边界不变。
     local visualRadius = radius * 0.65
     ImageArt.ContactRipple(ctx, movement, point, time, visualRadius)
-    local barrelSize = visualRadius * 2 / 0.88
+    -- 2026-10-18 真机验收：eco_barrel 为预烘焙斜视资产（且烘焙了水纹），平铺在
+    -- 世界平面会被引擎斜投影二次压扁（「木桶显示被平铺」）→ 改竖幅公告板投影
+    -- （Upright，与树/丘/岛饰同一投影口径）立起；内容主体世界高度=2×visualRadius
+    -- （与旧平铺内容口径一致）。旧桶图 barrel 为正俯视（ART_PIPELINE 合规），
+    -- 保持平铺（Plane）作二级回退；再失败走矢量剪影。
+    local barrelContent = visualRadius * 2
     if not outlineOnly then
-        -- C2：生态层木桶三帧（浮起/半浸/下沉）循环优先；失败回退旧桶图，再回退矢量。
-        if ImageArt.Plane(ctx, ecoFrameName("eco_barrel", time, 0), movement, point,
-            barrelSize, barrelSize, 0, 0) then return end
-        if ImageArt.Plane(ctx, "barrel", movement, point, barrelSize, barrelSize, 0, 0) then return end
+        -- C2：生态层木桶三帧（浮起/半浸/下沉）循环优先；Upright 立起。
+        if ImageArt.Upright(ctx, ecoFrameName("eco_barrel", time, 0), movement, point,
+            barrelContent) then return end
+        local barrelCanvas = barrelContent / 0.88
+        if ImageArt.Plane(ctx, "barrel", movement, point, barrelCanvas, barrelCanvas, 0, 0) then return end
     end
     Geometry.WorldCircle(ctx, movement, point, radius, outlineOnly and nil or Config.visual.float,
         { 225, 203, 156, 160 }, 1.5)

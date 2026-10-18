@@ -6,7 +6,8 @@
 --      (35,45) 与固定沉船 (35,60) 相距 15m，禁止把同一张沉船图再叠到宝藏上（双沉船回归）；
 --   2) island_01 固定岛饰：sign_* 七件各恰好放置一次，全部落在 0.89r 陆地圈内、与
 --      TREE_LAYOUT 树位保持 ≥1.4m 间距；island_02 零放置（固定装饰作用域不越界）；
---   3) 兜底等价：Plane 恒假时全部 nvg 计数与自然加载失败基线完全一致（矢量回退零回归）；
+--      2026-10-18 起走竖幅公告板投影（Upright）：高度透传+投影模式断言（防回退平铺）；
+--   3) 兜底等价：Plane/Upright 恒假时全部 nvg 计数与自然加载失败基线完全一致（矢量回退零回归）；
 --   4) 零状态改写：Island/Scene 不推进 time/世界/船/相机/实体；
 --   5) Component 入口：shipwreck 尺寸换算与锚点透传（未知名/非法尺寸由生态层测试守护）。
 -- 注：reef/coast/wreck 的 scenery 世界放置（Config.world.fixedComponents/fixedWrecks +
@@ -66,18 +67,25 @@ local function near(a, b, tolerance)
         and math.abs(a - b) <= (tolerance or 0.001)
 end
 
--- 记录 ImageArt.Plane 调用；result 控制返回值（true=贴图可用 / false=加载失败）。
+-- 记录 ImageArt.Plane / ImageArt.Upright 调用；result 控制返回值（true=贴图可用 / false=加载失败）。
+-- 2026-10-18 真机验收：岛饰由平铺（Component→Plane）改竖幅公告板投影（Upright），
+-- 录制器须同时覆盖两个入口（Plane 仍服务岛贴图/wreck/reef/coast）。
 local function withPlaneRecorder(result, fn)
     local calls = {}
-    local original = ImageArt.Plane
+    local originalPlane, originalUpright = ImageArt.Plane, ImageArt.Upright
     ImageArt.Plane = function(ctx, name, movement, origin, length, width, heading, altitude, alpha)
-        calls[#calls + 1] = { name = name, x = origin.x, y = origin.y,
+        calls[#calls + 1] = { mode = "plane", name = name, x = origin.x, y = origin.y,
             length = length, width = width, heading = heading,
             altitude = altitude, alpha = alpha }
         return result
     end
+    ImageArt.Upright = function(ctx, name, movement, position, worldHeight, alpha)
+        calls[#calls + 1] = { mode = "upright", name = name, x = position.x, y = position.y,
+            height = worldHeight, alpha = alpha }
+        return result
+    end
     local ok, err = pcall(fn)
-    ImageArt.Plane = original
+    ImageArt.Plane, ImageArt.Upright = originalPlane, originalUpright
     if not ok then error(err) end
     return calls
 end
@@ -193,9 +201,14 @@ function Tests.Run(recorder)
             local offsetX, offsetY = decor.x * radius, decor.y * radius
             assert(near(call.x, centerX + offsetX) and near(call.y, centerY + offsetY),
                 decor.name .. " anchor drifted from the island-normalized layout")
-            local expectedLength = ImageArt.ContentPlaneSize(decor.name, decor.size)
-            assert(expectedLength and near(call.length, expectedLength),
-                decor.name .. " size did not follow the catalog content ratio")
+            -- 2026-10-18 真机验收：竖幅公告板投影（原平铺令棕榈/阔叶躺倒、预烘焙斜视
+            -- 资产被二次压扁，视觉融入海面）。高度=decor.size 透传（Upright 内容主体
+            -- 世界高度口径，画幅由 catalog 内容比内部换算）。
+            assert(call.mode == "upright",
+                decor.name .. " must draw through the upright billboard projection, got "
+                    .. tostring(call.mode))
+            assert(near(call.height, decor.size),
+                decor.name .. " upright height did not pass through the layout size")
             -- 陆地圈 0.89r 内（与岛体 land 圆同口径）。
             assert(offsetX * offsetX + offsetY * offsetY <= (0.89 * radius) * (0.89 * radius) + 1e-6,
                 decor.name .. " must stay inside the 0.89r land circle")

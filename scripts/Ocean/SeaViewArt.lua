@@ -537,9 +537,11 @@ function SeaViewArt.Surface(ctx, movement, time, clock)
     nvgFill(ctx)
     -- 纯海面贴图层（2026-10-17 C2，方案 A）：渐变保留为最终兜底；贴图可用时
     -- 叠加（base + 按相位交叉淡入的 over），只有加载失败/显式关闭才走纸纹层，
-    -- 避免贴图与纸纹双重颗粒叠加。滚动只读相机 x：近水速率 1 世界米 = base
-    -- 屏距（anchor 深度 q=1，与 Projection.parameters 同口径），负向偏移，
-    -- REPEATX 横向无缝循环；暂停时相机冻结，偏移自然静止。
+    -- 避免贴图与纸纹双重颗粒叠加。底图默认固定（scroll=false，2026-10-18 真机
+    -- 验收裁定）：海面是屏幕空间材质层，跟随相机横移会与世界实体速率脱节；
+    -- scroll=true 时按近水速率偏移（1 世界米 = base 屏距，anchor 深度 q=1，
+    -- 与 Projection.parameters 同口径），负向偏移，REPEATX 横向无缝循环；
+    -- 暂停时相机冻结，偏移自然静止。
     local seaSettings = Config.visual.seaSurface or {}
     local seaDrawn = false
     if seaSettings.enabled ~= false and type(ImageArt.SeaSurface) == "function" then
@@ -888,15 +890,18 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     for _,tree in ipairs(geometry.trees) do
         drawTree(ctx,movement,tree.base,tree.height,bounds,tree.palette,airMix,tree.shape,frame,tree.name)
     end
-    -- C2（2026-10-17，用户仲裁批准）：island_01 固定岛饰（sign_* oblique 组件，Component
-    -- 入口=ContentPlaneSize 内容比换算 + Plane 懒加载/LOD/地平线裁剪）。仅 island_01 装配，
-    -- island_02 与其他岛零改动；绘于树后（饰件与树位空间避让，压序无歧义）。
+    -- C2（2026-10-17，用户仲裁批准）：island_01 固定岛饰（OceanComponents sign_* 七件）。
+    -- 2026-10-18 真机验收改竖幅公告板投影（Upright）：原平铺在世界平面上，棕榈/阔叶
+    -- （侧视图树）直接躺倒、预烘焙斜视资产被引擎斜投影二次压扁，视觉融入海面——
+    -- 「岛的素材接入进海面了」。现底沿锚定岛上归一化位、立式显示（与树/丘同一
+    -- 投影口径），内容主体世界高度=decor.size 透传；仅 island_01 装配，
+    -- island_02 与其他岛零改动；加载失败静默跳过（岛体不依赖岛饰绘制成功）。
     -- 与 SeaDraw 的 scenery 体系（reef/coast/wreck，World:Init 注册）互补：不新增实体、
     -- 不碰 fixedContentEntities，资产作用域互不重叠（sign_* vs reef/coast/shipwreck）。
     if entity.contentId == "island_01" and radius >= 5 then
         for _, decor in ipairs(ISLAND_01_DECOR) do
-            SeaViewArt.Component(ctx, decor.name, movement,
-                localIslandPoint(center, decor.x * radius, decor.y * radius), decor.size, 0)
+            ImageArt.Upright(ctx, decor.name, movement,
+                localIslandPoint(center, decor.x * radius, decor.y * radius), decor.size)
         end
     end
     PerfProbe.Sample("islandVector", probeVectorStop())
