@@ -359,7 +359,7 @@ function Art.Upright(ctx, name, movement, position, worldHeight, alpha, worldWid
     end
     -- 2026-10-19：亚像素尺寸返回 false（此前 return true 但不绘制，调用方据此误判
     -- 「已绘制」而抑制矢量兜底 → 远处小岛只剩矢量裸底图）。
-    if math.min(screenHeight, screenWidth) < UPRIGHT_MIN_PX then return true end -- TEMP-REVERT-CHECK
+    if math.min(screenHeight, screenWidth) < UPRIGHT_MIN_PX then return false end
     local canvasHeight = screenHeight * spec.pixelHeight / spec.contentHeight
     local canvasWidth = screenWidth * spec.pixelWidth / spec.contentWidth
     -- 内容主体底沿落在锚点：画布中心 = 锚点 − 屏高/2（居中假设下内容底=锚点）。
