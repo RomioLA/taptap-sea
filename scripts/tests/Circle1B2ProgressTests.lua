@@ -51,6 +51,11 @@ local function memoryStore()
 end
 
 local function advanceDay(loop, store, failSave)
+    local pendingStory = loop:GetStoryDialog()
+    if pendingStory then
+        assert(loop:NotifyStoryShown(pendingStory.token))
+        assert(loop:CloseStoryDialog())
+    end
     assert(loop:EndToday())
     if failSave then store.failNext = true end
     assert(loop:ConfirmSettlement())
@@ -273,6 +278,47 @@ function Tests.Run()
         eq(status.present, false)
     end)
 
+    test("T15/T16 day-four fate result shows the finalized branch once without saving or changing resources", function()
+        local saved = decideElder({ true, true, true })
+        local loop = saved.loop
+        local dialog = assert(loop:GetStoryDialog())
+        eq(dialog.kind, "elder_fate")
+        eq(dialog.text, "第四天清晨，老人还在。\n他望着你说：“多亏这几天你一直照顾我。”\n这趟航行，你们还能继续同行。")
+        eq(loop:GetElderStatus().decision, "saved")
+        eq(Progress.IsElderFateShown(loop.player), false)
+        local stamina, writes = loop.player.stamina, saved.store.writes
+        assert(loop:NotifyStoryShown(dialog.token))
+        eq(Progress.IsElderFateShown(loop.player), true)
+        assert(loop:CloseStoryDialog())
+        loop:Update(0.1)
+        eq(loop:GetStoryDialog(), nil, "switching views does not reopen the result")
+        eq(loop.player.stamina, stamina, "story result does not change stamina")
+        eq(saved.store.writes, writes, "story result adds no autosave")
+        local reopened, reason = loop:OpenDay4ElderFate()
+        eq(reopened, false); eq(reason, "elder_fate_already_shown")
+
+        local dead = decideElder({ true, true, false })
+        local deadDialog = assert(dead.loop:GetStoryDialog())
+        eq(dead.loop:GetElderStatus().applesGiven, 2)
+        eq(dead.loop:GetElderStatus().decision, "dead")
+        eq(deadDialog.kind, "elder_fate")
+        eq(deadDialog.text, "第四天清晨，老人再也没有醒来。\n往后的航行，只剩你一个人。")
+        assert(dead.loop:NotifyStoryShown(deadDialog.token))
+        assert(dead.loop:CloseStoryDialog())
+        eq(dead.loop.player.elder.circle1B2.applesGiven, 2, "presentation does not change the apple threshold")
+        eq(dead.loop.player.elder.circle1B2.decision, "dead")
+    end)
+
+    test("partial same-schema story progress migrates missing elder fate marker as not shown", function()
+        local fixture = Flow.Fixture()
+        local snapshot = Persistence.Snapshot(fixture.loop.player)
+        snapshot.story.circle1B2.elderFateShown = nil
+        assert(Progress.Validate(snapshot), "missing optional marker remains compatible")
+        local restored, restoreError = Persistence.Restore(snapshot)
+        assert(restored, tostring(restoreError))
+        eq(restored.story.circle1B2.elderFateShown, false)
+    end)
+
     test("memory save retries once without double-advancing and restores progress through day seven", function()
         local store = memoryStore()
         local fixture = Flow.Fixture({ store = store })
@@ -450,7 +496,7 @@ function Tests.Run()
         eq(store.writes, 3)
     end)
 
-    test("day-seven paper opens only explicitly, acknowledgement round-trips without auto-saving", function()
+    test("T18/T19 day-seven paper auto-opens at port entry and acknowledgement does not autosave", function()
         local store = memoryStore()
         local fixture = Flow.Fixture({ store = store })
         local loop = fixture.loop
@@ -465,13 +511,13 @@ function Tests.Run()
         eq(loop.player.story.circle1B2.paperShown, false)
         advanceDay(loop, store)
         eq(loop.player.day, 7)
-        eq(loop:GetStoryDialog(), nil, "day start must not auto-open the paper")
-        local writesBeforePaper = store.writes
-
-        assert(loop:OpenDay7PaperBeforeEnding())
-        local dialog = assert(loop:GetStoryDialog())
+        local dialog = assert(loop:GetStoryDialog(), "day-seven port entry automatically opens the paper")
         eq(dialog.kind, "paper")
-        eq(dialog.text, "海岸边那只木桶，下面一定有什么东西，我想多打捞几次就能打捞上来吧。")
+        eq(dialog.text, "海边那只木桶还有秘密，快去再探探。")
+        eq(Progress.IsPaperShown(loop.player), false, "visible entry does not acknowledge before HUD display")
+        local writesBeforePaper = store.writes
+        eq(loop:CloseStoryDialog(), false, "unread entry paper cannot be dismissed")
+        assert(loop:OpenDay7PaperBeforeEnding(), "opening is idempotent while the entry paper is visible")
         local token = dialog.token
         assert(type(token) == "table")
         assert(loop:NotifyStoryShown(token))

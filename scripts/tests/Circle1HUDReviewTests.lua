@@ -1,6 +1,7 @@
 -- 玩家路径与引擎过渡算法的无窗口验证，不证明实际像素/触摸效果。
 local Loop = require("Gameplay.Loop")
 local Config = require("config.gameplay")
+local ArtVariants = require("Ocean.ArtVariants")
 local Transition = require("urhox-libs/UI/Core/Transition")
 local Tests = {}
 
@@ -8,6 +9,13 @@ local function uiHost()
     local Widget = {}
     Widget.__index = Widget
     function Widget:AddChild(child) self.children[#self.children + 1] = child; child.parent = self end
+    function Widget:InsertChild(child, index)
+        if child.parent then child.parent:RemoveChild(child) end
+        index = math.max(1, math.min(index, #self.children + 1))
+        table.insert(self.children, index, child)
+        child.parent = self
+        return self
+    end
     function Widget:RemoveChild(child)
         for i, value in ipairs(self.children) do if value == child then table.remove(self.children, i); break end end
     end
@@ -35,7 +43,7 @@ local function uiHost()
         self.props.backgroundColor = color
     end
     local UI = {}
-    for _, kind in ipairs({ "Panel", "SafeAreaView", "Label", "Button", "Spacer", "ScrollView", "TextField" }) do
+    for _, kind in ipairs({ "Panel", "SafeAreaView", "Label", "Button", "Spacer", "ScrollView", "TextField", "Sprite" }) do
         UI[kind] = function(props)
             props = props or {}
             local widget = setmetatable({ kind = kind, props = props, children = {},
@@ -289,6 +297,103 @@ function Tests.Run()
             assert(label(hud.root, "次日体力 99.0/100").visible)
             loop.clock:Seek("night", Config.clock.nightSec); hud.Refresh()
             assert(not label(hud.root, "晚归处罚中").visible)
+        end)
+    end)
+    check("T01/T02 formal stamina stays visible in port and at sea with StoryArt off or on", function()
+        local original = ArtVariants.IsEnabled
+        local ok, err = xpcall(function()
+            ArtVariants.IsEnabled = function() return false end
+            fixture({}, function(loop, hud)
+                local stamina = label(hud.root, "体力 100/100")
+                assert(isVisible(stamina), "formal stamina must be visible in port")
+                assert(loop:Depart())
+                hud.Refresh()
+                assert(isVisible(stamina), "formal stamina must remain visible at sea")
+                ArtVariants.IsEnabled = function() return true end
+                hud.Refresh()
+                assert(isVisible(stamina), "StoryArt must not control formal stamina visibility")
+            end)
+        end, debug.traceback)
+        ArtVariants.IsEnabled = original
+        if not ok then error(err, 0) end
+    end)
+    check("T03 fishing and barrel buttons show 40 stamina before an action starts", function()
+        fixture({}, function(loop, hud)
+            assert(loop:Depart())
+            loop.runtime = {
+                GetFixedBarrel = function() return { position = { x = 0, y = 0 } } end,
+                GetShipPosition = function() return { x = 0, y = 0 } end,
+            }
+            hud.Refresh()
+            local stamina = loop.player.stamina
+            local fishing = button(hud.root, "捕鱼 · 40体力")
+            local barrel = button(hud.root, "检查木桶 · 40体力")
+            assert(isVisible(fishing) and isVisible(barrel))
+            assert(loop.player.stamina == stamina, "showing action costs must not charge stamina")
+        end)
+    end)
+    check("T11/T12/T13 failed auto-return warning is shown once and outranks saved status", function()
+        fixture({}, function(loop, hud)
+            assert(loop:Depart())
+            local autoState = { phase = "active" }
+            loop.runtime = { GetAutoReturnState = function() return autoState end }
+            loop.saveStatus = "saved"
+            hud.Refresh()
+            autoState.phase, autoState.failureReason = "failed", "stuck"
+            hud.Refresh()
+            local warning = "自动返航受阻，请手动驶离障碍后重试。"
+            assert(hasVisibleLabel(hud.root, warning))
+            assert(loop.saveStatus == "saved", "failure notice must not mutate saveStatus")
+            for _ = 1, 3 do hud.Refresh() end
+            local count = 0
+            walk(hud.root, function(widget)
+                if widget.kind == "Label" and isVisible(widget)
+                    and type(widget.props.text) == "string" and widget.props.text:find(warning, 1, true) then
+                    count = count + 1
+                end
+            end)
+            assert(count == 1, "refreshes must not create duplicate failure notices")
+            autoState.phase = "active"
+            hud.Refresh()
+            assert(not hasVisibleLabel(hud.root, warning), "a successful restart clears the old warning")
+            assert(loop.saveStatus == "saved")
+        end)
+    end)
+    check("T14 successful, cancelled, and idle auto-return states do not report failure", function()
+        fixture({}, function(loop, hud)
+            assert(loop:Depart())
+            local autoState = { phase = "active" }
+            loop.runtime = { GetAutoReturnState = function() return autoState end }
+            for _, phase in ipairs({ "active", "cancelled", "arrival_ready", "idle" }) do
+                autoState.phase, autoState.failureReason = phase, nil
+                hud.Refresh()
+                assert(not hasVisibleLabel(hud.root, "自动返航受阻"),
+                    "phase " .. phase .. " must not show a failure warning")
+            end
+        end)
+    end)
+    check("T09 action feedback uses the existing central result bubble once", function()
+        fixture({}, function(loop, hud)
+            local toastText = "获得记忆：岛屿记忆一\n消耗40体力，剩余60体力"
+            assert(loop:QueueActionToast(toastText, 3))
+            hud.Refresh()
+            assert(hasVisibleLabel(hud.root, "获得记忆：岛屿记忆一"))
+            assert(hasVisibleLabel(hud.root, "消耗40体力，剩余60体力"))
+            local bubble = find(hud.root, function(widget)
+                return widget.props and widget.props.id == "catchResultBubble"
+            end)
+            assert(isVisible(bubble), "feedback should reuse the central result bubble")
+            assert(loop:GetActionToast() == nil, "HUD consumes one result toast")
+            hud.Refresh()
+            assert(hasVisibleLabel(hud.root, "获得记忆：岛屿记忆一"))
+        end)
+    end)
+    check("T07 opening shows seven-day rule as a system note, separate from elder dialogue", function()
+        fixture({}, function(_loop, hud)
+            assert(hasVisibleLabel(hud.root,
+                "系统提示：本轮旅程共7天。每天可以出海、捕鱼、探索或返港准备；第7天结束后会进入结局，之后可以开始新周目。"))
+            assert(hasVisibleLabel(hud.root, "老人：被救起的老人把一只旧背包递给你："),
+                "the rule note remains separate from elder speech")
         end)
     end)
     return { results = results, guiVerified = false }

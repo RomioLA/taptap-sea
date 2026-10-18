@@ -328,15 +328,13 @@ function HUD.Create(loop, parent, debugTools)
     -- v2.1 §7.15（用户 13:03「仅留顶部一行状态栏」）：header 由 4~5 行纵向堆叠
     -- 收敛为**单行左右分栏**——
     --   左：第几天 / 昼夜 / 剩余时间 / 暂停态 / 距港距离（日志与夜航警示折叠进其尾）
-    --   右：体力 + 钱 + 背包格
-    -- 定位为**测试期状态查看**（发布时整块删除），故：
-    --   · 不参与布局（absolute + pointerEvents=box-none），不挤占任何 UI 位
-    --   · 任何卡片/按钮坞都可覆盖它，不影响操作
+    --   右：正式常驻的体力当前值/上限。
+    -- 顶部体力是正式玩家 HUD，独立于开发调试开关与 StoryArt；状态信息仍浮层显示，
+    -- 不参与布局，不挤占行动按钮空间。
 local header = UI.Panel {
         id = "gameplayStatusBar",
-        -- v2.1 §7.15（用户 13:03）：测试期单行状态浮层——absolute 不占布局、
-        -- pointerEvents=box-none 不抢点击、任何卡片都可覆盖，发布时整块删除。
-        -- 左右分栏：左=天数/昼夜/时间/暂停/距港，右=体力/钱/背包格。
+        -- 正式体力常驻显示与辅助状态共用单行浮层；absolute 不占布局，
+        -- pointerEvents=box-none 不抢点击。左=日期/昼夜/时间/暂停/距港，右=体力。
         position = "absolute",
         left = 0,
         top = 0,
@@ -452,7 +450,7 @@ local header = UI.Panel {
         if invokeLoop("BeginFishingSelection") then
             showFishingSelectionHint()
         end
-    end, "primary", 72)
+    end, "primary", 132)
 
     -- 真机反馈（2026-10-05）：按钮坞由三行收敛为单行操作。容器透明 +
     -- box-none——空白区域点击穿透海面，只有按钮本身接收点击；超出屏幕
@@ -498,6 +496,11 @@ local header = UI.Panel {
             or mode == "return_to_port") then return mode end
         return "return_to_port"
     end
+    local function readAutoReturnState()
+        if type(loop.GetAutoReturnState) ~= "function" then return nil end
+        local ok, value = Diagnostics.Call("HUD", "auto_return_state", loop.GetAutoReturnState, loop)
+        return ok and type(value) == "table" and value or nil
+    end
     local function readWorldContentPrompt()
         if type(loop.GetWorldContentPrompt) ~= "function" then return nil end
         local ok, prompt = Diagnostics.Call("HUD", "world_content_prompt", loop.GetWorldContentPrompt, loop)
@@ -541,7 +544,7 @@ local header = UI.Panel {
         else
             invokeLoop("BeginWorldContentAction", prompt.contentId, prompt.actionKind)
         end
-    end, "primary", 104)
+    end, "primary", 142)
     refs.worldContentAction:SetVisible(false)
     refs.endToday = makeButton("结束今日", function() invokeLoop("EndToday") end, "primary", 98)
     -- 读取云存档/开始新周目移入信息滚动屏（低频港口操作，见 portPanel 段）。
@@ -573,7 +576,7 @@ local header = UI.Panel {
     -- 望远镜（窥视镜）在获得后常驻、未获得时靠近木桶作为线索入口。
     refs.barrelToggle = makeButton("检查木桶", function()
         invokeLoop("BeginBarrelInspection")
-    end, "secondary", 96)
+    end, "secondary", 132)
     refs.barrelToggle:SetVisible(false)
     -- v2.1 §7.9（真机 21:10"镇模未获得"被截断）：文案会变
     -- "透镜未获得"/"关闭望远镜"（5~6 字），固定 80px 装不下 → 放宽到 104。
@@ -635,15 +638,15 @@ local header = UI.Panel {
     local dockEntries = {
         { widget = refs.infoToggle,       width = 92 },
         { widget = refs.compendiumToggle, width = 72 },
-        { widget = refs.barrelToggle,     width = 96 },
+        { widget = refs.barrelToggle,     width = 132 },
         { widget = refs.scopeToggleBar,   width = 104 },
-        { widget = refs.worldContentAction,width = 104 },
+        { widget = refs.worldContentAction,width = 142 },
         { widget = refs.inventoryToggle,  width = 128 },
         { widget = refs.elderToggle,      width = 112 },
         { widget = refs.depart,           width = 80 },
         { widget = refs.returnToPort,     width = 80 },
         { widget = refs.endToday,         width = 98 },
-        { widget = refs.beginFishing,     width = 72 },
+        { widget = refs.beginFishing,     width = 132 },
     }
     local dockReserve = 60
 
@@ -891,8 +894,9 @@ local header = UI.Panel {
     refs.scopePanel:AddChild(refs.scopeStatus)
     content:AddChild(refs.scopePanel)
     -- 宝物是既有player.treasures状态，不占有限格inventory；开关复用既有望远镜入口。
-    refs.treasurePanel = card("宝物 · 不占船舱格")
-    refs.treasureSummary = makeLabel("尚未获得宝物。", UiKit.fontSize.teaching, UiKit.ink.dim)
+    refs.treasurePanel = card("记忆与透镜")
+    refs.treasureSummary = makeLabel("已获得的记忆与透镜会在此显示，不占船舱格。",
+        UiKit.fontSize.teaching, UiKit.ink.dim)
     refs.treasurePanel:AddChild(refs.treasureSummary)
     drawerContent:AddChild(refs.treasurePanel)
 
@@ -2305,6 +2309,18 @@ local header = UI.Panel {
         local lastMessageEvent = (lastMessageText ~= "" and lastMessageText ~= "出海采集，返港交易与结算。")
             and lastMessageText or nil
         local saveStatus = loop.saveStatus
+        local autoReturnState = readAutoReturnState()
+        if type(autoReturnState) == "table" and autoReturnState.phase == "failed" then
+            local failureSignature = tostring(loop.generation or 0) .. "|"
+                .. tostring(autoReturnState.failureReason or "unknown")
+            if state.autoReturnFailureSignature ~= failureSignature then
+                state.autoReturnFailureSignature = failureSignature
+                state.autoReturnFailureMessage = "自动返航受阻，请手动驶离障碍后重试。"
+            end
+        elseif type(autoReturnState) == "table" then
+            state.autoReturnFailureSignature = nil
+            state.autoReturnFailureMessage = nil
+        end
         local portAccess, portReason, portDetails = loop:CanAccessPort()
         local portDistance = portDetails and portDetails.distance
         local portRadius = portDetails and portDetails.radius or 10
@@ -2329,6 +2345,8 @@ local header = UI.Panel {
         local logText
         if saveStatus == "error" then
             logText = saveText(loop)
+        elseif state.autoReturnFailureMessage then
+            logText = state.autoReturnFailureMessage
         elseif localMessage then
             logText = localMessage
         elseif saveStatus == "saved" then
@@ -2401,7 +2419,7 @@ local header = UI.Panel {
         if type(loop.GetStoryDialog) == "function" then
             local ok, value = pcall(loop.GetStoryDialog, loop)
             if ok and type(value) == "table"
-                and (value.kind == "paper" or value.kind == "elder")
+                and (value.kind == "paper" or value.kind == "elder" or value.kind == "elder_fate")
                 and type(value.token) == "table" and type(value.text) == "string" then
                 storyDialog = value
             end
@@ -2446,12 +2464,17 @@ local header = UI.Panel {
                 if (outcome == "caught" or outcome == "pending_catch") and caughtItemId then
                     local definition = Items.GetDefinition(caughtItemId)
                     local fishName = definition and definition.name or "鱼获"
+                    local costFeedback = string.format("\n消耗%d体力，剩余%d体力",
+                        tonumber(fishingState.staminaCost) or Config.stamina.fishingCost,
+                        math.floor(tonumber(fishingState.staminaAfter) or tonumber(player.stamina) or 0))
                     if outcome == "pending_catch" then
                         resultText = "本次捞到 1 条" .. fishName .. "；船舱已满，请整理船舱接收鱼获。"
+                            .. costFeedback
                     else
                         local sellPrice = definition and definition.sellPrice
                         resultText = "本次捞到 1 条" .. fishName
                             .. (sellPrice and sellPrice > 0 and string.format("，返港可卖 %d 币", sellPrice) or "")
+                            .. costFeedback
                     end
                 elseif outcome == "empty" then
                     resultText = "没有捞到。试试停船投饵，等鱼群聚过来再下网。"
@@ -2470,20 +2493,41 @@ local header = UI.Panel {
         -- （os.time 缺失的运行时静默禁用气泡，结果仍见捕鱼小卡的结果行。）
         local nowStamp = bubbleTime()
         if nowStamp then
-            if fishingTerminal and resultText ~= "" then
-                local bubbleKey = fishingPhase .. "|" .. resultText
-                if state.bubbleKey ~= bubbleKey then
-                    state.bubbleKey = bubbleKey
-                    state.bubbleText = resultText
-                    state.bubbleUntil = nowStamp + 5
-                end
-            elseif not fishingTerminal and state.bubbleKey ~= nil then
-                state.bubbleKey = nil
+            local actionToast
+            if type(loop.GetActionToast) == "function" then
+                local okToast, value = Diagnostics.Call(
+                    "HUD", "action_toast", loop.GetActionToast, loop)
+                if okToast and type(value) == "table" then actionToast = value end
             end
-            local bubbleVisible = state.bubbleUntil ~= nil and nowStamp < state.bubbleUntil
-            refs.catchBubble:SetVisible(bubbleVisible)
-            if bubbleVisible then
-                setText(refs.catchBubbleText, "catchBubbleText", state.bubbleText or "")
+            if actionToast and type(actionToast.id) == "number"
+                and type(actionToast.text) == "string" and actionToast.text ~= "" then
+                state.actionToastUntil = nowStamp + (tonumber(actionToast.durationSec) or 3)
+                state.actionToastText = actionToast.text
+                if type(loop.AcknowledgeActionToast) == "function" then
+                    Diagnostics.Call("HUD", "action_toast_ack",
+                        loop.AcknowledgeActionToast, loop, actionToast.id)
+                end
+            end
+            local actionToastVisible = state.actionToastUntil ~= nil and nowStamp < state.actionToastUntil
+            if actionToastVisible then
+                refs.catchBubble:SetVisible(true)
+                setText(refs.catchBubbleText, "catchBubbleText", state.actionToastText or "")
+            else
+                if fishingTerminal and resultText ~= "" then
+                    local bubbleKey = fishingPhase .. "|" .. resultText
+                    if state.bubbleKey ~= bubbleKey then
+                        state.bubbleKey = bubbleKey
+                        state.bubbleText = resultText
+                        state.bubbleUntil = nowStamp + 5
+                    end
+                elseif not fishingTerminal and state.bubbleKey ~= nil then
+                    state.bubbleKey = nil
+                end
+                local bubbleVisible = state.bubbleUntil ~= nil and nowStamp < state.bubbleUntil
+                refs.catchBubble:SetVisible(bubbleVisible)
+                if bubbleVisible then
+                    setText(refs.catchBubbleText, "catchBubbleText", state.bubbleText or "")
+                end
             end
         end
 
@@ -2495,7 +2539,9 @@ local header = UI.Panel {
         local fishingCancellable = fishingSelecting or fishingPhase == "casting"
             or fishingPhase == "landed" or fishingCleanupPending
         refs.beginFishing:SetVisible(not inPort and (not fishingRestricted or fishingCancellable))
-        local beginFishingLabel = fishingCleanupPending and "重试清理" or "捕鱼"
+        local beginFishingLabel = fishingCleanupPending and "重试清理"
+            or fishingCancellable and "捕鱼"
+            or string.format("捕鱼 · %d体力", Config.stamina.fishingCost)
         if state.lastTexts.beginFishingLabel ~= beginFishingLabel then
             state.lastTexts.beginFishingLabel = beginFishingLabel
             refs.beginFishing:SetText(beginFishingLabel)
@@ -2515,6 +2561,9 @@ local header = UI.Panel {
         end
         local barrelDockEngaged = bucketActiveForInput or (barrelState ~= nil and barrelState.active == true)
         refs.barrelToggle:SetVisible(not inPort and (barrelNearForDock or barrelDockEngaged))
+        local barrelToggleLabel = barrelState and barrelState.active == true and "检查木桶"
+            or string.format("检查木桶 · %d体力", Config.barrel.cost)
+        setText(refs.barrelToggle, "barrelToggleLabel", barrelToggleLabel)
         refs.barrelToggle:SetDisabled(busy or fishingRestricted
             or (not barrelNearForDock and not barrelDockEngaged))
         -- 望远镜单入口（真机反馈 2026-10-05 精简：信息屏内只留状态文字）：
@@ -2547,13 +2596,10 @@ local header = UI.Panel {
             and string.format(" · 距港 %.1f米", portDistance)
             or " · 距港暂不可读"
         setText(refs.status, "status", statusText .. modeSuffix .. portDistanceText)
-        -- v2.1 §7.15 右列：体力 / 钱 / 背包格（测试期状态查看）
-        -- ⚠️ 文案格式受 GameLoopUISpec:77 契约约束（"100/100" / "钱：100" /
-        -- "2 / 5"，冒号与空格均不可改），仅位置搬到右列。
+        -- P0-01：不依赖开发调试或 StoryArt 的正式常驻体力值。
+        -- 用短文本为窄屏保留宽度；完整金钱与船舱信息仍在信息/商店区域查看。
         setText(refs.statusRight, "statusRight", string.format(
-            "体力：%s/%s · 钱：%s · 船舱 %d / %d 格",
-            tostring(player.stamina or 0), tostring(player.maxStamina or 0),
-            tostring(player.money or 0), #items, capacity))
+            "体力 %s/%s", tostring(player.stamina or 0), tostring(player.maxStamina or 0)))
 
         -- 夜航警示行：条件显隐（夜+海上+未耗尽才出现），常日不占行。
         refs.nightRisk:SetVisible(clockState.phase == "night" and not inPort and not clockState.exhausted)
@@ -2893,7 +2939,9 @@ local header = UI.Panel {
             or showEnding or showOpening or showCompendium
         refs.overlay:SetVisible(overlayShown)
         fadeOpacity(refs.modalCard, overlayShown and 1 or 0)
-        local storyTitle = storyDialog and storyDialog.kind == "elder" and "海岸边的老人" or "纸条"
+        local storyTitle = storyDialog and storyDialog.kind == "elder_fate" and "第4天 · 老人"
+            or storyDialog and storyDialog.kind == "elder" and "海岸边的老人"
+            or "漂流瓶里的纸条"
         local overlayTitle = showEntry and "云存档" or showForced and "夜晚返港"
             or (showSettlement and "每日结算" or (showOpening and "海岸边的老人")
             or (showEnding and "第 7 天 · 结局" or (showStory and storyTitle
@@ -3072,10 +3120,12 @@ local header = UI.Panel {
                     if ok and accepted ~= false then
                         state.storyShownToken = storyDialog.token
                     else
-                        state.localMessage = "纸条状态未能更新：" .. userMessage(ok and reason or accepted)
+                        local subject = storyDialog.kind == "paper" and "纸条" or "剧情结果"
+                        state.localMessage = subject .. "状态未能更新：" .. userMessage(ok and reason or accepted)
                     end
                 else
-                    state.localMessage = "纸条状态记录接口暂不可用。"
+                    state.localMessage = storyDialog.kind == "paper"
+                        and "纸条状态记录接口暂不可用。" or "剧情结果状态记录接口暂不可用。"
                 end
             end
         elseif not storyDialog then

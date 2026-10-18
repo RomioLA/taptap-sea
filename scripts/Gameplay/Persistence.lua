@@ -93,7 +93,9 @@ local function restoreValidated(data)
         or boatSpeedLevel > #Config.upgrades.boatSpeed.metersPerSec then
         return nil, "invalid_boat_speed_level"
     end
-    if not integer(data.day, 1) or not finite(data.maxStamina) or data.maxStamina <= 0
+    if not integer(data.day, 1) then return nil, "invalid_save_state" end
+    if data.day > Config.clock.maxDay then return nil, "invalid_run_day" end
+    if not finite(data.maxStamina) or data.maxStamina <= 0
         or not finite(data.stamina) or data.stamina < 0 or data.stamina > data.maxStamina
         or not integer(data.money, 0)
         or type(data.inventory) ~= "table" then return nil, "invalid_save_state" end

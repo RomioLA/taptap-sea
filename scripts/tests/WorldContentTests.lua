@@ -4,6 +4,7 @@ local Persistence = require "Gameplay.Persistence"
 local Circle1B2Progress = require "Gameplay.Circle1B2Progress"
 local Progress = require "Gameplay.WorldContentProgress"
 local Actions = require "Gameplay.WorldContentActions"
+local Loop = require "Gameplay.Loop"
 
 local Tests = {}
 local MEMORY_IDS = { "memory_island_01", "memory_island_02", "memory_treasure_01" }
@@ -167,6 +168,52 @@ function Tests.Run()
         owned(f.actions:GetOwnedTreasures(), { "memory_island_01" })
     end)
 
+    test("T08/T09 committed exploration and salvage toast exact memory and actual remaining stamina once", function()
+        local cases = {
+            { contentId = "island_01", kind = "explore", label = "岛屿记忆一" },
+            { contentId = "island_02", kind = "explore", label = "岛屿记忆二" },
+            { contentId = "underwater_treasure_01", kind = "salvage", label = "海底记忆" },
+        }
+        for _, case in ipairs(cases) do
+            local loop = Loop.New()
+            local f = fixture(loop.player)
+            loop.worldContentActions = f.actions
+            if case.kind == "salvage" then markTreasure(f) end
+            assert(loop:Depart())
+            local before = loop.player.stamina
+            local token = assert(loop:BeginWorldContentAction(case.contentId, case.kind))
+            eq(loop:GetActionToast(), nil, "begin must not show a successful charge")
+            eq(loop.player.stamina, before, "begin must be free")
+            loop:Update(3.99)
+            eq(loop:GetActionToast(), nil, "incomplete action must not show a reward")
+            loop:Update(0.01)
+            local toast = assert(loop:GetActionToast())
+            assert(toast.text:find("获得记忆：" .. case.label, 1, true), "toast must name the committed memory")
+            assert(toast.text:find(string.format("消耗40体力，剩余%d体力", loop.player.stamina), 1, true),
+                "toast must use the actual post-commit stamina")
+            eq(toast.durationSec, 3)
+            eq(loop.player.stamina, before - 40)
+            eq(f.actions:GetReceipt(token).commitState, "committed")
+            local sameToast = assert(loop:GetActionToast())
+            eq(sameToast.id, toast.id, "one action must enqueue one result")
+            assert(state(f, case.contentId).completed and state(f, case.contentId).rewardOwned)
+        end
+    end)
+
+    test("cancelled world-content action creates no paid or memory toast", function()
+        local loop = Loop.New()
+        local f = fixture(loop.player)
+        loop.worldContentActions = f.actions
+        assert(loop:Depart())
+        local token = assert(loop:BeginWorldContentAction("island_01", "explore"))
+        assert(loop:CancelWorldContentAction(token))
+        loop:Update(1)
+        eq(loop:GetActionToast(), nil)
+        eq(loop.player.stamina, 200)
+        eq(state(f, "island_01").completed, false)
+        eq(state(f, "island_01").rewardOwned, false)
+    end)
+
     test("two services on one player cannot both commit the same island reward", function()
         local f = fixture()
         local second = assert(Actions.New(f))
@@ -194,13 +241,65 @@ function Tests.Run()
         eq(f.player.stamina, 200)
     end)
 
-    test("exploration rejects stamina below 40 before opening a receipt", function()
+    test("low-stamina exploration stays visible but cannot start or charge", function()
         local f = fixture()
         f.player.stamina = 39
+        local prompt = assert(f.actions:GetWorldContentPrompt())
+        eq(prompt.text, "探索岛屿 · 40体力")
+        eq(prompt.staminaCost, 40)
+        eq(prompt.canAffordStamina, false)
         local token, reason = f.actions:BeginExplore("island_01")
         eq(token, nil); eq(reason, "insufficient_stamina")
         eq(f.player.stamina, 39)
         eq(f.actions:GetActionState(), nil)
+        eq(state(f, "island_01").completed, false)
+        eq(state(f, "island_01").rewardOwned, false)
+    end)
+
+    test("low-stamina marked treasure stays visible without a salvage receipt", function()
+        local f = fixture()
+        complete(f, "explore", "island_01")
+        complete(f, "explore", "island_02")
+        markTreasure(f)
+        f.player.stamina = 39
+        local prompt = assert(f.actions:GetWorldContentPrompt())
+        eq(prompt.text, "打捞宝藏 · 40体力")
+        eq(prompt.actionKind, "salvage")
+        eq(prompt.staminaCost, 40)
+        eq(prompt.canAffordStamina, false)
+        local token, reason = f.actions:BeginSalvage("underwater_treasure_01")
+        eq(token, nil); eq(reason, "insufficient_stamina")
+        eq(f.player.stamina, 39)
+        eq(f.actions:GetActionState(), nil)
+        eq(state(f, "underwater_treasure_01").completed, false)
+        eq(state(f, "underwater_treasure_01").rewardOwned, false)
+    end)
+
+    test("T06 low-stamina island click explains the cost without starting or cancelling another action", function()
+        local loop = Loop.New()
+        local f = fixture(loop.player)
+        loop.worldContentActions = f.actions
+        loop.player.stamina = 39
+        local cancelCalls = 0
+        loop.runtime = {
+            GetAutoReturnState = function() return { phase = "active" } end,
+            CancelAutoReturn = function()
+                cancelCalls = cancelCalls + 1
+                return true
+            end,
+        }
+        assert(loop:Depart())
+        local prompt = assert(loop:GetWorldContentPrompt())
+        eq(prompt.text, "探索岛屿 · 40体力")
+        eq(prompt.canAffordStamina, false)
+        local started, reason = loop:BeginWorldContentAction("island_01", "explore")
+        eq(started, false); eq(reason, "insufficient_stamina_explore")
+        eq(loop.lastMessage, "体力不足，探索需要40体力。")
+        eq(loop.player.stamina, 39)
+        eq(cancelCalls, 0, "a rejected low-stamina click cannot cancel auto-return")
+        eq(f.actions:GetActionState(), nil)
+        eq(state(f, "island_01").completed, false)
+        eq(state(f, "island_01").rewardOwned, false)
     end)
 
     test("exactly 40 stamina is sufficient and a successful action reaches zero", function()

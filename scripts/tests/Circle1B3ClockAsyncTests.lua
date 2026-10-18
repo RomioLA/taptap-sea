@@ -17,9 +17,24 @@ local function fixture(options)
     return Loop.New(options), store
 end
 
+local function acknowledgeStory(loop)
+    local story = loop:GetStoryDialog()
+    if not story then return end
+    assert(loop:NotifyStoryShown(story.token))
+    assert(loop:CloseStoryDialog())
+end
+
 local function settle(loop)
-    assert(loop:EndToday())
+    acknowledgeStory(loop)
+    local ended, reason = loop:EndToday()
+    assert(ended, reason)
+    if reason == "paper_opened" then
+        acknowledgeStory(loop)
+        ended, reason = loop:EndToday()
+        assert(ended, reason)
+    end
     assert(loop:ConfirmSettlement())
+    acknowledgeStory(loop)
 end
 
 function Tests.Run()

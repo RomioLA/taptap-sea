@@ -57,7 +57,11 @@ end
 local function button(root,text,first)
     local found
     walk(root,function(widget)
-        if widget.kind=="Button" and widget.props.text==text and (not first or not found) then found=widget end
+        local actual=widget.kind=="Button" and widget.props.text or nil
+        local costSuffix=" · "
+        local matches=actual==text or (type(actual)=="string" and actual:sub(1,#text)==text
+            and actual:sub(#text+1,#text+#costSuffix)==costSuffix)
+        if matches and (not first or not found) then found=widget end
     end,true)
     assert(found,"missing visible button: "..text)
     assert(not found.disabled,"disabled button: "..text)
@@ -81,7 +85,7 @@ test("HUD always visible information, host subtree and core button wiring",funct
     local loop,hud,update,stop=Bootstrap.Init{store=mock,parent=parent}
     eq(#parent.children,1); eq(loop.loading,false)
     contains(hud.root,"第 1 天"); contains(hud.root,"白天"); contains(hud.root,"60")
-    contains(hud.root,"100/100"); contains(hud.root,"钱：100"); contains(hud.root,"2 / 5")
+    contains(hud.root,"体力 100/100")
     contains(hud.root,"苹果"); contains(hud.root,"鱼饵"); contains(hud.root,"暂停：port")
     button(hud.root,"收起信息")
     assert(hasButton(hud.root,"港口商店"),"the collapsed port-shop entry must be available in port")

@@ -277,13 +277,18 @@ test("load success failure pending lock and late callbacks", function()
     local loop, store = newLoop()
     local callback
     function store:Load(done) callback = done end
-    assert(loop:LoadSaved()); eq(loop:Depart(),false); eq(loop:Buy("apple"),false)
+    local completions = {}
+    assert(loop:LoadSaved(function(ok, reason) completions[#completions + 1] = { ok = ok, reason = reason } end))
+    eq(loop:Depart(),false); eq(loop:Buy("apple"),false)
     local savedPlayer = Player.New(); savedPlayer.money = 333; savedPlayer.day = 8
     savedPlayer:MarkRecognized("saved_island")
-    callback(true,Persistence.Snapshot(savedPlayer)); eq(loop.player.money,333); eq(loop.player.day,8)
-    eq(loop.player:IsRecognized("saved_island"),true); eq(loop.loading,false)
-    assert(loop:LoadSaved()); callback(false,"offline"); eq(loop.player.money,333)
-    assert(loop:LoadSaved()); callback(true,{schemaVersion=99}); eq(loop.player.money,333)
+    assert(callback)
+    callback(true,Persistence.Snapshot(savedPlayer))
+    eq(completions[1].ok,false); eq(completions[1].reason,"invalid_run_day")
+    eq(loop.player.money,100); eq(loop.player.day,1)
+    eq(loop.player:IsRecognized("saved_island"),false); eq(loop.loading,false)
+    assert(loop:LoadSaved()); callback(false,"offline"); eq(loop.player.money,100)
+    assert(loop:LoadSaved()); callback(true,{schemaVersion=99}); eq(loop.player.money,100)
     eq(loop.loading,false); assert(loop:Depart()); eq(loop:LoadSaved(),false)
     eq(#store.saves,0)
 end)

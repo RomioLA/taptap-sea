@@ -205,7 +205,7 @@ local function keyRequirement(player, definition)
     return { id = keyId, consume = definition.consumeKey, map = keys, owned = true }
 end
 
-function Actions:_eligible(contentId, kind, ctx)
+function Actions:_eligible(contentId, kind, ctx, allowInsufficientStamina)
     local definition = DEFINITIONS[contentId]
     if not definition then return nil, "invalid_content_id" end
     if definition.kind ~= kind then return nil, "invalid_action_kind" end
@@ -217,10 +217,15 @@ function Actions:_eligible(contentId, kind, ctx)
     local key, keyError = keyRequirement(ctx.player, definition)
     if not key then return nil, keyError end
     if not finite(ctx.player.stamina) or ctx.player.stamina < 0 then return nil, "invalid_stamina" end
-    if ctx.player.stamina < STAMINA_COST then return nil, "insufficient_stamina" end
+    local canAffordStamina = ctx.player.stamina >= STAMINA_COST
+    if not canAffordStamina and allowInsufficientStamina ~= true then
+        return nil, "insufficient_stamina"
+    end
     local access, accessError = self:_access(contentId, ctx)
     if not access then return nil, accessError end
     access.key = key
+    access.staminaCost = STAMINA_COST
+    access.canAffordStamina = canAffordStamina
     return access
 end
 
@@ -558,10 +563,12 @@ function Actions:GetWorldContentPrompt()
     end
     for _, id in ipairs(IDS) do
         local kind = DEFINITIONS[id].kind
-        local eligible = self:_eligible(id, kind, ctx)
-        if eligible then
-            return { text = kind == "explore" and "探索岛屿" or "打捞宝藏", operation = "begin",
-                contentId = id, actionKind = kind, enabled = true }
+        local access = self:_eligible(id, kind, ctx, true)
+        if access then
+            local actionName = kind == "explore" and "探索岛屿" or "打捞宝藏"
+            return { text = string.format("%s · %d体力", actionName, access.staminaCost),
+                operation = "begin", contentId = id, actionKind = kind,
+                staminaCost = access.staminaCost, canAffordStamina = access.canAffordStamina, enabled = true }
         end
     end
     return nil, "no_eligible_content"

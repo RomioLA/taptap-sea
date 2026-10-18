@@ -10,10 +10,23 @@ local function assertEqual(actual, expected, label)
     Flow.AssertEqual(actual, expected, label)
 end
 
+local function acknowledgePaper(loop)
+    local dialog = loop:GetStoryDialog()
+    assert(dialog and dialog.kind == "paper", "day-seven paper should be visible before ending")
+    assert(loop:NotifyStoryShown(dialog.token))
+    assert(loop:CloseStoryDialog())
+end
+
 -- 结算到指定天：从第 fromDay 天结束结算（港口内）。
 local function settleDay(fixture, fromDay)
     fixture.loop.player.day = fromDay
-    assert(fixture.loop:EndToday())
+    local ended, reason = fixture.loop:EndToday()
+    assert(ended, reason)
+    if reason == "paper_opened" then
+        acknowledgePaper(fixture.loop)
+        ended, reason = fixture.loop:EndToday()
+        assert(ended, reason)
+    end
     assert(fixture.loop:ConfirmSettlement())
 end
 
@@ -59,6 +72,8 @@ function Tests.Run()
     check("day 7 forced-return settlement also ends the run", function()
         local f = Flow.Fixture({ loadSaved = false })
         f.loop.player.day = 7
+        assert(f.loop:OpenDay7PaperBeforeEnding())
+        acknowledgePaper(f.loop)
         -- 夜尽强返路径：ConfirmForcedReturn 需要 forcedReturnPending 状态。
         f.loop.forcedReturnPending = true
         f.loop.forcedAtPort = false

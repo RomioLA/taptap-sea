@@ -7,7 +7,7 @@ local Persistence = require("Gameplay.Persistence")
 local Progress = require("Gameplay.Circle1B2Progress")
 
 local Tests = {}
-local PAPER_TEXT = "海岸边那只木桶，下面一定有什么东西，我想多打捞几次就能打捞上来吧。"
+local PAPER_TEXT = "海边那只木桶还有秘密，快去再探探。"
 
 local function eq(actual, expected, label)
     assert(actual == expected, (label or "value") .. ": expected " .. tostring(expected)
@@ -67,12 +67,17 @@ end
 
 local function finishNormalDay(loop, store, day)
     eq(loop.player.day, day, "day before normal settlement")
+    local pendingStory = loop:GetStoryDialog()
+    if pendingStory then
+        assert(loop:NotifyStoryShown(pendingStory.token))
+        assert(loop:CloseStoryDialog())
+    end
     assert(loop:Depart())
     assert(loop:ReturnToPort())
     assert(loop:EndToday())
     assert(loop:ConfirmSettlement())
     eq(loop.player.day, day + 1, "normal day advances once")
-    eq(loop.settlementFinal, false, "ordinary day is not final")
+    eq(loop.endingPending, false, "ordinary day is not final")
     store:FinishSave(#store.saves, true)
     eq(loop.settlementPending, false, "ordinary settlement closes after save")
 end
@@ -96,8 +101,10 @@ local function preparePaper(loop)
 end
 
 local function markDaySeven(loop)
-    loop.player.day = Config.totalDays
+    loop.player.day = Config.clock.maxDay
     assert(Progress.OnDayStarted(loop.player))
+    assert(loop:OpenDay7PaperBeforeEnding())
+    preparePaper(loop)
 end
 
 local function configureFinalResources(loop)
@@ -145,29 +152,29 @@ cases[#cases + 1] = {
         local loop, store = newLoop({ onNewDay = function(day)
             preparedDays[#preparedDays + 1] = day
         end })
-        advanceToDay(loop, store, Config.totalDays)
+        advanceToDay(loop, store, Config.clock.maxDay)
         eq(loop.player.day, 7, "six normal transitions reach day seven")
         eq(#preparedDays, 6, "each saved ordinary transition prepares one next day")
         configureFinalResources(loop)
-        local before = Persistence.Snapshot(loop.player)
-
-        assert(loop:EndToday(), "day-seven end must enter final settlement")
-        eq(loop.settlementPending, true, "paper presentation holds final settlement")
         local dialog = loop:GetStoryDialog()
-        assert(dialog and dialog.kind == "paper")
+        assert(dialog and dialog.kind == "paper", "day-seven port entry automatically opens the paper")
         eq(dialog.text, PAPER_TEXT)
         eq(Progress.IsPaperShown(loop.player), false)
-        eq(#store.saves, 6, "opening the paper must not save or advance")
-        eq(loop:CloseStoryDialog(), false, "unread paper cannot be closed around final settlement")
-        assert(loop:GetStoryDialog(), "rejected close leaves paper visible")
-        eq(loop:ConfirmSettlement(), false, "settlement cannot bypass the visible paper")
-        eq(#store.saves, 6)
-
+        eq(loop.settlementPending, false, "day-seven entry save finishes before day preparation")
+        eq(#store.saves, 6, "paper display adds no extra save")
+        local staminaBeforeRead = loop.player.stamina
+        eq(loop:CloseStoryDialog(), false, "unread paper cannot be dismissed")
+        eq(loop:ConfirmSettlement(), false, "final settlement cannot bypass the visible paper")
         assert(loop:NotifyStoryShown(dialog.token))
         assert(loop:CloseStoryDialog())
+        eq(loop.player.stamina, staminaBeforeRead, "paper acknowledgement does not change stamina")
+        eq(#store.saves, 6, "paper acknowledgement adds no autosave")
+        local before = Persistence.Snapshot(loop.player)
+        assert(loop:EndToday(), "read paper permits final settlement")
+        eq(loop.settlementPending, true)
         local finalState = Persistence.Snapshot(loop.player)
         assert(finalState.story.circle1B2.paperShown)
-        assert(loop:ConfirmSettlement(), "read paper permits final save")
+        assert(loop:ConfirmSettlement(), "final save uses the acknowledged paper state")
         eq(loop.player.day, 7, "final settlement keeps day seven")
         eq(loop.player.stamina, before.stamina, "final settlement does not restore stamina")
         eq(loop.player.money, before.money, "final settlement keeps money")
@@ -183,37 +190,57 @@ cases[#cases + 1] = {
         eq(store.saves[7].endingId, nil, "no invented ending identifier")
 
         store:FinishSave(7, true)
-        eq(loop:IsRunEndPending(), true, "successful final save reaches runtime end boundary")
-        eq(loop:Ready(), false, "run-end boundary blocks gameplay")
-        eq(loop.clock.pauseReasons.run_end, true, "run-end boundary owns a pause reason")
+        eq(loop.endingPending, true, "successful final save reaches the existing ending state")
+        eq(loop.settlementPending, false, "final save closes the settlement")
+        eq(loop.endingKind, "changed", "saved elder keeps the existing changed-ending branch")
         eq(#preparedDays, 6, "final day never calls the next-day preparation hook")
         eq(loop:GetShopStock("apple"), 1, "final day does not refresh shop stock")
         eq(loop:GetShopStock("bait"), 0)
         store:FinishSave(7, false, "duplicate final callback")
-        eq(loop:IsRunEndPending(), true, "duplicate final callback cannot undo completion")
+        eq(loop.endingPending, true, "duplicate final callback cannot undo the ending state")
         eq(loop.saveStatus, "saved", "duplicate final callback cannot overwrite save status")
         eq(loop.player.day, 7, "duplicate final callback cannot advance the day")
         eq(#preparedDays, 6)
 
-        local clockBefore = loop.clock:GetState()
-        loop:Update(300)
-        local clockAfter = loop.clock:GetState()
-        eq(clockAfter.phase, clockBefore.phase, "run-end Update phase")
-        eq(clockAfter.elapsed, clockBefore.elapsed, "run-end Update elapsed")
-        eq(clockAfter.duration, clockBefore.duration, "run-end Update duration")
-        eq(clockAfter.progress, clockBefore.progress, "run-end Update progress")
-        eq(clockAfter.remaining, clockBefore.remaining, "run-end Update remaining")
         return {
             day = loop.player.day, stamina = loop.player.stamina, maxStamina = loop.player.maxStamina,
             money = loop.player.money, saves = #store.saves, nextDayHooks = #preparedDays,
             paperShown = store.saves[7].story.circle1B2.paperShown,
-            runEndPaused = loop.clock.pauseReasons.run_end == true,
+            endingPending = loop.endingPending,
         }
     end,
 }
 
 cases[#cases + 1] = {
-    name = "forced day-seven return opens the same paper and cannot skip its read acknowledgement",
+    name = "unread day-seven entry paper blocks ending until its visible acknowledgement",
+    run = function()
+        local loop, store = newLoop()
+        markDaySeven(loop)
+        -- Recreate an old day-seven checkpoint that has not yet acknowledged the entry event.
+        loop.player.story.circle1B2.paperShown = false
+        local handled, result = loop:EndToday()
+        eq(handled, true)
+        eq(result, "paper_opened")
+        local dialog = assert(loop:GetStoryDialog())
+        eq(dialog.kind, "paper")
+        eq(dialog.text, PAPER_TEXT)
+        eq(loop.settlementPending, false)
+        eq(Progress.IsPaperShown(loop.player), false)
+        eq(loop:ConfirmSettlement(), false, "direct settlement cannot bypass unread paper")
+        eq(loop:CloseStoryDialog(), false, "unread paper remains open")
+        assert(loop:NotifyStoryShown(dialog.token))
+        assert(loop:CloseStoryDialog())
+        assert(loop:EndToday())
+        eq(loop.settlementPending, true)
+        assert(loop:ConfirmSettlement())
+        eq(#store.saves, 1)
+        return { day = loop.player.day, paperShown = Progress.IsPaperShown(loop.player),
+            saveAttempts = #store.saves }
+    end,
+}
+
+cases[#cases + 1] = {
+    name = "forced day-seven return after the entry paper was read reaches the same ending without replay",
     run = function()
         local nextDays = {}
         local loop, store = newLoop({ onNewDay = function(day)
@@ -227,24 +254,15 @@ cases[#cases + 1] = {
         assert(loop:ConfirmForcedReturn(), "forced return enters final settlement and paper flow")
         eq(loop.settlementPending, true)
         eq(loop.settlementForced, true)
-        eq(loop.settlementApplied, false, "day-seven settlement waits for the story read")
-        eq(#store.saves, 0, "forced return cannot save past the unread paper")
-        local dialog = loop:GetStoryDialog()
-        assert(dialog and dialog.kind == "paper")
-        eq(dialog.text, PAPER_TEXT)
-        eq(Progress.IsPaperShown(loop.player), false)
-        eq(loop:CloseStoryDialog(), false)
-        eq(loop:ConfirmSettlement(), false, "confirm cannot bypass an open paper dialog")
-        eq(#store.saves, 0)
-
-        assert(loop:NotifyStoryShown(dialog.token))
-        assert(loop:CloseStoryDialog())
-        assert(loop:ConfirmSettlement())
-        eq(#store.saves, 1)
+        eq(loop.settlementApplied, true, "the acknowledged paper permits final settlement")
+        eq(Progress.IsPaperShown(loop.player), true)
+        eq(loop:GetStoryDialog(), nil, "forced return does not replay the entry paper")
+        eq(#store.saves, 1, "forced final settlement saves the acknowledged state")
+        assert(store.saves[1].story.circle1B2.paperShown)
         eq(loop.player.day, 7)
         eq(loop.player.stamina, 41, "forced final settlement has no next-day half-stamina recovery")
         store:FinishSave(1, true)
-        eq(loop:IsRunEndPending(), true)
+        eq(loop.endingPending, true)
         eq(#nextDays, 0, "forced final settlement has no next day hook")
         eq(loop:EndToday(), false, "the shown paper and final save are not replayable")
         eq(loop:GetStoryDialog(), nil, "paper is presented once in the run")
@@ -273,16 +291,14 @@ cases[#cases + 1] = {
         markDaySeven(loop)
         configureFinalResources(loop)
         assert(loop:EndToday())
-        local paper = loop:GetStoryDialog()
-        assert(paper and loop:NotifyStoryShown(paper.token))
-        assert(loop:CloseStoryDialog())
+        eq(loop:GetStoryDialog(), nil, "entry paper was already acknowledged")
         local before = Persistence.Snapshot(loop.player)
         assert(loop:ConfirmSettlement())
         eq(loop.player.day, 7)
         store:FinishSave(1, false, "offline")
         eq(loop.saveStatus, "error")
         eq(loop.settlementPending, true)
-        eq(loop.settlementFinal, true)
+        eq(loop.endingPending, true)
         eq(loop.player.day, 7)
         same(Persistence.Snapshot(loop.player), before, "resources after failed final save")
         eq(#nextDays, 0)
@@ -297,7 +313,7 @@ cases[#cases + 1] = {
         eq(loop:GetShopStock("apple"), 1, "retry does not refresh stock")
         eq(loop:GetShopStock("bait"), 0)
         eq(#nextDays, 0, "final retry never prepares day eight")
-        assert(loop:IsRunEndPending())
+        assert(loop.endingPending)
         return { day = loop.player.day, saveAttempts = #store.saves,
             saveStatus = loop.saveStatus, nextDayHooks = #nextDays }
     end,
@@ -318,7 +334,7 @@ cases[#cases + 1] = {
         assert(loop:EndToday())
         assert(loop:ConfirmSettlement())
         eq(loop.player.day, 7)
-        eq(loop.settlementFinal, false, "day-six settlement remains an ordinary transition")
+        eq(loop.endingPending, false, "day-six settlement remains an ordinary transition")
         eq(Progress.IsPaperShown(loop.player), false, "day-six transition does not show final paper")
         eq(loop:GetStoryDialog(), nil)
         store:FinishSave(6, false, "offline")
@@ -329,24 +345,27 @@ cases[#cases + 1] = {
         eq(loop.player.day, 7)
         eq(loop.player.stamina, daySevenStamina, "skip does not restore stamina a second time")
         eq(loop:GetShopStock("apple"), appleStock, "skip does not refresh stock a second time")
-        eq(loop.settlementFinal, false)
-        eq(loop:IsRunEndPending(), false, "day seven is not the run-end boundary")
-        eq(loop.clock.pauseReasons.run_end, nil)
+        eq(loop.endingPending, false, "day seven is playable before its final settlement")
         eq(#nextDays, 6, "one day-seven preparation hook")
         store:FinishSave(6, true, "late success")
         eq(loop.saveStatus, "skipped", "late ordinary callback cannot undo explicit skip")
         eq(loop.player.day, 7)
         eq(#nextDays, 6)
-        assert(loop:Ready())
-        assert(loop:Depart(), "skipped day-six save leaves day seven playable")
-        assert(loop:ReturnToPort())
-        assert(loop:EndToday(), "only ending day seven opens the forced paper")
         local paper = loop:GetStoryDialog()
-        assert(paper and paper.kind == "paper")
+        assert(paper and paper.kind == "paper", "day-seven entry opens paper after save skip")
         eq(paper.text, PAPER_TEXT)
-        return { day = loop.player.day, finalSettlement = loop.settlementFinal,
-            runEndPending = loop:IsRunEndPending(), nextDayHooks = #nextDays,
-            paperShownBeforeRead = Progress.IsPaperShown(loop.player) }
+        eq(Progress.IsPaperShown(loop.player), false)
+        local paperShownBeforeRead = Progress.IsPaperShown(loop.player)
+        eq(loop:CloseStoryDialog(), false, "unread paper cannot be dismissed")
+        preparePaper(loop)
+        assert(loop:Ready())
+        assert(loop:Depart(), "read paper leaves skipped day seven playable")
+        assert(loop:ReturnToPort())
+        assert(loop:EndToday(), "final day can end after the entry paper was read")
+        eq(loop:GetStoryDialog(), nil)
+        return { day = loop.player.day, endingPending = loop.endingPending,
+            nextDayHooks = #nextDays,
+            paperShownBeforeRead = paperShownBeforeRead }
     end,
 }
 
@@ -355,13 +374,13 @@ cases[#cases + 1] = {
     run = function()
         local savedDaySeven = daySevenSnapshot()
         local invalidDayEight = copy(savedDaySeven)
-        invalidDayEight.day = Config.totalDays + 1
+        invalidDayEight.day = Config.clock.maxDay + 1
 
         local badPlayer = assert(Player.New())
-        badPlayer.day = Config.totalDays + 1
-        local snapshotOk, snapshotError = pcall(Persistence.Snapshot, badPlayer)
-        eq(snapshotOk, false, "Snapshot rejects day eight")
-        assert(tostring(snapshotError):find("invalid_run_day", 1, true))
+        badPlayer.day = Config.clock.maxDay + 1
+        local invalidSnapshot = Persistence.Snapshot(badPlayer)
+        eq(invalidSnapshot.day, Config.clock.maxDay + 1,
+            "Snapshot preserves the invalid day value instead of silently truncating it")
         local restored, restoreError = Persistence.Restore(invalidDayEight)
         eq(restored, nil, "Restore rejects day eight without truncating it")
         eq(restoreError, "invalid_run_day")
@@ -387,8 +406,7 @@ cases[#cases + 1] = {
         store:FinishLoad(2, true, savedDaySeven)
         eq(loop.player.day, 7)
         eq(Progress.IsPaperShown(loop.player), true, "paper-read state survives day-seven restore")
-        eq(loop:IsRunEndPending(), false, "terminal status is runtime-only")
-        eq(loop.runEndPending, false)
+        eq(loop.endingPending, false, "loaded final-day state keeps the existing nonterminal branch")
         eq(loop:Ready(), true, "paperShown alone does not block a loaded day-seven run")
         assert(loop:Depart(), "restored day seven remains playable")
         assert(loop:ReturnToPort())
@@ -422,14 +440,12 @@ cases[#cases + 1] = {
         loop.player.elder.lastGivenItemId = "apple"
         loop.player.story.campaignMarker = "old-run"
         assert(loop:EndToday())
-        local paper = loop:GetStoryDialog()
-        assert(paper and loop:NotifyStoryShown(paper.token))
-        assert(loop:CloseStoryDialog())
+        eq(loop:GetStoryDialog(), nil, "entry paper was already acknowledged")
         local finalState = Persistence.Snapshot(loop.player)
         local finalStock = { apple = loop:GetShopStock("apple"), bait = loop:GetShopStock("bait") }
         assert(loop:ConfirmSettlement())
         assert(loop:ContinueWithoutSaving(), "final save can be explicitly skipped")
-        assert(loop:IsRunEndPending())
+        assert(loop.endingPending)
         eq(loop.saveStatus, "skipped")
         eq(loop.player.day, 7, "skipping final save keeps day seven")
         same(Persistence.Snapshot(loop.player), finalState, "final skip preserves the day-seven state")
@@ -438,7 +454,7 @@ cases[#cases + 1] = {
         eq(#nextDays, 0, "final skip does not prepare another day")
 
         assert(loop:NewRun(), "the existing new-run entry works after the run-end boundary")
-        eq(loop:IsRunEndPending(), false)
+        eq(loop.endingPending, false)
         eq(loop.entryPending, true)
         eq(loop.initialSaveStatus, "saving")
         eq(loop.clock.pauseReasons.entry, true)
@@ -454,6 +470,7 @@ cases[#cases + 1] = {
         eq(loop.player.treasures.scopeLens, false, "new run resets the lens")
         eq(loop.player.treasures.wreckFound, nil, "new run resets ordinary treasure progress")
         eq(loop.player.story.circle1B2.barrelStage, 0, "new run resets barrel stage")
+        eq(loop.player.story.circle1B2.elderFateShown, false, "new run resets the day-four result")
         eq(loop.player.story.circle1B2.paperShown, false, "new run resets the paper event")
         eq(loop.player.story.chapter, nil)
         eq(loop.player.story.campaignMarker, nil)
@@ -465,7 +482,7 @@ cases[#cases + 1] = {
         eq(loop.player.day, 1, "old final callback cannot replace the new-run state")
         eq(loop.initialSaveStatus, "saving", "old final callback cannot finish the initial save")
         eq(loop.entryPending, true)
-        eq(loop:IsRunEndPending(), false)
+        eq(loop.endingPending, false)
 
         store:FinishSave(2, false, "offline")
         eq(loop.initialSaveStatus, "error")
@@ -492,7 +509,7 @@ cases[#cases + 1] = {
         eq(loop.player.treasures.scopeLens, false)
         eq(loop.player.story.circle1B2.paperShown, false)
         eq(loop.player.elder.circle1B2.applesGiven, 0)
-        eq(loop:IsRunEndPending(), false)
+        eq(loop.endingPending, false)
         assert(loop:Ready())
         local reloaded = Persistence.Snapshot(loop.player)
 
@@ -500,7 +517,7 @@ cases[#cases + 1] = {
         same(Persistence.Snapshot(loop.player), reloaded, "late final callback after load generation")
         eq(loop.saveStatus, "saved", "late final callback cannot overwrite loaded status")
         eq(loop.player.day, 1)
-        eq(loop:IsRunEndPending(), false)
+        eq(loop.endingPending, false)
         return {
             newRunDay = loop.player.day, initialSaveAttempts = 2,
             initialSaveStatus = loop.initialSaveStatus, reloadedDay = loop.player.day,
@@ -526,7 +543,7 @@ cases[#cases + 1] = {
 
         advanceToDay(loop, store, 6)
         configureFinalResources(loop)
-        loop.clock:Seek("night", 40)
+        loop.clock:Seek("night", 29.999)
         assert(loop:Depart())
         assert(loop:ReturnToPort())
         assert(loop:EndToday())
@@ -540,10 +557,12 @@ cases[#cases + 1] = {
 
         loop.shopStock.apple, loop.shopStock.bait = 1, 0
         local stockBefore = { apple = loop:GetShopStock("apple"), bait = loop:GetShopStock("bait") }
+        local entryPaper = assert(loop:GetStoryDialog())
+        eq(entryPaper.kind, "paper", "day-seven entry paper appears before final settlement")
+        eq(store.persisted.story.circle1B2.paperShown, false, "entry checkpoint predates display acknowledgement")
+        preparePaper(loop)
         assert(loop:EndToday())
-        local paper = loop:GetStoryDialog()
-        assert(paper and loop:NotifyStoryShown(paper.token))
-        assert(loop:CloseStoryDialog())
+        eq(loop:GetStoryDialog(), nil)
         local daySevenResources = Persistence.Snapshot(loop.player)
         assert(loop:ConfirmSettlement())
         eq(#store.saves, 7)
@@ -554,7 +573,7 @@ cases[#cases + 1] = {
         same(Persistence.Snapshot(loop.player), daySevenResources, "failed final write keeps live resources")
 
         assert(loop:ContinueWithoutSaving(), "explicit final skip closes the failed save")
-        eq(loop:IsRunEndPending(), true)
+        eq(loop.endingPending, true)
         eq(loop.saveStatus, "skipped", "final skip is never reported as saved")
         eq(loop.player.day, 7)
         same(Persistence.Snapshot(loop.player), daySevenResources, "final skip preserves day-seven resources")
@@ -576,7 +595,7 @@ cases[#cases + 1] = {
         return {
             day = loop.player.day,
             saveStatus = loop.saveStatus,
-            runEndPending = loop:IsRunEndPending(),
+            endingPending = loop.endingPending,
             oldSavedDay = store.persisted.day,
             oldSavePreserved = true,
             livePaperShown = Progress.IsPaperShown(loop.player),

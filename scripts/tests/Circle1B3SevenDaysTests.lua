@@ -4,7 +4,7 @@
 local Flow = require("Tests.Circle1BFishingFlowTests")
 
 local Tests = {}
-local PAPER_TEXT = "海岸边那只木桶，下面一定有什么东西，我想多打捞几次就能打捞上来吧。"
+local PAPER_TEXT = "海边那只木桶还有秘密，快去再探探。"
 
 local function eq(actual, expected, label)
     assert(actual == expected, (label or "value") .. ": expected " .. tostring(expected)
@@ -338,10 +338,16 @@ local function route(appleGiftDays)
                 clickButton(root, "收起")
             end
 
+            assert(loop:Ready(), string.format(
+                "loop not ready before departure: story=%s busy=%s loading=%s settlementPending=%s entryPending=%s dayExhausted=%s clockExhausted=%s elderOpen=%s inventoryOpen=%s",
+                tostring(loop.storyDialog and loop.storyDialog.kind), tostring(loop.busy),
+                tostring(loop.loading), tostring(loop.settlementPending), tostring(loop.entryPending),
+                tostring(loop.dayExhausted), tostring(loop.clock.exhausted), tostring(loop.elderOpen),
+                tostring(loop.inventoryOpen)))
             clickButton(root, "出航")
             advance(2, 1, 0)
             local center = runtime:GetShipPosition()
-            clickButton(root, "捕鱼")
+            clickButton(root, "捕鱼", true)
             assert(bridge:OnSeaPointer(center), "sea-pointer selection should be consumed")
             hud.Refresh() -- mirrors Scene's onSeaPointer refresh after the ocean callback
             eq(loop:GetFishingState().state, "casting", "one sea pointer starts the cast")
@@ -377,23 +383,46 @@ local function route(appleGiftDays)
                 row.nextDay = loop.player.day
                 row.nextDayElder = loop:GetElderStatus()
                 row.saveStatusAfterSettlement = loop.saveStatus
+                local dayEntryDialog = loop:GetStoryDialog()
+                if loop.player.day == 4 then
+                    assert(dayEntryDialog and dayEntryDialog.kind == "elder_fate",
+                        "day-four fate should appear when entering day four")
+                    hud.Refresh()
+                    assert(hasVisibleLabel(root, dayEntryDialog.text), "day-four fate text should be visible")
+                elseif loop.player.day == 7 then
+                    assert(dayEntryDialog and dayEntryDialog.kind == "paper",
+                        "day-seven paper should appear when entering day seven")
+                    eq(dayEntryDialog.text, PAPER_TEXT, "day-seven entry paper copy")
+                end
+                if dayEntryDialog and dayEntryDialog.kind == "elder_fate" then
+                    row.dayEntryStoryKind = dayEntryDialog.kind
+                    hud.Refresh()
+                    clickButton(root, "结束对话")
+                    row.dayEntryStoryShown = true
+                elseif dayEntryDialog and dayEntryDialog.kind == "paper" then
+                    row.dayEntryStoryKind = dayEntryDialog.kind
+                    hud.Refresh()
+                    assert(hasVisibleLabel(root, PAPER_TEXT), "day-seven paper text should be visible")
+                    clickButton(root, "结束对话")
+                    row.dayEntryStoryShown = true
+                end
             end
         end
 
         routeData.day4Elder = routeData.days[3].nextDayElder
+        eq(routeData.days[3].dayEntryStoryKind, "elder_fate", "day-four fate entry")
+        assert(routeData.days[3].dayEntryStoryShown, "day-four fate should be read once")
         eq(routeData.day4Elder.decision,
            #appleGiftDays >= 3 and "saved" or "dead", "day four elder decision")
         eq(loop.player.day, 7, "route stops on day seven")
-        local paperOpened, paperReason = loop:OpenDay7PaperBeforeEnding()
-        assert(paperOpened, "day-seven paper entry unavailable: " .. tostring(paperReason))
-        hud.Refresh()
-        local dialog = loop:GetStoryDialog()
-        assert(dialog and dialog.kind == "paper", "day seven must expose only the existing paper entry")
-        eq(dialog.text, PAPER_TEXT, "existing paper text")
-        advance(0.5) -- protocol can measure simulated story pause; real reading stays unmeasured
+        eq(routeData.days[6].dayEntryStoryKind, "paper", "day-seven paper entry")
+        assert(routeData.days[6].dayEntryStoryShown, "day-seven paper should be read on entry")
         routeData.paperShown = loop.player.story.circle1B2.paperShown == true
-        clickButton(root, "结束对话")
+        assert(routeData.paperShown, "day-seven paper shown state should be recorded")
         routeData.paperClosed = loop:GetStoryDialog() == nil
+        local reopened, reopenReason = loop:OpenDay7PaperBeforeEnding()
+        assert(not reopened and reopenReason == "paper_already_shown",
+            "a read day-seven paper should not reopen")
         routeData.day7State = snapshot(loop)
         routeData.terminalEndingTriggered = false
         routeData.endingDesignStatus = "not specified; no ending is invoked or inferred"
