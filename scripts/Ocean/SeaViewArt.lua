@@ -694,6 +694,18 @@ local ISLAND_01_DECOR = {
     { name = "sign_broadleaf_v1", x = -0.10, y =  0.52, size = 1.8 },
 }
 
+-- 岛屿底图映射（2026-10-18 真机验收）：海岸/礁石 oblique 组件由独立海面投放
+-- （Config.world.fixedComponents 平铺，呈漂浮贴图块）改为既有岛屿底图试配——
+-- island_01←海岸底图（主岛沙滩底）、island_02←礁石（远岛礁石底）。经 Plane
+-- 世界锚定平铺于岛位（oblique 资产与斜投影同口径，内容比换算同 island 口径），
+-- 程序丘/树/泡沫/岛饰保持叠绘；加载失败回退既有 island.png，再失败走矢量兜底。
+-- 未映射岛走原 island.png 口径不变；映射可一行调整（换岛/增减/试配反转），
+-- 契约由 Circle1B5ComponentPlacementTests 守护。
+local ISLAND_BASE_TEXTURES = {
+    island_01 = "coast_base_v3",
+    island_02 = "reef_rocks_v1",
+}
+
 local function treeShape(base,heightMeters)
     local crownWidth = heightMeters * 0.38
     local function raised(x,h) return {x=base.x+x,y=base.y,altitude=h} end
@@ -791,6 +803,9 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     end
     local center = entity.position
     local radius = math.max(0.5, finite(entity.radius) and entity.radius or 4)
+    -- 2026-10-18 真机验收：映射岛（ISLAND_BASE_TEXTURES）以 oblique 底图（海岸/礁石）
+    -- 替代完整岛 PNG 与 island.png 作岛体底图；未映射岛走原完整 PNG/贴图/矢量口径。
+    local baseName = ISLAND_BASE_TEXTURES[entity.contentId or ""]
     local probeTotalStop = PerfProbe.Timer()
     -- A complete top-down PNG contains beach, hills, vegetation and static shore
     -- decoration. Skip only their draw cost, before constructing vector geometry.
@@ -798,8 +813,9 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     -- loading takes the original cached/culled vector path below, unchanged.
     local imageSpec = ImageArt.GetSpec("island")
     local probeCompletePngStop = PerfProbe.Timer()
-    local drewCompleteIsland = imageSpec and imageSpec.completeIsland and ImageArt.Sprite(ctx, "island", movement,
-        center, radius * 2, 0, 0, 1, radius * 2)
+    local drewCompleteIsland = not baseName and imageSpec and imageSpec.completeIsland
+        and ImageArt.Sprite(ctx, "island", movement,
+            center, radius * 2, 0, 0, 1, radius * 2)
     PerfProbe.Sample("islandPng", probeCompletePngStop())
     if drewCompleteIsland then
         local imageBounds = newScreenBounds()
@@ -862,11 +878,21 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     -- 内容主体填满世界直径（2r）：catalog 内容比（story 730/739=0.713，
     -- loop 900/901=0.879）→ 画幅 2r*pixel/content，岛贴图边缘与世界岸线对齐。
     -- 走 Plane（懒加载+LOD）而非 Sprite（严格 IsLoaded，SeaDebug 切换变体会漏绘）。
-    local canvasLength, canvasWidth = ImageArt.ContentPlaneSize("island", radius * 2)
+    -- 2026-10-18 真机验收：映射岛（ISLAND_BASE_TEXTURES）以 oblique 底图（海岸/礁石）
+    -- 替代 island.png 作岛体底图；底图加载失败回退 island.png，再失败走矢量兜底。
+    local baseName = ISLAND_BASE_TEXTURES[entity.contentId or ""]
+    local canvasLength, canvasWidth = ImageArt.ContentPlaneSize(baseName or "island", radius * 2)
     local hasImage = false
     if canvasLength then
-        hasImage = ImageArt.Plane(ctx, "island", movement, center,
+        hasImage = ImageArt.Plane(ctx, baseName or "island", movement, center,
             canvasLength, canvasWidth, 0, 0)
+    end
+    if baseName and not hasImage then
+        canvasLength, canvasWidth = ImageArt.ContentPlaneSize("island", radius * 2)
+        if canvasLength then
+            hasImage = ImageArt.Plane(ctx, "island", movement, center,
+                canvasLength, canvasWidth, 0, 0)
+        end
     end
     PerfProbe.Sample("islandPng", probePngStop())
     local probeVectorStop = PerfProbe.Timer()

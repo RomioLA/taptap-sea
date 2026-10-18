@@ -198,11 +198,13 @@ local function drawFixedTreasure(ctx, runtime, entity, marked)
 end
 
 -- C2（2026-10-17）：主场景组件渲染（OceanComponents 藏品，World:Init 以 kind="scenery"
--- 放置的固定装饰实体）。地表 oblique 组件（reef_rocks_v1 礁石群 / coast_base_v3 海岸补丁）
--- 与海底沉船（shipwreck_v1 顶视）均走 SeaViewArt.Component 贴图（世界平面 Plane +
--- ContentPlaneSize 内容比换算 + LOD + 懒加载），贴图失败回退矢量剪影，与生态层鱼/鸟/桶
--- 的「贴图优先、失败回退」口径一致。实体校验走 fixedContentEntities 身份直查
--- （scenery 不进 Runtime 快照接口），只读渲染，零世界状态改写。
+-- 放置的固定装饰实体）。2026-10-18 真机验收：礁石/海岸 oblique 组件撤出独立海面投放
+-- （原平铺呈漂浮贴图块），改作 island_01/02 既有岛屿底图（见 SeaViewArt
+-- ISLAND_BASE_TEXTURES，契约在 Circle1B5ComponentPlacementTests）；本入口保留服务
+-- fixedComponents 回填的后续方案。水下沉船（shipwreck_v1 顶视）走 SeaViewArt.Component
+-- 贴图（世界平面 Plane + ContentPlaneSize 内容比换算 + LOD + 懒加载），贴图失败回退
+-- 矢量剪影，与生态层鱼/鸟/桶的「贴图优先、失败回退」口径一致。实体校验走
+-- fixedContentEntities 身份直查（scenery 不进 Runtime 快照接口），只读渲染，零世界状态改写。
 local COMPONENT_ENTITY_TYPES = { reef = true, coast = true }
 local WRECK_ENTITY_TYPE, WRECK_CONTENT_ID = "wreck", "shipwreck_v1"
 local SCENERY_FALLBACK_FILL = { 198, 188, 170, 205 }

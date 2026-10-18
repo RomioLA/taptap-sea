@@ -66,14 +66,12 @@ local Config = {
     -- C2（2026-10-17）：主场景组件世界放置（assets/image/OceanComponents，oblique 海面组件）。
     -- 与 fixedObjects（冻结的双岛集）/fixedTreasure 并列的独立清单：World:Init 以
     -- kind="scenery" 注册的非阻挡装饰实体，不影响航行/捕鱼/交互，仅 SeaDraw 贴图渲染。
-    -- 礁石群：第一座岛 (35,25) 外侧近海浅滩（坐标避开岛/桶碰撞圈，满足 isPositionFree），
-    -- 出港即见；海岸补丁：第二处景观，island_02 (-80,90) 方向中途点。放置参数待真机观感调校。
-    fixedComponents = {
-        { entityType = "reef", contentId = "reef_rocks_v1",
-            position = { x = 16, y = 20 }, radius = 6, blocking = false },
-        { entityType = "coast", contentId = "coast_base_v3",
-            position = { x = 60, y = 40 }, radius = 14, blocking = false },
-    },
+    -- 真机反馈（2026-10-18）：礁石/海岸 oblique 组件原按独立世界放置平铺在开阔海面，
+    -- 呈漂浮贴图块（白边、与世界实体速率脱节——「岛的素材接入进海面了」）。用户裁决：
+    -- 两张 oblique 组件改作既有岛屿底图（island_01←海岸 / island_02←礁石，见
+    -- SeaViewArt ISLAND_BASE_TEXTURES），不再独立投放。放置机制保留：清单为空即零
+    -- 投放，后续方案/SeaDebug 回填条目即可复用（坐标须满足 isPositionFree）。
+    fixedComponents = {},
     -- C2（2026-10-17）：海底沉船残骸（固定水下内容，与 fixedTreasure 同构：
     -- layer="underwater"、非阻挡、望远镜 scope 楔形内可见时 SeaDraw 绘制顶视 sprite）。
     -- 位于第一座岛南侧可航水域，距固定宝藏 (35,45) 15m，构成「宝藏海域」叙事。

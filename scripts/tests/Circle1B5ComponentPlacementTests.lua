@@ -9,10 +9,13 @@
 --      2026-10-18 起走竖幅公告板投影（Upright）：高度透传+投影模式断言（防回退平铺）；
 --   3) 兜底等价：Plane/Upright 恒假时全部 nvg 计数与自然加载失败基线完全一致（矢量回退零回归）；
 --   4) 零状态改写：Island/Scene 不推进 time/世界/船/相机/实体；
---   5) Component 入口：shipwreck 尺寸换算与锚点透传（未知名/非法尺寸由生态层测试守护）。
--- 注：reef/coast/wreck 的 scenery 世界放置（Config.world.fixedComponents/fixedWrecks +
--- World:Init kind="scenery" + SeaDraw.drawSurfaceComponent/drawFixedWreck）由
--- Circle1B6SceneComponentRenderTests 守护，与本套件资产作用域互不重叠。
+--   5) Component 入口：shipwreck 尺寸换算与锚点透传（未知名/非法尺寸由生态层测试守护）；
+--   6) 岛屿底图（2026-10-18 真机验收）：island_01←海岸 / island_02←礁石 oblique 底图
+--      经 Plane 世界锚定平铺、内容比尺寸，替代 island.png（防双绘）；底图加载失败回退
+--      island.png（矢量兜底口径不变）。
+-- 注：2026-10-18 真机验收后 reef/coast 撤出独立海面投放（改作 island_01/02 岛屿底图，
+-- 由本套件 ISLAND_BASE_TEXTURES 契约守护）；fixedWrecks 沉船的 scenery 放置与
+-- drawFixedWreck 由 Circle1B6SceneComponentRenderTests 守护，资产作用域互不重叠。
 local Tests = {}
 
 local Runtime = require("Ocean.SeaRuntime")
@@ -83,6 +86,30 @@ local function withPlaneRecorder(result, fn)
         calls[#calls + 1] = { mode = "upright", name = name, x = position.x, y = position.y,
             height = worldHeight, alpha = alpha }
         return result
+    end
+    local ok, err = pcall(fn)
+    ImageArt.Plane, ImageArt.Upright = originalPlane, originalUpright
+    if not ok then error(err) end
+    return calls
+end
+
+-- 2026-10-18 岛底图试配：按名选择性失败的录制器（failNames 中的贴图返回 false，
+-- 其余返回 true），用于验证「底图失败 → 回退 island.png」链与「成功 → 不双绘」。
+local function withSelectivePlaneRecorder(failNames, fn)
+    local calls = {}
+    local failing = {}
+    for _, name in ipairs(failNames) do failing[name] = true end
+    local originalPlane, originalUpright = ImageArt.Plane, ImageArt.Upright
+    ImageArt.Plane = function(ctx, name, movement, origin, length, width, heading, altitude, alpha)
+        calls[#calls + 1] = { mode = "plane", name = name, x = origin.x, y = origin.y,
+            length = length, width = width, heading = heading,
+            altitude = altitude, alpha = alpha }
+        return not failing[name]
+    end
+    ImageArt.Upright = function(ctx, name, movement, position, worldHeight, alpha)
+        calls[#calls + 1] = { mode = "upright", name = name, x = position.x, y = position.y,
+            height = worldHeight, alpha = alpha }
+        return true
     end
     local ok, err = pcall(fn)
     ImageArt.Plane, ImageArt.Upright = originalPlane, originalUpright
@@ -227,6 +254,57 @@ function Tests.Run(recorder)
         for _, name in ipairs(SIGN_COMPONENTS) do
             assert(countCalls(otherCalls, name) == 0, name .. " must not decorate island_02")
         end
+    end)
+
+    -- 2026-10-18 真机验收：海岸/礁石 oblique 组件由独立海面投放（fixedComponents 平铺，
+    -- 呈漂浮贴图块——「岛的素材接入进海面了」）改为既有岛屿底图。守护契约：映射岛以
+    -- oblique 底图经 Plane 世界锚定平铺（内容比尺寸同 island 口径）且不再绘 island.png
+    -- （防底图与旧岛贴图双绘）；底图加载失败回退 island.png（矢量兜底口径不变）。
+    check("island_base_textures_replace_island_png_on_mapped_islands", function()
+        local runtime = makeRuntime(ISLAND_01_VANTAGE)
+        local calls = drawIsland(runtime, ISLAND_01, true)
+        local base = findCall(calls, "coast_base_v3")
+        assert(base, "island_01 must draw the coastal base texture")
+        assert(near(base.x, ISLAND_01.position.x) and near(base.y, ISLAND_01.position.y),
+            "island_01 base must anchor at the island center")
+        local expectedLength, expectedWidth =
+            ImageArt.ContentPlaneSize("coast_base_v3", ISLAND_01.radius * 2)
+        assert(expectedLength and near(base.length, expectedLength)
+            and near(base.width, expectedWidth),
+            "island_01 base size did not follow the catalog content ratio")
+        assert(not findCall(calls, "island"),
+            "the mapped base replaces the legacy island png on island_01 (no double draw)")
+
+        local other = makeRuntime(ISLAND_02_VANTAGE)
+        local otherCalls = drawIsland(other, ISLAND_02, true)
+        local reef = findCall(otherCalls, "reef_rocks_v1")
+        assert(reef, "island_02 must draw the reef base texture")
+        assert(near(reef.x, ISLAND_02.position.x) and near(reef.y, ISLAND_02.position.y),
+            "island_02 base must anchor at the island center")
+        local reefLength, reefWidth =
+            ImageArt.ContentPlaneSize("reef_rocks_v1", ISLAND_02.radius * 2)
+        assert(reefLength and near(reef.length, reefLength) and near(reef.width, reefWidth),
+            "island_02 base size did not follow the catalog content ratio")
+        assert(not findCall(otherCalls, "island"),
+            "the mapped base replaces the legacy island png on island_02 (no double draw)")
+    end)
+
+    check("island_base_texture_failure_falls_back_to_island_png", function()
+        local runtime = makeRuntime(ISLAND_01_VANTAGE)
+        local calls = withSelectivePlaneRecorder({ "coast_base_v3" }, function()
+            SeaViewArt.Island({}, runtime.movement, islandEntity(ISLAND_01), 0, 0)
+        end)
+        assert(findCall(calls, "coast_base_v3"),
+            "the base attempt must still be made before falling back")
+        local fallback = findCall(calls, "island")
+        assert(fallback, "base load failure must fall back to the legacy island png")
+        local expectedLength, expectedWidth =
+            ImageArt.ContentPlaneSize("island", ISLAND_01.radius * 2)
+        assert(near(fallback.length, expectedLength) and near(fallback.width, expectedWidth),
+            "island png fallback must keep the content-ratio sizing")
+        -- 回退后岛饰仍按公告板投影叠绘（底图失败不连带装饰失效）。
+        assert(countCalls(calls, "sign_chest_v1") == 1,
+            "island decor must still draw after the base fallback")
     end)
 
     check("decor_plane_failure_keeps_island_counts_identical", function()
