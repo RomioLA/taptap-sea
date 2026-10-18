@@ -1,0 +1,238 @@
+{
+  "nativeFpsVerified": false,
+  "method": "Same 1920x1080, seed271828, initial ship/camera; Lua5.4 counting no-op NanoVG; each archive uses its own historical config. 3x36 frames; isolated diagnostic ablations only. Allocations measured with GC stopped for one frame. Historical commits are comparison points, not confirmed good versions.",
+  "versions": [
+    {
+      "version": "before-oblique-ef6dea0",
+      "samples": [
+        {
+          "full": {
+            "allocatedKiBPerFrame": 18.6171875,
+            "luaCpuMs": 0.138888888888889,
+            "nvgCallsPerFrame": 1198.0
+          }
+        },
+        {
+          "full": {
+            "allocatedKiBPerFrame": 18.6171875,
+            "luaCpuMs": 0.11111111111111122,
+            "nvgCallsPerFrame": 1198.0
+          }
+        },
+        {
+          "full": {
+            "allocatedKiBPerFrame": 18.6171875,
+            "luaCpuMs": 0.138888888888889,
+            "nvgCallsPerFrame": 1198.0
+          }
+        }
+      ],
+      "medianLuaCpuMs": {
+        "full": 0.138888888888889
+      }
+    },
+    {
+      "version": "first-oblique-949d7ca",
+      "samples": [
+        {
+          "full": {
+            "luaCpuMs": 4.472222222222223,
+            "allocatedKiBPerFrame": 460.9375,
+            "nvgCallsPerFrame": 5661.0
+          },
+          "reuseViewPolygonWithinFrame": {
+            "luaCpuMs": 4.361111111111112,
+            "allocatedKiBPerFrame": 384.05859375,
+            "nvgCallsPerFrame": 5661.0
+          },
+          "withoutIsland": {
+            "luaCpuMs": 3.861111111111111,
+            "allocatedKiBPerFrame": 358.125,
+            "nvgCallsPerFrame": 4981.0
+          },
+          "withoutBoat": {
+            "luaCpuMs": 4.416666666666668,
+            "allocatedKiBPerFrame": 442.7421875,
+            "nvgCallsPerFrame": 5557.0
+          },
+          "geometryCallsPerFrame": {
+            "ViewPolygon": 111,
+            "ClipLine": 96,
+            "Project": 2224
+          }
+        },
+        {
+          "full": {
+            "luaCpuMs": 4.472222222222223,
+            "allocatedKiBPerFrame": 460.9375,
+            "nvgCallsPerFrame": 5661.0
+          },
+          "reuseViewPolygonWithinFrame": {
+            "luaCpuMs": 4.416666666666661,
+            "allocatedKiBPerFrame": 384.05859375,
+            "nvgCallsPerFrame": 5661.0
+          },
+          "withoutIsland": {
+            "luaCpuMs": 3.8888888888888866,
+            "allocatedKiBPerFrame": 358.125,
+            "nvgCallsPerFrame": 4981.0
+          },
+          "withoutBoat": {
+            "luaCpuMs": 4.388888888888893,
+            "allocatedKiBPerFrame": 442.7421875,
+            "nvgCallsPerFrame": 5557.0
+          },
+          "geometryCallsPerFrame": {
+            "ViewPolygon": 111,
+            "ClipLine": 96,
+            "Project": 2224
+          }
+        },
+        {
+          "full": {
+            "luaCpuMs": 4.444444444444448,
+            "allocatedKiBPerFrame": 460.9375,
+            "nvgCallsPerFrame": 5661.0
+          },
+          "reuseViewPolygonWithinFrame": {
+            "luaCpuMs": 4.3333333333333375,
+            "allocatedKiBPerFrame": 384.05859375,
+            "nvgCallsPerFrame": 5661.0
+          },
+          "withoutIsland": {
+            "luaCpuMs": 3.8611111111111054,
+            "allocatedKiBPerFrame": 358.125,
+            "nvgCallsPerFrame": 4981.0
+          },
+          "withoutBoat": {
+            "luaCpuMs": 4.388888888888887,
+            "allocatedKiBPerFrame": 442.7421875,
+            "nvgCallsPerFrame": 5557.0
+          },
+          "geometryCallsPerFrame": {
+            "ViewPolygon": 111,
+            "ClipLine": 96,
+            "Project": 2224
+          }
+        }
+      ],
+      "medianLuaCpuMs": {
+        "full": 4.472222222222223,
+        "reuseViewPolygonWithinFrame": 4.361111111111112,
+        "withoutIsland": 3.861111111111111,
+        "withoutBoat": 4.388888888888893
+      }
+    },
+    {
+      "version": "current",
+      "samples": [
+        {
+          "withoutBoat": {
+            "luaCpuMs": 37.833333333333336,
+            "nvgCallsPerFrame": 12756.0,
+            "allocatedKiBPerFrame": 5428.537109375
+          },
+          "withoutIsland": {
+            "luaCpuMs": 13.222222222222221,
+            "nvgCallsPerFrame": 4254.0,
+            "allocatedKiBPerFrame": 1234.708984375
+          },
+          "withoutShoreFoam": {
+            "luaCpuMs": 29.888888888888875,
+            "nvgCallsPerFrame": 10655.0,
+            "allocatedKiBPerFrame": 3929.662109375
+          },
+          "geometryCallsPerFrame": {
+            "ClipLine": 860,
+            "Project": 7266,
+            "StrokeWorldLine": 604,
+            "ViewPolygon": 894
+          },
+          "full": {
+            "luaCpuMs": 37.99999999999999,
+            "nvgCallsPerFrame": 12860.0,
+            "allocatedKiBPerFrame": 5448.521484375
+          },
+          "reuseViewPolygonWithinFrame": {
+            "luaCpuMs": 36.972222222222236,
+            "nvgCallsPerFrame": 12860.0,
+            "allocatedKiBPerFrame": 4840.7021484375
+          }
+        },
+        {
+          "withoutBoat": {
+            "luaCpuMs": 39.13888888888891,
+            "nvgCallsPerFrame": 12756.0,
+            "allocatedKiBPerFrame": 5428.599609375
+          },
+          "withoutIsland": {
+            "luaCpuMs": 13.666666666666693,
+            "nvgCallsPerFrame": 4254.0,
+            "allocatedKiBPerFrame": 1234.771484375
+          },
+          "withoutShoreFoam": {
+            "luaCpuMs": 29.916666666666668,
+            "nvgCallsPerFrame": 10655.0,
+            "allocatedKiBPerFrame": 3929.724609375
+          },
+          "geometryCallsPerFrame": {
+            "ClipLine": 860,
+            "Project": 7266,
+            "StrokeWorldLine": 604,
+            "ViewPolygon": 894
+          },
+          "full": {
+            "luaCpuMs": 40.222222222222236,
+            "nvgCallsPerFrame": 12860.0,
+            "allocatedKiBPerFrame": 5448.583984375
+          },
+          "reuseViewPolygonWithinFrame": {
+            "luaCpuMs": 37.111111111111114,
+            "nvgCallsPerFrame": 12860.0,
+            "allocatedKiBPerFrame": 4840.5146484375
+          }
+        },
+        {
+          "withoutBoat": {
+            "luaCpuMs": 43.194444444444436,
+            "nvgCallsPerFrame": 12756.0,
+            "allocatedKiBPerFrame": 5428.599609375
+          },
+          "withoutIsland": {
+            "luaCpuMs": 13.611111111111166,
+            "nvgCallsPerFrame": 4254.0,
+            "allocatedKiBPerFrame": 1234.771484375
+          },
+          "withoutShoreFoam": {
+            "luaCpuMs": 33.444444444444464,
+            "nvgCallsPerFrame": 10655.0,
+            "allocatedKiBPerFrame": 3929.724609375
+          },
+          "geometryCallsPerFrame": {
+            "ClipLine": 860,
+            "Project": 7266,
+            "StrokeWorldLine": 604,
+            "ViewPolygon": 894
+          },
+          "full": {
+            "luaCpuMs": 38.55555555555551,
+            "nvgCallsPerFrame": 12860.0,
+            "allocatedKiBPerFrame": 5448.583984375
+          },
+          "reuseViewPolygonWithinFrame": {
+            "luaCpuMs": 37.97222222222214,
+            "nvgCallsPerFrame": 12860.0,
+            "allocatedKiBPerFrame": 4840.5146484375
+          }
+        }
+      ],
+      "medianLuaCpuMs": {
+        "withoutBoat": 39.13888888888891,
+        "withoutIsland": 13.611111111111166,
+        "withoutShoreFoam": 29.916666666666668,
+        "full": 38.55555555555551,
+        "reuseViewPolygonWithinFrame": 37.111111111111114
+      }
+    }
+  ]
+}

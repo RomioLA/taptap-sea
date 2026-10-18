@@ -1,0 +1,152 @@
+{
+  "method": "pHash: alpha-composited on white, grayscale, 32x32 Lanczos thumbnail, 8x8 low-frequency DCT without DC, median threshold; compatible aspect/scale and Hamming <=6/63. Manifest source/runtime links are independent version evidence.",
+  "threshold": 6,
+  "hashBits": 63,
+  "candidatePairCount": 13,
+  "candidateAssetCount": 25,
+  "pairs": [
+    {
+      "pathA": "assets/generated/highspec/ART-W1-02/bigfish_splash_chase.png",
+      "pathB": "assets/image/ART-W1-02_bigfish_splash_chase_20261005160011.png",
+      "evidence": [
+        {
+          "type": "perceptual_pHash",
+          "hammingDistance": 0,
+          "hashBits": 63
+        }
+      ]
+    },
+    {
+      "pathA": "assets/generated/highspec/ART-W1-02/fishing_success_feedback.png",
+      "pathB": "assets/image/ART-W1-02_fishing_success_feedback_20261005160235.png",
+      "evidence": [
+        {
+          "type": "perceptual_pHash",
+          "hammingDistance": 0,
+          "hashBits": 63
+        }
+      ]
+    },
+    {
+      "pathA": "assets/generated/highspec/ART-W1-02/net_impact_splash.png",
+      "pathB": "assets/image/ART-W1-02_net_impact_splash_20261005160235.png",
+      "evidence": [
+        {
+          "type": "perceptual_pHash",
+          "hammingDistance": 0,
+          "hashBits": 63
+        }
+      ]
+    },
+    {
+      "pathA": "assets/generated/highspec/ART-W1-05/driftwood_world.png",
+      "pathB": "assets/image/OceanReady_driftwood_top_20261005123027.png",
+      "evidence": [
+        {
+          "type": "perceptual_pHash",
+          "hammingDistance": 0,
+          "hashBits": 63
+        }
+      ]
+    },
+    {
+      "pathA": "assets/image/OceanReady/shrub.png",
+      "pathB": "assets/image/OceanReady_shrub_top_20261005123049.png",
+      "evidence": [
+        {
+          "type": "manifest_source_runtime",
+          "hammingDistance": 10,
+          "hashBits": 63
+        }
+      ]
+    },
+    {
+      "pathA": "assets/image/OceanLoop/island.png",
+      "pathB": "assets/image/OceanStory_island_20261005114948.png",
+      "evidence": [
+        {
+          "type": "manifest_source_runtime",
+          "hammingDistance": 12,
+          "hashBits": 63
+        }
+      ]
+    },
+    {
+      "pathA": "assets/image/OceanReady/driftwood.png",
+      "pathB": "assets/image/OceanReady_driftwood_top_20261005123027.png",
+      "evidence": [
+        {
+          "type": "manifest_source_runtime",
+          "hammingDistance": 12,
+          "hashBits": 63
+        }
+      ]
+    },
+    {
+      "pathA": "assets/image/OceanReady/sardine.png",
+      "pathB": "assets/image/OceanReady_sardine_top_20261005123025.png",
+      "evidence": [
+        {
+          "type": "manifest_source_runtime",
+          "hammingDistance": 12,
+          "hashBits": 63
+        }
+      ]
+    },
+    {
+      "pathA": "assets/image/OceanLoop/barrel.png",
+      "pathB": "assets/image/OceanStory_barrel_20261005115009.png",
+      "evidence": [
+        {
+          "type": "manifest_source_runtime",
+          "hammingDistance": 24,
+          "hashBits": 63
+        }
+      ]
+    },
+    {
+      "pathA": "assets/image/OceanReady/reef.png",
+      "pathB": "assets/image/OceanReady_reef_top_20261005123026.png",
+      "evidence": [
+        {
+          "type": "manifest_source_runtime",
+          "hammingDistance": 24,
+          "hashBits": 63
+        }
+      ]
+    },
+    {
+      "pathA": "assets/image/OceanLoop/boat.png",
+      "pathB": "assets/image/OceanStory_boat_20261005114947.png",
+      "evidence": [
+        {
+          "type": "manifest_source_runtime",
+          "hammingDistance": 30,
+          "hashBits": 63
+        }
+      ]
+    },
+    {
+      "pathA": "assets/image/OceanLoop/waterpaper.png",
+      "pathB": "assets/image/OceanStory_waterpaper_20261005114940.png",
+      "evidence": [
+        {
+          "type": "manifest_source_runtime",
+          "hammingDistance": 32,
+          "hashBits": 63
+        }
+      ]
+    },
+    {
+      "pathA": "assets/image/OceanLoop/gull.png",
+      "pathB": "assets/image/OceanStory_gull_20261005114946.png",
+      "evidence": [
+        {
+          "type": "manifest_source_runtime",
+          "hammingDistance": 34,
+          "hashBits": 63
+        }
+      ]
+    }
+  ]
+}

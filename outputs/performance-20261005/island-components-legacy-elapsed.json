@@ -1,0 +1,989 @@
+{
+  "method": "Current production Lua5.4 modules in isolated instances. No-op NanoVG, no GUI/GPU. Whole island timings and one-component ablations: 3x36 frames; one-frame allocation with GC stopped then restarted. Local island upvalues discovered via debug.getupvalue; diagnostic replacements affect only this runtime. Component traces are instrumented and inclusive within the selected owner; compare ablations for cost, do not add trace ms to production timings. Direct island calls are measured even offscreen to expose work that broad-phase normally skips. Synthetic radius/camera scenarios, not an exact reproduction of screenshot position.",
+  "nativeFpsVerified": false,
+  "productionFilesModified": false,
+  "records": [
+    {
+      "scenario": "near_full",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        -35
+      ],
+      "radius": 20,
+      "actualUpvalues": [
+        "_ENV",
+        "finite",
+        "Config",
+        "rgba",
+        "newScreenBounds",
+        "circlePoints",
+        "fillWorldPolygon",
+        "strokeWorldPolygon",
+        "drawShoreFoam",
+        "drawHill",
+        "clamp",
+        "TREE_LAYOUT",
+        "drawTree",
+        "localIslandPoint",
+        "finishScreenBounds"
+      ],
+      "withoutComponent": {
+        "drawTree": [
+          {
+            "nvgApiCalls": 4784.0,
+            "luaCpuMs": 48.499999999999986,
+            "allocatedKiBPerFrame": 1209.552734375
+          },
+          {
+            "nvgApiCalls": 4784.0,
+            "luaCpuMs": 74.61111111111111,
+            "allocatedKiBPerFrame": 1209.552734375
+          },
+          {
+            "nvgApiCalls": 4784.0,
+            "luaCpuMs": 87.58333333333331,
+            "allocatedKiBPerFrame": 1209.552734375
+          }
+        ],
+        "strokeWorldPolygon": [
+          {
+            "nvgApiCalls": 2108.0,
+            "luaCpuMs": 43.416666666666636,
+            "allocatedKiBPerFrame": 667.701171875
+          },
+          {
+            "nvgApiCalls": 2108.0,
+            "luaCpuMs": 42.83333333333338,
+            "allocatedKiBPerFrame": 667.701171875
+          },
+          {
+            "nvgApiCalls": 2108.0,
+            "luaCpuMs": 49.55555555555552,
+            "allocatedKiBPerFrame": 667.701171875
+          }
+        ],
+        "drawShoreFoam": [
+          {
+            "nvgApiCalls": 3812.0,
+            "luaCpuMs": 6.611111111111111,
+            "allocatedKiBPerFrame": 995.466796875
+          },
+          {
+            "nvgApiCalls": 3812.0,
+            "luaCpuMs": 6.277777777777777,
+            "allocatedKiBPerFrame": 995.466796875
+          },
+          {
+            "nvgApiCalls": 3812.0,
+            "luaCpuMs": 6.277777777777777,
+            "allocatedKiBPerFrame": 995.466796875
+          }
+        ],
+        "drawHill": [
+          {
+            "nvgApiCalls": 4188.0,
+            "luaCpuMs": 7.444444444444445,
+            "allocatedKiBPerFrame": 1073.482421875
+          },
+          {
+            "nvgApiCalls": 4188.0,
+            "luaCpuMs": 7.444444444444451,
+            "allocatedKiBPerFrame": 1073.482421875
+          },
+          {
+            "nvgApiCalls": 4188.0,
+            "luaCpuMs": 7.611111111111111,
+            "allocatedKiBPerFrame": 1073.482421875
+          }
+        ]
+      },
+      "full": [
+        {
+          "nvgApiCalls": 4964.0,
+          "luaCpuMs": 9.416666666666666,
+          "allocatedKiBPerFrame": 1277.310546875
+        },
+        {
+          "nvgApiCalls": 4964.0,
+          "luaCpuMs": 9.166666666666664,
+          "allocatedKiBPerFrame": 1277.310546875
+        },
+        {
+          "nvgApiCalls": 4964.0,
+          "luaCpuMs": 9.138888888888888,
+          "allocatedKiBPerFrame": 1277.310546875
+        }
+      ],
+      "components": {
+        "trees": {
+          "invocations": 4.0,
+          "ms": 4.555555555555596,
+          "calls": {
+            "StrokeWorldLine": 4.0,
+            "ProjectPolygon": 8.0,
+            "ClipLine": 4.0,
+            "nvgLineTo": 108.0,
+            "nvgClosePath": 12.0,
+            "Visibility": 63.0,
+            "nvgFill": 12.0,
+            "Project": 120.0
+          }
+        },
+        "hills": {
+          "invocations": 1.0,
+          "ms": 10.33333333333333,
+          "calls": {
+            "StrokeWorldLine": 6.0,
+            "ProjectPolygon": 2.0,
+            "ClipLine": 6.0,
+            "nvgClosePath": 110.0,
+            "Project": 332.0,
+            "Visibility": 253.0,
+            "nvgFill": 8.0,
+            "nvgLineTo": 528.0
+          }
+        },
+        "body_fill": {
+          "invocations": 2.0,
+          "ms": 10.333333333333625,
+          "calls": {
+            "ProjectPolygon": 2.0,
+            "Project": 546.0,
+            "nvgClosePath": 2.0,
+            "nvgFill": 2.0,
+            "nvgLineTo": 544.0
+          }
+        },
+        "ring_construction": {
+          "invocations": 2.0,
+          "ms": 0.3611111111111577,
+          "calls": []
+        },
+        "outlines": {
+          "invocations": 2.0,
+          "ms": 39.05555555555533,
+          "calls": {
+            "StrokeWorldLine": 96.0,
+            "nvgFill": 96.0,
+            "ClipLine": 96.0,
+            "nvgClosePath": 402.0,
+            "nvgLineTo": 1206.0,
+            "Visibility": 498.0,
+            "ClipScreenPolygon": 402.0,
+            "Project": 690.0
+          }
+        },
+        "foam": {
+          "invocations": 1.0,
+          "ms": 21.999999999999943,
+          "calls": {
+            "StrokeWorldLine": 128.0,
+            "nvgFill": 128.0,
+            "ClipLine": 128.0,
+            "nvgClosePath": 128.0,
+            "nvgLineTo": 384.0,
+            "Visibility": 256.0,
+            "ClipScreenPolygon": 128.0,
+            "Project": 512.0
+          }
+        }
+      },
+      "visibleByPresentation": true,
+      "medianFull": {
+        "nvgApiCalls": 4964.0,
+        "luaCpuMs": 9.166666666666664,
+        "allocatedKiBPerFrame": 1277.310546875
+      },
+      "medianWithoutComponent": {
+        "drawTree": 74.61111111111111,
+        "strokeWorldPolygon": 43.416666666666636,
+        "drawShoreFoam": 6.277777777777777,
+        "drawHill": 7.444444444444451
+      }
+    },
+    {
+      "scenario": "left_edge",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        90,
+        -35
+      ],
+      "radius": 20,
+      "actualUpvalues": [
+        "_ENV",
+        "finite",
+        "Config",
+        "rgba",
+        "newScreenBounds",
+        "circlePoints",
+        "fillWorldPolygon",
+        "strokeWorldPolygon",
+        "drawShoreFoam",
+        "drawHill",
+        "clamp",
+        "TREE_LAYOUT",
+        "drawTree",
+        "localIslandPoint",
+        "finishScreenBounds"
+      ],
+      "full": [
+        {
+          "allocatedKiBPerFrame": 546.076171875,
+          "luaCpuMs": 31.61111111111106,
+          "nvgApiCalls": 1955.0
+        },
+        {
+          "allocatedKiBPerFrame": 546.076171875,
+          "luaCpuMs": 36.805555555555536,
+          "nvgApiCalls": 1955.0
+        },
+        {
+          "allocatedKiBPerFrame": 546.076171875,
+          "luaCpuMs": 30.00000000000005,
+          "nvgApiCalls": 1955.0
+        }
+      ],
+      "withoutComponent": {
+        "strokeWorldPolygon": [
+          {
+            "allocatedKiBPerFrame": 323.310546875,
+            "luaCpuMs": 17.94444444444427,
+            "nvgApiCalls": 943.0
+          },
+          {
+            "allocatedKiBPerFrame": 323.310546875,
+            "luaCpuMs": 18.49999999999991,
+            "nvgApiCalls": 943.0
+          },
+          {
+            "allocatedKiBPerFrame": 323.310546875,
+            "luaCpuMs": 22.72222222222216,
+            "nvgApiCalls": 943.0
+          }
+        ],
+        "drawShoreFoam": [
+          {
+            "allocatedKiBPerFrame": 424.357421875,
+            "luaCpuMs": 27.222222222222236,
+            "nvgApiCalls": 1475.0
+          },
+          {
+            "allocatedKiBPerFrame": 424.357421875,
+            "luaCpuMs": 24.277777777777743,
+            "nvgApiCalls": 1475.0
+          },
+          {
+            "allocatedKiBPerFrame": 424.357421875,
+            "luaCpuMs": 24.6388888888889,
+            "nvgApiCalls": 1475.0
+          }
+        ],
+        "drawTree": [
+          {
+            "allocatedKiBPerFrame": 515.482421875,
+            "luaCpuMs": 30.1111111111111,
+            "nvgApiCalls": 1897.0
+          },
+          {
+            "allocatedKiBPerFrame": 515.482421875,
+            "luaCpuMs": 34.47222222222221,
+            "nvgApiCalls": 1897.0
+          },
+          {
+            "allocatedKiBPerFrame": 515.482421875,
+            "luaCpuMs": 36.88888888888877,
+            "nvgApiCalls": 1897.0
+          }
+        ],
+        "drawHill": [
+          {
+            "allocatedKiBPerFrame": 534.693359375,
+            "luaCpuMs": 34.91666666666661,
+            "nvgApiCalls": 1928.0
+          },
+          {
+            "allocatedKiBPerFrame": 534.693359375,
+            "luaCpuMs": 29.11111111111116,
+            "nvgApiCalls": 1928.0
+          },
+          {
+            "allocatedKiBPerFrame": 534.693359375,
+            "luaCpuMs": 35.33333333333339,
+            "nvgApiCalls": 1928.0
+          }
+        ]
+      },
+      "visibleByPresentation": true,
+      "components": {
+        "foam": {
+          "invocations": 1.0,
+          "calls": {
+            "nvgClosePath": 44.0,
+            "ClipLine": 128.0,
+            "StrokeWorldLine": 128.0,
+            "nvgFill": 44.0,
+            "nvgLineTo": 132.0,
+            "ClipScreenPolygon": 44.0,
+            "Project": 176.0,
+            "Visibility": 88.0
+          },
+          "ms": 10.444444444444972
+        },
+        "hills": {
+          "invocations": 1.0,
+          "calls": {
+            "ClipLine": 6.0,
+            "nvgClosePath": 3.0,
+            "StrokeWorldLine": 6.0,
+            "nvgFill": 3.0,
+            "nvgLineTo": 8.0,
+            "ProjectPolygon": 2.0,
+            "Project": 11.0,
+            "Visibility": 8.0
+          },
+          "ms": 0.555555555555445
+        },
+        "body_fill": {
+          "invocations": 2.0,
+          "calls": {
+            "nvgClosePath": 2.0,
+            "nvgFill": 2.0,
+            "nvgLineTo": 380.0,
+            "ProjectPolygon": 2.0,
+            "Project": 382.0
+          },
+          "ms": 7.3333333333328214
+        },
+        "trees": {
+          "invocations": 4.0,
+          "calls": {
+            "nvgClosePath": 3.0,
+            "ClipLine": 4.0,
+            "StrokeWorldLine": 4.0,
+            "nvgFill": 3.0,
+            "nvgLineTo": 31.0,
+            "ProjectPolygon": 8.0,
+            "Project": 34.0,
+            "Visibility": 16.0
+          },
+          "ms": 3.166666666667181
+        },
+        "ring_construction": {
+          "invocations": 2.0,
+          "calls": [],
+          "ms": 0.1111111111112469
+        },
+        "outlines": {
+          "invocations": 2.0,
+          "calls": {
+            "nvgClosePath": 174.0,
+            "ClipLine": 96.0,
+            "StrokeWorldLine": 96.0,
+            "nvgFill": 42.0,
+            "nvgLineTo": 522.0,
+            "ClipScreenPolygon": 174.0,
+            "Project": 300.0,
+            "Visibility": 216.0
+          },
+          "ms": 16.722222222221735
+        }
+      },
+      "medianFull": {
+        "allocatedKiBPerFrame": 546.076171875,
+        "luaCpuMs": 31.61111111111106,
+        "nvgApiCalls": 1955.0
+      },
+      "medianWithoutComponent": {
+        "strokeWorldPolygon": 18.49999999999991,
+        "drawShoreFoam": 24.6388888888889,
+        "drawTree": 34.47222222222221,
+        "drawHill": 34.91666666666661
+      }
+    },
+    {
+      "scenario": "left_offscreen",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        160,
+        -35
+      ],
+      "radius": 20,
+      "components": {
+        "foam": {
+          "invocations": 1.0,
+          "calls": {
+            "ClipLine": 128.0,
+            "StrokeWorldLine": 128.0
+          },
+          "ms": 3.0555555555547502
+        },
+        "body_fill": {
+          "invocations": 2.0,
+          "calls": {
+            "ProjectPolygon": 2.0
+          },
+          "ms": 0.2222222222224938
+        },
+        "ring_construction": {
+          "invocations": 2.0,
+          "calls": [],
+          "ms": 0.13888888888876258
+        },
+        "outlines": {
+          "invocations": 0.0,
+          "calls": [],
+          "ms": 0.0
+        },
+        "hills": {
+          "invocations": 1.0,
+          "calls": {
+            "ProjectPolygon": 2.0,
+            "StrokeWorldLine": 6.0,
+            "ClipLine": 6.0
+          },
+          "ms": 0.6388888888889789
+        },
+        "trees": {
+          "invocations": 4.0,
+          "calls": {
+            "ProjectPolygon": 8.0,
+            "StrokeWorldLine": 4.0,
+            "ClipLine": 4.0
+          },
+          "ms": 1.527777777778362
+        }
+      },
+      "withoutComponent": {
+        "strokeWorldPolygon": [
+          {
+            "luaCpuMs": 4.194444444444538,
+            "nvgApiCalls": 146.0,
+            "allocatedKiBPerFrame": 98.341796875
+          },
+          {
+            "luaCpuMs": 4.555555555555596,
+            "nvgApiCalls": 146.0,
+            "allocatedKiBPerFrame": 96.466796875
+          },
+          {
+            "luaCpuMs": 4.555555555555596,
+            "nvgApiCalls": 146.0,
+            "allocatedKiBPerFrame": 96.466796875
+          }
+        ],
+        "drawShoreFoam": [
+          {
+            "luaCpuMs": 1.2222222222223342,
+            "nvgApiCalls": 18.0,
+            "allocatedKiBPerFrame": 61.076171875
+          },
+          {
+            "luaCpuMs": 1.9999999999998783,
+            "nvgApiCalls": 18.0,
+            "allocatedKiBPerFrame": 61.076171875
+          },
+          {
+            "luaCpuMs": 2.3055555555557086,
+            "nvgApiCalls": 18.0,
+            "allocatedKiBPerFrame": 61.076171875
+          }
+        ],
+        "drawTree": [
+          {
+            "luaCpuMs": 3.944444444444528,
+            "nvgApiCalls": 134.0,
+            "allocatedKiBPerFrame": 80.763671875
+          },
+          {
+            "luaCpuMs": 3.888888888888905,
+            "nvgApiCalls": 134.0,
+            "allocatedKiBPerFrame": 80.763671875
+          },
+          {
+            "luaCpuMs": 3.888888888888905,
+            "nvgApiCalls": 134.0,
+            "allocatedKiBPerFrame": 80.763671875
+          }
+        ],
+        "drawHill": [
+          {
+            "luaCpuMs": 4.000000000000152,
+            "nvgApiCalls": 142.0,
+            "allocatedKiBPerFrame": 90.912109375
+          },
+          {
+            "luaCpuMs": 4.4722222222220624,
+            "nvgApiCalls": 142.0,
+            "allocatedKiBPerFrame": 90.912109375
+          },
+          {
+            "luaCpuMs": 4.0833333333334885,
+            "nvgApiCalls": 142.0,
+            "allocatedKiBPerFrame": 90.912109375
+          }
+        ]
+      },
+      "actualUpvalues": [
+        "_ENV",
+        "finite",
+        "Config",
+        "rgba",
+        "newScreenBounds",
+        "circlePoints",
+        "fillWorldPolygon",
+        "strokeWorldPolygon",
+        "drawShoreFoam",
+        "drawHill",
+        "clamp",
+        "TREE_LAYOUT",
+        "drawTree",
+        "localIslandPoint",
+        "finishScreenBounds"
+      ],
+      "visibleByPresentation": false,
+      "full": [
+        {
+          "luaCpuMs": 3.888888888888905,
+          "nvgApiCalls": 146.0,
+          "allocatedKiBPerFrame": 98.919921875
+        },
+        {
+          "luaCpuMs": 3.888888888888905,
+          "nvgApiCalls": 146.0,
+          "allocatedKiBPerFrame": 98.919921875
+        },
+        {
+          "luaCpuMs": 4.694444444444359,
+          "nvgApiCalls": 146.0,
+          "allocatedKiBPerFrame": 98.919921875
+        }
+      ],
+      "medianFull": {
+        "luaCpuMs": 3.888888888888905,
+        "nvgApiCalls": 146.0,
+        "allocatedKiBPerFrame": 98.919921875
+      },
+      "medianWithoutComponent": {
+        "strokeWorldPolygon": 4.555555555555596,
+        "drawShoreFoam": 1.9999999999998783,
+        "drawTree": 3.888888888888905,
+        "drawHill": 4.0833333333334885
+      }
+    },
+    {
+      "scenario": "horizon_crossing",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        -108
+      ],
+      "radius": 20,
+      "components": {
+        "foam": {
+          "ms": 19.861111111110812,
+          "invocations": 1.0,
+          "calls": {
+            "ClipLine": 128.0,
+            "nvgFill": 76.0,
+            "StrokeWorldLine": 128.0,
+            "nvgLineTo": 228.0,
+            "nvgClosePath": 76.0,
+            "ClipScreenPolygon": 76.0,
+            "Project": 304.0,
+            "Visibility": 152.0
+          }
+        },
+        "ring_construction": {
+          "ms": 0.24999999999961472,
+          "invocations": 2.0,
+          "calls": []
+        },
+        "body_fill": {
+          "ms": 10.833333333336112,
+          "invocations": 2.0,
+          "calls": {
+            "nvgClosePath": 2.0,
+            "nvgFill": 2.0,
+            "ProjectPolygon": 2.0,
+            "nvgLineTo": 433.0,
+            "Project": 435.0
+          }
+        },
+        "hills": {
+          "ms": 9.388888888889113,
+          "invocations": 1.0,
+          "calls": {
+            "Visibility": 237.0,
+            "nvgFill": 8.0,
+            "ProjectPolygon": 2.0,
+            "nvgLineTo": 411.0,
+            "ClipLine": 6.0,
+            "StrokeWorldLine": 6.0,
+            "Project": 247.0,
+            "nvgClosePath": 94.0
+          }
+        },
+        "outlines": {
+          "ms": 26.694444444442823,
+          "invocations": 2.0,
+          "calls": {
+            "ClipLine": 96.0,
+            "nvgFill": 52.0,
+            "StrokeWorldLine": 96.0,
+            "nvgLineTo": 614.0,
+            "nvgClosePath": 204.0,
+            "ClipScreenPolygon": 204.0,
+            "Project": 360.0,
+            "Visibility": 256.0
+          }
+        },
+        "trees": {
+          "ms": 6.916666666665744,
+          "invocations": 4.0,
+          "calls": {
+            "ProjectPolygon": 8.0,
+            "ClipLine": 4.0,
+            "nvgFill": 12.0,
+            "StrokeWorldLine": 4.0,
+            "nvgLineTo": 87.0,
+            "Visibility": 145.0,
+            "ClipScreenPolygon": 2.0,
+            "Project": 203.0,
+            "nvgClosePath": 12.0
+          }
+        }
+      },
+      "actualUpvalues": [
+        "_ENV",
+        "finite",
+        "Config",
+        "rgba",
+        "newScreenBounds",
+        "circlePoints",
+        "fillWorldPolygon",
+        "strokeWorldPolygon",
+        "drawShoreFoam",
+        "drawHill",
+        "clamp",
+        "TREE_LAYOUT",
+        "drawTree",
+        "localIslandPoint",
+        "finishScreenBounds"
+      ],
+      "withoutComponent": {
+        "strokeWorldPolygon": [
+          {
+            "luaCpuMs": 38.583333333333414,
+            "nvgApiCalls": 1491.0,
+            "allocatedKiBPerFrame": 527.091796875
+          },
+          {
+            "luaCpuMs": 43.888888888889234,
+            "nvgApiCalls": 1491.0,
+            "allocatedKiBPerFrame": 527.154296875
+          },
+          {
+            "luaCpuMs": 40.8333333333333,
+            "nvgApiCalls": 1491.0,
+            "allocatedKiBPerFrame": 527.091796875
+          }
+        ],
+        "drawHill": [
+          {
+            "luaCpuMs": 40.97222222222226,
+            "nvgApiCalls": 2520.0,
+            "allocatedKiBPerFrame": 736.669921875
+          },
+          {
+            "luaCpuMs": 72.33333333333331,
+            "nvgApiCalls": 2520.0,
+            "allocatedKiBPerFrame": 736.669921875
+          },
+          {
+            "luaCpuMs": 59.7777777777778,
+            "nvgApiCalls": 2520.0,
+            "allocatedKiBPerFrame": 736.669921875
+          }
+        ],
+        "drawShoreFoam": [
+          {
+            "luaCpuMs": 32.44444444444443,
+            "nvgApiCalls": 2411.0,
+            "allocatedKiBPerFrame": 710.544921875
+          },
+          {
+            "luaCpuMs": 38.638888888888836,
+            "nvgApiCalls": 2411.0,
+            "allocatedKiBPerFrame": 710.544921875
+          },
+          {
+            "luaCpuMs": 39.194444444444485,
+            "nvgApiCalls": 2411.0,
+            "allocatedKiBPerFrame": 710.544921875
+          }
+        ],
+        "drawTree": [
+          {
+            "luaCpuMs": 64.86111111111114,
+            "nvgApiCalls": 2988.0,
+            "allocatedKiBPerFrame": 829.708984375
+          },
+          {
+            "luaCpuMs": 58.27777777777775,
+            "nvgApiCalls": 2988.0,
+            "allocatedKiBPerFrame": 829.708984375
+          },
+          {
+            "luaCpuMs": 58.472222222222335,
+            "nvgApiCalls": 2988.0,
+            "allocatedKiBPerFrame": 829.708984375
+          }
+        ]
+      },
+      "visibleByPresentation": true,
+      "full": [
+        {
+          "luaCpuMs": 65.4444444444445,
+          "nvgApiCalls": 3147.0,
+          "allocatedKiBPerFrame": 905.013671875
+        },
+        {
+          "luaCpuMs": 48.666666666666735,
+          "nvgApiCalls": 3147.0,
+          "allocatedKiBPerFrame": 905.013671875
+        },
+        {
+          "luaCpuMs": 48.00000000000004,
+          "nvgApiCalls": 3147.0,
+          "allocatedKiBPerFrame": 905.013671875
+        }
+      ],
+      "medianFull": {
+        "luaCpuMs": 48.666666666666735,
+        "nvgApiCalls": 3147.0,
+        "allocatedKiBPerFrame": 905.013671875
+      },
+      "medianWithoutComponent": {
+        "strokeWorldPolygon": 40.8333333333333,
+        "drawHill": 59.7777777777778,
+        "drawShoreFoam": 38.638888888888836,
+        "drawTree": 58.472222222222335
+      }
+    },
+    {
+      "scenario": "small_island_near",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        -35
+      ],
+      "radius": 12,
+      "visibleByPresentation": true,
+      "withoutComponent": {
+        "strokeWorldPolygon": [
+          {
+            "allocatedKiBPerFrame": 550.271484375,
+            "luaCpuMs": 35.66666666666644,
+            "nvgApiCalls": 1776.0
+          },
+          {
+            "allocatedKiBPerFrame": 550.271484375,
+            "luaCpuMs": 31.833333333333357,
+            "nvgApiCalls": 1776.0
+          },
+          {
+            "allocatedKiBPerFrame": 550.271484375,
+            "luaCpuMs": 33.91666666666677,
+            "nvgApiCalls": 1776.0
+          }
+        ],
+        "drawTree": [
+          {
+            "allocatedKiBPerFrame": 890.724609375,
+            "luaCpuMs": 59.05555555555529,
+            "nvgApiCalls": 3509.0
+          },
+          {
+            "allocatedKiBPerFrame": 890.724609375,
+            "luaCpuMs": 62.02777777777789,
+            "nvgApiCalls": 3509.0
+          },
+          {
+            "allocatedKiBPerFrame": 890.724609375,
+            "luaCpuMs": 77.44444444444436,
+            "nvgApiCalls": 3509.0
+          }
+        ],
+        "drawHill": [
+          {
+            "allocatedKiBPerFrame": 821.943359375,
+            "luaCpuMs": 55.36111111111136,
+            "nvgApiCalls": 3182.0
+          },
+          {
+            "allocatedKiBPerFrame": 821.943359375,
+            "luaCpuMs": 66.22222222222223,
+            "nvgApiCalls": 3182.0
+          },
+          {
+            "allocatedKiBPerFrame": 821.943359375,
+            "luaCpuMs": 79.99999999999987,
+            "nvgApiCalls": 3182.0
+          }
+        ],
+        "drawShoreFoam": [
+          {
+            "allocatedKiBPerFrame": 665.287109375,
+            "luaCpuMs": 41.80555555555543,
+            "nvgApiCalls": 2505.0
+          },
+          {
+            "allocatedKiBPerFrame": 665.287109375,
+            "luaCpuMs": 37.16666666666689,
+            "nvgApiCalls": 2505.0
+          },
+          {
+            "allocatedKiBPerFrame": 665.287109375,
+            "luaCpuMs": 36.19444444444437,
+            "nvgApiCalls": 2505.0
+          }
+        ]
+      },
+      "full": [
+        {
+          "allocatedKiBPerFrame": 947.130859375,
+          "luaCpuMs": 72.16666666666703,
+          "nvgApiCalls": 3657.0
+        },
+        {
+          "allocatedKiBPerFrame": 947.130859375,
+          "luaCpuMs": 69.77777777777779,
+          "nvgApiCalls": 3657.0
+        },
+        {
+          "allocatedKiBPerFrame": 947.130859375,
+          "luaCpuMs": 74.22222222222254,
+          "nvgApiCalls": 3657.0
+        }
+      ],
+      "actualUpvalues": [
+        "_ENV",
+        "finite",
+        "Config",
+        "rgba",
+        "newScreenBounds",
+        "circlePoints",
+        "fillWorldPolygon",
+        "strokeWorldPolygon",
+        "drawShoreFoam",
+        "drawHill",
+        "clamp",
+        "TREE_LAYOUT",
+        "drawTree",
+        "localIslandPoint",
+        "finishScreenBounds"
+      ],
+      "components": {
+        "trees": {
+          "calls": {
+            "ClipLine": 4.0,
+            "Visibility": 56.0,
+            "Project": 88.0,
+            "ProjectPolygon": 8.0,
+            "nvgFill": 12.0,
+            "StrokeWorldLine": 4.0,
+            "nvgClosePath": 12.0,
+            "nvgLineTo": 76.0
+          },
+          "ms": 4.194444444445919,
+          "invocations": 4.0
+        },
+        "ring_construction": {
+          "calls": [],
+          "ms": 0.027777777777910413,
+          "invocations": 2.0
+        },
+        "foam": {
+          "calls": {
+            "ClipLine": 128.0,
+            "Visibility": 256.0,
+            "Project": 512.0,
+            "nvgFill": 128.0,
+            "nvgClosePath": 128.0,
+            "StrokeWorldLine": 128.0,
+            "nvgLineTo": 384.0,
+            "ClipScreenPolygon": 128.0
+          },
+          "ms": 30.30555555555697,
+          "invocations": 1.0
+        },
+        "body_fill": {
+          "calls": {
+            "ProjectPolygon": 2.0,
+            "nvgFill": 2.0,
+            "nvgClosePath": 2.0,
+            "nvgLineTo": 340.0,
+            "Project": 342.0
+          },
+          "ms": 10.722222222221312,
+          "invocations": 2.0
+        },
+        "outlines": {
+          "calls": {
+            "ClipLine": 96.0,
+            "Visibility": 344.0,
+            "Project": 536.0,
+            "nvgFill": 96.0,
+            "nvgClosePath": 248.0,
+            "StrokeWorldLine": 96.0,
+            "nvgLineTo": 744.0,
+            "ClipScreenPolygon": 248.0
+          },
+          "ms": 31.19444444444379,
+          "invocations": 2.0
+        },
+        "hills": {
+          "calls": {
+            "ProjectPolygon": 2.0,
+            "Visibility": 158.0,
+            "Project": 195.0,
+            "ClipLine": 6.0,
+            "nvgFill": 8.0,
+            "StrokeWorldLine": 6.0,
+            "nvgClosePath": 69.0,
+            "nvgLineTo": 309.0
+          },
+          "ms": 9.027777777776278,
+          "invocations": 1.0
+        }
+      },
+      "medianFull": {
+        "allocatedKiBPerFrame": 947.130859375,
+        "luaCpuMs": 72.16666666666703,
+        "nvgApiCalls": 3657.0
+      },
+      "medianWithoutComponent": {
+        "strokeWorldPolygon": 33.91666666666677,
+        "drawTree": 62.02777777777789,
+        "drawHill": 66.22222222222223,
+        "drawShoreFoam": 37.16666666666689
+      }
+    }
+  ]
+}

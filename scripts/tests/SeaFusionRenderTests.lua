@@ -211,6 +211,8 @@ function Tests.Run(recorder)
         assert(clock.elapsed == elapsed and clock.phase == "night" and clock:IsPaused(),
             "rendering mutated the existing gameplay clock")
         assert(calls.nightOverlay == 1, "night rendering must tint the scene exactly once")
+        assert(recorder.countFillColor(table.unpack(nightColor)) == expectedTintCount,
+            "world night grade must be applied once after world objects")
         assert(recorder.callCount("nvgSave") == recorder.callCount("nvgRestore"),
             "night tint left the NanoVG state stack unbalanced")
         expectedTintCount = 0

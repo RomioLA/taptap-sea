@@ -1,0 +1,4871 @@
+{
+  "input_png_count": 88,
+  "staging_count": 92,
+  "records": [
+    {
+      "path": "assets/generated/highspec/ART-W1-01/env_coastal_rocks.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/env_coastal_rocks__384x384.png",
+      "sha256": "b173357ea1d932e1eb76f645308560f60f55ed148a5c25ebad369eb99077ce87",
+      "staging_sha256": "d1b7303aac96edec34b495018b1a2002a97351f52217a3581e3ac871f17ff397",
+      "source_bytes": 344917,
+      "staging_bytes": 193025,
+      "saving_bytes": 151892,
+      "saving_percent": 44.04,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        37,
+        54,
+        484,
+        458
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          37,
+          54,
+          484,
+          458
+        ],
+        "alpha_pixels": 111059,
+        "partial_alpha_pixels": 16496,
+        "transparent_pixels": 151085,
+        "opaque_pixels": 94563
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          39,
+          361,
+          344
+        ],
+        "alpha_pixels": 64394,
+        "partial_alpha_pixels": 9461,
+        "transparent_pixels": 83062,
+        "opaque_pixels": 54933
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-01/candidates/env_coastal_rocks.png",
+      "asset_original": "assets/generated/highspec/ART-W1-01/env_coastal_rocks.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-01/env_driftwood_bundle.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/env_driftwood_bundle__384x384.png",
+      "sha256": "23897f3a2a8ce27725d70c751c706d274362a7992efd6a8b846b06c5703ae7bf",
+      "staging_sha256": "00c21d4596f1be46056384f6f25fc1e3e2a48e7f048eb0df7aefec6bbcfdcb4b",
+      "source_bytes": 158167,
+      "staging_bytes": 78986,
+      "saving_bytes": 79181,
+      "saving_percent": 50.06,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        37,
+        100,
+        474,
+        234
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          341
+        ],
+        "alpha_bbox": [
+          37,
+          100,
+          474,
+          234
+        ],
+        "alpha_pixels": 48176,
+        "partial_alpha_pixels": 4663,
+        "transparent_pixels": 126416,
+        "opaque_pixels": 43513
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          140,
+          361,
+          244
+        ],
+        "alpha_pixels": 29621,
+        "partial_alpha_pixels": 3736,
+        "transparent_pixels": 117835,
+        "opaque_pixels": 25885
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-01/candidates/env_driftwood_bundle.png",
+      "asset_original": "assets/generated/highspec/ART-W1-01/env_driftwood_bundle.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-01/env_reef_cluster.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/env_reef_cluster__384x384.png",
+      "sha256": "2395ed0307530b747bd5bd821a4879e5464c0e71d465bd18547e08cdde6c9a18",
+      "staging_sha256": "bb7d17339a45248d2d402810d42a7a8db59b485e3ef374d8406f8353802848c5",
+      "source_bytes": 331613,
+      "staging_bytes": 230052,
+      "saving_bytes": 101561,
+      "saving_percent": 30.63,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        57,
+        76,
+        455,
+        442
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          57,
+          76,
+          455,
+          442
+        ],
+        "alpha_pixels": 106034,
+        "partial_alpha_pixels": 14777,
+        "transparent_pixels": 156110,
+        "opaque_pixels": 91257
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          36,
+          361,
+          347
+        ],
+        "alpha_pixels": 77056,
+        "partial_alpha_pixels": 10430,
+        "transparent_pixels": 70400,
+        "opaque_pixels": 66626
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-01/candidates/env_reef_cluster.png",
+      "asset_original": "assets/generated/highspec/ART-W1-01/env_reef_cluster.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-01/env_shrub_grove.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/env_shrub_grove__384x384.png",
+      "sha256": "2d0f19d8a60c61b1d5949fe25f112bcac400bb0f3e25d069565f3925531014c7",
+      "staging_sha256": "3ceffd74c9d228137cc7784413afa44ba1752d4a08148e20b3e1e77ff94ff402",
+      "source_bytes": 405021,
+      "staging_bytes": 216168,
+      "saving_bytes": 188853,
+      "saving_percent": 46.63,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        33,
+        48,
+        488,
+        471
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          33,
+          48,
+          488,
+          471
+        ],
+        "alpha_pixels": 117703,
+        "partial_alpha_pixels": 72061,
+        "transparent_pixels": 144441,
+        "opaque_pixels": 45642
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          35,
+          361,
+          349
+        ],
+        "alpha_pixels": 66038,
+        "partial_alpha_pixels": 37843,
+        "transparent_pixels": 81418,
+        "opaque_pixels": 28195
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-01/candidates/env_shrub_grove.png",
+      "asset_original": "assets/generated/highspec/ART-W1-01/env_shrub_grove.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-01/env_small_jetty.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/env_small_jetty__384x384.png",
+      "sha256": "f84f09ac883cd7d18a47fbb271335484913cab0628755be9119d1ddb3af40dcb",
+      "staging_sha256": "9810aeb32f577343282fac7df01dc428ed97ade01a26e0a8e1af6b14757c239a",
+      "source_bytes": 251852,
+      "staging_bytes": 145572,
+      "saving_bytes": 106280,
+      "saving_percent": 42.2,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        57,
+        40,
+        454,
+        471
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          57,
+          40,
+          454,
+          471
+        ],
+        "alpha_pixels": 95126,
+        "partial_alpha_pixels": 11885,
+        "transparent_pixels": 167018,
+        "opaque_pixels": 83241
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          36,
+          23,
+          347,
+          361
+        ],
+        "alpha_pixels": 59013,
+        "partial_alpha_pixels": 7317,
+        "transparent_pixels": 88443,
+        "opaque_pixels": 51696
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-01/candidates/env_small_jetty.png",
+      "asset_original": "assets/generated/highspec/ART-W1-01/env_small_jetty.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-01/island_crescent_sandbar.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/island_crescent_sandbar__768x768.png",
+      "sha256": "5fcb00302e1ff515f804f3bf8bff402885bf2b7ad7393e98990d407c8d541d9e",
+      "staging_sha256": "ebee35442308e0f378aff01b51a78c0813f472dd1d846d622b6852a5317fe1cc",
+      "source_bytes": 807749,
+      "staging_bytes": 487360,
+      "saving_bytes": 320389,
+      "saving_percent": 39.66,
+      "soft_budget_bytes": 500000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        72,
+        63,
+        945,
+        963
+      ],
+      "original": {
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "alpha_bbox": [
+          72,
+          63,
+          945,
+          963
+        ],
+        "alpha_pixels": 294704,
+        "partial_alpha_pixels": 46650,
+        "transparent_pixels": 753872,
+        "opaque_pixels": 248054
+      },
+      "staged": {
+        "dimensions": [
+          768,
+          768
+        ],
+        "alpha_bbox": [
+          56,
+          46,
+          712,
+          722
+        ],
+        "alpha_pixels": 167894,
+        "partial_alpha_pixels": 27116,
+        "transparent_pixels": 421930,
+        "opaque_pixels": 140778
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-01/candidates/island_crescent_sandbar.png",
+      "asset_original": "assets/generated/highspec/ART-W1-01/island_crescent_sandbar.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-01/island_crescent_sandbar.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/island_crescent_sandbar__1024x1024.png",
+      "sha256": "5fcb00302e1ff515f804f3bf8bff402885bf2b7ad7393e98990d407c8d541d9e",
+      "staging_sha256": "ba60be194acfcea2421110e05d800455eed4cc70c39673f7e28b9bf38bdc2423",
+      "source_bytes": 807749,
+      "staging_bytes": 820206,
+      "saving_bytes": -12457,
+      "saving_percent": -1.54,
+      "soft_budget_bytes": 500000,
+      "soft_overbudget": true,
+      "content_bounds": [
+        72,
+        63,
+        945,
+        963
+      ],
+      "original": {
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "alpha_bbox": [
+          72,
+          63,
+          945,
+          963
+        ],
+        "alpha_pixels": 294704,
+        "partial_alpha_pixels": 46650,
+        "transparent_pixels": 753872,
+        "opaque_pixels": 248054
+      },
+      "staged": {
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "alpha_bbox": [
+          75,
+          61,
+          949,
+          962
+        ],
+        "alpha_pixels": 296313,
+        "partial_alpha_pixels": 46827,
+        "transparent_pixels": 752263,
+        "opaque_pixels": 249486
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-01/candidates/island_crescent_sandbar.png",
+      "asset_original": "assets/generated/highspec/ART-W1-01/island_crescent_sandbar.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-01/island_exploration_arch.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/island_exploration_arch__768x768.png",
+      "sha256": "cdc4eb00151c0c0f22cdc7316fea47f8996010c06b0b84d3850a5663e0e64107",
+      "staging_sha256": "2a4308f1c5dbe87f7c0956dd00244ec2a222fb64f9b3f2f9e9e23837a5796237",
+      "source_bytes": 1508648,
+      "staging_bytes": 792268,
+      "saving_bytes": 716380,
+      "saving_percent": 47.48,
+      "soft_budget_bytes": 500000,
+      "soft_overbudget": true,
+      "content_bounds": [
+        39,
+        38,
+        989,
+        975
+      ],
+      "original": {
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "alpha_bbox": [
+          39,
+          38,
+          989,
+          975
+        ],
+        "alpha_pixels": 560732,
+        "partial_alpha_pixels": 46187,
+        "transparent_pixels": 487844,
+        "opaque_pixels": 514545
+      },
+      "staged": {
+        "dimensions": [
+          768,
+          768
+        ],
+        "alpha_bbox": [
+          46,
+          50,
+          722,
+          717
+        ],
+        "alpha_pixels": 285053,
+        "partial_alpha_pixels": 23721,
+        "transparent_pixels": 304771,
+        "opaque_pixels": 261332
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-01/candidates/island_exploration_arch.png",
+      "asset_original": "assets/generated/highspec/ART-W1-01/island_exploration_arch.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-01/island_exploration_arch.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/island_exploration_arch__1024x1024.png",
+      "sha256": "cdc4eb00151c0c0f22cdc7316fea47f8996010c06b0b84d3850a5663e0e64107",
+      "staging_sha256": "351fb41492e7811235e62d3ab760c22ff3e6860355f3b2161281758dce1a6782",
+      "source_bytes": 1508648,
+      "staging_bytes": 1347842,
+      "saving_bytes": 160806,
+      "saving_percent": 10.66,
+      "soft_budget_bytes": 500000,
+      "soft_overbudget": true,
+      "content_bounds": [
+        39,
+        38,
+        989,
+        975
+      ],
+      "original": {
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "alpha_bbox": [
+          39,
+          38,
+          989,
+          975
+        ],
+        "alpha_pixels": 560732,
+        "partial_alpha_pixels": 46187,
+        "transparent_pixels": 487844,
+        "opaque_pixels": 514545
+      },
+      "staged": {
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "alpha_bbox": [
+          61,
+          67,
+          962,
+          956
+        ],
+        "alpha_pixels": 505500,
+        "partial_alpha_pixels": 41691,
+        "transparent_pixels": 543076,
+        "opaque_pixels": 463809
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-01/candidates/island_exploration_arch.png",
+      "asset_original": "assets/generated/highspec/ART-W1-01/island_exploration_arch.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-01/island_rocky_reef.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/island_rocky_reef__768x768.png",
+      "sha256": "9b1a75ac256160242fe507eb1764c6ffdd909dbb228b20ceec93d6f445741708",
+      "staging_sha256": "931241792d0f568e306802a173b82b4190d84a424decf3fa2895606ab96e7f4c",
+      "source_bytes": 1484382,
+      "staging_bytes": 702908,
+      "saving_bytes": 781474,
+      "saving_percent": 52.65,
+      "soft_budget_bytes": 500000,
+      "soft_overbudget": true,
+      "content_bounds": [
+        17,
+        95,
+        994,
+        923
+      ],
+      "original": {
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "alpha_bbox": [
+          17,
+          95,
+          994,
+          923
+        ],
+        "alpha_pixels": 505774,
+        "partial_alpha_pixels": 43937,
+        "transparent_pixels": 542802,
+        "opaque_pixels": 461837
+      },
+      "staged": {
+        "dimensions": [
+          768,
+          768
+        ],
+        "alpha_bbox": [
+          46,
+          97,
+          722,
+          670
+        ],
+        "alpha_pixels": 242988,
+        "partial_alpha_pixels": 21281,
+        "transparent_pixels": 346836,
+        "opaque_pixels": 221707
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-01/candidates/island_rocky_reef.png",
+      "asset_original": "assets/generated/highspec/ART-W1-01/island_rocky_reef.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-01/island_rocky_reef.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/island_rocky_reef__1024x1024.png",
+      "sha256": "9b1a75ac256160242fe507eb1764c6ffdd909dbb228b20ceec93d6f445741708",
+      "staging_sha256": "96d97a42b17e3d0a0d3c33f86706eceb6c54a680e2963e02dfadca9d2619fa92",
+      "source_bytes": 1484382,
+      "staging_bytes": 1217918,
+      "saving_bytes": 266464,
+      "saving_percent": 17.95,
+      "soft_budget_bytes": 500000,
+      "soft_overbudget": true,
+      "content_bounds": [
+        17,
+        95,
+        994,
+        923
+      ],
+      "original": {
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "alpha_bbox": [
+          17,
+          95,
+          994,
+          923
+        ],
+        "alpha_pixels": 505774,
+        "partial_alpha_pixels": 43937,
+        "transparent_pixels": 542802,
+        "opaque_pixels": 461837
+      },
+      "staged": {
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "alpha_bbox": [
+          61,
+          130,
+          962,
+          894
+        ],
+        "alpha_pixels": 431069,
+        "partial_alpha_pixels": 37593,
+        "transparent_pixels": 617507,
+        "opaque_pixels": 393476
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-01/candidates/island_rocky_reef.png",
+      "asset_original": "assets/generated/highspec/ART-W1-01/island_rocky_reef.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-01/island_sandy_green_cove.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/island_sandy_green_cove__768x768.png",
+      "sha256": "0283a432fffbd203509a9b5b76e5b51d6541ea83f3b1ddd26a9d7f6278318ff3",
+      "staging_sha256": "658c7ba3ced66d2e8ea38df36603e6732209a9eb656af80954fb4ca12a5fa5bb",
+      "source_bytes": 1567197,
+      "staging_bytes": 769917,
+      "saving_bytes": 797280,
+      "saving_percent": 50.87,
+      "soft_budget_bytes": 500000,
+      "soft_overbudget": true,
+      "content_bounds": [
+        37,
+        76,
+        993,
+        956
+      ],
+      "original": {
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "alpha_bbox": [
+          37,
+          76,
+          993,
+          956
+        ],
+        "alpha_pixels": 585807,
+        "partial_alpha_pixels": 36285,
+        "transparent_pixels": 462769,
+        "opaque_pixels": 549522
+      },
+      "staged": {
+        "dimensions": [
+          768,
+          768
+        ],
+        "alpha_bbox": [
+          46,
+          73,
+          722,
+          695
+        ],
+        "alpha_pixels": 293575,
+        "partial_alpha_pixels": 18365,
+        "transparent_pixels": 296249,
+        "opaque_pixels": 275210
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-01/candidates/island_sandy_green_cove.png",
+      "asset_original": "assets/generated/highspec/ART-W1-01/island_sandy_green_cove.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-01/island_sandy_green_cove.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/island_sandy_green_cove__1024x1024.png",
+      "sha256": "0283a432fffbd203509a9b5b76e5b51d6541ea83f3b1ddd26a9d7f6278318ff3",
+      "staging_sha256": "c79da37ef7d275c780438871e82d8b550546544d442e2b86d955c3a6c328a4e7",
+      "source_bytes": 1567197,
+      "staging_bytes": 1328032,
+      "saving_bytes": 239165,
+      "saving_percent": 15.26,
+      "soft_budget_bytes": 500000,
+      "soft_overbudget": true,
+      "content_bounds": [
+        37,
+        76,
+        993,
+        956
+      ],
+      "original": {
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "alpha_bbox": [
+          37,
+          76,
+          993,
+          956
+        ],
+        "alpha_pixels": 585807,
+        "partial_alpha_pixels": 36285,
+        "transparent_pixels": 462769,
+        "opaque_pixels": 549522
+      },
+      "staged": {
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "alpha_bbox": [
+          61,
+          97,
+          962,
+          926
+        ],
+        "alpha_pixels": 520838,
+        "partial_alpha_pixels": 32246,
+        "transparent_pixels": 527738,
+        "opaque_pixels": 488592
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-01/candidates/island_sandy_green_cove.png",
+      "asset_original": "assets/generated/highspec/ART-W1-01/island_sandy_green_cove.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-01/ship_coastal_cutter_B.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ship_coastal_cutter_B__640x427.png",
+      "sha256": "d8d30910c7d6153a59a8b2980ed6fc3c22eed24a869b05ba4b348b97cf2402de",
+      "staging_sha256": "f1096b433b8848eb16dcc5b03431e4fe1511dec98d0d7aacda4ccd9f0fdb8c14",
+      "source_bytes": 285411,
+      "staging_bytes": 159923,
+      "saving_bytes": 125488,
+      "saving_percent": 43.97,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        10,
+        105,
+        760,
+        354
+      ],
+      "original": {
+        "dimensions": [
+          768,
+          512
+        ],
+        "alpha_bbox": [
+          10,
+          105,
+          760,
+          354
+        ],
+        "alpha_pixels": 103178,
+        "partial_alpha_pixels": 11223,
+        "transparent_pixels": 290038,
+        "opaque_pixels": 91955
+      },
+      "staged": {
+        "dimensions": [
+          640,
+          427
+        ],
+        "alpha_bbox": [
+          38,
+          120,
+          601,
+          307
+        ],
+        "alpha_pixels": 58980,
+        "partial_alpha_pixels": 6460,
+        "transparent_pixels": 214300,
+        "opaque_pixels": 52520
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-01/candidates/ship_coastal_cutter_B.png",
+      "asset_original": "assets/generated/highspec/ART-W1-01/ship_coastal_cutter_B.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-01/ship_fishing_sloop_A.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ship_fishing_sloop_A__640x427.png",
+      "sha256": "1351762edb9348052025a24d5b35d3866f8d27a32f4df9675cbe6b7371585649",
+      "staging_sha256": "9f39d9890fa114b2115bca0d20cc34482ec2b708edaec92c41c4c38f49bef42b",
+      "source_bytes": 395307,
+      "staging_bytes": 234394,
+      "saving_bytes": 160913,
+      "saving_percent": 40.71,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        32,
+        112,
+        745,
+        395
+      ],
+      "original": {
+        "dimensions": [
+          768,
+          512
+        ],
+        "alpha_bbox": [
+          32,
+          112,
+          745,
+          395
+        ],
+        "alpha_pixels": 144617,
+        "partial_alpha_pixels": 11252,
+        "transparent_pixels": 248599,
+        "opaque_pixels": 133365
+      },
+      "staged": {
+        "dimensions": [
+          640,
+          427
+        ],
+        "alpha_bbox": [
+          38,
+          102,
+          601,
+          325
+        ],
+        "alpha_pixels": 90645,
+        "partial_alpha_pixels": 6908,
+        "transparent_pixels": 182635,
+        "opaque_pixels": 83737
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-01/candidates/ship_fishing_sloop_A.png",
+      "asset_original": "assets/generated/highspec/ART-W1-01/ship_fishing_sloop_A.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-02/bait_impact_splash.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/bait_impact_splash__384x384.png",
+      "sha256": "71563662bbcd0ca6af3272d39cf8d231161485b1a6242a0235603b4a3f80cdf8",
+      "staging_sha256": "bd2542540e3c77622225ff2aa103f745a65595ea736281acc1ef89bf8d2830dd",
+      "source_bytes": 23167,
+      "staging_bytes": 109600,
+      "saving_bytes": -86433,
+      "saving_percent": -373.09,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        56,
+        86,
+        201,
+        176
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          56,
+          86,
+          201,
+          176
+        ],
+        "alpha_pixels": 8241,
+        "partial_alpha_pixels": 2975,
+        "transparent_pixels": 57295,
+        "opaque_pixels": 5266
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          87,
+          361,
+          297
+        ],
+        "alpha_pixels": 45871,
+        "partial_alpha_pixels": 15703,
+        "transparent_pixels": 101585,
+        "opaque_pixels": 30168
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/bait_impact_splash.png",
+      "asset_original": "assets/generated/highspec/ART-W1-02/bait_impact_splash.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-02/bigfish_direction_wake.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/bigfish_direction_wake__384x384.png",
+      "sha256": "2a9acfb4c243e03bdcfb53248d62508f8bf51444677709175f3a7c6b790c85dc",
+      "staging_sha256": "e655b1f44f37e5ed38e325d210ac8b01f4e6cc4fc5c82f493a65ed93c732d0c8",
+      "source_bytes": 73187,
+      "staging_bytes": 48339,
+      "saving_bytes": 24848,
+      "saving_percent": 33.95,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        24,
+        195,
+        483,
+        309
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          24,
+          195,
+          483,
+          309
+        ],
+        "alpha_pixels": 26343,
+        "partial_alpha_pixels": 8433,
+        "transparent_pixels": 235801,
+        "opaque_pixels": 17910
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          150,
+          361,
+          234
+        ],
+        "alpha_pixels": 14953,
+        "partial_alpha_pixels": 4553,
+        "transparent_pixels": 132503,
+        "opaque_pixels": 10400
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/bigfish_direction_wake.png",
+      "asset_original": "assets/generated/highspec/ART-W1-02/bigfish_direction_wake.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-02/bigfish_splash_chase.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/bigfish_splash_chase__384x384.png",
+      "sha256": "44759c36555c0a03cc8ac258578f6ba9633a92b97e12e485c9daee677d688f9e",
+      "staging_sha256": "b951101ead886721276d521b761303dcda36a5909181cad58d557bc4f281566b",
+      "source_bytes": 281053,
+      "staging_bytes": 171695,
+      "saving_bytes": 109358,
+      "saving_percent": 38.91,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        12,
+        19,
+        436,
+        410
+      ],
+      "original": {
+        "dimensions": [
+          448,
+          448
+        ],
+        "alpha_bbox": [
+          12,
+          19,
+          436,
+          410
+        ],
+        "alpha_pixels": 85006,
+        "partial_alpha_pixels": 17858,
+        "transparent_pixels": 115698,
+        "opaque_pixels": 67148
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          36,
+          361,
+          348
+        ],
+        "alpha_pixels": 56612,
+        "partial_alpha_pixels": 14792,
+        "transparent_pixels": 90844,
+        "opaque_pixels": 41820
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/bigfish_splash_chase.png",
+      "asset_original": "assets/generated/highspec/ART-W1-02/bigfish_splash_chase.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-02/bigfish_splash_roaming.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/bigfish_splash_roaming__256x256.png",
+      "sha256": "993f60a9ccbeadc148096a74f8aacc70c8203a440030a1a935713a241e21f274",
+      "staging_sha256": "697f1223248796c1c9dc0c1e8d48d8e61c2084341085cc899e456d4e41f027d8",
+      "source_bytes": 30823,
+      "staging_bytes": 54190,
+      "saving_bytes": -23367,
+      "saving_percent": -75.81,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        38,
+        81,
+        216,
+        178
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          38,
+          81,
+          216,
+          178
+        ],
+        "alpha_pixels": 11555,
+        "partial_alpha_pixels": 2429,
+        "transparent_pixels": 53981,
+        "opaque_pixels": 9126
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          66,
+          240,
+          189
+        ],
+        "alpha_pixels": 19006,
+        "partial_alpha_pixels": 3900,
+        "transparent_pixels": 46530,
+        "opaque_pixels": 15106
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/bigfish_splash_roaming.png",
+      "asset_original": "assets/generated/highspec/ART-W1-02/bigfish_splash_roaming.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-02/fishing_empty_feedback.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/fishing_empty_feedback__384x384.png",
+      "sha256": "74de86cf73a3bb13e08784366bb586f82cc89369b5807083154694ddc9f6c802",
+      "staging_sha256": "7036486d498d83f79f54e4757cf861c0efe30fff0b1e9af71854358b545be0cb",
+      "source_bytes": 184949,
+      "staging_bytes": 148488,
+      "saving_bytes": 36461,
+      "saving_percent": 19.71,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        14,
+        107,
+        483,
+        403
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          14,
+          107,
+          483,
+          403
+        ],
+        "alpha_pixels": 100204,
+        "partial_alpha_pixels": 8569,
+        "transparent_pixels": 161940,
+        "opaque_pixels": 91635
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          85,
+          361,
+          298
+        ],
+        "alpha_pixels": 52548,
+        "partial_alpha_pixels": 4503,
+        "transparent_pixels": 94908,
+        "opaque_pixels": 48045
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/fishing_empty_feedback.png",
+      "asset_original": "assets/generated/highspec/ART-W1-02/fishing_empty_feedback.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-02/fishing_success_feedback.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/fishing_success_feedback__384x384.png",
+      "sha256": "88a26b3ffa55e37ea04a19fff7e5fc1c10d5a9f35bc59ed45f7198fc5a3f54ce",
+      "staging_sha256": "8cf3e254fec0874411ce0bad54d4915518bfe1092602af48eea814a0829fbec4",
+      "source_bytes": 225873,
+      "staging_bytes": 179003,
+      "saving_bytes": 46870,
+      "saving_percent": 20.75,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        22,
+        49,
+        367,
+        339
+      ],
+      "original": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          22,
+          49,
+          367,
+          339
+        ],
+        "alpha_pixels": 76555,
+        "partial_alpha_pixels": 6802,
+        "transparent_pixels": 70901,
+        "opaque_pixels": 69753
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          50,
+          361,
+          334
+        ],
+        "alpha_pixels": 74287,
+        "partial_alpha_pixels": 8133,
+        "transparent_pixels": 73169,
+        "opaque_pixels": 66154
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/fishing_success_feedback.png",
+      "asset_original": "assets/generated/highspec/ART-W1-02/fishing_success_feedback.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-02/net_impact_splash.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/net_impact_splash__384x384.png",
+      "sha256": "2c30e8c5ad89b699fab2b5f39094be6170b9fe6464e9b3f6f91fce08ee8a436c",
+      "staging_sha256": "ce6f4e5e72737a305ae01daa08d4e71a5f92df26f178c4eb6d4fc3076f1d1db6",
+      "source_bytes": 265745,
+      "staging_bytes": 168097,
+      "saving_bytes": 97648,
+      "saving_percent": 36.74,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        13,
+        48,
+        438,
+        395
+      ],
+      "original": {
+        "dimensions": [
+          448,
+          448
+        ],
+        "alpha_bbox": [
+          13,
+          48,
+          438,
+          395
+        ],
+        "alpha_pixels": 98194,
+        "partial_alpha_pixels": 17891,
+        "transparent_pixels": 102510,
+        "opaque_pixels": 80303
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          54,
+          361,
+          330
+        ],
+        "alpha_pixels": 63455,
+        "partial_alpha_pixels": 12777,
+        "transparent_pixels": 84001,
+        "opaque_pixels": 50678
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/net_impact_splash.png",
+      "asset_original": "assets/generated/highspec/ART-W1-02/net_impact_splash.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-02/ripple_medium.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ripple_medium__384x384.png",
+      "sha256": "c84ebcfde7b7d8be4a990bfbd2a953a7391eae178cf78756572f2395f315948a",
+      "staging_sha256": "20259ea3c9e05ccb653a2adafed304d274a309d7b396444691589e6dfd25335b",
+      "source_bytes": 113214,
+      "staging_bytes": 167699,
+      "saving_bytes": -54485,
+      "saving_percent": -48.13,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        0,
+        9,
+        256,
+        242
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          0,
+          9,
+          256,
+          242
+        ],
+        "alpha_pixels": 38755,
+        "partial_alpha_pixels": 2876,
+        "transparent_pixels": 26781,
+        "opaque_pixels": 35879
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          38,
+          361,
+          346
+        ],
+        "alpha_pixels": 69293,
+        "partial_alpha_pixels": 7949,
+        "transparent_pixels": 78163,
+        "opaque_pixels": 61344
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ripple_medium.png",
+      "asset_original": "assets/generated/highspec/ART-W1-02/ripple_medium.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-02/ripple_small.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ripple_small__256x256.png",
+      "sha256": "9f1fd4ac7b4da52abca53bede6a507f83ae5c8a392f883835173c0ec0578550a",
+      "staging_sha256": "8261324aa281bf6d2151bc55a58056a04673fc42b39f4b8ad98a1d46999016b3",
+      "source_bytes": 51872,
+      "staging_bytes": 71395,
+      "saving_bytes": -19523,
+      "saving_percent": -37.64,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        28,
+        53,
+        233,
+        196
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          28,
+          53,
+          233,
+          196
+        ],
+        "alpha_pixels": 21014,
+        "partial_alpha_pixels": 3455,
+        "transparent_pixels": 44522,
+        "opaque_pixels": 17559
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          49,
+          240,
+          206
+        ],
+        "alpha_pixels": 25773,
+        "partial_alpha_pixels": 4165,
+        "transparent_pixels": 39763,
+        "opaque_pixels": 21608
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ripple_small.png",
+      "asset_original": "assets/generated/highspec/ART-W1-02/ripple_small.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-02/seabird_dive.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/seabird_dive__384x384.png",
+      "sha256": "e9e217be0cf038d915bec5038fcd153c5fdb6076d63653d6d252a23b04dae63a",
+      "staging_sha256": "442e745afb8fadeef1a3b58b9fa485c66fa976407b37d393e951cf4507909574",
+      "source_bytes": 181304,
+      "staging_bytes": 92628,
+      "saving_bytes": 88676,
+      "saving_percent": 48.91,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        22,
+        51,
+        490,
+        437
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          22,
+          51,
+          490,
+          437
+        ],
+        "alpha_pixels": 72168,
+        "partial_alpha_pixels": 10345,
+        "transparent_pixels": 189976,
+        "opaque_pixels": 61823
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          52,
+          361,
+          331
+        ],
+        "alpha_pixels": 38417,
+        "partial_alpha_pixels": 5479,
+        "transparent_pixels": 109039,
+        "opaque_pixels": 32938
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/seabird_dive.png",
+      "asset_original": "assets/generated/highspec/ART-W1-02/seabird_dive.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-02/seabird_glide.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/seabird_glide__384x384.png",
+      "sha256": "d965595ad73a17fb58b7a51f94b3a9b7868ac500f17ab438cabdeabd703da40f",
+      "staging_sha256": "95b12f31dc59b3d0211a3a65253a6a03262e588021000261e926471ccac85e61",
+      "source_bytes": 158795,
+      "staging_bytes": 73017,
+      "saving_bytes": 85778,
+      "saving_percent": 54.02,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        3,
+        97,
+        510,
+        405
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          3,
+          97,
+          510,
+          405
+        ],
+        "alpha_pixels": 60025,
+        "partial_alpha_pixels": 9291,
+        "transparent_pixels": 202119,
+        "opaque_pixels": 50734
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          89,
+          361,
+          294
+        ],
+        "alpha_pixels": 27409,
+        "partial_alpha_pixels": 4376,
+        "transparent_pixels": 120047,
+        "opaque_pixels": 23033
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/seabird_glide.png",
+      "asset_original": "assets/generated/highspec/ART-W1-02/seabird_glide.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-02/smallfish_breach.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/smallfish_breach__256x256.png",
+      "sha256": "f6e8002ced76ec544d21f9f1f622574226f434535c61d61a0c2c8c4053670548",
+      "staging_sha256": "4ba863d3044c22cc702a585631d24a96c9cd5c6d724a14362d92375f6e6551cb",
+      "source_bytes": 120320,
+      "staging_bytes": 49512,
+      "saving_bytes": 70808,
+      "saving_percent": 58.85,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        157,
+        60,
+        388,
+        452
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          157,
+          60,
+          388,
+          452
+        ],
+        "alpha_pixels": 44070,
+        "partial_alpha_pixels": 15184,
+        "transparent_pixels": 218074,
+        "opaque_pixels": 28886
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          61,
+          15,
+          194,
+          240
+        ],
+        "alpha_pixels": 15296,
+        "partial_alpha_pixels": 5113,
+        "transparent_pixels": 50240,
+        "opaque_pixels": 10183
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/smallfish_breach.png",
+      "asset_original": "assets/generated/highspec/ART-W1-02/smallfish_breach.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-02/smallfish_surface_disturbance.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/smallfish_surface_disturbance__256x256.png",
+      "sha256": "a090c17fbb5e0f288814ce5efb166eeca86068413493e6af82211540a8b6b234",
+      "staging_sha256": "4e06f4852034f810c539471395851197355bed2dd254ce4f3b49c435ac0fa2fc",
+      "source_bytes": 48586,
+      "staging_bytes": 55313,
+      "saving_bytes": -6727,
+      "saving_percent": -13.85,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        17,
+        71,
+        243,
+        189
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          17,
+          71,
+          243,
+          189
+        ],
+        "alpha_pixels": 19763,
+        "partial_alpha_pixels": 3103,
+        "transparent_pixels": 45773,
+        "opaque_pixels": 16660
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          69,
+          240,
+          186
+        ],
+        "alpha_pixels": 19606,
+        "partial_alpha_pixels": 3041,
+        "transparent_pixels": 45930,
+        "opaque_pixels": 16565
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/smallfish_surface_disturbance.png",
+      "asset_original": "assets/generated/highspec/ART-W1-02/smallfish_surface_disturbance.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-02/surface_bubbles.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/surface_bubbles__256x256.png",
+      "sha256": "93eb66990ee903a7f1ffdb92cbda1e07b1dd3154e19e76bdaab395dfae3b923a",
+      "staging_sha256": "f549fd1141a7f11e4a38acece2d6cbfdf5f56921ba8e2a64f60e545777f8db72",
+      "source_bytes": 59977,
+      "staging_bytes": 62229,
+      "saving_bytes": -2252,
+      "saving_percent": -3.75,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        6,
+        28,
+        248,
+        224
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          6,
+          28,
+          248,
+          224
+        ],
+        "alpha_pixels": 27748,
+        "partial_alpha_pixels": 3960,
+        "transparent_pixels": 37788,
+        "opaque_pixels": 23788
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          37,
+          240,
+          219
+        ],
+        "alpha_pixels": 24338,
+        "partial_alpha_pixels": 3424,
+        "transparent_pixels": 41198,
+        "opaque_pixels": 20914
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/surface_bubbles.png",
+      "asset_original": "assets/generated/highspec/ART-W1-02/surface_bubbles.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_Caustic_v2_20261005160511.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW103_Caustic_v2_20261005160511__384x384.png",
+      "sha256": "50ee572055c8fb722096d7a38a6f0ae93fedffb485ff9f15aaaacd0c1ae3067c",
+      "staging_sha256": "56d8a31c00cd32802c4260d72426b91dd24c14af08aff643e7577e8d796a09e8",
+      "source_bytes": 262644,
+      "staging_bytes": 292353,
+      "saving_bytes": -29709,
+      "saving_percent": -11.31,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": true,
+      "content_bounds": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          0,
+          0,
+          512,
+          512
+        ],
+        "alpha_pixels": 217795,
+        "partial_alpha_pixels": 217795,
+        "transparent_pixels": 44349,
+        "opaque_pixels": 0
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          23,
+          361,
+          361
+        ],
+        "alpha_pixels": 104232,
+        "partial_alpha_pixels": 104232,
+        "transparent_pixels": 43224,
+        "opaque_pixels": 0
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-03/candidates/ARTW103_Caustic_v2_20261005160511.png",
+      "asset_original": "assets/generated/highspec/ART-W1-03/ARTW103_Caustic_v2_20261005160511.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_LensEdge_v2_20261005160359.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW103_LensEdge_v2_20261005160359__256x256.png",
+      "sha256": "2205787803f45b46b34df3fde44b66b9d923c8044c084df243b76c6fbb2be428",
+      "staging_sha256": "14c0afe0b364522566aba2cbe7eb735b51152169f5bbc86bcf23440323d2c0ff",
+      "source_bytes": 98679,
+      "staging_bytes": 16677,
+      "saving_bytes": 82002,
+      "saving_percent": 83.1,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        6,
+        0,
+        498,
+        133
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          342
+        ],
+        "alpha_bbox": [
+          6,
+          0,
+          498,
+          133
+        ],
+        "alpha_pixels": 39449,
+        "partial_alpha_pixels": 39449,
+        "transparent_pixels": 135655,
+        "opaque_pixels": 0
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          97,
+          240,
+          158
+        ],
+        "alpha_pixels": 8353,
+        "partial_alpha_pixels": 8353,
+        "transparent_pixels": 57183,
+        "opaque_pixels": 0
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-03/candidates/ARTW103_LensEdge_v2_20261005160359.png",
+      "asset_original": "assets/generated/highspec/ART-W1-03/ARTW103_LensEdge_v2_20261005160359.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_ReefRocks_20261005155952.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW103_ReefRocks_20261005155952__384x384.png",
+      "sha256": "618a21da2ebc2b59fe45adb7fc1e3f29eac44b76154b5c43ffcf7a18b30266a5",
+      "staging_sha256": "198734c901cc3b66a6007e81fbe002df203f4771ee0a22820bbb7267f4606b88",
+      "source_bytes": 279707,
+      "staging_bytes": 169749,
+      "saving_bytes": 109958,
+      "saving_percent": 39.31,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        27,
+        43,
+        421,
+        412
+      ],
+      "original": {
+        "dimensions": [
+          448,
+          448
+        ],
+        "alpha_bbox": [
+          27,
+          43,
+          421,
+          412
+        ],
+        "alpha_pixels": 101303,
+        "partial_alpha_pixels": 5671,
+        "transparent_pixels": 99401,
+        "opaque_pixels": 95632
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          33,
+          361,
+          350
+        ],
+        "alpha_pixels": 75357,
+        "partial_alpha_pixels": 5138,
+        "transparent_pixels": 72099,
+        "opaque_pixels": 70219
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-03/candidates/ARTW103_ReefRocks_20261005155952.png",
+      "asset_original": "assets/generated/highspec/ART-W1-03/ARTW103_ReefRocks_20261005155952.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_RockySeabed_20261005155952.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW103_RockySeabed_20261005155952__384x384.png",
+      "sha256": "0968984c2e626abe53749c7636a83df04e7dcb9edd26a333adddd1e912a8c199",
+      "staging_sha256": "847cccd2ab75a95900a73f07737a4d3262cfc3abbc7fea51dcdd6cbe4234fde7",
+      "source_bytes": 292351,
+      "staging_bytes": 181775,
+      "saving_bytes": 110576,
+      "saving_percent": 37.82,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        0,
+        24,
+        384,
+        363
+      ],
+      "original": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          0,
+          24,
+          384,
+          363
+        ],
+        "alpha_pixels": 106678,
+        "partial_alpha_pixels": 5657,
+        "transparent_pixels": 40778,
+        "opaque_pixels": 101021
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          43,
+          361,
+          341
+        ],
+        "alpha_pixels": 83203,
+        "partial_alpha_pixels": 5349,
+        "transparent_pixels": 64253,
+        "opaque_pixels": 77854
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-03/candidates/ARTW103_RockySeabed_20261005155952.png",
+      "asset_original": "assets/generated/highspec/ART-W1-03/ARTW103_RockySeabed_20261005155952.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_SandPatch_20261005155952.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW103_SandPatch_20261005155952__384x384.png",
+      "sha256": "896451799e6631530b03f8996ef8c1ab62146668e774067d08c5246339655025",
+      "staging_sha256": "18039ef983de11d060460b489c85ab9a351ffc5c744eb984323f74d90a1aa42c",
+      "source_bytes": 281636,
+      "staging_bytes": 160168,
+      "saving_bytes": 121468,
+      "saving_percent": 43.13,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        0,
+        14,
+        416,
+        406
+      ],
+      "original": {
+        "dimensions": [
+          416,
+          416
+        ],
+        "alpha_bbox": [
+          0,
+          14,
+          416,
+          406
+        ],
+        "alpha_pixels": 113945,
+        "partial_alpha_pixels": 6344,
+        "transparent_pixels": 59111,
+        "opaque_pixels": 107601
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          33,
+          361,
+          351
+        ],
+        "alpha_pixels": 75879,
+        "partial_alpha_pixels": 5170,
+        "transparent_pixels": 71577,
+        "opaque_pixels": 70709
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-03/candidates/ARTW103_SandPatch_20261005155952.png",
+      "asset_original": "assets/generated/highspec/ART-W1-03/ARTW103_SandPatch_20261005155952.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_Sardine_20261005155952.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW103_Sardine_20261005155952__384x384.png",
+      "sha256": "32f52de8306ca5f6050a7f7b4676fd5c2f383f45b01c14bb58d1022f6e99d27a",
+      "staging_sha256": "5fad8394ad3f46555c38b94a62c2bc517b4fafe6d9f713a288feb5d4cfa44f26",
+      "source_bytes": 94607,
+      "staging_bytes": 51821,
+      "saving_bytes": 42786,
+      "saving_percent": 45.22,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        28,
+        110,
+        484,
+        231
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          342
+        ],
+        "alpha_bbox": [
+          28,
+          110,
+          484,
+          231
+        ],
+        "alpha_pixels": 31371,
+        "partial_alpha_pixels": 3919,
+        "transparent_pixels": 143733,
+        "opaque_pixels": 27452
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          147,
+          361,
+          237
+        ],
+        "alpha_pixels": 17908,
+        "partial_alpha_pixels": 3112,
+        "transparent_pixels": 129548,
+        "opaque_pixels": 14796
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-03/candidates/ARTW103_Sardine_20261005155952.png",
+      "asset_original": "assets/generated/highspec/ART-W1-03/ARTW103_Sardine_20261005155952.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_SardineSchoolA_20261005155952.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW103_SardineSchoolA_20261005155952__384x384.png",
+      "sha256": "78907d3c2f0df12107f747e7b897c622cbe370f13e1fe76fc94708800692586a",
+      "staging_sha256": "c7efa830d0d1154e82cd1ebf7bd2b70661a9accde5b8a3cb02482eb432ff6f6a",
+      "source_bytes": 202375,
+      "staging_bytes": 135294,
+      "saving_bytes": 67081,
+      "saving_percent": 33.15,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        33,
+        45,
+        475,
+        479
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          33,
+          45,
+          475,
+          479
+        ],
+        "alpha_pixels": 74642,
+        "partial_alpha_pixels": 23164,
+        "transparent_pixels": 187502,
+        "opaque_pixels": 51478
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          26,
+          361,
+          358
+        ],
+        "alpha_pixels": 45505,
+        "partial_alpha_pixels": 13809,
+        "transparent_pixels": 101951,
+        "opaque_pixels": 31696
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-03/candidates/ARTW103_SardineSchoolA_20261005155952.png",
+      "asset_original": "assets/generated/highspec/ART-W1-03/ARTW103_SardineSchoolA_20261005155952.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_SardineSchoolB_20261005155952.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW103_SardineSchoolB_20261005155952__384x384.png",
+      "sha256": "f056f85c32bc0617fa9892aff5a145835afd071a39d27ec4c8b4cb1b60e99d1b",
+      "staging_sha256": "389e838887fb1fd88ed170f0229a4fad9f6b8d358068ea483f704a96c5f97af8",
+      "source_bytes": 224222,
+      "staging_bytes": 136540,
+      "saving_bytes": 87682,
+      "saving_percent": 39.1,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        28,
+        46,
+        491,
+        464
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          28,
+          46,
+          491,
+          464
+        ],
+        "alpha_pixels": 84025,
+        "partial_alpha_pixels": 21614,
+        "transparent_pixels": 178119,
+        "opaque_pixels": 62411
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          39,
+          361,
+          344
+        ],
+        "alpha_pixels": 46633,
+        "partial_alpha_pixels": 12064,
+        "transparent_pixels": 100823,
+        "opaque_pixels": 34569
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-03/candidates/ARTW103_SardineSchoolB_20261005155952.png",
+      "asset_original": "assets/generated/highspec/ART-W1-03/ARTW103_SardineSchoolB_20261005155952.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_Seaweed_20261005155952.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW103_Seaweed_20261005155952__384x384.png",
+      "sha256": "6278507ce4a4c4e66fc7ffc9b2f301992f3a4d189dcf7ebb4100eea7dc0513ce",
+      "staging_sha256": "537f659891f8c9dd1ea09de0ae1fda4a65f2d03bcc141e4494081a039c9034e7",
+      "source_bytes": 296177,
+      "staging_bytes": 191187,
+      "saving_bytes": 104990,
+      "saving_percent": 35.45,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        27,
+        25,
+        419,
+        416
+      ],
+      "original": {
+        "dimensions": [
+          448,
+          448
+        ],
+        "alpha_bbox": [
+          27,
+          25,
+          419,
+          416
+        ],
+        "alpha_pixels": 97720,
+        "partial_alpha_pixels": 14985,
+        "transparent_pixels": 102984,
+        "opaque_pixels": 82735
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          23,
+          361,
+          360
+        ],
+        "alpha_pixels": 74275,
+        "partial_alpha_pixels": 13383,
+        "transparent_pixels": 73181,
+        "opaque_pixels": 60892
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-03/candidates/ARTW103_Seaweed_20261005155952.png",
+      "asset_original": "assets/generated/highspec/ART-W1-03/ARTW103_Seaweed_20261005155952.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_Tuna_20261005155952.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW103_Tuna_20261005155952__256x256.png",
+      "sha256": "8558a1f9e89e6bfc280484722a621dbe9964dad532ad821c7cfa58832d454541",
+      "staging_sha256": "328429eaa6fe8c059ce5fafad2d6919d52e25e3aa089c24fb0a7e69153db0b19",
+      "source_bytes": 140909,
+      "staging_bytes": 31053,
+      "saving_bytes": 109856,
+      "saving_percent": 77.96,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        12,
+        80,
+        498,
+        261
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          342
+        ],
+        "alpha_bbox": [
+          12,
+          80,
+          498,
+          261
+        ],
+        "alpha_pixels": 49167,
+        "partial_alpha_pixels": 6024,
+        "transparent_pixels": 125937,
+        "opaque_pixels": 43143
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          86,
+          240,
+          170
+        ],
+        "alpha_pixels": 11183,
+        "partial_alpha_pixels": 2096,
+        "transparent_pixels": 54353,
+        "opaque_pixels": 9087
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-03/candidates/ARTW103_Tuna_20261005155952.png",
+      "asset_original": "assets/generated/highspec/ART-W1-03/ARTW103_Tuna_20261005155952.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_体力指示器_20261005160902.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_体力指示器_20261005160902__256x256.png",
+      "sha256": "1d656e5610ff13558157ab92abf1d3fe4ce9a2d9507a02f7687bd9db030c7420",
+      "staging_sha256": "2cd8c9d44ebf8ae61f1588b4b547b5a0cdcd4f3b2d71baa3d2492991e6f0da92",
+      "source_bytes": 67727,
+      "staging_bytes": 87190,
+      "saving_bytes": -19463,
+      "saving_percent": -28.74,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        36,
+        32,
+        224,
+        222
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          36,
+          32,
+          224,
+          222
+        ],
+        "alpha_pixels": 28229,
+        "partial_alpha_pixels": 3008,
+        "transparent_pixels": 37307,
+        "opaque_pixels": 25221
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          16,
+          15,
+          239,
+          240
+        ],
+        "alpha_pixels": 40063,
+        "partial_alpha_pixels": 4094,
+        "transparent_pixels": 25473,
+        "opaque_pixels": 35969
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_体力指示器_20261005160902.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_体力指示器_20261005160902.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_夜晚.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_夜晚__256x256.png",
+      "sha256": "6b8f53f4db2aa71fe9afc5e00d93031e6bbb7e9835d2dbf2a5278de3dd34b011",
+      "staging_sha256": "cb7892178fd4072f60782d4011475b4a349d8c3f22943d74f2712a5b15cb125a",
+      "source_bytes": 51524,
+      "staging_bytes": 73731,
+      "saving_bytes": -22207,
+      "saving_percent": -43.1,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        16,
+        5,
+        179,
+        164
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          16,
+          5,
+          179,
+          164
+        ],
+        "alpha_pixels": 20030,
+        "partial_alpha_pixels": 2059,
+        "transparent_pixels": 16834,
+        "opaque_pixels": 17971
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          18,
+          240,
+          237
+        ],
+        "alpha_pixels": 38690,
+        "partial_alpha_pixels": 4859,
+        "transparent_pixels": 26846,
+        "opaque_pixels": 33831
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_夜晚.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_夜晚.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_底部操作栏_20261005160639.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_底部操作栏_20261005160639__640x360.png",
+      "sha256": "a7f7e1b08c478695426df7cb3966ec7d7785333c760924d94dcd3d7debc55413",
+      "staging_sha256": "8888a26d6b76011e64b48b7ec035120562a96605ab59312a9b2319a3fb618dfc",
+      "source_bytes": 162657,
+      "staging_bytes": 103381,
+      "saving_bytes": 59276,
+      "saving_percent": 36.44,
+      "soft_budget_bytes": 400000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        121,
+        363,
+        903,
+        492
+      ],
+      "original": {
+        "dimensions": [
+          1024,
+          576
+        ],
+        "alpha_bbox": [
+          121,
+          363,
+          903,
+          492
+        ],
+        "alpha_pixels": 87192,
+        "partial_alpha_pixels": 11646,
+        "transparent_pixels": 502632,
+        "opaque_pixels": 75546
+      },
+      "staged": {
+        "dimensions": [
+          640,
+          360
+        ],
+        "alpha_bbox": [
+          38,
+          133,
+          601,
+          226
+        ],
+        "alpha_pixels": 45854,
+        "partial_alpha_pixels": 6379,
+        "transparent_pixels": 184546,
+        "opaque_pixels": 39475
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_底部操作栏_20261005160639.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_底部操作栏_20261005160639.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_捕鱼_按下态.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_捕鱼_按下态__256x256.png",
+      "sha256": "ac80877d7951a216dff9187d90164628bf629b324b7e42945e6c7b1b4de21359",
+      "staging_sha256": "9e2e086970a3f3c2e771ae039334c760623069a1e712aa6a7f1e9beb0fafeb22",
+      "source_bytes": 90984,
+      "staging_bytes": 106902,
+      "saving_bytes": -15918,
+      "saving_percent": -17.5,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        5,
+        0,
+        192,
+        192
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          5,
+          0,
+          192,
+          192
+        ],
+        "alpha_pixels": 31468,
+        "partial_alpha_pixels": 4878,
+        "transparent_pixels": 5396,
+        "opaque_pixels": 26590
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          18,
+          15,
+          237,
+          240
+        ],
+        "alpha_pixels": 43293,
+        "partial_alpha_pixels": 6625,
+        "transparent_pixels": 22243,
+        "opaque_pixels": 36668
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_捕鱼_按下态.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_捕鱼_按下态.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_捕鱼_普通态.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_捕鱼_普通态__256x256.png",
+      "sha256": "f023c184a5a348f52e5e19ffbf6fce37b6f33f9209ba26c5ff524d41a5739db8",
+      "staging_sha256": "818a69234c8d612451cd3ec0a776c712ba969372db6de2a7742982ee721bcf63",
+      "source_bytes": 76657,
+      "staging_bytes": 92929,
+      "saving_bytes": -16272,
+      "saving_percent": -21.23,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        13,
+        0,
+        192,
+        192
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          13,
+          0,
+          192,
+          192
+        ],
+        "alpha_pixels": 27775,
+        "partial_alpha_pixels": 4592,
+        "transparent_pixels": 9089,
+        "opaque_pixels": 23183
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          23,
+          15,
+          233,
+          240
+        ],
+        "alpha_pixels": 38379,
+        "partial_alpha_pixels": 6219,
+        "transparent_pixels": 27157,
+        "opaque_pixels": 32160
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_捕鱼_普通态.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_捕鱼_普通态.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_时间罗盘.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_时间罗盘__256x256.png",
+      "sha256": "c37c057e0a2dbad98bef42d0baf1a2c3ea59089b04c9fb69cdc1913aa0b71fe2",
+      "staging_sha256": "bc3a84796aa53ed938ebf984a079a37e81261dff1877412c0605a8ea0b75779d",
+      "source_bytes": 60237,
+      "staging_bytes": 90136,
+      "saving_bytes": -29899,
+      "saving_percent": -49.64,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        7,
+        2,
+        168,
+        164
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          7,
+          2,
+          168,
+          164
+        ],
+        "alpha_pixels": 20076,
+        "partial_alpha_pixels": 2028,
+        "transparent_pixels": 16788,
+        "opaque_pixels": 18048
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          16,
+          15,
+          240,
+          240
+        ],
+        "alpha_pixels": 39406,
+        "partial_alpha_pixels": 4930,
+        "transparent_pixels": 26130,
+        "opaque_pixels": 34476
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_时间罗盘.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_时间罗盘.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_白昼.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_白昼__256x256.png",
+      "sha256": "c39ed6dedc508337a6f88aa3a931f304ffe313549768c62871096ca71d469615",
+      "staging_sha256": "97efdda59abfb3e2f95e61b0deda403a34e437d2ead63d80fb3cad29a6832152",
+      "source_bytes": 53869,
+      "staging_bytes": 78219,
+      "saving_bytes": -24350,
+      "saving_percent": -45.2,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        24,
+        5,
+        186,
+        164
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          24,
+          5,
+          186,
+          164
+        ],
+        "alpha_pixels": 20078,
+        "partial_alpha_pixels": 1920,
+        "transparent_pixels": 16786,
+        "opaque_pixels": 18158
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          17,
+          240,
+          238
+        ],
+        "alpha_pixels": 39357,
+        "partial_alpha_pixels": 4725,
+        "transparent_pixels": 26179,
+        "opaque_pixels": 34632
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_白昼.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_白昼.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_结束今日_按下态.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_结束今日_按下态__256x256.png",
+      "sha256": "7fcd8a428a2484e815778550206027bbb886b781e01a1e454bae50fb18001e88",
+      "staging_sha256": "4f722841e0c455c6100530d329ea02f1344a1e2ccba1bc0a5b68a8300a2dfff3",
+      "source_bytes": 90550,
+      "staging_bytes": 100133,
+      "saving_bytes": -9583,
+      "saving_percent": -10.58,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        0,
+        0,
+        190,
+        192
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          0,
+          0,
+          190,
+          192
+        ],
+        "alpha_pixels": 31670,
+        "partial_alpha_pixels": 4406,
+        "transparent_pixels": 5194,
+        "opaque_pixels": 27264
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          16,
+          15,
+          239,
+          240
+        ],
+        "alpha_pixels": 43698,
+        "partial_alpha_pixels": 5984,
+        "transparent_pixels": 21838,
+        "opaque_pixels": 37714
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_结束今日_按下态.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_结束今日_按下态.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_结束今日_普通态.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_结束今日_普通态__256x256.png",
+      "sha256": "eb8857005eab857558eefb547761566523e4a59700acfc8eeac359a1a5d804f2",
+      "staging_sha256": "eadc21ef7e935810b4e1d128346ee478756f015ffaee29c39d8a44f640ba560f",
+      "source_bytes": 80741,
+      "staging_bytes": 88047,
+      "saving_bytes": -7306,
+      "saving_percent": -9.05,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        1,
+        0,
+        192,
+        192
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          1,
+          0,
+          192,
+          192
+        ],
+        "alpha_pixels": 28217,
+        "partial_alpha_pixels": 5431,
+        "transparent_pixels": 8647,
+        "opaque_pixels": 22786
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          16,
+          15,
+          240,
+          240
+        ],
+        "alpha_pixels": 38987,
+        "partial_alpha_pixels": 7366,
+        "transparent_pixels": 26549,
+        "opaque_pixels": 31621
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_结束今日_普通态.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_结束今日_普通态.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_老人互动_按下态.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_老人互动_按下态__256x256.png",
+      "sha256": "0b32570342f1892d402cd7259857384b7c86584b146a5f4d562e60d6f4800bcd",
+      "staging_sha256": "613de579e1aca0f0a258a8a28851eacd9a18fab8e885548bddceae9d3ab65e7b",
+      "source_bytes": 94845,
+      "staging_bytes": 110278,
+      "saving_bytes": -15433,
+      "saving_percent": -16.27,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        0,
+        0,
+        192,
+        192
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          0,
+          0,
+          192,
+          192
+        ],
+        "alpha_pixels": 32320,
+        "partial_alpha_pixels": 5419,
+        "transparent_pixels": 4544,
+        "opaque_pixels": 26901
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          15,
+          240,
+          240
+        ],
+        "alpha_pixels": 44494,
+        "partial_alpha_pixels": 7278,
+        "transparent_pixels": 21042,
+        "opaque_pixels": 37216
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_老人互动_按下态.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_老人互动_按下态.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_老人互动_普通态.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_老人互动_普通态__256x256.png",
+      "sha256": "67d8edf0ef8ccda8c0823df26e4da880e76bde0b7f3e3bbd6a6a771319b504d9",
+      "staging_sha256": "5c774dd9af5c379be783aabdc947529c8551fc246a36467fac3b0de532cc3e28",
+      "source_bytes": 85718,
+      "staging_bytes": 96563,
+      "saving_bytes": -10845,
+      "saving_percent": -12.65,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        11,
+        0,
+        192,
+        192
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          11,
+          0,
+          192,
+          192
+        ],
+        "alpha_pixels": 27941,
+        "partial_alpha_pixels": 5303,
+        "transparent_pixels": 8923,
+        "opaque_pixels": 22638
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          22,
+          15,
+          234,
+          240
+        ],
+        "alpha_pixels": 38526,
+        "partial_alpha_pixels": 7099,
+        "transparent_pixels": 27010,
+        "opaque_pixels": 31427
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_老人互动_普通态.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_老人互动_普通态.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_背包_按下态.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_背包_按下态__256x256.png",
+      "sha256": "3f83c5c651ae29577c0809ade50b7eed7b10ae02bd5a0f7e1eeb7d6ac9199a44",
+      "staging_sha256": "831f1127f806b2d132734c4882a3362ea884ad22c0c9377174826de21af2fc48",
+      "source_bytes": 93674,
+      "staging_bytes": 107774,
+      "saving_bytes": -14100,
+      "saving_percent": -15.05,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        0,
+        0,
+        192,
+        192
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          0,
+          0,
+          192,
+          192
+        ],
+        "alpha_pixels": 31767,
+        "partial_alpha_pixels": 4664,
+        "transparent_pixels": 5097,
+        "opaque_pixels": 27103
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          15,
+          240,
+          240
+        ],
+        "alpha_pixels": 43792,
+        "partial_alpha_pixels": 6377,
+        "transparent_pixels": 21744,
+        "opaque_pixels": 37415
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_背包_按下态.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_背包_按下态.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_背包_普通态.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_背包_普通态__256x256.png",
+      "sha256": "2656437c1e15b236aa37aa78d336630c057966d67be28997302ccf8e810187b5",
+      "staging_sha256": "d33adbfc855713827f49a08a3be15f4d83539872585fcd70f6f07d8ddfa3b02a",
+      "source_bytes": 83462,
+      "staging_bytes": 95826,
+      "saving_bytes": -12364,
+      "saving_percent": -14.81,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        0,
+        0,
+        192,
+        192
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          0,
+          0,
+          192,
+          192
+        ],
+        "alpha_pixels": 28290,
+        "partial_alpha_pixels": 4960,
+        "transparent_pixels": 8574,
+        "opaque_pixels": 23330
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          15,
+          240,
+          240
+        ],
+        "alpha_pixels": 39133,
+        "partial_alpha_pixels": 6761,
+        "transparent_pixels": 26403,
+        "opaque_pixels": 32372
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_背包_普通态.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_背包_普通态.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_船舱槽位.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_船舱槽位__640x427.png",
+      "sha256": "5c6b27e215b6d2e60f51badc1e1bd04be63358fe3eaf282708cdd1272345e839",
+      "staging_sha256": "ff4b428a0693899704868ac912ac6138e705ce9f30c063bcfe3304c12a35d801",
+      "source_bytes": 58265,
+      "staging_bytes": 181500,
+      "saving_bytes": -123235,
+      "saving_percent": -211.51,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        7,
+        22,
+        169,
+        181
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          7,
+          22,
+          169,
+          181
+        ],
+        "alpha_pixels": 20093,
+        "partial_alpha_pixels": 2097,
+        "transparent_pixels": 16771,
+        "opaque_pixels": 17996
+      },
+      "staged": {
+        "dimensions": [
+          640,
+          427
+        ],
+        "alpha_bbox": [
+          128,
+          25,
+          511,
+          401
+        ],
+        "alpha_pixels": 114001,
+        "partial_alpha_pixels": 14589,
+        "transparent_pixels": 159279,
+        "opaque_pixels": 99412
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_船舱槽位.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_船舱槽位.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_返港_按下态.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_返港_按下态__256x256.png",
+      "sha256": "b8a61d065181796ac0c03297c648615905361976975f5c850d3b9f7b227adb17",
+      "staging_sha256": "611c44dbdafad9bffa7c5fe966ab644a65f5516ac86f082ee77a61ab6eb5d647",
+      "source_bytes": 94989,
+      "staging_bytes": 111758,
+      "saving_bytes": -16769,
+      "saving_percent": -17.65,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        0,
+        0,
+        192,
+        192
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          0,
+          0,
+          192,
+          192
+        ],
+        "alpha_pixels": 32504,
+        "partial_alpha_pixels": 5145,
+        "transparent_pixels": 4360,
+        "opaque_pixels": 27359
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          15,
+          240,
+          240
+        ],
+        "alpha_pixels": 44788,
+        "partial_alpha_pixels": 7062,
+        "transparent_pixels": 20748,
+        "opaque_pixels": 37726
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_返港_按下态.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_返港_按下态.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_返港_普通态.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_返港_普通态__256x256.png",
+      "sha256": "e14b678ba8b947fd625e42e4407179c752eded3324ce99fe4d4e74f3b65bbd3f",
+      "staging_sha256": "c330557e24b07c6203002cb6f17147e7c2976a134b0a1e350dee1ce9be2f8688",
+      "source_bytes": 84566,
+      "staging_bytes": 99952,
+      "saving_bytes": -15386,
+      "saving_percent": -18.19,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        0,
+        1,
+        192,
+        192
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          0,
+          1,
+          192,
+          192
+        ],
+        "alpha_pixels": 28951,
+        "partial_alpha_pixels": 5495,
+        "transparent_pixels": 7913,
+        "opaque_pixels": 23456
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          16,
+          240,
+          240
+        ],
+        "alpha_pixels": 40026,
+        "partial_alpha_pixels": 7552,
+        "transparent_pixels": 25510,
+        "opaque_pixels": 32474
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_返港_普通态.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_返港_普通态.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_透镜_按下态.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_透镜_按下态__256x256.png",
+      "sha256": "f0fbb9ec92c701baaac9af4459ec1a9ca4ee6fcaa33746edc7e64776bfc87cdd",
+      "staging_sha256": "57b8d4e36d5a0a0fc023be99af28933bce757003c202db79b6324f75936d0895",
+      "source_bytes": 90143,
+      "staging_bytes": 105403,
+      "saving_bytes": -15260,
+      "saving_percent": -16.93,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        0,
+        0,
+        190,
+        192
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          0,
+          0,
+          190,
+          192
+        ],
+        "alpha_pixels": 31760,
+        "partial_alpha_pixels": 4556,
+        "transparent_pixels": 5104,
+        "opaque_pixels": 27204
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          16,
+          15,
+          239,
+          240
+        ],
+        "alpha_pixels": 43893,
+        "partial_alpha_pixels": 6272,
+        "transparent_pixels": 21643,
+        "opaque_pixels": 37621
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_透镜_按下态.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_透镜_按下态.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_透镜_普通态.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_透镜_普通态__256x256.png",
+      "sha256": "9d487366dfc1840d5f2fb5188dae16dc1edbf299ff9b34c23f6b1993e1bf5364",
+      "staging_sha256": "b2a255430a877b8afbfeeb7360a89cfc5160b6dc1d3fecb8fb97b6f6454a339c",
+      "source_bytes": 75314,
+      "staging_bytes": 89393,
+      "saving_bytes": -14079,
+      "saving_percent": -18.69,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        0,
+        0,
+        179,
+        192
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          0,
+          0,
+          179,
+          192
+        ],
+        "alpha_pixels": 27894,
+        "partial_alpha_pixels": 4600,
+        "transparent_pixels": 8970,
+        "opaque_pixels": 23294
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          23,
+          15,
+          233,
+          240
+        ],
+        "alpha_pixels": 38528,
+        "partial_alpha_pixels": 6226,
+        "transparent_pixels": 27008,
+        "opaque_pixels": 32302
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_透镜_普通态.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_透镜_普通态.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_金币.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_UI_金币__256x256.png",
+      "sha256": "e02965e0000ee93f2b9fa57b0d13af922d5c32ea64ca9dba7e153c7cd90ea472",
+      "staging_sha256": "bc619d057b5359fa763bc8d0aa229bc832e1b698d7fe399d3b1880459741214c",
+      "source_bytes": 61229,
+      "staging_bytes": 88450,
+      "saving_bytes": -27221,
+      "saving_percent": -44.46,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        23,
+        22,
+        186,
+        181
+      ],
+      "original": {
+        "dimensions": [
+          192,
+          192
+        ],
+        "alpha_bbox": [
+          23,
+          22,
+          186,
+          181
+        ],
+        "alpha_pixels": 20064,
+        "partial_alpha_pixels": 2038,
+        "transparent_pixels": 16800,
+        "opaque_pixels": 18026
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          18,
+          240,
+          237
+        ],
+        "alpha_pixels": 38737,
+        "partial_alpha_pixels": 4920,
+        "transparent_pixels": 26799,
+        "opaque_pixels": 33817
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_UI_金币.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_UI_金币.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_世界_交易棚_20261005160008.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_世界_交易棚_20261005160008__384x384.png",
+      "sha256": "74612030a39f804d837d6c82676f888ea4523ae63f57aff957f3d96e6cbf8c29",
+      "staging_sha256": "f7403a00865cb850fd338b280a6252a3d1b58ec2b03b6d8854836789b24523a1",
+      "source_bytes": 147717,
+      "staging_bytes": 136982,
+      "saving_bytes": 10735,
+      "saving_percent": 7.27,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        35,
+        12,
+        350,
+        237
+      ],
+      "original": {
+        "dimensions": [
+          384,
+          256
+        ],
+        "alpha_bbox": [
+          35,
+          12,
+          350,
+          237
+        ],
+        "alpha_pixels": 57967,
+        "partial_alpha_pixels": 2993,
+        "transparent_pixels": 40337,
+        "opaque_pixels": 54974
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          72,
+          361,
+          312
+        ],
+        "alpha_pixels": 67745,
+        "partial_alpha_pixels": 5949,
+        "transparent_pixels": 79711,
+        "opaque_pixels": 61796
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_世界_交易棚_20261005160008.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_世界_交易棚_20261005160008.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_世界_修船棚_20261005160008.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_世界_修船棚_20261005160008__640x427.png",
+      "sha256": "d4232e2b5a4e72fde19c995d64caff7a4a6604647b9bb67413a35d2689a8044f",
+      "staging_sha256": "ec16a8b6c0800d91ca2f1ca8feae7c35125d8e56997f8f8bc29271d26858611c",
+      "source_bytes": 261069,
+      "staging_bytes": 256267,
+      "saving_bytes": 4802,
+      "saving_percent": 1.84,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        21,
+        11,
+        363,
+        352
+      ],
+      "original": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          21,
+          11,
+          363,
+          352
+        ],
+        "alpha_pixels": 80302,
+        "partial_alpha_pixels": 5828,
+        "transparent_pixels": 67154,
+        "opaque_pixels": 74474
+      },
+      "staged": {
+        "dimensions": [
+          640,
+          427
+        ],
+        "alpha_bbox": [
+          131,
+          25,
+          508,
+          401
+        ],
+        "alpha_pixels": 99131,
+        "partial_alpha_pixels": 9995,
+        "transparent_pixels": 174149,
+        "opaque_pixels": 89136
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_世界_修船棚_20261005160008.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_世界_修船棚_20261005160008.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_世界_小仓库_20261005160008.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_世界_小仓库_20261005160008__384x384.png",
+      "sha256": "80c88dea59fd7732670d896840925140c701ba07523b5eacfb9784eec44a29af",
+      "staging_sha256": "cb52c4acdd87e9ab7ea484347bb49e8d1b74897db079dc32fa34d576f2d0d460",
+      "source_bytes": 214216,
+      "staging_bytes": 183746,
+      "saving_bytes": 30470,
+      "saving_percent": 14.22,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        37,
+        61,
+        347,
+        335
+      ],
+      "original": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          37,
+          61,
+          347,
+          335
+        ],
+        "alpha_pixels": 73979,
+        "partial_alpha_pixels": 3054,
+        "transparent_pixels": 73477,
+        "opaque_pixels": 70925
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          42,
+          361,
+          341
+        ],
+        "alpha_pixels": 88845,
+        "partial_alpha_pixels": 5585,
+        "transparent_pixels": 58611,
+        "opaque_pixels": 83260
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_世界_小仓库_20261005160008.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_世界_小仓库_20261005160008.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_世界_小渔舍_20261005160008.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_世界_小渔舍_20261005160008__384x384.png",
+      "sha256": "6192560b933a4c18bd69b416ec8aab17fff0d2a0c0b28f914f4a969c0e762a40",
+      "staging_sha256": "06be0b17e42f1bef14c9af5c5944d0db0034bc7ddd3451b6c6ff9bd917fa423f",
+      "source_bytes": 214074,
+      "staging_bytes": 180944,
+      "saving_bytes": 33130,
+      "saving_percent": 15.48,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        57,
+        25,
+        347,
+        356
+      ],
+      "original": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          57,
+          25,
+          347,
+          356
+        ],
+        "alpha_pixels": 71429,
+        "partial_alpha_pixels": 3286,
+        "transparent_pixels": 76027,
+        "opaque_pixels": 68143
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          44,
+          23,
+          340,
+          361
+        ],
+        "alpha_pixels": 75476,
+        "partial_alpha_pixels": 5042,
+        "transparent_pixels": 71980,
+        "opaque_pixels": 70434
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_世界_小渔舍_20261005160008.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_世界_小渔舍_20261005160008.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_世界_木码头_T形_20261005160008.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_世界_木码头_T形_20261005160008__384x384.png",
+      "sha256": "e983a3e5951c7fcca646184806bdd88b2ccfa11e8d4a81d502ae9af105c40e92",
+      "staging_sha256": "48ca0e02d0b3824990195ed6b74c4dd5d78f67bdc67f7cd0daeeea743d68c137",
+      "source_bytes": 154242,
+      "staging_bytes": 100739,
+      "saving_bytes": 53503,
+      "saving_percent": 34.69,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        66,
+        6,
+        318,
+        373
+      ],
+      "original": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          66,
+          6,
+          318,
+          373
+        ],
+        "alpha_pixels": 46869,
+        "partial_alpha_pixels": 3611,
+        "transparent_pixels": 100587,
+        "opaque_pixels": 43258
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          76,
+          23,
+          308,
+          361
+        ],
+        "alpha_pixels": 40687,
+        "partial_alpha_pixels": 4662,
+        "transparent_pixels": 106769,
+        "opaque_pixels": 36025
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_世界_木码头_T形_20261005160008.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_世界_木码头_T形_20261005160008.png"
+    },
+    {
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_世界_港口组合装饰_20261005160008.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW104_世界_港口组合装饰_20261005160008__384x384.png",
+      "sha256": "973cd467b4d5714d90930480e9459da33c13904c52f3501cc1533793bca5e888",
+      "staging_sha256": "df34a3def7585cc8a4f676ba987ed46211b89f01ea4366011bed8a0ed8af6c22",
+      "source_bytes": 259930,
+      "staging_bytes": 197127,
+      "saving_bytes": 62803,
+      "saving_percent": 24.16,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        9,
+        33,
+        378,
+        345
+      ],
+      "original": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          9,
+          33,
+          378,
+          345
+        ],
+        "alpha_pixels": 77812,
+        "partial_alpha_pixels": 7794,
+        "transparent_pixels": 69644,
+        "opaque_pixels": 70018
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          49,
+          361,
+          335
+        ],
+        "alpha_pixels": 67563,
+        "partial_alpha_pixels": 10087,
+        "transparent_pixels": 79893,
+        "opaque_pixels": 57476
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-04/candidates/ARTW104_世界_港口组合装饰_20261005160008.png",
+      "asset_original": "assets/generated/highspec/ART-W1-04/ARTW104_世界_港口组合装饰_20261005160008.png"
+    },
+    {
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Apple_Icon_20261006012957.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW1_05_Apple_Icon_20261006012957__256x256.png",
+      "sha256": "21919cae71dce082fc3f3bc832ab764c659debbe8d8ed5506b621254948bdc39",
+      "staging_sha256": "76764cc6021893c981f3a4010739f4d29e09575d893e0fb3ef428cb9e65371ac",
+      "source_bytes": 63456,
+      "staging_bytes": 75488,
+      "saving_bytes": -12032,
+      "saving_percent": -18.96,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        38,
+        27,
+        222,
+        225
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          38,
+          27,
+          222,
+          225
+        ],
+        "alpha_pixels": 25766,
+        "partial_alpha_pixels": 3738,
+        "transparent_pixels": 39770,
+        "opaque_pixels": 22028
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          23,
+          15,
+          232,
+          240
+        ],
+        "alpha_pixels": 33727,
+        "partial_alpha_pixels": 4765,
+        "transparent_pixels": 31809,
+        "opaque_pixels": 28962
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Apple_Icon_20261006012957.png"
+    },
+    {
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_DriftingBottle_World_20261006012957.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW1_05_DriftingBottle_World_20261006012957__384x384.png",
+      "sha256": "52f4428dd632245642671ce1a14b52c8b3bef886952528267d50e5c440a28c8c",
+      "staging_sha256": "64b64dbe3f2aaf71b40dc2f6ec8fddc7559694b2468d3f2d0af731aa154e2cd6",
+      "source_bytes": 188999,
+      "staging_bytes": 106929,
+      "saving_bytes": 82070,
+      "saving_percent": 43.42,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        35,
+        146,
+        479,
+        349
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          35,
+          146,
+          479,
+          349
+        ],
+        "alpha_pixels": 71726,
+        "partial_alpha_pixels": 5989,
+        "transparent_pixels": 190418,
+        "opaque_pixels": 65737
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          114,
+          361,
+          269
+        ],
+        "alpha_pixels": 42210,
+        "partial_alpha_pixels": 3477,
+        "transparent_pixels": 105246,
+        "opaque_pixels": 38733
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_DriftingBottle_World_20261006012957.png"
+    },
+    {
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_FishBait_Icon_20261006012957.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW1_05_FishBait_Icon_20261006012957__256x256.png",
+      "sha256": "a442323b2f658c978c94083173311dc6088bbbefc659918492b230b2c4f54bac",
+      "staging_sha256": "7c195cae6465c2c2e659275784e6cc0c1e45ae61d8e340e71c4f9ebc9d4d618c",
+      "source_bytes": 47401,
+      "staging_bytes": 85279,
+      "saving_bytes": -37878,
+      "saving_percent": -79.91,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        48,
+        50,
+        210,
+        204
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          48,
+          50,
+          210,
+          204
+        ],
+        "alpha_pixels": 16999,
+        "partial_alpha_pixels": 3536,
+        "transparent_pixels": 48537,
+        "opaque_pixels": 13463
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          21,
+          240,
+          235
+        ],
+        "alpha_pixels": 33363,
+        "partial_alpha_pixels": 6690,
+        "transparent_pixels": 32173,
+        "opaque_pixels": 26673
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_FishBait_Icon_20261006012957.png"
+    },
+    {
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_FishingNet_World_20261006013145.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW1_05_FishingNet_World_20261006013145__384x384.png",
+      "sha256": "04d7fa8753a312112c0f1c096197cb2f30acd41a19c254f8c8cc98de8c8970af",
+      "staging_sha256": "610a952aee92728cc97e15f201e6d055686c98ad0938aae22654746444c513ac",
+      "source_bytes": 449614,
+      "staging_bytes": 227258,
+      "saving_bytes": 222356,
+      "saving_percent": 49.45,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        26,
+        19,
+        487,
+        487
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          26,
+          19,
+          487,
+          487
+        ],
+        "alpha_pixels": 162813,
+        "partial_alpha_pixels": 8167,
+        "transparent_pixels": 99331,
+        "opaque_pixels": 154646
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          25,
+          23,
+          358,
+          361
+        ],
+        "alpha_pixels": 85693,
+        "partial_alpha_pixels": 4424,
+        "transparent_pixels": 61763,
+        "opaque_pixels": 81269
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_FishingNet_World_20261006013145.png"
+    },
+    {
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_IdentifiedLocationMarker_UI_20261006013145.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW1_05_IdentifiedLocationMarker_UI_20261006013145__256x256.png",
+      "sha256": "9e5ced66b90b5b15b603702ae6bc83f7bdd62bae5fbacfb5d257df26e894f006",
+      "staging_sha256": "4cc6c548e221ce7554d3d93b8129e0f2a034a190144fe07bd28142f8af1ffc5f",
+      "source_bytes": 59498,
+      "staging_bytes": 70392,
+      "saving_bytes": -10894,
+      "saving_percent": -18.31,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        52,
+        25,
+        202,
+        227
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          52,
+          25,
+          202,
+          227
+        ],
+        "alpha_pixels": 20069,
+        "partial_alpha_pixels": 3182,
+        "transparent_pixels": 45467,
+        "opaque_pixels": 16887
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          44,
+          15,
+          211,
+          240
+        ],
+        "alpha_pixels": 25232,
+        "partial_alpha_pixels": 3936,
+        "transparent_pixels": 40304,
+        "opaque_pixels": 21296
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_IdentifiedLocationMarker_UI_20261006013145.png"
+    },
+    {
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Lens_Icon_20261006012957.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW1_05_Lens_Icon_20261006012957__256x256.png",
+      "sha256": "df4d48a209ff2546e18ec5433d97c014c74a26e158b58c02c0d3ce0345e10244",
+      "staging_sha256": "8a52578d6f92e3168da79fed26c2a07e2564054847b14c1b86ee93a554c766e2",
+      "source_bytes": 61414,
+      "staging_bytes": 92338,
+      "saving_bytes": -30924,
+      "saving_percent": -50.35,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        43,
+        38,
+        212,
+        208
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          43,
+          38,
+          212,
+          208
+        ],
+        "alpha_pixels": 22796,
+        "partial_alpha_pixels": 2593,
+        "transparent_pixels": 42740,
+        "opaque_pixels": 20203
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          16,
+          15,
+          240,
+          240
+        ],
+        "alpha_pixels": 40351,
+        "partial_alpha_pixels": 4309,
+        "transparent_pixels": 25185,
+        "opaque_pixels": 36042
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Lens_Icon_20261006012957.png"
+    },
+    {
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_NetCenter_Target_UI_20261006013145.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW1_05_NetCenter_Target_UI_20261006013145__256x256.png",
+      "sha256": "63721283bbdce7ca9622d4011360e3a73436a23d7a413f45dfb428579a12a596",
+      "staging_sha256": "973a7d76122bb8ace9ddef45d468053ce40effb116369ed0a8c7d8d04472df98",
+      "source_bytes": 44330,
+      "staging_bytes": 87465,
+      "saving_bytes": -43135,
+      "saving_percent": -97.3,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        48,
+        44,
+        208,
+        208
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          48,
+          44,
+          208,
+          208
+        ],
+        "alpha_pixels": 16160,
+        "partial_alpha_pixels": 2680,
+        "transparent_pixels": 49376,
+        "opaque_pixels": 13480
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          18,
+          15,
+          238,
+          240
+        ],
+        "alpha_pixels": 30900,
+        "partial_alpha_pixels": 5002,
+        "transparent_pixels": 34636,
+        "opaque_pixels": 25898
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_NetCenter_Target_UI_20261006013145.png"
+    },
+    {
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Note_Rolled_World_20261006012957.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW1_05_Note_Rolled_World_20261006012957__384x384.png",
+      "sha256": "38e4f42960d3bf6e89b8dfae90696a028d603e9a773cca56d8f9939c11da0829",
+      "staging_sha256": "f8e79286cd5d82ddf41fd7f04b2ebb0d87aa4c678d8af0a1c2d99aeb1d8e53b6",
+      "source_bytes": 94500,
+      "staging_bytes": 116929,
+      "saving_bytes": -22429,
+      "saving_percent": -23.73,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        53,
+        37,
+        340,
+        334
+      ],
+      "original": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          53,
+          37,
+          340,
+          334
+        ],
+        "alpha_pixels": 34119,
+        "partial_alpha_pixels": 5553,
+        "transparent_pixels": 113337,
+        "opaque_pixels": 28566
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          28,
+          23,
+          355,
+          361
+        ],
+        "alpha_pixels": 44775,
+        "partial_alpha_pixels": 7150,
+        "transparent_pixels": 102681,
+        "opaque_pixels": 37625
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Note_Rolled_World_20261006012957.png"
+    },
+    {
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Note_Unrolled_Story_20261006013145.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW1_05_Note_Unrolled_Story_20261006013145__384x384.png",
+      "sha256": "8c6910cd2e2ce9f5da3182b9e552e7e65c223a19f4ac601218f5857a775b4056",
+      "staging_sha256": "0fc207e782137363fb9cb515aa286722e6ab72cfde90a59832c232bdc6546094",
+      "source_bytes": 288383,
+      "staging_bytes": 105928,
+      "saving_bytes": 182455,
+      "saving_percent": 63.27,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        19,
+        31,
+        557,
+        351
+      ],
+      "original": {
+        "dimensions": [
+          576,
+          384
+        ],
+        "alpha_bbox": [
+          19,
+          31,
+          557,
+          351
+        ],
+        "alpha_pixels": 159557,
+        "partial_alpha_pixels": 10536,
+        "transparent_pixels": 61627,
+        "opaque_pixels": 149021
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          91,
+          361,
+          292
+        ],
+        "alpha_pixels": 63725,
+        "partial_alpha_pixels": 4377,
+        "transparent_pixels": 83731,
+        "opaque_pixels": 59348
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Note_Unrolled_Story_20261006013145.png"
+    },
+    {
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Tuna_Icon_20261006012957.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW1_05_Tuna_Icon_20261006012957__256x256.png",
+      "sha256": "55a8957e442aeb9387230b87dd930bb844e31d5300b9694ae4a1bed83f7a624e",
+      "staging_sha256": "02d8df7800bdf635d796d4093b3b78462213d30c24811d4dab85c6bba1067967",
+      "source_bytes": 49087,
+      "staging_bytes": 44054,
+      "saving_bytes": 5033,
+      "saving_percent": 10.25,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        4,
+        60,
+        252,
+        188
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          4,
+          60,
+          252,
+          188
+        ],
+        "alpha_pixels": 16553,
+        "partial_alpha_pixels": 4172,
+        "transparent_pixels": 48983,
+        "opaque_pixels": 12381
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          70,
+          240,
+          186
+        ],
+        "alpha_pixels": 14035,
+        "partial_alpha_pixels": 3330,
+        "transparent_pixels": 51501,
+        "opaque_pixels": 10705
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Tuna_Icon_20261006012957.png"
+    },
+    {
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_UnknownLocationMarker_UI_20261006013145.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ARTW1_05_UnknownLocationMarker_UI_20261006013145__256x256.png",
+      "sha256": "b4532545094dd30dc72ba636dd8fdfb22abbaec8a4c9fd146f53e701f3b369b0",
+      "staging_sha256": "7247168a280e495d802d65adab72903d1e818752b9763927028c4dd02974dbe3",
+      "source_bytes": 59438,
+      "staging_bytes": 63711,
+      "saving_bytes": -4273,
+      "saving_percent": -7.19,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        51,
+        21,
+        204,
+        232
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          51,
+          21,
+          204,
+          232
+        ],
+        "alpha_pixels": 21665,
+        "partial_alpha_pixels": 3261,
+        "transparent_pixels": 43871,
+        "opaque_pixels": 18404
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          46,
+          15,
+          209,
+          240
+        ],
+        "alpha_pixels": 24887,
+        "partial_alpha_pixels": 3608,
+        "transparent_pixels": 40649,
+        "opaque_pixels": 21279
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_UnknownLocationMarker_UI_20261006013145.png"
+    },
+    {
+      "path": "outputs/art-wave1/ART-W1-05/candidates/barrel_world_candidate.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/barrel_world_candidate__384x384.png",
+      "sha256": "8fa627d003e0d2a64ebcd50667edfcfab303f72eafdd9db8df3ecc00078b043e",
+      "staging_sha256": "e4cb88707c8ca66d5026ad0baebfb66e3585eebcd89bcdf74490a96b70a02195",
+      "source_bytes": 231191,
+      "staging_bytes": 160592,
+      "saving_bytes": 70599,
+      "saving_percent": 30.54,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        76,
+        61,
+        436,
+        441
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          76,
+          61,
+          436,
+          441
+        ],
+        "alpha_pixels": 107552,
+        "partial_alpha_pixels": 8883,
+        "transparent_pixels": 154592,
+        "opaque_pixels": 98669
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          32,
+          23,
+          352,
+          361
+        ],
+        "alpha_pixels": 85297,
+        "partial_alpha_pixels": 6943,
+        "transparent_pixels": 62159,
+        "opaque_pixels": 78354
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-05/candidates/barrel_world_candidate.png",
+      "asset_original": "assets/generated/highspec/ART-W1-05/barrel_world_candidate.png"
+    },
+    {
+      "path": "outputs/art-wave1/ART-W1-05/candidates/driftwood_world.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/driftwood_world__384x384.png",
+      "sha256": "28f0c0185b11f1d834e9891da94d500f08fe085d69317103875fb554c6889515",
+      "staging_sha256": "592e5ea04103d6c530dc9d52ad9a38e32676960e16c4491d0d66e3c83dfde4d7",
+      "source_bytes": 134881,
+      "staging_bytes": 72112,
+      "saving_bytes": 62769,
+      "saving_percent": 46.54,
+      "soft_budget_bytes": 300000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        40,
+        98,
+        466,
+        242
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          341
+        ],
+        "alpha_bbox": [
+          40,
+          98,
+          466,
+          242
+        ],
+        "alpha_pixels": 52393,
+        "partial_alpha_pixels": 3071,
+        "transparent_pixels": 122199,
+        "opaque_pixels": 49322
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          135,
+          361,
+          249
+        ],
+        "alpha_pixels": 33806,
+        "partial_alpha_pixels": 3445,
+        "transparent_pixels": 113650,
+        "opaque_pixels": 30361
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-05/candidates/driftwood_world.png",
+      "asset_original": "assets/generated/highspec/ART-W1-05/driftwood_world.png"
+    },
+    {
+      "path": "outputs/art-wave1/ART-W1-05/candidates/sardine_inventory_icon.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/sardine_inventory_icon__256x256.png",
+      "sha256": "ed330201a5c86e8c1656c741cc4240452c99c4efca1157c4db32591b8529fab4",
+      "staging_sha256": "ea3c98678f3e22d8209bb605d7cdda40c9f4091d0527e181fd71857d38c45537",
+      "source_bytes": 22954,
+      "staging_bytes": 22425,
+      "saving_bytes": 529,
+      "saving_percent": 2.3,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        18,
+        95,
+        238,
+        155
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          18,
+          95,
+          238,
+          155
+        ],
+        "alpha_pixels": 7597,
+        "partial_alpha_pixels": 705,
+        "transparent_pixels": 57939,
+        "opaque_pixels": 6892
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          97,
+          240,
+          158
+        ],
+        "alpha_pixels": 8482,
+        "partial_alpha_pixels": 1859,
+        "transparent_pixels": 57054,
+        "opaque_pixels": 6623
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-05/candidates/sardine_inventory_icon.png",
+      "asset_original": "assets/generated/highspec/ART-W1-05/sardine_inventory_icon.png"
+    },
+    {
+      "path": "assets/image/ART-W1-02_bait_impact_splash_20261005160235.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ART-W1-02_bait_impact_splash_20261005160235__384x384.png",
+      "sha256": "71563662bbcd0ca6af3272d39cf8d231161485b1a6242a0235603b4a3f80cdf8",
+      "staging_sha256": "bd2542540e3c77622225ff2aa103f745a65595ea736281acc1ef89bf8d2830dd",
+      "source_bytes": 23167,
+      "staging_bytes": 109600,
+      "saving_bytes": -86433,
+      "saving_percent": -373.09,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        56,
+        86,
+        201,
+        176
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          56,
+          86,
+          201,
+          176
+        ],
+        "alpha_pixels": 8241,
+        "partial_alpha_pixels": 2975,
+        "transparent_pixels": 57295,
+        "opaque_pixels": 5266
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          87,
+          361,
+          297
+        ],
+        "alpha_pixels": 45871,
+        "partial_alpha_pixels": 15703,
+        "transparent_pixels": 101585,
+        "opaque_pixels": 30168
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ART-W1-02_bait_impact_splash_20261005160235.png",
+      "asset_original": "assets/image/ART-W1-02_bait_impact_splash_20261005160235.png"
+    },
+    {
+      "path": "assets/image/ART-W1-02_bigfish_direction_wake_20261005160011.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ART-W1-02_bigfish_direction_wake_20261005160011__384x384.png",
+      "sha256": "2a9acfb4c243e03bdcfb53248d62508f8bf51444677709175f3a7c6b790c85dc",
+      "staging_sha256": "e655b1f44f37e5ed38e325d210ac8b01f4e6cc4fc5c82f493a65ed93c732d0c8",
+      "source_bytes": 73187,
+      "staging_bytes": 48339,
+      "saving_bytes": 24848,
+      "saving_percent": 33.95,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        24,
+        195,
+        483,
+        309
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          24,
+          195,
+          483,
+          309
+        ],
+        "alpha_pixels": 26343,
+        "partial_alpha_pixels": 8433,
+        "transparent_pixels": 235801,
+        "opaque_pixels": 17910
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          150,
+          361,
+          234
+        ],
+        "alpha_pixels": 14953,
+        "partial_alpha_pixels": 4553,
+        "transparent_pixels": 132503,
+        "opaque_pixels": 10400
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ART-W1-02_bigfish_direction_wake_20261005160011.png",
+      "asset_original": "assets/image/ART-W1-02_bigfish_direction_wake_20261005160011.png"
+    },
+    {
+      "path": "assets/image/ART-W1-02_bigfish_splash_chase_20261005160011.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ART-W1-02_bigfish_splash_chase_20261005160011__384x384.png",
+      "sha256": "9296ffe201d54f6a8a7f7353674621abe6092c257f2f210c5661b6c6b35aaba2",
+      "staging_sha256": "6d590a544a9dc8fc7f643b9a29259160b6779ee259d0f7f3c7bbe09d4ebfa908",
+      "source_bytes": 306252,
+      "staging_bytes": 172457,
+      "saving_bytes": 133795,
+      "saving_percent": 43.69,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        14,
+        22,
+        498,
+        468
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          14,
+          22,
+          498,
+          468
+        ],
+        "alpha_pixels": 111933,
+        "partial_alpha_pixels": 30413,
+        "transparent_pixels": 150211,
+        "opaque_pixels": 81520
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          36,
+          361,
+          347
+        ],
+        "alpha_pixels": 56497,
+        "partial_alpha_pixels": 14935,
+        "transparent_pixels": 90959,
+        "opaque_pixels": 41562
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ART-W1-02_bigfish_splash_chase_20261005160011.png",
+      "asset_original": "assets/image/ART-W1-02_bigfish_splash_chase_20261005160011.png"
+    },
+    {
+      "path": "assets/image/ART-W1-02_bigfish_splash_roaming_20261005160011.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ART-W1-02_bigfish_splash_roaming_20261005160011__256x256.png",
+      "sha256": "993f60a9ccbeadc148096a74f8aacc70c8203a440030a1a935713a241e21f274",
+      "staging_sha256": "697f1223248796c1c9dc0c1e8d48d8e61c2084341085cc899e456d4e41f027d8",
+      "source_bytes": 30823,
+      "staging_bytes": 54190,
+      "saving_bytes": -23367,
+      "saving_percent": -75.81,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        38,
+        81,
+        216,
+        178
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          38,
+          81,
+          216,
+          178
+        ],
+        "alpha_pixels": 11555,
+        "partial_alpha_pixels": 2429,
+        "transparent_pixels": 53981,
+        "opaque_pixels": 9126
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          66,
+          240,
+          189
+        ],
+        "alpha_pixels": 19006,
+        "partial_alpha_pixels": 3900,
+        "transparent_pixels": 46530,
+        "opaque_pixels": 15106
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ART-W1-02_bigfish_splash_roaming_20261005160011.png",
+      "asset_original": "assets/image/ART-W1-02_bigfish_splash_roaming_20261005160011.png"
+    },
+    {
+      "path": "assets/image/ART-W1-02_fishing_empty_feedback_20261005160235.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ART-W1-02_fishing_empty_feedback_20261005160235__384x384.png",
+      "sha256": "74de86cf73a3bb13e08784366bb586f82cc89369b5807083154694ddc9f6c802",
+      "staging_sha256": "7036486d498d83f79f54e4757cf861c0efe30fff0b1e9af71854358b545be0cb",
+      "source_bytes": 184949,
+      "staging_bytes": 148488,
+      "saving_bytes": 36461,
+      "saving_percent": 19.71,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        14,
+        107,
+        483,
+        403
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          14,
+          107,
+          483,
+          403
+        ],
+        "alpha_pixels": 100204,
+        "partial_alpha_pixels": 8569,
+        "transparent_pixels": 161940,
+        "opaque_pixels": 91635
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          85,
+          361,
+          298
+        ],
+        "alpha_pixels": 52548,
+        "partial_alpha_pixels": 4503,
+        "transparent_pixels": 94908,
+        "opaque_pixels": 48045
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ART-W1-02_fishing_empty_feedback_20261005160235.png",
+      "asset_original": "assets/image/ART-W1-02_fishing_empty_feedback_20261005160235.png"
+    },
+    {
+      "path": "assets/image/ART-W1-02_fishing_success_feedback_20261005160235.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ART-W1-02_fishing_success_feedback_20261005160235__384x384.png",
+      "sha256": "88c399972efbd476a75b0faadeb0fdcc594b6d1e09e54b335b9994b355313331",
+      "staging_sha256": "a48bdd36838a0756b9fa3faac94ca40abfedb78f3126fc234aa15ba8e15ce726",
+      "source_bytes": 330393,
+      "staging_bytes": 186191,
+      "saving_bytes": 144202,
+      "saving_percent": 43.65,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        30,
+        66,
+        489,
+        452
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          30,
+          66,
+          489,
+          452
+        ],
+        "alpha_pixels": 136167,
+        "partial_alpha_pixels": 15706,
+        "transparent_pixels": 125977,
+        "opaque_pixels": 120461
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          50,
+          361,
+          334
+        ],
+        "alpha_pixels": 74494,
+        "partial_alpha_pixels": 8267,
+        "transparent_pixels": 72962,
+        "opaque_pixels": 66227
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ART-W1-02_fishing_success_feedback_20261005160235.png",
+      "asset_original": "assets/image/ART-W1-02_fishing_success_feedback_20261005160235.png"
+    },
+    {
+      "path": "assets/image/ART-W1-02_net_impact_splash_20261005160235.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ART-W1-02_net_impact_splash_20261005160235__384x384.png",
+      "sha256": "f476bd98cdebbb91c27b5af9da489aa6368615d500d0172fb3d8971973fd106d",
+      "staging_sha256": "ba7ca206c31849326ebca4784ecba6d080101e70f812cfc0c95095767685383f",
+      "source_bytes": 344123,
+      "staging_bytes": 169462,
+      "saving_bytes": 174661,
+      "saving_percent": 50.76,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        14,
+        54,
+        501,
+        451
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          14,
+          54,
+          501,
+          451
+        ],
+        "alpha_pixels": 128945,
+        "partial_alpha_pixels": 27256,
+        "transparent_pixels": 133199,
+        "opaque_pixels": 101689
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          54,
+          361,
+          330
+        ],
+        "alpha_pixels": 63207,
+        "partial_alpha_pixels": 12957,
+        "transparent_pixels": 84249,
+        "opaque_pixels": 50250
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ART-W1-02_net_impact_splash_20261005160235.png",
+      "asset_original": "assets/image/ART-W1-02_net_impact_splash_20261005160235.png"
+    },
+    {
+      "path": "assets/image/ART-W1-02_ripple_medium_20261005160235.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ART-W1-02_ripple_medium_20261005160235__384x384.png",
+      "sha256": "9a04a1217725d746ca0beddfcc2ef7c16ee9088066108d761da5dc4d6ee1fab1",
+      "staging_sha256": "0d2b889095e2aacbefdfe35c03d536ac6922754af647499438885885350c37f4",
+      "source_bytes": 335178,
+      "staging_bytes": 183796,
+      "saving_bytes": 151382,
+      "saving_percent": 45.16,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        0,
+        18,
+        512,
+        484
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          0,
+          18,
+          512,
+          484
+        ],
+        "alpha_pixels": 173736,
+        "partial_alpha_pixels": 14067,
+        "transparent_pixels": 88408,
+        "opaque_pixels": 159669
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          38,
+          361,
+          346
+        ],
+        "alpha_pixels": 76348,
+        "partial_alpha_pixels": 5981,
+        "transparent_pixels": 71108,
+        "opaque_pixels": 70367
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ART-W1-02_ripple_medium_20261005160235.png",
+      "asset_original": "assets/image/ART-W1-02_ripple_medium_20261005160235.png"
+    },
+    {
+      "path": "assets/image/ART-W1-02_ripple_small_20261005160235.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ART-W1-02_ripple_small_20261005160235__256x256.png",
+      "sha256": "9f1fd4ac7b4da52abca53bede6a507f83ae5c8a392f883835173c0ec0578550a",
+      "staging_sha256": "8261324aa281bf6d2151bc55a58056a04673fc42b39f4b8ad98a1d46999016b3",
+      "source_bytes": 51872,
+      "staging_bytes": 71395,
+      "saving_bytes": -19523,
+      "saving_percent": -37.64,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        28,
+        53,
+        233,
+        196
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          28,
+          53,
+          233,
+          196
+        ],
+        "alpha_pixels": 21014,
+        "partial_alpha_pixels": 3455,
+        "transparent_pixels": 44522,
+        "opaque_pixels": 17559
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          49,
+          240,
+          206
+        ],
+        "alpha_pixels": 25773,
+        "partial_alpha_pixels": 4165,
+        "transparent_pixels": 39763,
+        "opaque_pixels": 21608
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ART-W1-02_ripple_small_20261005160235.png",
+      "asset_original": "assets/image/ART-W1-02_ripple_small_20261005160235.png"
+    },
+    {
+      "path": "assets/image/ART-W1-02_seabird_dive_20261005160011.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ART-W1-02_seabird_dive_20261005160011__384x384.png",
+      "sha256": "e9e217be0cf038d915bec5038fcd153c5fdb6076d63653d6d252a23b04dae63a",
+      "staging_sha256": "442e745afb8fadeef1a3b58b9fa485c66fa976407b37d393e951cf4507909574",
+      "source_bytes": 181304,
+      "staging_bytes": 92628,
+      "saving_bytes": 88676,
+      "saving_percent": 48.91,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        22,
+        51,
+        490,
+        437
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          22,
+          51,
+          490,
+          437
+        ],
+        "alpha_pixels": 72168,
+        "partial_alpha_pixels": 10345,
+        "transparent_pixels": 189976,
+        "opaque_pixels": 61823
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          52,
+          361,
+          331
+        ],
+        "alpha_pixels": 38417,
+        "partial_alpha_pixels": 5479,
+        "transparent_pixels": 109039,
+        "opaque_pixels": 32938
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ART-W1-02_seabird_dive_20261005160011.png",
+      "asset_original": "assets/image/ART-W1-02_seabird_dive_20261005160011.png"
+    },
+    {
+      "path": "assets/image/ART-W1-02_seabird_glide_20261005160011.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ART-W1-02_seabird_glide_20261005160011__384x384.png",
+      "sha256": "d965595ad73a17fb58b7a51f94b3a9b7868ac500f17ab438cabdeabd703da40f",
+      "staging_sha256": "95b12f31dc59b3d0211a3a65253a6a03262e588021000261e926471ccac85e61",
+      "source_bytes": 158795,
+      "staging_bytes": 73017,
+      "saving_bytes": 85778,
+      "saving_percent": 54.02,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        3,
+        97,
+        510,
+        405
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          3,
+          97,
+          510,
+          405
+        ],
+        "alpha_pixels": 60025,
+        "partial_alpha_pixels": 9291,
+        "transparent_pixels": 202119,
+        "opaque_pixels": 50734
+      },
+      "staged": {
+        "dimensions": [
+          384,
+          384
+        ],
+        "alpha_bbox": [
+          23,
+          89,
+          361,
+          294
+        ],
+        "alpha_pixels": 27409,
+        "partial_alpha_pixels": 4376,
+        "transparent_pixels": 120047,
+        "opaque_pixels": 23033
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ART-W1-02_seabird_glide_20261005160011.png",
+      "asset_original": "assets/image/ART-W1-02_seabird_glide_20261005160011.png"
+    },
+    {
+      "path": "assets/image/ART-W1-02_smallfish_breach_20261005160011.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ART-W1-02_smallfish_breach_20261005160011__256x256.png",
+      "sha256": "f6e8002ced76ec544d21f9f1f622574226f434535c61d61a0c2c8c4053670548",
+      "staging_sha256": "4ba863d3044c22cc702a585631d24a96c9cd5c6d724a14362d92375f6e6551cb",
+      "source_bytes": 120320,
+      "staging_bytes": 49512,
+      "saving_bytes": 70808,
+      "saving_percent": 58.85,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        157,
+        60,
+        388,
+        452
+      ],
+      "original": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "alpha_bbox": [
+          157,
+          60,
+          388,
+          452
+        ],
+        "alpha_pixels": 44070,
+        "partial_alpha_pixels": 15184,
+        "transparent_pixels": 218074,
+        "opaque_pixels": 28886
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          61,
+          15,
+          194,
+          240
+        ],
+        "alpha_pixels": 15296,
+        "partial_alpha_pixels": 5113,
+        "transparent_pixels": 50240,
+        "opaque_pixels": 10183
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ART-W1-02_smallfish_breach_20261005160011.png",
+      "asset_original": "assets/image/ART-W1-02_smallfish_breach_20261005160011.png"
+    },
+    {
+      "path": "assets/image/ART-W1-02_smallfish_surface_disturbance_20261005160011.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ART-W1-02_smallfish_surface_disturbance_20261005160011__256x256.png",
+      "sha256": "a090c17fbb5e0f288814ce5efb166eeca86068413493e6af82211540a8b6b234",
+      "staging_sha256": "4e06f4852034f810c539471395851197355bed2dd254ce4f3b49c435ac0fa2fc",
+      "source_bytes": 48586,
+      "staging_bytes": 55313,
+      "saving_bytes": -6727,
+      "saving_percent": -13.85,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        17,
+        71,
+        243,
+        189
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          17,
+          71,
+          243,
+          189
+        ],
+        "alpha_pixels": 19763,
+        "partial_alpha_pixels": 3103,
+        "transparent_pixels": 45773,
+        "opaque_pixels": 16660
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          69,
+          240,
+          186
+        ],
+        "alpha_pixels": 19606,
+        "partial_alpha_pixels": 3041,
+        "transparent_pixels": 45930,
+        "opaque_pixels": 16565
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ART-W1-02_smallfish_surface_disturbance_20261005160011.png",
+      "asset_original": "assets/image/ART-W1-02_smallfish_surface_disturbance_20261005160011.png"
+    },
+    {
+      "path": "assets/image/ART-W1-02_surface_bubbles_20261005160235.png",
+      "staging": "outputs/art-wave2/ART-W2-01/runtime-staging/ART-W1-02_surface_bubbles_20261005160235__256x256.png",
+      "sha256": "93eb66990ee903a7f1ffdb92cbda1e07b1dd3154e19e76bdaab395dfae3b923a",
+      "staging_sha256": "f549fd1141a7f11e4a38acece2d6cbfdf5f56921ba8e2a64f60e545777f8db72",
+      "source_bytes": 59977,
+      "staging_bytes": 62229,
+      "saving_bytes": -2252,
+      "saving_percent": -3.75,
+      "soft_budget_bytes": 250000,
+      "soft_overbudget": false,
+      "content_bounds": [
+        6,
+        28,
+        248,
+        224
+      ],
+      "original": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          6,
+          28,
+          248,
+          224
+        ],
+        "alpha_pixels": 27748,
+        "partial_alpha_pixels": 3960,
+        "transparent_pixels": 37788,
+        "opaque_pixels": 23788
+      },
+      "staged": {
+        "dimensions": [
+          256,
+          256
+        ],
+        "alpha_bbox": [
+          15,
+          37,
+          240,
+          219
+        ],
+        "alpha_pixels": 24338,
+        "partial_alpha_pixels": 3424,
+        "transparent_pixels": 41198,
+        "opaque_pixels": 20914
+      },
+      "fit": "visible-alpha bbox centered; 88% max canvas; premultiplied RGBa Lanczos",
+      "candidate_input": "outputs/art-wave1/ART-W1-02/candidates/ART-W1-02_surface_bubbles_20261005160235.png",
+      "asset_original": "assets/image/ART-W1-02_surface_bubbles_20261005160235.png"
+    }
+  ]
+}

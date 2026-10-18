@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "status": "CURRENT_RUNTIME_CANDIDATE",
+  "task": "ART-W2-01",
+  "projection": "orthographic top-down source -> existing ImageArt.Plane + Ocean.Projection",
+  "assets": {
+    "boat": {
+      "task": "ART-W1-01",
+      "source": "outputs/art-wave1/ART-W1-01/candidates/ship_fishing_sloop_A.png",
+      "source_sha256": "1351762edb9348052025a24d5b35d3866f8d27a32f4df9675cbe6b7371585649",
+      "size": [
+        640,
+        427
+      ],
+      "preload": true,
+      "complete_island": false
+    },
+    "island": {
+      "task": "ART-W1-01",
+      "source": "outputs/art-wave1/ART-W1-01/candidates/island_sandy_green_cove.png",
+      "source_sha256": "0283a432fffbd203509a9b5b76e5b51d6541ea83f3b1ddd26a9d7f6278318ff3",
+      "size": [
+        768,
+        768
+      ],
+      "preload": true,
+      "complete_island": true
+    },
+    "gull": {
+      "task": "ART-W1-02",
+      "source": "outputs/art-wave1/ART-W1-02/candidates/seabird_glide.png",
+      "source_sha256": "d965595ad73a17fb58b7a51f94b3a9b7868ac500f17ab438cabdeabd703da40f",
+      "size": [
+        384,
+        384
+      ],
+      "preload": true,
+      "complete_island": false
+    },
+    "gull_dive": {
+      "task": "ART-W1-02",
+      "source": "outputs/art-wave1/ART-W1-02/candidates/seabird_dive.png",
+      "source_sha256": "e9e217be0cf038d915bec5038fcd153c5fdb6076d63653d6d252a23b04dae63a",
+      "size": [
+        384,
+        384
+      ],
+      "preload": true,
+      "complete_island": false
+    },
+    "ripple": {
+      "task": "ART-W1-02",
+      "source": "outputs/art-wave1/ART-W1-02/candidates/ripple_small.png",
+      "source_sha256": "9f1fd4ac7b4da52abca53bede6a507f83ae5c8a392f883835173c0ec0578550a",
+      "size": [
+        256,
+        256
+      ],
+      "preload": true,
+      "complete_island": false
+    },
+    "splash": {
+      "task": "ART-W1-02",
+      "source": "outputs/art-wave1/ART-W1-02/candidates/bigfish_splash_roaming.png",
+      "source_sha256": "993f60a9ccbeadc148096a74f8aacc70c8203a440030a1a935713a241e21f274",
+      "size": [
+        256,
+        256
+      ],
+      "preload": true,
+      "complete_island": false
+    }
+  }
+}

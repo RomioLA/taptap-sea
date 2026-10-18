@@ -1,0 +1,498 @@
+{
+  "method": "Isolated Lua5.4, saved pre-island-fix modules versus current modules; same configuration, seed271828, time9. Alternating 4x32 frames, warmed static world-geometry cache. GC stopped during timed batches to isolate algorithm process CPU, then restarted/collected; timings exclude GC pauses. Python process_time for CPU, perf_counter for elapsed. Counting no-op NanoVG, excludes native binding, tessellation, GPU/UI and FPS. One-frame allocation measured with GC stopped. Drift advances camera/ship .02m and time1/60 per draw; world simulation not executed. Direct isolated Island samples differ from actual Scene broad-phase.",
+  "nativeFpsVerified": false,
+  "records": [
+    {
+      "scenario": "near_full",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        -35
+      ],
+      "radius": 20,
+      "scene": false,
+      "drift": false,
+      "samples": {
+        "before": [
+          {
+            "nvgApiCalls": 4964.0,
+            "allocatedKiBPerFrame": 1278.716796875,
+            "elapsedMs": 8.051215625073382,
+            "processCpuMs": 7.8125
+          },
+          {
+            "nvgApiCalls": 4964.0,
+            "allocatedKiBPerFrame": 1278.716796875,
+            "elapsedMs": 7.864028124913602,
+            "processCpuMs": 7.8125
+          },
+          {
+            "nvgApiCalls": 4964.0,
+            "allocatedKiBPerFrame": 1278.716796875,
+            "elapsedMs": 7.879631250034436,
+            "processCpuMs": 7.32421875
+          },
+          {
+            "nvgApiCalls": 4964.0,
+            "allocatedKiBPerFrame": 1278.716796875,
+            "elapsedMs": 7.897165624854097,
+            "processCpuMs": 7.32421875
+          }
+        ],
+        "after": [
+          {
+            "elapsedMs": 4.847212499953457,
+            "nvgApiCalls": 4868.0,
+            "allocatedKiBPerFrame": 714.412109375,
+            "processCpuMs": 3.41796875
+          },
+          {
+            "elapsedMs": 4.57454687466452,
+            "nvgApiCalls": 4868.0,
+            "allocatedKiBPerFrame": 714.412109375,
+            "processCpuMs": 4.39453125
+          },
+          {
+            "elapsedMs": 4.556918750040495,
+            "nvgApiCalls": 4868.0,
+            "allocatedKiBPerFrame": 714.412109375,
+            "processCpuMs": 4.8828125
+          },
+          {
+            "elapsedMs": 4.533168750185723,
+            "nvgApiCalls": 4868.0,
+            "allocatedKiBPerFrame": 714.412109375,
+            "processCpuMs": 4.39453125
+          }
+        ]
+      },
+      "before": {
+        "nvgApiCalls": 4964.0,
+        "allocatedKiBPerFrame": 1278.716796875,
+        "elapsedMs": 7.888398437444266,
+        "processCpuMs": 7.568359375
+      },
+      "after": {
+        "elapsedMs": 4.565732812352508,
+        "nvgApiCalls": 4868.0,
+        "allocatedKiBPerFrame": 714.412109375,
+        "processCpuMs": 4.39453125
+      },
+      "cpuReductionPercent": 41.93548387096774,
+      "allocationReductionPercent": 44.13054468972955
+    },
+    {
+      "scenario": "left_edge",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        90,
+        -35
+      ],
+      "radius": 20,
+      "scene": false,
+      "drift": false,
+      "samples": {
+        "before": [
+          {
+            "allocatedKiBPerFrame": 547.482421875,
+            "elapsedMs": 3.5118625000905013,
+            "nvgApiCalls": 1955.0,
+            "processCpuMs": 3.90625
+          },
+          {
+            "allocatedKiBPerFrame": 547.482421875,
+            "elapsedMs": 3.538434375059296,
+            "nvgApiCalls": 1955.0,
+            "processCpuMs": 3.41796875
+          },
+          {
+            "allocatedKiBPerFrame": 547.482421875,
+            "elapsedMs": 3.5409281249485502,
+            "nvgApiCalls": 1955.0,
+            "processCpuMs": 3.41796875
+          },
+          {
+            "allocatedKiBPerFrame": 547.482421875,
+            "elapsedMs": 3.5160718748556974,
+            "nvgApiCalls": 1955.0,
+            "processCpuMs": 3.41796875
+          }
+        ],
+        "after": [
+          {
+            "allocatedKiBPerFrame": 269.669921875,
+            "nvgApiCalls": 1827.0,
+            "elapsedMs": 2.0111124999857566,
+            "processCpuMs": 1.953125
+          },
+          {
+            "allocatedKiBPerFrame": 269.669921875,
+            "nvgApiCalls": 1827.0,
+            "elapsedMs": 1.9383781250326138,
+            "processCpuMs": 1.953125
+          },
+          {
+            "allocatedKiBPerFrame": 269.669921875,
+            "nvgApiCalls": 1827.0,
+            "elapsedMs": 1.9715875000656524,
+            "processCpuMs": 1.953125
+          },
+          {
+            "allocatedKiBPerFrame": 269.669921875,
+            "nvgApiCalls": 1827.0,
+            "elapsedMs": 1.9875812499776657,
+            "processCpuMs": 1.953125
+          }
+        ]
+      },
+      "before": {
+        "allocatedKiBPerFrame": 547.482421875,
+        "elapsedMs": 3.5272531249574968,
+        "nvgApiCalls": 1955.0,
+        "processCpuMs": 3.41796875
+      },
+      "after": {
+        "allocatedKiBPerFrame": 269.669921875,
+        "nvgApiCalls": 1827.0,
+        "elapsedMs": 1.979584375021659,
+        "processCpuMs": 1.953125
+      },
+      "cpuReductionPercent": 42.85714285714286,
+      "allocationReductionPercent": 50.74363831601328
+    },
+    {
+      "scenario": "horizon_crossing",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        -108
+      ],
+      "radius": 20,
+      "scene": false,
+      "drift": false,
+      "samples": {
+        "before": [
+          {
+            "processCpuMs": 6.34765625,
+            "allocatedKiBPerFrame": 906.419921875,
+            "elapsedMs": 6.245084375223087,
+            "nvgApiCalls": 3147.0
+          },
+          {
+            "processCpuMs": 6.34765625,
+            "allocatedKiBPerFrame": 906.419921875,
+            "elapsedMs": 6.188762499732547,
+            "nvgApiCalls": 3147.0
+          },
+          {
+            "processCpuMs": 5.859375,
+            "allocatedKiBPerFrame": 906.419921875,
+            "elapsedMs": 6.282218750129687,
+            "nvgApiCalls": 3147.0
+          },
+          {
+            "processCpuMs": 7.32421875,
+            "allocatedKiBPerFrame": 906.419921875,
+            "elapsedMs": 7.478621874724922,
+            "nvgApiCalls": 3147.0
+          }
+        ],
+        "after": [
+          {
+            "allocatedKiBPerFrame": 616.787109375,
+            "elapsedMs": 4.506409375153453,
+            "processCpuMs": 4.39453125,
+            "nvgApiCalls": 3038.0
+          },
+          {
+            "allocatedKiBPerFrame": 616.787109375,
+            "elapsedMs": 4.461334375264414,
+            "processCpuMs": 4.39453125,
+            "nvgApiCalls": 3038.0
+          },
+          {
+            "allocatedKiBPerFrame": 616.787109375,
+            "elapsedMs": 4.412862499975745,
+            "processCpuMs": 4.39453125,
+            "nvgApiCalls": 3038.0
+          },
+          {
+            "allocatedKiBPerFrame": 616.787109375,
+            "elapsedMs": 4.448471875093674,
+            "processCpuMs": 4.39453125,
+            "nvgApiCalls": 3038.0
+          }
+        ]
+      },
+      "before": {
+        "processCpuMs": 6.34765625,
+        "allocatedKiBPerFrame": 906.419921875,
+        "elapsedMs": 6.263651562676387,
+        "nvgApiCalls": 3147.0
+      },
+      "after": {
+        "allocatedKiBPerFrame": 616.787109375,
+        "elapsedMs": 4.454903125179044,
+        "processCpuMs": 4.39453125,
+        "nvgApiCalls": 3038.0
+      },
+      "cpuReductionPercent": 30.76923076923077,
+      "allocationReductionPercent": 31.953491478968388
+    },
+    {
+      "scenario": "small_island",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        -35
+      ],
+      "radius": 12,
+      "scene": false,
+      "drift": false,
+      "samples": {
+        "before": [
+          {
+            "processCpuMs": 6.34765625,
+            "allocatedKiBPerFrame": 948.537109375,
+            "nvgApiCalls": 3657.0,
+            "elapsedMs": 5.982003124699986
+          },
+          {
+            "processCpuMs": 6.34765625,
+            "allocatedKiBPerFrame": 948.537109375,
+            "nvgApiCalls": 3657.0,
+            "elapsedMs": 6.2139968749761465
+          },
+          {
+            "processCpuMs": 5.859375,
+            "allocatedKiBPerFrame": 948.537109375,
+            "nvgApiCalls": 3657.0,
+            "elapsedMs": 6.074884374811518
+          },
+          {
+            "processCpuMs": 5.859375,
+            "allocatedKiBPerFrame": 948.537109375,
+            "nvgApiCalls": 3657.0,
+            "elapsedMs": 6.089112500376359
+          }
+        ],
+        "after": [
+          {
+            "allocatedKiBPerFrame": 600.083984375,
+            "nvgApiCalls": 3561.0,
+            "processCpuMs": 3.90625,
+            "elapsedMs": 3.789671874983469
+          },
+          {
+            "allocatedKiBPerFrame": 600.083984375,
+            "nvgApiCalls": 3561.0,
+            "processCpuMs": 3.41796875,
+            "elapsedMs": 3.7520750001931447
+          },
+          {
+            "allocatedKiBPerFrame": 600.083984375,
+            "nvgApiCalls": 3561.0,
+            "processCpuMs": 3.41796875,
+            "elapsedMs": 3.7455031251738546
+          },
+          {
+            "allocatedKiBPerFrame": 600.083984375,
+            "nvgApiCalls": 3561.0,
+            "processCpuMs": 3.90625,
+            "elapsedMs": 3.8263406249825493
+          }
+        ]
+      },
+      "before": {
+        "processCpuMs": 6.103515625,
+        "allocatedKiBPerFrame": 948.537109375,
+        "nvgApiCalls": 3657.0,
+        "elapsedMs": 6.081998437593938
+      },
+      "after": {
+        "allocatedKiBPerFrame": 600.083984375,
+        "nvgApiCalls": 3561.0,
+        "processCpuMs": 3.662109375,
+        "elapsedMs": 3.770873437588307
+      },
+      "cpuReductionPercent": 40.0,
+      "allocationReductionPercent": 36.73584528807724
+    },
+    {
+      "scenario": "port_scene",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        0
+      ],
+      "radius": 20,
+      "scene": true,
+      "drift": false,
+      "samples": {
+        "before": [
+          {
+            "elapsedMs": 27.84286250016521,
+            "allocatedKiBPerFrame": 3432.888671875,
+            "nvgApiCalls": 12972.0,
+            "processCpuMs": 27.34375
+          },
+          {
+            "elapsedMs": 31.661049999911484,
+            "allocatedKiBPerFrame": 3432.888671875,
+            "nvgApiCalls": 12972.0,
+            "processCpuMs": 31.25
+          },
+          {
+            "elapsedMs": 28.55195312486103,
+            "allocatedKiBPerFrame": 3432.888671875,
+            "nvgApiCalls": 12972.0,
+            "processCpuMs": 27.34375
+          },
+          {
+            "elapsedMs": 28.27735312484947,
+            "allocatedKiBPerFrame": 3432.888671875,
+            "nvgApiCalls": 12972.0,
+            "processCpuMs": 27.83203125
+          }
+        ],
+        "after": [
+          {
+            "elapsedMs": 21.909681250235735,
+            "processCpuMs": 21.97265625,
+            "nvgApiCalls": 12776.0,
+            "allocatedKiBPerFrame": 2484.560546875
+          },
+          {
+            "elapsedMs": 22.109609375092987,
+            "processCpuMs": 21.97265625,
+            "nvgApiCalls": 12776.0,
+            "allocatedKiBPerFrame": 2484.560546875
+          },
+          {
+            "elapsedMs": 22.27811249986189,
+            "processCpuMs": 22.4609375,
+            "nvgApiCalls": 12776.0,
+            "allocatedKiBPerFrame": 2484.560546875
+          },
+          {
+            "elapsedMs": 21.651109375397937,
+            "processCpuMs": 21.484375,
+            "nvgApiCalls": 12776.0,
+            "allocatedKiBPerFrame": 2484.560546875
+          }
+        ]
+      },
+      "before": {
+        "elapsedMs": 28.41465312485525,
+        "allocatedKiBPerFrame": 3432.888671875,
+        "nvgApiCalls": 12972.0,
+        "processCpuMs": 27.587890625
+      },
+      "after": {
+        "elapsedMs": 22.00964531266436,
+        "processCpuMs": 21.97265625,
+        "nvgApiCalls": 12776.0,
+        "allocatedKiBPerFrame": 2484.560546875
+      },
+      "cpuReductionPercent": 20.353982300884955,
+      "allocationReductionPercent": 27.62478529436363
+    },
+    {
+      "scenario": "port_scene_drift",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        0
+      ],
+      "radius": 20,
+      "scene": true,
+      "drift": true,
+      "samples": {
+        "before": [
+          {
+            "nvgApiCalls": 13000.1875,
+            "allocatedKiBPerFrame": 3447.380859375,
+            "processCpuMs": 27.83203125,
+            "elapsedMs": 27.67228749962669
+          },
+          {
+            "nvgApiCalls": 13047.71875,
+            "allocatedKiBPerFrame": 3417.701171875,
+            "processCpuMs": 27.34375,
+            "elapsedMs": 27.16664999979912
+          },
+          {
+            "nvgApiCalls": 13094.34375,
+            "allocatedKiBPerFrame": 3401.623046875,
+            "processCpuMs": 26.85546875,
+            "elapsedMs": 27.28735312484787
+          },
+          {
+            "nvgApiCalls": 13158.5625,
+            "allocatedKiBPerFrame": 3364.849609375,
+            "processCpuMs": 26.3671875,
+            "elapsedMs": 27.048734375057393
+          }
+        ],
+        "after": [
+          {
+            "processCpuMs": 21.484375,
+            "allocatedKiBPerFrame": 2485.341796875,
+            "elapsedMs": 21.235684374914854,
+            "nvgApiCalls": 12805.78125
+          },
+          {
+            "processCpuMs": 20.99609375,
+            "allocatedKiBPerFrame": 2441.302734375,
+            "elapsedMs": 20.602121875072044,
+            "nvgApiCalls": 12853.65625
+          },
+          {
+            "processCpuMs": 20.01953125,
+            "allocatedKiBPerFrame": 2407.880859375,
+            "elapsedMs": 20.430625000244618,
+            "nvgApiCalls": 12900.28125
+          },
+          {
+            "processCpuMs": 18.5546875,
+            "allocatedKiBPerFrame": 2342.248046875,
+            "elapsedMs": 19.882656250047148,
+            "nvgApiCalls": 12964.5
+          }
+        ]
+      },
+      "before": {
+        "nvgApiCalls": 13071.03125,
+        "allocatedKiBPerFrame": 3409.662109375,
+        "processCpuMs": 27.099609375,
+        "elapsedMs": 27.227001562323494
+      },
+      "after": {
+        "processCpuMs": 20.5078125,
+        "allocatedKiBPerFrame": 2424.591796875,
+        "elapsedMs": 20.51637343765833,
+        "nvgApiCalls": 12876.96875
+      },
+      "cpuReductionPercent": 24.32432432432432,
+      "allocationReductionPercent": 28.890555160627517
+    }
+  ]
+}

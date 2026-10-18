@@ -1,0 +1,66 @@
+{
+  "nativeFpsVerified": false,
+  "gpuMeasured": false,
+  "method": "Paired isolated Lua5.4 runtimes, alternating before/after order, 3x36 frames per scenario. Same config/seed271828. Pre-fix geometry/art/projection loaded from saved files. Counting no-op NanoVG; excludes GPU, binding cost, UI, real logs. Allocation measured over one frame with GC stopped, then restarted. Synthetic drift: camera/ship X and Y each advance .02m and time advances 1/60s per render. Forces plane-cache invalidation every frame, without world simulation.",
+  "records": [
+    {
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "position": [
+        0,
+        0
+      ],
+      "time": 9,
+      "cameraDriftsEveryFrame": true,
+      "samples": {
+        "before": [
+          {
+            "nvgCallsPerFrame": 14999.694444444445,
+            "allocatedKiBPerFrame": 7454.146484375,
+            "luaCpuMs": 58.777777777777764
+          },
+          {
+            "nvgCallsPerFrame": 14999.694444444445,
+            "allocatedKiBPerFrame": 7454.146484375,
+            "luaCpuMs": 69.08333333333333
+          },
+          {
+            "nvgCallsPerFrame": 14999.694444444445,
+            "allocatedKiBPerFrame": 7454.146484375,
+            "luaCpuMs": 64.52777777777779
+          }
+        ],
+        "after": [
+          {
+            "nvgCallsPerFrame": 13001.222222222223,
+            "allocatedKiBPerFrame": 3444.912109375,
+            "luaCpuMs": 32.138888888888886
+          },
+          {
+            "nvgCallsPerFrame": 13001.222222222223,
+            "allocatedKiBPerFrame": 3444.912109375,
+            "luaCpuMs": 37.80555555555555
+          },
+          {
+            "nvgCallsPerFrame": 13001.222222222223,
+            "allocatedKiBPerFrame": 3444.912109375,
+            "luaCpuMs": 36.44444444444443
+          }
+        ]
+      },
+      "before": {
+        "nvgCallsPerFrame": 14999.694444444445,
+        "allocatedKiBPerFrame": 7454.146484375,
+        "luaCpuMs": 64.52777777777779
+      },
+      "after": {
+        "nvgCallsPerFrame": 13001.222222222223,
+        "allocatedKiBPerFrame": 3444.912109375,
+        "luaCpuMs": 36.44444444444443
+      },
+      "cpuReductionPercent": 43.52130865260442
+    }
+  ]
+}

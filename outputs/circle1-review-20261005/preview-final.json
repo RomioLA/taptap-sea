@@ -1,0 +1,10 @@
+{
+  "checkedAt": "2026-10-05T02:59:08.5385373+08:00",
+  "project": "C:\\codex\\taptap-sea",
+  "session": "67a4667f-dc9c-4fa1-b25d-050acc90cc55",
+  "state": "stopped",
+  "process_alive": false,
+  "ready": false,
+  "message": "Process status only; game loading, visuals and cloud/server features are not verified.",
+  "action": "status only; stopped session was not started"
+}

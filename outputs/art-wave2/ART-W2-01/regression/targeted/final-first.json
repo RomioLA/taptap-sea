@@ -1,0 +1,352 @@
+{
+  "phase": "final",
+  "generatedAt": "2026-10-06T02:21:20.702500+00:00",
+  "project": "C:\\codex\\taptap-sea",
+  "runtimePath": "C:\\codex\\taptap-sea\\.tmp\\circle1-review-runtime",
+  "suiteCount": 5,
+  "suites": [
+    {
+      "name": "ArtWave2Tests",
+      "kind": "run",
+      "file": "scripts\\Tests\\ArtWave2Tests.lua",
+      "passed": false,
+      "subtestCount": 6,
+      "failures": [
+        {
+          "error": "C:/codex/taptap-sea/scripts/Ocean\\ImageArt.lua:33: attempt to perform bitwise operation on a nil value (global 'NVG_IMAGE_REPEATX')",
+          "passed": false,
+          "name": "loaded complete island skips coast foam hills and tree strokes"
+        },
+        {
+          "error": "C:/codex/taptap-sea/scripts/tests\\ArtWave2Tests.lua:62: assertion failed!",
+          "passed": false,
+          "name": "warm PNG drawing reads current geometry after radius position and viewport changes"
+        },
+        {
+          "error": "C:/codex/taptap-sea/scripts/Ocean\\ImageArt.lua:33: attempt to perform bitwise operation on a nil value (global 'NVG_IMAGE_REPEATX')",
+          "passed": false,
+          "name": "night grade follows loaded island ship and signal images while daytime has no overlay"
+        }
+      ],
+      "returned": {
+        "results": [
+          {
+            "error": "",
+            "passed": true,
+            "name": "complete island metadata is immutable and uses the W2 runtime path"
+          },
+          {
+            "error": "C:/codex/taptap-sea/scripts/Ocean\\ImageArt.lua:33: attempt to perform bitwise operation on a nil value (global 'NVG_IMAGE_REPEATX')",
+            "passed": false,
+            "name": "loaded complete island skips coast foam hills and tree strokes"
+          },
+          {
+            "error": "C:/codex/taptap-sea/scripts/tests\\ArtWave2Tests.lua:62: assertion failed!",
+            "passed": false,
+            "name": "warm PNG drawing reads current geometry after radius position and viewport changes"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "unloaded complete PNG restores the original cached vector path"
+          },
+          {
+            "error": "C:/codex/taptap-sea/scripts/Ocean\\ImageArt.lua:33: attempt to perform bitwise operation on a nil value (global 'NVG_IMAGE_REPEATX')",
+            "passed": false,
+            "name": "night grade follows loaded island ship and signal images while daytime has no overlay"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "added runtime images retain balanced create release lifecycle"
+          }
+        ]
+      },
+      "stdout": "[OceanArt] loaded boat path=image/OceanWave2/boat.png\n[OceanArt] loaded gull_dive path=image/OceanWave2/gull_dive.png\n[OceanArt] loaded splash path=image/OceanWave2/splash.png\n[OceanArt] loaded boat path=image/OceanWave2/boat.png\n[OceanArt] loaded gull_dive path=image/OceanWave2/gull_dive.png\n[OceanArt] loaded splash path=image/OceanWave2/splash.png",
+      "nvgCalls": {
+        "nvgBeginPath": 742,
+        "nvgClosePath": 1381,
+        "nvgFill": 742,
+        "nvgFillColor": 742,
+        "nvgLineTo": 5568,
+        "nvgMoveTo": 1381
+      },
+      "nvgCallTotal": 10556,
+      "durationMs": 53.124
+    },
+    {
+      "name": "OceanImageCatalogTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\OceanImageCatalogTests.lua",
+      "passed": true,
+      "subtestCount": 8,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "error": "",
+            "passed": true,
+            "name": "目录规格只返回副本且未知名称无效"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "正式启动只加载已接入世界素材且重复调用幂等"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "新增候选显式加载且不影响另一上下文"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "失败只尝试一次并保留矢量回退"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "主体尺寸自动补偿留边且保持鱼体比例"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "无效尺寸和未加载图不提交绘制"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "停止释放仅当前上下文的成功句柄且幂等"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "停止后可重新加载候选与默认集"
+          }
+        ]
+      },
+      "stdout": "[OceanArt] loaded boat path=image/OceanWave2/boat.png\n[OceanArt] loaded gull_dive path=image/OceanWave2/gull_dive.png\n[OceanArt] loaded splash path=image/OceanWave2/splash.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded island path=image/OceanWave2/island.png\n[OceanArt] loaded ripple path=image/OceanWave2/ripple.png\n[OceanArt] loaded gull path=image/OceanWave2/gull.png\n[OceanArt] loaded reef path=image/OceanReady/reef.png\n[OceanArt] loaded shrub path=image/OceanReady/shrub.png\n[OceanArt] loaded boat path=image/OceanWave2/boat.png\n[OceanArt] loaded gull_dive path=image/OceanWave2/gull_dive.png\n[OceanArt] loaded splash path=image/OceanWave2/splash.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded island path=image/OceanWave2/island.png\n[OceanArt] loaded ripple path=image/OceanWave2/ripple.png\n[OceanArt] loaded gull path=image/OceanWave2/gull.png\n[OceanArt] load failed image/OceanReady/driftwood.png; retaining vector fallback\n[OceanArt] loaded sardine path=image/OceanReady/sardine.png\n[OceanArt] loaded driftwood path=image/OceanReady/driftwood.png\n[OceanArt] loaded boat path=image/OceanWave2/boat.png\n[OceanArt] loaded gull_dive path=image/OceanWave2/gull_dive.png\n[OceanArt] loaded splash path=image/OceanWave2/splash.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded island path=image/OceanWave2/island.png\n[OceanArt] loaded ripple path=image/OceanWave2/ripple.png\n[OceanArt] loaded gull path=image/OceanWave2/gull.png",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 4.261
+    },
+    {
+      "name": "SeaFusionRenderTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaFusionRenderTests.lua",
+      "passed": false,
+      "subtestCount": 0,
+      "failures": [],
+      "error": "LuaError: C:/codex/taptap-sea/scripts/tests\\SeaFusionRenderTests.lua:258: C:/codex/taptap-sea/scripts/tests\\SeaFusionRenderTests.lua:80: night tint must be drawn before the boat, and removed in daytime\nstack traceback:\n\t[C]: in function 'error'\n\tC:/codex/taptap-sea/scripts/tests\\SeaFusionRenderTests.lua:258: in function 'tests.SeaFusionRenderTests.Run'",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\codex\\taptap-sea\\tests\\run_circle1_review.py\", line 268, in run_one\n    returned = run(recorder_table)\n               ^^^^^^^^^^^^^^^^^^^\n  File \"lupa/lua54.pyx\", line 921, in lupa.lua54._LuaObject.__call__\n  File \"lupa/lua54.pyx\", line 1886, in lupa.lua54.call_lua\n  File \"lupa/lua54.pyx\", line 1913, in lupa.lua54.execute_lua_call\n  File \"lupa/lua54.pyx\", line 1794, in lupa.lua54.raise_lua_error\nlupa.lua54.LuaError: C:/codex/taptap-sea/scripts/tests\\SeaFusionRenderTests.lua:258: C:/codex/taptap-sea/scripts/tests\\SeaFusionRenderTests.lua:80: night tint must be drawn before the boat, and removed in daytime\nstack traceback:\n\t[C]: in function 'error'\n\tC:/codex/taptap-sea/scripts/tests\\SeaFusionRenderTests.lua:258: in function 'tests.SeaFusionRenderTests.Run'\n",
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 474,
+        "nvgBezierTo": 377,
+        "nvgCircle": 3,
+        "nvgClosePath": 909,
+        "nvgEllipse": 9,
+        "nvgFill": 451,
+        "nvgFillColor": 446,
+        "nvgFillPaint": 5,
+        "nvgGlobalAlpha": 3,
+        "nvgIntersectScissor": 3,
+        "nvgLineTo": 4069,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1286,
+        "nvgRadialGradient": 3,
+        "nvgRect": 1,
+        "nvgRestore": 11,
+        "nvgSave": 12,
+        "nvgScale": 4,
+        "nvgStroke": 23,
+        "nvgStrokeColor": 23,
+        "nvgStrokeWidth": 23,
+        "nvgTranslate": 4
+      },
+      "nvgCallTotal": 8141,
+      "durationMs": 150.915
+    },
+    {
+      "name": "SeaHorizonOcclusionTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaHorizonOcclusionTests.lua",
+      "passed": true,
+      "subtestCount": 13,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "separated screen polygons retain their geometry across horizon extrema",
+            "passed": true
+          },
+          {
+            "name": "horizon snapshots match the live formula and renew after viewport or config changes",
+            "passed": true
+          },
+          {
+            "name": "scalar projection snapshots match live projection and renew after changes",
+            "passed": true
+          },
+          {
+            "name": "world bounds reject complete screen-exterior geometry but retain crossing heights",
+            "passed": true
+          },
+          {
+            "name": "clip planes renew after camera viewport config padding and height changes",
+            "passed": true
+          },
+          {
+            "name": "intersecting and tangent screen polygons still clip against the curved horizon",
+            "passed": true
+          },
+          {
+            "name": "the lowest raised vertices disappear before the top as the surface recedes",
+            "passed": true
+          },
+          {
+            "name": "large footprints survive center crossings including lateral screen edges",
+            "passed": true
+          },
+          {
+            "name": "raised directional vectors use the same altitude as finite difference samples",
+            "passed": true
+          },
+          {
+            "name": "raised geometry at the tangent retains its real height",
+            "passed": true
+          },
+          {
+            "name": "ground inverse remains unique at every lateral horizon and DPR scale",
+            "passed": true
+          },
+          {
+            "name": "actual scene renders a new float with its center beyond the tangent",
+            "passed": true
+          },
+          {
+            "name": "height broad phase is conservative and responds to configuration changes",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 675,
+        "nvgBezierTo": 630,
+        "nvgCircle": 26,
+        "nvgClosePath": 1200,
+        "nvgEllipse": 9,
+        "nvgFill": 647,
+        "nvgFillColor": 621,
+        "nvgFillPaint": 26,
+        "nvgGlobalAlpha": 4,
+        "nvgIntersectScissor": 24,
+        "nvgLineTo": 4866,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1831,
+        "nvgRadialGradient": 24,
+        "nvgRect": 1,
+        "nvgRestore": 35,
+        "nvgSave": 35,
+        "nvgScale": 22,
+        "nvgStroke": 28,
+        "nvgStrokeColor": 28,
+        "nvgStrokeWidth": 28,
+        "nvgTranslate": 22
+      },
+      "nvgCallTotal": 10784,
+      "durationMs": 99.626
+    },
+    {
+      "name": "SeaViewUpgradeTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaViewUpgradeTests.lua",
+      "passed": true,
+      "subtestCount": 10,
+      "failures": [],
+      "returned": {
+        "metrics": {
+          "headingCount": 8,
+          "viewportCases": 3,
+          "projectedDepthsMeters": [
+            0,
+            20,
+            85,
+            109
+          ],
+          "clippedFarCircleSamples": 21,
+          "lensSectorSamples": 26,
+          "netCircleSamples": 32
+        },
+        "status": "PASS",
+        "results": [
+          {
+            "error": "",
+            "name": "camera_configuration_uses_the_confirmed_world_oblique_values",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "eight_heading_inputs_keep_the_same_meter_speed",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "camera_follows_continuously_and_returns_smoothly_when_the_ship_stops",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "projection_formula_and_inverse_hold_at_multiple_world_depths",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "logical_projection_resizes_correctly_across_aspect_and_dpr",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "horizon_far_depth_and_near_singularity_are_rejected",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "sampled_net_circles_and_lens_sectors_preserve_world_distance_and_angle",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "world_visibility_and_interaction_distances_do_not_change_with_camera",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "wake_uses_measured_displacement_and_expires_while_stationary",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "pause_resize_return_port_and_reset_preserve_or_clear_wake_as_required",
+            "passed": true
+          }
+        ],
+        "passed": true,
+        "evidence": {
+          "nativeEngineVisualAcceptance": "NOT_RUN",
+          "kind": "pure Lua logic suite using real project modules",
+          "NanoVGMockVisualAcceptance": false
+        }
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 12.786
+    }
+  ],
+  "luaVersion": "Lua 5.4",
+  "passedSuiteCount": 3,
+  "failedSuiteCount": 2,
+  "passed": false
+}

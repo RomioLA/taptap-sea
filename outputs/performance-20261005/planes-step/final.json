@@ -1,0 +1,347 @@
+{
+  "phase": "final",
+  "generatedAt": "2026-10-04T23:02:43.571104+00:00",
+  "project": "C:\\codex\\taptap-sea",
+  "runtimePath": "C:\\codex\\taptap-sea\\.tmp\\circle1-review-runtime",
+  "suiteCount": 5,
+  "suites": [
+    {
+      "name": "SeaCurvatureTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaCurvatureTests.lua",
+      "passed": true,
+      "subtestCount": 4,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "formula and exact inverse across DPR and landscape/portrait viewports",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "screen-space horizon rejects sky according to its lateral curve",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "vector derivatives match the curved projection finite difference",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "finite ground plane reaches the horizon while elevated silhouettes pass it",
+            "error": "",
+            "passed": true
+          }
+        ],
+        "status": "PASS"
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 4.274
+    },
+    {
+      "name": "SeaFusionRenderTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaFusionRenderTests.lua",
+      "passed": true,
+      "subtestCount": 10,
+      "failures": [],
+      "returned": {
+        "metrics": {
+          "landscape": {
+            "anchorY": 0.72,
+            "basePixelsPerMeter": 24.0,
+            "height": 1080,
+            "anchorX": 0.5,
+            "shipScreenY": 777.5999999999999,
+            "width": 1920,
+            "hiddenWorldFishCalls": 0,
+            "shipScreenX": 960.0,
+            "horizonY": 259.2
+          },
+          "portrait": {
+            "anchorY": 0.72,
+            "basePixelsPerMeter": 25.555555555555557,
+            "height": 1150,
+            "anchorX": 0.5,
+            "shipScreenY": 828.0,
+            "width": 1200,
+            "shipScreenX": 600.0,
+            "revealedWorldFishCalls": 2,
+            "horizonY": 276.0
+          },
+          "originalFixedObjectCount": 3,
+          "previewFixtures": {
+            "tuna": "(8,-8)",
+            "sardine": "(-8,-8)",
+            "island": "(-14,-12)"
+          },
+          "originalConfiguredBirds": 2
+        },
+        "status": "PASS",
+        "tests": [
+          "draw_is_pure_for_runtime_state",
+          "original_sun_and_birds_reused",
+          "projected_sea_view_art_apis_reused",
+          "ordinary_fish_hidden_by_default",
+          "show_underwater_draws_both_fixture_fish",
+          "resize_preserves_projection_anchor_horizon_and_perspective_scale",
+          "curved_ground_clips_preserve_elevated_island_silhouettes_in_both_aspects",
+          "presentation_fixture_does_not_change_config_world",
+          "night_tint_precedes_boat_and_preserves_paused_gameplay_clock",
+          "daytime_removes_night_tint_and_nvg_state_stack_is_balanced"
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 625,
+        "nvgBezierTo": 16,
+        "nvgCircle": 16,
+        "nvgClosePath": 1114,
+        "nvgEllipse": 9,
+        "nvgFill": 596,
+        "nvgFillColor": 580,
+        "nvgFillPaint": 16,
+        "nvgGlobalAlpha": 5,
+        "nvgIntersectScissor": 14,
+        "nvgLineTo": 5687,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1495,
+        "nvgRadialGradient": 14,
+        "nvgRect": 1,
+        "nvgRestore": 26,
+        "nvgSave": 26,
+        "nvgScale": 15,
+        "nvgStroke": 51,
+        "nvgStrokeColor": 51,
+        "nvgStrokeWidth": 51,
+        "nvgTranslate": 15
+      },
+      "nvgCallTotal": 10425,
+      "durationMs": 232.538
+    },
+    {
+      "name": "SeaHorizonOcclusionTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaHorizonOcclusionTests.lua",
+      "passed": true,
+      "subtestCount": 9,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "name": "separated screen polygons retain their geometry across horizon extrema"
+          },
+          {
+            "passed": true,
+            "name": "intersecting and tangent screen polygons still clip against the curved horizon"
+          },
+          {
+            "passed": true,
+            "name": "the lowest raised vertices disappear before the top as the surface recedes"
+          },
+          {
+            "passed": true,
+            "name": "large footprints survive center crossings including lateral screen edges"
+          },
+          {
+            "passed": true,
+            "name": "raised directional vectors use the same altitude as finite difference samples"
+          },
+          {
+            "passed": true,
+            "name": "raised geometry at the tangent retains its real height"
+          },
+          {
+            "passed": true,
+            "name": "ground inverse remains unique at every lateral horizon and DPR scale"
+          },
+          {
+            "passed": true,
+            "name": "actual scene renders a new float with its center beyond the tangent"
+          },
+          {
+            "passed": true,
+            "name": "height broad phase is conservative and responds to configuration changes"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 724,
+        "nvgBezierTo": 16,
+        "nvgCircle": 26,
+        "nvgClosePath": 1249,
+        "nvgEllipse": 9,
+        "nvgFill": 696,
+        "nvgFillColor": 670,
+        "nvgFillPaint": 26,
+        "nvgGlobalAlpha": 5,
+        "nvgIntersectScissor": 24,
+        "nvgLineTo": 6285,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1880,
+        "nvgRadialGradient": 24,
+        "nvgRect": 1,
+        "nvgRestore": 36,
+        "nvgSave": 36,
+        "nvgScale": 22,
+        "nvgStroke": 49,
+        "nvgStrokeColor": 49,
+        "nvgStrokeWidth": 49,
+        "nvgTranslate": 22
+      },
+      "nvgCallTotal": 11900,
+      "durationMs": 85.681
+    },
+    {
+      "name": "SeaPresentationTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaPresentationTests.lua",
+      "passed": true,
+      "subtestCount": 4,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "name": "fixed_island_height_crosses_the_horizon_without_vertical_art_motion"
+          },
+          {
+            "passed": true,
+            "name": "complete_footprint_bounds_replace_center_cutoff_and_opacity_emergence"
+          },
+          {
+            "passed": true,
+            "name": "presentation_preserves_world_coordinates_and_restores_drawing_state"
+          },
+          {
+            "passed": true,
+            "name": "paused_scene_keeps_hidden_and_beyond_horizon_fish_out_of_the_sky"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 707,
+        "nvgBezierTo": 16,
+        "nvgCircle": 26,
+        "nvgClosePath": 1232,
+        "nvgEllipse": 9,
+        "nvgFill": 679,
+        "nvgFillColor": 653,
+        "nvgFillPaint": 26,
+        "nvgGlobalAlpha": 4,
+        "nvgIntersectScissor": 24,
+        "nvgLineTo": 6213,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1863,
+        "nvgRadialGradient": 24,
+        "nvgRect": 1,
+        "nvgRestore": 35,
+        "nvgSave": 35,
+        "nvgScale": 22,
+        "nvgStroke": 49,
+        "nvgStrokeColor": 49,
+        "nvgStrokeWidth": 49,
+        "nvgTranslate": 22
+      },
+      "nvgCallTotal": 11740,
+      "durationMs": 233.709
+    },
+    {
+      "name": "SeaViewUpgradeTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaViewUpgradeTests.lua",
+      "passed": true,
+      "subtestCount": 10,
+      "failures": [],
+      "returned": {
+        "passed": true,
+        "evidence": {
+          "kind": "pure Lua logic suite using real project modules",
+          "nativeEngineVisualAcceptance": "NOT_RUN",
+          "NanoVGMockVisualAcceptance": false
+        },
+        "metrics": {
+          "viewportCases": 3,
+          "projectedDepthsMeters": [
+            0,
+            20,
+            85,
+            109
+          ],
+          "clippedFarCircleSamples": 21,
+          "lensSectorSamples": 26,
+          "netCircleSamples": 32,
+          "headingCount": 8
+        },
+        "results": [
+          {
+            "name": "camera_configuration_uses_the_confirmed_world_oblique_values",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "eight_heading_inputs_keep_the_same_meter_speed",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "camera_follows_continuously_and_returns_smoothly_when_the_ship_stops",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "projection_formula_and_inverse_hold_at_multiple_world_depths",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "logical_projection_resizes_correctly_across_aspect_and_dpr",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "horizon_far_depth_and_near_singularity_are_rejected",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "sampled_net_circles_and_lens_sectors_preserve_world_distance_and_angle",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "world_visibility_and_interaction_distances_do_not_change_with_camera",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "wake_uses_measured_displacement_and_expires_while_stationary",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "pause_resize_return_port_and_reset_preserve_or_clear_wake_as_required",
+            "passed": true,
+            "error": ""
+          }
+        ],
+        "status": "PASS"
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 12.67
+    }
+  ],
+  "luaVersion": "Lua 5.4",
+  "passedSuiteCount": 5,
+  "failedSuiteCount": 0,
+  "passed": true
+}

@@ -1,0 +1,91 @@
+{
+  "createdOnlyUnder": "outputs/art-wave1/ART-W1-06/experiments/",
+  "sourceFilesModified": false,
+  "experiments": [
+    {
+      "source": "assets/image/OceanLoop/island.png",
+      "sourceSha256": "6c68a9cc310d17e06cd0da7fd4e11c25a132ad4daab3542de4c8e16021c73f00",
+      "sourceBytes": 1108621,
+      "variant": "outputs/art-wave1/ART-W1-06/experiments/OceanLoop_island_png_optimize.png",
+      "variantBytes": 1104766,
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "bytesSaved": 3855,
+      "savingRatio": 0.003477,
+      "operation": "PNG optimize + max deflate",
+      "pixelIdenticalDecoded": true,
+      "visualQualityRisk": "无像素损失",
+      "note": "PNG 解码像素逐点相同；只改实验副本。"
+    },
+    {
+      "source": "assets/image/OceanLoop/island.png",
+      "sourceSha256": "6c68a9cc310d17e06cd0da7fd4e11c25a132ad4daab3542de4c8e16021c73f00",
+      "sourceBytes": 1108621,
+      "variant": "outputs/art-wave1/ART-W1-06/experiments/OceanLoop_island_768.png",
+      "variantBytes": 676995,
+      "dimensions": [
+        768,
+        768
+      ],
+      "bytesSaved": 431626,
+      "savingRatio": 0.389336,
+      "operation": "LANCZOS resize 1024x1024->768x768",
+      "pixelIdenticalDecoded": null,
+      "visualQualityRisk": "中",
+      "note": "缩小约25%；细纹理与边缘可能变软，需按游戏中实际占屏大小复核。"
+    },
+    {
+      "source": "assets/image/OceanLoop/island.png",
+      "sourceSha256": "6c68a9cc310d17e06cd0da7fd4e11c25a132ad4daab3542de4c8e16021c73f00",
+      "sourceBytes": 1108621,
+      "variant": "outputs/art-wave1/ART-W1-06/experiments/OceanLoop_island_512.png",
+      "variantBytes": 316359,
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytesSaved": 792262,
+      "savingRatio": 0.714637,
+      "operation": "LANCZOS resize 1024x1024->512x512",
+      "pixelIdenticalDecoded": null,
+      "visualQualityRisk": "高",
+      "note": "缩小50%；近看细节损失风险高，仅适合小屏幕显示或远景。"
+    },
+    {
+      "source": "assets/image/reading_sea_watercolor_navigation_icons_20261005115342.png",
+      "sourceSha256": "bb0dd2167adbd417404ee475f7e0a9ded5c0f9a71ee48619e8b201da39eccaf2",
+      "sourceBytes": 834419,
+      "variant": "outputs/art-wave1/ART-W1-06/experiments/reading_sea_watercolor_navigation_icons_png_optimize.png",
+      "variantBytes": 797116,
+      "dimensions": [
+        1152,
+        768
+      ],
+      "bytesSaved": 37303,
+      "savingRatio": 0.044705,
+      "operation": "PNG optimize + max deflate",
+      "pixelIdenticalDecoded": true,
+      "visualQualityRisk": "无像素损失",
+      "note": "PNG 解码像素逐点相同；只改实验副本。"
+    },
+    {
+      "source": "assets/image/OceanLoop/gull.png",
+      "sourceSha256": "846a9f871ab82d6edd689406ea62d14592d1737d90bd1455845e2d6863331809",
+      "sourceBytes": 96047,
+      "variant": "outputs/art-wave1/ART-W1-06/experiments/OceanLoop_gull_crop_pad24.png",
+      "variantBytes": 87833,
+      "dimensions": [
+        284,
+        499
+      ],
+      "bytesSaved": 8214,
+      "savingRatio": 0.085521,
+      "operation": "alpha bounds crop + 24px padding",
+      "pixelIdenticalDecoded": null,
+      "visualQualityRisk": "无重采样损失；接入风险中",
+      "note": "按 alpha>0 bounds 裁切后四边留24px；需同步锚点/UV/碰撞与采样边界。"
+    }
+  ]
+}

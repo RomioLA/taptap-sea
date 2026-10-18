@@ -1,0 +1,26 @@
+{
+  "snapshotTimeLocal": "2026-10-06T10:14:41+08:00",
+  "workspace": "C:\\codex\\taptap-sea",
+  "totals": {
+    "assets": {
+      "files": 309,
+      "bytes": 70510771
+    },
+    "assets/image": {
+      "files": 192,
+      "bytes": 41161430
+    },
+    "assets/generated": {
+      "files": 67,
+      "bytes": 14735371
+    },
+    "scripts": {
+      "files": 259,
+      "bytes": 1541267
+    },
+    "assets+scripts": {
+      "files": 568,
+      "bytes": 72052038
+    }
+  }
+}

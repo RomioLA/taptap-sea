@@ -1,0 +1,1632 @@
+-- B 玩法 HUD 原型。UI 生命周期由宿主负责，本模块只创建和管理自己的子树。
+local UI = require("urhox-libs/UI")
+local Config = require("config.gameplay")
+local Items = require("data.items")
+local Diagnostics = require("Gameplay.Diagnostics")
+
+local HUD = {}
+
+---@class HUDFishingCenter
+---@field x number
+---@field y number
+
+---@class HUDFishingState
+---@field state "idle"|"selecting"|"casting"|"landed"|"complete"|"failed"|"cancelled"|"cleanup_pending"|"rollback_pending"|"committing"
+---@field center HUDFishingCenter?
+---@field elapsed number?
+---@field duration number?
+---@field reason string?
+
+---@class HUDPendingCatch
+---@field itemIds string[]
+---@field requiredSlots number
+
+---@class HUDElderStatus
+---@field applesGiven number
+---@field decision "pending"|"saved"|"dead"|string
+---@field present boolean
+
+---@class HUDBarrelState
+---@field stage number
+---@field active boolean
+---@field pending boolean
+---@field elapsed number
+---@field duration number
+---@field remaining number
+---@field timingAvailable boolean
+---@field interfaceAvailable boolean
+
+---@class HUDStoryDialog
+---@field token table
+---@field kind "paper"
+---@field text string
+
+---@class HUDThrowSelection
+---@field index number
+---@field itemId string
+
+local ERROR_MESSAGES = {
+    busy = "当前操作尚未完成",
+    port_interface_unavailable = "港口位置接口暂不可用，无法确认交易权限。",
+    port_out_of_range = "距港超过10米；请航行到港口标记10米内，再返港或交易。",
+    port_reset_unavailable = "实际返港接口暂不可用，请稍后重试。",
+    port_reset_failed = "船只未能回到港口，请重试。",
+    cargo_changed = "船舱物品已变化，请重新选择要出售的鱼。",
+    transaction_failed = "交易未完成，金钱与物品已恢复，请重试。",
+    transaction_snapshot_failed = "暂时无法核对交易物品，请重试。",
+    inventory_rollback_pending = "物品正在恢复，请稍后重试。",
+    speed_upgrade_failed = "海洋船速未能更新，本次升级已撤销，请重试。",
+    maximum_level = "已经达到最高等级。",
+    unsupported_stamina_level = "当前体力上限没有对应的升级方案。",
+    invalid_upgrade_configuration = "升级数据暂不可用。",
+    busy_or_at_sea = "请先在港口结束当前操作，再读取存档。",
+    scene_closed = "场景已经关闭。",
+    no_settlement = "当前没有待确认的日结。",
+    no_failed_settlement = "当前没有可放弃的保存。",
+    new_day_preparation_failed = "港口或海洋准备未完成，请重试。",
+    settlement_snapshot_failed = "日结快照尚未生成，请重试保存。",
+    fishing_runtime_interface_unavailable = "捕鱼接口暂未就绪，请稍后重试。",
+    cast_out_of_range_or_invalid = "请点击船只30米内的合法海面，网心不能落在陆地上。",
+    fishing_requires_bridge_token = "请从正式捕鱼按钮开始操作。",
+    pending_catch_required = "请先处理已有待接收收获；物品会完整保留。",
+    no_forced_return = "当前没有待确认的强制返港。",
+    ["insufficient money"] = "余额不足。",
+    day_finished = "今天已经结束",
+    port_required = "请先返港",
+    close_dialog_first = "请先关闭当前界面",
+    inventory_full = "背包已满",
+    unknown_item = "未知物品",
+    not_enough_money = "钱不够",
+    not_enough_stamina = "体力不足",
+    ["insufficient stamina"] = "体力不足",
+    cannot_use_item = "现在无法使用该物品",
+    cannot_give_item = "老人不收这件物品",
+    insufficient_money = "钱不够",
+    not_for_sale = "该物品不出售",
+    shop_sold_out = "今日已售罄，明天补货",
+    invalid_item = "物品已不存在或无法使用",
+    sea_required = "请先出海",
+    elder_dialog_required = "请先打开老人对话",
+    elder_not_present = "老人不在船上，当前无法赠送。",
+    item_has_no_use = "该物品没有可用效果，无法使用。",
+    throw_selection_pending = "请先完成或取消当前投掷选择。",
+    treasure_unavailable = "当前没有可展示的透镜。",
+    scope_not_owned = "尚未获得透镜。",
+    elder_progress_failed = "老人救助进度未能更新，苹果已保留，请重试。",
+    scope_interface_unavailable = "望远镜控制接口暂不可用。",
+    scope_sync_failed = "望远镜状态同步失败，请重试关闭。",
+    stale_barrel_action = "木桶已变化，当前检查已取消，请重新开始。",
+    stale_barrel_stage = "木桶进度已变化，请重新检查。",
+    barrel_executor_failed = "木桶检查未能完成，本次不扣体力。",
+    barrel_timing_unconfirmed = "木桶检查暂未开放。",
+    barrel_interface_unavailable = "木桶检查暂未开放。",
+    barrel_unavailable = "木桶检查暂未开放。",
+    barrel_out_of_range = "请靠近海岸边的木桶。",
+    barrel_finished = "木桶调查已完成。",
+    barrel_cancel_failed = "木桶检查取消失败，请稍后重试。",
+    barrel_commit_failed = "木桶检查结果未能保存，请稍后重试。",
+    barrel_rollback_pending = "木桶检查正在恢复物品，请稍后重试。",
+    barrel_action_not_completed = "木桶检查尚未完成。",
+    paper_day_required = "这张纸条要到第 7 天才能查看。",
+    day_required = "这张纸条要到第 7 天才能查看。",
+    paper_already_shown = "这张纸条已经看过了。",
+    stale_story_dialog = "纸条状态已更新，请重新打开。",
+    drop_receiver_unavailable = "附近没有接收地点，物品仍保留在背包里",
+    drop_rejected = "没有接收地点接收物品，物品仍保留在背包里",
+    invalid_drop_position = "请在海面选择有效投放点。",
+    throw_out_of_range = "投掷距离太远，请点击 12 米内的海面。",
+    throw_selection_required = "请先选择要投掷的物品。",
+    throw_item_changed = "所选物品已变化，请重新选择。",
+    elder_rejected = "老人没有收下这件物品",
+    not_sellable = "这件物品不能出售",
+    action_blocked = "当前不能进行该动作",
+    elapsed_exceeds_phase = "跳转时间超过了该昼夜阶段长度",
+    invalid_elapsed = "请输入有效的跳转秒数",
+    development_only = "仅开发模式允许此操作",
+    time_scale_not_configured = "时间倍率不在配置列表中",
+    invalid_time_scale = "请输入有效的时间倍率",
+    unknown_debug_command = "未知调试命令",
+}
+
+local function userMessage(value)
+    if value == nil then return "" end
+    local text = tostring(value)
+    if ERROR_MESSAGES[text] then return ERROR_MESSAGES[text] end
+    if text:find("[A-Za-z_]") and not text:find("[\128-\255]") then
+        return "操作暂未完成，当前进度保留，请稍后重试。"
+    end
+    return text
+end
+
+local function saveText(loop)
+    if loop.loading then return "读取存档中…" end
+    local status = loop.saveStatus
+    if status == "idle" or status == nil then return "尚未保存" end
+    if status == "saving" then return "正在自动保存…" end
+    if status == "saved" then return "已自动保存" end
+    if status == "error" then return "自动保存失败，可重试" end
+    if status == "skipped" then return "本次结算未保存" end
+    return "存档状态：" .. tostring(status)
+end
+
+---@return string[]
+local function copyItems(loop)
+    local inventory = loop.player and loop.player.inventory
+    if not inventory then return {} end
+    local source = inventory:GetItems()
+    local result = {}
+    for index, itemId in ipairs(source or {}) do result[index] = itemId end
+    return result
+end
+
+local ITEM_NAME_FALLBACK = {
+    apple = "苹果", bait = "鱼饵", sardine = "沙丁鱼", tuna = "金枪鱼",
+    wood = "木材", mineral = "矿产", scopeLens = "望远镜",
+}
+
+-- 开场教学（事物设定集：被救老人以陪伴者身份开场，赠旧背包——内含开局苹果与鱼饵）。
+-- HUD 演出层实现：不进 Loop 状态机、不阻塞出航/存档；每个周目(generation)在港演出一次。
+local OPENING_ELDER_TEXT = "被救起的老人把一只旧背包递给你：“孩子，这海上讨生活，"
+    .. "先学会看海——海鸟盘旋、水面翻花的地方才有鱼。"
+    .. "背包里有些苹果和鱼饵，出海去试试吧。出港往右看，那只木桶是我的旧物，靠近了敲一敲。”"
+
+local function itemName(itemId)
+    local definition = Items.GetDefinition(itemId)
+    if definition and definition.name then return definition.name end
+    return ITEM_NAME_FALLBACK[itemId] or tostring(itemId)
+end
+
+-- 玩家界面设计方案 v1.0（2026-10-04）：所有取色来自 config.ui.palette；
+-- 未配置时回退到本表，保证旧存档/测试桩环境可运行。
+local FALLBACK_PALETTE = {
+    seaDeep = { 12, 68, 124, 242 },
+    seaNight = { 4, 32, 62, 248 },
+    seaMid = { 24, 95, 165, 235 },
+    actionPrimary = { 15, 110, 86, 255 },
+    actionPressed = { 8, 80, 65, 255 },
+    coinBright = { 250, 199, 117, 255 },
+    coinDeep = { 133, 79, 11, 255 },
+    warnCoral = { 216, 90, 48, 255 },
+    textOnDark = { 230, 241, 251, 255 },
+    textMuted = { 159, 225, 203, 255 },
+    textGold = { 250, 213, 130, 255 },
+    cardDay = { 20, 52, 92, 240 },
+    cardNight = { 6, 26, 50, 246 },
+    border = { 55, 138, 221, 150 },
+    backdrop = { 4, 20, 40, 150 },
+    disabledBg = { 96, 116, 138, 210 },
+    disabledText = { 190, 204, 216, 220 },
+    infoStroke = { 10, 28, 46, 225 },
+    infoShadow = { 6, 16, 28, 150 },
+}
+local UI_PALETTE = {}
+local UI_SIZE = { touchMajor = 88, touchMinor = 64, touchGap = 12, buttonMinHeight = 44, radiusCard = 10 }
+do
+    local cfg = Config.ui or {}
+    for key, value in pairs(FALLBACK_PALETTE) do
+        UI_PALETTE[key] = (cfg.palette and cfg.palette[key]) or value
+    end
+    for key, value in pairs(cfg.size or {}) do UI_SIZE[key] = value end
+end
+
+-- 安全应用背景色：真机 Widget 支持 SetBackgroundColor；测试桩缺失时静默跳过。
+local function applyBackground(widget, color)
+    if type(widget) == "table" and type(widget.SetBackgroundColor) == "function" then
+        widget:SetBackgroundColor(color)
+    end
+end
+
+-- 昼夜主题应用器：只在 phase 变化时写样式，避免每帧 SetBackgroundColor。
+local function makeThemer()
+    local lastPhase = nil
+    return function(phase, panels)
+        if lastPhase == phase then return end
+        lastPhase = phase
+        local night = phase == "night"
+        for _, entry in ipairs(panels) do
+            applyBackground(entry.widget, night and entry.night or entry.day)
+        end
+    end
+end
+
+local function makeLabel(text, size, color, weight, extraProps)
+    local props = {
+        text = text,
+        fontSize = size or 14,
+        fontColor = color or UI_PALETTE.textOnDark,
+        fontWeight = weight or "normal",
+        whiteSpace = "normal",
+    }
+    if extraProps then
+        for key, value in pairs(extraProps) do props[key] = value end
+    end
+    return UI.Label(props)
+end
+
+-- 设计方案 v2.0（零遮挡）：信息层无底板纯文字，靠描边+阴影保证海面上
+-- 白天/夜晚均可读。urhox Label 原生支持 textStroke/textShadow（测试桩
+-- 环境未知字段会被忽略，不影响断言）。
+-- extraProps：允许调用方补充布局属性（如 flexGrow/flexBasis 防压缩）。
+local function makeInfoLabel(text, size, color, weight, extraProps)
+    local props = {
+        text = text,
+        fontSize = size or 14,
+        fontColor = color or UI_PALETTE.textOnDark,
+        fontWeight = weight or "normal",
+        whiteSpace = "normal",
+        textStroke = { width = 3, color = UI_PALETTE.infoStroke },
+        textShadow = { offsetX = 1, offsetY = 1, blur = 2, color = UI_PALETTE.infoShadow },
+    }
+    if extraProps then
+        for key, value in pairs(extraProps) do props[key] = value end
+    end
+    return UI.Label(props)
+end
+
+-- 真机踩坑（Codex 定位确认）：row 布局下无宽度约束的 label 会被 flex
+-- 压缩为不可见——真机"两层纯色栏没有字"即此原因。信息层每行用
+-- 「行容器 + 单个 flexGrow/flexBasis=0 的 label」保证文字占满行宽。
+local INFO_FLEX = { flexGrow = 1, flexBasis = 0 }
+local function infoLine(label)
+    local line = UI.Panel {
+        width = "100%",
+        flexDirection = "row",
+        gap = 6,
+    }
+    line:AddChild(label)
+    return line
+end
+
+local function makeButton(text, onClick, variant, width)
+    return UI.Button {
+        text = text,
+        variant = variant or "secondary",
+        width = width or "auto",
+        -- 触控目标 ≥44px（设计方案 v1.0 尺寸 token）；主操作按钮的 88px 热区
+        -- 由 Scene 层的抛竿交互承担，此处为通用面板按钮。
+        minHeight = UI_SIZE.buttonMinHeight or 44,
+        fontSize = 13,
+        onClick = function() onClick() end,
+    }
+end
+
+-- 淡入辅助：真机 urhox Widget 支持 SetOpacity（transition 驱动），
+-- 测试桩未实现该方法时静默跳过，不影响功能断言。
+local function fadeOpacity(widget, value)
+    if type(widget) == "table" and type(widget.SetOpacity) == "function" then
+        widget:SetOpacity(value)
+    end
+end
+
+function HUD.Create(loop, parent, debugTools)
+    if not loop then error("HUD.Create requires a gameplay loop", 2) end
+
+    ---@class HUDLocalState
+    ---@field destroyed boolean
+    ---@field localMessage string
+    ---@field inventorySignature string
+    ---@field lastTexts table<string, string>
+    ---@field seekText string
+    ---@field addItemText string
+    ---@field selectedItemIndex number|nil
+    ---@field storyShownToken table|nil
+    ---@type HUDLocalState
+    local state = {
+        destroyed = false,
+        localMessage = "",
+        inventorySignature = "",
+        lastTexts = {},
+        seekText = "",
+        addItemText = "",
+        selectedItemIndex = nil,
+        storyShownToken = nil,
+        openingDismissedGeneration = nil,
+        openingActive = false,
+        openingGeneration = nil,
+    }
+    ---@type table<string, any>
+    local refs = {}
+    local refresh = function() end
+    ---@type fun(methodName: string, ...: any)
+    local invokeLoop = function(methodName, ...) end
+    ---@type fun(command: string, argument?: number|string)
+    local invokeDebug = function(command, argument) end
+
+    local function setText(widget, key, value)
+        local text = tostring(value or "")
+        if state.lastTexts[key] == text then return end
+        state.lastTexts[key] = text
+        widget:SetText(text)
+    end
+
+    local themedPanels = {} -- 昼夜主题注册表：{widget=, day=, night=}
+    local applyTheme = makeThemer()
+
+    local function card(title)
+        local panel = UI.Panel {
+            width = "100%",
+            padding = 10,
+            gap = 7,
+            flexDirection = "column",
+            backgroundColor = UI_PALETTE.cardDay,
+            borderColor = UI_PALETTE.border,
+            borderWidth = 1,
+            borderRadius = UI_SIZE.radiusCard or 10,
+        }
+        themedPanels[#themedPanels + 1] = { widget = panel, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight }
+        panel:AddChild(makeLabel(title, 16, UI_PALETTE.textGold, "bold"))
+        return panel
+    end
+
+    local root = UI.SafeAreaView {
+        width = "100%",
+        height = "100%",
+        padding = 12,
+        gap = 8,
+        flexDirection = "column",
+        pointerEvents = "box-none",
+    }
+
+    -- v2.0 零遮挡：header 保持 root 首子节点（测试契约 + Scene 左侧注入依赖），
+    -- 去掉纯色底板——每行一个 flexGrow label，固定在画面左上角。
+    local header = UI.Panel {
+        width = "100%",
+        minHeight = 40,
+        flexDirection = "column",
+        alignItems = "flex-start",
+        gap = 2,
+    }
+    -- UI 精简（2026-10-04）：顶部只保留"看"的信息（天/昼夜/金币），去掉常驻标题；
+    -- 详细提示按需显隐（见 refresh 内各 SetVisible），常态下海面占比最大化。
+    refs.day = makeInfoLabel("第 1 天", 14, nil, nil, INFO_FLEX)
+    refs.phase = makeInfoLabel("白天 · 剩余 -- 秒", 13, UI_PALETTE.textMuted, nil, INFO_FLEX)
+    refs.money = makeInfoLabel("钱：0", 14, UI_PALETTE.coinBright, "bold", INFO_FLEX)
+    header:AddChild(infoLine(refs.day))
+    header:AddChild(infoLine(refs.phase))
+    header:AddChild(infoLine(refs.money))
+    refs.debugToggle = makeButton("开发调试", function()
+        if refs.debugPanel then refs.debugPanel:SetVisible(not refs.debugPanel:IsVisible()) end
+    end, "secondary", 92)
+    if debugTools and debugTools.enabled == true then header:AddChild(refs.debugToggle) end
+    root:AddChild(header)
+
+    -- v2.0 零遮挡：第二行信息同样去底板，纯描边文字（root 次子节点保留给
+    -- Scene 的 flexWrap 注入契约）。
+    -- v2.0 零遮挡：第二段信息同样去底板，逐行 flexGrow 防压缩
+    -- （root 次子节点保留给 Scene 的 flexWrap 注入契约）。
+    local stats = UI.Panel {
+        width = "100%",
+        minHeight = 36,
+        flexDirection = "column",
+        alignItems = "flex-start",
+        gap = 2,
+    }
+    refs.stamina = makeInfoLabel("体力：0/0", 14, nil, nil, INFO_FLEX)
+    refs.pauseReasons = makeInfoLabel("暂停：无", 12, UI_PALETTE.textMuted, nil, INFO_FLEX)
+    refs.save = makeInfoLabel("尚未保存", 12, UI_PALETTE.textMuted, nil, INFO_FLEX)
+    refs.save:SetVisible(false) -- 常态隐藏，仅读取中/保存中/失败时显示（见 refresh）
+    refs.inventorySummary = makeInfoLabel("背包 0 / 0 格", 12, nil, nil, INFO_FLEX)
+    stats:AddChild(infoLine(refs.stamina))
+    stats:AddChild(infoLine(refs.inventorySummary))
+    stats:AddChild(infoLine(refs.pauseReasons))
+    stats:AddChild(infoLine(refs.save))
+    root:AddChild(stats)
+
+    -- v2.0 零遮挡：消息条改为透明 toast 文字（描边），仅真实反馈出现时显示。
+    refs.message = makeInfoLabel("", 13, UI_PALETTE.textGold)
+    refs.messagePanel = UI.Panel {
+        width = "100%",
+        minHeight = 24,
+        justifyContent = "center",
+        children = { refs.message },
+    }
+    root:AddChild(refs.messagePanel)
+
+    refs.portAccessReason = makeInfoLabel("锚形标记=港口（交易中心）· 返港/交易需距港≤10米。", 12, UI_PALETTE.textMuted)
+    root:AddChild(refs.portAccessReason)
+
+    -- v2.0 零遮挡：捕鱼面板只在选择/收网/结算过程中出现（点击"捕鱼"入口后）；
+    -- 常驻入口按钮移至右下按钮坞（actionBar 段）。
+    refs.fishingPanel = card("捕鱼")
+    refs.fishingStatus = makeLabel("选择海面网心开始捕鱼。", 13)
+    refs.fishingProgress = makeLabel("动作进度：0%", 12, { 180, 203, 191, 255 })
+    refs.fishingResult = makeLabel("", 13, { 249, 211, 118, 255 }, "bold")
+    refs.fishingPanel:AddChild(refs.fishingStatus)
+    refs.fishingPanel:AddChild(refs.fishingProgress)
+    refs.fishingPanel:AddChild(refs.fishingResult)
+    -- v1.1：捕鱼入口收敛为按钮坞的单个"捕鱼"按钮；引导文字走消息条（对话形式），
+    -- 本面板只在选点/抛网/收网/结算过程中出现，承载取消和清理重试。
+    refs.beginFishing = makeButton("捕鱼", function()
+        invokeLoop("BeginFishingSelection")
+    end, "primary", 72)
+    local fishingButtons = UI.Panel {
+        width = "100%",
+        flexDirection = "row",
+        flexWrap = "wrap",
+        alignItems = "center",
+        gap = 7,
+    }
+    refs.cancelFishing = makeButton("取消捕鱼", function()
+        invokeLoop("CancelFishingAction")
+    end, "danger", 88)
+    fishingButtons:AddChild(refs.cancelFishing)
+    refs.fishingPanel:AddChild(fishingButtons)
+    root:AddChild(refs.fishingPanel)
+
+    -- v2.0 零遮挡按钮坞：右下角拇指区常驻的"明确按钮"集合。容器透明 +
+    -- box-none——空白区域点击穿透海面，只有按钮本身接收点击。
+    -- zIndex 低于抽屉(90/91)与模态(100)：抽屉/弹窗打开时自然盖住按钮坞。
+    local actionBar = UI.Panel {
+        position = "absolute",
+        right = 0,
+        bottom = 0,
+        zIndex = 60,
+        padding = 10,
+        gap = 7,
+        flexDirection = "column",
+        alignItems = "flex-end",
+        pointerEvents = "box-none",
+    }
+    local function dockRow()
+        return UI.Panel {
+            flexDirection = "row",
+            gap = 7,
+            pointerEvents = "box-none",
+        }
+    end
+    refs.depart = makeButton("出航", function() invokeLoop("Depart") end, "primary", 80)
+    refs.returnToPort = makeButton("返港", function() invokeLoop("ReturnToPort") end, "secondary", 80)
+    refs.endToday = makeButton("结束今日", function() invokeLoop("EndToday") end, "primary", 98)
+    refs.loadSaved = makeButton("读取云存档", function() invokeLoop("LoadSaved") end, "secondary", 110)
+    refs.newRun = makeButton("开始新周目", function() invokeLoop("NewRun") end, "secondary", 110)
+    refs.inventoryToggle = makeButton("背包", function()
+        invokeLoop("SetInventoryOpen", not (loop.inventoryOpen == true))
+    end, "secondary", 80)
+    refs.elderToggle = makeButton("拜访老人", function()
+        invokeLoop("SetElderOpen", not (loop.elderOpen == true))
+    end, "secondary", 98)
+    -- 与捕鱼同级的上下文按钮：靠近出港点右侧木桶（新手教程点位）后出现；
+    -- 望远镜（窥视镜）在获得后常驻、未获得时靠近木桶作为线索入口。
+    refs.barrelToggle = makeButton("检查木桶", function()
+        invokeLoop("BeginBarrelInspection")
+    end, "secondary", 96)
+    refs.barrelToggle:SetVisible(false)
+    refs.scopeToggleBar = makeButton("望远镜", function()
+        invokeLoop(loop.scopeSyncError and "DisableScope" or "ToggleScope")
+    end, "secondary", 80)
+    refs.scopeToggleBar:SetVisible(false)
+    local dockUtility = dockRow()
+    dockUtility:AddChild(refs.loadSaved)
+    dockUtility:AddChild(refs.newRun)
+    local dockContext = dockRow()
+    dockContext:AddChild(refs.barrelToggle)
+    dockContext:AddChild(refs.scopeToggleBar)
+    dockContext:AddChild(refs.inventoryToggle)
+    dockContext:AddChild(refs.elderToggle)
+    local dockMain = dockRow()
+    dockMain:AddChild(refs.depart)
+    dockMain:AddChild(refs.returnToPort)
+    dockMain:AddChild(refs.endToday)
+    dockMain:AddChild(refs.beginFishing)
+    actionBar:AddChild(dockUtility)
+    actionBar:AddChild(dockContext)
+    actionBar:AddChild(dockMain)
+    root:AddChild(actionBar)
+
+    local contentScroll = UI.ScrollView {
+        id = "gameplayContentScroll",
+        width = "100%",
+        flexGrow = 1,
+        flexBasis = 0,
+        scrollY = true,
+        showScrollbar = true,
+    }
+    local content = UI.Panel {
+        width = "100%",
+        gap = 8,
+        flexDirection = "column",
+    }
+    contentScroll:AddChild(content)
+
+    -- 背包底部抽屉（设计方案 v1.0）：从底部滑入占屏 65%，背后场景压暗；
+    -- 港口商店留在滚动区——抽屉若同时容纳商店会遮挡出航/结算等核心按钮。
+    refs.drawerBackdrop = UI.Panel {
+        position = "absolute",
+        top = 0,
+        left = 0,
+        width = "100%",
+        height = "100%",
+        zIndex = 90,
+        backgroundColor = UI_PALETTE.backdrop,
+        pointerEvents = "auto",
+    }
+    refs.drawerBackdrop:Hide()
+    refs.drawer = UI.Panel {
+        position = "absolute",
+        left = 0,
+        bottom = 0,
+        width = "100%",
+        height = UI_SIZE.drawerHeightPct or "65%",
+        zIndex = 91,
+        padding = 12,
+        gap = 8,
+        flexDirection = "column",
+        backgroundColor = UI_PALETTE.seaDeep,
+        borderColor = UI_PALETTE.border,
+        borderWidth = 1,
+        borderRadius = 16,
+        pointerEvents = "auto",
+        transition = "opacity 0.25s easeOut",
+    }
+    themedPanels[#themedPanels + 1] = { widget = refs.drawer, day = UI_PALETTE.seaDeep, night = UI_PALETTE.seaNight }
+    refs.drawer:Hide()
+    local drawerGrabber = UI.Panel {
+        width = "100%",
+        minHeight = 10,
+        justifyContent = "center",
+        alignItems = "center",
+    }
+    drawerGrabber:AddChild(UI.Panel {
+        width = 44,
+        height = 4,
+        backgroundColor = UI_PALETTE.border,
+        borderRadius = 2,
+    })
+    refs.drawer:AddChild(drawerGrabber)
+    refs.drawerScroll = UI.ScrollView {
+        width = "100%",
+        flexGrow = 1,
+        flexBasis = 0,
+        scrollY = true,
+        showScrollbar = true,
+    }
+    local drawerContent = UI.Panel {
+        width = "100%",
+        gap = 8,
+        flexDirection = "column",
+    }
+    refs.drawerScroll:AddChild(drawerContent)
+    refs.drawer:AddChild(refs.drawerScroll)
+
+    refs.throwSelectionPanel = card("投掷物品")
+    refs.throwSelectionText = makeLabel("", 13, { 255, 236, 207, 255 }, "bold")
+    refs.throwSelectionPanel:AddChild(refs.throwSelectionText)
+    refs.throwSelectionCancel = makeButton("取消投掷", function()
+        invokeLoop("CancelThrowSelection")
+    end, "secondary", 94)
+    refs.throwSelectionPanel:AddChild(refs.throwSelectionCancel)
+    refs.throwSelectionPanel:SetVisible(false)
+    content:AddChild(refs.throwSelectionPanel)
+
+    refs.barrelPanel = card("海岸木桶")
+    refs.barrelStatus = makeLabel("木桶检查暂未开放。", 13)
+    refs.barrelPanel:AddChild(refs.barrelStatus)
+    refs.barrelBegin = makeButton("检查木桶", function()
+        invokeLoop("BeginBarrelInspection")
+    end, "primary", 92)
+    refs.barrelCancel = makeButton("取消检查", function()
+        invokeLoop("CancelBarrelInspection")
+    end, "secondary", 92)
+    refs.barrelPanel:AddChild(refs.barrelBegin)
+    refs.barrelPanel:AddChild(refs.barrelCancel)
+    refs.barrelPanel:SetVisible(false)
+    content:AddChild(refs.barrelPanel)
+
+    -- v2.0 零遮挡：望远镜条目去卡片底板，收为一行紧凑文字+按钮；
+    -- 测试契约要求"透镜未获得"按钮无透镜时可见且禁用，故保留常驻。
+    refs.scopePanel = UI.Panel {
+        width = "100%",
+        flexDirection = "row",
+        flexWrap = "wrap",
+        alignItems = "center",
+        gap = 7,
+    }
+    refs.scopeStatus = makeInfoLabel("尚未获得透镜；无法查看或切换望远镜功能。", 12, UI_PALETTE.textMuted)
+    refs.scopePanel:AddChild(refs.scopeStatus)
+    refs.scopeToggle = makeButton("切换望远镜", function()
+        invokeLoop(loop.scopeSyncError and "DisableScope" or "ToggleScope")
+    end, "secondary", 112)
+    refs.scopePanel:AddChild(refs.scopeToggle)
+    content:AddChild(refs.scopePanel)
+
+    refs.inventoryPanel = card("背包")
+    refs.inventoryCount = makeLabel("0 / 0 格", 12, UI_PALETTE.textMuted)
+    refs.upgrade = makeButton("扩容", function() invokeLoop("UpgradeInventory") end, "secondary", 148)
+    refs.sellAll = makeButton("全部卖出", function() invokeLoop("SellAll") end, "primary", 108)
+    refs.inventoryClose = makeButton("收起", function()
+        invokeLoop("SetInventoryOpen", false)
+    end, "secondary", 72)
+    local inventoryHeader = UI.Panel {
+        width = "100%",
+        flexDirection = "row",
+        alignItems = "center",
+        gap = 6,
+        children = {
+            refs.inventoryCount,
+            UI.Spacer(),
+            refs.sellAll,
+            refs.upgrade,
+            refs.inventoryClose,
+        },
+    }
+    refs.inventoryPanel:AddChild(inventoryHeader)
+    refs.itemMenu = UI.Panel {
+        width = "100%",
+        padding = 8,
+        gap = 6,
+        flexDirection = "column",
+        backgroundColor = { 45, 64, 61, 220 },
+        borderRadius = 5,
+    }
+    refs.itemMenuTitle = makeLabel("物品操作", 12, { 237, 213, 159, 255 }, "bold")
+    refs.itemMenu:AddChild(refs.itemMenuTitle)
+    refs.itemUseReason = makeLabel("", 12, { 213, 193, 161, 255 })
+    refs.itemMenu:AddChild(refs.itemUseReason)
+    local itemMenuActions = UI.Panel {
+        width = "100%",
+        flexDirection = "row",
+        flexWrap = "wrap",
+        alignItems = "center",
+        gap = 5,
+    }
+    refs.itemUse = makeButton("使用", function()
+        if state.selectedItemIndex then invokeLoop("UseItem", state.selectedItemIndex) end
+    end, "success", 56)
+    refs.itemGive = makeButton("给老人", function()
+        if state.selectedItemIndex then invokeLoop("GiveToElder", state.selectedItemIndex) end
+    end, "primary", 72)
+    refs.itemDrop = makeButton("丢弃", function()
+        if state.selectedItemIndex then invokeLoop("DropItem", state.selectedItemIndex) end
+    end, "danger", 56)
+    refs.itemThrow = makeButton("投掷", function()
+        if state.selectedItemIndex then invokeLoop("BeginThrowItem", state.selectedItemIndex) end
+    end, "secondary", 56)
+    refs.itemMenuBack = makeButton("返回", function()
+        state.selectedItemIndex = nil
+        refresh()
+    end, "secondary", 56)
+    itemMenuActions:AddChild(refs.itemUse)
+    itemMenuActions:AddChild(refs.itemGive)
+    itemMenuActions:AddChild(refs.itemDrop)
+    itemMenuActions:AddChild(refs.itemThrow)
+    itemMenuActions:AddChild(refs.itemMenuBack)
+    refs.itemMenu:AddChild(itemMenuActions)
+    refs.itemMenu:SetVisible(false)
+    refs.inventoryPanel:AddChild(refs.itemMenu)
+    refs.pendingCatchPanel = UI.Panel {
+        width = "100%",
+        padding = 8,
+        gap = 6,
+        flexDirection = "column",
+        backgroundColor = { 72, 61, 42, 235 },
+        borderColor = { 159, 133, 88, 230 },
+        borderWidth = 1,
+        borderRadius = 6,
+    }
+    refs.pendingCatchText = makeLabel("有渔获等待接收。", 13, { 255, 236, 207, 255 }, "bold")
+    refs.pendingCatchPanel:AddChild(makeLabel("需要丢弃时，先点击海面选择投放点；船舱保持打开，世界仍暂停。", 12))
+    refs.pendingCatchClaim = makeButton("领取渔获", function()
+        invokeLoop("ClaimPendingCatch")
+    end, "primary", 108)
+    refs.pendingCatchPanel:AddChild(refs.pendingCatchText)
+    refs.pendingCatchPanel:AddChild(refs.pendingCatchClaim)
+    refs.pendingCatchPanel:SetVisible(false)
+    refs.inventoryPanel:AddChild(refs.pendingCatchPanel)
+    refs.inventoryRows = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
+    refs.inventoryScroll = UI.ScrollView {
+        width = "100%",
+        height = 210,
+        scrollY = true,
+        showScrollbar = true,
+        children = { refs.inventoryRows },
+    }
+    refs.inventoryPanel:AddChild(refs.inventoryScroll)
+    refs.inventoryPanel:SetVisible(false)
+    drawerContent:AddChild(refs.inventoryPanel)
+
+    refs.portPanel = card("港口商店")
+    refs.loadStatus = makeLabel("", 12)
+    refs.portPanel:AddChild(refs.loadStatus)
+    refs.portPanel:AddChild(makeLabel("新周目起始状态会在开始时保存；入口处可读取已有云存档。", 12))
+    refs.staminaUpgrade = makeButton("升级体力", function() invokeLoop("UpgradeStamina") end, "secondary", 180)
+    refs.speedUpgrade = makeButton("升级航速", function() invokeLoop("UpgradeBoatSpeed") end, "secondary", 180)
+    refs.portPanel:AddChild(refs.staminaUpgrade)
+    refs.portPanel:AddChild(refs.speedUpgrade)
+    refs.portPanel:AddChild(makeLabel("购买补给", 13, { 203, 218, 202, 255 }))
+    local buyRow = UI.Panel {
+        width = "100%",
+        flexDirection = "row",
+        flexWrap = "wrap",
+        gap = 7,
+    }
+    refs.shopButtons = {}
+    refs.shopStockLabels = {}
+    for _, itemId in ipairs({ "apple", "bait" }) do
+        local buyId = itemId
+        local definition = Items.GetDefinition(buyId)
+        local itemLabel = definition and definition.name or buyId
+        local price = definition and definition.buyPrice
+        local label = price and (itemLabel .. " · ¥" .. tostring(price)) or (itemLabel .. " · 价格未定")
+        local shopButton = makeButton(label, function() invokeLoop("Buy", buyId) end, "primary", 142)
+        if not price then shopButton:SetDisabled(true) end
+        refs.shopButtons[buyId] = shopButton
+        refs.shopStockLabels[buyId] = makeLabel("", 12)
+        buyRow:AddChild(refs.shopStockLabels[buyId])
+        buyRow:AddChild(shopButton)
+    end
+    refs.portPanel:AddChild(buyRow)
+    refs.portPanel:AddChild(makeLabel("出售渔获", 13, { 203, 218, 202, 255 }))
+    refs.portSales = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
+    refs.portSalesScroll = UI.ScrollView {
+        width = "100%",
+        height = 150,
+        scrollY = true,
+        showScrollbar = true,
+        children = { refs.portSales },
+    }
+    refs.portPanel:AddChild(refs.portSalesScroll)
+    refs.portPanel:SetVisible(false)
+    content:AddChild(refs.portPanel)
+
+    if debugTools and debugTools.enabled == true then
+        refs.debugPanel = card("开发调试")
+        refs.debugPanel:SetVisible(false)
+        refs.debugStatus = makeLabel("调试命令仅在开发模式启用", 12, { 189, 211, 190, 255 })
+        refs.debugPanel:AddChild(refs.debugStatus)
+
+        local scaleRow = UI.Panel { width = "100%", flexDirection = "row", flexWrap = "wrap", gap = 5 }
+        scaleRow:AddChild(makeLabel("时间倍率", 12))
+        for _, scale in ipairs(Config.debug.timeScales or {}) do
+            local configuredScale = scale
+            scaleRow:AddChild(makeButton(tostring(configuredScale) .. "×", function()
+                invokeDebug("timeScale", configuredScale)
+            end, "secondary", 54))
+        end
+        refs.debugPanel:AddChild(scaleRow)
+
+        local staminaRow = UI.Panel { width = "100%", flexDirection = "row", flexWrap = "wrap", gap = 5 }
+        staminaRow:AddChild(makeButton("体力 +", function() invokeDebug("staminaPlus") end, "secondary", 82))
+        staminaRow:AddChild(makeButton("体力 −", function() invokeDebug("staminaMinus") end, "secondary", 82))
+        staminaRow:AddChild(makeButton("金钱 +", function() invokeDebug("moneyPlus") end, "secondary", 82))
+        staminaRow:AddChild(makeButton("清空背包", function() invokeDebug("clearInventory") end, "danger", 92))
+        refs.debugFishing = makeButton("钓鱼（" .. tostring(Config.stamina.fishingCost) .. "体力）", function()
+            invokeDebug("fishing")
+        end, "primary", 112)
+        refs.debugSalvage = makeButton("打捞（" .. tostring(Config.stamina.salvageCost) .. "体力）", function()
+            invokeDebug("salvage")
+        end, "primary", 112)
+        staminaRow:AddChild(refs.debugFishing)
+        staminaRow:AddChild(refs.debugSalvage)
+        refs.debugPanel:AddChild(staminaRow)
+
+        local seekRow = UI.Panel { width = "100%", flexDirection = "row", flexWrap = "wrap", alignItems = "center", gap = 5 }
+        seekRow:AddChild(makeLabel("跳转秒数", 12))
+        refs.seekField = UI.TextField {
+            value = "",
+            placeholder = "输入 elapsed",
+            width = 118,
+            height = 36,
+            onChange = function(_, value) state.seekText = tostring(value or "") end,
+        }
+        seekRow:AddChild(refs.seekField)
+        seekRow:AddChild(makeButton("白天", function() invokeDebug("seekDay", state.seekText) end, "secondary", 58))
+        seekRow:AddChild(makeButton("夜晚", function() invokeDebug("seekNight", state.seekText) end, "secondary", 58))
+        refs.debugPanel:AddChild(seekRow)
+
+        local itemRow = UI.Panel { width = "100%", flexDirection = "row", flexWrap = "wrap", alignItems = "center", gap = 5 }
+        refs.addItemField = UI.TextField {
+            value = "",
+            placeholder = "apple / bait / sardine / tuna",
+            width = 190,
+            height = 36,
+            onChange = function(_, value) state.addItemText = tostring(value or "") end,
+        }
+        itemRow:AddChild(refs.addItemField)
+        itemRow:AddChild(makeButton("加入物品", function() invokeDebug("addItem", state.addItemText) end, "secondary", 86))
+        itemRow:AddChild(makeButton("结算今日", function() invokeDebug("settleDay") end, "primary", 86))
+        itemRow:AddChild(makeButton("暂停原因", function() invokeDebug("pauseReasons") end, "secondary", 86))
+        refs.debugPanel:AddChild(itemRow)
+
+        content:AddChild(refs.debugPanel)
+    end
+
+    root:AddChild(contentScroll)
+    root:AddChild(refs.drawerBackdrop)
+    root:AddChild(refs.drawer)
+
+    -- 统一遮罩承载强制返港、每日结算和拜访老人的反馈。
+    refs.overlay = UI.Panel {
+        position = "absolute",
+        top = 0,
+        left = 0,
+        width = "100%",
+        height = "100%",
+        zIndex = 100,
+        justifyContent = "center",
+        alignItems = "center",
+        padding = 12,
+        backgroundColor = { 8, 16, 18, 190 },
+        pointerEvents = "auto",
+    }
+    refs.modalCard = UI.Panel {
+        width = 380,
+        maxWidth = "94%",
+        height = "90%",
+        maxHeight = 430,
+        padding = 14,
+        gap = 9,
+        flexDirection = "column",
+        backgroundColor = { 33, 51, 52, 255 },
+        borderColor = { 159, 133, 88, 255 },
+        borderWidth = 2,
+        borderRadius = 10,
+        transition = "opacity 0.25s easeOut", -- 模态出现时淡入，替代硬切
+    }
+    refs.modalTitle = makeLabel("", 18, { 246, 223, 171, 255 }, "bold")
+    refs.modalCard:AddChild(refs.modalTitle)
+
+    refs.entryBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 12 }
+    refs.entryText = makeLabel("正在读取云存档…", 14)
+    refs.entryBody:AddChild(refs.entryText)
+    refs.entryLoad = makeButton("重试读取", function() invokeLoop("LoadSaved") end, "primary", 130)
+    refs.entryNew = makeButton("开始新周目", function() invokeLoop("NewRun") end, "secondary", 130)
+    refs.entryRetrySave = makeButton("重试初始保存", function() invokeLoop("RetryInitialSave") end, "primary", 150)
+    refs.entryContinue = makeButton("不保存继续", function() invokeLoop("ContinueWithoutSaving") end, "secondary", 150)
+    refs.entryRetrySave:Hide()
+    refs.entryContinue:Hide()
+    refs.entryBody:AddChild(refs.entryLoad)
+    refs.entryBody:AddChild(refs.entryNew)
+    refs.entryBody:AddChild(refs.entryRetrySave)
+    refs.entryBody:AddChild(refs.entryContinue)
+    refs.entryBody:AddChild(makeLabel("开始新周目会立即尝试覆盖旧云存档；若失败，可重试或明确不保存继续。", 12))
+    refs.modalCard:AddChild(refs.entryBody)
+
+    refs.forcedBody = UI.Panel { width = "100%", flexGrow = 1, justifyContent = "center", gap = 12 }
+    refs.forcedText = makeLabel("夜深了，你必须返港。", 16, { 255, 236, 207, 255 }, "bold")
+    refs.forcedBody:AddChild(refs.forcedText)
+    refs.forcedBody:AddChild(makeLabel("返港后会自动完成今日结算并保存。", 13))
+    refs.forcedConfirm = makeButton("确认返港", function() invokeLoop("ConfirmForcedReturn") end, "primary", 130)
+    refs.forcedBody:AddChild(refs.forcedConfirm)
+    refs.modalCard:AddChild(refs.forcedBody)
+
+    refs.settlementBody = UI.Panel { width = "100%", flexGrow = 1, gap = 12 }
+    refs.settlementText = makeLabel("结束今日并进入下一天？确认后会自动保存。", 14)
+    refs.settlementBody:AddChild(refs.settlementText)
+    refs.settlementConfirm = makeButton("确认结算", function() invokeLoop("ConfirmSettlement") end, "primary", 130)
+    refs.settlementBody:AddChild(refs.settlementConfirm)
+    refs.settlementSkip = makeButton("放弃本次保存，进入下一天", function() invokeLoop("ContinueWithoutSaving") end, "secondary", 270)
+    refs.settlementSkip:Hide()
+    refs.settlementBody:AddChild(refs.settlementSkip)
+    refs.modalCard:AddChild(refs.settlementBody)
+
+    refs.elderBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 8 }
+    refs.elderMessage = makeLabel("食物可给予老人；鱼和鱼饵可向老人展示。", 13)
+    refs.elderBody:AddChild(refs.elderMessage)
+    refs.elderStatus = makeLabel("", 12, { 237, 213, 159, 255 }, "bold")
+    refs.elderBody:AddChild(refs.elderStatus)
+    refs.elderTreasure = UI.Panel {
+        width = "100%", padding = 7, gap = 5, flexDirection = "column",
+        backgroundColor = { 45, 64, 61, 220 }, borderRadius = 5,
+    }
+    refs.elderTreasure:AddChild(makeLabel("宝物", 12, { 237, 213, 159, 255 }, "bold"))
+    refs.elderLensStatus = makeLabel("尚未获得透镜。", 12)
+    refs.elderTreasure:AddChild(refs.elderLensStatus)
+    refs.elderLensGive = makeButton("展示透镜", function()
+        invokeLoop("GiveTreasureToElder", "scopeLens")
+    end, "primary", 92)
+    refs.elderTreasure:AddChild(refs.elderLensGive)
+    refs.elderBody:AddChild(refs.elderTreasure)
+    refs.elderGiftRows = UI.Panel { width = "100%", flexDirection = "column", gap = 4 }
+    refs.elderGiftScroll = UI.ScrollView {
+        width = "100%",
+        flexGrow = 1,
+        flexBasis = 0,
+        scrollY = true,
+        showScrollbar = true,
+        children = { refs.elderGiftRows },
+    }
+    refs.elderBody:AddChild(refs.elderGiftScroll)
+    refs.elderBody:AddChild(makeButton("结束对话", function() invokeLoop("SetElderOpen", false) end, "secondary", 104))
+    refs.modalCard:AddChild(refs.elderBody)
+
+    refs.storyBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 12 }
+    refs.storyText = UI.Label {
+        id = "storyDialogText",
+        text = "",
+        fontSize = 15,
+        fontColor = { 255, 236, 207, 255 },
+        whiteSpace = "normal",
+    }
+    refs.storyBody:AddChild(refs.storyText)
+    refs.storyClose = makeButton("结束对话", function()
+        if state.openingActive then
+            state.openingDismissedGeneration = state.openingGeneration
+            state.openingActive = false
+            refresh()
+        else
+            invokeLoop("CloseStoryDialog")
+        end
+    end, "primary", 104)
+    refs.storyBody:AddChild(refs.storyClose)
+    refs.modalCard:AddChild(refs.storyBody)
+    refs.overlay:AddChild(refs.modalCard)
+    refs.overlay:Hide()
+    fadeOpacity(refs.modalCard, 0) -- 隐藏期间保持全透明；显示时由 transition 淡入
+    refs.forcedBody:Hide()
+    refs.settlementBody:Hide()
+    refs.elderBody:Hide()
+    refs.storyBody:Hide()
+    root:AddChild(refs.overlay)
+
+    invokeLoop = function(methodName, ...)
+        if state.destroyed then return end
+        local method = loop[methodName]
+        if type(method) ~= "function" then
+            state.localMessage = "当前玩法暂不支持：" .. methodName
+            refresh()
+            return
+        end
+        local ok, result, reason = Diagnostics.Call("HUD", "invoke_loop", method, loop, ...)
+        if not ok then
+            state.localMessage = "操作失败，当前进度保留，请稍后重试。"
+        elseif result == false then
+            state.localMessage = "操作未完成：" .. userMessage(reason)
+        else
+            state.localMessage = ""
+        end
+        refresh()
+    end
+
+    invokeDebug = function(command, argument)
+        if state.destroyed or not debugTools then return end
+        local ok, result, reason = Diagnostics.Call(
+            "HUD", "invoke_debug", debugTools.Execute, debugTools, command, argument)
+        if not ok then
+            local errorText = (type(result) == "string" or type(result) == "number") and tostring(result) or "未知异常"
+            state.localMessage = "调试命令失败：" .. errorText
+        elseif result == false then
+            state.localMessage = "调试命令失败：" .. userMessage(reason)
+        else
+            state.localMessage = tostring(reason or "")
+        end
+        if refs.debugStatus then setText(refs.debugStatus, "debugStatus", state.localMessage) end
+        refresh()
+    end
+
+    local function addEmptyMessage(rows, text)
+        rows:AddChild(makeLabel(text, 12, { 169, 191, 181, 255 }))
+    end
+
+    local function destroyChildren(container)
+        local source = container:GetChildren()
+        local snapshot = {}
+        for index, child in ipairs(source) do snapshot[index] = child end
+        for _, child in ipairs(snapshot) do child:Destroy() end
+        container:ClearChildren()
+    end
+
+    local function rebuildItemRows(items, inPort, elderOpen, actionsBlocked)
+        local cargoRevision = loop:GetCargoRevision()
+        destroyChildren(refs.inventoryRows)
+        destroyChildren(refs.portSales)
+        destroyChildren(refs.elderGiftRows)
+
+        if #items == 0 then addEmptyMessage(refs.inventoryRows, "背包是空的。") end
+        local saleCount, giftCount = 0, 0
+        for index, itemId in ipairs(items) do
+            local itemIndex = index
+            local definition = Items.GetDefinition(itemId)
+            local name = definition and definition.name or tostring(itemId)
+            local inventoryRow = UI.Panel {
+                width = "100%",
+                minHeight = 38,
+                flexDirection = "row",
+                alignItems = "center",
+                gap = 4,
+                paddingHorizontal = 4,
+                backgroundColor = { 45, 64, 61, 220 },
+                borderRadius = 5,
+            }
+            -- 名称标签必须占满剩余宽度：row 布局下无宽度约束的 label 会被压缩为不可见。
+            inventoryRow:AddChild(makeLabel(string.format("%02d · %s", itemIndex, name), 12,
+                nil, nil, { flexGrow = 1, flexBasis = 0 }))
+            local itemActions = makeButton("操作", function()
+                state.selectedItemIndex = itemIndex
+                refresh()
+            end, "secondary", 56)
+            itemActions:SetDisabled(actionsBlocked)
+            inventoryRow:AddChild(itemActions)
+            if inPort and (itemId == "sardine" or itemId == "tuna") and definition then
+                local price = definition.sellPrice
+                local label = price and ("出售 ¥" .. tostring(price)) or "售价未定"
+                local sellButton = makeButton(label, function() invokeLoop("Sell", itemIndex, itemId, cargoRevision) end, "primary", 82)
+                if not price or actionsBlocked then sellButton:SetDisabled(true) end
+                inventoryRow:AddChild(sellButton)
+            end
+            refs.inventoryRows:AddChild(inventoryRow)
+
+            if inPort and (itemId == "sardine" or itemId == "tuna") and definition then
+                saleCount = saleCount + 1
+                local saleRow = UI.Panel {
+                    width = "100%",
+                    minHeight = 36,
+                    flexDirection = "row",
+                    alignItems = "center",
+                    gap = 5,
+                }
+                saleRow:AddChild(makeLabel(string.format("%s · 槽位 %d", name, itemIndex), 12,
+                    nil, nil, { flexGrow = 1, flexBasis = 0 }))
+                local price = definition.sellPrice
+                local saleButton = makeButton(price and ("出售 ¥" .. tostring(price)) or "售价未定", function()
+                    invokeLoop("Sell", itemIndex, itemId, cargoRevision)
+                end, "primary", 92)
+                if not price or actionsBlocked then saleButton:SetDisabled(true) end
+                saleRow:AddChild(saleButton)
+                refs.portSales:AddChild(saleRow)
+            end
+
+            if elderOpen and definition and definition.canGive then
+                giftCount = giftCount + 1
+                local giftRow = UI.Panel {
+                    width = "100%",
+                    minHeight = 38,
+                    flexDirection = "row",
+                    alignItems = "center",
+                    gap = 5,
+                }
+                giftRow:AddChild(makeLabel(string.format("%02d · %s", itemIndex, name), 12))
+                local giftAction = definition.category == "food" and "给予" or "展示"
+                local giftButton = makeButton(giftAction, function() invokeLoop("GiveToElder", itemIndex) end, "primary", 64)
+                giftButton:SetDisabled(actionsBlocked)
+                giftRow:AddChild(giftButton)
+                refs.elderGiftRows:AddChild(giftRow)
+            end
+        end
+        if saleCount == 0 then addEmptyMessage(refs.portSales, "没有可出售的鱼。") end
+        if giftCount == 0 then addEmptyMessage(refs.elderGiftRows, "没有可给予或展示的物品。") end
+    end
+
+    refresh = function()
+        if state.destroyed then return end
+        local player = loop.player or {}
+        local clockState = loop.clock and loop.clock:GetState() or {}
+        local phase = clockState.phase == "night" and "夜晚" or "白天"
+        -- 昼夜主题（设计方案 v1.0）：面板明度与海面反向，夜晚更深；仅 phase 变化时写样式。
+        applyTheme(clockState.phase == "night" and "night" or "day", themedPanels)
+        local remaining = tonumber(clockState.remaining) or 0
+        setText(refs.day, "day", "第 " .. tostring(player.day or 1) .. " 天")
+        setText(refs.phase, "phase", string.format("%s · 剩余 %.0f 秒", phase, math.max(0, remaining)))
+        setText(refs.stamina, "stamina", string.format("体力：%s/%s", tostring(player.stamina or 0), tostring(player.maxStamina or 0)))
+        setText(refs.money, "money", "钱：" .. tostring(player.money or 0))
+
+        local reasons = clockState.pauseReasons or {}
+        local pauseText = #reasons > 0 and table.concat(reasons, "、") or "无"
+        if clockState.paused and #reasons == 0 then pauseText = "暂停中" end
+        setText(refs.pauseReasons, "pauseReasons", "暂停：" .. pauseText)
+        -- UI 精简：暂停原因/存档状态仅异常或有事发生时占位，常态让位给海面
+        refs.pauseReasons:SetVisible(clockState.paused == true or #reasons > 0)
+        setText(refs.save, "save", saveText(loop))
+        -- 仅"尚未保存/未保存"两个无信息量状态隐藏；读取/保存/已保存/失败均可见
+        local saveStatus = loop.saveStatus
+        refs.save:SetVisible(loop.loading == true or saveStatus == "loading"
+            or saveStatus == "saving" or saveStatus == "saved" or saveStatus == "error")
+
+        local message = state.localMessage ~= "" and state.localMessage or userMessage(loop.lastMessage)
+        if message == "" then message = "出海采集，返港交易与结算。" end
+        setText(refs.message, "message", message)
+        -- 默认引导语不占行；仅真实操作反馈出现时显示消息条
+        refs.messagePanel:SetVisible(message ~= "" and message ~= "出海采集，返港交易与结算。")
+
+        local inPort = loop.inPort == true
+
+        local elderPresent = false
+        if type(loop.IsElderPresent) == "function" then
+            local ok, value = pcall(loop.IsElderPresent, loop)
+            elderPresent = ok and value == true
+        end
+        ---@type HUDElderStatus|nil
+        local elderStatus
+        if type(loop.GetElderStatus) == "function" then
+            local ok, value = pcall(loop.GetElderStatus, loop)
+            if ok and type(value) == "table" then elderStatus = value end
+        end
+
+        ---@type HUDBarrelState|nil
+        local barrelState
+        if type(loop.GetBarrelState) == "function" then
+            local ok, value = pcall(loop.GetBarrelState, loop)
+            if ok and type(value) == "table" then barrelState = value end
+        end
+
+        local hasLens, scopeEnabled, scopeApiAvailable = false, false, false
+        if type(loop.HasLens) == "function" then
+            local ok, value = pcall(loop.HasLens, loop)
+            hasLens = ok and value == true
+        end
+        if type(loop.IsScopeEnabled) == "function" then
+            local ok, value = pcall(loop.IsScopeEnabled, loop)
+            scopeEnabled = ok and value == true
+        end
+        scopeApiAvailable = type(loop.HasLens) == "function"
+            and type(loop.IsScopeEnabled) == "function" and type(loop.ToggleScope) == "function"
+
+        ---@type HUDStoryDialog|nil
+        local storyDialog
+        if type(loop.GetStoryDialog) == "function" then
+            local ok, value = pcall(loop.GetStoryDialog, loop)
+            if ok and type(value) == "table"
+                and (value.kind == "paper" or value.kind == "elder")
+                and type(value.token) == "table" and type(value.text) == "string" then
+                storyDialog = value
+            end
+        end
+
+        ---@type HUDThrowSelection|nil
+        local throwSelection
+        if type(loop.GetThrowSelection) == "function" then
+            local ok, value = pcall(loop.GetThrowSelection, loop)
+            if ok and type(value) == "table" then throwSelection = value end
+        end
+
+        local busy = loop.busy == true or loop.loading == true or loop.dropInFlight == true
+            or throwSelection ~= nil
+        local ready = true
+        if type(loop.Ready) == "function" then ready = loop:Ready() end
+        local bucketActiveForInput = barrelState ~= nil and barrelState.active == true
+
+        ---@type HUDFishingState|nil
+        local fishingState
+        if type(loop.GetFishingState) == "function" then
+            local ok, value = pcall(loop.GetFishingState, loop)
+            if ok and type(value) == "table" then fishingState = value end
+        end
+        local fishingPhase = fishingState and fishingState.state or "idle"
+        local fishingSelecting = fishingPhase == "selecting"
+        local fishingCleanupPending = fishingPhase == "cleanup_pending"
+            or fishingPhase == "rollback_pending" or fishingPhase == "committing"
+        local fishingActive = fishingPhase == "casting" or fishingPhase == "landed" or fishingCleanupPending
+        local fishingRestricted = fishingSelecting or fishingActive
+        local fishingTerminal = fishingPhase == "complete" or fishingPhase == "failed" or fishingPhase == "cancelled"
+        local fishingStatus
+        if fishingSelecting then
+            fishingStatus = "点击或触摸30米内合法海面，立即抛网；可取消选点。"
+        elseif fishingPhase == "casting" then
+            fishingStatus = "抛网进行中。"
+        elseif fishingPhase == "landed" then
+            fishingStatus = "网已落水，正在收网。"
+        elseif fishingPhase == "cleanup_pending" then
+            fishingStatus = "捕鱼清理尚未完成，可以重试清理。"
+        elseif fishingPhase == "rollback_pending" then
+            fishingStatus = "捕鱼回滚尚未完成，可以重试清理。"
+        elseif fishingPhase == "committing" then
+            fishingStatus = "正在提交捕鱼结果，可以重试清理。"
+        elseif fishingPhase == "complete" then
+            fishingStatus = "本次捕鱼已完成。"
+        elseif fishingPhase == "failed" then
+            fishingStatus = "本次捕鱼未完成。"
+        elseif fishingPhase == "cancelled" then
+            fishingStatus = "本次捕鱼已取消。"
+        elseif not fishingState then
+            fishingStatus = "捕鱼状态暂不可用。"
+        else
+            fishingStatus = "选择海面网心开始捕鱼。"
+        end
+        setText(refs.fishingStatus, "fishingStatus", fishingStatus)
+        local actionDuration = math.max(0.01, tonumber(fishingState and fishingState.duration) or 4)
+        local actionElapsed = math.max(0, tonumber(fishingState and fishingState.elapsed) or 0)
+        local progress = fishingPhase == "complete" and 100
+            or math.floor(math.min(1, actionElapsed / actionDuration) * 100 + 0.5)
+        setText(refs.fishingProgress, "fishingProgress",
+            string.format("动作进度：%d%% · %.1f / %.1f 秒", progress, math.min(actionElapsed, actionDuration), actionDuration))
+        local resultText = ""
+        if fishingTerminal then
+            if fishingPhase == "complete" then
+                local detail = loop.lastMessage
+                resultText = "收网完成。" .. (detail and detail ~= "" and (" " .. userMessage(detail)) or "")
+            elseif fishingPhase == "cancelled" then
+                resultText = "已取消，未消耗体力。"
+            else
+                local reason = fishingState and fishingState.reason or loop.lastMessage
+                resultText = "未完成：" .. (reason ~= nil and userMessage(reason) or "请稍后重试")
+            end
+        end
+        refs.fishingResult:SetVisible(fishingTerminal)
+        setText(refs.fishingResult, "fishingResult", resultText)
+        -- v2.0 零遮挡：捕鱼面板只在捕鱼过程（选择/收网/清理/结算）中出现；
+        -- 待机状态的出海画面只保留左上信息文字与右下按钮坞。
+        refs.fishingPanel:SetVisible(fishingRestricted or fishingTerminal)
+        refs.beginFishing:SetVisible(not inPort and not fishingSelecting and not fishingActive)
+        refs.beginFishing:SetDisabled(not ready or busy or inPort or loop.inventoryOpen == true
+            or loop.elderOpen == true or fishingRestricted)
+        -- 新手教程点位：靠近出港点右侧木桶（≤操作距离+3m 余量）时出现 检查木桶/望远镜；
+        -- 望远镜获得后常驻（设定集：窥视镜=看海面下）。
+        local barrelNearForDock, barrelDistanceForDock = false, nil
+        if type(loop.GetBarrelAccess) == "function" then
+            local okBarrel, nearBarrel, _barrelReason, barrelDetails = pcall(loop.GetBarrelAccess, loop)
+            if okBarrel and type(barrelDetails) == "table" and type(barrelDetails.distance) == "number" then
+                barrelDistanceForDock = barrelDetails.distance
+                barrelNearForDock = nearBarrel == true
+                    or barrelDetails.distance <= (barrelDetails.operateDistance or 5) + 3
+            end
+        end
+        local barrelDockEngaged = bucketActiveForInput or (barrelState ~= nil and barrelState.active == true)
+        refs.barrelToggle:SetVisible(not inPort and (barrelNearForDock or barrelDockEngaged))
+        refs.barrelToggle:SetDisabled(busy or fishingRestricted
+            or (not barrelNearForDock and not barrelDockEngaged))
+        refs.scopeToggleBar:SetVisible(not inPort and (hasLens or barrelNearForDock))
+        refs.scopeToggleBar:SetText(hasLens and (scopeEnabled and "望远镜·开" or "望远镜·关") or "望远镜")
+        refs.scopeToggleBar:SetDisabled(busy or fishingRestricted)
+        refs.cancelFishing:SetVisible(fishingRestricted)
+        refs.cancelFishing:SetText(fishingCleanupPending and "重试清理" or "取消捕鱼")
+        refs.cancelFishing:SetDisabled(false)
+
+        local pendingCatch = false
+        if type(loop.HasPendingCatch) == "function" then
+            local ok, value = pcall(loop.HasPendingCatch, loop)
+            pendingCatch = ok and value == true
+        end
+        ---@type HUDPendingCatch|nil
+        local pendingData
+        if pendingCatch and type(loop.GetPendingCatch) == "function" then
+            local ok, value = pcall(loop.GetPendingCatch, loop)
+            if ok and type(value) == "table" then pendingData = value end
+        end
+        refs.depart:SetVisible(inPort)
+        refs.returnToPort:SetVisible(not inPort)
+        refs.endToday:SetVisible(inPort)
+        refs.elderToggle:SetVisible(inPort or bucketActiveForInput or loop.elderOpen == true)
+        refs.depart:SetDisabled(not ready or busy or fishingRestricted or loop.inventoryOpen == true or loop.elderOpen == true)
+        refs.returnToPort:SetDisabled(busy or not ready or fishingRestricted)
+        refs.endToday:SetDisabled(busy or not ready or fishingRestricted)
+        refs.inventoryToggle:SetDisabled(busy or fishingRestricted or pendingCatch
+            or (not ready and loop.inventoryOpen ~= true and not bucketActiveForInput))
+        refs.inventoryToggle:SetText(pendingCatch and "船舱（收获待领）" or "背包")
+        refs.elderToggle:SetDisabled(busy or fishingRestricted
+            or (not ready and not bucketActiveForInput and loop.elderOpen ~= true)
+            or (not elderPresent and loop.elderOpen ~= true))
+        local showInventory = loop.inventoryOpen == true or pendingCatch
+        refs.inventoryPanel:SetVisible(showInventory)
+        -- 背包抽屉（v1.0）：开背包或有待领渔获时，底部抽屉 + 压暗层整体出现。
+        refs.drawer:SetVisible(showInventory)
+        refs.drawerBackdrop:SetVisible(showInventory)
+        refs.inventoryClose:SetVisible(true)
+        refs.inventoryClose:SetDisabled(busy or loop.loading == true)
+        refs.portPanel:SetVisible(inPort)
+        local portAccess, portReason, portDetails = loop:CanAccessPort()
+        local portDistance = portDetails and portDetails.distance
+        local portRadius = portDetails and portDetails.radius or 10
+        local portInfo
+        if type(portDistance) == "number" then
+            local accessText = portAccess and "范围内，可返港/交易" or "范围外，需≤10米才可返港/交易"
+            portInfo = string.format("锚形标记=港口（交易中心）· 距港 %.3f/%.0f米（%s）；同日往返不恢复体力、不补充库存。",
+                portDistance, portRadius, accessText)
+        else
+            portInfo = "锚形标记=港口（交易中心）· 距离暂不可读；返港/交易需距港≤10米。"
+            if not portAccess and portReason then portInfo = portInfo .. " " .. userMessage(portReason) end
+        end
+        setText(refs.portAccessReason, "portInfo", portInfo)
+        -- 港口提示仅在有意义时占位：接近港口（≤30m）或范围外警示；远海航行时隐藏
+        local showPortHint = (type(portDistance) == "number" and (not portAccess or portDistance <= 30))
+            or (type(portDistance) ~= "number" and not portAccess)
+        refs.portAccessReason:SetVisible(showPortHint)
+        refs.loadSaved:SetVisible(inPort)
+        refs.loadSaved:SetText(loop.loadStatus == "error" and "重试读取" or "读取云存档")
+        refs.loadSaved:SetDisabled(busy or loop.settlementPending == true or pendingCatch or fishingRestricted)
+        refs.newRun:SetDisabled(busy or loop.settlementPending == true or pendingCatch)
+        local loadMessages = {
+            idle = "云存档仅在每日结算时保存。", loading = "正在读取云存档…",
+            empty = "没有云存档，可开始新周目。", loaded = "已恢复每日结算存档。",
+            error = "读取云存档失败，当前状态保留；可重试读取。",
+        }
+        setText(refs.loadStatus, "loadStatus", loadMessages[loop.loadStatus or "idle"] or loadMessages.idle)
+        local function updateUpgrade(button, label, price)
+            button:SetText(label .. (price and (" · ¥" .. tostring(price)) or " · 已满级/不可升级"))
+            button:SetDisabled(not inPort or not ready or busy or fishingRestricted or not price)
+        end
+        local staminaLevel = loop:GetStaminaLevel()
+        updateUpgrade(refs.staminaUpgrade, "升级体力", staminaLevel and Config.upgrades.stamina.prices[staminaLevel])
+        updateUpgrade(refs.speedUpgrade, "升级航速", Config.upgrades.boatSpeed.prices[player.boatSpeedLevel])
+        updateUpgrade(refs.upgrade, "扩容", Config.upgrades.inventory.prices[player.inventory:GetLevel()])
+        for itemId, shopButton in pairs(refs.shopButtons) do
+            local definition = assert(Items.GetDefinition(itemId))
+            local stock = loop:GetShopStock(itemId)
+            local label = definition.name .. " · ¥" .. tostring(definition.buyPrice)
+            shopButton:SetText(stock > 0 and label or (definition.name .. " · 售罄"))
+            shopButton:SetDisabled(not inPort or not ready or busy or fishingRestricted)
+            refs.shopStockLabels[itemId]:SetText(definition.name .. "库存：" .. tostring(stock))
+        end
+        local elderToggleText = loop.elderOpen == true and "结束对话"
+            or (elderPresent and "拜访老人" or "老人不在")
+        refs.elderToggle:SetText(elderToggleText)
+
+        -- UI 精简 v1.1：木桶卡仅在检查过程中出现；入口走按钮坞"检查木桶"
+        refs.barrelPanel:SetVisible(not inPort and barrelDockEngaged)
+        local barrelGatesAvailable = barrelState ~= nil and barrelState.timingAvailable == true
+            and barrelState.interfaceAvailable == true
+        local barrelFinished = barrelState ~= nil and (tonumber(barrelState.stage) or 0) >= 3
+        local barrelActive = bucketActiveForInput
+        local barrelPending = barrelState ~= nil and barrelState.pending == true
+        if not barrelGatesAvailable then
+            setText(refs.barrelStatus, "barrelStatus", "木桶检查暂未开放。")
+            refs.barrelBegin:SetVisible(false)
+            refs.barrelCancel:SetVisible(false)
+        elseif barrelPending then
+            setText(refs.barrelStatus, "barrelStatus", "木桶补给等待领取，请先处理待领取奖励。")
+            refs.barrelBegin:SetVisible(false)
+            refs.barrelCancel:SetVisible(false)
+        elseif barrelFinished then
+            setText(refs.barrelStatus, "barrelStatus", "木桶调查已完成。")
+            refs.barrelBegin:SetVisible(false)
+            refs.barrelCancel:SetVisible(false)
+        elseif barrelActive then
+            local seconds = math.max(0, tonumber(barrelState.remaining) or 0)
+            setText(refs.barrelStatus, "barrelStatus", string.format(
+                "木桶检查进行中，剩余 %.1f 秒；打开背包或对话会暂停计时，可以取消。", seconds))
+            refs.barrelBegin:SetVisible(false)
+            refs.barrelCancel:SetVisible(true)
+            refs.barrelCancel:SetDisabled(false)
+        else
+            setText(refs.barrelStatus, "barrelStatus", "发现海岸边的木桶。")
+            refs.barrelBegin:SetVisible(true)
+            refs.barrelCancel:SetVisible(false)
+            refs.barrelBegin:SetDisabled(busy or fishingRestricted or not ready or pendingCatch)
+        end
+
+        if not hasLens then
+            setText(refs.scopeStatus, "scopeStatus", "尚未获得透镜；无法查看或切换望远镜功能。")
+            refs.scopeToggle:SetText("透镜未获得")
+            refs.scopeToggle:SetDisabled(true)
+        elseif not scopeApiAvailable or loop.scopeSyncError == "scope_interface_unavailable" then
+            setText(refs.scopeStatus, "scopeStatus", "望远镜功能接口暂不可用。")
+            refs.scopeToggle:SetText("功能暂不可用")
+            refs.scopeToggle:SetDisabled(true)
+        elseif loop.scopeSyncError then
+            setText(refs.scopeStatus, "scopeStatus", "望远镜状态同步失败，请重试关闭。")
+            refs.scopeToggle:SetText("重试关闭望远镜")
+            refs.scopeToggle:SetDisabled(busy or fishingRestricted)
+        else
+            setText(refs.scopeStatus, "scopeStatus", scopeEnabled and "望远镜设置：开启。" or "望远镜设置：关闭。")
+            refs.scopeToggle:SetText(scopeEnabled and "关闭望远镜" or "开启望远镜")
+            refs.scopeToggle:SetDisabled(busy or fishingRestricted)
+        end
+
+        -- 注：scopePanel（望远镜条目）保留常驻——测试契约要求无透镜时显示
+        -- "透镜未获得"禁用按钮；v2.0 已将其压成一行透明文字+按钮。
+
+        refs.throwSelectionPanel:SetVisible(throwSelection ~= nil)
+        if throwSelection then
+            setText(refs.throwSelectionText, "throwSelectionText",
+                "已选择" .. itemName(throwSelection.itemId) .. "，请点击 12 米内海面投掷；也可以取消。")
+            refs.throwSelectionCancel:SetDisabled(false)
+        end
+
+        local items = copyItems(loop)
+        local capacity = player.inventory and player.inventory:GetCapacity() or 0
+        setText(refs.inventoryCount, "inventoryCount", string.format("%d / %d 格", #items, capacity))
+        -- F2: 全部卖出——在港且背包有可售渔获时启用。
+        local sellableCount = 0
+        for _, itemId in ipairs(items) do
+            local definition = Items.GetDefinition(itemId)
+            if definition and definition.category == "fish"
+                and definition.sellPrice and definition.sellPrice > 0 then
+                sellableCount = sellableCount + 1
+            end
+        end
+        refs.sellAll:SetText(sellableCount > 0 and ("全部卖出 · " .. tostring(sellableCount) .. " 件") or "全部卖出")
+        refs.sellAll:SetDisabled(not inPort or not ready or busy or fishingRestricted or sellableCount == 0)
+        -- 背包摘要精简为纯计数（原物品清单文本移除，明细看背包卡）
+        setText(refs.inventorySummary, "inventorySummary",
+            string.format("背包 %d / %d 格", #items, capacity))
+        ---@type string[]
+        local signatureParts = { tostring(loop:GetCargoRevision()), tostring(capacity), tostring(inPort), tostring(loop.elderOpen == true) }
+        for _, itemId in ipairs(items) do signatureParts[#signatureParts + 1] = itemId end
+        signatureParts[#signatureParts + 1] = tostring(busy or fishingRestricted)
+        signatureParts[#signatureParts + 1] = tostring(elderPresent)
+        local signature = table.concat(signatureParts, "|")
+        if signature ~= state.inventorySignature then
+            state.inventorySignature = signature
+            state.selectedItemIndex = nil
+            rebuildItemRows(items, inPort, loop.elderOpen == true and elderPresent, busy or fishingRestricted)
+        end
+        local selectedItem = state.selectedItemIndex and items[state.selectedItemIndex]
+        local selectedDefinition = selectedItem and Items.GetDefinition(selectedItem)
+        local itemUseAvailable = selectedDefinition ~= nil and selectedDefinition.canEat == true
+            and selectedDefinition.heal > 0
+        refs.itemMenu:SetVisible(showInventory and selectedItem ~= nil)
+        if selectedItem then
+            setText(refs.itemMenuTitle, "itemMenuTitle", string.format("%02d · %s", state.selectedItemIndex, itemName(selectedItem)))
+        end
+        refs.itemUse:SetVisible(selectedDefinition ~= nil)
+        refs.itemGive:SetVisible(selectedDefinition ~= nil and selectedDefinition.canGive == true)
+        refs.itemThrow:SetVisible(selectedDefinition ~= nil and selectedDefinition.category ~= "treasure")
+        refs.itemUse:SetDisabled(busy or fishingRestricted or not itemUseAvailable)
+        refs.itemGive:SetText(selectedDefinition and selectedDefinition.category == "food" and "给予" or "展示")
+        refs.itemGive:SetDisabled(busy or fishingRestricted or not elderPresent)
+        refs.itemDrop:SetVisible(selectedDefinition ~= nil and selectedDefinition.category ~= "treasure")
+        refs.itemDrop:SetDisabled(busy or fishingRestricted or selectedDefinition == nil or selectedDefinition.category == "treasure")
+        refs.itemThrow:SetDisabled(busy or fishingRestricted or inPort or not ready
+            or selectedDefinition == nil or selectedDefinition.category == "treasure")
+        refs.itemMenuBack:SetDisabled(false)
+        local useUnavailable = selectedDefinition ~= nil and not itemUseAvailable
+        refs.itemUseReason:SetVisible(useUnavailable)
+        setText(refs.itemUseReason, "itemUseReason", useUnavailable and userMessage("item_has_no_use") or "")
+
+        local pendingIds = pendingData and pendingData.itemIds or {}
+        local requiredSlots = pendingData and pendingData.requiredSlots
+        local availableSlots = capacity - #items
+        if availableSlots < 0 then availableSlots = 0 end
+        local pendingNames = {}
+        for _, itemId in ipairs(pendingIds) do
+            pendingNames[#pendingNames + 1] = itemName(itemId)
+        end
+        local pendingSummary = #pendingNames > 0 and table.concat(pendingNames, "、") or "渔获"
+        local pendingText
+        if requiredSlots == nil or requiredSlots < 0 then
+            pendingText = pendingSummary .. " 等待接收；暂时无法读取所需空间。"
+        elseif availableSlots >= requiredSlots then
+            pendingText = string.format("%s 等待接收；需要 %d 格，目前有 %d 个空位，可以领取。", pendingSummary, requiredSlots, availableSlots)
+        else
+            pendingText = string.format("%s 等待接收；需要 %d 格，目前有 %d 个空位，请腾出 %d 格。", pendingSummary,
+                requiredSlots, availableSlots, requiredSlots - availableSlots)
+        end
+        refs.pendingCatchPanel:SetVisible(pendingCatch)
+        setText(refs.pendingCatchText, "pendingCatchText", pendingText)
+        refs.pendingCatchClaim:SetVisible(pendingCatch)
+        refs.pendingCatchClaim:SetDisabled(not ready or busy or fishingRestricted
+            or requiredSlots == nil or requiredSlots < 0 or availableSlots < requiredSlots)
+
+        local showEntry = loop.entryPending == true
+        local showForced = not showEntry and not pendingCatch and loop.forcedReturnPending == true
+        local showSettlement = not showEntry and not pendingCatch and not showForced and loop.settlementPending == true
+        local showStory = not showEntry and not pendingCatch and not showForced and not showSettlement
+            and storyDialog ~= nil
+        local showElder = not showForced and not showSettlement and not showStory
+            and loop.elderOpen == true and elderPresent
+        -- 开场教学（演出层，见 OPENING_ELDER_TEXT）：模态独占，优先级低于存档/结算弹窗。
+        local showOpening = player.day == 1 and inPort == true
+            and state.openingDismissedGeneration ~= loop.generation
+            and not showEntry and not pendingCatch and not showForced and not showSettlement
+            and not showStory and not showElder and loop.inventoryOpen ~= true
+        state.openingActive = showOpening
+        if showOpening then state.openingGeneration = loop.generation end
+        local overlayShown = showEntry or showForced or showSettlement or showStory or showElder
+            or showOpening
+        refs.overlay:SetVisible(overlayShown)
+        fadeOpacity(refs.modalCard, overlayShown and 1 or 0)
+        local storyTitle = storyDialog and storyDialog.kind == "elder" and "海岸边的老人" or "纸条"
+        local overlayTitle = showEntry and "云存档" or showForced and "夜晚返港"
+            or (showSettlement and "每日结算" or (showOpening and "海岸边的老人")
+            or (showStory and storyTitle or (showElder and "拜访老人" or "")))
+        setText(refs.modalTitle, "modalTitle", overlayTitle)
+        refs.entryBody:SetVisible(showEntry)
+        if showEntry then
+            local initialStatus = loop.initialSaveStatus or "idle"
+            local initialSaving = initialStatus == "saving"
+            local initialError = initialStatus == "error"
+            local entryMessage = initialSaving and "正在保存新周目初始状态；成功后会立即开始游戏。"
+                or initialError and "新周目初始存档失败；可重试，或不保存继续。旧云档仍保留。"
+                or (loadMessages[loop.loadStatus or "idle"] or loadMessages.idle)
+            setText(refs.entryText, "entryText", entryMessage)
+            refs.entryLoad:SetVisible(initialStatus == "idle")
+            refs.entryNew:SetVisible(initialStatus == "idle")
+            refs.entryRetrySave:SetVisible(initialError)
+            refs.entryContinue:SetVisible(initialSaving or initialError)
+            refs.entryLoad:SetDisabled(busy or loop.initialSaveBusy == true)
+            refs.entryNew:SetDisabled(busy or loop.initialSaveBusy == true)
+            refs.entryRetrySave:SetDisabled(loop.initialSaveBusy == true)
+            refs.entryContinue:SetText(initialSaving and "不等待保存，继续" or "不保存继续")
+            refs.entryContinue:SetDisabled(false)
+        end
+        refs.forcedBody:SetVisible(showForced)
+        refs.settlementBody:SetVisible(showSettlement)
+        refs.storyBody:SetVisible(showStory or showOpening)
+        refs.elderBody:SetVisible(showElder)
+
+        if showSettlement then
+            local confirmed = loop.settlementApplied == true
+            local text = loop.dayPreparationError and "本次保存选择已记录，但新日海洋准备失败；请重试准备，不会重复加天或保存。"
+                or confirmed and (busy and "今日已结算，正在自动保存…"
+                or "保存失败，可重试保存或明确放弃本次保存进入下一天。旧存档仍保留，退出后当天未保存进度可能丢失。")
+                or "结束今日并进入下一天？确认后会自动保存。"
+            setText(refs.settlementText, "settlementText", text)
+            -- ConfirmSettlement 在存档失败时可重试已应用的同一结算。
+            local settlementButton = refs.settlementConfirm
+            settlementButton:SetText(loop.dayPreparationError and "重试准备" or confirmed and "重试保存" or "确认结算")
+            settlementButton:SetDisabled(busy)
+            refs.settlementSkip:SetVisible(confirmed
+                and (loop.saveStatus == "saving" or loop.saveStatus == "error"))
+            refs.settlementSkip:SetText(loop.saveStatus == "saving" and "不等待保存，进入下一天"
+                or "放弃本次保存，进入下一天")
+            refs.settlementSkip:SetDisabled(loop.loading == true)
+        end
+        if showForced then
+            local forcedButton = refs.forcedConfirm
+            forcedButton:SetDisabled(busy)
+        end
+        if showElder then
+            local feedback = state.localMessage
+            if feedback == "" then
+                feedback = userMessage(loop.lastMessage)
+                if feedback == "" or not string.find(feedback, "老人", 1, true) then
+                    feedback = "食物可给予老人；鱼和鱼饵可向老人展示。"
+                end
+            end
+            setText(refs.elderMessage, "elderMessage", feedback)
+        end
+        if loop.elderOpen == true then
+            local elderProgressText = "老人进展暂不可用。"
+            if elderStatus then
+                local day = tonumber(player.day) or 1
+                if day <= 3 then
+                    elderProgressText = string.format("已给予老人苹果：%d/3", tonumber(elderStatus.applesGiven) or 0)
+                else
+                    local decisions = {
+                        pending = "待第4天判定",
+                        saved = "老人获救",
+                        dead = "老人已离世",
+                    }
+                    elderProgressText = decisions[elderStatus.decision] or "老人状态暂不可用。"
+                end
+            end
+            setText(refs.elderStatus, "elderStatus", elderProgressText)
+            if not scopeApiAvailable then
+                setText(refs.elderLensStatus, "elderLensStatus", "透镜状态接口暂不可用。")
+                refs.elderLensGive:SetDisabled(true)
+            elseif hasLens then
+                setText(refs.elderLensStatus, "elderLensStatus", "透镜仍保留在宝物栏，可向老人展示。")
+                refs.elderLensGive:SetDisabled(busy or not elderPresent)
+            else
+                setText(refs.elderLensStatus, "elderLensStatus", "尚未获得透镜。")
+                refs.elderLensGive:SetDisabled(true)
+            end
+            refs.elderLensGive:SetVisible(true)
+        end
+        if showOpening then
+            setText(refs.storyText, "storyText", OPENING_ELDER_TEXT)
+        elseif showStory and storyDialog then
+            setText(refs.storyText, "storyText", storyDialog.text)
+            -- 文本和两个可见状态先完成，再通知 Loop 这张纸条已展示。
+            refs.overlay:SetVisible(true)
+            refs.storyBody:SetVisible(true)
+            if state.storyShownToken ~= storyDialog.token then
+                if type(loop.NotifyStoryShown) == "function" then
+                    local ok, accepted, reason = pcall(loop.NotifyStoryShown, loop, storyDialog.token)
+                    if ok and accepted ~= false then
+                        state.storyShownToken = storyDialog.token
+                    else
+                        state.localMessage = "纸条状态未能更新：" .. userMessage(ok and reason or accepted)
+                    end
+                else
+                    state.localMessage = "纸条状态记录接口暂不可用。"
+                end
+            end
+        elseif not storyDialog then
+            state.storyShownToken = nil
+        end
+        if refs.debugFishing then refs.debugFishing:SetDisabled(busy or inPort or not ready or fishingRestricted) end
+        if refs.debugSalvage then refs.debugSalvage:SetDisabled(busy or inPort or not ready or fishingRestricted) end
+    end
+
+    local function destroy()
+        if state.destroyed then return end
+        state.destroyed = true
+        if parent and type(parent.RemoveChild) == "function" then
+            pcall(parent.RemoveChild, parent, root)
+        end
+        root:Destroy()
+    end
+    local handle = {
+        root = root,
+        Refresh = function() refresh() end,
+        Destroy = destroy,
+    }
+
+    if parent then
+        if type(parent.AddChild) ~= "function" then error("HUD parent must support AddChild", 2) end
+        parent:AddChild(root)
+    end
+    refresh()
+    return handle
+end
+
+return HUD

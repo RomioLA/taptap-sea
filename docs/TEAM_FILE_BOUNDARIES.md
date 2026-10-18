@@ -116,7 +116,7 @@ assets/
 
 - Main、State、Config：除非 A 明确分配任务，否则不得修改。
 - Draw/HUD：可以提出视觉方案；默认接入由 A 完成。若 A 分配视觉代码任务，必须列出允许文件与视觉范围，只能有一个修改者，不写核心规则或直接修改 State。
-- 当前 Draw 使用程序化矢量图，没有图片接入。添加素材不等于素材会自动进入画面。
+- 当前海洋表现仍保留程序化矢量路径，但已存在 Ocean.ImageArt + OceanImageCatalog + Projection 的图片接入与矢量 fallback 链；美术接入必须遵守 docs/ART_PIPELINE.md，添加素材本身仍不等于已完成运行时接入。
 
 ### 素材交接至少说明
 

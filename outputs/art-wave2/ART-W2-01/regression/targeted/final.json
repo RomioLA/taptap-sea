@@ -1,0 +1,225 @@
+{
+  "phase": "final",
+  "generatedAt": "2026-10-06T02:28:46.197222+00:00",
+  "project": "C:\\codex\\taptap-sea",
+  "runtimePath": "C:\\codex\\taptap-sea\\.tmp\\circle1-review-runtime",
+  "suiteCount": 3,
+  "suites": [
+    {
+      "name": "ArtWave2Tests",
+      "kind": "run",
+      "file": "scripts\\Tests\\ArtWave2Tests.lua",
+      "passed": true,
+      "subtestCount": 7,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "error": "",
+            "passed": true,
+            "name": "complete island metadata is immutable and uses the W2 runtime path"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "loaded complete island skips coast foam hills and tree strokes"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "warm PNG drawing reads current geometry after radius position and viewport changes"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "loaded boat retains continuous heading and world projection through a full turn"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "unloaded complete PNG restores the original cached vector path"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "night grade follows loaded island ship and signal images while daytime has no overlay"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "added runtime images retain balanced create release lifecycle"
+          }
+        ]
+      },
+      "stdout": "[OceanArt] loaded ripple path=image/OceanWave2/ripple.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded splash path=image/OceanWave2/splash.png\n[OceanArt] loaded gull_dive path=image/OceanWave2/gull_dive.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded boat path=image/OceanWave2/boat.png\n[OceanArt] loaded gull path=image/OceanWave2/gull.png\n[OceanArt] loaded island path=image/OceanWave2/island.png\n[OceanArt] loaded ripple path=image/OceanWave2/ripple.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded splash path=image/OceanWave2/splash.png\n[OceanArt] loaded gull_dive path=image/OceanWave2/gull_dive.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded boat path=image/OceanWave2/boat.png\n[OceanArt] loaded gull path=image/OceanWave2/gull.png\n[OceanArt] loaded island path=image/OceanWave2/island.png",
+      "nvgCalls": {
+        "nvgBeginPath": 2803,
+        "nvgBezierTo": 1260,
+        "nvgCircle": 36,
+        "nvgClosePath": 3130,
+        "nvgEllipse": 18,
+        "nvgFill": 2753,
+        "nvgFillColor": 699,
+        "nvgFillPaint": 2054,
+        "nvgGlobalAlpha": 14,
+        "nvgIntersectScissor": 32,
+        "nvgLineTo": 10238,
+        "nvgLinearGradient": 4,
+        "nvgMoveTo": 4420,
+        "nvgRadialGradient": 32,
+        "nvgRect": 3,
+        "nvgRestore": 2078,
+        "nvgSave": 2078,
+        "nvgScale": 32,
+        "nvgStroke": 50,
+        "nvgStrokeColor": 50,
+        "nvgStrokeWidth": 50,
+        "nvgTransform": 2016,
+        "nvgTranslate": 32
+      },
+      "nvgCallTotal": 33882,
+      "durationMs": 137.085
+    },
+    {
+      "name": "OceanImageCatalogTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\OceanImageCatalogTests.lua",
+      "passed": true,
+      "subtestCount": 8,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "name": "目录规格只返回副本且未知名称无效",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "正式启动只加载已接入世界素材且重复调用幂等",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "新增候选显式加载且不影响另一上下文",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "失败只尝试一次并保留矢量回退",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "主体尺寸自动补偿留边且保持鱼体比例",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "无效尺寸和未加载图不提交绘制",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "停止释放仅当前上下文的成功句柄且幂等",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "停止后可重新加载候选与默认集",
+            "error": ""
+          }
+        ]
+      },
+      "stdout": "[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded gull_dive path=image/OceanWave2/gull_dive.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded ripple path=image/OceanWave2/ripple.png\n[OceanArt] loaded boat path=image/OceanWave2/boat.png\n[OceanArt] loaded splash path=image/OceanWave2/splash.png\n[OceanArt] loaded island path=image/OceanWave2/island.png\n[OceanArt] loaded gull path=image/OceanWave2/gull.png\n[OceanArt] loaded reef path=image/OceanReady/reef.png\n[OceanArt] loaded shrub path=image/OceanReady/shrub.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded gull_dive path=image/OceanWave2/gull_dive.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded ripple path=image/OceanWave2/ripple.png\n[OceanArt] loaded boat path=image/OceanWave2/boat.png\n[OceanArt] loaded splash path=image/OceanWave2/splash.png\n[OceanArt] loaded island path=image/OceanWave2/island.png\n[OceanArt] loaded gull path=image/OceanWave2/gull.png\n[OceanArt] load failed image/OceanReady/driftwood.png; retaining vector fallback\n[OceanArt] loaded sardine path=image/OceanReady/sardine.png\n[OceanArt] loaded driftwood path=image/OceanReady/driftwood.png\n[OceanArt] loaded waterpaper path=image/OceanLoop/waterpaper.png\n[OceanArt] loaded gull_dive path=image/OceanWave2/gull_dive.png\n[OceanArt] loaded barrel path=image/OceanLoop/barrel.png\n[OceanArt] loaded ripple path=image/OceanWave2/ripple.png\n[OceanArt] loaded boat path=image/OceanWave2/boat.png\n[OceanArt] loaded splash path=image/OceanWave2/splash.png\n[OceanArt] loaded island path=image/OceanWave2/island.png\n[OceanArt] loaded gull path=image/OceanWave2/gull.png",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 3.812
+    },
+    {
+      "name": "SeaFusionRenderTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaFusionRenderTests.lua",
+      "passed": true,
+      "subtestCount": 10,
+      "failures": [],
+      "returned": {
+        "status": "PASS",
+        "metrics": {
+          "originalFixedObjectCount": 2,
+          "originalConfiguredBirds": 2,
+          "landscape": {
+            "horizonY": 259.2,
+            "anchorX": 0.5,
+            "width": 1920,
+            "shipScreenX": 960.0,
+            "hiddenWorldFishCalls": 0,
+            "shipScreenY": 777.5999999999999,
+            "basePixelsPerMeter": 24.0,
+            "anchorY": 0.72,
+            "height": 1080
+          },
+          "previewFixtures": {
+            "tuna": "(8,-8)",
+            "sardine": "(-8,-8)",
+            "island": "(-14,-12)"
+          },
+          "portrait": {
+            "horizonY": 276.0,
+            "anchorX": 0.5,
+            "width": 1200,
+            "revealedWorldFishCalls": 2,
+            "shipScreenX": 600.0,
+            "shipScreenY": 828.0,
+            "basePixelsPerMeter": 25.555555555555557,
+            "anchorY": 0.72,
+            "height": 1150
+          }
+        },
+        "tests": [
+          "draw_is_pure_for_runtime_state",
+          "original_sun_and_birds_reused",
+          "projected_sea_view_art_apis_reused",
+          "ordinary_fish_hidden_by_default",
+          "show_underwater_draws_both_fixture_fish",
+          "resize_preserves_projection_anchor_horizon_and_perspective_scale",
+          "curved_ground_clips_preserve_elevated_island_silhouettes_in_both_aspects",
+          "presentation_fixture_does_not_change_config_world",
+          "night_tint_precedes_boat_and_preserves_paused_gameplay_clock",
+          "daytime_removes_night_tint_and_nvg_state_stack_is_balanced"
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 576,
+        "nvgBezierTo": 377,
+        "nvgCircle": 16,
+        "nvgClosePath": 1065,
+        "nvgEllipse": 9,
+        "nvgFill": 547,
+        "nvgFillColor": 531,
+        "nvgFillPaint": 16,
+        "nvgGlobalAlpha": 4,
+        "nvgIntersectScissor": 14,
+        "nvgLineTo": 4745,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1446,
+        "nvgRadialGradient": 14,
+        "nvgRect": 1,
+        "nvgRestore": 25,
+        "nvgSave": 25,
+        "nvgScale": 15,
+        "nvgStroke": 29,
+        "nvgStrokeColor": 29,
+        "nvgStrokeWidth": 29,
+        "nvgTranslate": 15
+      },
+      "nvgCallTotal": 9530,
+      "durationMs": 188.368
+    }
+  ],
+  "luaVersion": "Lua 5.4",
+  "passedSuiteCount": 3,
+  "failedSuiteCount": 0,
+  "passed": true
+}

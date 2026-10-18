@@ -1,0 +1,78 @@
+{
+  "time": "2026-10-05T02:58:28.9991116+08:00",
+  "project": "C:\\codex\\taptap-sea",
+  "suites": 53,
+  "passing": 53,
+  "reportedChecks": 491.0,
+  "lspFiles": 26,
+  "lspErrors": 0,
+  "lspWarnings": 43,
+  "guiVerified": false,
+  "remoteCloudVerified": false,
+  "sourceFiles": [
+    {
+      "path": "scripts/Gameplay/HUD.lua",
+      "sha256": "EDEB017A7C71F1CFADFC09E8E5039D93F748B77975C8133CA76BB9402AEC1729"
+    },
+    {
+      "path": "scripts/Gameplay/HUDPresentation.lua",
+      "sha256": "2B91ADBD411CCFF8AC6D2E8F42D2D23A2EDA67C188B48F38F3FE3EAC239BA7E5"
+    },
+    {
+      "path": "scripts/Gameplay/Loop.lua",
+      "sha256": "ECACD90A7555DD4A02B4A3A8ADFC09ADD4669955C81405C0B4FE7FD97C4A8FE8"
+    },
+    {
+      "path": "scripts/Gameplay/LocalSaveBackend.lua",
+      "sha256": "F293363C72AF01ADFF9550D95B4B8EE1D79B3896AAD27AA8FED5F8990C373103"
+    },
+    {
+      "path": "scripts/Integration/Circle1BInput.lua",
+      "sha256": "91A3BF513E114F375FF6853646A0697E7EB0A789698F9B502632B40A9447C0C3"
+    },
+    {
+      "path": "scripts/Integration/Scene.lua",
+      "sha256": "6EF79CA41D4B9FECF4089BA7B591D5E45626E23C865DDF86BFFF18B8F7ECE1F0"
+    },
+    {
+      "path": "scripts/config/gameplay.lua",
+      "sha256": "F3F4DA55F9586C42FCC7AA1040C712C8D7B13DE4F6C40F76268BB6CB30A76946"
+    },
+    {
+      "path": "scripts/Ocean/Config.lua",
+      "sha256": "0925987ACF914F3CFAED61EB7964260C5815371C0B5C3AA75F74450694CFE9C2"
+    },
+    {
+      "path": "scripts/Ocean/World.lua",
+      "sha256": "8374C5DE22F5049EEB4909D7FBD6020B342AD29A99ECDCAFDF9F65BECB999323"
+    },
+    {
+      "path": "scripts/Tests/Circle1HUDReviewTests.lua",
+      "sha256": "6CCE584AAA3E744349B62E7E2357048E09A87042918F0573808AC06485E4727D"
+    },
+    {
+      "path": "scripts/Tests/Circle1A2BarrelTests.lua",
+      "sha256": "8DE401999C4F875CA8DF336CDA43FD419ADA6C408D55E23E0B59E32D7B85E265"
+    },
+    {
+      "path": "scripts/Tests/Circle1B3ClockAsyncTests.lua",
+      "sha256": "10FA128537B6D59FE86FA2B3C60558ECA5A2B25597975772A018E9BCC4987B0B"
+    },
+    {
+      "path": "scripts/Tests/Circle1B3SceneUITests.lua",
+      "sha256": "F80E20B70CC92DDFE0D64503AE70047A8E5B19F1DB2DFB04E2E32A3A77CAFEA4"
+    },
+    {
+      "path": "scripts/Tests/Circle1B3SevenDaysTests.lua",
+      "sha256": "840E80862176C45874A6D0F0DF32F3C0ED2B515F829DABCD7DB8557DB0DD7642"
+    },
+    {
+      "path": "scripts/Tests/GameLoopUISpec.lua",
+      "sha256": "F9033ECF4B77318CDE109E9AB0F6AB3D34E262F38AF5344A55BB619EA27464D5"
+    },
+    {
+      "path": "tests/run_circle1_review.py",
+      "sha256": "FC915BB9B566117366A3C065EBD2DF50B2086FFBCD9DB1F1D52E2D740DB41693"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "current_file_sha256": {
+    "scripts/Ocean/ImageArt.lua": "76fd2ea13250beceeb45e033e1af04122f68132e719433936e704b1f79a8b153",
+    "scripts/Ocean/SeaDraw.lua": "684eb0ec175c3159f238e3ecca315d2c7a1707a5f38a29c04d980372f044915e",
+    "scripts/Ocean/SeaViewArt.lua": "8245abae69450162c1f7b40e3e1bc37874a515f804fb161b6c1c31a52dd3c5f0",
+    "scripts/GeneratedData/OceanImageCatalog.lua": "5f8a71eea582b6f79daec3135a30c5d5e7ea405e3e446f5142624ffd7e819c23",
+    "scripts/Tests/ArtWave2Tests.lua": "77ccddc7a0291cd283970dbc7f8f56a88c42448edc2a84c6f1f1bc384ea853f1",
+    "tests/prepare_ocean_ready_art.py": "9015570fa5055c76afca7b0f99a427598a2ddc4443daffe549e2f191582a4a15",
+    "tests/verify_art_wave2.py": "e31200738538b2e618b8ec71ad7349b90d555d55080f12e9b73984aa10a1b80b",
+    "docs/art-runtime-selection.json": "a9b7ea57dee2ddd19ccff5add91e93ac66bf214cc42ea02cf77044f781f51534"
+  },
+  "protected_gameplay_projection": {
+    "scripts/Ocean/World.lua": {
+      "sha256": "0621131afac679ba31b797506999c2f421f5aa7ee281581890420ba9eaeb10c1",
+      "unchanged_from_HEAD": true
+    },
+    "scripts/Ocean/Movement.lua": {
+      "sha256": "6a757e2a8de9841c478447f4db7367f95da7b3d182a9c9a13fdf8036befe2269",
+      "unchanged_from_HEAD": true
+    },
+    "scripts/Ocean/Projection.lua": {
+      "sha256": "805d6f06a1511b6311920989c3b3e12d358a3b7e80f458899ef15b9f7149a91b",
+      "unchanged_from_HEAD": true
+    },
+    "scripts/Ocean/ProjectedGeometry.lua": {
+      "sha256": "9f4e43b22a3d5990a963c44f37903c261e4ccd83d9c0fe6c021d28962afa96f2",
+      "unchanged_from_HEAD": true
+    },
+    "scripts/Ocean/SeaRuntime.lua": {
+      "sha256": "b897ca107506f084077573243b07f9d997bd7e1cec18e8d1a256ca21880804c7",
+      "unchanged_from_HEAD": true
+    },
+    "scripts/Ocean/SurfaceSignals.lua": {
+      "sha256": "deedcfa005f51f8a3aef0d5a73bea4fcc99f540748a73adde0aea13758dc2c9c",
+      "unchanged_from_HEAD": true
+    },
+    "scripts/Ocean/Fish.lua": {
+      "sha256": "d1fab12ac63e0f144e8497acd74affee622fe2066fed2616c68f178915662d03",
+      "unchanged_from_HEAD": true
+    },
+    "scripts/Ocean/Config.lua": {
+      "sha256": "8561be43620f8596eb94e1d11a758e35d2dcb92ba8e10fe74482a42a4f199776",
+      "unchanged_from_HEAD": true
+    }
+  },
+  "regression_final": {
+    "suiteCount": 55,
+    "passedSuiteCount": 54,
+    "failedSuiteCount": 1
+  },
+  "report_sha256": "2c703afbd9c063d0a7027749762e75e8a645733e98dace39f31d757eea12f784"
+}

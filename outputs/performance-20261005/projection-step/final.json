@@ -1,0 +1,357 @@
+{
+  "phase": "final",
+  "generatedAt": "2026-10-04T22:55:01.962729+00:00",
+  "project": "C:\\codex\\taptap-sea",
+  "runtimePath": "C:\\codex\\taptap-sea\\.tmp\\circle1-review-runtime",
+  "suiteCount": 5,
+  "suites": [
+    {
+      "name": "Circle1HUDReviewTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\Circle1HUDReviewTests.lua",
+      "passed": true,
+      "subtestCount": 12,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "stable visible and hidden modal opacity does not dirty layout on each refresh",
+            "passed": true
+          },
+          {
+            "name": "fish rows and port sales show rarity without inventing weight",
+            "passed": true
+          },
+          {
+            "name": "empty cabin and supply-only cabin explain disabled sell-all",
+            "passed": true
+          },
+          {
+            "name": "catch at sea explains port requirement and sale becomes available on return",
+            "passed": true
+          },
+          {
+            "name": "drawer and cards use native RGBA interpolation and stable phase writes",
+            "passed": true
+          },
+          {
+            "name": "pending catch selects a sea drop point through the real drawer backdrop only",
+            "passed": true
+          },
+          {
+            "name": "cabin gift opens actual elder dialogue and consumes food without healing player",
+            "passed": true
+          },
+          {
+            "name": "elder absence remains clickable and explains reason without losing cargo",
+            "passed": true
+          },
+          {
+            "name": "full cabin gift frees a slot and claims catch once while all dialogue pauses remain",
+            "passed": true
+          },
+          {
+            "name": "shop shortages explain their cause and are re-enabled after restock",
+            "passed": true
+          },
+          {
+            "name": "treasure ownership remains separate from cargo and mode follows real state",
+            "passed": true
+          },
+          {
+            "name": "night HUD explains grace, precise penalty and exhaustion",
+            "passed": true
+          }
+        ],
+        "guiVerified": false
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 43.892
+    },
+    {
+      "name": "SeaCurvatureTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaCurvatureTests.lua",
+      "passed": true,
+      "subtestCount": 4,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "error": "",
+            "passed": true,
+            "name": "formula and exact inverse across DPR and landscape/portrait viewports"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "screen-space horizon rejects sky according to its lateral curve"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "vector derivatives match the curved projection finite difference"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "finite ground plane reaches the horizon while elevated silhouettes pass it"
+          }
+        ],
+        "status": "PASS"
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 3.959
+    },
+    {
+      "name": "SeaFusionRenderTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaFusionRenderTests.lua",
+      "passed": true,
+      "subtestCount": 10,
+      "failures": [],
+      "returned": {
+        "status": "PASS",
+        "tests": [
+          "draw_is_pure_for_runtime_state",
+          "original_sun_and_birds_reused",
+          "projected_sea_view_art_apis_reused",
+          "ordinary_fish_hidden_by_default",
+          "show_underwater_draws_both_fixture_fish",
+          "resize_preserves_projection_anchor_horizon_and_perspective_scale",
+          "curved_ground_clips_preserve_elevated_island_silhouettes_in_both_aspects",
+          "presentation_fixture_does_not_change_config_world",
+          "night_tint_precedes_boat_and_preserves_paused_gameplay_clock",
+          "daytime_removes_night_tint_and_nvg_state_stack_is_balanced"
+        ],
+        "metrics": {
+          "landscape": {
+            "basePixelsPerMeter": 24.0,
+            "height": 1080,
+            "horizonY": 259.2,
+            "width": 1920,
+            "hiddenWorldFishCalls": 0,
+            "shipScreenX": 960.0,
+            "anchorY": 0.72,
+            "shipScreenY": 777.5999999999999,
+            "anchorX": 0.5
+          },
+          "originalFixedObjectCount": 3,
+          "previewFixtures": {
+            "island": "(-14,-12)",
+            "tuna": "(8,-8)",
+            "sardine": "(-8,-8)"
+          },
+          "portrait": {
+            "basePixelsPerMeter": 25.555555555555557,
+            "height": 1150,
+            "horizonY": 276.0,
+            "width": 1200,
+            "shipScreenX": 600.0,
+            "anchorY": 0.72,
+            "revealedWorldFishCalls": 2,
+            "shipScreenY": 828.0,
+            "anchorX": 0.5
+          },
+          "originalConfiguredBirds": 2
+        }
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 625,
+        "nvgBezierTo": 16,
+        "nvgCircle": 16,
+        "nvgClosePath": 1114,
+        "nvgEllipse": 9,
+        "nvgFill": 596,
+        "nvgFillColor": 580,
+        "nvgFillPaint": 16,
+        "nvgGlobalAlpha": 5,
+        "nvgIntersectScissor": 14,
+        "nvgLineTo": 5687,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1495,
+        "nvgRadialGradient": 14,
+        "nvgRect": 1,
+        "nvgRestore": 26,
+        "nvgSave": 26,
+        "nvgScale": 15,
+        "nvgStroke": 51,
+        "nvgStrokeColor": 51,
+        "nvgStrokeWidth": 51,
+        "nvgTranslate": 15
+      },
+      "nvgCallTotal": 10425,
+      "durationMs": 267.557
+    },
+    {
+      "name": "SeaHorizonOcclusionTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaHorizonOcclusionTests.lua",
+      "passed": true,
+      "subtestCount": 9,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "separated screen polygons retain their geometry across horizon extrema",
+            "passed": true
+          },
+          {
+            "name": "intersecting and tangent screen polygons still clip against the curved horizon",
+            "passed": true
+          },
+          {
+            "name": "the lowest raised vertices disappear before the top as the surface recedes",
+            "passed": true
+          },
+          {
+            "name": "large footprints survive center crossings including lateral screen edges",
+            "passed": true
+          },
+          {
+            "name": "raised directional vectors use the same altitude as finite difference samples",
+            "passed": true
+          },
+          {
+            "name": "raised geometry at the tangent retains its real height",
+            "passed": true
+          },
+          {
+            "name": "ground inverse remains unique at every lateral horizon and DPR scale",
+            "passed": true
+          },
+          {
+            "name": "actual scene renders a new float with its center beyond the tangent",
+            "passed": true
+          },
+          {
+            "name": "height broad phase is conservative and responds to configuration changes",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 724,
+        "nvgBezierTo": 16,
+        "nvgCircle": 26,
+        "nvgClosePath": 1249,
+        "nvgEllipse": 9,
+        "nvgFill": 696,
+        "nvgFillColor": 670,
+        "nvgFillPaint": 26,
+        "nvgGlobalAlpha": 5,
+        "nvgIntersectScissor": 24,
+        "nvgLineTo": 6285,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1880,
+        "nvgRadialGradient": 24,
+        "nvgRect": 1,
+        "nvgRestore": 36,
+        "nvgSave": 36,
+        "nvgScale": 22,
+        "nvgStroke": 49,
+        "nvgStrokeColor": 49,
+        "nvgStrokeWidth": 49,
+        "nvgTranslate": 22
+      },
+      "nvgCallTotal": 11900,
+      "durationMs": 100.154
+    },
+    {
+      "name": "SeaViewUpgradeTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaViewUpgradeTests.lua",
+      "passed": true,
+      "subtestCount": 10,
+      "failures": [],
+      "returned": {
+        "passed": true,
+        "results": [
+          {
+            "passed": true,
+            "name": "camera_configuration_uses_the_confirmed_world_oblique_values",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "eight_heading_inputs_keep_the_same_meter_speed",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "camera_follows_continuously_and_returns_smoothly_when_the_ship_stops",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "projection_formula_and_inverse_hold_at_multiple_world_depths",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "logical_projection_resizes_correctly_across_aspect_and_dpr",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "horizon_far_depth_and_near_singularity_are_rejected",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "sampled_net_circles_and_lens_sectors_preserve_world_distance_and_angle",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "world_visibility_and_interaction_distances_do_not_change_with_camera",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "wake_uses_measured_displacement_and_expires_while_stationary",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "pause_resize_return_port_and_reset_preserve_or_clear_wake_as_required",
+            "error": ""
+          }
+        ],
+        "metrics": {
+          "netCircleSamples": 32,
+          "clippedFarCircleSamples": 21,
+          "lensSectorSamples": 26,
+          "headingCount": 8,
+          "viewportCases": 3,
+          "projectedDepthsMeters": [
+            0,
+            20,
+            85,
+            109
+          ]
+        },
+        "evidence": {
+          "NanoVGMockVisualAcceptance": false,
+          "nativeEngineVisualAcceptance": "NOT_RUN",
+          "kind": "pure Lua logic suite using real project modules"
+        },
+        "status": "PASS"
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 14.525
+    }
+  ],
+  "luaVersion": "Lua 5.4",
+  "passedSuiteCount": 5,
+  "failedSuiteCount": 0,
+  "passed": true
+}

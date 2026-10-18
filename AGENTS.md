@@ -1119,7 +1119,8 @@ workspace/
 
 ## 渔夫漂流记项目级约定
 
-- 本项目是 2D 俯视游戏。
+- 本项目主航海画面是 **UrhoX + Lua + NanoVG + 世界米制坐标 + 自实现斜视投影的 2D/2.5D 渲染**，不是传统 3D 模型场景。不得因美术接入自行改成 3D 资产链或另建平行图片/投影系统。
+- **美术任务入口**：涉及主场景美术、Maker 资源生成、图片接入、风格调整、昼夜视觉、船/岛/漂浮物/海面信号时，执行前必须完整阅读 docs/ART_PIPELINE.md。该文档是当前美术生产与接入的 ACTIVE BASELINE；如需求与其冲突，先报告冲突并等待用户确认。具体实现仍须读取当前源码，不得只按文档摘要改代码。
 - 目录职责应遵守 `docs/ARCHITECTURE_LAYOUT.md`：保留轻量 `Game/Entities/FSM/Systems` 骨架，海洋能力放 `Ocean/`，玩家玩法放 `Gameplay/`，装配与事务编排放 `Integration/`；不引入完整 ECS 或重型继承。本节规定架构要求，不作为文件存在性或实施进度的证明。
 - `scripts/Main.lua` 仅负责 Maker 生命周期和场景接线；引擎输入、渲染事件适配在场景层，规则不写进入口。
 - `Game/Game.lua` 应发起整局更新和暂停同步；Gameplay 更新须以 System 经 `World:AddSystem` 注册，由 World 统一调度，不再由 Game 或 Integration 单独调用 Gameplay.Update。玩家状态、昼夜与保存应由 `Gameplay/` 持有；Game 不另建玩家状态或时钟。

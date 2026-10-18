@@ -1,0 +1,145 @@
+{
+  "phase": "final",
+  "generatedAt": "2026-10-04T22:51:13.857492+00:00",
+  "project": "C:\\codex\\taptap-sea",
+  "runtimePath": "C:\\codex\\taptap-sea\\.tmp\\circle1-review-runtime",
+  "suiteCount": 3,
+  "suites": [
+    {
+      "name": "Circle1B3SceneUITests",
+      "kind": "run",
+      "file": "scripts\\Tests\\Circle1B3SceneUITests.lua",
+      "passed": true,
+      "subtestCount": 10,
+      "failures": [],
+      "returned": {
+        "realCloudVerified": false,
+        "kind": "widget-tree and SDK protocol",
+        "guiVerified": false,
+        "results": [
+          {
+            "name": "formal scene defaults to clientCloud read and blocks entry until a choice",
+            "passed": true
+          },
+          {
+            "name": "new-run initial save can retry or explicitly continue without waiting",
+            "passed": true
+          },
+          {
+            "name": "formal cloud load failure retry restores a legal snapshot at the physical port",
+            "passed": true
+          },
+          {
+            "name": "missing port API does not turn empty cloud into a fake playable new run",
+            "passed": true
+          },
+          {
+            "name": "closing the scene during a real adapter read ignores the old callback",
+            "passed": true
+          },
+          {
+            "name": "scene Stop accepts A's false disabled result and closes the real scope",
+            "passed": true
+          },
+          {
+            "name": "HUD old sale callback cannot sell the next identical fish",
+            "passed": true
+          },
+          {
+            "name": "formal HUD save failure explicitly retries or abandons without double settlement",
+            "passed": true
+          },
+          {
+            "name": "ordinary mouse and touch adapter blocks UI and consumes net-center pointer once",
+            "passed": true
+          },
+          {
+            "name": "default scene hides sea cheats and recalculates HUD width on resize",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 58.234
+    },
+    {
+      "name": "Circle1HUDReviewTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\Circle1HUDReviewTests.lua",
+      "passed": true,
+      "subtestCount": 11,
+      "failures": [],
+      "returned": {
+        "guiVerified": false,
+        "results": [
+          {
+            "name": "fish rows and port sales show rarity without inventing weight",
+            "passed": true
+          },
+          {
+            "name": "empty cabin and supply-only cabin explain disabled sell-all",
+            "passed": true
+          },
+          {
+            "name": "catch at sea explains port requirement and sale becomes available on return",
+            "passed": true
+          },
+          {
+            "name": "drawer and cards use native RGBA interpolation and stable phase writes",
+            "passed": true
+          },
+          {
+            "name": "pending catch selects a sea drop point through the real drawer backdrop only",
+            "passed": true
+          },
+          {
+            "name": "cabin gift opens actual elder dialogue and consumes food without healing player",
+            "passed": true
+          },
+          {
+            "name": "elder absence remains clickable and explains reason without losing cargo",
+            "passed": true
+          },
+          {
+            "name": "full cabin gift frees a slot and claims catch once while all dialogue pauses remain",
+            "passed": true
+          },
+          {
+            "name": "shop shortages explain their cause and are re-enabled after restock",
+            "passed": true
+          },
+          {
+            "name": "treasure ownership remains separate from cargo and mode follows real state",
+            "passed": true
+          },
+          {
+            "name": "night HUD explains grace, precise penalty and exhaustion",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 39.949
+    },
+    {
+      "name": "GameLoopUISpec",
+      "kind": "spec",
+      "file": "scripts\\Tests\\GameLoopUISpec.lua",
+      "passed": true,
+      "subtestCount": 11,
+      "failures": [],
+      "stdout": "PASS HUD always visible information, host subtree and core button wiring\nPASS forced return modal and failed save retry through actual callbacks\nPASS failed save offers an explicit unsaved continuation through the HUD\nPASS skipping a pending save explains that the remote write may still finish\nPASS debug restricted to development, config steps and freeze during save\nPASS development HUD controls configure actions without production debug\nPASS port upgrade buttons use config prices and refresh after purchase\nPASS daily shop stock sold-out UI and next-day refresh\nPASS production fishing HUD casts on the sea pointer then pauses and cancels\nPASS pending cabin menu returns without closing then consumes and claims exactly once\nPASS pending cabin pointer chooses drop position while paused with mouse and touch\nGAME_LOOP_UI_MOCK_PASS 11",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 25.003
+    }
+  ],
+  "luaVersion": "Lua 5.4",
+  "passedSuiteCount": 3,
+  "failedSuiteCount": 0,
+  "passed": true
+}

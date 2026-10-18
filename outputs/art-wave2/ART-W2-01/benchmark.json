@@ -1,0 +1,1042 @@
+{
+  "schemaVersion": 1,
+  "method": "Isolated Lua 5.4 A/B, old four presentation modules versus current four modules; process_time and perf_counter; same seed/time/config per scenario; 1 warm-up draw then alternating 4x32 measured frames; GC collected then stopped during each timed batch; one additional GC-stopped draw for allocation delta; Art.Load(ctx) and all draw calls reuse the same ctx.",
+  "limitations": [
+    "All NanoVG calls are Lua counting no-ops; nvgCreateImage returns a positive integer only when the requested local assets path exists and has a PNG signature.",
+    "Reports offline Lua process CPU, elapsed time, allocation, and call counts only; does not measure native NanoVG cost, image decoding/upload, GPU, GUI, or FPS.",
+    "Geometry/Projection remain the current optimized files in both versions. Different image specifications are recorded; PNG pixels are not rendered or visually compared."
+  ],
+  "nativeFpsVerified": false,
+  "config": {
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "cases": [
+      {
+        "name": "near_full",
+        "camera": [
+          0,
+          -35
+        ],
+        "radius": 20
+      },
+      {
+        "name": "left_edge",
+        "camera": [
+          90,
+          -35
+        ],
+        "radius": 20
+      },
+      {
+        "name": "horizon_crossing",
+        "camera": [
+          0,
+          -108
+        ],
+        "radius": 20
+      },
+      {
+        "name": "small_island",
+        "camera": [
+          0,
+          -35
+        ],
+        "radius": 12
+      },
+      {
+        "name": "offscreen",
+        "camera": [
+          2500,
+          -35
+        ],
+        "radius": 20
+      },
+      {
+        "name": "port_scene",
+        "camera": [
+          0,
+          0
+        ],
+        "radius": 20,
+        "scene": true
+      },
+      {
+        "name": "port_scene_drift",
+        "camera": [
+          0,
+          0
+        ],
+        "radius": 20,
+        "scene": true,
+        "drift": true
+      }
+    ],
+    "runsPerVersion": 4,
+    "framesPerRun": 32,
+    "alternation": [
+      "A_before",
+      "B_current"
+    ],
+    "versions": {
+      "A_before": {
+        "modulePaths": {
+          "SeaViewArt": "outputs/art-wave2/ART-W2-01/before/SeaViewArt.lua",
+          "ImageArt": "outputs/art-wave2/ART-W2-01/before/ImageArt.lua",
+          "SeaDraw": "outputs/art-wave2/ART-W2-01/before/SeaDraw.lua",
+          "OceanImageCatalog": "outputs/art-wave2/ART-W2-01/before/OceanImageCatalog.lua"
+        },
+        "moduleSha256": {
+          "SeaViewArt": "118815f590e62a5c790c4a55cfae74c5f1d9905413893412092be5d9e9c51da2",
+          "ImageArt": "17678734a765098b5477e83409cc5edea6e40d6bcfebfa4b0d2ae2ae2fc34e73",
+          "SeaDraw": "26083b7b4357aebb963eeaadb8a5e1965c38897ab29cd31f0e5d652fc1b6d4ea",
+          "OceanImageCatalog": "425245b5ab40d06de4403901da4d7ac0c40b215a93c7640276509c9a2a71f240"
+        },
+        "preloadOverrides": true,
+        "packagePreloadModuleNames": {
+          "SeaViewArt": "Ocean.SeaViewArt",
+          "ImageArt": "Ocean.ImageArt",
+          "SeaDraw": "Ocean.SeaDraw",
+          "OceanImageCatalog": "GeneratedData.OceanImageCatalog"
+        }
+      },
+      "B_current": {
+        "modulePaths": {
+          "SeaViewArt": "scripts/Ocean/SeaViewArt.lua",
+          "ImageArt": "scripts/Ocean/ImageArt.lua",
+          "SeaDraw": "scripts/Ocean/SeaDraw.lua",
+          "OceanImageCatalog": "scripts/GeneratedData/OceanImageCatalog.lua"
+        },
+        "moduleSha256": {
+          "SeaViewArt": "8245abae69450162c1f7b40e3e1bc37874a515f804fb161b6c1c31a52dd3c5f0",
+          "ImageArt": "76fd2ea13250beceeb45e033e1af04122f68132e719433936e704b1f79a8b153",
+          "SeaDraw": "684eb0ec175c3159f238e3ecca315d2c7a1707a5f38a29c04d980372f044915e",
+          "OceanImageCatalog": "5f8a71eea582b6f79daec3135a30c5d5e7ea405e3e446f5142624ffd7e819c23"
+        },
+        "preloadOverrides": false,
+        "packagePreloadModuleNames": {}
+      }
+    },
+    "otherModules": {
+      "scripts/Ocean/ProjectedGeometry.lua": "9f4e43b22a3d5990a963c44f37903c261e4ccd83d9c0fe6c021d28962afa96f2",
+      "scripts/Ocean/Projection.lua": "805d6f06a1511b6311920989c3b3e12d358a3b7e80f458899ef15b9f7149a91b"
+    },
+    "imageStub": "returns positive integer handles only for existing PNG paths beneath assets/",
+    "counters": [
+      "nvgAPICalls",
+      "nvgFill",
+      "Geometry.StrokeWorldLine"
+    ],
+    "countingNoopNvgApiNames": [
+      "nvgBeginPath",
+      "nvgBezierTo",
+      "nvgCircle",
+      "nvgClosePath",
+      "nvgCreateImage",
+      "nvgDeleteImage",
+      "nvgEllipse",
+      "nvgFill",
+      "nvgFillColor",
+      "nvgFillPaint",
+      "nvgGlobalAlpha",
+      "nvgImagePattern",
+      "nvgIntersectScissor",
+      "nvgLineTo",
+      "nvgLinearGradient",
+      "nvgMoveTo",
+      "nvgQuadTo",
+      "nvgRGBA",
+      "nvgRGBAf",
+      "nvgRadialGradient",
+      "nvgRect",
+      "nvgResetScissor",
+      "nvgRestore",
+      "nvgRotate",
+      "nvgRoundedRect",
+      "nvgSave",
+      "nvgScale",
+      "nvgScissor",
+      "nvgShapeAntiAlias",
+      "nvgStroke",
+      "nvgStrokeColor",
+      "nvgStrokeWidth",
+      "nvgTransform",
+      "nvgTranslate"
+    ]
+  },
+  "config_hash": "037080cdb19bc997588a84fcd63701848a13874d749c985f24d8dd94ba8560f2",
+  "versions": {
+    "A_before": {
+      "modulePaths": {
+        "SeaViewArt": "outputs/art-wave2/ART-W2-01/before/SeaViewArt.lua",
+        "ImageArt": "outputs/art-wave2/ART-W2-01/before/ImageArt.lua",
+        "SeaDraw": "outputs/art-wave2/ART-W2-01/before/SeaDraw.lua",
+        "OceanImageCatalog": "outputs/art-wave2/ART-W2-01/before/OceanImageCatalog.lua"
+      },
+      "moduleSha256": {
+        "SeaViewArt": "118815f590e62a5c790c4a55cfae74c5f1d9905413893412092be5d9e9c51da2",
+        "ImageArt": "17678734a765098b5477e83409cc5edea6e40d6bcfebfa4b0d2ae2ae2fc34e73",
+        "SeaDraw": "26083b7b4357aebb963eeaadb8a5e1965c38897ab29cd31f0e5d652fc1b6d4ea",
+        "OceanImageCatalog": "425245b5ab40d06de4403901da4d7ac0c40b215a93c7640276509c9a2a71f240"
+      },
+      "preloadOverrides": true,
+      "packagePreloadModuleNames": {
+        "SeaViewArt": "Ocean.SeaViewArt",
+        "ImageArt": "Ocean.ImageArt",
+        "SeaDraw": "Ocean.SeaDraw",
+        "OceanImageCatalog": "GeneratedData.OceanImageCatalog"
+      }
+    },
+    "B_current": {
+      "modulePaths": {
+        "SeaViewArt": "scripts/Ocean/SeaViewArt.lua",
+        "ImageArt": "scripts/Ocean/ImageArt.lua",
+        "SeaDraw": "scripts/Ocean/SeaDraw.lua",
+        "OceanImageCatalog": "scripts/GeneratedData/OceanImageCatalog.lua"
+      },
+      "moduleSha256": {
+        "SeaViewArt": "8245abae69450162c1f7b40e3e1bc37874a515f804fb161b6c1c31a52dd3c5f0",
+        "ImageArt": "76fd2ea13250beceeb45e033e1af04122f68132e719433936e704b1f79a8b153",
+        "SeaDraw": "684eb0ec175c3159f238e3ecca315d2c7a1707a5f38a29c04d980372f044915e",
+        "OceanImageCatalog": "5f8a71eea582b6f79daec3135a30c5d5e7ea405e3e446f5142624ffd7e819c23"
+      },
+      "preloadOverrides": false,
+      "packagePreloadModuleNames": {}
+    }
+  },
+  "loadedPngPaths": {
+    "A_before": [
+      {
+        "path": "image/OceanLoop/barrel.png",
+        "resolvedPath": "assets/image/OceanLoop/barrel.png",
+        "exists": true,
+        "isPng": true,
+        "bytes": 280717,
+        "flags": 4
+      },
+      {
+        "path": "image/OceanLoop/gull.png",
+        "resolvedPath": "assets/image/OceanLoop/gull.png",
+        "exists": true,
+        "isPng": true,
+        "bytes": 96047,
+        "flags": 4
+      },
+      {
+        "path": "image/OceanLoop/ripple.png",
+        "resolvedPath": "assets/image/OceanLoop/ripple.png",
+        "exists": true,
+        "isPng": true,
+        "bytes": 29856,
+        "flags": 4
+      },
+      {
+        "path": "image/OceanLoop/island.png",
+        "resolvedPath": "assets/image/OceanLoop/island.png",
+        "exists": true,
+        "isPng": true,
+        "bytes": 1108621,
+        "flags": 4
+      },
+      {
+        "path": "image/OceanLoop/boat.png",
+        "resolvedPath": "assets/image/OceanLoop/boat.png",
+        "exists": true,
+        "isPng": true,
+        "bytes": 478694,
+        "flags": 4
+      },
+      {
+        "path": "image/OceanLoop/waterpaper.png",
+        "resolvedPath": "assets/image/OceanLoop/waterpaper.png",
+        "exists": true,
+        "isPng": true,
+        "bytes": 1532955,
+        "flags": 7
+      }
+    ],
+    "B_current": [
+      {
+        "path": "image/OceanLoop/waterpaper.png",
+        "resolvedPath": "assets/image/OceanLoop/waterpaper.png",
+        "exists": true,
+        "isPng": true,
+        "bytes": 1532955,
+        "flags": 7
+      },
+      {
+        "path": "image/OceanWave2/gull.png",
+        "resolvedPath": "assets/image/OceanWave2/gull.png",
+        "exists": true,
+        "isPng": true,
+        "bytes": 73017,
+        "flags": 4
+      },
+      {
+        "path": "image/OceanWave2/splash.png",
+        "resolvedPath": "assets/image/OceanWave2/splash.png",
+        "exists": true,
+        "isPng": true,
+        "bytes": 29480,
+        "flags": 4
+      },
+      {
+        "path": "image/OceanLoop/barrel.png",
+        "resolvedPath": "assets/image/OceanLoop/barrel.png",
+        "exists": true,
+        "isPng": true,
+        "bytes": 280717,
+        "flags": 4
+      },
+      {
+        "path": "image/OceanWave2/island.png",
+        "resolvedPath": "assets/image/OceanWave2/island.png",
+        "exists": true,
+        "isPng": true,
+        "bytes": 769917,
+        "flags": 4
+      },
+      {
+        "path": "image/OceanWave2/gull_dive.png",
+        "resolvedPath": "assets/image/OceanWave2/gull_dive.png",
+        "exists": true,
+        "isPng": true,
+        "bytes": 92628,
+        "flags": 4
+      },
+      {
+        "path": "image/OceanWave2/ripple.png",
+        "resolvedPath": "assets/image/OceanWave2/ripple.png",
+        "exists": true,
+        "isPng": true,
+        "bytes": 49072,
+        "flags": 4
+      },
+      {
+        "path": "image/OceanWave2/boat.png",
+        "resolvedPath": "assets/image/OceanWave2/boat.png",
+        "exists": true,
+        "isPng": true,
+        "bytes": 235532,
+        "flags": 4
+      }
+    ]
+  },
+  "records": [
+    {
+      "scenario": "near_full",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        -35
+      ],
+      "radius": 20,
+      "scene": false,
+      "drift": false,
+      "samples": {
+        "A_before": [
+          {
+            "allocatedKiBPerFrame": 744.560546875,
+            "geometryStrokeWorldLineCallsPerFrame": 138.0,
+            "processCpuMsPerFrame": 4.39453125,
+            "elapsedMsPerFrame": 4.833584375035116,
+            "nvgAPICallsPerFrame": 3550.0,
+            "nvgFillCallsPerFrame": 276.0
+          },
+          {
+            "allocatedKiBPerFrame": 744.560546875,
+            "geometryStrokeWorldLineCallsPerFrame": 138.0,
+            "processCpuMsPerFrame": 4.39453125,
+            "elapsedMsPerFrame": 4.272512499994718,
+            "nvgAPICallsPerFrame": 3550.0,
+            "nvgFillCallsPerFrame": 276.0
+          },
+          {
+            "allocatedKiBPerFrame": 744.560546875,
+            "geometryStrokeWorldLineCallsPerFrame": 138.0,
+            "processCpuMsPerFrame": 4.39453125,
+            "elapsedMsPerFrame": 4.2094187500083535,
+            "nvgAPICallsPerFrame": 3550.0,
+            "nvgFillCallsPerFrame": 276.0
+          },
+          {
+            "allocatedKiBPerFrame": 744.560546875,
+            "geometryStrokeWorldLineCallsPerFrame": 138.0,
+            "processCpuMsPerFrame": 4.39453125,
+            "elapsedMsPerFrame": 4.297506249997696,
+            "nvgAPICallsPerFrame": 3550.0,
+            "nvgFillCallsPerFrame": 276.0
+          }
+        ],
+        "B_current": [
+          {
+            "allocatedKiBPerFrame": 385.7421875,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "nvgAPICallsPerFrame": 1536.0,
+            "processCpuMsPerFrame": 1.953125,
+            "nvgFillCallsPerFrame": 128.0,
+            "elapsedMsPerFrame": 1.89045625000972
+          },
+          {
+            "allocatedKiBPerFrame": 385.7421875,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "nvgAPICallsPerFrame": 1536.0,
+            "processCpuMsPerFrame": 1.953125,
+            "nvgFillCallsPerFrame": 128.0,
+            "elapsedMsPerFrame": 1.892393749983512
+          },
+          {
+            "allocatedKiBPerFrame": 385.7421875,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "nvgAPICallsPerFrame": 1536.0,
+            "processCpuMsPerFrame": 1.953125,
+            "nvgFillCallsPerFrame": 128.0,
+            "elapsedMsPerFrame": 1.954818749993592
+          },
+          {
+            "allocatedKiBPerFrame": 385.7421875,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "nvgAPICallsPerFrame": 1536.0,
+            "processCpuMsPerFrame": 1.953125,
+            "nvgFillCallsPerFrame": 128.0,
+            "elapsedMsPerFrame": 1.9095000000106666
+          }
+        ]
+      },
+      "A_before": {
+        "allocatedKiBPerFrame": 744.560546875,
+        "geometryStrokeWorldLineCallsPerFrame": 138.0,
+        "processCpuMsPerFrame": 4.39453125,
+        "elapsedMsPerFrame": 4.285009374996207,
+        "nvgAPICallsPerFrame": 3550.0,
+        "nvgFillCallsPerFrame": 276.0
+      },
+      "B_current": {
+        "allocatedKiBPerFrame": 385.7421875,
+        "geometryStrokeWorldLineCallsPerFrame": 0.0,
+        "nvgAPICallsPerFrame": 1536.0,
+        "processCpuMsPerFrame": 1.953125,
+        "nvgFillCallsPerFrame": 128.0,
+        "elapsedMsPerFrame": 1.9009468749970893
+      },
+      "cpuReductionPercent": 55.55555555555556,
+      "allocationReductionPercent": 48.19196516401506
+    },
+    {
+      "scenario": "left_edge",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        90,
+        -35
+      ],
+      "radius": 20,
+      "scene": false,
+      "drift": false,
+      "samples": {
+        "A_before": [
+          {
+            "elapsedMsPerFrame": 2.022312500002954,
+            "geometryStrokeWorldLineCallsPerFrame": 48.0,
+            "processCpuMsPerFrame": 1.953125,
+            "nvgFillCallsPerFrame": 112.0,
+            "nvgAPICallsPerFrame": 1183.0,
+            "allocatedKiBPerFrame": 394.498046875
+          },
+          {
+            "elapsedMsPerFrame": 2.0183374999760417,
+            "geometryStrokeWorldLineCallsPerFrame": 48.0,
+            "processCpuMsPerFrame": 1.953125,
+            "nvgFillCallsPerFrame": 112.0,
+            "nvgAPICallsPerFrame": 1183.0,
+            "allocatedKiBPerFrame": 394.498046875
+          },
+          {
+            "elapsedMsPerFrame": 2.0515500000328757,
+            "geometryStrokeWorldLineCallsPerFrame": 48.0,
+            "processCpuMsPerFrame": 2.44140625,
+            "nvgFillCallsPerFrame": 112.0,
+            "nvgAPICallsPerFrame": 1183.0,
+            "allocatedKiBPerFrame": 394.498046875
+          },
+          {
+            "elapsedMsPerFrame": 2.029109374973359,
+            "geometryStrokeWorldLineCallsPerFrame": 48.0,
+            "processCpuMsPerFrame": 1.953125,
+            "nvgFillCallsPerFrame": 112.0,
+            "nvgAPICallsPerFrame": 1183.0,
+            "allocatedKiBPerFrame": 394.498046875
+          }
+        ],
+        "B_current": [
+          {
+            "allocatedKiBPerFrame": 303.65625,
+            "nvgAPICallsPerFrame": 732.0,
+            "nvgFillCallsPerFrame": 61.0,
+            "elapsedMsPerFrame": 1.3057781250154221,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "processCpuMsPerFrame": 0.9765625
+          },
+          {
+            "allocatedKiBPerFrame": 303.65625,
+            "nvgAPICallsPerFrame": 732.0,
+            "nvgFillCallsPerFrame": 61.0,
+            "elapsedMsPerFrame": 1.2901562499791908,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "processCpuMsPerFrame": 0.9765625
+          },
+          {
+            "allocatedKiBPerFrame": 303.65625,
+            "nvgAPICallsPerFrame": 732.0,
+            "nvgFillCallsPerFrame": 61.0,
+            "elapsedMsPerFrame": 1.2997562499776905,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "processCpuMsPerFrame": 1.46484375
+          },
+          {
+            "allocatedKiBPerFrame": 303.65625,
+            "nvgAPICallsPerFrame": 732.0,
+            "nvgFillCallsPerFrame": 61.0,
+            "elapsedMsPerFrame": 1.2722718749955675,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "processCpuMsPerFrame": 1.46484375
+          }
+        ]
+      },
+      "A_before": {
+        "elapsedMsPerFrame": 2.0257109374881566,
+        "geometryStrokeWorldLineCallsPerFrame": 48.0,
+        "processCpuMsPerFrame": 1.953125,
+        "nvgFillCallsPerFrame": 112.0,
+        "nvgAPICallsPerFrame": 1183.0,
+        "allocatedKiBPerFrame": 394.498046875
+      },
+      "B_current": {
+        "allocatedKiBPerFrame": 303.65625,
+        "nvgAPICallsPerFrame": 732.0,
+        "nvgFillCallsPerFrame": 61.0,
+        "elapsedMsPerFrame": 1.2949562499784406,
+        "geometryStrokeWorldLineCallsPerFrame": 0.0,
+        "processCpuMsPerFrame": 1.220703125
+      },
+      "cpuReductionPercent": 37.5,
+      "allocationReductionPercent": 23.02718545620176
+    },
+    {
+      "scenario": "horizon_crossing",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        -108
+      ],
+      "radius": 20,
+      "scene": false,
+      "drift": false,
+      "samples": {
+        "A_before": [
+          {
+            "elapsedMsPerFrame": 4.28716562498721,
+            "processCpuMsPerFrame": 4.39453125,
+            "allocatedKiBPerFrame": 784.294921875,
+            "nvgAPICallsPerFrame": 2851.0,
+            "geometryStrokeWorldLineCallsPerFrame": 86.0,
+            "nvgFillCallsPerFrame": 184.0
+          },
+          {
+            "elapsedMsPerFrame": 4.274418750014775,
+            "processCpuMsPerFrame": 4.39453125,
+            "allocatedKiBPerFrame": 784.294921875,
+            "nvgAPICallsPerFrame": 2851.0,
+            "geometryStrokeWorldLineCallsPerFrame": 86.0,
+            "nvgFillCallsPerFrame": 184.0
+          },
+          {
+            "elapsedMsPerFrame": 4.29501562501855,
+            "processCpuMsPerFrame": 4.39453125,
+            "allocatedKiBPerFrame": 784.294921875,
+            "nvgAPICallsPerFrame": 2851.0,
+            "geometryStrokeWorldLineCallsPerFrame": 86.0,
+            "nvgFillCallsPerFrame": 184.0
+          },
+          {
+            "elapsedMsPerFrame": 4.259662500032846,
+            "processCpuMsPerFrame": 4.39453125,
+            "allocatedKiBPerFrame": 784.294921875,
+            "nvgAPICallsPerFrame": 2851.0,
+            "geometryStrokeWorldLineCallsPerFrame": 86.0,
+            "nvgFillCallsPerFrame": 184.0
+          }
+        ],
+        "B_current": [
+          {
+            "nvgFillCallsPerFrame": 88.0,
+            "processCpuMsPerFrame": 1.953125,
+            "allocatedKiBPerFrame": 445.1640625,
+            "elapsedMsPerFrame": 1.958031250012482,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "nvgAPICallsPerFrame": 1433.0
+          },
+          {
+            "nvgFillCallsPerFrame": 88.0,
+            "processCpuMsPerFrame": 1.953125,
+            "allocatedKiBPerFrame": 445.1640625,
+            "elapsedMsPerFrame": 1.9317125000384294,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "nvgAPICallsPerFrame": 1433.0
+          },
+          {
+            "nvgFillCallsPerFrame": 88.0,
+            "processCpuMsPerFrame": 1.953125,
+            "allocatedKiBPerFrame": 445.1640625,
+            "elapsedMsPerFrame": 2.003043749994049,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "nvgAPICallsPerFrame": 1433.0
+          },
+          {
+            "nvgFillCallsPerFrame": 88.0,
+            "processCpuMsPerFrame": 2.44140625,
+            "allocatedKiBPerFrame": 445.1640625,
+            "elapsedMsPerFrame": 2.0661281249658714,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "nvgAPICallsPerFrame": 1433.0
+          }
+        ]
+      },
+      "A_before": {
+        "elapsedMsPerFrame": 4.280792187500992,
+        "processCpuMsPerFrame": 4.39453125,
+        "allocatedKiBPerFrame": 784.294921875,
+        "nvgAPICallsPerFrame": 2851.0,
+        "geometryStrokeWorldLineCallsPerFrame": 86.0,
+        "nvgFillCallsPerFrame": 184.0
+      },
+      "B_current": {
+        "nvgFillCallsPerFrame": 88.0,
+        "processCpuMsPerFrame": 1.953125,
+        "allocatedKiBPerFrame": 445.1640625,
+        "elapsedMsPerFrame": 1.9805375000032654,
+        "geometryStrokeWorldLineCallsPerFrame": 0.0,
+        "nvgAPICallsPerFrame": 1433.0
+      },
+      "cpuReductionPercent": 55.55555555555556,
+      "allocationReductionPercent": 43.24022123772596
+    },
+    {
+      "scenario": "small_island",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        -35
+      ],
+      "radius": 12,
+      "scene": false,
+      "drift": false,
+      "samples": {
+        "A_before": [
+          {
+            "processCpuMsPerFrame": 3.41796875,
+            "nvgAPICallsPerFrame": 3217.0,
+            "elapsedMsPerFrame": 3.7759343750281005,
+            "allocatedKiBPerFrame": 645.076171875,
+            "nvgFillCallsPerFrame": 276.0,
+            "geometryStrokeWorldLineCallsPerFrame": 138.0
+          },
+          {
+            "processCpuMsPerFrame": 3.90625,
+            "nvgAPICallsPerFrame": 3217.0,
+            "elapsedMsPerFrame": 3.760474999978669,
+            "allocatedKiBPerFrame": 645.076171875,
+            "nvgFillCallsPerFrame": 276.0,
+            "geometryStrokeWorldLineCallsPerFrame": 138.0
+          },
+          {
+            "processCpuMsPerFrame": 3.90625,
+            "nvgAPICallsPerFrame": 3217.0,
+            "elapsedMsPerFrame": 4.033831250012554,
+            "allocatedKiBPerFrame": 645.076171875,
+            "nvgFillCallsPerFrame": 276.0,
+            "geometryStrokeWorldLineCallsPerFrame": 138.0
+          },
+          {
+            "processCpuMsPerFrame": 3.90625,
+            "nvgAPICallsPerFrame": 3217.0,
+            "elapsedMsPerFrame": 3.8025124999876425,
+            "allocatedKiBPerFrame": 645.076171875,
+            "nvgFillCallsPerFrame": 276.0,
+            "geometryStrokeWorldLineCallsPerFrame": 138.0
+          }
+        ],
+        "B_current": [
+          {
+            "nvgAPICallsPerFrame": 1536.0,
+            "processCpuMsPerFrame": 1.953125,
+            "elapsedMsPerFrame": 1.797146874991995,
+            "nvgFillCallsPerFrame": 128.0,
+            "allocatedKiBPerFrame": 359.4765625,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          },
+          {
+            "nvgAPICallsPerFrame": 1536.0,
+            "processCpuMsPerFrame": 1.953125,
+            "elapsedMsPerFrame": 1.771006250010032,
+            "nvgFillCallsPerFrame": 128.0,
+            "allocatedKiBPerFrame": 359.4765625,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          },
+          {
+            "nvgAPICallsPerFrame": 1536.0,
+            "processCpuMsPerFrame": 1.953125,
+            "elapsedMsPerFrame": 1.807475000020986,
+            "nvgFillCallsPerFrame": 128.0,
+            "allocatedKiBPerFrame": 359.4765625,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          },
+          {
+            "nvgAPICallsPerFrame": 1536.0,
+            "processCpuMsPerFrame": 1.953125,
+            "elapsedMsPerFrame": 1.7771531250332373,
+            "nvgFillCallsPerFrame": 128.0,
+            "allocatedKiBPerFrame": 359.4765625,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          }
+        ]
+      },
+      "A_before": {
+        "processCpuMsPerFrame": 3.90625,
+        "nvgAPICallsPerFrame": 3217.0,
+        "elapsedMsPerFrame": 3.7892234375078715,
+        "allocatedKiBPerFrame": 645.076171875,
+        "nvgFillCallsPerFrame": 276.0,
+        "geometryStrokeWorldLineCallsPerFrame": 138.0
+      },
+      "B_current": {
+        "nvgAPICallsPerFrame": 1536.0,
+        "processCpuMsPerFrame": 1.953125,
+        "elapsedMsPerFrame": 1.7871500000126161,
+        "nvgFillCallsPerFrame": 128.0,
+        "allocatedKiBPerFrame": 359.4765625,
+        "geometryStrokeWorldLineCallsPerFrame": 0.0
+      },
+      "cpuReductionPercent": 50.0,
+      "allocationReductionPercent": 44.273780652115335
+    },
+    {
+      "scenario": "offscreen",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        2500,
+        -35
+      ],
+      "radius": 20,
+      "scene": false,
+      "drift": false,
+      "samples": {
+        "A_before": [
+          {
+            "processCpuMsPerFrame": 0.48828125,
+            "elapsedMsPerFrame": 0.28869687503174646,
+            "allocatedKiBPerFrame": 49.849609375,
+            "nvgAPICallsPerFrame": 2.0,
+            "nvgFillCallsPerFrame": 0.0,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          },
+          {
+            "processCpuMsPerFrame": 0.48828125,
+            "elapsedMsPerFrame": 0.2931875000058426,
+            "allocatedKiBPerFrame": 49.849609375,
+            "nvgAPICallsPerFrame": 2.0,
+            "nvgFillCallsPerFrame": 0.0,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          },
+          {
+            "processCpuMsPerFrame": 0.0,
+            "elapsedMsPerFrame": 0.2906500000108281,
+            "allocatedKiBPerFrame": 49.849609375,
+            "nvgAPICallsPerFrame": 2.0,
+            "nvgFillCallsPerFrame": 0.0,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          },
+          {
+            "processCpuMsPerFrame": 0.0,
+            "elapsedMsPerFrame": 0.29059687500421205,
+            "allocatedKiBPerFrame": 49.849609375,
+            "nvgAPICallsPerFrame": 2.0,
+            "nvgFillCallsPerFrame": 0.0,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          }
+        ],
+        "B_current": [
+          {
+            "nvgAPICallsPerFrame": 0.0,
+            "elapsedMsPerFrame": 0.009662499962814763,
+            "allocatedKiBPerFrame": 4.96875,
+            "processCpuMsPerFrame": 0.0,
+            "nvgFillCallsPerFrame": 0.0,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          },
+          {
+            "nvgAPICallsPerFrame": 0.0,
+            "elapsedMsPerFrame": 0.009406250001120497,
+            "allocatedKiBPerFrame": 4.96875,
+            "processCpuMsPerFrame": 0.0,
+            "nvgFillCallsPerFrame": 0.0,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          },
+          {
+            "nvgAPICallsPerFrame": 0.0,
+            "elapsedMsPerFrame": 0.011759375013298268,
+            "allocatedKiBPerFrame": 4.96875,
+            "processCpuMsPerFrame": 0.0,
+            "nvgFillCallsPerFrame": 0.0,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          },
+          {
+            "nvgAPICallsPerFrame": 0.0,
+            "elapsedMsPerFrame": 0.009706250011731754,
+            "allocatedKiBPerFrame": 4.96875,
+            "processCpuMsPerFrame": 0.0,
+            "nvgFillCallsPerFrame": 0.0,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          }
+        ]
+      },
+      "A_before": {
+        "processCpuMsPerFrame": 0.244140625,
+        "elapsedMsPerFrame": 0.29062343750752007,
+        "allocatedKiBPerFrame": 49.849609375,
+        "nvgAPICallsPerFrame": 2.0,
+        "nvgFillCallsPerFrame": 0.0,
+        "geometryStrokeWorldLineCallsPerFrame": 0.0
+      },
+      "B_current": {
+        "nvgAPICallsPerFrame": 0.0,
+        "elapsedMsPerFrame": 0.009684374987273259,
+        "allocatedKiBPerFrame": 4.96875,
+        "processCpuMsPerFrame": 0.0,
+        "nvgFillCallsPerFrame": 0.0,
+        "geometryStrokeWorldLineCallsPerFrame": 0.0
+      },
+      "cpuReductionPercent": 100.0,
+      "allocationReductionPercent": 90.03251968812444
+    },
+    {
+      "scenario": "port_scene",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        0
+      ],
+      "radius": 20,
+      "scene": true,
+      "drift": false,
+      "samples": {
+        "A_before": [
+          {
+            "allocatedKiBPerFrame": 2448.037109375,
+            "nvgAPICallsPerFrame": 9930.0,
+            "elapsedMsPerFrame": 18.732521874994745,
+            "processCpuMsPerFrame": 18.5546875,
+            "geometryStrokeWorldLineCallsPerFrame": 276.0,
+            "nvgFillCallsPerFrame": 658.0
+          },
+          {
+            "allocatedKiBPerFrame": 2448.037109375,
+            "nvgAPICallsPerFrame": 9930.0,
+            "elapsedMsPerFrame": 18.691006249980546,
+            "processCpuMsPerFrame": 18.5546875,
+            "geometryStrokeWorldLineCallsPerFrame": 276.0,
+            "nvgFillCallsPerFrame": 658.0
+          },
+          {
+            "allocatedKiBPerFrame": 2448.037109375,
+            "nvgAPICallsPerFrame": 9930.0,
+            "elapsedMsPerFrame": 18.679050000002917,
+            "processCpuMsPerFrame": 19.04296875,
+            "geometryStrokeWorldLineCallsPerFrame": 276.0,
+            "nvgFillCallsPerFrame": 658.0
+          },
+          {
+            "allocatedKiBPerFrame": 2448.037109375,
+            "nvgAPICallsPerFrame": 9930.0,
+            "elapsedMsPerFrame": 18.773703125020802,
+            "processCpuMsPerFrame": 19.04296875,
+            "geometryStrokeWorldLineCallsPerFrame": 276.0,
+            "nvgFillCallsPerFrame": 658.0
+          }
+        ],
+        "B_current": [
+          {
+            "nvgAPICallsPerFrame": 6344.0,
+            "elapsedMsPerFrame": 14.295296874990981,
+            "allocatedKiBPerFrame": 1756.568359375,
+            "processCpuMsPerFrame": 14.16015625,
+            "nvgFillCallsPerFrame": 370.0,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          },
+          {
+            "nvgAPICallsPerFrame": 6344.0,
+            "elapsedMsPerFrame": 13.983659374957824,
+            "allocatedKiBPerFrame": 1756.568359375,
+            "processCpuMsPerFrame": 13.671875,
+            "nvgFillCallsPerFrame": 370.0,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          },
+          {
+            "nvgAPICallsPerFrame": 6344.0,
+            "elapsedMsPerFrame": 14.111399999990226,
+            "allocatedKiBPerFrame": 1756.568359375,
+            "processCpuMsPerFrame": 14.16015625,
+            "nvgFillCallsPerFrame": 370.0,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          },
+          {
+            "nvgAPICallsPerFrame": 6344.0,
+            "elapsedMsPerFrame": 14.207446874991092,
+            "allocatedKiBPerFrame": 1756.568359375,
+            "processCpuMsPerFrame": 13.671875,
+            "nvgFillCallsPerFrame": 370.0,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0
+          }
+        ]
+      },
+      "A_before": {
+        "allocatedKiBPerFrame": 2448.037109375,
+        "nvgAPICallsPerFrame": 9930.0,
+        "elapsedMsPerFrame": 18.711764062487646,
+        "processCpuMsPerFrame": 18.798828125,
+        "geometryStrokeWorldLineCallsPerFrame": 276.0,
+        "nvgFillCallsPerFrame": 658.0
+      },
+      "B_current": {
+        "nvgAPICallsPerFrame": 6344.0,
+        "elapsedMsPerFrame": 14.15942343749066,
+        "allocatedKiBPerFrame": 1756.568359375,
+        "processCpuMsPerFrame": 13.916015625,
+        "nvgFillCallsPerFrame": 370.0,
+        "geometryStrokeWorldLineCallsPerFrame": 0.0
+      },
+      "cpuReductionPercent": 25.97402597402597,
+      "allocationReductionPercent": 28.245844286916732
+    },
+    {
+      "scenario": "port_scene_drift",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        0
+      ],
+      "radius": 20,
+      "scene": true,
+      "drift": true,
+      "samples": {
+        "A_before": [
+          {
+            "nvgFillCallsPerFrame": 659.3125,
+            "elapsedMsPerFrame": 19.08819999999878,
+            "nvgAPICallsPerFrame": 9955.0,
+            "geometryStrokeWorldLineCallsPerFrame": 277.375,
+            "allocatedKiBPerFrame": 2470.271484375,
+            "processCpuMsPerFrame": 19.04296875
+          },
+          {
+            "nvgFillCallsPerFrame": 633.625,
+            "elapsedMsPerFrame": 18.616690624980947,
+            "nvgAPICallsPerFrame": 9656.15625,
+            "geometryStrokeWorldLineCallsPerFrame": 278.75,
+            "allocatedKiBPerFrame": 2403.888671875,
+            "processCpuMsPerFrame": 18.06640625
+          },
+          {
+            "nvgFillCallsPerFrame": 632.75,
+            "elapsedMsPerFrame": 18.594403125007375,
+            "nvgAPICallsPerFrame": 9658.0625,
+            "geometryStrokeWorldLineCallsPerFrame": 278.75,
+            "allocatedKiBPerFrame": 2399.443359375,
+            "processCpuMsPerFrame": 18.5546875
+          },
+          {
+            "nvgFillCallsPerFrame": 632.75,
+            "elapsedMsPerFrame": 18.203940624971438,
+            "nvgAPICallsPerFrame": 9671.71875,
+            "geometryStrokeWorldLineCallsPerFrame": 278.75,
+            "allocatedKiBPerFrame": 2335.396484375,
+            "processCpuMsPerFrame": 18.5546875
+          }
+        ],
+        "B_current": [
+          {
+            "elapsedMsPerFrame": 13.856846875000883,
+            "nvgAPICallsPerFrame": 6372.96875,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "allocatedKiBPerFrame": 1750.693359375,
+            "processCpuMsPerFrame": 13.671875,
+            "nvgFillCallsPerFrame": 370.0
+          },
+          {
+            "elapsedMsPerFrame": 13.414603124999758,
+            "nvgAPICallsPerFrame": 5988.28125,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "allocatedKiBPerFrame": 1691.169921875,
+            "processCpuMsPerFrame": 13.18359375,
+            "nvgFillCallsPerFrame": 335.125
+          },
+          {
+            "elapsedMsPerFrame": 13.382478125038233,
+            "nvgAPICallsPerFrame": 6008.8125,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "allocatedKiBPerFrame": 1695.544921875,
+            "processCpuMsPerFrame": 13.671875,
+            "nvgFillCallsPerFrame": 334.0
+          },
+          {
+            "elapsedMsPerFrame": 13.71968124999512,
+            "nvgAPICallsPerFrame": 6045.1875,
+            "geometryStrokeWorldLineCallsPerFrame": 0.0,
+            "allocatedKiBPerFrame": 1684.755859375,
+            "processCpuMsPerFrame": 13.18359375,
+            "nvgFillCallsPerFrame": 334.0
+          }
+        ]
+      },
+      "A_before": {
+        "nvgFillCallsPerFrame": 633.1875,
+        "elapsedMsPerFrame": 18.60554687499416,
+        "nvgAPICallsPerFrame": 9664.890625,
+        "geometryStrokeWorldLineCallsPerFrame": 278.75,
+        "allocatedKiBPerFrame": 2401.666015625,
+        "processCpuMsPerFrame": 18.5546875
+      },
+      "B_current": {
+        "elapsedMsPerFrame": 13.567142187497438,
+        "nvgAPICallsPerFrame": 6027.0,
+        "geometryStrokeWorldLineCallsPerFrame": 0.0,
+        "allocatedKiBPerFrame": 1693.357421875,
+        "processCpuMsPerFrame": 13.427734375,
+        "nvgFillCallsPerFrame": 334.5625
+      },
+      "cpuReductionPercent": 27.631578947368418,
+      "allocationReductionPercent": 29.4923852501478
+    }
+  ]
+}

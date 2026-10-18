@@ -1,0 +1,173 @@
+{
+  "method": "NanoVG command recorder, removes duplicate/collinear path points within 1e-7 px; paint, stroke widths, ordering and commands must match; remaining coordinates within 1e-6 px. No raster/native visual judgment.",
+  "records": [
+    {
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "position": [
+        0,
+        0
+      ],
+      "time": 0,
+      "elements": 730,
+      "maxCoordinateDifferencePx": 1.7763568394002505e-15,
+      "passed": true
+    },
+    {
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "position": [
+        0,
+        0
+      ],
+      "time": 9,
+      "elements": 741,
+      "maxCoordinateDifferencePx": 3.552713678800501e-15,
+      "passed": true
+    },
+    {
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "position": [
+        400,
+        400
+      ],
+      "time": 0,
+      "elements": 83,
+      "maxCoordinateDifferencePx": 8.881784197001252e-16,
+      "passed": true
+    },
+    {
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "position": [
+        400,
+        400
+      ],
+      "time": 9,
+      "elements": 85,
+      "maxCoordinateDifferencePx": 3.552713678800501e-15,
+      "passed": true
+    },
+    {
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "position": [
+        -80,
+        -20
+      ],
+      "time": 0,
+      "elements": 224,
+      "maxCoordinateDifferencePx": 6.661338147750939e-16,
+      "passed": true
+    },
+    {
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "position": [
+        -80,
+        -20
+      ],
+      "time": 9,
+      "elements": 228,
+      "maxCoordinateDifferencePx": 1.7763568394002505e-15,
+      "passed": true
+    },
+    {
+      "dimensions": [
+        600,
+        900
+      ],
+      "position": [
+        0,
+        0
+      ],
+      "time": 0,
+      "elements": 285,
+      "maxCoordinateDifferencePx": 3.552713678800501e-15,
+      "passed": true
+    },
+    {
+      "dimensions": [
+        600,
+        900
+      ],
+      "position": [
+        0,
+        0
+      ],
+      "time": 9,
+      "elements": 290,
+      "maxCoordinateDifferencePx": 1.7763568394002505e-15,
+      "passed": true
+    },
+    {
+      "dimensions": [
+        600,
+        900
+      ],
+      "position": [
+        400,
+        400
+      ],
+      "time": 0,
+      "elements": 79,
+      "maxCoordinateDifferencePx": 3.552713678800501e-15,
+      "passed": true
+    },
+    {
+      "dimensions": [
+        600,
+        900
+      ],
+      "position": [
+        400,
+        400
+      ],
+      "time": 9,
+      "elements": 79,
+      "maxCoordinateDifferencePx": 3.552713678800501e-15,
+      "passed": true
+    },
+    {
+      "dimensions": [
+        600,
+        900
+      ],
+      "position": [
+        -80,
+        -20
+      ],
+      "time": 0,
+      "elements": 212,
+      "maxCoordinateDifferencePx": 1.7763568394002505e-15,
+      "passed": true
+    },
+    {
+      "dimensions": [
+        600,
+        900
+      ],
+      "position": [
+        -80,
+        -20
+      ],
+      "time": 9,
+      "elements": 216,
+      "maxCoordinateDifferencePx": 1.7763568394002505e-15,
+      "passed": true
+    }
+  ]
+}

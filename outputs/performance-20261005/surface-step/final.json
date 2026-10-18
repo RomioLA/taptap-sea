@@ -1,0 +1,218 @@
+{
+  "phase": "final",
+  "generatedAt": "2026-10-04T22:52:32.749698+00:00",
+  "project": "C:\\codex\\taptap-sea",
+  "runtimePath": "C:\\codex\\taptap-sea\\.tmp\\circle1-review-runtime",
+  "suiteCount": 3,
+  "suites": [
+    {
+      "name": "SeaFusionRenderTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaFusionRenderTests.lua",
+      "passed": true,
+      "subtestCount": 10,
+      "failures": [],
+      "returned": {
+        "status": "PASS",
+        "tests": [
+          "draw_is_pure_for_runtime_state",
+          "original_sun_and_birds_reused",
+          "projected_sea_view_art_apis_reused",
+          "ordinary_fish_hidden_by_default",
+          "show_underwater_draws_both_fixture_fish",
+          "resize_preserves_projection_anchor_horizon_and_perspective_scale",
+          "curved_ground_clips_preserve_elevated_island_silhouettes_in_both_aspects",
+          "presentation_fixture_does_not_change_config_world",
+          "night_tint_precedes_boat_and_preserves_paused_gameplay_clock",
+          "daytime_removes_night_tint_and_nvg_state_stack_is_balanced"
+        ],
+        "metrics": {
+          "previewFixtures": {
+            "sardine": "(-8,-8)",
+            "island": "(-14,-12)",
+            "tuna": "(8,-8)"
+          },
+          "originalConfiguredBirds": 2,
+          "originalFixedObjectCount": 3,
+          "landscape": {
+            "basePixelsPerMeter": 24.0,
+            "width": 1920,
+            "anchorX": 0.5,
+            "shipScreenY": 777.5999999999999,
+            "horizonY": 259.2,
+            "hiddenWorldFishCalls": 0,
+            "shipScreenX": 960.0,
+            "height": 1080,
+            "anchorY": 0.72
+          },
+          "portrait": {
+            "basePixelsPerMeter": 25.555555555555557,
+            "width": 1200,
+            "anchorX": 0.5,
+            "shipScreenY": 828.0,
+            "horizonY": 276.0,
+            "revealedWorldFishCalls": 2,
+            "shipScreenX": 600.0,
+            "height": 1150,
+            "anchorY": 0.72
+          }
+        }
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 625,
+        "nvgBezierTo": 16,
+        "nvgCircle": 16,
+        "nvgClosePath": 1114,
+        "nvgEllipse": 9,
+        "nvgFill": 596,
+        "nvgFillColor": 580,
+        "nvgFillPaint": 16,
+        "nvgGlobalAlpha": 5,
+        "nvgIntersectScissor": 14,
+        "nvgLineTo": 5687,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1495,
+        "nvgRadialGradient": 14,
+        "nvgRect": 1,
+        "nvgRestore": 26,
+        "nvgSave": 26,
+        "nvgScale": 15,
+        "nvgStroke": 51,
+        "nvgStrokeColor": 51,
+        "nvgStrokeWidth": 51,
+        "nvgTranslate": 15
+      },
+      "nvgCallTotal": 10425,
+      "durationMs": 298.475
+    },
+    {
+      "name": "SeaHorizonOcclusionTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaHorizonOcclusionTests.lua",
+      "passed": true,
+      "subtestCount": 7,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "the lowest raised vertices disappear before the top as the surface recedes",
+            "passed": true
+          },
+          {
+            "name": "large footprints survive center crossings including lateral screen edges",
+            "passed": true
+          },
+          {
+            "name": "raised directional vectors use the same altitude as finite difference samples",
+            "passed": true
+          },
+          {
+            "name": "raised geometry at the tangent retains its real height",
+            "passed": true
+          },
+          {
+            "name": "ground inverse remains unique at every lateral horizon and DPR scale",
+            "passed": true
+          },
+          {
+            "name": "actual scene renders a new float with its center beyond the tangent",
+            "passed": true
+          },
+          {
+            "name": "height broad phase is conservative and responds to configuration changes",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 724,
+        "nvgBezierTo": 16,
+        "nvgCircle": 26,
+        "nvgClosePath": 1249,
+        "nvgEllipse": 9,
+        "nvgFill": 696,
+        "nvgFillColor": 670,
+        "nvgFillPaint": 26,
+        "nvgGlobalAlpha": 5,
+        "nvgIntersectScissor": 24,
+        "nvgLineTo": 6285,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1880,
+        "nvgRadialGradient": 24,
+        "nvgRect": 1,
+        "nvgRestore": 36,
+        "nvgSave": 36,
+        "nvgScale": 22,
+        "nvgStroke": 49,
+        "nvgStrokeColor": 49,
+        "nvgStrokeWidth": 49,
+        "nvgTranslate": 22
+      },
+      "nvgCallTotal": 11900,
+      "durationMs": 114.258
+    },
+    {
+      "name": "SeaMotionEffectsTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaMotionEffectsTests.lua",
+      "passed": true,
+      "subtestCount": 6,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "near and far surface detail blend smoothly with complementary weights",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "surface lattice positions stay on fixed world cells while the view drifts",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "boat heave and roll are pure samples of voyage time and turn rate",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "shoreline foam arcs expand, fade, and repeat in world space",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "water mark budget is enforced even within a single row",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "turn bank eases back when stopped and freezes while paused",
+            "error": "",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 3,
+        "nvgClosePath": 1,
+        "nvgFill": 1,
+        "nvgFillPaint": 1,
+        "nvgLineTo": 56,
+        "nvgLinearGradient": 1,
+        "nvgMoveTo": 5,
+        "nvgStroke": 3,
+        "nvgStrokeColor": 3,
+        "nvgStrokeWidth": 3
+      },
+      "nvgCallTotal": 77,
+      "durationMs": 17.331
+    }
+  ],
+  "luaVersion": "Lua 5.4",
+  "passedSuiteCount": 3,
+  "failedSuiteCount": 0,
+  "passed": true
+}

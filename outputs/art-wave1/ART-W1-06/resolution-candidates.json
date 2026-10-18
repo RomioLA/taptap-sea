@@ -1,0 +1,2267 @@
+{
+  "advisoryOnly": true,
+  "candidateAssetCount": 59,
+  "tagCounts": {
+    "EXACT_DUPLICATE": 22,
+    "CAN_CROP_TRANSPARENT": 18,
+    "POSSIBLE_DUPLICATE": 25,
+    "KEEP_AS_IS": 85,
+    "CAN_DOWNSCALE": 9,
+    "LIKELY_SOURCE_ONLY": 9
+  },
+  "assets": [
+    {
+      "relativePath": "assets/image/ART-W1-02_bait_impact_splash_20261005160235.png",
+      "group": "其他",
+      "width": 256,
+      "height": 256,
+      "fileSizeBytes": 23167,
+      "subjectAreaRatio": 0.199127,
+      "tags": [
+        "EXACT_DUPLICATE",
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。",
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/ART-W1-02_bigfish_direction_wake_20261005160011.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 73187,
+      "subjectAreaRatio": 0.199608,
+      "tags": [
+        "EXACT_DUPLICATE",
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。",
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/ART-W1-02_bigfish_splash_chase_20261005160011.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 306252,
+      "subjectAreaRatio": 0.823456,
+      "tags": [
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/ART-W1-02_bigfish_splash_roaming_20261005160011.png",
+      "group": "其他",
+      "width": 256,
+      "height": 256,
+      "fileSizeBytes": 30823,
+      "subjectAreaRatio": 0.263458,
+      "tags": [
+        "EXACT_DUPLICATE",
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。",
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/ART-W1-02_fishing_empty_feedback_20261005160235.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 184949,
+      "subjectAreaRatio": 0.529572,
+      "tags": [
+        "EXACT_DUPLICATE"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/ART-W1-02_fishing_success_feedback_20261005160235.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 330393,
+      "subjectAreaRatio": 0.675865,
+      "tags": [
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/ART-W1-02_net_impact_splash_20261005160235.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 344123,
+      "subjectAreaRatio": 0.73753,
+      "tags": [
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/ART-W1-02_ripple_medium_20261005160235.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 335178,
+      "subjectAreaRatio": 0.910156,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/ART-W1-02_ripple_small_20261005160235.png",
+      "group": "其他",
+      "width": 256,
+      "height": 256,
+      "fileSizeBytes": 51872,
+      "subjectAreaRatio": 0.447311,
+      "tags": [
+        "EXACT_DUPLICATE"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/ART-W1-02_seabird_dive_20261005160011.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 181304,
+      "subjectAreaRatio": 0.689117,
+      "tags": [
+        "EXACT_DUPLICATE"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/ART-W1-02_seabird_glide_20261005160011.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 158795,
+      "subjectAreaRatio": 0.595688,
+      "tags": [
+        "EXACT_DUPLICATE"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/ART-W1-02_smallfish_breach_20261005160011.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 120320,
+      "subjectAreaRatio": 0.345428,
+      "tags": [
+        "EXACT_DUPLICATE",
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。",
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/ART-W1-02_smallfish_surface_disturbance_20261005160011.png",
+      "group": "其他",
+      "width": 256,
+      "height": 256,
+      "fileSizeBytes": 48586,
+      "subjectAreaRatio": 0.406921,
+      "tags": [
+        "EXACT_DUPLICATE"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/ART-W1-02_surface_bubbles_20261005160235.png",
+      "group": "其他",
+      "width": 256,
+      "height": 256,
+      "fileSizeBytes": 59977,
+      "subjectAreaRatio": 0.723755,
+      "tags": [
+        "EXACT_DUPLICATE"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_UI03_夜晚面板底板_20261005093900.png",
+      "group": "LP",
+      "width": 1025,
+      "height": 683,
+      "fileSizeBytes": 419929,
+      "subjectAreaRatio": 0.55566,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_岛屿01_浅沙棕榈岛_20261005093058.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 709929,
+      "subjectAreaRatio": 0.717625,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_岛屿02_低矮礁岩岛_20261005093113.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 667182,
+      "subjectAreaRatio": 0.770397,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_岛屿04_草坡小岛_20261005093044.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 695819,
+      "subjectAreaRatio": 0.561123,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_岛屿05_双礁连沙岛_20261005093108.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 541134,
+      "subjectAreaRatio": 0.578873,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_岛屿06_天然石拱岛_20261005093245.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 956789,
+      "subjectAreaRatio": 0.741211,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_岛屿07_海岸小林岛_20261005093320.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 638920,
+      "subjectAreaRatio": 0.615512,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_岛屿08_玄武岩小岛_20261005093238.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 793935,
+      "subjectAreaRatio": 0.622624,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_建筑01_海港渔舍_20261005093245.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 807226,
+      "subjectAreaRatio": 0.658295,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_建筑02_港口交易棚_20261005093251.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 792206,
+      "subjectAreaRatio": 0.879622,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_建筑03_木质仓库_20261005093236.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 813628,
+      "subjectAreaRatio": 0.724792,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_建筑04_朴素海岸灯塔_20261005093236.png",
+      "group": "LP",
+      "width": 768,
+      "height": 1152,
+      "fileSizeBytes": 565216,
+      "subjectAreaRatio": 0.481496,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_建筑05_修船棚_20261005093242.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 919722,
+      "subjectAreaRatio": 0.830566,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_建筑06_T形木码头_20261005093237.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 584901,
+      "subjectAreaRatio": 0.774727,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_检查总览_首批.png",
+      "group": "LP",
+      "width": 1200,
+      "height": 1668,
+      "fileSizeBytes": 865575,
+      "subjectAreaRatio": 1.0,
+      "tags": [
+        "CAN_DOWNSCALE"
+      ],
+      "reasons": [
+        "高分辨率/图标图集启发式候选；实际显示像素尚未由玩法引用证明。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_海洋生物01_沙丁鱼_20261005093443.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 299454,
+      "subjectAreaRatio": 0.517541,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_海洋生物02_金枪鱼_20261005093439.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 433134,
+      "subjectAreaRatio": 0.684259,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_海洋生物03_海豚_20261005093432.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 320377,
+      "subjectAreaRatio": 0.541746,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_海洋生物04_礁鲨_20261005093440.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 281490,
+      "subjectAreaRatio": 0.498819,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_海洋生物05_海龟_20261005093442.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 545407,
+      "subjectAreaRatio": 0.568591,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_海洋生物06_蝠鲼_20261005093519.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 430877,
+      "subjectAreaRatio": 0.640155,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_海洋生物07_章鱼_20261005093538.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 539799,
+      "subjectAreaRatio": 0.460571,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_海洋生物08_水母_20261005093444.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 494878,
+      "subjectAreaRatio": 0.513481,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_港口01_归航港口插画_20261005093244.png",
+      "group": "LP",
+      "width": 1536,
+      "height": 1024,
+      "fileSizeBytes": 1397382,
+      "subjectAreaRatio": 0.761406,
+      "tags": [
+        "CAN_DOWNSCALE"
+      ],
+      "reasons": [
+        "高分辨率/图标图集启发式候选；实际显示像素尚未由玩法引用证明。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_物品01_苹果_20261005093442.png",
+      "group": "LP",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 158828,
+      "subjectAreaRatio": 0.564903,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_物品02_鱼饵_20261005093441.png",
+      "group": "LP",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 165360,
+      "subjectAreaRatio": 0.44989,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_物品05_望远镜透镜_20261005093727.png",
+      "group": "LP",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 200972,
+      "subjectAreaRatio": 0.541431,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_船02_轻型木质划艇_20261005093048.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 563782,
+      "subjectAreaRatio": 0.701265,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_遗迹01_残破石门_20261005093742.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 511414,
+      "subjectAreaRatio": 0.46883,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_遗迹02_断裂石柱群_20261005093728.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 743598,
+      "subjectAreaRatio": 0.61574,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_遗迹03_破损石井_20261005093736.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 799875,
+      "subjectAreaRatio": 0.568746,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_遗迹04_废弃石台阶_20261005093723.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 750270,
+      "subjectAreaRatio": 0.647144,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_鸟01_海鸥_20261005093724.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 324680,
+      "subjectAreaRatio": 0.706718,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_鸟02_燕鸥_20261005093725.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 240642,
+      "subjectAreaRatio": 0.796535,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_鸟03_鸬鹚_20261005093726.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 356605,
+      "subjectAreaRatio": 0.695973,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/LP_鸟04_鹈鹕_20261005093734.png",
+      "group": "LP",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 297535,
+      "subjectAreaRatio": 0.566264,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/OceanLoop/barrel.png",
+      "group": "OceanLoop",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 280717,
+      "subjectAreaRatio": 0.775913,
+      "tags": [
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/OceanLoop/boat.png",
+      "group": "OceanLoop",
+      "width": 1024,
+      "height": 512,
+      "fileSizeBytes": 478694,
+      "subjectAreaRatio": 0.774193,
+      "tags": [
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/OceanLoop/gull.png",
+      "group": "OceanLoop",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 96047,
+      "subjectAreaRatio": 0.406021,
+      "tags": [
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/OceanLoop/island.png",
+      "group": "OceanLoop",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 1108621,
+      "subjectAreaRatio": 0.773335,
+      "tags": [
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/OceanLoop/ripple.png",
+      "group": "OceanLoop",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 29856,
+      "subjectAreaRatio": 0.784195,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/OceanLoop/waterpaper.png",
+      "group": "OceanLoop",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 1532955,
+      "subjectAreaRatio": 1.0,
+      "tags": [
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/OceanReady/driftwood.png",
+      "group": "OceanReady",
+      "width": 768,
+      "height": 512,
+      "fileSizeBytes": 259140,
+      "subjectAreaRatio": 0.393687,
+      "tags": [
+        "POSSIBLE_DUPLICATE",
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。",
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/OceanReady/preview.jpg",
+      "group": "OceanReady",
+      "width": 1024,
+      "height": 640,
+      "fileSizeBytes": 58248,
+      "subjectAreaRatio": 1.0,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/OceanReady/reef.png",
+      "group": "OceanReady",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 302301,
+      "subjectAreaRatio": 0.738064,
+      "tags": [
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/OceanReady/sardine.png",
+      "group": "OceanReady",
+      "width": 768,
+      "height": 512,
+      "fileSizeBytes": 162712,
+      "subjectAreaRatio": 0.312887,
+      "tags": [
+        "POSSIBLE_DUPLICATE",
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。",
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/OceanReady/shrub.png",
+      "group": "OceanReady",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 272663,
+      "subjectAreaRatio": 0.72086,
+      "tags": [
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/OceanReady_driftwood_top_20261005123027.png",
+      "group": "OceanReady",
+      "width": 768,
+      "height": 512,
+      "fileSizeBytes": 247525,
+      "subjectAreaRatio": 0.350464,
+      "tags": [
+        "LIKELY_SOURCE_ONLY",
+        "POSSIBLE_DUPLICATE",
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "项目 manifest 将该图列为另一运行图的 source，且对应文件存在；用途未定。",
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。",
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": [
+        {
+          "manifest": "assets/image/OceanReady/manifest.json",
+          "runtimePath": "assets/image/OceanReady/driftwood.png"
+        }
+      ]
+    },
+    {
+      "relativePath": "assets/image/OceanReady_reef_top_20261005123026.png",
+      "group": "OceanReady",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 215719,
+      "subjectAreaRatio": 0.452454,
+      "tags": [
+        "LIKELY_SOURCE_ONLY",
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "项目 manifest 将该图列为另一运行图的 source，且对应文件存在；用途未定。",
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": [
+        {
+          "manifest": "assets/image/OceanReady/manifest.json",
+          "runtimePath": "assets/image/OceanReady/reef.png"
+        }
+      ]
+    },
+    {
+      "relativePath": "assets/image/OceanReady_sardine_top_20261005123025.png",
+      "group": "OceanReady",
+      "width": 768,
+      "height": 512,
+      "fileSizeBytes": 157284,
+      "subjectAreaRatio": 0.296638,
+      "tags": [
+        "LIKELY_SOURCE_ONLY",
+        "POSSIBLE_DUPLICATE",
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "项目 manifest 将该图列为另一运行图的 source，且对应文件存在；用途未定。",
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。",
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": [
+        {
+          "manifest": "assets/image/OceanReady/manifest.json",
+          "runtimePath": "assets/image/OceanReady/sardine.png"
+        }
+      ]
+    },
+    {
+      "relativePath": "assets/image/OceanReady_shrub_top_20261005123049.png",
+      "group": "OceanReady",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 249406,
+      "subjectAreaRatio": 0.589874,
+      "tags": [
+        "LIKELY_SOURCE_ONLY",
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "项目 manifest 将该图列为另一运行图的 source，且对应文件存在；用途未定。",
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": [
+        {
+          "manifest": "assets/image/OceanReady/manifest.json",
+          "runtimePath": "assets/image/OceanReady/shrub.png"
+        }
+      ]
+    },
+    {
+      "relativePath": "assets/image/OceanStory_barrel_20261005115009.png",
+      "group": "OceanStory",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 231191,
+      "subjectAreaRatio": 0.521851,
+      "tags": [
+        "LIKELY_SOURCE_ONLY",
+        "EXACT_DUPLICATE",
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "项目 manifest 将该图列为另一运行图的 source，且对应文件存在；用途未定。",
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。",
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": [
+        {
+          "manifest": "assets/image/OceanLoop/manifest.json",
+          "runtimePath": "assets/image/OceanLoop/barrel.png"
+        }
+      ]
+    },
+    {
+      "relativePath": "assets/image/OceanStory_boat_20261005114947.png",
+      "group": "OceanStory",
+      "width": 768,
+      "height": 1536,
+      "fileSizeBytes": 836298,
+      "subjectAreaRatio": 0.53109,
+      "tags": [
+        "LIKELY_SOURCE_ONLY",
+        "POSSIBLE_DUPLICATE",
+        "CAN_DOWNSCALE"
+      ],
+      "reasons": [
+        "项目 manifest 将该图列为另一运行图的 source，且对应文件存在；用途未定。",
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。",
+        "高分辨率/图标图集启发式候选；实际显示像素尚未由玩法引用证明。"
+      ],
+      "sourceRuntimeRelations": [
+        {
+          "manifest": "assets/image/OceanLoop/manifest.json",
+          "runtimePath": "assets/image/OceanLoop/boat.png"
+        }
+      ]
+    },
+    {
+      "relativePath": "assets/image/OceanStory_gull_20261005114946.png",
+      "group": "OceanStory",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 110885,
+      "subjectAreaRatio": 0.511513,
+      "tags": [
+        "LIKELY_SOURCE_ONLY",
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "项目 manifest 将该图列为另一运行图的 source，且对应文件存在；用途未定。",
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": [
+        {
+          "manifest": "assets/image/OceanLoop/manifest.json",
+          "runtimePath": "assets/image/OceanLoop/gull.png"
+        }
+      ]
+    },
+    {
+      "relativePath": "assets/image/OceanStory_island_20261005114948.png",
+      "group": "OceanStory",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 897031,
+      "subjectAreaRatio": 0.517284,
+      "tags": [
+        "LIKELY_SOURCE_ONLY",
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "项目 manifest 将该图列为另一运行图的 source，且对应文件存在；用途未定。",
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": [
+        {
+          "manifest": "assets/image/OceanLoop/manifest.json",
+          "runtimePath": "assets/image/OceanLoop/island.png"
+        }
+      ]
+    },
+    {
+      "relativePath": "assets/image/OceanStory_waterpaper_20261005114940.png",
+      "group": "OceanStory",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 1458080,
+      "subjectAreaRatio": 1.0,
+      "tags": [
+        "LIKELY_SOURCE_ONLY",
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "项目 manifest 将该图列为另一运行图的 source，且对应文件存在；用途未定。",
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": [
+        {
+          "manifest": "assets/image/OceanLoop/manifest.json",
+          "runtimePath": "assets/image/OceanLoop/waterpaper.png"
+        }
+      ]
+    },
+    {
+      "relativePath": "assets/image/reading_sea_watercolor_button_states_20261005115716.png",
+      "group": "ReadingSeaWatercolor",
+      "width": 1152,
+      "height": 768,
+      "fileSizeBytes": 988248,
+      "subjectAreaRatio": 0.82875,
+      "tags": [
+        "CAN_DOWNSCALE"
+      ],
+      "reasons": [
+        "高分辨率/图标图集启发式候选；实际显示像素尚未由玩法引用证明。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/reading_sea_watercolor_characters_20261005115718.png",
+      "group": "ReadingSeaWatercolor",
+      "width": 1152,
+      "height": 768,
+      "fileSizeBytes": 649786,
+      "subjectAreaRatio": 0.603841,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/reading_sea_watercolor_landmarks_20261005115646.png",
+      "group": "ReadingSeaWatercolor",
+      "width": 1536,
+      "height": 1024,
+      "fileSizeBytes": 1616891,
+      "subjectAreaRatio": 0.850643,
+      "tags": [
+        "CAN_DOWNSCALE"
+      ],
+      "reasons": [
+        "高分辨率/图标图集启发式候选；实际显示像素尚未由玩法引用证明。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/reading_sea_watercolor_marine_life_20261005115707.png",
+      "group": "ReadingSeaWatercolor",
+      "width": 1152,
+      "height": 768,
+      "fileSizeBytes": 611728,
+      "subjectAreaRatio": 0.670539,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/reading_sea_watercolor_navigation_clean_20261005115700.png",
+      "group": "ReadingSeaWatercolor",
+      "width": 1152,
+      "height": 768,
+      "fileSizeBytes": 629695,
+      "subjectAreaRatio": 0.735931,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/reading_sea_watercolor_navigation_icons_20261005115342.png",
+      "group": "ReadingSeaWatercolor",
+      "width": 1152,
+      "height": 768,
+      "fileSizeBytes": 834419,
+      "subjectAreaRatio": 0.770589,
+      "tags": [
+        "CAN_DOWNSCALE"
+      ],
+      "reasons": [
+        "高分辨率/图标图集启发式候选；实际显示像素尚未由玩法引用证明。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/reading_sea_watercolor_ocean_tile_20261005115327.png",
+      "group": "ReadingSeaWatercolor",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 1430943,
+      "subjectAreaRatio": 1.0,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/reading_sea_watercolor_resource_icons_20261005115435.png",
+      "group": "ReadingSeaWatercolor",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 772664,
+      "subjectAreaRatio": 0.849807,
+      "tags": [
+        "CAN_DOWNSCALE"
+      ],
+      "reasons": [
+        "高分辨率/图标图集启发式候选；实际显示像素尚未由玩法引用证明。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/reading_sea_watercolor_ui_panels_20261005115445.png",
+      "group": "ReadingSeaWatercolor",
+      "width": 1152,
+      "height": 768,
+      "fileSizeBytes": 995357,
+      "subjectAreaRatio": 0.853234,
+      "tags": [
+        "CAN_DOWNSCALE"
+      ],
+      "reasons": [
+        "高分辨率/图标图集启发式候选；实际显示像素尚未由玩法引用证明。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/image/reading_sea_watercolor_ui_panels_clean_20261005115658.png",
+      "group": "ReadingSeaWatercolor",
+      "width": 1152,
+      "height": 768,
+      "fileSizeBytes": 757549,
+      "subjectAreaRatio": 0.813248,
+      "tags": [
+        "CAN_DOWNSCALE"
+      ],
+      "reasons": [
+        "高分辨率/图标图集启发式候选；实际显示像素尚未由玩法引用证明。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-01/env_coastal_rocks.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 344917,
+      "subjectAreaRatio": 0.688889,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-01/env_driftwood_bundle.png",
+      "group": "其他",
+      "width": 512,
+      "height": 341,
+      "fileSizeBytes": 158167,
+      "subjectAreaRatio": 0.335399,
+      "tags": [
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-01/env_reef_cluster.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 331613,
+      "subjectAreaRatio": 0.555679,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-01/env_shrub_grove.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 405021,
+      "subjectAreaRatio": 0.734196,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-01/env_small_jetty.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 251852,
+      "subjectAreaRatio": 0.652721,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-01/island_crescent_sandbar.png",
+      "group": "其他",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 807749,
+      "subjectAreaRatio": 0.749302,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-01/island_exploration_arch.png",
+      "group": "其他",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 1508648,
+      "subjectAreaRatio": 0.848913,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-01/island_rocky_reef.png",
+      "group": "其他",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 1484382,
+      "subjectAreaRatio": 0.771481,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-01/island_sandy_green_cove.png",
+      "group": "其他",
+      "width": 1024,
+      "height": 1024,
+      "fileSizeBytes": 1567197,
+      "subjectAreaRatio": 0.802307,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-01/ship_coastal_cutter_B.png",
+      "group": "其他",
+      "width": 768,
+      "height": 512,
+      "fileSizeBytes": 285411,
+      "subjectAreaRatio": 0.47493,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-01/ship_fishing_sloop_A.png",
+      "group": "其他",
+      "width": 768,
+      "height": 512,
+      "fileSizeBytes": 395307,
+      "subjectAreaRatio": 0.513151,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-02/bait_impact_splash.png",
+      "group": "其他",
+      "width": 256,
+      "height": 256,
+      "fileSizeBytes": 23167,
+      "subjectAreaRatio": 0.199127,
+      "tags": [
+        "EXACT_DUPLICATE",
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。",
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-02/bigfish_direction_wake.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 73187,
+      "subjectAreaRatio": 0.199608,
+      "tags": [
+        "EXACT_DUPLICATE",
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。",
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-02/bigfish_splash_chase.png",
+      "group": "其他",
+      "width": 448,
+      "height": 448,
+      "fileSizeBytes": 281053,
+      "subjectAreaRatio": 0.826012,
+      "tags": [
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-02/bigfish_splash_roaming.png",
+      "group": "其他",
+      "width": 256,
+      "height": 256,
+      "fileSizeBytes": 30823,
+      "subjectAreaRatio": 0.263458,
+      "tags": [
+        "EXACT_DUPLICATE",
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。",
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-02/fishing_empty_feedback.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 184949,
+      "subjectAreaRatio": 0.529572,
+      "tags": [
+        "EXACT_DUPLICATE"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-02/fishing_success_feedback.png",
+      "group": "其他",
+      "width": 384,
+      "height": 384,
+      "fileSizeBytes": 225873,
+      "subjectAreaRatio": 0.678507,
+      "tags": [
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-02/net_impact_splash.png",
+      "group": "其他",
+      "width": 448,
+      "height": 448,
+      "fileSizeBytes": 265745,
+      "subjectAreaRatio": 0.734789,
+      "tags": [
+        "POSSIBLE_DUPLICATE"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-02/ripple_medium.png",
+      "group": "其他",
+      "width": 256,
+      "height": 256,
+      "fileSizeBytes": 113214,
+      "subjectAreaRatio": 0.910156,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-02/ripple_small.png",
+      "group": "其他",
+      "width": 256,
+      "height": 256,
+      "fileSizeBytes": 51872,
+      "subjectAreaRatio": 0.447311,
+      "tags": [
+        "EXACT_DUPLICATE"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-02/seabird_dive.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 181304,
+      "subjectAreaRatio": 0.689117,
+      "tags": [
+        "EXACT_DUPLICATE"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-02/seabird_glide.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 158795,
+      "subjectAreaRatio": 0.595688,
+      "tags": [
+        "EXACT_DUPLICATE"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-02/smallfish_breach.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 120320,
+      "subjectAreaRatio": 0.345428,
+      "tags": [
+        "EXACT_DUPLICATE",
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。",
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-02/smallfish_surface_disturbance.png",
+      "group": "其他",
+      "width": 256,
+      "height": 256,
+      "fileSizeBytes": 48586,
+      "subjectAreaRatio": 0.406921,
+      "tags": [
+        "EXACT_DUPLICATE"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-02/surface_bubbles.png",
+      "group": "其他",
+      "width": 256,
+      "height": 256,
+      "fileSizeBytes": 59977,
+      "subjectAreaRatio": 0.723755,
+      "tags": [
+        "EXACT_DUPLICATE"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-03/ARTW103_Caustic_v2_20261005160511.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 262644,
+      "subjectAreaRatio": 1.0,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-03/ARTW103_LensEdge_v2_20261005160359.png",
+      "group": "其他",
+      "width": 512,
+      "height": 342,
+      "fileSizeBytes": 98679,
+      "subjectAreaRatio": 0.373698,
+      "tags": [
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-03/ARTW103_ReefRocks_20261005155952.png",
+      "group": "其他",
+      "width": 448,
+      "height": 448,
+      "fileSizeBytes": 279707,
+      "subjectAreaRatio": 0.72438,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-03/ARTW103_RockySeabed_20261005155952.png",
+      "group": "其他",
+      "width": 384,
+      "height": 384,
+      "fileSizeBytes": 292351,
+      "subjectAreaRatio": 0.882812,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-03/ARTW103_SandPatch_20261005155952.png",
+      "group": "其他",
+      "width": 416,
+      "height": 416,
+      "fileSizeBytes": 281636,
+      "subjectAreaRatio": 0.942308,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-03/ARTW103_Sardine_20261005155952.png",
+      "group": "其他",
+      "width": 512,
+      "height": 342,
+      "fileSizeBytes": 94607,
+      "subjectAreaRatio": 0.315104,
+      "tags": [
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-03/ARTW103_SardineSchoolA_20261005155952.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 202375,
+      "subjectAreaRatio": 0.731766,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-03/ARTW103_SardineSchoolB_20261005155952.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 224222,
+      "subjectAreaRatio": 0.738274,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-03/ARTW103_Seaweed_20261005155952.png",
+      "group": "其他",
+      "width": 448,
+      "height": 448,
+      "fileSizeBytes": 296177,
+      "subjectAreaRatio": 0.763672,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-03/ARTW103_Tuna_20261005155952.png",
+      "group": "其他",
+      "width": 512,
+      "height": 342,
+      "fileSizeBytes": 140909,
+      "subjectAreaRatio": 0.502364,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_体力指示器_20261005160902.png",
+      "group": "其他",
+      "width": 256,
+      "height": 256,
+      "fileSizeBytes": 67727,
+      "subjectAreaRatio": 0.545044,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_夜晚.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 51524,
+      "subjectAreaRatio": 0.703044,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_底部操作栏_20261005160639.png",
+      "group": "其他",
+      "width": 1024,
+      "height": 576,
+      "fileSizeBytes": 162657,
+      "subjectAreaRatio": 0.171031,
+      "tags": [
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_捕鱼_按下态.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 90984,
+      "subjectAreaRatio": 0.973958,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_捕鱼_普通态.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 76657,
+      "subjectAreaRatio": 0.932292,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_时间罗盘.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 60237,
+      "subjectAreaRatio": 0.70752,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_白昼.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 53869,
+      "subjectAreaRatio": 0.69873,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_结束今日_按下态.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 90550,
+      "subjectAreaRatio": 0.989583,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_结束今日_普通态.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 80741,
+      "subjectAreaRatio": 0.994792,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_老人互动_按下态.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 94845,
+      "subjectAreaRatio": 1.0,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_老人互动_普通态.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 85718,
+      "subjectAreaRatio": 0.942708,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_背包_按下态.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 93674,
+      "subjectAreaRatio": 1.0,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_背包_普通态.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 83462,
+      "subjectAreaRatio": 1.0,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_船舱槽位.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 58265,
+      "subjectAreaRatio": 0.69873,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_返港_按下态.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 94989,
+      "subjectAreaRatio": 1.0,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_返港_普通态.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 84566,
+      "subjectAreaRatio": 0.994792,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_透镜_按下态.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 90143,
+      "subjectAreaRatio": 0.989583,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_透镜_普通态.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 75314,
+      "subjectAreaRatio": 0.932292,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_UI_金币.png",
+      "group": "其他",
+      "width": 192,
+      "height": 192,
+      "fileSizeBytes": 61229,
+      "subjectAreaRatio": 0.703044,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_世界_交易棚_20261005160008.png",
+      "group": "其他",
+      "width": 384,
+      "height": 256,
+      "fileSizeBytes": 147717,
+      "subjectAreaRatio": 0.720978,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_世界_修船棚_20261005160008.png",
+      "group": "其他",
+      "width": 384,
+      "height": 384,
+      "fileSizeBytes": 261069,
+      "subjectAreaRatio": 0.790894,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_世界_小仓库_20261005160008.png",
+      "group": "其他",
+      "width": 384,
+      "height": 384,
+      "fileSizeBytes": 214216,
+      "subjectAreaRatio": 0.576036,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_世界_小渔舍_20261005160008.png",
+      "group": "其他",
+      "width": 384,
+      "height": 384,
+      "fileSizeBytes": 214074,
+      "subjectAreaRatio": 0.650974,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_世界_木码头_T形_20261005160008.png",
+      "group": "其他",
+      "width": 384,
+      "height": 384,
+      "fileSizeBytes": 154242,
+      "subjectAreaRatio": 0.627197,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-04/ARTW104_世界_港口组合装饰_20261005160008.png",
+      "group": "其他",
+      "width": 384,
+      "height": 384,
+      "fileSizeBytes": 259930,
+      "subjectAreaRatio": 0.780762,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-05/barrel_world_candidate.png",
+      "group": "其他",
+      "width": 512,
+      "height": 512,
+      "fileSizeBytes": 231191,
+      "subjectAreaRatio": 0.521851,
+      "tags": [
+        "EXACT_DUPLICATE"
+      ],
+      "reasons": [
+        "SHA256 与另一资源完全相同；只是分析候选，不删除。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-05/driftwood_world.png",
+      "group": "其他",
+      "width": 512,
+      "height": 341,
+      "fileSizeBytes": 134881,
+      "subjectAreaRatio": 0.351356,
+      "tags": [
+        "POSSIBLE_DUPLICATE",
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "存在 pHash 或 source/runtime manifest 关联，需人工判断。",
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/highspec/ART-W1-05/sardine_inventory_icon.png",
+      "group": "其他",
+      "width": 256,
+      "height": 256,
+      "fileSizeBytes": 22954,
+      "subjectAreaRatio": 0.201416,
+      "tags": [
+        "CAN_CROP_TRANSPARENT"
+      ],
+      "reasons": [
+        "透明像素比例≥65%且主体 bounds 面积<画布40%；裁切需保留留边及锚点/UV。"
+      ],
+      "sourceRuntimeRelations": []
+    },
+    {
+      "relativePath": "assets/generated/mcp_test_barrel.png",
+      "group": "其他",
+      "width": 64,
+      "height": 64,
+      "fileSizeBytes": 5384,
+      "subjectAreaRatio": 0.522949,
+      "tags": [
+        "KEEP_AS_IS"
+      ],
+      "reasons": [
+        "当前筛选未标为候选；不代表最终采用判断。"
+      ],
+      "sourceRuntimeRelations": []
+    }
+  ]
+}

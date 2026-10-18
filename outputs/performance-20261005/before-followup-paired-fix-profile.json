@@ -1,0 +1,297 @@
+{
+  "nativeFpsVerified": false,
+  "gpuMeasured": false,
+  "method": "Paired isolated Lua5.4 runtimes, alternating before/after order, 3x36 frames per scenario. Same config/seed271828. Pre-fix geometry/art/projection loaded from saved files. Counting no-op NanoVG; excludes GPU, binding cost, UI, real logs. Allocation measured over one frame with GC stopped, then restarted.",
+  "records": [
+    {
+      "dimensions": [
+        1280,
+        720
+      ],
+      "position": [
+        0,
+        0
+      ],
+      "time": 0,
+      "samples": {
+        "before": [
+          {
+            "nvgCallsPerFrame": 13125.0,
+            "luaCpuMs": 48.194444444444436,
+            "allocatedKiBPerFrame": 7248.208984375
+          },
+          {
+            "nvgCallsPerFrame": 13125.0,
+            "luaCpuMs": 48.97222222222222,
+            "allocatedKiBPerFrame": 7248.208984375
+          },
+          {
+            "nvgCallsPerFrame": 13125.0,
+            "luaCpuMs": 49.05555555555556,
+            "allocatedKiBPerFrame": 7248.208984375
+          }
+        ],
+        "after": [
+          {
+            "nvgCallsPerFrame": 12298.0,
+            "allocatedKiBPerFrame": 3354.677734375,
+            "luaCpuMs": 29.02777777777778
+          },
+          {
+            "nvgCallsPerFrame": 12298.0,
+            "allocatedKiBPerFrame": 3354.677734375,
+            "luaCpuMs": 28.444444444444457
+          },
+          {
+            "nvgCallsPerFrame": 12298.0,
+            "allocatedKiBPerFrame": 3354.677734375,
+            "luaCpuMs": 29.77777777777778
+          }
+        ]
+      },
+      "before": {
+        "nvgCallsPerFrame": 13125.0,
+        "luaCpuMs": 48.97222222222222,
+        "allocatedKiBPerFrame": 7248.208984375
+      },
+      "after": {
+        "nvgCallsPerFrame": 12298.0,
+        "allocatedKiBPerFrame": 3354.677734375,
+        "luaCpuMs": 29.02777777777778
+      },
+      "cpuReductionPercent": 40.72603516732841
+    },
+    {
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "position": [
+        0,
+        0
+      ],
+      "time": 0,
+      "samples": {
+        "before": [
+          {
+            "nvgCallsPerFrame": 14840.0,
+            "luaCpuMs": 51.27777777777778,
+            "allocatedKiBPerFrame": 7481.482421875
+          },
+          {
+            "nvgCallsPerFrame": 14840.0,
+            "luaCpuMs": 49.88888888888892,
+            "allocatedKiBPerFrame": 7481.482421875
+          },
+          {
+            "nvgCallsPerFrame": 14840.0,
+            "luaCpuMs": 49.13888888888884,
+            "allocatedKiBPerFrame": 7481.482421875
+          }
+        ],
+        "after": [
+          {
+            "nvgCallsPerFrame": 12860.0,
+            "allocatedKiBPerFrame": 3482.357421875,
+            "luaCpuMs": 29.444444444444457
+          },
+          {
+            "nvgCallsPerFrame": 12860.0,
+            "allocatedKiBPerFrame": 3482.357421875,
+            "luaCpuMs": 29.333333333333307
+          },
+          {
+            "nvgCallsPerFrame": 12860.0,
+            "allocatedKiBPerFrame": 3482.357421875,
+            "luaCpuMs": 28.750000000000007
+          }
+        ]
+      },
+      "before": {
+        "nvgCallsPerFrame": 14840.0,
+        "luaCpuMs": 49.88888888888892,
+        "allocatedKiBPerFrame": 7481.482421875
+      },
+      "after": {
+        "nvgCallsPerFrame": 12860.0,
+        "allocatedKiBPerFrame": 3482.357421875,
+        "luaCpuMs": 29.333333333333307
+      },
+      "cpuReductionPercent": 41.20267260579074
+    },
+    {
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "position": [
+        0,
+        0
+      ],
+      "time": 9,
+      "samples": {
+        "before": [
+          {
+            "nvgCallsPerFrame": 14930.0,
+            "luaCpuMs": 49.83333333333334,
+            "allocatedKiBPerFrame": 7619.318359375
+          },
+          {
+            "nvgCallsPerFrame": 14930.0,
+            "luaCpuMs": 49.916666666666686,
+            "allocatedKiBPerFrame": 7619.318359375
+          },
+          {
+            "nvgCallsPerFrame": 14930.0,
+            "luaCpuMs": 49.97222222222221,
+            "allocatedKiBPerFrame": 7619.318359375
+          }
+        ],
+        "after": [
+          {
+            "nvgCallsPerFrame": 12968.0,
+            "allocatedKiBPerFrame": 3527.998046875,
+            "luaCpuMs": 29.000000000000014
+          },
+          {
+            "nvgCallsPerFrame": 12968.0,
+            "allocatedKiBPerFrame": 3527.998046875,
+            "luaCpuMs": 29.083333333333353
+          },
+          {
+            "nvgCallsPerFrame": 12968.0,
+            "allocatedKiBPerFrame": 3527.998046875,
+            "luaCpuMs": 29.444444444444407
+          }
+        ]
+      },
+      "before": {
+        "nvgCallsPerFrame": 14930.0,
+        "luaCpuMs": 49.916666666666686,
+        "allocatedKiBPerFrame": 7619.318359375
+      },
+      "after": {
+        "nvgCallsPerFrame": 12968.0,
+        "allocatedKiBPerFrame": 3527.998046875,
+        "luaCpuMs": 29.083333333333353
+      },
+      "cpuReductionPercent": 41.736227045075104
+    },
+    {
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "position": [
+        400,
+        400
+      ],
+      "time": 9,
+      "samples": {
+        "before": [
+          {
+            "nvgCallsPerFrame": 3731.0,
+            "luaCpuMs": 13.972222222222225,
+            "allocatedKiBPerFrame": 1353.6953125
+          },
+          {
+            "nvgCallsPerFrame": 3731.0,
+            "luaCpuMs": 13.916666666666702,
+            "allocatedKiBPerFrame": 1353.6953125
+          },
+          {
+            "nvgCallsPerFrame": 3731.0,
+            "luaCpuMs": 13.88888888888889,
+            "allocatedKiBPerFrame": 1353.6953125
+          }
+        ],
+        "after": [
+          {
+            "nvgCallsPerFrame": 2692.0,
+            "allocatedKiBPerFrame": 697.2734375,
+            "luaCpuMs": 9.083333333333282
+          },
+          {
+            "nvgCallsPerFrame": 2692.0,
+            "allocatedKiBPerFrame": 697.2734375,
+            "luaCpuMs": 9.194444444444432
+          },
+          {
+            "nvgCallsPerFrame": 2692.0,
+            "allocatedKiBPerFrame": 697.2734375,
+            "luaCpuMs": 9.416666666666629
+          }
+        ]
+      },
+      "before": {
+        "nvgCallsPerFrame": 3731.0,
+        "luaCpuMs": 13.916666666666702,
+        "allocatedKiBPerFrame": 1353.6953125
+      },
+      "after": {
+        "nvgCallsPerFrame": 2692.0,
+        "allocatedKiBPerFrame": 697.2734375,
+        "luaCpuMs": 9.194444444444432
+      },
+      "cpuReductionPercent": 33.932135728543166
+    },
+    {
+      "dimensions": [
+        600,
+        900
+      ],
+      "position": [
+        -80,
+        -20
+      ],
+      "time": 9,
+      "samples": {
+        "before": [
+          {
+            "nvgCallsPerFrame": 4551.0,
+            "luaCpuMs": 17.555555555555596,
+            "allocatedKiBPerFrame": 2479.755859375
+          },
+          {
+            "nvgCallsPerFrame": 4551.0,
+            "luaCpuMs": 17.305555555555486,
+            "allocatedKiBPerFrame": 2479.755859375
+          },
+          {
+            "nvgCallsPerFrame": 4551.0,
+            "luaCpuMs": 17.249999999999865,
+            "allocatedKiBPerFrame": 2479.755859375
+          }
+        ],
+        "after": [
+          {
+            "nvgCallsPerFrame": 4280.0,
+            "allocatedKiBPerFrame": 1197.599609375,
+            "luaCpuMs": 10.750000000000012
+          },
+          {
+            "nvgCallsPerFrame": 4280.0,
+            "allocatedKiBPerFrame": 1197.599609375,
+            "luaCpuMs": 10.69444444444439
+          },
+          {
+            "nvgCallsPerFrame": 4280.0,
+            "allocatedKiBPerFrame": 1197.599609375,
+            "luaCpuMs": 10.750000000000012
+          }
+        ]
+      },
+      "before": {
+        "nvgCallsPerFrame": 4551.0,
+        "luaCpuMs": 17.305555555555486,
+        "allocatedKiBPerFrame": 2479.755859375
+      },
+      "after": {
+        "nvgCallsPerFrame": 4280.0,
+        "allocatedKiBPerFrame": 1197.599609375,
+        "luaCpuMs": 10.750000000000012
+      },
+      "cpuReductionPercent": 37.88121990369149
+    }
+  ]
+}

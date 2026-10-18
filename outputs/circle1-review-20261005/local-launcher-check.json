@@ -1,0 +1,26 @@
+{
+  "project": "C:\\codex\\taptap-sea",
+  "syntaxErrors": 0,
+  "crossDirectoryCheck": "C:\\codex\\taptap-jam -> taptap-sea: exit 0; stopped/alive false",
+  "invalidArgumentExit": 2,
+  "guiStarted": false,
+  "allowedCommands": [
+    "preview status",
+    "preview start",
+    "preview refresh"
+  ],
+  "files": [
+    {
+      "path": "本地测试.cmd",
+      "sha256": "D66182F4B86347937C2088F612C915CE80A6F26836FB3AA1CC327E35A6D250D8"
+    },
+    {
+      "path": "start-local-preview.ps1",
+      "sha256": "CFC50C3EC680116064641F6BBEF55A65263F3F65922DC60450364E878C33586D"
+    },
+    {
+      "path": "docs/LOCAL_PREVIEW.md",
+      "sha256": "26F5AD47B31A7B89F9E835B511BBFC4D6EEFCF84BFB02E26EF115D64261AA0D7"
+    }
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "phase": "baseline",
+  "generatedAt": "2026-10-04T18:43:44.772608+00:00",
+  "project": "C:\\codex\\taptap-sea",
+  "runtimePath": "C:\\codex\\taptap-sea\\.tmp\\circle1-review-runtime",
+  "suiteCount": 3,
+  "suites": [
+    {
+      "name": "Circle1B5PersistenceBarrelTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\Circle1B5PersistenceBarrelTests.lua",
+      "passed": true,
+      "subtestCount": 5,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "name": "barrel start, evidence rejection, completion and duplicate callback keep action identity",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "barrel cancellation and commit exception roll back without changing failure results",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "barrel rollback tick failures are logged once until recovery changes state",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "cloud save/load report only outcomes and ignore asynchronous failure replays",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "raw exception identity and failed diagnostic printing do not alter business outcomes",
+            "error": ""
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 44.716
+    },
+    {
+      "name": "LocalSaveLoopTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\LocalSaveLoopTests.lua",
+      "passed": true,
+      "subtestCount": 14,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "name": "LocalSaveBackendRoundtrip",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "LocalSaveBackendEmptyAndCorrupt",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "LocalSaveBackendAvailableProbe",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "DualSaveLocalWinsCloudShadows",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "DualSaveFallsBackToCloudWhenLocalFails",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "DualSaveCloudUnavailableStillSucceeds",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "DualLoadPrefersLocal",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "DualLoadFallsBackToCloudAndCaches",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "DualLoadEmptyWhenNoSaveAnywhere",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "DualDegradesToCloudWithoutEngine",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "SellAllSellsOnlyFishAndSumsIncome",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "SellAllEmptyInventoryRejected",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "SellAllAtSeaRejected",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "ReturnToPortOutOfRangeGivesCompass",
+            "error": ""
+          }
+        ],
+        "metrics": []
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 41.509
+    },
+    {
+      "name": "PersistenceRegressionSpec",
+      "kind": "spec",
+      "file": "scripts\\Tests\\PersistenceRegressionSpec.lua",
+      "passed": true,
+      "subtestCount": 0,
+      "failures": [],
+      "stdout": "PERSISTENCE_REGRESSION_PASS 84",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 31.843
+    }
+  ],
+  "luaVersion": "Lua 5.4",
+  "passedSuiteCount": 3,
+  "failedSuiteCount": 0,
+  "passed": true
+}

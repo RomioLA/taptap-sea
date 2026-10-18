@@ -1,0 +1,21 @@
+{
+  "consistentScenarios": 5,
+  "productionSourceHashesUnchanged": [
+    "scripts/Ocean/Projection.lua",
+    "scripts/Ocean/ProjectedGeometry.lua",
+    "scripts/Ocean/SeaViewArt.lua",
+    "scripts/Gameplay/HUDPresentation.lua",
+    "scripts/Tests/SeaHorizonOcclusionTests.lua",
+    "scripts/Tests/Circle1HUDReviewTests.lua",
+    "scripts/Tests/SeaMotionEffectsTests.lua"
+  ],
+  "contentConfigUnchanged": true,
+  "diagnosticSyntaxFiles": 4,
+  "clockEvidence": {
+    "luaOsClockSeconds": 0.251,
+    "processCpuSeconds": 0.0,
+    "elapsedSeconds": 0.250427100007073
+  },
+  "gameRegressionRerun": false,
+  "nativeFpsVerified": false
+}

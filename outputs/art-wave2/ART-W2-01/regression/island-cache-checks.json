@@ -1,0 +1,40 @@
+{
+  "passed": false,
+  "project": "C:\\codex\\taptap-sea",
+  "baseline": "C:\\codex\\taptap-sea\\outputs\\performance-20261005\\before-island-fix",
+  "resultPath": "C:\\codex\\taptap-sea\\outputs\\art-wave2\\ART-W2-01\\regression\\island-cache-checks.json",
+  "method": "Independent Lua 5.4 runtimes load the pre-optimization snapshot and current source. A single optimized entity is kept warm across mutations; recorded NanoVG elements compare draw order, paint, and every path coordinate within 1e-6 px.",
+  "scenarioCount": 1,
+  "optimizedDrawCount": 3,
+  "maximumCoordinateDifferencePx": 0.0,
+  "snapshotSha256": {
+    "SeaViewArt": "65d77b867359a2524cac92c3e997177fe52c61172718489214b24be1316ca1fc",
+    "ProjectedGeometry": "0afdedd178e528599325432fe85ab2b951b36b3b5a877e133720bfeee08a1427",
+    "Projection": "04730ef60d0e6d77791f2219b9233e2a73d49efc4aa4e7700febc7a2424961f4"
+  },
+  "error": "AssertionError: element[0].fill_color.r: expected 204.0, got 219.0",
+  "scenarios": [
+    {
+      "name": "warm-visible",
+      "state": {
+        "width": 1280,
+        "height": 720,
+        "x": 0.0,
+        "y": 0.0,
+        "cameraX": 0.0,
+        "cameraY": 0.0,
+        "radius": 4.9,
+        "segments": 48,
+        "time": 0.25,
+        "airMix": 0.15
+      },
+      "passed": false,
+      "baselineElements": 234,
+      "optimizedElements": 234,
+      "optimizedDraws": 3,
+      "matchesBaseline": true,
+      "maximumCoordinateDifferencePx": 0.0,
+      "error": "AssertionError: element[0].fill_color.r: expected 204.0, got 219.0"
+    }
+  ]
+}

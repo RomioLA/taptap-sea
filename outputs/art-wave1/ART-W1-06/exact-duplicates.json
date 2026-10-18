@@ -1,0 +1,119 @@
+{
+  "method": "SHA256 exact byte equality",
+  "duplicateGroupCount": 11,
+  "duplicateFileCount": 22,
+  "redundantCopyCount": 11,
+  "theoreticalRedundantBytes": 1164171,
+  "groups": [
+    {
+      "sha256": "71563662bbcd0ca6af3272d39cf8d231161485b1a6242a0235603b4a3f80cdf8",
+      "files": [
+        "assets/image/ART-W1-02_bait_impact_splash_20261005160235.png",
+        "assets/generated/highspec/ART-W1-02/bait_impact_splash.png"
+      ],
+      "copies": 2,
+      "oneCopyBytes": 23167,
+      "theoreticalRedundantBytes": 23167
+    },
+    {
+      "sha256": "2a9acfb4c243e03bdcfb53248d62508f8bf51444677709175f3a7c6b790c85dc",
+      "files": [
+        "assets/image/ART-W1-02_bigfish_direction_wake_20261005160011.png",
+        "assets/generated/highspec/ART-W1-02/bigfish_direction_wake.png"
+      ],
+      "copies": 2,
+      "oneCopyBytes": 73187,
+      "theoreticalRedundantBytes": 73187
+    },
+    {
+      "sha256": "993f60a9ccbeadc148096a74f8aacc70c8203a440030a1a935713a241e21f274",
+      "files": [
+        "assets/image/ART-W1-02_bigfish_splash_roaming_20261005160011.png",
+        "assets/generated/highspec/ART-W1-02/bigfish_splash_roaming.png"
+      ],
+      "copies": 2,
+      "oneCopyBytes": 30823,
+      "theoreticalRedundantBytes": 30823
+    },
+    {
+      "sha256": "74de86cf73a3bb13e08784366bb586f82cc89369b5807083154694ddc9f6c802",
+      "files": [
+        "assets/image/ART-W1-02_fishing_empty_feedback_20261005160235.png",
+        "assets/generated/highspec/ART-W1-02/fishing_empty_feedback.png"
+      ],
+      "copies": 2,
+      "oneCopyBytes": 184949,
+      "theoreticalRedundantBytes": 184949
+    },
+    {
+      "sha256": "9f1fd4ac7b4da52abca53bede6a507f83ae5c8a392f883835173c0ec0578550a",
+      "files": [
+        "assets/image/ART-W1-02_ripple_small_20261005160235.png",
+        "assets/generated/highspec/ART-W1-02/ripple_small.png"
+      ],
+      "copies": 2,
+      "oneCopyBytes": 51872,
+      "theoreticalRedundantBytes": 51872
+    },
+    {
+      "sha256": "e9e217be0cf038d915bec5038fcd153c5fdb6076d63653d6d252a23b04dae63a",
+      "files": [
+        "assets/image/ART-W1-02_seabird_dive_20261005160011.png",
+        "assets/generated/highspec/ART-W1-02/seabird_dive.png"
+      ],
+      "copies": 2,
+      "oneCopyBytes": 181304,
+      "theoreticalRedundantBytes": 181304
+    },
+    {
+      "sha256": "d965595ad73a17fb58b7a51f94b3a9b7868ac500f17ab438cabdeabd703da40f",
+      "files": [
+        "assets/image/ART-W1-02_seabird_glide_20261005160011.png",
+        "assets/generated/highspec/ART-W1-02/seabird_glide.png"
+      ],
+      "copies": 2,
+      "oneCopyBytes": 158795,
+      "theoreticalRedundantBytes": 158795
+    },
+    {
+      "sha256": "f6e8002ced76ec544d21f9f1f622574226f434535c61d61a0c2c8c4053670548",
+      "files": [
+        "assets/image/ART-W1-02_smallfish_breach_20261005160011.png",
+        "assets/generated/highspec/ART-W1-02/smallfish_breach.png"
+      ],
+      "copies": 2,
+      "oneCopyBytes": 120320,
+      "theoreticalRedundantBytes": 120320
+    },
+    {
+      "sha256": "a090c17fbb5e0f288814ce5efb166eeca86068413493e6af82211540a8b6b234",
+      "files": [
+        "assets/image/ART-W1-02_smallfish_surface_disturbance_20261005160011.png",
+        "assets/generated/highspec/ART-W1-02/smallfish_surface_disturbance.png"
+      ],
+      "copies": 2,
+      "oneCopyBytes": 48586,
+      "theoreticalRedundantBytes": 48586
+    },
+    {
+      "sha256": "93eb66990ee903a7f1ffdb92cbda1e07b1dd3154e19e76bdaab395dfae3b923a",
+      "files": [
+        "assets/image/ART-W1-02_surface_bubbles_20261005160235.png",
+        "assets/generated/highspec/ART-W1-02/surface_bubbles.png"
+      ],
+      "copies": 2,
+      "oneCopyBytes": 59977,
+      "theoreticalRedundantBytes": 59977
+    },
+    {
+      "sha256": "8fa627d003e0d2a64ebcd50667edfcfab303f72eafdd9db8df3ecc00078b043e",
+      "files": [
+        "assets/image/OceanStory_barrel_20261005115009.png",
+        "assets/generated/highspec/ART-W1-05/barrel_world_candidate.png"
+      ],
+      "copies": 2,
+      "oneCopyBytes": 231191,
+      "theoreticalRedundantBytes": 231191
+    }
+  ]
+}

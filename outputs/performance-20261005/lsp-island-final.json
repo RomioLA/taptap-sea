@@ -1,0 +1,1136 @@
+{
+  "filesExpected": 30,
+  "filesDiagnosed": 30,
+  "missing": [],
+  "errors": [],
+  "warnings": [
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/GameClock.lua",
+      "line": 183,
+      "code": "missing-return",
+      "message": "Annotations specify that a return value is required here."
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaMotionEffectsTests.lua",
+      "line": 62,
+      "code": "unnecessary-assert",
+      "message": "Unnecessary assert: this expression is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaMotionEffectsTests.lua",
+      "line": 110,
+      "code": "unnecessary-assert",
+      "message": "Unnecessary assert: this expression is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Circle1B2Barrel.lua",
+      "line": 378,
+      "code": "undefined-field",
+      "message": "Undefined field `rollbackStartedLogged`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Circle1B2Barrel.lua",
+      "line": 389,
+      "code": "undefined-field",
+      "message": "Undefined field `rollbackFailureLogged`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Actions.lua",
+      "line": 331,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 57,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 91,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 136,
+      "code": "unnecessary-assert",
+      "message": "Unnecessary assert: this expression is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 141,
+      "code": "need-check-nil",
+      "message": "mid may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 141,
+      "code": "need-check-nil",
+      "message": "(a + b) value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 141,
+      "code": "need-check-nil",
+      "message": "a value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 141,
+      "code": "need-check-nil",
+      "message": "b value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 147,
+      "code": "need-check-nil",
+      "message": "writes value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 31,
+      "code": "undefined-field",
+      "message": "Undefined field `Properties`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 100,
+      "code": "undefined-field",
+      "message": "Undefined field `props`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 101,
+      "code": "undefined-field",
+      "message": "Undefined field `props`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 111,
+      "code": "undefined-field",
+      "message": "Undefined field `visible`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 122,
+      "code": "undefined-field",
+      "message": "Undefined field `visible`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 131,
+      "code": "undefined-field",
+      "message": "Undefined field `props`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 132,
+      "code": "undefined-field",
+      "message": "Undefined field `props`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 134,
+      "code": "undefined-field",
+      "message": "Undefined field `colorWrites`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 135,
+      "code": "undefined-field",
+      "message": "Undefined field `transitions`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 137,
+      "code": "undefined-field",
+      "message": "Undefined field `transitions`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 138,
+      "code": "undefined-field",
+      "message": "Undefined field `[8]`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 143,
+      "code": "undefined-field",
+      "message": "Undefined field `colorWrites`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 144,
+      "code": "undefined-field",
+      "message": "Undefined field `transitions`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 145,
+      "code": "undefined-field",
+      "message": "Undefined field `transitions`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 147,
+      "code": "undefined-field",
+      "message": "Undefined field `colorWrites`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 247,
+      "code": "undefined-field",
+      "message": "Undefined field `visible`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 249,
+      "code": "undefined-field",
+      "message": "Undefined field `visible`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/Circle1HUDReviewTests.lua",
+      "line": 251,
+      "code": "undefined-field",
+      "message": "Undefined field `visible`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaViewArt.lua",
+      "line": 231,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaViewArt.lua",
+      "line": 583,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaViewArt.lua",
+      "line": 252,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaViewArt.lua",
+      "line": 252,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaViewArt.lua",
+      "line": 319,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaViewArt.lua",
+      "line": 320,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaViewArt.lua",
+      "line": 321,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaViewArt.lua",
+      "line": 328,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaViewArt.lua",
+      "line": 328,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaViewArt.lua",
+      "line": 328,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaViewArt.lua",
+      "line": 331,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaViewArt.lua",
+      "line": 332,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaViewArt.lua",
+      "line": 333,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaViewArt.lua",
+      "line": 444,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `(unknown|number)` to `number`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Integration/Scene.lua",
+      "line": 244,
+      "code": "unnecessary-assert",
+      "message": "Unnecessary assert: this expression is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 214,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 297,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 20,
+      "code": "need-check-nil",
+      "message": "Projection.VisibleDepth(movement, altitude or 0) value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 56,
+      "code": "need-check-nil",
+      "message": "nextPoint may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 56,
+      "code": "need-check-nil",
+      "message": "nextPoint may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 201,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 202,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 204,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 206,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 206,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 211,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 211,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 212,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 275,
+      "code": "need-check-nil",
+      "message": "horizon(p.x) value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 285,
+      "code": "need-check-nil",
+      "message": "horizon(x) value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 297,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 298,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 300,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 363,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 365,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 372,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 372,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 375,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 375,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 388,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 388,
+      "code": "need-check-nil",
+      "message": "b may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 404,
+      "code": "need-check-nil",
+      "message": "p may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 404,
+      "code": "need-check-nil",
+      "message": "q may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 404,
+      "code": "need-check-nil",
+      "message": "p may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 404,
+      "code": "need-check-nil",
+      "message": "q may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 405,
+      "code": "need-check-nil",
+      "message": "p may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 405,
+      "code": "need-check-nil",
+      "message": "q may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 405,
+      "code": "need-check-nil",
+      "message": "p may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 517,
+      "code": "need-check-nil",
+      "message": "matrix[5] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 517,
+      "code": "need-check-nil",
+      "message": "matrix[1] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 517,
+      "code": "need-check-nil",
+      "message": "matrix[3] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 518,
+      "code": "need-check-nil",
+      "message": "matrix[6] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 518,
+      "code": "need-check-nil",
+      "message": "matrix[2] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 518,
+      "code": "need-check-nil",
+      "message": "matrix[4] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 522,
+      "code": "need-check-nil",
+      "message": "m[1] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 522,
+      "code": "need-check-nil",
+      "message": "m[3] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 522,
+      "code": "need-check-nil",
+      "message": "m[2] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 522,
+      "code": "need-check-nil",
+      "message": "m[4] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 522,
+      "code": "need-check-nil",
+      "message": "m[1] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 522,
+      "code": "need-check-nil",
+      "message": "m[3] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 522,
+      "code": "need-check-nil",
+      "message": "m[2] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 522,
+      "code": "need-check-nil",
+      "message": "m[4] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 523,
+      "code": "need-check-nil",
+      "message": "m[5] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 523,
+      "code": "need-check-nil",
+      "message": "m[1] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 523,
+      "code": "need-check-nil",
+      "message": "m[3] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 523,
+      "code": "need-check-nil",
+      "message": "m[6] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 523,
+      "code": "need-check-nil",
+      "message": "m[2] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 523,
+      "code": "need-check-nil",
+      "message": "m[4] value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 196,
+      "code": "undefined-field",
+      "message": "Undefined field `[index % #clipped + 1]`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 200,
+      "code": "undefined-field",
+      "message": "Undefined field `x`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 200,
+      "code": "undefined-field",
+      "message": "Undefined field `y`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 208,
+      "code": "undefined-field",
+      "message": "Undefined field `scale`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 128,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 128,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 173,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 173,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 285,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 285,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 333,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 333,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 334,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/ProjectedGeometry.lua",
+      "line": 334,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 138,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 139,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 140,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 141,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 142,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 143,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 144,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 145,
+      "code": "unnecessary-assert",
+      "message": "Impossible assert: this expression is always falsy; prefer `error()`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 290,
+      "code": "missing-fields",
+      "message": "Missing required fields in type `NVGContextWrapper`: `Dispose`, `GetBlockEvents`, `GetCategory`, `GetTypeName`, `GetType`, `HasSubscribedToEvent`, `SendEvent`, `SetBlockEvents`, `category`, `delete`, `typeName`, `type`"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 249,
+      "code": "param-type-mismatch",
+      "message": "expected `integer` but found `number?`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 42,
+      "code": "need-check-nil",
+      "message": "edge value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 42,
+      "code": "need-check-nil",
+      "message": "edge value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 43,
+      "code": "need-check-nil",
+      "message": "center value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 43,
+      "code": "need-check-nil",
+      "message": "center value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 155,
+      "code": "need-check-nil",
+      "message": "center value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 155,
+      "code": "need-check-nil",
+      "message": "center value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 156,
+      "code": "need-check-nil",
+      "message": "edge value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 156,
+      "code": "need-check-nil",
+      "message": "edge value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 162,
+      "code": "need-check-nil",
+      "message": "Projection.Horizon(v,p.x) value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 167,
+      "code": "need-check-nil",
+      "message": "edge value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 167,
+      "code": "need-check-nil",
+      "message": "edge value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 174,
+      "code": "need-check-nil",
+      "message": "edge value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 174,
+      "code": "need-check-nil",
+      "message": "edge value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 174,
+      "code": "need-check-nil",
+      "message": "edge value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 198,
+      "code": "need-check-nil",
+      "message": "Projection.Horizon(v,vertex.x) value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 221,
+      "code": "need-check-nil",
+      "message": "Projection.Horizon(v,vertex.x) value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 260,
+      "code": "need-check-nil",
+      "message": "Projection.Horizon(v,v.viewportWidth*.5) value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 271,
+      "code": "need-check-nil",
+      "message": "horizon value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 273,
+      "code": "need-check-nil",
+      "message": "horizon value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 276,
+      "code": "need-check-nil",
+      "message": "horizon value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 302,
+      "code": "need-check-nil",
+      "message": "bound value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 85,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 85,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "line": 187,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 79,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 147,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 197,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 203,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 570,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 608,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 683,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 687,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 726,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 731,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 810,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 811,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 875,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 1001,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 1010,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 412,
+      "code": "return-type-mismatch",
+      "message": "Annotations specify that return value 1 has a type of `boolean`, returning value of type `(string|never)` here instead. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 410,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `(boolean|string)` to `(string|never)`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 434,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/Loop.lua",
+      "line": 1213,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/Projection.lua",
+      "line": 27,
+      "code": "param-type-mismatch",
+      "message": "expected `integer` but found `(0.045|number)?`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/Projection.lua",
+      "line": 235,
+      "code": "need-check-nil",
+      "message": "Projection.Horizon(view, x) value may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/Projection.lua",
+      "line": 37,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/Projection.lua",
+      "line": 44,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/Projection.lua",
+      "line": 94,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/Projection.lua",
+      "line": 115,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/Projection.lua",
+      "line": 147,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/Projection.lua",
+      "line": 273,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/Projection.lua",
+      "line": 273,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 54,
+      "code": "unnecessary-assert",
+      "message": "Unnecessary assert: this expression is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 21,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 350,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 351,
+      "code": "unnecessary-if",
+      "message": "Unnecessary `if` statement: this condition is always truthy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 433,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 110,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 437,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Ocean/SeaRuntime.lua",
+      "line": 447,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 1357,
+      "code": "unnecessary-if",
+      "message": "Impossible `if` statement: this condition is always falsy"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 1334,
+      "code": "param-type-mismatch",
+      "message": "expected `boolean` but found `false?`. "
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 1169,
+      "code": "need-check-nil",
+      "message": "barrelState may be nil"
+    },
+    {
+      "file": "file:///C:/codex/taptap-sea/scripts/Gameplay/HUD.lua",
+      "line": 1071,
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `number` to `integer`. "
+    }
+  ]
+}

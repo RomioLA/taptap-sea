@@ -1,0 +1,71 @@
+{
+  "phase": "final",
+  "generatedAt": "2026-10-05T01:32:14.113941+00:00",
+  "project": "C:\\codex\\taptap-sea",
+  "runtimePath": "C:\\codex\\taptap-sea\\.tmp\\circle1-review-runtime",
+  "suiteCount": 1,
+  "suites": [
+    {
+      "name": "SeaMotionEffectsTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaMotionEffectsTests.lua",
+      "passed": true,
+      "subtestCount": 7,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "name": "near and far surface detail blend smoothly with complementary weights",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "surface lattice positions stay on fixed world cells while the view drifts",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "boat heave and roll are pure samples of voyage time and turn rate",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "shoreline foam arcs expand, fade, and repeat in world space",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "water mark budget is enforced even within a single row",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "meter-width foam clips once and returns the same projected edge endpoints",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "turn bank eases back when stopped and freezes while paused",
+            "error": ""
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 1,
+        "nvgClosePath": 240,
+        "nvgFill": 1,
+        "nvgFillColor": 1,
+        "nvgLineTo": 720,
+        "nvgMoveTo": 240
+      },
+      "nvgCallTotal": 1203,
+      "durationMs": 20.014
+    }
+  ],
+  "luaVersion": "Lua 5.4",
+  "passedSuiteCount": 1,
+  "failedSuiteCount": 0,
+  "passed": true
+}

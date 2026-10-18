@@ -1,0 +1,490 @@
+{
+  "phase": "baseline",
+  "generatedAt": "2026-10-04T18:29:39.226489+00:00",
+  "project": "C:\\codex\\taptap-sea",
+  "runtimePath": "C:\\codex\\taptap-sea\\.tmp\\circle1-review-runtime",
+  "suiteCount": 8,
+  "suites": [
+    {
+      "name": "Circle1A2BarrelRenderTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\Circle1A2BarrelRenderTests.lua",
+      "passed": true,
+      "subtestCount": 3,
+      "failures": [],
+      "returned": {
+        "status": "PASS",
+        "tests": [
+          {
+            "name": "barrel_outline_and_recognition_boundaries_are_inclusive",
+            "passed": true
+          },
+          {
+            "name": "barrel_screen_culling_keeps_partial_edges_and_skips_fully_offscreen",
+            "passed": true
+          },
+          {
+            "name": "only_the_exact_barrel_gets_recognition_and_other_floats_keep_their_shape",
+            "passed": true
+          }
+        ],
+        "metrics": {
+          "outlineDistance": 80,
+          "contentId": "driftwood_barrel",
+          "offscreenCulling": "partial visible / full margin culled",
+          "recognitionDistance": 20
+        }
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 817,
+        "nvgBezierTo": 16,
+        "nvgCircle": 26,
+        "nvgClosePath": 1450,
+        "nvgEllipse": 9,
+        "nvgFill": 788,
+        "nvgFillColor": 762,
+        "nvgFillPaint": 26,
+        "nvgGlobalAlpha": 6,
+        "nvgIntersectScissor": 24,
+        "nvgLineTo": 13627,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 3105,
+        "nvgRadialGradient": 24,
+        "nvgRect": 1,
+        "nvgRestore": 37,
+        "nvgSave": 37,
+        "nvgScale": 22,
+        "nvgStroke": 51,
+        "nvgStrokeColor": 51,
+        "nvgStrokeWidth": 51,
+        "nvgTranslate": 22
+      },
+      "nvgCallTotal": 20954,
+      "durationMs": 666.565
+    },
+    {
+      "name": "Circle1A2FishingTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\Circle1A2FishingTests.lua",
+      "passed": true,
+      "subtestCount": 5,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "fishing_phase_geometry_and_readonly_snapshot",
+            "passed": true
+          },
+          {
+            "name": "optional_sixth_argument_keeps_fifth_clock_and_absent_view",
+            "passed": true
+          },
+          {
+            "name": "projected_fish_culling_keeps_partial_edge_and_rejects_far_depth",
+            "passed": true
+          },
+          {
+            "name": "pointer_consumption_preserves_navigation_and_guards",
+            "passed": true
+          },
+          {
+            "name": "bootstrap_optional_callback_is_forwarded_without_mutation",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 1457,
+        "nvgBezierTo": 32,
+        "nvgCircle": 52,
+        "nvgClosePath": 2628,
+        "nvgEllipse": 18,
+        "nvgFill": 1399,
+        "nvgFillColor": 1347,
+        "nvgFillPaint": 52,
+        "nvgGlobalAlpha": 11,
+        "nvgIntersectScissor": 48,
+        "nvgLineTo": 17676,
+        "nvgLinearGradient": 4,
+        "nvgMoveTo": 3900,
+        "nvgRadialGradient": 48,
+        "nvgRect": 3,
+        "nvgRestore": 73,
+        "nvgSave": 73,
+        "nvgScale": 44,
+        "nvgStroke": 102,
+        "nvgStrokeColor": 102,
+        "nvgStrokeWidth": 102,
+        "nvgTranslate": 44
+      },
+      "nvgCallTotal": 29215,
+      "durationMs": 868.105
+    },
+    {
+      "name": "Circle1A3RecognitionTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\Circle1A3RecognitionTests.lua",
+      "passed": true,
+      "subtestCount": 5,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "first_approach_then_depart_and_return_reads_existing_player_progress",
+            "passed": true
+          },
+          {
+            "name": "restore_and_new_game_are_read_live_without_ocean_progress_copy",
+            "passed": true
+          },
+          {
+            "name": "missing_false_nil_and_nonboolean_queries_preserve_unknown_behavior",
+            "passed": true
+          },
+          {
+            "name": "recognized_offscreen_and_content_decoys_do_not_bypass_existing_filters",
+            "passed": true
+          },
+          {
+            "name": "repeated_draw_is_readonly_for_world_ship_signals_and_player",
+            "passed": true
+          }
+        ],
+        "metrics": {
+          "recognitionMeters": 20,
+          "evidenceKind": "NanoVG recorder / render fixtures, not native gameplay",
+          "recognitionOwner": "real Gameplay.PlayerState",
+          "restore": "real Persistence.Restore (offline)",
+          "outlineMeters": 80
+        }
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 719,
+        "nvgBezierTo": 16,
+        "nvgCircle": 26,
+        "nvgClosePath": 1361,
+        "nvgEllipse": 9,
+        "nvgFill": 690,
+        "nvgFillColor": 664,
+        "nvgFillPaint": 26,
+        "nvgGlobalAlpha": 4,
+        "nvgIntersectScissor": 24,
+        "nvgLineTo": 13064,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 3017,
+        "nvgRadialGradient": 24,
+        "nvgRect": 1,
+        "nvgRestore": 35,
+        "nvgSave": 35,
+        "nvgScale": 22,
+        "nvgStroke": 51,
+        "nvgStrokeColor": 51,
+        "nvgStrokeWidth": 51,
+        "nvgTranslate": 22
+      },
+      "nvgCallTotal": 19914,
+      "durationMs": 3646.639
+    },
+    {
+      "name": "SeaAtmosphereTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaAtmosphereTests.lua",
+      "passed": true,
+      "subtestCount": 7,
+      "failures": [],
+      "returned": {
+        "metrics": {
+          "maxCloudPuffsPerPass": 12,
+          "maxFogPuffsPerPass": 36,
+          "fog": 14,
+          "closeFogAlpha": 3.0,
+          "fogCrossesHorizon": true,
+          "distantFogAlpha": 29.0,
+          "cloudCrossesHorizon": true,
+          "cloudShadows": 3
+        },
+        "tests": [
+          "cloud_shadows_are_repeatable_for_same_seed_and_time",
+          "cloud_shadows_drift_only_from_supplied_time",
+          "cloud_and_fog_world_cells_remain_stable_across_camera_cell_boundaries",
+          "fog_and_cloud_shadows_clip_to_curved_horizon_without_dropping_crossing_puffs",
+          "fog_is_sparse_and_near_ship_opacity_is_reduced",
+          "atmosphere_respects_expanded_puff_budgets_and_nvg_state_stack",
+          "atmosphere_does_not_change_movement_state"
+        ],
+        "status": "PASS"
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 9.737
+    },
+    {
+      "name": "SeaFusionRenderTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaFusionRenderTests.lua",
+      "passed": true,
+      "subtestCount": 10,
+      "failures": [],
+      "returned": {
+        "status": "PASS",
+        "tests": [
+          "draw_is_pure_for_runtime_state",
+          "original_sun_and_birds_reused",
+          "projected_sea_view_art_apis_reused",
+          "ordinary_fish_hidden_by_default",
+          "show_underwater_draws_both_fixture_fish",
+          "resize_preserves_projection_anchor_horizon_and_perspective_scale",
+          "curved_ground_clips_preserve_elevated_island_silhouettes_in_both_aspects",
+          "presentation_fixture_does_not_change_config_world",
+          "night_tint_precedes_boat_and_preserves_paused_gameplay_clock",
+          "daytime_removes_night_tint_and_nvg_state_stack_is_balanced"
+        ],
+        "metrics": {
+          "portrait": {
+            "basePixelsPerMeter": 25.555555555555557,
+            "anchorY": 0.72,
+            "revealedWorldFishCalls": 2,
+            "horizonY": 276.0,
+            "shipScreenY": 828.0,
+            "anchorX": 0.5,
+            "shipScreenX": 600.0,
+            "width": 1200,
+            "height": 1150
+          },
+          "previewFixtures": {
+            "island": "(-14,-12)",
+            "sardine": "(-8,-8)",
+            "tuna": "(8,-8)"
+          },
+          "landscape": {
+            "basePixelsPerMeter": 24.0,
+            "anchorY": 0.72,
+            "hiddenWorldFishCalls": 0,
+            "horizonY": 259.2,
+            "shipScreenY": 777.5999999999999,
+            "anchorX": 0.5,
+            "shipScreenX": 960.0,
+            "width": 1920,
+            "height": 1080
+          },
+          "originalFixedObjectCount": 3,
+          "originalConfiguredBirds": 2
+        }
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 625,
+        "nvgBezierTo": 16,
+        "nvgCircle": 16,
+        "nvgClosePath": 1114,
+        "nvgEllipse": 9,
+        "nvgFill": 596,
+        "nvgFillColor": 580,
+        "nvgFillPaint": 16,
+        "nvgGlobalAlpha": 5,
+        "nvgIntersectScissor": 14,
+        "nvgLineTo": 7415,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1495,
+        "nvgRadialGradient": 14,
+        "nvgRect": 1,
+        "nvgRestore": 26,
+        "nvgSave": 26,
+        "nvgScale": 15,
+        "nvgStroke": 51,
+        "nvgStrokeColor": 51,
+        "nvgStrokeWidth": 51,
+        "nvgTranslate": 15
+      },
+      "nvgCallTotal": 12153,
+      "durationMs": 324.117
+    },
+    {
+      "name": "SeaHorizonOcclusionTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaHorizonOcclusionTests.lua",
+      "passed": true,
+      "subtestCount": 7,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "name": "the lowest raised vertices disappear before the top as the surface recedes"
+          },
+          {
+            "passed": true,
+            "name": "large footprints survive center crossings including lateral screen edges"
+          },
+          {
+            "passed": true,
+            "name": "raised directional vectors use the same altitude as finite difference samples"
+          },
+          {
+            "passed": true,
+            "name": "raised geometry at the tangent retains its real height"
+          },
+          {
+            "passed": true,
+            "name": "ground inverse remains unique at every lateral horizon and DPR scale"
+          },
+          {
+            "passed": true,
+            "name": "actual scene renders a new float with its center beyond the tangent"
+          },
+          {
+            "passed": true,
+            "name": "height broad phase is conservative and responds to configuration changes"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 724,
+        "nvgBezierTo": 16,
+        "nvgCircle": 26,
+        "nvgClosePath": 1249,
+        "nvgEllipse": 9,
+        "nvgFill": 696,
+        "nvgFillColor": 670,
+        "nvgFillPaint": 26,
+        "nvgGlobalAlpha": 5,
+        "nvgIntersectScissor": 24,
+        "nvgLineTo": 7112,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1880,
+        "nvgRadialGradient": 24,
+        "nvgRect": 1,
+        "nvgRestore": 36,
+        "nvgSave": 36,
+        "nvgScale": 22,
+        "nvgStroke": 49,
+        "nvgStrokeColor": 49,
+        "nvgStrokeWidth": 49,
+        "nvgTranslate": 22
+      },
+      "nvgCallTotal": 12727,
+      "durationMs": 107.731
+    },
+    {
+      "name": "SeaMotionEffectsTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaMotionEffectsTests.lua",
+      "passed": true,
+      "subtestCount": 6,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "error": "",
+            "passed": true,
+            "name": "near and far surface detail blend smoothly with complementary weights"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "surface lattice positions stay on fixed world cells while the view drifts"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "boat heave and roll are pure samples of voyage time and turn rate"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "shoreline foam arcs expand, fade, and repeat in world space"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "water mark budget is enforced even within a single row"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "turn bank eases back when stopped and freezes while paused"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 3,
+        "nvgClosePath": 1,
+        "nvgFill": 1,
+        "nvgFillPaint": 1,
+        "nvgLineTo": 79,
+        "nvgLinearGradient": 1,
+        "nvgMoveTo": 5,
+        "nvgStroke": 3,
+        "nvgStrokeColor": 3,
+        "nvgStrokeWidth": 3
+      },
+      "nvgCallTotal": 100,
+      "durationMs": 11.772
+    },
+    {
+      "name": "SeaPresentationTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaPresentationTests.lua",
+      "passed": true,
+      "subtestCount": 4,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "passed": true,
+            "name": "fixed_island_height_crosses_the_horizon_without_vertical_art_motion"
+          },
+          {
+            "passed": true,
+            "name": "complete_footprint_bounds_replace_center_cutoff_and_opacity_emergence"
+          },
+          {
+            "passed": true,
+            "name": "presentation_preserves_world_coordinates_and_restores_drawing_state"
+          },
+          {
+            "passed": true,
+            "name": "paused_scene_keeps_hidden_and_beyond_horizon_fish_out_of_the_sky"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 707,
+        "nvgBezierTo": 16,
+        "nvgCircle": 26,
+        "nvgClosePath": 1232,
+        "nvgEllipse": 9,
+        "nvgFill": 679,
+        "nvgFillColor": 653,
+        "nvgFillPaint": 26,
+        "nvgGlobalAlpha": 4,
+        "nvgIntersectScissor": 24,
+        "nvgLineTo": 7040,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1863,
+        "nvgRadialGradient": 24,
+        "nvgRect": 1,
+        "nvgRestore": 35,
+        "nvgSave": 35,
+        "nvgScale": 22,
+        "nvgStroke": 49,
+        "nvgStrokeColor": 49,
+        "nvgStrokeWidth": 49,
+        "nvgTranslate": 22
+      },
+      "nvgCallTotal": 12567,
+      "durationMs": 317.138
+    }
+  ],
+  "luaVersion": "Lua 5.4",
+  "passedSuiteCount": 8,
+  "failedSuiteCount": 0,
+  "passed": true
+}

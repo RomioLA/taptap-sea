@@ -1,0 +1,96 @@
+{
+  "phase": "final",
+  "generatedAt": "2026-10-04T23:04:14.977977+00:00",
+  "project": "C:\\codex\\taptap-sea",
+  "runtimePath": "C:\\codex\\taptap-sea\\.tmp\\circle1-review-runtime",
+  "suiteCount": 1,
+  "suites": [
+    {
+      "name": "SeaHorizonOcclusionTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SeaHorizonOcclusionTests.lua",
+      "passed": true,
+      "subtestCount": 11,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "name": "separated screen polygons retain their geometry across horizon extrema",
+            "passed": true
+          },
+          {
+            "name": "horizon snapshots match the live formula and renew after viewport or config changes",
+            "passed": true
+          },
+          {
+            "name": "clip planes renew after camera viewport config padding and height changes",
+            "passed": true
+          },
+          {
+            "name": "intersecting and tangent screen polygons still clip against the curved horizon",
+            "passed": true
+          },
+          {
+            "name": "the lowest raised vertices disappear before the top as the surface recedes",
+            "passed": true
+          },
+          {
+            "name": "large footprints survive center crossings including lateral screen edges",
+            "passed": true
+          },
+          {
+            "name": "raised directional vectors use the same altitude as finite difference samples",
+            "passed": true
+          },
+          {
+            "name": "raised geometry at the tangent retains its real height",
+            "passed": true
+          },
+          {
+            "name": "ground inverse remains unique at every lateral horizon and DPR scale",
+            "passed": true
+          },
+          {
+            "name": "actual scene renders a new float with its center beyond the tangent",
+            "passed": true
+          },
+          {
+            "name": "height broad phase is conservative and responds to configuration changes",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {
+        "nvgBeginPath": 724,
+        "nvgBezierTo": 16,
+        "nvgCircle": 26,
+        "nvgClosePath": 1249,
+        "nvgEllipse": 9,
+        "nvgFill": 696,
+        "nvgFillColor": 670,
+        "nvgFillPaint": 26,
+        "nvgGlobalAlpha": 5,
+        "nvgIntersectScissor": 24,
+        "nvgLineTo": 6285,
+        "nvgLinearGradient": 2,
+        "nvgMoveTo": 1880,
+        "nvgRadialGradient": 24,
+        "nvgRect": 1,
+        "nvgRestore": 36,
+        "nvgSave": 36,
+        "nvgScale": 22,
+        "nvgStroke": 49,
+        "nvgStrokeColor": 49,
+        "nvgStrokeWidth": 49,
+        "nvgTranslate": 22
+      },
+      "nvgCallTotal": 11900,
+      "durationMs": 89.471
+    }
+  ],
+  "luaVersion": "Lua 5.4",
+  "passedSuiteCount": 1,
+  "failedSuiteCount": 0,
+  "passed": true
+}

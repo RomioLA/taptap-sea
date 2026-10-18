@@ -1,0 +1,1978 @@
+{
+  "method": "Current production Lua5.4 modules in isolated instances. No-op NanoVG, no GUI/GPU. Python time.process_time measures process CPU; perf_counter measures elapsed. Whole island timings: 3x72 frames. Ablations: 3 adjacent baseline/disabled/baseline pairs, 72 frames each; CPU delta uses mean adjacent baselines minus disabled. One-frame allocation with GC stopped then restarted. Local island upvalues discovered via debug.getupvalue; diagnostic replacements affect only this runtime. Component traces have extra instrumentation and measure elapsed, not CPU; do not add trace timings to production timings. Direct island calls are measured even offscreen to expose work that broad-phase normally skips. Synthetic radius/camera scenarios, not an exact reproduction of screenshot position.",
+  "nativeFpsVerified": false,
+  "productionFilesModified": false,
+  "records": [
+    {
+      "scenario": "near_full",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        -35
+      ],
+      "radius": 20,
+      "components": {
+        "ring_construction": {
+          "calls": [],
+          "invocations": 2.0,
+          "traceElapsedMs": 0.049675001112821825
+        },
+        "hills": {
+          "calls": {
+            "nvgClosePath": 110.0,
+            "nvgFill": 8.0,
+            "ClipLine": 6.0,
+            "Project": 332.0,
+            "StrokeWorldLine": 6.0,
+            "ProjectPolygon": 2.0,
+            "Visibility": 253.0,
+            "nvgLineTo": 528.0
+          },
+          "invocations": 1.0,
+          "traceElapsedMs": 5.330055554724014
+        },
+        "body_fill": {
+          "calls": {
+            "nvgClosePath": 2.0,
+            "nvgFill": 2.0,
+            "Project": 546.0,
+            "ProjectPolygon": 2.0,
+            "nvgLineTo": 544.0
+          },
+          "invocations": 2.0,
+          "traceElapsedMs": 5.761644445657213
+        },
+        "outlines": {
+          "calls": {
+            "nvgClosePath": 402.0,
+            "StrokeWorldLine": 96.0,
+            "nvgFill": 96.0,
+            "Visibility": 498.0,
+            "Project": 690.0,
+            "ClipLine": 96.0,
+            "ClipScreenPolygon": 402.0,
+            "nvgLineTo": 1206.0
+          },
+          "invocations": 2.0,
+          "traceElapsedMs": 18.429797221971157
+        },
+        "trees": {
+          "calls": {
+            "nvgClosePath": 12.0,
+            "StrokeWorldLine": 4.0,
+            "ProjectPolygon": 8.0,
+            "Visibility": 63.0,
+            "nvgFill": 12.0,
+            "ClipLine": 4.0,
+            "Project": 120.0,
+            "nvgLineTo": 108.0
+          },
+          "invocations": 4.0,
+          "traceElapsedMs": 1.9854777795747698
+        },
+        "foam": {
+          "calls": {
+            "nvgClosePath": 128.0,
+            "StrokeWorldLine": 128.0,
+            "nvgFill": 128.0,
+            "Visibility": 256.0,
+            "Project": 512.0,
+            "ClipLine": 128.0,
+            "ClipScreenPolygon": 128.0,
+            "nvgLineTo": 384.0
+          },
+          "invocations": 1.0,
+          "traceElapsedMs": 11.749122222681763
+        }
+      },
+      "visibleByPresentation": true,
+      "withoutComponent": {
+        "strokeWorldPolygon": [
+          {
+            "after": {
+              "allocatedKiBPerFrame": 1277.779296875,
+              "elapsedMs": 48.50747222210177,
+              "processCpuMs": 21.26736111111111,
+              "nvgApiCalls": 4964.0
+            },
+            "before": {
+              "allocatedKiBPerFrame": 1277.716796875,
+              "elapsedMs": 53.33667361123339,
+              "processCpuMs": 16.927083333333332,
+              "nvgApiCalls": 4964.0
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 667.763671875,
+              "elapsedMs": 43.72455972224998,
+              "processCpuMs": 9.54861111111111,
+              "nvgApiCalls": 2108.0
+            },
+            "cpuDeltaMs": 9.54861111111111
+          },
+          {
+            "after": {
+              "allocatedKiBPerFrame": 1277.779296875,
+              "elapsedMs": 35.671787499975636,
+              "processCpuMs": 23.4375,
+              "nvgApiCalls": 4964.0
+            },
+            "before": {
+              "allocatedKiBPerFrame": 1277.716796875,
+              "elapsedMs": 48.78012916661747,
+              "processCpuMs": 24.739583333333332,
+              "nvgApiCalls": 4964.0
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 667.763671875,
+              "elapsedMs": 19.27594583321479,
+              "processCpuMs": 12.803819444444445,
+              "nvgApiCalls": 2108.0
+            },
+            "cpuDeltaMs": 11.28472222222222
+          },
+          {
+            "after": {
+              "allocatedKiBPerFrame": 1277.779296875,
+              "elapsedMs": 26.77955833334838,
+              "processCpuMs": 20.616319444444443,
+              "nvgApiCalls": 4964.0
+            },
+            "before": {
+              "allocatedKiBPerFrame": 1277.716796875,
+              "elapsedMs": 28.251186111042948,
+              "processCpuMs": 21.26736111111111,
+              "nvgApiCalls": 4964.0
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 667.763671875,
+              "elapsedMs": 16.221077777825283,
+              "processCpuMs": 11.93576388888889,
+              "nvgApiCalls": 2108.0
+            },
+            "cpuDeltaMs": 9.00607638888889
+          }
+        ],
+        "drawTree": [
+          {
+            "after": {
+              "allocatedKiBPerFrame": 1277.779296875,
+              "elapsedMs": 59.41164861097705,
+              "processCpuMs": 16.05902777777778,
+              "nvgApiCalls": 4964.0
+            },
+            "before": {
+              "allocatedKiBPerFrame": 1277.716796875,
+              "elapsedMs": 123.2634555554897,
+              "processCpuMs": 16.05902777777778,
+              "nvgApiCalls": 4964.0
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 1209.615234375,
+              "elapsedMs": 128.6950291667179,
+              "processCpuMs": 17.36111111111111,
+              "nvgApiCalls": 4784.0
+            },
+            "cpuDeltaMs": -1.3020833333333321
+          },
+          {
+            "after": {
+              "allocatedKiBPerFrame": 1277.779296875,
+              "elapsedMs": 46.039877777932105,
+              "processCpuMs": 18.663194444444443,
+              "nvgApiCalls": 4964.0
+            },
+            "before": {
+              "allocatedKiBPerFrame": 1277.716796875,
+              "elapsedMs": 45.83737916679335,
+              "processCpuMs": 21.05034722222222,
+              "nvgApiCalls": 4964.0
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 1209.615234375,
+              "elapsedMs": 45.51168194464279,
+              "processCpuMs": 17.79513888888889,
+              "nvgApiCalls": 4784.0
+            },
+            "cpuDeltaMs": 2.061631944444443
+          },
+          {
+            "after": {
+              "allocatedKiBPerFrame": 1277.779296875,
+              "elapsedMs": 37.289249999957974,
+              "processCpuMs": 16.493055555555557,
+              "nvgApiCalls": 4964.0
+            },
+            "before": {
+              "allocatedKiBPerFrame": 1277.716796875,
+              "elapsedMs": 35.815343055623494,
+              "processCpuMs": 18.01215277777778,
+              "nvgApiCalls": 4964.0
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 1209.615234375,
+              "elapsedMs": 27.661358333312414,
+              "processCpuMs": 16.710069444444443,
+              "nvgApiCalls": 4784.0
+            },
+            "cpuDeltaMs": 0.542534722222225
+          }
+        ],
+        "drawShoreFoam": [
+          {
+            "after": {
+              "allocatedKiBPerFrame": 1277.779296875,
+              "elapsedMs": 41.68075833331386,
+              "processCpuMs": 20.833333333333332,
+              "nvgApiCalls": 4964.0
+            },
+            "before": {
+              "allocatedKiBPerFrame": 1277.716796875,
+              "elapsedMs": 9.38416527767711,
+              "processCpuMs": 9.114583333333334,
+              "nvgApiCalls": 4964.0
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 995.529296875,
+              "elapsedMs": 34.08173472234921,
+              "processCpuMs": 15.625,
+              "nvgApiCalls": 3812.0
+            },
+            "cpuDeltaMs": -0.6510416666666679
+          },
+          {
+            "after": {
+              "allocatedKiBPerFrame": 1277.779296875,
+              "elapsedMs": 45.14877499989072,
+              "processCpuMs": 17.14409722222222,
+              "nvgApiCalls": 4964.0
+            },
+            "before": {
+              "allocatedKiBPerFrame": 1277.716796875,
+              "elapsedMs": 53.462795833386025,
+              "processCpuMs": 19.96527777777778,
+              "nvgApiCalls": 4964.0
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 995.529296875,
+              "elapsedMs": 27.78830694438107,
+              "processCpuMs": 14.973958333333334,
+              "nvgApiCalls": 3812.0
+            },
+            "cpuDeltaMs": 3.580729166666666
+          },
+          {
+            "after": {
+              "allocatedKiBPerFrame": 1277.779296875,
+              "elapsedMs": 32.83192777780641,
+              "processCpuMs": 19.31423611111111,
+              "nvgApiCalls": 4964.0
+            },
+            "before": {
+              "allocatedKiBPerFrame": 1277.716796875,
+              "elapsedMs": 49.87779583340549,
+              "processCpuMs": 20.616319444444443,
+              "nvgApiCalls": 4964.0
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 995.529296875,
+              "elapsedMs": 29.04225972209436,
+              "processCpuMs": 14.539930555555555,
+              "nvgApiCalls": 3812.0
+            },
+            "cpuDeltaMs": 5.425347222222223
+          }
+        ],
+        "drawHill": [
+          {
+            "after": {
+              "allocatedKiBPerFrame": 1277.779296875,
+              "elapsedMs": 60.21265555540999,
+              "processCpuMs": 17.36111111111111,
+              "nvgApiCalls": 4964.0
+            },
+            "before": {
+              "allocatedKiBPerFrame": 1277.716796875,
+              "elapsedMs": 42.90257222217204,
+              "processCpuMs": 18.663194444444443,
+              "nvgApiCalls": 4964.0
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 1073.544921875,
+              "elapsedMs": 48.42876111110349,
+              "processCpuMs": 17.79513888888889,
+              "nvgApiCalls": 4188.0
+            },
+            "cpuDeltaMs": 0.21701388888888928
+          },
+          {
+            "after": {
+              "allocatedKiBPerFrame": 1277.779296875,
+              "elapsedMs": 124.6625652778069,
+              "processCpuMs": 17.578125,
+              "nvgApiCalls": 4964.0
+            },
+            "before": {
+              "allocatedKiBPerFrame": 1277.716796875,
+              "elapsedMs": 47.53702083326061,
+              "processCpuMs": 19.74826388888889,
+              "nvgApiCalls": 4964.0
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 1073.544921875,
+              "elapsedMs": 37.2589833332313,
+              "processCpuMs": 14.105902777777779,
+              "nvgApiCalls": 4188.0
+            },
+            "cpuDeltaMs": 4.557291666666664
+          },
+          {
+            "after": {
+              "allocatedKiBPerFrame": 1277.779296875,
+              "elapsedMs": 116.53310972239221,
+              "processCpuMs": 16.05902777777778,
+              "nvgApiCalls": 4964.0
+            },
+            "before": {
+              "allocatedKiBPerFrame": 1277.716796875,
+              "elapsedMs": 130.45905138884942,
+              "processCpuMs": 18.880208333333332,
+              "nvgApiCalls": 4964.0
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 1073.544921875,
+              "elapsedMs": 134.98219583319346,
+              "processCpuMs": 15.84201388888889,
+              "nvgApiCalls": 4188.0
+            },
+            "cpuDeltaMs": 1.6276041666666679
+          }
+        ]
+      },
+      "actualUpvalues": [
+        "_ENV",
+        "finite",
+        "Config",
+        "rgba",
+        "newScreenBounds",
+        "circlePoints",
+        "fillWorldPolygon",
+        "strokeWorldPolygon",
+        "drawShoreFoam",
+        "drawHill",
+        "clamp",
+        "TREE_LAYOUT",
+        "drawTree",
+        "localIslandPoint",
+        "finishScreenBounds"
+      ],
+      "full": [
+        {
+          "allocatedKiBPerFrame": 1277.373046875,
+          "elapsedMs": 9.111738888855648,
+          "processCpuMs": 8.680555555555555,
+          "nvgApiCalls": 4964.0
+        },
+        {
+          "allocatedKiBPerFrame": 1277.373046875,
+          "elapsedMs": 9.215462499923888,
+          "processCpuMs": 9.114583333333334,
+          "nvgApiCalls": 4964.0
+        },
+        {
+          "allocatedKiBPerFrame": 1277.373046875,
+          "elapsedMs": 9.63378750000427,
+          "processCpuMs": 9.114583333333334,
+          "nvgApiCalls": 4964.0
+        }
+      ],
+      "medianFull": {
+        "allocatedKiBPerFrame": 1277.373046875,
+        "elapsedMs": 9.215462499923888,
+        "processCpuMs": 9.114583333333334,
+        "nvgApiCalls": 4964.0
+      },
+      "medianComponentCpuDeltaMs": {
+        "strokeWorldPolygon": 9.54861111111111,
+        "drawTree": 0.542534722222225,
+        "drawShoreFoam": 3.580729166666666,
+        "drawHill": 1.6276041666666679
+      }
+    },
+    {
+      "scenario": "left_edge",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        90,
+        -35
+      ],
+      "radius": 20,
+      "visibleByPresentation": true,
+      "withoutComponent": {
+        "strokeWorldPolygon": [
+          {
+            "cpuDeltaMs": 3.0381944444444446,
+            "after": {
+              "allocatedKiBPerFrame": 546.544921875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 8.02951388888889,
+              "elapsedMs": 50.5078708334218
+            },
+            "before": {
+              "allocatedKiBPerFrame": 546.482421875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 8.02951388888889,
+              "elapsedMs": 27.612319444516388
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 323.373046875,
+              "nvgApiCalls": 943.0,
+              "processCpuMs": 4.991319444444445,
+              "elapsedMs": 27.535381944390892
+            }
+          },
+          {
+            "cpuDeltaMs": 2.3871527777777777,
+            "after": {
+              "allocatedKiBPerFrame": 546.544921875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 6.727430555555555,
+              "elapsedMs": 69.51925555545637
+            },
+            "before": {
+              "allocatedKiBPerFrame": 546.482421875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 10.633680555555555,
+              "elapsedMs": 88.95393472226311
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 323.373046875,
+              "nvgApiCalls": 943.0,
+              "processCpuMs": 6.293402777777778,
+              "elapsedMs": 31.460331944496527
+            }
+          },
+          {
+            "cpuDeltaMs": 2.8211805555555554,
+            "after": {
+              "allocatedKiBPerFrame": 546.544921875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 8.680555555555555,
+              "elapsedMs": 50.373440277730374
+            },
+            "before": {
+              "allocatedKiBPerFrame": 546.482421875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 8.680555555555555,
+              "elapsedMs": 48.39758194430033
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 323.373046875,
+              "nvgApiCalls": 943.0,
+              "processCpuMs": 5.859375,
+              "elapsedMs": 15.407318055521399
+            }
+          }
+        ],
+        "drawTree": [
+          {
+            "cpuDeltaMs": 0.9765625000000018,
+            "after": {
+              "allocatedKiBPerFrame": 546.544921875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 8.897569444444445,
+              "elapsedMs": 17.989447222134913
+            },
+            "before": {
+              "allocatedKiBPerFrame": 546.482421875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 9.98263888888889,
+              "elapsedMs": 18.99487500001366
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 515.544921875,
+              "nvgApiCalls": 1897.0,
+              "processCpuMs": 8.463541666666666,
+              "elapsedMs": 18.60451666673018
+            }
+          },
+          {
+            "cpuDeltaMs": 0.7595486111111125,
+            "after": {
+              "allocatedKiBPerFrame": 546.544921875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 9.114583333333334,
+              "elapsedMs": 18.21008611113939
+            },
+            "before": {
+              "allocatedKiBPerFrame": 546.482421875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 9.331597222222221,
+              "elapsedMs": 19.86560833332381
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 515.544921875,
+              "nvgApiCalls": 1897.0,
+              "processCpuMs": 8.463541666666666,
+              "elapsedMs": 18.978304166618425
+            }
+          },
+          {
+            "cpuDeltaMs": 0.3255208333333339,
+            "after": {
+              "allocatedKiBPerFrame": 546.544921875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 8.246527777777779,
+              "elapsedMs": 18.92561805551749
+            },
+            "before": {
+              "allocatedKiBPerFrame": 546.482421875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 11.50173611111111,
+              "elapsedMs": 17.80899305554663
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 515.544921875,
+              "nvgApiCalls": 1897.0,
+              "processCpuMs": 9.54861111111111,
+              "elapsedMs": 18.30306666670367
+            }
+          }
+        ],
+        "drawHill": [
+          {
+            "cpuDeltaMs": 0.10850694444444464,
+            "after": {
+              "allocatedKiBPerFrame": 546.544921875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 9.331597222222221,
+              "elapsedMs": 24.970443055685287
+            },
+            "before": {
+              "allocatedKiBPerFrame": 546.482421875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 9.98263888888889,
+              "elapsedMs": 25.415997222201742
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 534.755859375,
+              "nvgApiCalls": 1928.0,
+              "processCpuMs": 9.54861111111111,
+              "elapsedMs": 27.455765277813448
+            }
+          },
+          {
+            "cpuDeltaMs": -0.43402777777777857,
+            "after": {
+              "allocatedKiBPerFrame": 546.544921875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 9.331597222222221,
+              "elapsedMs": 24.553213888995945
+            },
+            "before": {
+              "allocatedKiBPerFrame": 546.482421875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 9.331597222222221,
+              "elapsedMs": 21.874304166582686
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 534.755859375,
+              "nvgApiCalls": 1928.0,
+              "processCpuMs": 9.765625,
+              "elapsedMs": 18.32269999997354
+            }
+          },
+          {
+            "cpuDeltaMs": 0.21701388888888928,
+            "after": {
+              "allocatedKiBPerFrame": 546.544921875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 9.114583333333334,
+              "elapsedMs": 16.622022222185883
+            },
+            "before": {
+              "allocatedKiBPerFrame": 546.482421875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 9.98263888888889,
+              "elapsedMs": 17.369752777691854
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 534.755859375,
+              "nvgApiCalls": 1928.0,
+              "processCpuMs": 9.331597222222221,
+              "elapsedMs": 17.364987500008688
+            }
+          }
+        ],
+        "drawShoreFoam": [
+          {
+            "cpuDeltaMs": 4.123263888888889,
+            "after": {
+              "allocatedKiBPerFrame": 546.544921875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 9.54861111111111,
+              "elapsedMs": 15.904054166538925
+            },
+            "before": {
+              "allocatedKiBPerFrame": 546.482421875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 9.98263888888889,
+              "elapsedMs": 17.166936111001025
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 424.419921875,
+              "nvgApiCalls": 1475.0,
+              "processCpuMs": 5.642361111111111,
+              "elapsedMs": 15.071762499954072
+            }
+          },
+          {
+            "cpuDeltaMs": 1.953125,
+            "after": {
+              "allocatedKiBPerFrame": 546.544921875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 9.98263888888889,
+              "elapsedMs": 23.2091499999822
+            },
+            "before": {
+              "allocatedKiBPerFrame": 546.482421875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 9.114583333333334,
+              "elapsedMs": 19.8650680556764
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 424.419921875,
+              "nvgApiCalls": 1475.0,
+              "processCpuMs": 7.595486111111111,
+              "elapsedMs": 14.418211111155365
+            }
+          },
+          {
+            "cpuDeltaMs": 2.495659722222223,
+            "after": {
+              "allocatedKiBPerFrame": 546.544921875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 10.199652777777779,
+              "elapsedMs": 24.58029583350354
+            },
+            "before": {
+              "allocatedKiBPerFrame": 546.482421875,
+              "nvgApiCalls": 1955.0,
+              "processCpuMs": 8.680555555555555,
+              "elapsedMs": 28.98688611114469
+            },
+            "disabled": {
+              "allocatedKiBPerFrame": 424.419921875,
+              "nvgApiCalls": 1475.0,
+              "processCpuMs": 6.944444444444445,
+              "elapsedMs": 20.29074722223514
+            }
+          }
+        ]
+      },
+      "actualUpvalues": [
+        "_ENV",
+        "finite",
+        "Config",
+        "rgba",
+        "newScreenBounds",
+        "circlePoints",
+        "fillWorldPolygon",
+        "strokeWorldPolygon",
+        "drawShoreFoam",
+        "drawHill",
+        "clamp",
+        "TREE_LAYOUT",
+        "drawTree",
+        "localIslandPoint",
+        "finishScreenBounds"
+      ],
+      "components": {
+        "foam": {
+          "invocations": 1.0,
+          "traceElapsedMs": 13.763855555427856,
+          "calls": {
+            "nvgClosePath": 44.0,
+            "nvgFill": 44.0,
+            "Visibility": 88.0,
+            "StrokeWorldLine": 128.0,
+            "nvgLineTo": 132.0,
+            "ClipLine": 128.0,
+            "Project": 176.0,
+            "ClipScreenPolygon": 44.0
+          }
+        },
+        "trees": {
+          "invocations": 4.0,
+          "traceElapsedMs": 4.284216667050107,
+          "calls": {
+            "nvgClosePath": 3.0,
+            "ProjectPolygon": 8.0,
+            "StrokeWorldLine": 4.0,
+            "nvgFill": 3.0,
+            "nvgLineTo": 31.0,
+            "ClipLine": 4.0,
+            "Project": 34.0,
+            "Visibility": 16.0
+          }
+        },
+        "hills": {
+          "invocations": 1.0,
+          "traceElapsedMs": 0.8251083321132077,
+          "calls": {
+            "nvgClosePath": 3.0,
+            "ProjectPolygon": 2.0,
+            "Visibility": 8.0,
+            "StrokeWorldLine": 6.0,
+            "nvgLineTo": 8.0,
+            "ClipLine": 6.0,
+            "Project": 11.0,
+            "nvgFill": 3.0
+          }
+        },
+        "body_fill": {
+          "invocations": 2.0,
+          "traceElapsedMs": 14.668769447275231,
+          "calls": {
+            "nvgClosePath": 2.0,
+            "ProjectPolygon": 2.0,
+            "nvgFill": 2.0,
+            "nvgLineTo": 380.0,
+            "Project": 382.0
+          }
+        },
+        "outlines": {
+          "invocations": 2.0,
+          "traceElapsedMs": 22.090733331424417,
+          "calls": {
+            "nvgClosePath": 174.0,
+            "nvgFill": 42.0,
+            "Visibility": 216.0,
+            "StrokeWorldLine": 96.0,
+            "nvgLineTo": 522.0,
+            "ClipLine": 96.0,
+            "Project": 300.0,
+            "ClipScreenPolygon": 174.0
+          }
+        },
+        "ring_construction": {
+          "invocations": 2.0,
+          "traceElapsedMs": 0.50053611226354,
+          "calls": []
+        }
+      },
+      "full": [
+        {
+          "allocatedKiBPerFrame": 546.138671875,
+          "nvgApiCalls": 1955.0,
+          "processCpuMs": 10.199652777777779,
+          "elapsedMs": 13.806693055408282
+        },
+        {
+          "allocatedKiBPerFrame": 546.138671875,
+          "nvgApiCalls": 1955.0,
+          "processCpuMs": 8.897569444444445,
+          "elapsedMs": 14.001155555484324
+        },
+        {
+          "allocatedKiBPerFrame": 546.138671875,
+          "nvgApiCalls": 1955.0,
+          "processCpuMs": 10.416666666666666,
+          "elapsedMs": 19.878372222188368
+        }
+      ],
+      "medianFull": {
+        "allocatedKiBPerFrame": 546.138671875,
+        "nvgApiCalls": 1955.0,
+        "processCpuMs": 10.199652777777779,
+        "elapsedMs": 14.001155555484324
+      },
+      "medianComponentCpuDeltaMs": {
+        "strokeWorldPolygon": 2.8211805555555554,
+        "drawTree": 0.7595486111111125,
+        "drawHill": 0.10850694444444464,
+        "drawShoreFoam": 2.495659722222223
+      }
+    },
+    {
+      "scenario": "left_offscreen",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        160,
+        -35
+      ],
+      "radius": 20,
+      "withoutComponent": {
+        "drawShoreFoam": [
+          {
+            "cpuDeltaMs": 0.5425347222222222,
+            "after": {
+              "processCpuMs": 0.6510416666666666,
+              "allocatedKiBPerFrame": 99.388671875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 7.995243055524447
+            },
+            "before": {
+              "processCpuMs": 1.3020833333333333,
+              "allocatedKiBPerFrame": 99.326171875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 7.430737500019152
+            },
+            "disabled": {
+              "processCpuMs": 0.4340277777777778,
+              "allocatedKiBPerFrame": 61.138671875,
+              "nvgApiCalls": 18.0,
+              "elapsedMs": 3.190181944268665
+            }
+          },
+          {
+            "cpuDeltaMs": 1.6276041666666667,
+            "after": {
+              "processCpuMs": 1.5190972222222223,
+              "allocatedKiBPerFrame": 99.388671875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 6.487305555613905
+            },
+            "before": {
+              "processCpuMs": 2.170138888888889,
+              "allocatedKiBPerFrame": 99.326171875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 6.386351388856484
+            },
+            "disabled": {
+              "processCpuMs": 0.2170138888888889,
+              "allocatedKiBPerFrame": 61.138671875,
+              "nvgApiCalls": 18.0,
+              "elapsedMs": 2.5178166666187787
+            }
+          },
+          {
+            "cpuDeltaMs": 1.3020833333333335,
+            "after": {
+              "processCpuMs": 1.0850694444444444,
+              "allocatedKiBPerFrame": 99.388671875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 7.5070083332522906
+            },
+            "before": {
+              "processCpuMs": 1.953125,
+              "allocatedKiBPerFrame": 99.326171875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 7.143106944365879
+            },
+            "disabled": {
+              "processCpuMs": 0.2170138888888889,
+              "allocatedKiBPerFrame": 61.138671875,
+              "nvgApiCalls": 18.0,
+              "elapsedMs": 4.444719444412233
+            }
+          }
+        ],
+        "strokeWorldPolygon": [
+          {
+            "cpuDeltaMs": 0.10850694444444442,
+            "after": {
+              "processCpuMs": 1.3020833333333333,
+              "allocatedKiBPerFrame": 99.388671875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 6.939434722274503
+            },
+            "before": {
+              "processCpuMs": 0.6510416666666666,
+              "allocatedKiBPerFrame": 99.326171875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 6.15518472214818
+            },
+            "disabled": {
+              "processCpuMs": 0.8680555555555556,
+              "allocatedKiBPerFrame": 98.404296875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 6.172566666767428
+            }
+          },
+          {
+            "cpuDeltaMs": 0.32552083333333326,
+            "after": {
+              "processCpuMs": 1.5190972222222223,
+              "allocatedKiBPerFrame": 99.388671875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 7.401722222210891
+            },
+            "before": {
+              "processCpuMs": 0.8680555555555556,
+              "allocatedKiBPerFrame": 99.326171875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 4.288180555603402
+            },
+            "disabled": {
+              "processCpuMs": 0.8680555555555556,
+              "allocatedKiBPerFrame": 98.404296875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 5.865369444412257
+            }
+          },
+          {
+            "cpuDeltaMs": 0.0,
+            "after": {
+              "processCpuMs": 1.0850694444444444,
+              "allocatedKiBPerFrame": 99.388671875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 5.805929166753129
+            },
+            "before": {
+              "processCpuMs": 1.0850694444444444,
+              "allocatedKiBPerFrame": 99.326171875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 6.966512499881598
+            },
+            "disabled": {
+              "processCpuMs": 1.0850694444444444,
+              "allocatedKiBPerFrame": 98.404296875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 7.810606944581701
+            }
+          }
+        ],
+        "drawHill": [
+          {
+            "cpuDeltaMs": -0.32552083333333326,
+            "after": {
+              "processCpuMs": 1.3020833333333333,
+              "allocatedKiBPerFrame": 99.388671875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 7.231101389051117
+            },
+            "before": {
+              "processCpuMs": 0.6510416666666666,
+              "allocatedKiBPerFrame": 99.326171875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 7.5465750000552765
+            },
+            "disabled": {
+              "processCpuMs": 1.3020833333333333,
+              "allocatedKiBPerFrame": 92.849609375,
+              "nvgApiCalls": 142.0,
+              "elapsedMs": 5.787472222234808
+            }
+          },
+          {
+            "cpuDeltaMs": 0.0,
+            "after": {
+              "processCpuMs": 0.8680555555555556,
+              "allocatedKiBPerFrame": 99.388671875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 9.07345555565876
+            },
+            "before": {
+              "processCpuMs": 1.3020833333333333,
+              "allocatedKiBPerFrame": 99.326171875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 5.425780555621411
+            },
+            "disabled": {
+              "processCpuMs": 1.0850694444444444,
+              "allocatedKiBPerFrame": 92.849609375,
+              "nvgApiCalls": 142.0,
+              "elapsedMs": 5.493474999942312
+            }
+          },
+          {
+            "cpuDeltaMs": -0.6510416666666666,
+            "after": {
+              "processCpuMs": 0.6510416666666666,
+              "allocatedKiBPerFrame": 99.388671875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 9.25579861096695
+            },
+            "before": {
+              "processCpuMs": 0.6510416666666666,
+              "allocatedKiBPerFrame": 99.326171875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 8.555134722175556
+            },
+            "disabled": {
+              "processCpuMs": 1.3020833333333333,
+              "allocatedKiBPerFrame": 92.849609375,
+              "nvgApiCalls": 142.0,
+              "elapsedMs": 5.6787069445110525
+            }
+          }
+        ],
+        "drawTree": [
+          {
+            "cpuDeltaMs": 0.0,
+            "after": {
+              "processCpuMs": 1.3020833333333333,
+              "allocatedKiBPerFrame": 99.388671875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 11.82485833325902
+            },
+            "before": {
+              "processCpuMs": 1.3020833333333333,
+              "allocatedKiBPerFrame": 99.326171875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 6.703481944391064
+            },
+            "disabled": {
+              "processCpuMs": 1.3020833333333333,
+              "allocatedKiBPerFrame": 82.701171875,
+              "nvgApiCalls": 134.0,
+              "elapsedMs": 8.590979166708873
+            }
+          },
+          {
+            "cpuDeltaMs": 0.9765625,
+            "after": {
+              "processCpuMs": 1.0850694444444444,
+              "allocatedKiBPerFrame": 99.388671875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 7.391404166709334
+            },
+            "before": {
+              "processCpuMs": 1.3020833333333333,
+              "allocatedKiBPerFrame": 99.326171875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 5.873993055502069
+            },
+            "disabled": {
+              "processCpuMs": 0.2170138888888889,
+              "allocatedKiBPerFrame": 82.701171875,
+              "nvgApiCalls": 134.0,
+              "elapsedMs": 5.505624999892057
+            }
+          },
+          {
+            "cpuDeltaMs": 0.10850694444444442,
+            "after": {
+              "processCpuMs": 1.3020833333333333,
+              "allocatedKiBPerFrame": 99.388671875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 6.747429166555069
+            },
+            "before": {
+              "processCpuMs": 1.0850694444444444,
+              "allocatedKiBPerFrame": 99.326171875,
+              "nvgApiCalls": 146.0,
+              "elapsedMs": 5.132374999852295
+            },
+            "disabled": {
+              "processCpuMs": 1.0850694444444444,
+              "allocatedKiBPerFrame": 82.701171875,
+              "nvgApiCalls": 134.0,
+              "elapsedMs": 5.117472222183197
+            }
+          }
+        ]
+      },
+      "actualUpvalues": [
+        "_ENV",
+        "finite",
+        "Config",
+        "rgba",
+        "newScreenBounds",
+        "circlePoints",
+        "fillWorldPolygon",
+        "strokeWorldPolygon",
+        "drawShoreFoam",
+        "drawHill",
+        "clamp",
+        "TREE_LAYOUT",
+        "drawTree",
+        "localIslandPoint",
+        "finishScreenBounds"
+      ],
+      "visibleByPresentation": false,
+      "components": {
+        "body_fill": {
+          "traceElapsedMs": 0.8272361131578995,
+          "invocations": 2.0,
+          "calls": {
+            "ProjectPolygon": 2.0
+          }
+        },
+        "trees": {
+          "traceElapsedMs": 0.9608805566030141,
+          "invocations": 4.0,
+          "calls": {
+            "ProjectPolygon": 8.0,
+            "StrokeWorldLine": 4.0,
+            "ClipLine": 4.0
+          }
+        },
+        "hills": {
+          "traceElapsedMs": 0.4257833336143651,
+          "invocations": 1.0,
+          "calls": {
+            "ProjectPolygon": 2.0,
+            "ClipLine": 6.0,
+            "StrokeWorldLine": 6.0
+          }
+        },
+        "foam": {
+          "traceElapsedMs": 3.9412861107040147,
+          "invocations": 1.0,
+          "calls": {
+            "ClipLine": 128.0,
+            "StrokeWorldLine": 128.0
+          }
+        },
+        "ring_construction": {
+          "traceElapsedMs": 0.6143472229369864,
+          "invocations": 2.0,
+          "calls": []
+        },
+        "outlines": {
+          "traceElapsedMs": 0.0,
+          "invocations": 0.0,
+          "calls": []
+        }
+      },
+      "full": [
+        {
+          "processCpuMs": 0.8680555555555556,
+          "allocatedKiBPerFrame": 98.982421875,
+          "nvgApiCalls": 146.0,
+          "elapsedMs": 7.612395833348273
+        },
+        {
+          "processCpuMs": 1.3020833333333333,
+          "allocatedKiBPerFrame": 98.982421875,
+          "nvgApiCalls": 146.0,
+          "elapsedMs": 7.312159722358855
+        },
+        {
+          "processCpuMs": 0.8680555555555556,
+          "allocatedKiBPerFrame": 98.982421875,
+          "nvgApiCalls": 146.0,
+          "elapsedMs": 7.441959722200409
+        }
+      ],
+      "medianFull": {
+        "processCpuMs": 0.8680555555555556,
+        "allocatedKiBPerFrame": 98.982421875,
+        "nvgApiCalls": 146.0,
+        "elapsedMs": 7.441959722200409
+      },
+      "medianComponentCpuDeltaMs": {
+        "drawShoreFoam": 1.3020833333333335,
+        "strokeWorldPolygon": 0.10850694444444442,
+        "drawHill": -0.32552083333333326,
+        "drawTree": 0.10850694444444442
+      }
+    },
+    {
+      "scenario": "horizon_crossing",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        -108
+      ],
+      "radius": 20,
+      "withoutComponent": {
+        "drawTree": [
+          {
+            "cpuDeltaMs": -0.2170138888888875,
+            "before": {
+              "elapsedMs": 39.061487499970504,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.419921875,
+              "processCpuMs": 10.850694444444445
+            },
+            "disabled": {
+              "elapsedMs": 30.990519444458187,
+              "nvgApiCalls": 2988.0,
+              "allocatedKiBPerFrame": 829.771484375,
+              "processCpuMs": 12.369791666666666
+            },
+            "after": {
+              "elapsedMs": 34.331661111031686,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.482421875,
+              "processCpuMs": 13.45486111111111
+            }
+          },
+          {
+            "cpuDeltaMs": 3.038194444444443,
+            "before": {
+              "elapsedMs": 33.64679583339441,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.419921875,
+              "processCpuMs": 12.586805555555555
+            },
+            "disabled": {
+              "elapsedMs": 30.90998333330693,
+              "nvgApiCalls": 2988.0,
+              "allocatedKiBPerFrame": 829.771484375,
+              "processCpuMs": 10.199652777777779
+            },
+            "after": {
+              "elapsedMs": 41.1642055555098,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.482421875,
+              "processCpuMs": 13.88888888888889
+            }
+          },
+          {
+            "cpuDeltaMs": 0.7595486111111107,
+            "before": {
+              "elapsedMs": 37.59015972213496,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.419921875,
+              "processCpuMs": 15.190972222222221
+            },
+            "disabled": {
+              "elapsedMs": 34.066140277799505,
+              "nvgApiCalls": 2988.0,
+              "allocatedKiBPerFrame": 829.708984375,
+              "processCpuMs": 13.45486111111111
+            },
+            "after": {
+              "elapsedMs": 36.925261111213736,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.482421875,
+              "processCpuMs": 13.237847222222221
+            }
+          }
+        ],
+        "drawShoreFoam": [
+          {
+            "cpuDeltaMs": 5.316840277777779,
+            "before": {
+              "elapsedMs": 43.98479166674305,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.419921875,
+              "processCpuMs": 16.05902777777778
+            },
+            "disabled": {
+              "elapsedMs": 25.578068055539106,
+              "nvgApiCalls": 2411.0,
+              "allocatedKiBPerFrame": 710.607421875,
+              "processCpuMs": 10.199652777777779
+            },
+            "after": {
+              "elapsedMs": 29.720519444405607,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.482421875,
+              "processCpuMs": 14.973958333333334
+            }
+          },
+          {
+            "cpuDeltaMs": 4.665798611111111,
+            "before": {
+              "elapsedMs": 29.717740277798537,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.419921875,
+              "processCpuMs": 14.756944444444445
+            },
+            "disabled": {
+              "elapsedMs": 23.21515416669071,
+              "nvgApiCalls": 2411.0,
+              "allocatedKiBPerFrame": 710.607421875,
+              "processCpuMs": 10.199652777777779
+            },
+            "after": {
+              "elapsedMs": 31.989470833448447,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.482421875,
+              "processCpuMs": 14.973958333333334
+            }
+          },
+          {
+            "cpuDeltaMs": 4.991319444444445,
+            "before": {
+              "elapsedMs": 30.497959722197265,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.482421875,
+              "processCpuMs": 15.625
+            },
+            "disabled": {
+              "elapsedMs": 24.319908333280992,
+              "nvgApiCalls": 2411.0,
+              "allocatedKiBPerFrame": 710.607421875,
+              "processCpuMs": 12.369791666666666
+            },
+            "after": {
+              "elapsedMs": 41.95838055541875,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.482421875,
+              "processCpuMs": 19.09722222222222
+            }
+          }
+        ],
+        "strokeWorldPolygon": [
+          {
+            "cpuDeltaMs": 7.269965277777779,
+            "before": {
+              "elapsedMs": 40.696448611116566,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.419921875,
+              "processCpuMs": 14.539930555555555
+            },
+            "disabled": {
+              "elapsedMs": 21.913234722281533,
+              "nvgApiCalls": 1491.0,
+              "allocatedKiBPerFrame": 527.154296875,
+              "processCpuMs": 7.595486111111111
+            },
+            "after": {
+              "elapsedMs": 43.34872777771024,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.482421875,
+              "processCpuMs": 15.190972222222221
+            }
+          },
+          {
+            "cpuDeltaMs": 6.6189236111111125,
+            "before": {
+              "elapsedMs": 36.09024305559514,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.419921875,
+              "processCpuMs": 16.276041666666668
+            },
+            "disabled": {
+              "elapsedMs": 21.874459722110057,
+              "nvgApiCalls": 1491.0,
+              "allocatedKiBPerFrame": 527.154296875,
+              "processCpuMs": 10.633680555555555
+            },
+            "after": {
+              "elapsedMs": 65.87775416664954,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.482421875,
+              "processCpuMs": 18.229166666666668
+            }
+          },
+          {
+            "cpuDeltaMs": 6.944444444444445,
+            "before": {
+              "elapsedMs": 70.75950416664354,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.419921875,
+              "processCpuMs": 19.31423611111111
+            },
+            "disabled": {
+              "elapsedMs": 38.91685416662464,
+              "nvgApiCalls": 1491.0,
+              "allocatedKiBPerFrame": 527.154296875,
+              "processCpuMs": 12.369791666666666
+            },
+            "after": {
+              "elapsedMs": 77.91056388891269,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.482421875,
+              "processCpuMs": 19.31423611111111
+            }
+          }
+        ],
+        "drawHill": [
+          {
+            "cpuDeltaMs": 3.580729166666668,
+            "before": {
+              "elapsedMs": 39.103573610999675,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.419921875,
+              "processCpuMs": 15.84201388888889
+            },
+            "disabled": {
+              "elapsedMs": 36.70506805550152,
+              "nvgApiCalls": 2520.0,
+              "allocatedKiBPerFrame": 736.732421875,
+              "processCpuMs": 12.369791666666666
+            },
+            "after": {
+              "elapsedMs": 41.62864166674909,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.482421875,
+              "processCpuMs": 16.05902777777778
+            }
+          },
+          {
+            "cpuDeltaMs": 2.495659722222223,
+            "before": {
+              "elapsedMs": 47.95250416666224,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.419921875,
+              "processCpuMs": 16.05902777777778
+            },
+            "disabled": {
+              "elapsedMs": 46.66728194448903,
+              "nvgApiCalls": 2520.0,
+              "allocatedKiBPerFrame": 736.732421875,
+              "processCpuMs": 12.803819444444445
+            },
+            "after": {
+              "elapsedMs": 54.87029166660149,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.482421875,
+              "processCpuMs": 14.539930555555555
+            }
+          },
+          {
+            "cpuDeltaMs": 1.5190972222222214,
+            "before": {
+              "elapsedMs": 63.38468333342462,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.419921875,
+              "processCpuMs": 14.756944444444445
+            },
+            "disabled": {
+              "elapsedMs": 52.46697499993994,
+              "nvgApiCalls": 2520.0,
+              "allocatedKiBPerFrame": 736.732421875,
+              "processCpuMs": 13.020833333333334
+            },
+            "after": {
+              "elapsedMs": 51.31370555560958,
+              "nvgApiCalls": 3147.0,
+              "allocatedKiBPerFrame": 905.482421875,
+              "processCpuMs": 14.322916666666666
+            }
+          }
+        ]
+      },
+      "actualUpvalues": [
+        "_ENV",
+        "finite",
+        "Config",
+        "rgba",
+        "newScreenBounds",
+        "circlePoints",
+        "fillWorldPolygon",
+        "strokeWorldPolygon",
+        "drawShoreFoam",
+        "drawHill",
+        "clamp",
+        "TREE_LAYOUT",
+        "drawTree",
+        "localIslandPoint",
+        "finishScreenBounds"
+      ],
+      "components": {
+        "outlines": {
+          "calls": {
+            "nvgFill": 52.0,
+            "StrokeWorldLine": 96.0,
+            "nvgClosePath": 204.0,
+            "Visibility": 256.0,
+            "ClipScreenPolygon": 204.0,
+            "nvgLineTo": 614.0,
+            "Project": 360.0,
+            "ClipLine": 96.0
+          },
+          "invocations": 2.0,
+          "traceElapsedMs": 29.001211107647073
+        },
+        "body_fill": {
+          "calls": {
+            "nvgClosePath": 2.0,
+            "nvgLineTo": 433.0,
+            "nvgFill": 2.0,
+            "Project": 435.0,
+            "ProjectPolygon": 2.0
+          },
+          "invocations": 2.0,
+          "traceElapsedMs": 11.437177779347016
+        },
+        "foam": {
+          "calls": {
+            "nvgFill": 76.0,
+            "StrokeWorldLine": 128.0,
+            "nvgClosePath": 76.0,
+            "Visibility": 152.0,
+            "ClipScreenPolygon": 76.0,
+            "nvgLineTo": 228.0,
+            "Project": 304.0,
+            "ClipLine": 128.0
+          },
+          "invocations": 1.0,
+          "traceElapsedMs": 20.9012694447463
+        },
+        "hills": {
+          "calls": {
+            "ClipLine": 6.0,
+            "nvgClosePath": 94.0,
+            "StrokeWorldLine": 6.0,
+            "nvgLineTo": 411.0,
+            "nvgFill": 8.0,
+            "Visibility": 237.0,
+            "Project": 247.0,
+            "ProjectPolygon": 2.0
+          },
+          "invocations": 1.0,
+          "traceElapsedMs": 11.11013333381076
+        },
+        "ring_construction": {
+          "calls": [],
+          "invocations": 2.0,
+          "traceElapsedMs": 0.34118333415891455
+        },
+        "trees": {
+          "calls": {
+            "StrokeWorldLine": 4.0,
+            "Visibility": 145.0,
+            "ClipScreenPolygon": 2.0,
+            "nvgFill": 12.0,
+            "nvgLineTo": 87.0,
+            "nvgClosePath": 12.0,
+            "ClipLine": 4.0,
+            "Project": 203.0,
+            "ProjectPolygon": 8.0
+          },
+          "invocations": 4.0,
+          "traceElapsedMs": 8.068425001612114
+        }
+      },
+      "full": [
+        {
+          "elapsedMs": 65.43754027774816,
+          "nvgApiCalls": 3147.0,
+          "allocatedKiBPerFrame": 905.076171875,
+          "processCpuMs": 15.625
+        },
+        {
+          "elapsedMs": 54.348294444328836,
+          "nvgApiCalls": 3147.0,
+          "allocatedKiBPerFrame": 905.076171875,
+          "processCpuMs": 13.671875
+        },
+        {
+          "elapsedMs": 66.92207222234477,
+          "nvgApiCalls": 3147.0,
+          "allocatedKiBPerFrame": 905.076171875,
+          "processCpuMs": 14.105902777777779
+        }
+      ],
+      "visibleByPresentation": true,
+      "medianFull": {
+        "elapsedMs": 65.43754027774816,
+        "nvgApiCalls": 3147.0,
+        "allocatedKiBPerFrame": 905.076171875,
+        "processCpuMs": 14.105902777777779
+      },
+      "medianComponentCpuDeltaMs": {
+        "drawTree": 0.7595486111111107,
+        "drawShoreFoam": 4.991319444444445,
+        "strokeWorldPolygon": 6.944444444444445,
+        "drawHill": 2.495659722222223
+      }
+    },
+    {
+      "scenario": "small_island_near",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "camera": [
+        0,
+        -35
+      ],
+      "radius": 12,
+      "visibleByPresentation": true,
+      "full": [
+        {
+          "elapsedMs": 67.46766111104483,
+          "processCpuMs": 19.96527777777778,
+          "nvgApiCalls": 3657.0,
+          "allocatedKiBPerFrame": 947.193359375
+        },
+        {
+          "elapsedMs": 90.86201388890913,
+          "processCpuMs": 18.01215277777778,
+          "nvgApiCalls": 3657.0,
+          "allocatedKiBPerFrame": 947.193359375
+        },
+        {
+          "elapsedMs": 85.16663472235248,
+          "processCpuMs": 16.05902777777778,
+          "nvgApiCalls": 3657.0,
+          "allocatedKiBPerFrame": 947.193359375
+        }
+      ],
+      "actualUpvalues": [
+        "_ENV",
+        "finite",
+        "Config",
+        "rgba",
+        "newScreenBounds",
+        "circlePoints",
+        "fillWorldPolygon",
+        "strokeWorldPolygon",
+        "drawShoreFoam",
+        "drawHill",
+        "clamp",
+        "TREE_LAYOUT",
+        "drawTree",
+        "localIslandPoint",
+        "finishScreenBounds"
+      ],
+      "withoutComponent": {
+        "drawTree": [
+          {
+            "disabled": {
+              "elapsedMs": 31.584887499977615,
+              "processCpuMs": 14.322916666666666,
+              "nvgApiCalls": 3509.0,
+              "allocatedKiBPerFrame": 890.787109375
+            },
+            "after": {
+              "elapsedMs": 34.25596527773046,
+              "processCpuMs": 16.493055555555557,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.599609375
+            },
+            "before": {
+              "elapsedMs": 25.032459722246536,
+              "processCpuMs": 15.625,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.537109375
+            },
+            "cpuDeltaMs": 1.7361111111111125
+          },
+          {
+            "disabled": {
+              "elapsedMs": 26.713816666516422,
+              "processCpuMs": 15.190972222222221,
+              "nvgApiCalls": 3509.0,
+              "allocatedKiBPerFrame": 890.787109375
+            },
+            "after": {
+              "elapsedMs": 31.598104166631757,
+              "processCpuMs": 14.322916666666666,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.599609375
+            },
+            "before": {
+              "elapsedMs": 23.663011111137976,
+              "processCpuMs": 15.190972222222221,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.537109375
+            },
+            "cpuDeltaMs": -0.43402777777777857
+          },
+          {
+            "disabled": {
+              "elapsedMs": 24.12673611110626,
+              "processCpuMs": 15.625,
+              "nvgApiCalls": 3509.0,
+              "allocatedKiBPerFrame": 890.787109375
+            },
+            "after": {
+              "elapsedMs": 24.882233333402027,
+              "processCpuMs": 15.84201388888889,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.599609375
+            },
+            "before": {
+              "elapsedMs": 30.127268055568695,
+              "processCpuMs": 15.190972222222221,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.537109375
+            },
+            "cpuDeltaMs": -0.10850694444444464
+          }
+        ],
+        "strokeWorldPolygon": [
+          {
+            "disabled": {
+              "elapsedMs": 13.027715277833826,
+              "processCpuMs": 7.8125,
+              "nvgApiCalls": 1776.0,
+              "allocatedKiBPerFrame": 550.333984375
+            },
+            "after": {
+              "elapsedMs": 26.069066666726332,
+              "processCpuMs": 14.973958333333334,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.599609375
+            },
+            "before": {
+              "elapsedMs": 26.126956944507484,
+              "processCpuMs": 14.973958333333334,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.537109375
+            },
+            "cpuDeltaMs": 7.161458333333334
+          },
+          {
+            "disabled": {
+              "elapsedMs": 14.628554166847607,
+              "processCpuMs": 8.680555555555555,
+              "nvgApiCalls": 1776.0,
+              "allocatedKiBPerFrame": 550.333984375
+            },
+            "after": {
+              "elapsedMs": 24.10694444451009,
+              "processCpuMs": 14.973958333333334,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.599609375
+            },
+            "before": {
+              "elapsedMs": 24.741686111156014,
+              "processCpuMs": 13.45486111111111,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.537109375
+            },
+            "cpuDeltaMs": 5.533854166666666
+          },
+          {
+            "disabled": {
+              "elapsedMs": 15.455252777731706,
+              "processCpuMs": 9.54861111111111,
+              "nvgApiCalls": 1776.0,
+              "allocatedKiBPerFrame": 550.333984375
+            },
+            "after": {
+              "elapsedMs": 25.087784722119167,
+              "processCpuMs": 14.322916666666666,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.599609375
+            },
+            "before": {
+              "elapsedMs": 25.76144722216769,
+              "processCpuMs": 12.803819444444445,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.537109375
+            },
+            "cpuDeltaMs": 4.014756944444445
+          }
+        ],
+        "drawShoreFoam": [
+          {
+            "disabled": {
+              "elapsedMs": 37.034993055486765,
+              "processCpuMs": 12.369791666666666,
+              "nvgApiCalls": 2505.0,
+              "allocatedKiBPerFrame": 665.349609375
+            },
+            "after": {
+              "elapsedMs": 29.272843055473963,
+              "processCpuMs": 16.276041666666668,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.599609375
+            },
+            "before": {
+              "elapsedMs": 81.04722916666813,
+              "processCpuMs": 18.01215277777778,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.537109375
+            },
+            "cpuDeltaMs": 4.774305555555555
+          },
+          {
+            "disabled": {
+              "elapsedMs": 17.769020833333748,
+              "processCpuMs": 9.98263888888889,
+              "nvgApiCalls": 2505.0,
+              "allocatedKiBPerFrame": 665.349609375
+            },
+            "after": {
+              "elapsedMs": 23.125948611171527,
+              "processCpuMs": 16.05902777777778,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.599609375
+            },
+            "before": {
+              "elapsedMs": 23.677647222333082,
+              "processCpuMs": 16.493055555555557,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.537109375
+            },
+            "cpuDeltaMs": 6.293402777777779
+          },
+          {
+            "disabled": {
+              "elapsedMs": 17.23561666666582,
+              "processCpuMs": 11.93576388888889,
+              "nvgApiCalls": 2505.0,
+              "allocatedKiBPerFrame": 665.349609375
+            },
+            "after": {
+              "elapsedMs": 30.06529861118502,
+              "processCpuMs": 14.105902777777779,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.599609375
+            },
+            "before": {
+              "elapsedMs": 24.717591666760402,
+              "processCpuMs": 16.493055555555557,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.537109375
+            },
+            "cpuDeltaMs": 3.3637152777777786
+          }
+        ],
+        "drawHill": [
+          {
+            "disabled": {
+              "elapsedMs": 30.25177083327435,
+              "processCpuMs": 15.84201388888889,
+              "nvgApiCalls": 3182.0,
+              "allocatedKiBPerFrame": 822.005859375
+            },
+            "after": {
+              "elapsedMs": 40.885718055506004,
+              "processCpuMs": 15.625,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.599609375
+            },
+            "before": {
+              "elapsedMs": 31.9829388889856,
+              "processCpuMs": 14.973958333333334,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.537109375
+            },
+            "cpuDeltaMs": -0.5425347222222214
+          },
+          {
+            "disabled": {
+              "elapsedMs": 25.866940277814543,
+              "processCpuMs": 14.105902777777779,
+              "nvgApiCalls": 3182.0,
+              "allocatedKiBPerFrame": 822.005859375
+            },
+            "after": {
+              "elapsedMs": 32.765827777944246,
+              "processCpuMs": 15.40798611111111,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.599609375
+            },
+            "before": {
+              "elapsedMs": 30.581261110960945,
+              "processCpuMs": 15.40798611111111,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.537109375
+            },
+            "cpuDeltaMs": 1.3020833333333321
+          },
+          {
+            "disabled": {
+              "elapsedMs": 28.162483333289856,
+              "processCpuMs": 13.020833333333334,
+              "nvgApiCalls": 3182.0,
+              "allocatedKiBPerFrame": 822.005859375
+            },
+            "after": {
+              "elapsedMs": 29.498058333249194,
+              "processCpuMs": 16.710069444444443,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.599609375
+            },
+            "before": {
+              "elapsedMs": 26.82202361110184,
+              "processCpuMs": 15.190972222222221,
+              "nvgApiCalls": 3657.0,
+              "allocatedKiBPerFrame": 947.537109375
+            },
+            "cpuDeltaMs": 2.9296874999999982
+          }
+        ]
+      },
+      "components": {
+        "foam": {
+          "calls": {
+            "nvgLineTo": 384.0,
+            "nvgFill": 128.0,
+            "nvgClosePath": 128.0,
+            "Visibility": 256.0,
+            "StrokeWorldLine": 128.0,
+            "ClipLine": 128.0,
+            "Project": 512.0,
+            "ClipScreenPolygon": 128.0
+          },
+          "traceElapsedMs": 9.030625000579878,
+          "invocations": 1.0
+        },
+        "outlines": {
+          "calls": {
+            "nvgLineTo": 744.0,
+            "nvgFill": 96.0,
+            "nvgClosePath": 248.0,
+            "Visibility": 344.0,
+            "StrokeWorldLine": 96.0,
+            "ClipLine": 96.0,
+            "Project": 536.0,
+            "ClipScreenPolygon": 248.0
+          },
+          "traceElapsedMs": 9.772622220932842,
+          "invocations": 2.0
+        },
+        "body_fill": {
+          "calls": {
+            "nvgLineTo": 340.0,
+            "nvgFill": 2.0,
+            "nvgClosePath": 2.0,
+            "ProjectPolygon": 2.0,
+            "Project": 342.0
+          },
+          "traceElapsedMs": 3.4387527800087505,
+          "invocations": 2.0
+        },
+        "hills": {
+          "calls": {
+            "nvgLineTo": 309.0,
+            "nvgFill": 8.0,
+            "nvgClosePath": 69.0,
+            "StrokeWorldLine": 6.0,
+            "ProjectPolygon": 2.0,
+            "ClipLine": 6.0,
+            "Visibility": 158.0,
+            "Project": 195.0
+          },
+          "traceElapsedMs": 2.687780554778227,
+          "invocations": 1.0
+        },
+        "ring_construction": {
+          "calls": [],
+          "traceElapsedMs": 0.09237777905784444,
+          "invocations": 2.0
+        },
+        "trees": {
+          "calls": {
+            "nvgLineTo": 76.0,
+            "nvgFill": 12.0,
+            "nvgClosePath": 12.0,
+            "ProjectPolygon": 8.0,
+            "StrokeWorldLine": 4.0,
+            "ClipLine": 4.0,
+            "Project": 88.0,
+            "Visibility": 56.0
+          },
+          "traceElapsedMs": 1.5901222250249702,
+          "invocations": 4.0
+        }
+      },
+      "medianFull": {
+        "elapsedMs": 85.16663472235248,
+        "processCpuMs": 18.01215277777778,
+        "nvgApiCalls": 3657.0,
+        "allocatedKiBPerFrame": 947.193359375
+      },
+      "medianComponentCpuDeltaMs": {
+        "drawTree": -0.10850694444444464,
+        "strokeWorldPolygon": 5.533854166666666,
+        "drawShoreFoam": 4.774305555555555,
+        "drawHill": 1.3020833333333321
+      }
+    }
+  ],
+  "timingQuality": {
+    "accurateComponentPercentagesVerified": false,
+    "reason": "Large cross-sample variation, negative ablation deltas, instrumentation overhead, and shared outline upvalues. Use calls/allocations for this analysis.",
+    "legacyTimerValidation": {
+      "luaOsClockSeconds": 0.251,
+      "processCpuSeconds": 0.0,
+      "elapsedSeconds": 0.250427100007073
+    }
+  }
+}

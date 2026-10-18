@@ -1,0 +1,62 @@
+{
+  "ViewPolygon": {
+    "calls": 894,
+    "ms": 3.0000000000000027,
+    "allocKiB": 712.46875
+  },
+  "ClipPolygon": {
+    "calls": 27,
+    "ms": 0.0,
+    "allocKiB": 251.0078125
+  },
+  "VisibleDepth": {
+    "calls": 891,
+    "ms": 2.0000000000000018,
+    "allocKiB": 90.005859375
+  },
+  "Surface": {
+    "calls": 1,
+    "ms": 12.00000000000001,
+    "allocKiB": 1089.375
+  },
+  "Island": {
+    "calls": 2,
+    "ms": 32.0,
+    "allocKiB": 6085.171875
+  },
+  "ClipLine": {
+    "calls": 860,
+    "ms": 8.000000000000007,
+    "allocKiB": 1726.078125
+  },
+  "StrokeWorldLine": {
+    "calls": 604,
+    "ms": 29.999999999999982,
+    "allocKiB": 5148.015625
+  },
+  "Visibility": {
+    "calls": 2184,
+    "ms": 0.0,
+    "allocKiB": 204.96875
+  },
+  "ClipScreenPolygon": {
+    "calls": 1073,
+    "ms": 12.000000000000007,
+    "allocKiB": 1980.390625
+  },
+  "Horizon": {
+    "calls": 10952,
+    "ms": 9.000000000000007,
+    "allocKiB": 1027.1875
+  },
+  "Project": {
+    "calls": 7266,
+    "ms": 10.000000000000007,
+    "allocKiB": 908.4375
+  },
+  "ProjectPolygon": {
+    "calls": 26,
+    "ms": 2.0000000000000018,
+    "allocKiB": 917.4921875
+  }
+}

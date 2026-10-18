@@ -1,0 +1,4174 @@
+{
+  "schemaVersion": 1,
+  "workspace": "C:\\codex\\taptap-sea",
+  "scope": [
+    "assets/generated/highspec/ART-W1-01..05/**/*.png",
+    "assets/image/ART-W1-02*.png",
+    "outputs/art-wave1/**/*.png"
+  ],
+  "inventoryCount": 93,
+  "duplicateGroupCount": 10,
+  "assets": [
+    {
+      "task": "ART-W1-01",
+      "path": "assets/generated/highspec/ART-W1-01/env_coastal_rocks.png",
+      "purpose": "海岸岩石环境件",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 344917,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          37,
+          54,
+          484,
+          458
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c9dbb3f4-290d-4164-a8a7-e8ec36aff6d7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/def1e3a2-cda4-452e-a854-7e946a66891b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/67817391-952f-4465-8e36-9fcd36720b94.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/bb739b37-379a-4e66-a0f8-d9f933ec88f6.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c6e6c763-caf8-418c-8845-c2babb80c876.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/6e0e3605-82f7-43a9-b0e2-373da8fa4c65.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/e4d8e172-3d69-4dea-82e0-997ebf80ad73.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/84a70abd-0e37-49b8-9d6f-ff20c39f6bf9.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/9ec24ab3-9379-490a-93a7-ce249a2d57fa.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/644d995e-b451-44f8-81fd-2434722528be.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/705a368a-37ed-4aaf-b583-e59371f82b02.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-01/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "b173357ea1d932e1eb76f645308560f60f55ed148a5c25ebad369eb99077ce87",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-01",
+      "path": "assets/generated/highspec/ART-W1-01/env_driftwood_bundle.png",
+      "purpose": "漂流木组合环境件",
+      "dimensions": {
+        "width": 512,
+        "height": 341,
+        "mode": "RGBA"
+      },
+      "bytes": 158167,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          37,
+          100,
+          474,
+          234
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c9dbb3f4-290d-4164-a8a7-e8ec36aff6d7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/def1e3a2-cda4-452e-a854-7e946a66891b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/67817391-952f-4465-8e36-9fcd36720b94.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/bb739b37-379a-4e66-a0f8-d9f933ec88f6.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c6e6c763-caf8-418c-8845-c2babb80c876.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/6e0e3605-82f7-43a9-b0e2-373da8fa4c65.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/e4d8e172-3d69-4dea-82e0-997ebf80ad73.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/84a70abd-0e37-49b8-9d6f-ff20c39f6bf9.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/9ec24ab3-9379-490a-93a7-ce249a2d57fa.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/644d995e-b451-44f8-81fd-2434722528be.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/705a368a-37ed-4aaf-b583-e59371f82b02.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-01/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "23897f3a2a8ce27725d70c751c706d274362a7992efd6a8b846b06c5703ae7bf",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-01",
+      "path": "assets/generated/highspec/ART-W1-01/env_reef_cluster.png",
+      "purpose": "礁石组合环境件",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 331613,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          57,
+          76,
+          455,
+          442
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c9dbb3f4-290d-4164-a8a7-e8ec36aff6d7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/def1e3a2-cda4-452e-a854-7e946a66891b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/67817391-952f-4465-8e36-9fcd36720b94.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/bb739b37-379a-4e66-a0f8-d9f933ec88f6.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c6e6c763-caf8-418c-8845-c2babb80c876.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/6e0e3605-82f7-43a9-b0e2-373da8fa4c65.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/e4d8e172-3d69-4dea-82e0-997ebf80ad73.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/84a70abd-0e37-49b8-9d6f-ff20c39f6bf9.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/9ec24ab3-9379-490a-93a7-ce249a2d57fa.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/644d995e-b451-44f8-81fd-2434722528be.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/705a368a-37ed-4aaf-b583-e59371f82b02.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-01/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "2395ed0307530b747bd5bd821a4879e5464c0e71d465bd18547e08cdde6c9a18",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-01",
+      "path": "assets/generated/highspec/ART-W1-01/env_shrub_grove.png",
+      "purpose": "灌木组合环境件",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 405021,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          33,
+          48,
+          488,
+          471
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c9dbb3f4-290d-4164-a8a7-e8ec36aff6d7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/def1e3a2-cda4-452e-a854-7e946a66891b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/67817391-952f-4465-8e36-9fcd36720b94.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/bb739b37-379a-4e66-a0f8-d9f933ec88f6.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c6e6c763-caf8-418c-8845-c2babb80c876.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/6e0e3605-82f7-43a9-b0e2-373da8fa4c65.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/e4d8e172-3d69-4dea-82e0-997ebf80ad73.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/84a70abd-0e37-49b8-9d6f-ff20c39f6bf9.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/9ec24ab3-9379-490a-93a7-ce249a2d57fa.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/644d995e-b451-44f8-81fd-2434722528be.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/705a368a-37ed-4aaf-b583-e59371f82b02.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-01/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "2d0f19d8a60c61b1d5949fe25f112bcac400bb0f3e25d069565f3925531014c7",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-01",
+      "path": "assets/generated/highspec/ART-W1-01/env_small_jetty.png",
+      "purpose": "小码头环境件",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 251852,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          57,
+          40,
+          454,
+          471
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c9dbb3f4-290d-4164-a8a7-e8ec36aff6d7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/def1e3a2-cda4-452e-a854-7e946a66891b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/67817391-952f-4465-8e36-9fcd36720b94.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/bb739b37-379a-4e66-a0f8-d9f933ec88f6.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c6e6c763-caf8-418c-8845-c2babb80c876.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/6e0e3605-82f7-43a9-b0e2-373da8fa4c65.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/e4d8e172-3d69-4dea-82e0-997ebf80ad73.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/84a70abd-0e37-49b8-9d6f-ff20c39f6bf9.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/9ec24ab3-9379-490a-93a7-ce249a2d57fa.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/644d995e-b451-44f8-81fd-2434722528be.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/705a368a-37ed-4aaf-b583-e59371f82b02.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-01/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "f84f09ac883cd7d18a47fbb271335484913cab0628755be9119d1ddb3af40dcb",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-01",
+      "path": "assets/generated/highspec/ART-W1-01/island_crescent_sandbar.png",
+      "purpose": "弯月沙洲候选",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024,
+        "mode": "RGBA"
+      },
+      "bytes": 807749,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          72,
+          63,
+          945,
+          963
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c9dbb3f4-290d-4164-a8a7-e8ec36aff6d7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/def1e3a2-cda4-452e-a854-7e946a66891b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/67817391-952f-4465-8e36-9fcd36720b94.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/bb739b37-379a-4e66-a0f8-d9f933ec88f6.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c6e6c763-caf8-418c-8845-c2babb80c876.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/6e0e3605-82f7-43a9-b0e2-373da8fa4c65.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/e4d8e172-3d69-4dea-82e0-997ebf80ad73.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/84a70abd-0e37-49b8-9d6f-ff20c39f6bf9.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/9ec24ab3-9379-490a-93a7-ce249a2d57fa.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/644d995e-b451-44f8-81fd-2434722528be.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/705a368a-37ed-4aaf-b583-e59371f82b02.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-01/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "5fcb00302e1ff515f804f3bf8bff402885bf2b7ad7393e98990d407c8d541d9e",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-01",
+      "path": "assets/generated/highspec/ART-W1-01/island_exploration_arch.png",
+      "purpose": "地标探索岛候选",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024,
+        "mode": "RGBA"
+      },
+      "bytes": 1508648,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          39,
+          38,
+          989,
+          975
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c9dbb3f4-290d-4164-a8a7-e8ec36aff6d7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/def1e3a2-cda4-452e-a854-7e946a66891b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/67817391-952f-4465-8e36-9fcd36720b94.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/bb739b37-379a-4e66-a0f8-d9f933ec88f6.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c6e6c763-caf8-418c-8845-c2babb80c876.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/6e0e3605-82f7-43a9-b0e2-373da8fa4c65.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/e4d8e172-3d69-4dea-82e0-997ebf80ad73.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/84a70abd-0e37-49b8-9d6f-ff20c39f6bf9.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/9ec24ab3-9379-490a-93a7-ce249a2d57fa.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/644d995e-b451-44f8-81fd-2434722528be.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/705a368a-37ed-4aaf-b583-e59371f82b02.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-01/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "cdc4eb00151c0c0f22cdc7316fea47f8996010c06b0b84d3850a5663e0e64107",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-01",
+      "path": "assets/generated/highspec/ART-W1-01/island_rocky_reef.png",
+      "purpose": "岩礁岛候选",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024,
+        "mode": "RGBA"
+      },
+      "bytes": 1484382,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          17,
+          95,
+          994,
+          923
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c9dbb3f4-290d-4164-a8a7-e8ec36aff6d7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/def1e3a2-cda4-452e-a854-7e946a66891b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/67817391-952f-4465-8e36-9fcd36720b94.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/bb739b37-379a-4e66-a0f8-d9f933ec88f6.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c6e6c763-caf8-418c-8845-c2babb80c876.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/6e0e3605-82f7-43a9-b0e2-373da8fa4c65.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/e4d8e172-3d69-4dea-82e0-997ebf80ad73.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/84a70abd-0e37-49b8-9d6f-ff20c39f6bf9.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/9ec24ab3-9379-490a-93a7-ce249a2d57fa.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/644d995e-b451-44f8-81fd-2434722528be.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/705a368a-37ed-4aaf-b583-e59371f82b02.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-01/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "9b1a75ac256160242fe507eb1764c6ffdd909dbb228b20ceec93d6f445741708",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-01",
+      "path": "assets/generated/highspec/ART-W1-01/island_sandy_green_cove.png",
+      "purpose": "沙滩植被岛候选",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024,
+        "mode": "RGBA"
+      },
+      "bytes": 1567197,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          37,
+          76,
+          993,
+          956
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c9dbb3f4-290d-4164-a8a7-e8ec36aff6d7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/def1e3a2-cda4-452e-a854-7e946a66891b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/67817391-952f-4465-8e36-9fcd36720b94.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/bb739b37-379a-4e66-a0f8-d9f933ec88f6.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c6e6c763-caf8-418c-8845-c2babb80c876.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/6e0e3605-82f7-43a9-b0e2-373da8fa4c65.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/e4d8e172-3d69-4dea-82e0-997ebf80ad73.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/84a70abd-0e37-49b8-9d6f-ff20c39f6bf9.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/9ec24ab3-9379-490a-93a7-ce249a2d57fa.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/644d995e-b451-44f8-81fd-2434722528be.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/705a368a-37ed-4aaf-b583-e59371f82b02.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-01/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "0283a432fffbd203509a9b5b76e5b51d6541ea83f3b1ddd26a9d7f6278318ff3",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-01",
+      "path": "assets/generated/highspec/ART-W1-01/ship_coastal_cutter_B.png",
+      "purpose": "玩家船型候选 B",
+      "dimensions": {
+        "width": 768,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 285411,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          10,
+          105,
+          760,
+          354
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c9dbb3f4-290d-4164-a8a7-e8ec36aff6d7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/def1e3a2-cda4-452e-a854-7e946a66891b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/67817391-952f-4465-8e36-9fcd36720b94.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/bb739b37-379a-4e66-a0f8-d9f933ec88f6.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c6e6c763-caf8-418c-8845-c2babb80c876.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/6e0e3605-82f7-43a9-b0e2-373da8fa4c65.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/e4d8e172-3d69-4dea-82e0-997ebf80ad73.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/84a70abd-0e37-49b8-9d6f-ff20c39f6bf9.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/9ec24ab3-9379-490a-93a7-ce249a2d57fa.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/644d995e-b451-44f8-81fd-2434722528be.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/705a368a-37ed-4aaf-b583-e59371f82b02.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-01/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "d8d30910c7d6153a59a8b2980ed6fc3c22eed24a869b05ba4b348b97cf2402de",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-01",
+      "path": "assets/generated/highspec/ART-W1-01/ship_fishing_sloop_A.png",
+      "purpose": "玩家船型候选 A",
+      "dimensions": {
+        "width": 768,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 395307,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          32,
+          112,
+          745,
+          395
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c9dbb3f4-290d-4164-a8a7-e8ec36aff6d7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/def1e3a2-cda4-452e-a854-7e946a66891b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/67817391-952f-4465-8e36-9fcd36720b94.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/bb739b37-379a-4e66-a0f8-d9f933ec88f6.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c6e6c763-caf8-418c-8845-c2babb80c876.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/6e0e3605-82f7-43a9-b0e2-373da8fa4c65.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/e4d8e172-3d69-4dea-82e0-997ebf80ad73.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/84a70abd-0e37-49b8-9d6f-ff20c39f6bf9.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/9ec24ab3-9379-490a-93a7-ce249a2d57fa.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/644d995e-b451-44f8-81fd-2434722528be.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/705a368a-37ed-4aaf-b583-e59371f82b02.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-01/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "1351762edb9348052025a24d5b35d3866f8d27a32f4df9675cbe6b7371585649",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/generated/highspec/ART-W1-02/bait_impact_splash.png",
+      "purpose": "鱼饵入水冲击水花",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 23167,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          56,
+          86,
+          201,
+          176
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/ART-W1-02_bait_impact_splash_20261005160235.png",
+        "sourceMapping": "与 Maker 原生候选关联；如 SHA 不同则为整理版本",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "71563662bbcd0ca6af3272d39cf8d231161485b1a6242a0235603b4a3f80cdf8",
+      "duplicates": [
+        "assets/image/ART-W1-02_bait_impact_splash_20261005160235.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/generated/highspec/ART-W1-02/bigfish_direction_wake.png",
+      "purpose": "大鱼方向尾流",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 73187,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          24,
+          195,
+          483,
+          309
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/ART-W1-02_bigfish_direction_wake_20261005160011.png",
+        "sourceMapping": "与 Maker 原生候选关联；如 SHA 不同则为整理版本",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "2a9acfb4c243e03bdcfb53248d62508f8bf51444677709175f3a7c6b790c85dc",
+      "duplicates": [
+        "assets/image/ART-W1-02_bigfish_direction_wake_20261005160011.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/generated/highspec/ART-W1-02/bigfish_splash_chase.png",
+      "purpose": "大鱼追逐水花",
+      "dimensions": {
+        "width": 448,
+        "height": 448,
+        "mode": "RGBA"
+      },
+      "bytes": 281053,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          12,
+          19,
+          436,
+          410
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/ART-W1-02_bigfish_splash_chase_20261005160011.png",
+        "sourceMapping": "与 Maker 原生候选关联；如 SHA 不同则为整理版本",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "44759c36555c0a03cc8ac258578f6ba9633a92b97e12e485c9daee677d688f9e",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/generated/highspec/ART-W1-02/bigfish_splash_roaming.png",
+      "purpose": "大鱼游动水花",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 30823,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          38,
+          81,
+          216,
+          178
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/ART-W1-02_bigfish_splash_roaming_20261005160011.png",
+        "sourceMapping": "与 Maker 原生候选关联；如 SHA 不同则为整理版本",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "993f60a9ccbeadc148096a74f8aacc70c8203a440030a1a935713a241e21f274",
+      "duplicates": [
+        "assets/image/ART-W1-02_bigfish_splash_roaming_20261005160011.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/generated/highspec/ART-W1-02/fishing_empty_feedback.png",
+      "purpose": "空竿反馈效果",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 184949,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          14,
+          107,
+          483,
+          403
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/ART-W1-02_fishing_empty_feedback_20261005160235.png",
+        "sourceMapping": "与 Maker 原生候选关联；如 SHA 不同则为整理版本",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "74de86cf73a3bb13e08784366bb586f82cc89369b5807083154694ddc9f6c802",
+      "duplicates": [
+        "assets/image/ART-W1-02_fishing_empty_feedback_20261005160235.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/generated/highspec/ART-W1-02/fishing_success_feedback.png",
+      "purpose": "钓鱼成功反馈效果",
+      "dimensions": {
+        "width": 384,
+        "height": 384,
+        "mode": "RGBA"
+      },
+      "bytes": 225873,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          22,
+          49,
+          367,
+          339
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/ART-W1-02_fishing_success_feedback_20261005160235.png",
+        "sourceMapping": "与 Maker 原生候选关联；如 SHA 不同则为整理版本",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "88a26b3ffa55e37ea04a19fff7e5fc1c10d5a9f35bc59ed45f7198fc5a3f54ce",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/generated/highspec/ART-W1-02/net_impact_splash.png",
+      "purpose": "渔网入水冲击水花",
+      "dimensions": {
+        "width": 448,
+        "height": 448,
+        "mode": "RGBA"
+      },
+      "bytes": 265745,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          13,
+          48,
+          438,
+          395
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/ART-W1-02_net_impact_splash_20261005160235.png",
+        "sourceMapping": "与 Maker 原生候选关联；如 SHA 不同则为整理版本",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "2c30e8c5ad89b699fab2b5f39094be6170b9fe6464e9b3f6f91fce08ee8a436c",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/generated/highspec/ART-W1-02/ripple_medium.png",
+      "purpose": "中型波纹效果",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 113214,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          0,
+          9,
+          256,
+          242
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/ART-W1-02_ripple_medium_20261005160235.png",
+        "sourceMapping": "与 Maker 原生候选关联；如 SHA 不同则为整理版本",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "c84ebcfde7b7d8be4a990bfbd2a953a7391eae178cf78756572f2395f315948a",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/generated/highspec/ART-W1-02/ripple_small.png",
+      "purpose": "小型波纹效果",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 51872,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          28,
+          53,
+          233,
+          196
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/ART-W1-02_ripple_small_20261005160235.png",
+        "sourceMapping": "与 Maker 原生候选关联；如 SHA 不同则为整理版本",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "9f1fd4ac7b4da52abca53bede6a507f83ae5c8a392f883835173c0ec0578550a",
+      "duplicates": [
+        "assets/image/ART-W1-02_ripple_small_20261005160235.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/generated/highspec/ART-W1-02/seabird_dive.png",
+      "purpose": "海鸟俯冲姿态",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 181304,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          22,
+          51,
+          490,
+          437
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/ART-W1-02_seabird_dive_20261005160011.png",
+        "sourceMapping": "与 Maker 原生候选关联；如 SHA 不同则为整理版本",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "e9e217be0cf038d915bec5038fcd153c5fdb6076d63653d6d252a23b04dae63a",
+      "duplicates": [
+        "assets/image/ART-W1-02_seabird_dive_20261005160011.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/generated/highspec/ART-W1-02/seabird_glide.png",
+      "purpose": "海鸟滑翔姿态",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 158795,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          3,
+          97,
+          510,
+          405
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/ART-W1-02_seabird_glide_20261005160011.png",
+        "sourceMapping": "与 Maker 原生候选关联；如 SHA 不同则为整理版本",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "d965595ad73a17fb58b7a51f94b3a9b7868ac500f17ab438cabdeabd703da40f",
+      "duplicates": [
+        "assets/image/ART-W1-02_seabird_glide_20261005160011.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/generated/highspec/ART-W1-02/smallfish_breach.png",
+      "purpose": "小鱼跃出水面",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 120320,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          157,
+          60,
+          388,
+          452
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/ART-W1-02_smallfish_breach_20261005160011.png",
+        "sourceMapping": "与 Maker 原生候选关联；如 SHA 不同则为整理版本",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "f6e8002ced76ec544d21f9f1f622574226f434535c61d61a0c2c8c4053670548",
+      "duplicates": [
+        "assets/image/ART-W1-02_smallfish_breach_20261005160011.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/generated/highspec/ART-W1-02/smallfish_surface_disturbance.png",
+      "purpose": "小鱼水面扰动",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 48586,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          17,
+          71,
+          243,
+          189
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/ART-W1-02_smallfish_surface_disturbance_20261005160011.png",
+        "sourceMapping": "与 Maker 原生候选关联；如 SHA 不同则为整理版本",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "a090c17fbb5e0f288814ce5efb166eeca86068413493e6af82211540a8b6b234",
+      "duplicates": [
+        "assets/image/ART-W1-02_smallfish_surface_disturbance_20261005160011.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/generated/highspec/ART-W1-02/surface_bubbles.png",
+      "purpose": "水面气泡效果",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 59977,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          6,
+          28,
+          248,
+          224
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/ART-W1-02_surface_bubbles_20261005160235.png",
+        "sourceMapping": "与 Maker 原生候选关联；如 SHA 不同则为整理版本",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "93eb66990ee903a7f1ffdb92cbda1e07b1dd3154e19e76bdaab395dfae3b923a",
+      "duplicates": [
+        "assets/image/ART-W1-02_surface_bubbles_20261005160235.png"
+      ]
+    },
+    {
+      "task": "ART-W1-03",
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_Caustic_v2_20261005160511.png",
+      "purpose": "ARTW103 Caustic v2 20261005160511",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 262644,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          0,
+          0,
+          512,
+          512
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-03/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "50ee572055c8fb722096d7a38a6f0ae93fedffb485ff9f15aaaacd0c1ae3067c",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-03",
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_LensEdge_v2_20261005160359.png",
+      "purpose": "ARTW103 LensEdge v2 20261005160359",
+      "dimensions": {
+        "width": 512,
+        "height": 342,
+        "mode": "RGBA"
+      },
+      "bytes": 98679,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          6,
+          0,
+          498,
+          133
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-03/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "2205787803f45b46b34df3fde44b66b9d923c8044c084df243b76c6fbb2be428",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-03",
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_ReefRocks_20261005155952.png",
+      "purpose": "ARTW103 ReefRocks 20261005155952",
+      "dimensions": {
+        "width": 448,
+        "height": 448,
+        "mode": "RGBA"
+      },
+      "bytes": 279707,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          27,
+          43,
+          421,
+          412
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-03/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "618a21da2ebc2b59fe45adb7fc1e3f29eac44b76154b5c43ffcf7a18b30266a5",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-03",
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_RockySeabed_20261005155952.png",
+      "purpose": "ARTW103 RockySeabed 20261005155952",
+      "dimensions": {
+        "width": 384,
+        "height": 384,
+        "mode": "RGBA"
+      },
+      "bytes": 292351,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          0,
+          24,
+          384,
+          363
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-03/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "0968984c2e626abe53749c7636a83df04e7dcb9edd26a333adddd1e912a8c199",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-03",
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_SandPatch_20261005155952.png",
+      "purpose": "ARTW103 SandPatch 20261005155952",
+      "dimensions": {
+        "width": 416,
+        "height": 416,
+        "mode": "RGBA"
+      },
+      "bytes": 281636,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          0,
+          14,
+          416,
+          406
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-03/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "896451799e6631530b03f8996ef8c1ab62146668e774067d08c5246339655025",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-03",
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_Sardine_20261005155952.png",
+      "purpose": "ARTW103 Sardine 20261005155952",
+      "dimensions": {
+        "width": 512,
+        "height": 342,
+        "mode": "RGBA"
+      },
+      "bytes": 94607,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          28,
+          110,
+          484,
+          231
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-03/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "32f52de8306ca5f6050a7f7b4676fd5c2f383f45b01c14bb58d1022f6e99d27a",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-03",
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_SardineSchoolA_20261005155952.png",
+      "purpose": "ARTW103 SardineSchoolA 20261005155952",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 202375,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          33,
+          45,
+          475,
+          479
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-03/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "78907d3c2f0df12107f747e7b897c622cbe370f13e1fe76fc94708800692586a",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-03",
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_SardineSchoolB_20261005155952.png",
+      "purpose": "ARTW103 SardineSchoolB 20261005155952",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 224222,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          28,
+          46,
+          491,
+          464
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-03/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "f056f85c32bc0617fa9892aff5a145835afd071a39d27ec4c8b4cb1b60e99d1b",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-03",
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_Seaweed_20261005155952.png",
+      "purpose": "ARTW103 Seaweed 20261005155952",
+      "dimensions": {
+        "width": 448,
+        "height": 448,
+        "mode": "RGBA"
+      },
+      "bytes": 296177,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          27,
+          25,
+          419,
+          416
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-03/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "6278507ce4a4c4e66fc7ffc9b2f301992f3a4d189dcf7ebb4100eea7dc0513ce",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-03",
+      "path": "assets/generated/highspec/ART-W1-03/ARTW103_Tuna_20261005155952.png",
+      "purpose": "ARTW103 Tuna 20261005155952",
+      "dimensions": {
+        "width": 512,
+        "height": 342,
+        "mode": "RGBA"
+      },
+      "bytes": 140909,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          12,
+          80,
+          498,
+          261
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-03/REPORT.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "8558a1f9e89e6bfc280484722a621dbe9964dad532ad821c7cfa58832d454541",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_体力指示器_20261005160902.png",
+      "purpose": "W1-04 ui 体力指示器",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 67727,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          36,
+          32,
+          224,
+          222
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "1d656e5610ff13558157ab92abf1d3fe4ce9a2d9507a02f7687bd9db030c7420",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_夜晚.png",
+      "purpose": "W1-04 ui 夜晚",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 51524,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          16,
+          5,
+          179,
+          164
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "6b8f53f4db2aa71fe9afc5e00d93031e6bbb7e9835d2dbf2a5278de3dd34b011",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_底部操作栏_20261005160639.png",
+      "purpose": "W1-04 ui 底部操作栏",
+      "dimensions": {
+        "width": 1024,
+        "height": 576,
+        "mode": "RGBA"
+      },
+      "bytes": 162657,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          121,
+          363,
+          903,
+          492
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "a7f7e1b08c478695426df7cb3966ec7d7785333c760924d94dcd3d7debc55413",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_捕鱼_按下态.png",
+      "purpose": "W1-04 ui 捕鱼 按下态",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 90984,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          5,
+          0,
+          192,
+          192
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "ac80877d7951a216dff9187d90164628bf629b324b7e42945e6c7b1b4de21359",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_捕鱼_普通态.png",
+      "purpose": "W1-04 ui 捕鱼 普通态",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 76657,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          13,
+          0,
+          192,
+          192
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "f023c184a5a348f52e5e19ffbf6fce37b6f33f9209ba26c5ff524d41a5739db8",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_时间罗盘.png",
+      "purpose": "W1-04 ui 时间罗盘",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 60237,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          7,
+          2,
+          168,
+          164
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "c37c057e0a2dbad98bef42d0baf1a2c3ea59089b04c9fb69cdc1913aa0b71fe2",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_白昼.png",
+      "purpose": "W1-04 ui 白昼",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 53869,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          24,
+          5,
+          186,
+          164
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "c39ed6dedc508337a6f88aa3a931f304ffe313549768c62871096ca71d469615",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_结束今日_按下态.png",
+      "purpose": "W1-04 ui 结束今日 按下态",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 90550,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          0,
+          0,
+          190,
+          192
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "7fcd8a428a2484e815778550206027bbb886b781e01a1e454bae50fb18001e88",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_结束今日_普通态.png",
+      "purpose": "W1-04 ui 结束今日 普通态",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 80741,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          1,
+          0,
+          192,
+          192
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "eb8857005eab857558eefb547761566523e4a59700acfc8eeac359a1a5d804f2",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_老人互动_按下态.png",
+      "purpose": "W1-04 ui 老人互动 按下态",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 94845,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          0,
+          0,
+          192,
+          192
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "0b32570342f1892d402cd7259857384b7c86584b146a5f4d562e60d6f4800bcd",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_老人互动_普通态.png",
+      "purpose": "W1-04 ui 老人互动 普通态",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 85718,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          11,
+          0,
+          192,
+          192
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "67d8edf0ef8ccda8c0823df26e4da880e76bde0b7f3e3bbd6a6a771319b504d9",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_背包_按下态.png",
+      "purpose": "W1-04 ui 背包 按下态",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 93674,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          0,
+          0,
+          192,
+          192
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "3f83c5c651ae29577c0809ade50b7eed7b10ae02bd5a0f7e1eeb7d6ac9199a44",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_背包_普通态.png",
+      "purpose": "W1-04 ui 背包 普通态",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 83462,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          0,
+          0,
+          192,
+          192
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "2656437c1e15b236aa37aa78d336630c057966d67be28997302ccf8e810187b5",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_船舱槽位.png",
+      "purpose": "W1-04 ui 船舱槽位",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 58265,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          7,
+          22,
+          169,
+          181
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "5c6b27e215b6d2e60f51badc1e1bd04be63358fe3eaf282708cdd1272345e839",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_返港_按下态.png",
+      "purpose": "W1-04 ui 返港 按下态",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 94989,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          0,
+          0,
+          192,
+          192
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "b8a61d065181796ac0c03297c648615905361976975f5c850d3b9f7b227adb17",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_返港_普通态.png",
+      "purpose": "W1-04 ui 返港 普通态",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 84566,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          0,
+          1,
+          192,
+          192
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "e14b678ba8b947fd625e42e4407179c752eded3324ce99fe4d4e74f3b65bbd3f",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_透镜_按下态.png",
+      "purpose": "W1-04 ui 透镜 按下态",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 90143,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          0,
+          0,
+          190,
+          192
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "f0fbb9ec92c701baaac9af4459ec1a9ca4ee6fcaa33746edc7e64776bfc87cdd",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_透镜_普通态.png",
+      "purpose": "W1-04 ui 透镜 普通态",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 75314,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          0,
+          0,
+          179,
+          192
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "9d487366dfc1840d5f2fb5188dae16dc1edbf299ff9b34c23f6b1993e1bf5364",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_UI_金币.png",
+      "purpose": "W1-04 ui 金币",
+      "dimensions": {
+        "width": 192,
+        "height": 192,
+        "mode": "RGBA"
+      },
+      "bytes": 61229,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          23,
+          22,
+          186,
+          181
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "e02965e0000ee93f2b9fa57b0d13af922d5c32ea64ca9dba7e153c7cd90ea472",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_世界_交易棚_20261005160008.png",
+      "purpose": "W1-04 世界 交易棚",
+      "dimensions": {
+        "width": 384,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 147717,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          35,
+          12,
+          350,
+          237
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "74612030a39f804d837d6c82676f888ea4523ae63f57aff957f3d96e6cbf8c29",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_世界_修船棚_20261005160008.png",
+      "purpose": "W1-04 世界 修船棚",
+      "dimensions": {
+        "width": 384,
+        "height": 384,
+        "mode": "RGBA"
+      },
+      "bytes": 261069,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          21,
+          11,
+          363,
+          352
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "d4232e2b5a4e72fde19c995d64caff7a4a6604647b9bb67413a35d2689a8044f",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_世界_小仓库_20261005160008.png",
+      "purpose": "W1-04 世界 小仓库",
+      "dimensions": {
+        "width": 384,
+        "height": 384,
+        "mode": "RGBA"
+      },
+      "bytes": 214216,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          37,
+          61,
+          347,
+          335
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "80c88dea59fd7732670d896840925140c701ba07523b5eacfb9784eec44a29af",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_世界_小渔舍_20261005160008.png",
+      "purpose": "W1-04 世界 小渔舍",
+      "dimensions": {
+        "width": 384,
+        "height": 384,
+        "mode": "RGBA"
+      },
+      "bytes": 214074,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          57,
+          25,
+          347,
+          356
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "6192560b933a4c18bd69b416ec8aab17fff0d2a0c0b28f914f4a969c0e762a40",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_世界_木码头_T形_20261005160008.png",
+      "purpose": "W1-04 世界 木码头 t形",
+      "dimensions": {
+        "width": 384,
+        "height": 384,
+        "mode": "RGBA"
+      },
+      "bytes": 154242,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          66,
+          6,
+          318,
+          373
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "e983a3e5951c7fcca646184806bdd88b2ccfa11e8d4a81d502ae9af105c40e92",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-04",
+      "path": "assets/generated/highspec/ART-W1-04/ARTW104_世界_港口组合装饰_20261005160008.png",
+      "purpose": "W1-04 世界 港口组合装饰",
+      "dimensions": {
+        "width": 384,
+        "height": 384,
+        "mode": "RGBA"
+      },
+      "bytes": 259930,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          9,
+          33,
+          378,
+          345
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": null,
+        "sourceMapping": "独立候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+          "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+        ],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "973cd467b4d5714d90930480e9459da33c13904c52f3501cc1533793bca5e888",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-05",
+      "path": "assets/generated/highspec/ART-W1-05/barrel_world_candidate.png",
+      "purpose": "世界场景木桶候选",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 231191,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          76,
+          61,
+          436,
+          441
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/OceanStory_barrel_20261005115009.png",
+        "sourceMapping": "复用 OceanStory 木桶图；W1-05 final report 明确记录",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "8fa627d003e0d2a64ebcd50667edfcfab303f72eafdd9db8df3ecc00078b043e",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-05",
+      "path": "assets/generated/highspec/ART-W1-05/driftwood_world.png",
+      "purpose": "世界场景漂流木",
+      "dimensions": {
+        "width": 512,
+        "height": 341,
+        "mode": "RGBA"
+      },
+      "bytes": 134881,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          40,
+          98,
+          466,
+          242
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/OceanReady_driftwood_top_20261005123027.png",
+        "sourceMapping": "OceanReady 漂流木按比例缩小；W1-05 final report 明确记录",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "28f0c0185b11f1d834e9891da94d500f08fe085d69317103875fb554c6889515",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-05",
+      "path": "assets/generated/highspec/ART-W1-05/sardine_inventory_icon.png",
+      "purpose": "背包沙丁鱼图标",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 22954,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          18,
+          95,
+          238,
+          155
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/OceanReady_sardine_top_20261005123025.png",
+        "sourceMapping": "OceanReady Sardine 缩放适配；W1-05 final report 明确记录",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "ed330201a5c86e8c1656c741cc4240452c99c4efca1157c4db32591b8529fab4",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/image/ART-W1-02_bait_impact_splash_20261005160235.png",
+      "purpose": "ART-W1-02 bait impact splash 20261005160235",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 23167,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          56,
+          86,
+          201,
+          176
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/generated/highspec/ART-W1-02/bait_impact_splash.png",
+        "sourceMapping": "Maker 原生图/远程映射源；对应 highspec 候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "71563662bbcd0ca6af3272d39cf8d231161485b1a6242a0235603b4a3f80cdf8",
+      "duplicates": [
+        "assets/generated/highspec/ART-W1-02/bait_impact_splash.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/image/ART-W1-02_bigfish_direction_wake_20261005160011.png",
+      "purpose": "ART-W1-02 bigfish direction wake 20261005160011",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 73187,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          24,
+          195,
+          483,
+          309
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/generated/highspec/ART-W1-02/bigfish_direction_wake.png",
+        "sourceMapping": "Maker 原生图/远程映射源；对应 highspec 候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "2a9acfb4c243e03bdcfb53248d62508f8bf51444677709175f3a7c6b790c85dc",
+      "duplicates": [
+        "assets/generated/highspec/ART-W1-02/bigfish_direction_wake.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/image/ART-W1-02_bigfish_splash_chase_20261005160011.png",
+      "purpose": "ART-W1-02 bigfish splash chase 20261005160011",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 306252,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          14,
+          22,
+          498,
+          468
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/generated/highspec/ART-W1-02/bigfish_splash_chase.png",
+        "sourceMapping": "Maker 原生图/远程映射源；对应 highspec 候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "9296ffe201d54f6a8a7f7353674621abe6092c257f2f210c5661b6c6b35aaba2",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/image/ART-W1-02_bigfish_splash_roaming_20261005160011.png",
+      "purpose": "ART-W1-02 bigfish splash roaming 20261005160011",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 30823,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          38,
+          81,
+          216,
+          178
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/generated/highspec/ART-W1-02/bigfish_splash_roaming.png",
+        "sourceMapping": "Maker 原生图/远程映射源；对应 highspec 候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "993f60a9ccbeadc148096a74f8aacc70c8203a440030a1a935713a241e21f274",
+      "duplicates": [
+        "assets/generated/highspec/ART-W1-02/bigfish_splash_roaming.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/image/ART-W1-02_fishing_empty_feedback_20261005160235.png",
+      "purpose": "ART-W1-02 fishing empty feedback 20261005160235",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 184949,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          14,
+          107,
+          483,
+          403
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/generated/highspec/ART-W1-02/fishing_empty_feedback.png",
+        "sourceMapping": "Maker 原生图/远程映射源；对应 highspec 候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "74de86cf73a3bb13e08784366bb586f82cc89369b5807083154694ddc9f6c802",
+      "duplicates": [
+        "assets/generated/highspec/ART-W1-02/fishing_empty_feedback.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/image/ART-W1-02_fishing_success_feedback_20261005160235.png",
+      "purpose": "ART-W1-02 fishing success feedback 20261005160235",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 330393,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          30,
+          66,
+          489,
+          452
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/generated/highspec/ART-W1-02/fishing_success_feedback.png",
+        "sourceMapping": "Maker 原生图/远程映射源；对应 highspec 候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "88c399972efbd476a75b0faadeb0fdcc594b6d1e09e54b335b9994b355313331",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/image/ART-W1-02_net_impact_splash_20261005160235.png",
+      "purpose": "ART-W1-02 net impact splash 20261005160235",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 344123,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          14,
+          54,
+          501,
+          451
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/generated/highspec/ART-W1-02/net_impact_splash.png",
+        "sourceMapping": "Maker 原生图/远程映射源；对应 highspec 候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "f476bd98cdebbb91c27b5af9da489aa6368615d500d0172fb3d8971973fd106d",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/image/ART-W1-02_ripple_medium_20261005160235.png",
+      "purpose": "ART-W1-02 ripple medium 20261005160235",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 335178,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          0,
+          18,
+          512,
+          484
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/generated/highspec/ART-W1-02/ripple_medium.png",
+        "sourceMapping": "Maker 原生图/远程映射源；对应 highspec 候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "9a04a1217725d746ca0beddfcc2ef7c16ee9088066108d761da5dc4d6ee1fab1",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/image/ART-W1-02_ripple_small_20261005160235.png",
+      "purpose": "ART-W1-02 ripple small 20261005160235",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 51872,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          28,
+          53,
+          233,
+          196
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/generated/highspec/ART-W1-02/ripple_small.png",
+        "sourceMapping": "Maker 原生图/远程映射源；对应 highspec 候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "9f1fd4ac7b4da52abca53bede6a507f83ae5c8a392f883835173c0ec0578550a",
+      "duplicates": [
+        "assets/generated/highspec/ART-W1-02/ripple_small.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/image/ART-W1-02_seabird_dive_20261005160011.png",
+      "purpose": "ART-W1-02 seabird dive 20261005160011",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 181304,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          22,
+          51,
+          490,
+          437
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/generated/highspec/ART-W1-02/seabird_dive.png",
+        "sourceMapping": "Maker 原生图/远程映射源；对应 highspec 候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "e9e217be0cf038d915bec5038fcd153c5fdb6076d63653d6d252a23b04dae63a",
+      "duplicates": [
+        "assets/generated/highspec/ART-W1-02/seabird_dive.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/image/ART-W1-02_seabird_glide_20261005160011.png",
+      "purpose": "ART-W1-02 seabird glide 20261005160011",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 158795,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          3,
+          97,
+          510,
+          405
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/generated/highspec/ART-W1-02/seabird_glide.png",
+        "sourceMapping": "Maker 原生图/远程映射源；对应 highspec 候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "d965595ad73a17fb58b7a51f94b3a9b7868ac500f17ab438cabdeabd703da40f",
+      "duplicates": [
+        "assets/generated/highspec/ART-W1-02/seabird_glide.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/image/ART-W1-02_smallfish_breach_20261005160011.png",
+      "purpose": "ART-W1-02 smallfish breach 20261005160011",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 120320,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          157,
+          60,
+          388,
+          452
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/generated/highspec/ART-W1-02/smallfish_breach.png",
+        "sourceMapping": "Maker 原生图/远程映射源；对应 highspec 候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "f6e8002ced76ec544d21f9f1f622574226f434535c61d61a0c2c8c4053670548",
+      "duplicates": [
+        "assets/generated/highspec/ART-W1-02/smallfish_breach.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/image/ART-W1-02_smallfish_surface_disturbance_20261005160011.png",
+      "purpose": "ART-W1-02 smallfish surface disturbance 20261005160011",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 48586,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          17,
+          71,
+          243,
+          189
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/generated/highspec/ART-W1-02/smallfish_surface_disturbance.png",
+        "sourceMapping": "Maker 原生图/远程映射源；对应 highspec 候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "a090c17fbb5e0f288814ce5efb166eeca86068413493e6af82211540a8b6b234",
+      "duplicates": [
+        "assets/generated/highspec/ART-W1-02/smallfish_surface_disturbance.png"
+      ]
+    },
+    {
+      "task": "ART-W1-02",
+      "path": "assets/image/ART-W1-02_surface_bubbles_20261005160235.png",
+      "purpose": "ART-W1-02 surface bubbles 20261005160235",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 59977,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          6,
+          28,
+          248,
+          224
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/generated/highspec/ART-W1-02/surface_bubbles.png",
+        "sourceMapping": "Maker 原生图/远程映射源；对应 highspec 候选",
+        "makerPackageVersion": "@taptap/maker 0.0.36",
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "assets（Maker 配置扫描根；默认 ** 规则下可能进入资源集）",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md"
+      },
+      "w1Audit": {
+        "sourceRuntimeRelations": [],
+        "tags": "见 ART-W1-06 resolution-candidates.json；引用关系不代表定稿"
+      },
+      "sha256": "93eb66990ee903a7f1ffdb92cbda1e07b1dd3154e19e76bdaab395dfae3b923a",
+      "duplicates": [
+        "assets/generated/highspec/ART-W1-02/surface_bubbles.png"
+      ]
+    },
+    {
+      "task": "ART-W1-05",
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Apple_Icon_20261006012957.png",
+      "purpose": "未物化候选：apple icon",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 63456,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          38,
+          27,
+          222,
+          225
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Apple_Icon_20261006012957.png",
+        "sourceMapping": "11 张 Maker 成功生成 PNG；当前 final report 确认，Maker 版本/远程预览 URL 未注明，未物化到 assets/image；outputs 扫描根外",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md"
+      },
+      "sha256": "21919cae71dce082fc3f3bc832ab764c659debbe8d8ed5506b621254948bdc39",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-05",
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_DriftingBottle_World_20261006012957.png",
+      "purpose": "未物化候选：driftingbottle world",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 188999,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          35,
+          146,
+          479,
+          349
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_DriftingBottle_World_20261006012957.png",
+        "sourceMapping": "11 张 Maker 成功生成 PNG；当前 final report 确认，Maker 版本/远程预览 URL 未注明，未物化到 assets/image；outputs 扫描根外",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md"
+      },
+      "sha256": "52f4428dd632245642671ce1a14b52c8b3bef886952528267d50e5c440a28c8c",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-05",
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_FishBait_Icon_20261006012957.png",
+      "purpose": "未物化候选：fishbait icon",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 47401,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          48,
+          50,
+          210,
+          204
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_FishBait_Icon_20261006012957.png",
+        "sourceMapping": "11 张 Maker 成功生成 PNG；当前 final report 确认，Maker 版本/远程预览 URL 未注明，未物化到 assets/image；outputs 扫描根外",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md"
+      },
+      "sha256": "a442323b2f658c978c94083173311dc6088bbbefc659918492b230b2c4f54bac",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-05",
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_FishingNet_World_20261006013145.png",
+      "purpose": "未物化候选：fishingnet world",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 449614,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          26,
+          19,
+          487,
+          487
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_FishingNet_World_20261006013145.png",
+        "sourceMapping": "11 张 Maker 成功生成 PNG；当前 final report 确认，Maker 版本/远程预览 URL 未注明，未物化到 assets/image；outputs 扫描根外",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md"
+      },
+      "sha256": "04d7fa8753a312112c0f1c096197cb2f30acd41a19c254f8c8cc98de8c8970af",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-05",
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_IdentifiedLocationMarker_UI_20261006013145.png",
+      "purpose": "未物化候选：identifiedlocationmarker ui",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 59498,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          52,
+          25,
+          202,
+          227
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_IdentifiedLocationMarker_UI_20261006013145.png",
+        "sourceMapping": "11 张 Maker 成功生成 PNG；当前 final report 确认，Maker 版本/远程预览 URL 未注明，未物化到 assets/image；outputs 扫描根外",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md"
+      },
+      "sha256": "9e5ced66b90b5b15b603702ae6bc83f7bdd62bae5fbacfb5d257df26e894f006",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-05",
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Lens_Icon_20261006012957.png",
+      "purpose": "未物化候选：lens icon",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 61414,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          43,
+          38,
+          212,
+          208
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Lens_Icon_20261006012957.png",
+        "sourceMapping": "11 张 Maker 成功生成 PNG；当前 final report 确认，Maker 版本/远程预览 URL 未注明，未物化到 assets/image；outputs 扫描根外",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md"
+      },
+      "sha256": "df4d48a209ff2546e18ec5433d97c014c74a26e158b58c02c0d3ce0345e10244",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-05",
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_NetCenter_Target_UI_20261006013145.png",
+      "purpose": "未物化候选：netcenter target ui",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 44330,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          48,
+          44,
+          208,
+          208
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_NetCenter_Target_UI_20261006013145.png",
+        "sourceMapping": "11 张 Maker 成功生成 PNG；当前 final report 确认，Maker 版本/远程预览 URL 未注明，未物化到 assets/image；outputs 扫描根外",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md"
+      },
+      "sha256": "63721283bbdce7ca9622d4011360e3a73436a23d7a413f45dfb428579a12a596",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-05",
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Note_Rolled_World_20261006012957.png",
+      "purpose": "未物化候选：note rolled world",
+      "dimensions": {
+        "width": 384,
+        "height": 384,
+        "mode": "RGBA"
+      },
+      "bytes": 94500,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          53,
+          37,
+          340,
+          334
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Note_Rolled_World_20261006012957.png",
+        "sourceMapping": "11 张 Maker 成功生成 PNG；当前 final report 确认，Maker 版本/远程预览 URL 未注明，未物化到 assets/image；outputs 扫描根外",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md"
+      },
+      "sha256": "38e4f42960d3bf6e89b8dfae90696a028d603e9a773cca56d8f9939c11da0829",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-05",
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Note_Unrolled_Story_20261006013145.png",
+      "purpose": "未物化候选：note unrolled story",
+      "dimensions": {
+        "width": 576,
+        "height": 384,
+        "mode": "RGBA"
+      },
+      "bytes": 288383,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          19,
+          31,
+          557,
+          351
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Note_Unrolled_Story_20261006013145.png",
+        "sourceMapping": "11 张 Maker 成功生成 PNG；当前 final report 确认，Maker 版本/远程预览 URL 未注明，未物化到 assets/image；outputs 扫描根外",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md"
+      },
+      "sha256": "8c6910cd2e2ce9f5da3182b9e552e7e65c223a19f4ac601218f5857a775b4056",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-05",
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Tuna_Icon_20261006012957.png",
+      "purpose": "未物化候选：tuna icon",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 49087,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          4,
+          60,
+          252,
+          188
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_Tuna_Icon_20261006012957.png",
+        "sourceMapping": "11 张 Maker 成功生成 PNG；当前 final report 确认，Maker 版本/远程预览 URL 未注明，未物化到 assets/image；outputs 扫描根外",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md"
+      },
+      "sha256": "55a8957e442aeb9387230b87dd930bb844e31d5300b9694ae4a1bed83f7a624e",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-05",
+      "path": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_UnknownLocationMarker_UI_20261006013145.png",
+      "purpose": "未物化候选：unknownlocationmarker ui",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "mode": "RGBA"
+      },
+      "bytes": 59438,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          51,
+          21,
+          204,
+          232
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "outputs/art-wave1/ART-W1-05/candidates/ARTW1_05_UnknownLocationMarker_UI_20261006013145.png",
+        "sourceMapping": "11 张 Maker 成功生成 PNG；当前 final report 确认，Maker 版本/远程预览 URL 未注明，未物化到 assets/image；outputs 扫描根外",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md"
+      },
+      "sha256": "b4532545094dd30dc72ba636dd8fdfb22abbaec8a4c9fd146f53e701f3b369b0",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-06",
+      "path": "outputs/art-wave1/ART-W1-06/experiments/OceanLoop_gull_crop_pad24.png",
+      "purpose": "W1-06 OceanLoop 海鸟透明边裁切实验副本",
+      "dimensions": {
+        "width": 284,
+        "height": 499,
+        "mode": "RGBA"
+      },
+      "bytes": 87833,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          24,
+          24,
+          260,
+          475
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/OceanLoop/gull.png",
+        "sourceMapping": "W1-06 实验副本，源路径按审计报告",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": null
+      },
+      "sha256": "d4eabe5a4257566883f259b87cc4b65ead704e2d8dc48133710c9d33d4cace22",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-06",
+      "path": "outputs/art-wave1/ART-W1-06/experiments/OceanLoop_island_512.png",
+      "purpose": "W1-06 OceanLoop 岛屿缩放实验副本",
+      "dimensions": {
+        "width": 512,
+        "height": 512,
+        "mode": "RGBA"
+      },
+      "bytes": 316359,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          29,
+          29,
+          483,
+          482
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/OceanLoop/island.png",
+        "sourceMapping": "W1-06 实验副本，源路径按审计报告",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": null
+      },
+      "sha256": "7f9e6b9d6eafa6abcb7a9a7283d23b62c93e815270b0f3982b5559f17ad10142",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-06",
+      "path": "outputs/art-wave1/ART-W1-06/experiments/OceanLoop_island_768.png",
+      "purpose": "W1-06 OceanLoop 岛屿缩放实验副本",
+      "dimensions": {
+        "width": 768,
+        "height": 768,
+        "mode": "RGBA"
+      },
+      "bytes": 676995,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          44,
+          45,
+          723,
+          722
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/OceanLoop/island.png",
+        "sourceMapping": "W1-06 实验副本，源路径按审计报告",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": null
+      },
+      "sha256": "d327ae28aac5de605b75db961156a0c84012fd22ee47f1869e72ba2a98af4809",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-06",
+      "path": "outputs/art-wave1/ART-W1-06/experiments/OceanLoop_island_png_optimize.png",
+      "purpose": "W1-06 无损 PNG 优化实验副本",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024,
+        "mode": "RGBA"
+      },
+      "bytes": 1104766,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          62,
+          61,
+          962,
+          962
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/OceanLoop/island.png",
+        "sourceMapping": "W1-06 实验副本，源路径按审计报告",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": null
+      },
+      "sha256": "47d8d77cc5dcf1bdfe3397684a1ff91c9084ae9b21903b11f9490eb7510ce293",
+      "duplicates": []
+    },
+    {
+      "task": "ART-W1-06",
+      "path": "outputs/art-wave1/ART-W1-06/experiments/reading_sea_watercolor_navigation_icons_png_optimize.png",
+      "purpose": "W1-06 无损 PNG 优化实验副本",
+      "dimensions": {
+        "width": 1152,
+        "height": 768,
+        "mode": "RGBA"
+      },
+      "bytes": 797116,
+      "alpha": {
+        "present": true,
+        "transparentPixelsPresent": true,
+        "partialAlphaPresent": true,
+        "visibleBoundsXYXY": [
+          31,
+          90,
+          1145,
+          702
+        ],
+        "alphaChannelPresent": true
+      },
+      "source": {
+        "sourceCandidatePath": "assets/image/reading_sea_watercolor_navigation_icons_20261005115716.png",
+        "sourceMapping": "W1-06 实验副本，源路径按审计报告",
+        "makerPackageVersion": null,
+        "makerPreviewUrls": [],
+        "runtimeStatus": "候选/实验未接入",
+        "runtimePath": null,
+        "packageRoot": "不在 assets/scripts 配置扫描根",
+        "wave1ReportPath": null
+      },
+      "sha256": "50b987690ab258a3c7b9fd6815e8b65044f9a1e35d2092e3c9c6d7fd0b5805bf",
+      "duplicates": []
+    }
+  ],
+  "sourceRuntimeRelationsFromW1Audit": [
+    {
+      "manifest": "assets/image/OceanLoop/manifest.json",
+      "assetKey": "boat",
+      "source": "assets/image/OceanStory_boat_20261005114947.png",
+      "runtimePath": "assets/image/OceanLoop/boat.png",
+      "sourceExists": true,
+      "runtimeExists": true,
+      "manifestStatus": null
+    },
+    {
+      "manifest": "assets/image/OceanLoop/manifest.json",
+      "assetKey": "island",
+      "source": "assets/image/OceanStory_island_20261005114948.png",
+      "runtimePath": "assets/image/OceanLoop/island.png",
+      "sourceExists": true,
+      "runtimeExists": true,
+      "manifestStatus": null
+    },
+    {
+      "manifest": "assets/image/OceanLoop/manifest.json",
+      "assetKey": "gull",
+      "source": "assets/image/OceanStory_gull_20261005114946.png",
+      "runtimePath": "assets/image/OceanLoop/gull.png",
+      "sourceExists": true,
+      "runtimeExists": true,
+      "manifestStatus": null
+    },
+    {
+      "manifest": "assets/image/OceanLoop/manifest.json",
+      "assetKey": "barrel",
+      "source": "assets/image/OceanStory_barrel_20261005115009.png",
+      "runtimePath": "assets/image/OceanLoop/barrel.png",
+      "sourceExists": true,
+      "runtimeExists": true,
+      "manifestStatus": null
+    },
+    {
+      "manifest": "assets/image/OceanLoop/manifest.json",
+      "assetKey": "waterpaper",
+      "source": "assets/image/OceanStory_waterpaper_20261005114940.png",
+      "runtimePath": "assets/image/OceanLoop/waterpaper.png",
+      "sourceExists": true,
+      "runtimeExists": true,
+      "manifestStatus": null
+    },
+    {
+      "manifest": "assets/image/OceanReady/manifest.json",
+      "assetKey": "reef",
+      "source": "assets/image/OceanReady_reef_top_20261005123026.png",
+      "runtimePath": "assets/image/OceanReady/reef.png",
+      "sourceExists": true,
+      "runtimeExists": true,
+      "manifestStatus": "ready_not_placed"
+    },
+    {
+      "manifest": "assets/image/OceanReady/manifest.json",
+      "assetKey": "shrub",
+      "source": "assets/image/OceanReady_shrub_top_20261005123049.png",
+      "runtimePath": "assets/image/OceanReady/shrub.png",
+      "sourceExists": true,
+      "runtimeExists": true,
+      "manifestStatus": "ready_not_placed"
+    },
+    {
+      "manifest": "assets/image/OceanReady/manifest.json",
+      "assetKey": "driftwood",
+      "source": "assets/image/OceanReady_driftwood_top_20261005123027.png",
+      "runtimePath": "assets/image/OceanReady/driftwood.png",
+      "sourceExists": true,
+      "runtimeExists": true,
+      "manifestStatus": "ready_not_placed"
+    },
+    {
+      "manifest": "assets/image/OceanReady/manifest.json",
+      "assetKey": "sardine",
+      "source": "assets/image/OceanReady_sardine_top_20261005123025.png",
+      "runtimePath": "assets/image/OceanReady/sardine.png",
+      "sourceExists": true,
+      "runtimeExists": true,
+      "manifestStatus": "ready_not_placed"
+    }
+  ],
+  "makerRemoteMappingsByTask": {
+    "ART-W1-01": {
+      "reportPath": "outputs/art-wave1/ART-W1-01/REPORT.md",
+      "makerPackageVersion": "@taptap/maker 0.0.36",
+      "makerRemoteMappings": [
+        "https://tapcode-sce.spark.xd.com/tapcode-images/c9dbb3f4-290d-4164-a8a7-e8ec36aff6d7.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/def1e3a2-cda4-452e-a854-7e946a66891b.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/67817391-952f-4465-8e36-9fcd36720b94.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/bb739b37-379a-4e66-a0f8-d9f933ec88f6.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/c6e6c763-caf8-418c-8845-c2babb80c876.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/6e0e3605-82f7-43a9-b0e2-373da8fa4c65.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/e4d8e172-3d69-4dea-82e0-997ebf80ad73.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/84a70abd-0e37-49b8-9d6f-ff20c39f6bf9.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/9ec24ab3-9379-490a-93a7-ce249a2d57fa.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/644d995e-b451-44f8-81fd-2434722528be.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/705a368a-37ed-4aaf-b583-e59371f82b02.png"
+      ]
+    },
+    "ART-W1-02": {
+      "reportPath": "outputs/art-wave1/ART-W1-02/ART-W1-02_资产报告.md",
+      "makerPackageVersion": "@taptap/maker 0.0.36",
+      "makerRemoteMappings": []
+    },
+    "ART-W1-03": {
+      "reportPath": "outputs/art-wave1/ART-W1-03/REPORT.md",
+      "makerPackageVersion": "@taptap/maker 0.0.36",
+      "makerRemoteMappings": []
+    },
+    "ART-W1-04": {
+      "reportPath": "outputs/art-wave1/ART-W1-04/ART-W1-04_美术资产交付报告.md",
+      "makerPackageVersion": "@taptap/maker 0.0.36",
+      "makerRemoteMappings": [
+        "https://tapcode-sce.spark.xd.com/tapcode-images/0000b505-9fca-4a77-8762-9c2aa10245df.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/7f3a40cd-51a4-4012-a920-abb720e8305d.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/b99d4765-9454-47cc-ad1e-c90f01f85cb7.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/44f0fc41-4f0f-48ae-8510-2189ecaaef1b.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/c0f47142-a3f8-43ed-88e2-d451dacdaef1.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/3b65bd20-3ce3-461f-8060-7ed96760830b.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/3b1bff2d-dd36-4cc4-9797-fa4556e66480.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/0c66e427-603f-436f-9c7e-a6481982e90e.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/2cfe5699-cce6-41c7-b388-962b277f8df5.png",
+        "https://tapcode-sce.spark.xd.com/tapcode-images/fde10bf5-1136-43f9-94fa-4bc79eaf4175.png"
+      ]
+    },
+    "ART-W1-05": {
+      "reportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md",
+      "historicalReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_report.md",
+      "makerPackageVersion": null,
+      "makerRemoteMappings": [],
+      "remotePreviewMapping": "Final report contains no Maker preview URLs; do not infer a URL."
+    }
+  },
+  "currentTaskState": {
+    "ART-W1-05": {
+      "stage": "final_report_authoritative",
+      "reportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_final_report.md",
+      "historicalReportPath": "outputs/art-wave1/ART-W1-05/ART-W1-05_report.md",
+      "historyNote": "Earlier partial report records an attempted generation rejected; final_report.md supersedes it and documents 11 successful Maker-generated candidates plus 3 reused assets.",
+      "generatedCandidateCount": 11,
+      "reusedCandidateCount": 3,
+      "makerPackageVersion": "not stated in final report",
+      "generatedFilesHaveMetaSidecars": false,
+      "assetsImageResidualCount": 0
+    }
+  },
+  "scopeNotes": [
+    "ART-W1-05 的 current stage 取 final_report.md；历史 partial report 保留为历史，不能用来覆盖 final 的 11 张生成事实。"
+  ]
+}

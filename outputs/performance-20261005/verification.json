@@ -1,0 +1,40 @@
+{
+  "reportedChecks": 496.0,
+  "remoteBuildPerformed": false,
+  "sourceFiles": [
+    {
+      "path": "scripts/Ocean/Projection.lua",
+      "sha256": "04730EF60D0E6D77791F2219B9233E2A73D49EFC4AA4E7700FEBC7A2424961F4"
+    },
+    {
+      "path": "scripts/Ocean/ProjectedGeometry.lua",
+      "sha256": "402131290362D4E4C2C9C4DE8218D424C61F239EBDDC4C90F68826C0858C61F8"
+    },
+    {
+      "path": "scripts/Ocean/SeaViewArt.lua",
+      "sha256": "D3CAD53D926C2563B82818EC91FC595E961AE1F5B98FEE47259E0E541DF09AF4"
+    },
+    {
+      "path": "scripts/Gameplay/HUDPresentation.lua",
+      "sha256": "2FD4B276D8CE18F03582940229A80CB9DC11048DFAE36B523807DEF39FBEE2CE"
+    },
+    {
+      "path": "scripts/Tests/SeaHorizonOcclusionTests.lua",
+      "sha256": "571479E8CB727E6628681AEDE6E5108E63E01839FBF933ABCE7528EF1C14D20F"
+    },
+    {
+      "path": "scripts/Tests/Circle1HUDReviewTests.lua",
+      "sha256": "DF08A5AD733A082B0A69CAA3EBEC519E0FF39C5007D1D7770BEE2ED8279F7D81"
+    }
+  ],
+  "lspErrors": 0,
+  "nativeFpsVerified": false,
+  "suites": 53,
+  "guiVerified": false,
+  "lspWarnings": 158,
+  "generatedAt": "2026-10-05T07:13:27.4687845+08:00",
+  "lspFiles": 29,
+  "vectorScenarios": 12,
+  "passing": 53,
+  "project": "C:\\codex\\taptap-sea"
+}
