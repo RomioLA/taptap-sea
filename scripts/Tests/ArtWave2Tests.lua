@@ -78,7 +78,9 @@ function Tests.Run(recorder)
         assert(bounds and bounds.width > 0 and bounds.height > 0)
         local used = {}
         for _, call in ipairs(planeCalls) do used[call.name] = true end
-        assert(used.island and used.foam_ring, "base island and shore foam layers were not requested")
+        assert(used.island, "base island layer was not requested")
+        assert(not used.foam_ring,
+            "shore foam was removed (2026-10-18 user feedback) but a foam layer was requested")
         assert(used.hill_sand or used.hill_grass, "hill decor layer was not requested")
         assert(used.tree_palm or used.tree_round, "tree decor layer was not requested")
         assert(island.position.x == 0 and island.position.y == 0 and island.radius == 20)
@@ -132,7 +134,7 @@ function Tests.Run(recorder)
         local seen, planes = {}, {}
         for _, name in ipairs(order) do seen[name] = true end
         for _, call in ipairs(planeCalls) do planes[call.name] = true end
-        assert(planes.island and planes.foam_ring and (planes.hill_sand or planes.hill_grass))
+        assert(planes.island and not planes.foam_ring and (planes.hill_sand or planes.hill_grass))
         assert(not seen.island and not seen.boat, "island/boat should not use complete PNG sprites")
         assert(seen.splash and seen.gull_dive and seen.underwater)
         order = {}

@@ -171,8 +171,8 @@ local Config = {
         cloudShadowDriftMps = 0.55, cloudShadowRadiusMeters = 24,
         fogCount = 10, fogOpacity = 46, fogDriftMps = 0.30,
         fogRadiusMeters = 22, fogNearOpacityScale = 0.12 },
-    shoreFoam = { enabled = true, bubbleCount = 36, ringRatio = 1.0,
-        bubbleRadiusMeters = 0.30, pulsePeriodSec = 3.2 },
+    -- shoreFoam 键已移除（2026-10-18 真机反馈岛外围白色泡沫观感不佳，全体岛屿
+    -- 移除泡沫渲染；SurfaceEffects.ShoreFoamArc 数学函数保留供契约直测）。
     -- Remote STEP-5 visual, confirmed by the planning workbook's night-visual rule.
     nightOverlay = { 10, 22, 48, 190 },
     background = { 15, 91, 125, 255 }, wave = { 109, 207, 216, 145 },

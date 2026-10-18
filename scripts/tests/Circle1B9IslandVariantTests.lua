@@ -4,15 +4,18 @@
 -- 「做实体体积和对应岛屿素材渲染接入」。落地口径：
 -- Config.world.fixedIslands 独立清单 + World:Init kind="scenery" + blocking=true
 -- （实体阻挡，进 blockingList，island_01/02 同构；A2 冻结契约数 kind=="fixed" 不变）
--- + ISLAND_VARIANTS 变体数据；渲染=贴图优先（contentId 即 catalog 条目名走 Plane
--- 世界锚定底图）、加载失败回退变体矢量轮廓（贴图成功时矢量丘/树/石/柱抑制）。
+-- + ISLAND_VARIANTS 变体数据；渲染=竖幅公告板优先（2026-10-18 真机二轮：Plane
+-- 平铺呈漂浮贴图块被否决，改 Upright——contentId 即 catalog 条目名，底沿坐岛心、
+-- 高度=clamp(r*0.55, 2.6, 6.0)）、加载失败回退变体矢量轮廓（立牌成功时矢量
+-- 丘/树/石/柱抑制）。
 -- 守护契约：
 --   1) 注册与冻结：6 岛全部以 kind="scenery"+blocking=true 注册且 contentId 防重登记；
 --      冻结契约不受影响（fixedObjects 双岛、kind=="fixed" 计数不变）；blockingList
 --      含全部六岛（实体体积）；
---   2) 贴图优先：绘制时以 contentId 名调用 Plane 恰一次，且矢量植被被抑制
---      （nvgFill 低于兜底路径）；
---   3) 矢量兜底：贴图加载失败时 Plane 仍尝试恰一次，矢量填充 ≥ 镜像布点下界；
+--   2) 立牌优先：绘制时以 contentId 名调用 Upright 恰一次（位置=岛心、高度口径
+--      锚定），零 Plane 调用（防回退平铺），且矢量植被被抑制（nvgFill 低于兜底）；
+--   3) 矢量兜底：立牌加载失败时 Upright 仍尝试恰一次，零 Plane 调用
+--      （不回退 island.png），矢量填充 ≥ 镜像布点下界；
 --   4) 轮廓分量：nvgFill 下界 = outline 多边形数 + land + hills + trees + rocks + pillar
 --      （镜像 ISLAND_VARIANTS 数据，布点漂移即红）；
 --   5) 礁石群：5 个子多边形各自独立成岸块（无 land），beginPath 下界 10；
@@ -99,17 +102,23 @@ local function makeRuntime(departure)
     return runtime
 end
 
--- 记录 ImageArt.Plane 调用；result 控制返回值（headless 无图，false=加载失败走矢量）。
-local function withPlaneRecorder(result, fn)
+-- 桩 ImageArt.Upright（2026-10-18 真机二轮：变体岛贴图由 Plane 平铺改竖幅公告板）
+-- 与 ImageArt.Plane：uprightResult 控制 Upright 返回值（headless 无图，false=加载
+-- 失败走矢量兜底）；Plane 恒 false（变体岛不应有任何平面贴图，防回退平铺）。
+local function withBillboardRecorder(uprightResult, fn)
     local calls = {}
-    local originalPlane = ImageArt.Plane
+    local originalPlane, originalUpright = ImageArt.Plane, ImageArt.Upright
     ImageArt.Plane = function(ctx, name, movement, origin, length, width, heading, altitude, alpha)
-        calls[#calls + 1] = { name = name, x = origin.x, y = origin.y,
-            length = length, width = width, heading = heading, altitude = altitude }
-        return result
+        calls[#calls + 1] = { mode = "plane", name = name }
+        return false
+    end
+    ImageArt.Upright = function(ctx, name, movement, position, worldHeight, alpha)
+        calls[#calls + 1] = { mode = "upright", name = name, x = position.x, y = position.y,
+            height = worldHeight, alpha = alpha }
+        return uprightResult
     end
     local ok, err = pcall(fn)
-    ImageArt.Plane = originalPlane
+    ImageArt.Plane, ImageArt.Upright = originalPlane, originalUpright
     if not ok then error(err) end
     return calls
 end
@@ -130,10 +139,10 @@ local function islandEntity(entry)
     }
 end
 
--- 变体岛矢量绘制（贴图恒失败）：返回 Plane 调用表；nvg 计数经 recorder 读取。
+-- 变体岛矢量绘制（立牌加载失败）：返回 Upright/Plane 调用表；nvg 计数经 recorder 读取。
 local function drawVariantIsland(entry)
     local runtime = makeRuntime(vantageOf(entry))
-    return withPlaneRecorder(false, function()
+    return withBillboardRecorder(false, function()
         SeaViewArt.Island({}, runtime.movement, islandEntity(entry), 0, 0)
     end)
 end
@@ -211,46 +220,73 @@ function Tests.Run(recorder)
         end
     end)
 
-    check("variant_islands_draw_texture_plane_first", function()
-        -- 素材渲染接入（2026-10-18 晚）：贴图优先——以 contentId 名走 Plane 世界
-        -- 锚定底图；贴图成功时矢量丘/树/石/柱被抑制（fills 低于兜底路径）。
+    check("variant_islands_draw_billboard_upright_first", function()
+        -- 素材渲染接入（2026-10-18 真机二轮）：变体岛贴图走竖幅公告板投影
+        -- （Upright，与 sign_* 岛饰同口径）——contentId 名、底沿坐岛心、
+        -- 高度=clamp(r*0.55, 2.6, 6.0)；零 Plane 调用（防回退平铺）；立牌成功时
+        -- 矢量丘/树/石/柱被抑制（fills 低于兜底路径）。
+        local minHeight, maxHeight = 2.6, 6.0
         for _, variant in ipairs(VARIANT_MIRROR) do
             local entry = assert(fixedIsland(variant.contentId), variant.contentId .. " missing")
             recorder.reset()
-            local textureCalls = withPlaneRecorder(true, function()
+            local textureCalls = withBillboardRecorder(true, function()
                 local runtime = makeRuntime(vantageOf(entry))
                 SeaViewArt.Island({}, runtime.movement, islandEntity(entry), 0, 0)
             end)
-            assert(countCalls(textureCalls, variant.contentId) == 1,
-                variant.contentId .. " must draw its texture plane exactly once, got "
-                    .. countCalls(textureCalls, variant.contentId))
-            local textureFills
+            local uprights, planes = {}, 0
+            for _, call in ipairs(textureCalls) do
+                if call.mode == "upright" then uprights[#uprights + 1] = call
+                elseif call.mode == "plane" then planes = planes + 1 end
+            end
+            assert(#uprights == 1,
+                variant.contentId .. " must draw exactly one upright billboard, got " .. #uprights)
+            local billboard = uprights[1]
+            assert(billboard.name == variant.contentId,
+                variant.contentId .. " billboard must use its catalog name, got " .. billboard.name)
+            assert(billboard.x == entry.position.x and billboard.y == entry.position.y,
+                variant.contentId .. " billboard must anchor at the island center")
+            local expectedHeight = math.max(minHeight,
+                math.min(maxHeight, entry.radius * 0.55))
+            assert(math.abs(billboard.height - expectedHeight) < 1e-9,
+                variant.contentId .. " billboard height drift: " .. billboard.height
+                    .. " != " .. expectedHeight)
+            assert(planes == 0,
+                variant.contentId .. " must never draw a flat texture plane, got " .. planes)
             recorder.reset()
-            withPlaneRecorder(true, function()
+            withBillboardRecorder(true, function()
                 local runtime = makeRuntime(vantageOf(entry))
                 SeaViewArt.Island({}, runtime.movement, islandEntity(entry), 0, 0)
             end)
-            textureFills = recorder.callCount("nvgFill")
+            local textureFills = recorder.callCount("nvgFill")
             local vectorEntry = assert(fixedIsland(variant.contentId), variant.contentId .. " missing")
             recorder.reset()
             drawVariantIsland(vectorEntry)
             local vectorFills = recorder.callCount("nvgFill")
-            assert(textureFills < vectorFills,
-                variant.contentId .. " vector decor must be suppressed when the texture draws: "
-                    .. textureFills .. " >= " .. vectorFills)
+            -- 抑制量下界：立牌路径比兜底至少少 hills+trees+rocks+pillar 个 fill
+            -- （每树/丘实际产主体+高光多个 fill，只做下界；reefcluster 无植被则 0）。
+            local suppressedExpected = variant.hills + variant.trees + variant.rocks + variant.pillar
+            assert(vectorFills - textureFills >= suppressedExpected,
+                variant.contentId .. " billboard must suppress its vector decor: delta "
+                    .. (vectorFills - textureFills) .. " < " .. suppressedExpected)
         end
     end)
 
     check("variant_islands_fallback_to_vector_on_load_failure", function()
-        -- 贴图加载失败回退变体矢量轮廓（与映射岛的「贴图优先/矢量兜底」同构；
-        -- 桩环境无图即此路径）。Plane 以 contentId 尝试恰一次（不回退 island.png）。
+        -- 立牌加载失败回退变体矢量轮廓（与映射岛的「贴图优先/矢量兜底」同构；
+        -- 桩环境无图即此路径）。Upright 以 contentId 尝试恰一次，且零 Plane 调用
+        -- （不回退 island.png，也不回退平铺）。
         for _, variant in ipairs(VARIANT_MIRROR) do
             local entry = assert(fixedIsland(variant.contentId), variant.contentId .. " missing")
             recorder.reset()
             local calls = drawVariantIsland(entry)
             assert(countCalls(calls, variant.contentId) == 1,
-                variant.contentId .. " fallback must attempt its texture plane once, got "
+                variant.contentId .. " fallback must attempt its upright billboard once, got "
                     .. countCalls(calls, variant.contentId))
+            for _, call in ipairs(calls) do
+                assert(call.mode ~= "plane",
+                    variant.contentId .. " fallback must not draw any flat plane, got "
+                        .. tostring(call.name))
+            end
             assert(recorder.callCount("nvgFill") > 0,
                 variant.contentId .. " vector fallback added no fills")
         end

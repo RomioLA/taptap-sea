@@ -712,12 +712,12 @@ end
 -- ImageArt.Upright 竖幅公告板：世界锚点+深度缩放，高度直接沿用矢量版口径
 -- （丘峰 min(4.4, r*0.27)、树高 clamp(r*0.30, 2.2, 5.4)），底沿坐世界锚点，
 -- 宽度按源图内容宽高比推导——正视图素材无需重绘。
--- 泡沫环：内容带内/外缘=0.66/0.84（半画幅，实测径向 alpha）。令外缘落在岸线外
--- 1.24r：画幅半边=1.24r/0.84，内缘 0.974r 恰好被岛体贴图边缘（r）盖住，只露岸线外；
--- alpha 0.85→0.5（原值盖住岛贴图有机岸线呈"贴纸感"），呼吸弧 6→12 段保留"活"感。
+-- 泡沫环（foam_ring 贴图 + 程序弧）：2026-10-18 真机反馈「所有岛屿外围的白色
+-- 泡沫效果不好」→ 全体岛屿移除。drawShoreFoam 与 FOAM_RING_* 常数一并下线；
+-- SurfaceEffects.ShoreFoamArc 数学函数保留（SeaMotionEffectsTests 契约直测），
+-- 立牌口径常数见下（变体岛贴图竖幅公告板高度）。
 local HILL_PEAK_MAX, HILL_PEAK_RATIO = 4.4, 0.27
-local FOAM_RING_BAND_OUTER, FOAM_RING_REACH = 0.84, 1.24
-local FOAM_RING_ALPHA, FOAM_RING_ARC_MAX = 0.5, 12
+local VARIANT_BILLBOARD_RATIO, VARIANT_BILLBOARD_MIN, VARIANT_BILLBOARD_MAX = 0.55, 2.6, 6.0
 
 local function drawHill(ctx, movement, center, radius, bounds, airMix,shapes,frame,imageName)
     if imageName and radius >= 3 then
@@ -875,38 +875,6 @@ local function drawTree(ctx, movement, base, heightMeters, bounds, paletteShift,
     fillPolygon(ctx,projected,rgba(leafColor,nil,nil,airMix))
     fillPolygon(ctx,Geometry.ProjectPolygon(movement,shape.highlight,nil,nil,frame),
         rgba({142,165,132,245},nil,nil,airMix))
-end
-
-local function drawShoreFoam(ctx, movement, center, shorelineRadius, time, bounds,frame)
-    local settings = (Config.visual and Config.visual.shoreFoam) or {}
-    if settings.enabled == false then return end
-    local count = clamp(math.floor(settings.bubbleCount or 24), 1, 64)
-    local baseOpacity = clamp(settings.opacity or 165, 0, 255)
-    -- 方案 A（2026-10-16）：静态泡沫环外移到岸线外（内容带外缘 0.84 半画幅 → 1.24r），
-    -- 内缘 0.974r 被岛体贴图边缘盖住只露岸线外；alpha 0.5；呼吸弧 12 段提供"活"感，
-    -- 加载失败则全矢量（count 保持 settings.bubbleCount）。
-    if ImageArt.Plane(ctx, "foam_ring", movement, center,
-        shorelineRadius * 2 * FOAM_RING_REACH / FOAM_RING_BAND_OUTER,
-        shorelineRadius * 2 * FOAM_RING_REACH / FOAM_RING_BAND_OUTER,
-        0, 0, FOAM_RING_ALPHA) then
-        count = math.min(count, FOAM_RING_ARC_MAX)
-    end
-    for index = 1, count do
-        local arc = SurfaceEffects.ShoreFoamArc(center, shorelineRadius, index, count, time, settings)
-        if arc and arc.strength > 0.02 and Geometry.WorldBoundsVisible(movement,arc.points,0) then
-            local alpha=math.floor(baseOpacity*arc.strength+.5)
-            local width={meters=arc.strokeWidthMeters,minPixels=.65,maxPixels=1.9}
-            local tint=nvgRGBA(239,250,246,alpha)
-            for pointIndex=1,#arc.points-1 do
-                local _,ax,ay,bx,by=Geometry.StrokeWorldLine(ctx,movement,
-                    arc.points[pointIndex],arc.points[pointIndex+1],tint,width,0,frame)
-                if ax and bx then
-                    includeScreenPoint(bounds,{x=ax,y=ay},1.2)
-                    includeScreenPoint(bounds,{x=bx,y=by},1.2)
-                end
-            end
-        end
-    end
 end
 
 -- C2（2026-10-17）：海面组件渲染入口（OceanComponents 藏品：coast_base/reef_rocks 等
@@ -1111,23 +1079,30 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     -- 走 Plane（懒加载+LOD）而非 Sprite（严格 IsLoaded，SeaDebug 切换变体会漏绘）。
     -- 2026-10-18 真机验收：映射岛（ISLAND_BASE_TEXTURES）以 oblique 底图（海岸/礁石）
     -- 替代 island.png 作岛体底图；底图加载失败回退 island.png，再失败走矢量兜底。
-    -- 2026-10-18 晚（用户「对应岛屿素材渲染接入」）：变体岛贴图从备用转正——
-    -- contentId 即 catalog 条目名（island_peak_v1 等 6 条），走同一 Plane 底图
-    -- 路径（世界锚定+内容比对齐+懒加载+LOD）；加载失败不回退 island.png（形态
-    -- 完全不同），直接回退变体矢量轮廓（贴图优先/矢量兜底与映射岛同构）。
+    -- 2026-10-18 晚（用户「对应岛屿素材渲染接入」）：变体岛贴图从备用转正。
+    -- 2026-10-18 真机二轮反馈（红框截图）：变体岛贴图走 Plane 世界平面平铺呈
+    -- 「漂浮贴图块」观感，与 oblique 独立投放同病——现改竖幅公告板投影
+    -- （ImageArt.Upright，与 sign_* 岛饰/丘/树同一投影口径）：contentId 即
+    -- catalog 条目名，底沿坐岛心、高度按岛半径比例 clamp，加载失败回退变体
+    -- 矢量轮廓（不回退 island.png，形态完全不同）。映射岛（island_01/02）
+    -- 维持 Plane 底图口径（用户前轮亲定，本批不涉及）。
     local baseName = ISLAND_BASE_TEXTURES[entity.contentId or ""]
-        or (variant and entity.contentId or nil)
-    local canvasLength, canvasWidth = ImageArt.ContentPlaneSize(baseName or "island", radius * 2)
+    local canvasLength, canvasWidth
     local hasImage = false
-    if canvasLength then
-        hasImage = ImageArt.Plane(ctx, baseName or "island", movement, center,
-            canvasLength, canvasWidth, 0, 0)
-    end
-    if baseName and not hasImage and not variant then
-        canvasLength, canvasWidth = ImageArt.ContentPlaneSize("island", radius * 2)
+    -- 变体岛零 Plane（贴图走 Upright 立牌，见下方 variantBillboard 段）；
+    -- 映射岛 Plane 底图、失败回退 island.png；其余岛走 island.png Plane。
+    if not variant then
+        canvasLength, canvasWidth = ImageArt.ContentPlaneSize(baseName or "island", radius * 2)
         if canvasLength then
-            hasImage = ImageArt.Plane(ctx, "island", movement, center,
+            hasImage = ImageArt.Plane(ctx, baseName or "island", movement, center,
                 canvasLength, canvasWidth, 0, 0)
+        end
+        if baseName and not hasImage then
+            canvasLength, canvasWidth = ImageArt.ContentPlaneSize("island", radius * 2)
+            if canvasLength then
+                hasImage = ImageArt.Plane(ctx, "island", movement, center,
+                    canvasLength, canvasWidth, 0, 0)
+            end
         end
     end
     PerfProbe.Sample("islandPng", probePngStop())
@@ -1152,11 +1127,19 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
             end
         end
     end
-    drawShoreFoam(ctx, movement, center, radius, finite(time) and time or 0, bounds,frame)
-
-    -- 变体岛贴图成功时跳过矢量丘/树/散石/石柱（PNG 完整顶视图自带，避免与贴图
-    -- 内容叠加错位）；泡沫为水域效果保留。非变体岛（映射岛）维持贴图+矢量丘树现状。
-    local vectorDecorSuppressed = variant and hasImage
+    -- 变体岛贴图=竖幅公告板（Upright，与 sign_* 岛饰/丘/树同一投影口径）：
+    -- 底沿坐岛心，高度按岛半径比例 clamp（r=9→4.95m、r=4→2.6m）；成功时抑制
+    -- 矢量丘/树/散石/石柱（贴图完整顶视图自带，避免叠加错位）；加载失败回退
+    -- 全矢量轮廓。俯视岸块保留作水面基座（实体感，与映射岛贴图+矢量并存同构）。
+    -- 2026-10-18 真机反馈：岛外围白色泡沫观感不佳，全体岛屿移除（drawShoreFoam
+    -- 调用与 foam_ring 贴图一并下线；ShoreFoamArc 数学函数保留由 SeaMotionEffects
+    -- 契约直测）。
+    local variantBillboard = false
+    if variant then
+        variantBillboard = ImageArt.Upright(ctx, entity.contentId, movement, center,
+            clamp(radius * VARIANT_BILLBOARD_RATIO, VARIANT_BILLBOARD_MIN, VARIANT_BILLBOARD_MAX), 1)
+    end
+    local vectorDecorSuppressed = variant and variantBillboard
     if not vectorDecorSuppressed then
         drawHill(ctx, movement, center, radius, bounds, airMix,geometry.hills,frame,geometry.hillName)
         for _,tree in ipairs(geometry.trees) do
@@ -1165,7 +1148,7 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     end
     -- 2026-10-18：变体岛散石与中央石柱（stele）。rocks 为归一化布点（乘 r），
     -- pillar 仅 island_stele_v1 装配；纯装饰，零碰撞/半径/玩法改动。
-    if variant and not hasImage then
+    if variant and not vectorDecorSuppressed then
         for _, rock in ipairs(geometry.rocks or {}) do
             drawIslandRock(ctx, movement, center, radius, rock, bounds, airMix, frame)
         end
