@@ -143,9 +143,11 @@ local Config = {
     -- 波纹平铺层（2026-10-18 C4，用户提供水彩波纹纹理 sea_ripple_overlay）：
     -- 屏幕空间双向平铺（imagePattern REPEATX|REPEATY），叠加于海面底图之上，
     -- 替换程序 crest marks（贴图优先、加载失败回退 crests，零回归）。
-    -- alpha 为叠加不透明度（纹理近白，偏低值即可显纹）；tileScale 为瓦片缩放
-    -- （1=资产原生 512×288，调大=波纹更稀）。
-    seaRipple = { enabled = true, alpha = 0.28, tileScale = 1.0 },
+    -- alpha 为叠加不透明度；tileScale 为瓦片缩放（1=资产原生 512×288，调大=波纹更稀）。
+    -- 2026-10-18 晚修复：素材原为 RGB 无 alpha（白底不透明平铺→海面发白雾、
+    -- 波纹不可见），已去白底提取浪花白沫 alpha 通道（RGBA，.tmp/ripple_alpha_fix.py，
+    -- 接缝保持 0.0）；素材自持透明度后 0.28 压雾保守值上调 0.5 恢复波纹可见度。
+    seaRipple = { enabled = true, alpha = 0.5, tileScale = 1.0 },
     -- 天空图图层（2026-10-18 读海美术接入）：屏幕空间满幅天空贴图，绘于背景渐变
     -- 之上、日月云鸟之下（方案 B：不依赖 scissor，零回归）。昼夜相位复用 seaSurface
     -- 的 duskFrom/duskSpan/nightFade 映射（SkyFrame 委托 SeaSurfaceFrame，仅改写键名
