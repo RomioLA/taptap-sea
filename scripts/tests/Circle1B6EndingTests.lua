@@ -20,6 +20,7 @@ end
 -- 结算到指定天：从第 fromDay 天结束结算（港口内）。
 local function settleDay(fixture, fromDay)
     fixture.loop.player.day = fromDay
+    assert(Progress.OnDayStarted(fixture.loop.player))
     local ended, reason = fixture.loop:EndToday()
     assert(ended, reason)
     if reason == "paper_opened" then
@@ -72,6 +73,7 @@ function Tests.Run()
     check("day 7 forced-return settlement also ends the run", function()
         local f = Flow.Fixture({ loadSaved = false })
         f.loop.player.day = 7
+        assert(Progress.OnDayStarted(f.loop.player))
         assert(f.loop:OpenDay7PaperBeforeEnding())
         acknowledgePaper(f.loop)
         -- 夜尽强返路径：ConfirmForcedReturn 需要 forcedReturnPending 状态。

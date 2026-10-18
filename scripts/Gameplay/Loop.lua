@@ -45,6 +45,8 @@ local ProfileStore = require("Gameplay.ProfileStore")
 ---@field options table
 ---@field store table
 ---@field settlementSnapshot table
+---@field endingAchievementsSettled boolean
+---@field endingProfileSaveDispatched boolean
 ---@field saveStatus string
 ---@field lastMessage string
 ---@field shopStock table<string, integer>
@@ -154,6 +156,7 @@ function Loop:ResetState()
     self.settlementSnapshot = {}
     -- T1：第 7 天结算进入结局；NewRun/读档重置。
     self.endingPending, self.endingKind = false, nil
+    self.endingAchievementsSettled, self.endingProfileSaveDispatched = false, false
     self.throwSelection, self.storyDialog, self.scopeEnabled = nil, nil, false
     self.fishingSelectionHintPending = false
     self.scopeSyncError = nil
@@ -505,6 +508,11 @@ function Loop:AcknowledgeActionToast(id)
 end
 
 function Loop:RecognizeLocation(locationId)
+    local story = self.player.story
+    local storyRecord = type(story) == "table" and story.circle1B2 or nil
+    if self.endingPending or (storyRecord and storyRecord.runCompleted == true) then
+        return false, "ending_already_pending"
+    end
     local wasRecognized = self.player:IsRecognized(locationId)
     local marked, markError = self.player:MarkRecognized(locationId)
     if not marked then return false, markError or "recognition_rejected" end
@@ -828,6 +836,7 @@ function Loop:EndToday()
 end
 
 function Loop:ConfirmForcedReturn()
+    if self.endingPending then return false, "ending_already_pending" end
     -- ②③ A6 晚归强返：记录超出宽限后的晚归秒数（用于无强返判定）
     if self.achievements then
         local elapsed = self.clock.phase == "night" and self.clock.elapsed or 0
@@ -876,6 +885,22 @@ function Loop:BeginNewDay()
     if (self.barrel and self.barrel:IsBusy()) or self.storyDialog then return reject("busy") end
     -- 对外只允许由已经确认的结算调用，防止海上绕过处罚/自动存档。
     if not self.settlementPending or self.settlementApplied then return reject("settlement_required") end
+    local finalStoryRecord, finalElderRecord
+    if self.player.day >= Config.clock.maxDay then
+        if self.player.day ~= Config.clock.maxDay then return reject("invalid_run_day") end
+        local paperShown, paperReason = Progress.IsPaperShown(self.player)
+        if paperShown ~= true then return reject(paperReason or "day7_paper_required") end
+        finalStoryRecord = self.player.story and self.player.story.circle1B2
+        if type(finalStoryRecord) ~= "table" or type(finalStoryRecord.runCompleted) ~= "boolean" then
+            return reject("invalid_run_completed")
+        end
+        if finalStoryRecord.runCompleted then return reject("run_already_completed") end
+        finalElderRecord = self.player.elder and self.player.elder.circle1B2
+        if not finalElderRecord
+            or (finalElderRecord.decision ~= "saved" and finalElderRecord.decision ~= "dead") then
+            return reject("elder_decision_pending")
+        end
+    end
     if not self.portPreparedForSettlement then
         local prepared, reason = self:PreparePort("new_day")
         if not prepared then
@@ -890,11 +915,9 @@ function Loop:BeginNewDay()
     -- T1（2026-10-06 用户裁决）：第 7 天结算即本周目结局，不推进到第 8 天。
     -- 两支结局：3 苹果救活（elder.decision=="saved"）=改变结局，否则普通结局。
     -- 结局文案为占位，正式文本按 Q-006 由 B 侧内容生产替换后仅改 HUD 文案。
-    if self.player.day >= Config.clock.maxDay then
-        local paperShown, paperReason = Progress.IsPaperShown(self.player)
-        if paperShown ~= true then return reject(paperReason or "day7_paper_required") end
-        local elderRecord = self.player.elder and self.player.elder.circle1B2
-        self.endingKind = elderRecord and elderRecord.decision == "saved" and "changed" or "normal"
+    if finalStoryRecord then
+        self.endingKind = finalElderRecord.decision == "saved" and "changed" or "normal"
+        finalStoryRecord.runCompleted = true
         self.endingPending = true
         self.settlementApplied = true
         local snapshotOk, snapshot = Diagnostics.Call(
@@ -912,12 +935,7 @@ function Loop:BeginNewDay()
         emit(self, "new_day_preparation", {
             kind = "operation", result = "ending", endingKind = self.endingKind, day = self.player.day,
         })
-        -- ②③ 结局终判：非常规分支（改变结局）+ A6 无强返 + 认知成就终检
-        if self.achievements then
-            if self.endingKind == "changed" then self.achievements:NoteUnusualBranch() end
-            self.achievements:SettleRun()
-        end
-        if self.profileStore then self.profileStore:Save(function() end) end
+
         return true
     end
     local stamina = self:GetNextDayStamina(self.settlementForced)
@@ -977,10 +995,15 @@ local function finishSettlement(self, saved)
     self.saveStatus = saved and "saved" or "skipped"
     self.clock:Resume("settlement")
     -- T1：第 7 天结局结算的提示语不提"下一天"。
-    self.lastMessage = saved and (self.endingPending
+    if saved then
+        self.lastMessage = self.endingPending
             and "本次出海已结束，进度已保存。"
-            or "每日结算已保存，下一天已就绪")
-        or "已跳过本次保存等待，下一天已就绪；未保存进度可能在退出后丢失，已发出的保存请求仍可能稍后写入。"
+            or "每日结算已保存，下一天已就绪"
+    elseif self.endingPending then
+        self.lastMessage = "已跳过终局存档等待；当前结局只保留在内存中，重启后可能恢复此前检查点；已发出的保存请求仍可能稍后写入。"
+    else
+        self.lastMessage = "已跳过本次保存等待，下一天已就绪；未保存进度可能在退出后丢失，已发出的保存请求仍可能稍后写入。"
+    end
     if self.inPort and not self.endingPending then
         if self.player.day == 4 then
             self:OpenDay4ElderFate()
@@ -992,6 +1015,44 @@ local function finishSettlement(self, saved)
         kind = "operation", result = "ready", reason = saved and "saved" or "explicitly_skipped",
         day = self.player.day,
     })
+    return true
+end
+
+local function prepareEndingSettlement(self)
+    if not self.endingPending then return true end
+
+    if not self.endingAchievementsSettled then
+        local ok = Diagnostics.Call("Loop", "ending_achievement_settlement", function()
+            if self.achievements then
+                if self.endingKind == "changed" then self.achievements:NoteUnusualBranch() end
+                self.achievements:SettleRun()
+            end
+        end)
+        if not ok then
+            self.saveStatus = "error"
+            self:SetMessage("终局成就结算暂未完成，可重试。")
+            emit(self, "ending_settlement", {
+                kind = "failure", result = "failed", reason = "achievement_settlement_failed",
+            })
+            return false, "ending_achievement_settlement_failed"
+        end
+        self.endingAchievementsSettled = true
+    end
+
+    if self.profileStore and not self.endingProfileSaveDispatched then
+        local ok = Diagnostics.Call("Loop", "ending_profile_save_call", function()
+            self.profileStore:Save(function() end)
+        end)
+        if not ok then
+            self.saveStatus = "error"
+            self:SetMessage("终局档案保存调用失败，可重试终局结算。")
+            emit(self, "ending_settlement", {
+                kind = "failure", result = "failed", reason = "profile_save_call_failed",
+            })
+            return false, "ending_profile_save_call_failed"
+        end
+        self.endingProfileSaveDispatched = true
+    end
     return true
 end
 
@@ -1019,6 +1080,7 @@ function Loop:ContinueWithoutSaving()
         or (self.saveStatus ~= "saving" and self.saveStatus ~= "error") then
         return false, "no_failed_settlement"
     end
+
     if self.busy then
         if not self.activeRequest or self.activeRequest.kind ~= "settlement_save" then
             return false, "no_failed_settlement"
@@ -1060,6 +1122,8 @@ function Loop:ConfirmSettlement()
         end
         self.settlementSnapshot = snapshot
     end
+    local endingPrepared, endingReason = prepareEndingSettlement(self)
+    if not endingPrepared then return false, endingReason end
     local retrying = self.saveStatus == "error"
     self.busy, self.saveStatus = true, "saving"
     local generation = self.generation
@@ -1109,6 +1173,7 @@ function Loop:ConfirmSettlement()
 end
 
 function Loop:SettleDay()
+    if self.endingPending then return false, "ending_already_pending" end
     if self.achievements then self.achievements:SettleDay() end  -- ②③ A2 单日零空网 / A5 大鱼率 日结
     if not self.inPort then local ok, err = self:ReturnToPort(); if not ok then return false, err end end
     return self:EndToday()
@@ -1215,6 +1280,7 @@ function Loop:Close()
 end
 
 function Loop:LoadSaved(done)
+    if self.endingPending then return false, "ending_already_pending" end
     local autoCancelled, autoCancelError = self:CancelAutoReturn("load_requested")
     if not autoCancelled then return false, autoCancelError or "auto_return_cancel_failed" end
     local contentInvalidated, contentInvalidateError = self:InvalidateWorldContent("stale_generation")
@@ -1282,7 +1348,17 @@ function Loop:LoadSaved(done)
                 end
                 self.generation = self.generation + 1
                 self.player = player
-                Progress.OnDayStarted(self.player)
+                local storyRecord = self.player.story and self.player.story.circle1B2
+                local runCompleted = storyRecord and storyRecord.runCompleted == true or false
+                self.endingPending = runCompleted
+                self.endingAchievementsSettled, self.endingProfileSaveDispatched = runCompleted, runCompleted
+                self.endingKind = nil
+                if runCompleted then
+                    local elderRecord = self.player.elder and self.player.elder.circle1B2
+                    self.endingKind = elderRecord.decision == "saved" and "changed" or "normal"
+                else
+                    Progress.OnDayStarted(self.player)
+                end
                 self.scopeEnabled, self.throwSelection, self.storyDialog = false, nil, nil
                 self.fishingSelectionHintPending = false
                 self:ResetShopStock()
@@ -1296,10 +1372,12 @@ function Loop:LoadSaved(done)
                 self.worldContentFeedbackToken, self.actionToast = nil, nil
                 self.loadStatus, self.saveStatus = "loaded", "saved"
                 self.lastMessage = "已加载每日结算存档"
-                if self.player.day == 4 then
-                    self:OpenDay4ElderFate()
-                elseif self.player.day == 7 then
-                    self:OpenDay7PaperBeforeEnding()
+                if not runCompleted then
+                    if self.player.day == 4 then
+                        self:OpenDay4ElderFate()
+                    elseif self.player.day == 7 then
+                        self:OpenDay7PaperBeforeEnding()
+                    end
                 end
             else ok, data = false, restoreOk and err or player end
         end

@@ -1,0 +1,253 @@
+{
+  "phase": "final",
+  "generatedAt": "2026-10-18T08:31:39.961073+00:00",
+  "project": "C:\\codex\\taptap-sea-worktrees\\WORK-V26-PLAYTEST-FIX-01",
+  "runtimePath": "C:\\codex\\taptap-sea-worktrees\\WORK-V26-PLAYTEST-FIX-01\\.tmp\\circle1-review-runtime",
+  "suiteCount": 1,
+  "suites": [
+    {
+      "name": "SevenDaysRunTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SevenDaysRunTests.lua",
+      "passed": false,
+      "subtestCount": 20,
+      "failures": [
+        {
+          "name": "explicit final skip survives persistent achievement settlement exception",
+          "error": "...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:341: achievement exception must not block explicit skip\nstack traceback:\n\t[C]: in function 'assert'\n\t...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:341: in function <...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:308>\n\t[C]: in function 'xpcall'\n\t...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:1158: in function 'tests.SevenDaysRunTests.Run'",
+          "passed": false
+        },
+        {
+          "name": "explicit final skip survives persistent profile save exception",
+          "error": "...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:388: profile save exception must not block explicit skip\nstack traceback:\n\t[C]: in function 'assert'\n\t...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:388: in function <...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:359>\n\t[C]: in function 'xpcall'\n\t...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:1158: in function 'tests.SevenDaysRunTests.Run'",
+          "passed": false
+        }
+      ],
+      "returned": {
+        "failed": 2,
+        "limits": {
+          "endingContent": "No ending system or ending field is created or inferred by these tests.",
+          "terminalRunPersistence": "Legacy schema-v1 day-seven snapshots without runCompleted conservatively restore as playable because their completion state cannot be distinguished."
+        },
+        "passed": 18,
+        "results": [
+          {
+            "name": "terminal achievement settlement runs once for normal and changed endings",
+            "evidence": {
+              "endings": 2,
+              "terminalSettlements": 2
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "final snapshot exception retries through the same achievement settlement path",
+            "evidence": {
+              "profileSaves": 1,
+              "snapshotAttempts": 2,
+              "achievementSettlements": 1
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "main final save retries and duplicate callbacks do not repeat ending awards",
+            "evidence": {
+              "endingSettlements": 1,
+              "mainSaveAttempts": 2
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "profile save call exception retries without replaying achievements",
+            "evidence": {
+              "profileSaveCalls": 2,
+              "achievementSettlements": 1
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "explicit final skip survives persistent achievement settlement exception",
+            "error": "...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:341: achievement exception must not block explicit skip\nstack traceback:\n\t[C]: in function 'assert'\n\t...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:341: in function <...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:308>\n\t[C]: in function 'xpcall'\n\t...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:1158: in function 'tests.SevenDaysRunTests.Run'",
+            "passed": false
+          },
+          {
+            "name": "explicit final skip survives persistent profile save exception",
+            "error": "...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:388: profile save exception must not block explicit skip\nstack traceback:\n\t[C]: in function 'assert'\n\t...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:388: in function <...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:359>\n\t[C]: in function 'xpcall'\n\t...-V26-PLAYTEST-FIX-01/scripts/tests\\SevenDaysRunTests.lua:1158: in function 'tests.SevenDaysRunTests.Run'",
+            "passed": false
+          },
+          {
+            "name": "partial ending award failure retries without duplicating A4 and settles A6 cognition",
+            "evidence": {
+              "cognition": 3,
+              "A4": true,
+              "A6": true,
+              "markCallsA6": 2
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "new run resets ending settlement guards and completed loads do not re-award",
+            "evidence": {
+              "newRunSettlements": 2,
+              "loadedTerminalAwards": 0
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "normal seven-day cycle reaches a terminal day-seven save without recovery",
+            "evidence": {
+              "endingPending": true,
+              "paperShown": true,
+              "nextDayHooks": 6,
+              "day": 7,
+              "money": 777,
+              "stamina": 63,
+              "maxStamina": 160,
+              "saves": 7
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "completed day-seven snapshots restore both endings and block every gameplay settlement entry",
+            "evidence": {
+              "branches": 2,
+              "gameplayEntriesBlocked": true,
+              "terminalLoads": 2
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "day-seven completion admission rejects invalid final state before port preparation",
+            "evidence": {
+              "rejected": "day7_paper_required",
+              "portPreparationStarted": false
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "schema-one saves without runCompleted stay playable, including day-seven paper checkpoints",
+            "evidence": {
+              "loadedLegacyDays": 1,
+              "missingFieldDefaultsFalse": true,
+              "through": 7,
+              "oldDaySevenPaperMayReplay": true,
+              "oldTerminalStateIndistinguishable": true
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "invalid runCompleted types and terminal state combinations are rejected",
+            "evidence": {
+              "validTerminal": true,
+              "invalidCombinationsRejected": 6
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "unread day-seven entry paper blocks ending until its visible acknowledgement",
+            "evidence": {
+              "paperShown": true,
+              "saveAttempts": 1,
+              "day": 7
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "forced day-seven return after the entry paper was read reaches the same ending without replay",
+            "evidence": {
+              "day": 7,
+              "paperShown": true,
+              "nextDayHooks": 0,
+              "stamina": 41,
+              "saves": 1
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "final save retry reuses the day-seven snapshot and never advances or refreshes",
+            "evidence": {
+              "nextDayHooks": 0,
+              "saveStatus": "saved",
+              "saveAttempts": 2,
+              "day": 7
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "day-six save skip enters playable day seven without final-run state",
+            "evidence": {
+              "endingPending": false,
+              "paperShownBeforeRead": false,
+              "nextDayHooks": 6,
+              "day": 7
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "day-eight save data is rejected intact while a loaded day-seven save remains playable",
+            "evidence": {
+              "invalidDay": 8,
+              "terminalPersistence": "runCompleted distinguishes an unfinished day-seven save; only legacy snapshots missing the marker remain ambiguous",
+              "invalidLoadPreservedPlayer": true,
+              "loadedDaySevenPlayable": true,
+              "loadedDay": 7,
+              "paperShown": true
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "new run resets all run state, retries its initial save, and ignores stale final callbacks",
+            "evidence": {
+              "initialSaveAttempts": 2,
+              "newRunDay": 1,
+              "reloadedDay": 1,
+              "staleFinalCallbackIgnored": true,
+              "initialSaveStatus": "saved",
+              "finalSkipPreservedDaySeven": true,
+              "reset": true
+            },
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "explicitly skipping a failed final save preserves the actual older save",
+            "evidence": {
+              "livePaperShown": true,
+              "oldSavePreserved": true,
+              "day": 7,
+              "endingPending": true,
+              "nextDayHooks": 6,
+              "oldSavedDay": 7,
+              "saveStatus": "skipped"
+            },
+            "error": "",
+            "passed": true
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 26.367
+    }
+  ],
+  "luaVersion": "Lua 5.4",
+  "passedSuiteCount": 0,
+  "failedSuiteCount": 1,
+  "passed": false
+}

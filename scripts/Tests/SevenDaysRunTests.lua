@@ -5,6 +5,7 @@ local Loop = require("Gameplay.Loop")
 local Player = require("Gameplay.PlayerState")
 local Persistence = require("Gameplay.Persistence")
 local Progress = require("Gameplay.Circle1B2Progress")
+local AchievementSystem = require("Gameplay.AchievementSystem")
 
 local Tests = {}
 local PAPER_TEXT = "海边那只木桶还有秘密，快去再探探。"
@@ -63,6 +64,13 @@ local function newLoop(options)
     local store = makeStore()
     options.store = store
     return Loop.New(options), store
+end
+
+local function loadSnapshot(snapshot)
+    local loop, store = newLoop()
+    assert(loop:LoadSaved())
+    store:FinishLoad(1, true, snapshot)
+    return loop, store
 end
 
 local function finishNormalDay(loop, store, day)
@@ -143,7 +151,355 @@ local function daySevenSnapshot()
     return Persistence.Snapshot(player)
 end
 
+local function attachEndingSpies(loop, options)
+    options = options or {}
+    local calls = { unusualBranch = 0, settleRun = 0, profileSave = 0 }
+    local remainingProfileSaveFailures = options.profileSaveFailures or 0
+    loop.achievements = {
+        NoteUnusualBranch = function()
+            calls.unusualBranch = calls.unusualBranch + 1
+        end,
+        SettleRun = function()
+            calls.settleRun = calls.settleRun + 1
+        end,
+    }
+    loop.profileStore = {
+        Save = function(_, done)
+            calls.profileSave = calls.profileSave + 1
+            if remainingProfileSaveFailures > 0 then
+                remainingProfileSaveFailures = remainingProfileSaveFailures - 1
+                error("injected_profile_save_failure")
+            end
+            if done then done(true) end
+        end,
+    }
+    return calls
+end
+
+local function beginFinalSettlement(loop, decision)
+    markDaySeven(loop)
+    local elder = loop.player.elder.circle1B2
+    elder.applesGiven = decision == "saved" and 3 or 0
+    elder.decision = decision
+    assert(loop:EndToday())
+end
+
 local cases = {}
+
+cases[#cases + 1] = {
+    name = "terminal achievement settlement runs once for normal and changed endings",
+    run = function()
+        for _, decision in ipairs({ "dead", "saved" }) do
+            local loop, store = newLoop()
+            local calls = attachEndingSpies(loop)
+            beginFinalSettlement(loop, decision)
+            assert(loop:ConfirmSettlement())
+            eq(loop.endingKind, decision == "saved" and "changed" or "normal")
+            eq(calls.unusualBranch, decision == "saved" and 1 or 0)
+            eq(calls.settleRun, 1)
+            eq(calls.profileSave, 1)
+            eq(loop.endingAchievementsSettled, true)
+            eq(loop.endingProfileSaveDispatched, true)
+            store:FinishSave(1, true)
+            eq(loop:ConfirmSettlement(), false, "completed settlement cannot be replayed")
+            store:FinishSave(1, false, "duplicate callback")
+            eq(calls.unusualBranch, decision == "saved" and 1 or 0)
+            eq(calls.settleRun, 1)
+            eq(calls.profileSave, 1)
+        end
+        return { endings = 2, terminalSettlements = 2 }
+    end,
+}
+
+cases[#cases + 1] = {
+    name = "final snapshot exception retries through the same achievement settlement path",
+    run = function()
+        local loop, store = newLoop()
+        local calls = attachEndingSpies(loop)
+        beginFinalSettlement(loop, "saved")
+        local originalSnapshot = Persistence.Snapshot
+        local failuresRemaining = 1
+        Persistence.Snapshot = function(player)
+            if failuresRemaining > 0 then
+                failuresRemaining = failuresRemaining - 1
+                error("injected_final_snapshot_failure")
+            end
+            return originalSnapshot(player)
+        end
+        local callOk, accepted, reason = pcall(loop.ConfirmSettlement, loop)
+        Persistence.Snapshot = originalSnapshot
+        assert(callOk, accepted)
+        eq(accepted, false)
+        eq(reason, "ending_snapshot_failed")
+        eq(loop.endingPending, true)
+        eq(loop.settlementApplied, true)
+        eq(loop.settlementSnapshot, nil)
+        eq(calls.unusualBranch, 0)
+        eq(calls.settleRun, 0)
+        eq(calls.profileSave, 0)
+        eq(#store.saves, 0)
+
+        assert(loop:ConfirmSettlement(), "snapshot retry should prepare final awards and save")
+        eq(calls.unusualBranch, 1)
+        eq(calls.settleRun, 1)
+        eq(calls.profileSave, 1)
+        eq(#store.saves, 1)
+        store:FinishSave(1, true)
+        eq(loop.settlementPending, false)
+        return { snapshotAttempts = 2, achievementSettlements = calls.settleRun, profileSaves = calls.profileSave }
+    end,
+}
+
+cases[#cases + 1] = {
+    name = "main final save retries and duplicate callbacks do not repeat ending awards",
+    run = function()
+        local loop, store = newLoop()
+        local calls = attachEndingSpies(loop)
+        beginFinalSettlement(loop, "dead")
+        assert(loop:ConfirmSettlement())
+        eq(calls.settleRun, 1)
+        eq(calls.profileSave, 1)
+        store:FinishSave(1, false, "offline")
+        eq(loop.saveStatus, "error")
+        assert(loop:ConfirmSettlement(), "failed main save retries")
+        eq(#store.saves, 2)
+        same(store.saves[1], store.saves[2], "retry reuses the terminal snapshot")
+        eq(calls.unusualBranch, 0)
+        eq(calls.settleRun, 1)
+        eq(calls.profileSave, 1)
+        store:FinishSave(1, true, "late duplicate success")
+        eq(loop.saveStatus, "saving", "late old callback is ignored")
+        store:FinishSave(2, true)
+        store:FinishSave(2, false, "duplicate callback")
+        eq(loop.saveStatus, "saved")
+        eq(calls.settleRun, 1)
+        eq(calls.profileSave, 1)
+        return { mainSaveAttempts = 2, endingSettlements = calls.settleRun }
+    end,
+}
+
+cases[#cases + 1] = {
+    name = "profile save call exception retries without replaying achievements",
+    run = function()
+        local loop, store = newLoop()
+        local calls = attachEndingSpies(loop, { profileSaveFailures = 1 })
+        beginFinalSettlement(loop, "saved")
+        local accepted, reason = loop:ConfirmSettlement()
+        eq(accepted, false)
+        eq(reason, "ending_profile_save_call_failed")
+        eq(loop.saveStatus, "error")
+        eq(calls.settleRun, 1)
+        eq(calls.profileSave, 1)
+        eq(#store.saves, 0)
+
+        assert(loop:ConfirmSettlement(), "profile save call can retry")
+        eq(calls.unusualBranch, 1)
+        eq(calls.settleRun, 1)
+        eq(calls.profileSave, 2)
+        eq(#store.saves, 1)
+        store:FinishSave(1, true)
+        eq(calls.settleRun, 1)
+        return { profileSaveCalls = calls.profileSave, achievementSettlements = calls.settleRun }
+    end,
+}
+
+cases[#cases + 1] = {
+    name = "explicit final skip survives persistent achievement settlement exception",
+    run = function()
+        local loop, store = newLoop()
+        local markCalls, profileSaveCalls = 0, 0
+        local profile = {
+            HasAchievement = function() return false end,
+            MarkAchievement = function(_, id)
+                if id == "A6" then markCalls = markCalls + 1 end
+                error("injected_persistent_achievement_mark_failure:" .. tostring(id))
+            end,
+            Save = function(_, done)
+                profileSaveCalls = profileSaveCalls + 1
+                error("injected_persistent_profile_save_failure")
+            end,
+        }
+        loop.profileStore = profile
+        loop.knowledge = { GetDomainLevel = function() return 0 end }
+        loop.achievements = AchievementSystem.New({
+            data = require("data.achievements"),
+            knowledge = loop.knowledge,
+            profile = profile,
+            player = loop.player,
+        })
+        beginFinalSettlement(loop, "dead")
+        local accepted, reason = loop:ConfirmSettlement()
+        eq(accepted, false)
+        eq(reason, "ending_achievement_settlement_failed")
+        eq(markCalls, 1)
+        eq(profileSaveCalls, 0)
+        eq(#store.saves, 0)
+        eq(loop.saveStatus, "error")
+        eq(loop.player.story.circle1B2.runCompleted, true)
+        eq(loop.settlementPending, true)
+
+        assert(loop:ContinueWithoutSaving(), "achievement exception must not block explicit skip")
+        eq(markCalls, 1, "skip does not retry the throwing achievement")
+        eq(profileSaveCalls, 0)
+        eq(loop.settlementPending, false)
+        eq(loop.settlementApplied, false)
+        eq(loop.endingPending, true)
+        eq(loop.player.day, 7)
+        eq(loop.player.story.circle1B2.runCompleted, true)
+        eq(loop.saveStatus, "skipped")
+        assert(loop.lastMessage:find("重启后可能恢复此前检查点", 1, true))
+        eq(#store.saves, 0, "skip does not start or claim a main save")
+        eq(loop:ContinueWithoutSaving(), false, "skip can only be accepted once")
+        return { markCalls = markCalls, saveStatus = loop.saveStatus, memoryEndingPreserved = true }
+    end,
+}
+
+cases[#cases + 1] = {
+    name = "explicit final skip survives persistent profile save exception",
+    run = function()
+        local loop, store = newLoop()
+        local calls = { unusualBranch = 0, settleRun = 0, profileSave = 0 }
+        loop.achievements = {
+            NoteUnusualBranch = function()
+                calls.unusualBranch = calls.unusualBranch + 1
+            end,
+            SettleRun = function()
+                calls.settleRun = calls.settleRun + 1
+            end,
+        }
+        loop.profileStore = {
+            Save = function(_, done)
+                calls.profileSave = calls.profileSave + 1
+                error("injected_persistent_profile_save_failure")
+            end,
+        }
+        beginFinalSettlement(loop, "saved")
+        local accepted, reason = loop:ConfirmSettlement()
+        eq(accepted, false)
+        eq(reason, "ending_profile_save_call_failed")
+        eq(calls.unusualBranch, 1)
+        eq(calls.settleRun, 1)
+        eq(calls.profileSave, 1)
+        eq(loop.endingAchievementsSettled, true)
+        eq(loop.endingProfileSaveDispatched, false)
+        eq(#store.saves, 0)
+        eq(loop.saveStatus, "error")
+
+        assert(loop:ContinueWithoutSaving(), "profile save exception must not block explicit skip")
+        eq(calls.unusualBranch, 1, "skip does not repeat ending branch achievement")
+        eq(calls.settleRun, 1, "skip does not repeat run settlement")
+        eq(calls.profileSave, 1, "skip does not retry the throwing profile save")
+        eq(loop.settlementPending, false)
+        eq(loop.settlementApplied, false)
+        eq(loop.endingPending, true)
+        eq(loop.player.day, 7)
+        eq(loop.player.story.circle1B2.runCompleted, true)
+        eq(loop.saveStatus, "skipped")
+        assert(loop.lastMessage:find("重启后可能恢复此前检查点", 1, true))
+        eq(#store.saves, 0, "skip does not start or claim a main save")
+        return { profileSaveCalls = calls.profileSave, saveStatus = loop.saveStatus, memoryEndingPreserved = true }
+    end,
+}cases[#cases + 1] = {
+    name = "partial ending award failure retries without duplicating A4 and settles A6 cognition",
+    run = function()
+        local loop, store = newLoop()
+        local granted, markCalls = {}, {}
+        local failA6 = true
+        local profileSaveCalls = 0
+        local profile = {
+            HasAchievement = function(_, id) return granted[id] == true end,
+            MarkAchievement = function(_, id)
+                markCalls[id] = (markCalls[id] or 0) + 1
+                if id == "A6" and failA6 then
+                    failA6 = false
+                    error("injected_profile_achievement_mark_failure")
+                end
+                granted[id] = true
+            end,
+            Save = function(_, done)
+                profileSaveCalls = profileSaveCalls + 1
+                if done then done(true) end
+            end,
+        }
+        loop.profileStore = profile
+        loop.knowledge = { GetDomainLevel = function() return 99 end }
+        loop.achievements = AchievementSystem.New({
+            data = require("data.achievements"),
+            knowledge = loop.knowledge,
+            profile = profile,
+            player = loop.player,
+        })
+        beginFinalSettlement(loop, "saved")
+        local accepted, reason = loop:ConfirmSettlement()
+        eq(accepted, false)
+        eq(reason, "ending_achievement_settlement_failed")
+        eq(granted.A4, true, "earlier changed-ending award remains granted")
+        eq(granted.A6, nil, "failed profile mark is not cached as granted")
+        eq(loop.achievements:IsUnlocked("A6"), false)
+        eq(#store.saves, 0)
+
+        assert(loop:ConfirmSettlement(), "partial achievement settlement is retried")
+        eq(granted.A4, true, "changed ending A4 is restored")
+        eq(granted.A6, true, "no-force-return final check runs")
+        eq(granted.C1, true)
+        eq(granted.C2, true)
+        eq(granted.C3, true)
+        eq(markCalls.A4, 1, "earlier A4 grant is not repeated")
+        eq(markCalls.A6, 2)
+        eq(markCalls.C1, 1)
+        eq(markCalls.C2, 1)
+        eq(markCalls.C3, 1)
+        eq(profileSaveCalls, 1)
+        store:FinishSave(1, false, "offline")
+        assert(loop:ConfirmSettlement(), "main save retries after award settlement")
+        eq(markCalls.A6, 2)
+        eq(markCalls.C1, 1)
+        eq(markCalls.C2, 1)
+        eq(markCalls.C3, 1)
+        eq(profileSaveCalls, 1)
+        store:FinishSave(2, true)
+        return { A4 = granted.A4, A6 = granted.A6, cognition = 3, markCallsA6 = markCalls.A6 }
+    end,
+}
+
+cases[#cases + 1] = {
+    name = "new run resets ending settlement guards and completed loads do not re-award",
+    run = function()
+        local loop, store = newLoop()
+        local calls = attachEndingSpies(loop)
+        beginFinalSettlement(loop, "dead")
+        assert(loop:ConfirmSettlement())
+        store:FinishSave(1, true)
+        eq(loop.endingAchievementsSettled, true)
+        assert(loop:NewRun())
+        eq(loop.endingPending, false)
+        eq(loop.endingAchievementsSettled, false)
+        eq(loop.endingProfileSaveDispatched, false)
+        store:FinishSave(2, true)
+        beginFinalSettlement(loop, "saved")
+        assert(loop:ConfirmSettlement())
+        eq(calls.unusualBranch, 1)
+        eq(calls.settleRun, 2)
+        eq(calls.profileSave, 3, "NewRun keeps its existing independent profile save")
+        store:FinishSave(3, true)
+
+        local completed = daySevenSnapshot()
+        completed.story.circle1B2.runCompleted = true
+        local loaded, loadedStore = newLoop()
+        local loadedCalls = attachEndingSpies(loaded)
+        assert(loaded:LoadSaved())
+        loadedStore:FinishLoad(1, true, completed)
+        eq(loaded.endingPending, true)
+        eq(loaded.endingAchievementsSettled, true)
+        eq(loaded.endingProfileSaveDispatched, true)
+        eq(loaded:ConfirmSettlement(), false, "completed read cannot start another settlement")
+        eq(loadedCalls.unusualBranch, 0)
+        eq(loadedCalls.settleRun, 0)
+        eq(loadedCalls.profileSave, 0)
+        eq(#loadedStore.saves, 0)
+        return { newRunSettlements = calls.settleRun, loadedTerminalAwards = loadedCalls.settleRun }
+    end,
+}
 
 cases[#cases + 1] = {
     name = "normal seven-day cycle reaches a terminal day-seven save without recovery",
@@ -170,21 +526,25 @@ cases[#cases + 1] = {
         eq(loop.player.stamina, staminaBeforeRead, "paper acknowledgement does not change stamina")
         eq(#store.saves, 6, "paper acknowledgement adds no autosave")
         local before = Persistence.Snapshot(loop.player)
+        eq(before.story.circle1B2.runCompleted, false, "paper acknowledgement is not final settlement")
         assert(loop:EndToday(), "read paper permits final settlement")
         eq(loop.settlementPending, true)
         local finalState = Persistence.Snapshot(loop.player)
         assert(finalState.story.circle1B2.paperShown)
         assert(loop:ConfirmSettlement(), "final save uses the acknowledged paper state")
+        local completedState = Persistence.Snapshot(loop.player)
+        eq(completedState.story.circle1B2.runCompleted, true, "final settlement marks the run complete")
         eq(loop.player.day, 7, "final settlement keeps day seven")
         eq(loop.player.stamina, before.stamina, "final settlement does not restore stamina")
         eq(loop.player.money, before.money, "final settlement keeps money")
         eq(loop.player.maxStamina, before.maxStamina)
         eq(loop.player.boatSpeedLevel, before.boatSpeedLevel)
-        same(Persistence.Snapshot(loop.player), finalState, "live final state")
+        same(Persistence.Snapshot(loop.player), completedState, "live final state")
         eq(#store.saves, 7, "one final snapshot is written")
-        same(store.saves[7], finalState, "day-seven final snapshot")
+        same(store.saves[7], completedState, "day-seven final snapshot")
         eq(store.saves[7].day, 7)
         eq(store.saves[7].story.circle1B2.paperShown, true)
+        eq(store.saves[7].story.circle1B2.runCompleted, true)
         eq(store.saves[7].runEndPending, nil, "runtime ending boundary is not persisted")
         eq(store.saves[7].finished, nil, "no invented completion schema")
         eq(store.saves[7].endingId, nil, "no invented ending identifier")
@@ -208,6 +568,181 @@ cases[#cases + 1] = {
             paperShown = store.saves[7].story.circle1B2.paperShown,
             endingPending = loop.endingPending,
         }
+    end,
+}
+
+cases[#cases + 1] = {
+    name = "completed day-seven snapshots restore both endings and block every gameplay settlement entry",
+    run = function()
+        local variants = {
+            { decision = "dead", apples = 2, ending = "normal" },
+            { decision = "saved", apples = 3, ending = "changed" },
+        }
+        for _, variant in ipairs(variants) do
+            local snapshot = daySevenSnapshot()
+            snapshot.elder.circle1B2.applesGiven = variant.apples
+            snapshot.elder.circle1B2.decision = variant.decision
+            snapshot.story.circle1B2.runCompleted = true
+
+            local restored = assert(Persistence.Restore(copy(snapshot)))
+            eq(restored.day, 7)
+            eq(restored.story.circle1B2.runCompleted, true)
+
+            local loop, store = loadSnapshot(snapshot)
+            eq(loop.player.day, 7)
+            eq(loop.endingPending, true)
+            eq(loop.endingKind, variant.ending)
+            eq(loop.settlementPending, false)
+            eq(loop:GetStoryDialog(), nil, "completed restore does not replay the paper")
+            eq(loop.clock.pauseReasons.port, true, "completed restore keeps the port pause")
+            eq(loop.clock:IsPaused(), true)
+
+            local before = Persistence.Snapshot(loop.player)
+            eq(loop:Ready(), false)
+            eq(loop:Depart(), false)
+            eq(loop:CanStartAction("fishing"), false)
+            eq(loop:EndToday(), false)
+            eq(loop:SettleDay(), false)
+            eq(loop:ConfirmSettlement(), false)
+            eq(loop:ConfirmForcedReturn(), false)
+            eq(loop:BeginNewDay(), false)
+            eq(loop:RecognizeLocation("late-terminal-discovery"), false,
+                "automatic location recognition cannot mutate a completed save")
+            eq(loop:LoadSaved(), false, "terminal state cannot be replaced by an older in-session checkpoint")
+            local clockBefore = loop.clock:GetState()
+            loop:Update(5, function() end)
+            local clockAfter = loop.clock:GetState()
+            eq(clockAfter.phase, clockBefore.phase)
+            eq(clockAfter.elapsed, clockBefore.elapsed)
+            eq(clockAfter.progress, clockBefore.progress)
+            same(Persistence.Snapshot(loop.player), before, "blocked entry points do not change terminal state")
+            eq(#store.saves, 0, "blocked entry points do not save again")
+        end
+        return { branches = 2, terminalLoads = 2, gameplayEntriesBlocked = true }
+    end,
+}
+
+cases[#cases + 1] = {
+    name = "day-seven completion admission rejects invalid final state before port preparation",
+    run = function()
+        local loop = newLoop()
+        loop.player.day = 7
+        assert(Progress.OnDayStarted(loop.player))
+        loop.player.story.circle1B2.paperShown = false
+        loop.settlementPending = true
+        loop.inPort = false
+        local accepted, reason = loop:BeginNewDay()
+        eq(accepted, false)
+        eq(reason, "day7_paper_required")
+        eq(loop.portPreparedForSettlement, false, "invalid paper state must reject before port preparation")
+        eq(loop.endingPending, false)
+        eq(loop.settlementApplied, false)
+        eq(loop.player.story.circle1B2.runCompleted, false)
+        eq(loop.settlementSnapshot and next(loop.settlementSnapshot), nil)
+        return { rejected = reason, portPreparationStarted = false }
+    end,
+}
+
+cases[#cases + 1] = {
+    name = "schema-one saves without runCompleted stay playable, including day-seven paper checkpoints",
+    run = function()
+        for day = 1, 6 do
+            local player = assert(Player.New())
+            player.day = day
+            if day >= 4 then
+                player.elder.circle1B2.applesGiven = 0
+                player.elder.circle1B2.decision = "dead"
+            end
+            local snapshot = Persistence.Snapshot(player)
+            snapshot.story.circle1B2.runCompleted = nil
+            local restored = assert(Persistence.Restore(copy(snapshot)))
+            eq(restored.day, day)
+            eq(restored.story.circle1B2.runCompleted, false)
+
+            local loop = loadSnapshot(snapshot)
+            eq(loop.player.day, day)
+            eq(loop.endingPending, false)
+            eq(loop.player.story.circle1B2.runCompleted, false)
+            local dialog = loop:GetStoryDialog()
+            if dialog then
+                eq(day, 4)
+                eq(dialog.kind, "elder_fate")
+                assert(loop:NotifyStoryShown(dialog.token))
+                assert(loop:CloseStoryDialog())
+            end
+            assert(loop:Ready(), "legacy days one through six remain playable")
+        end
+
+        local paperCheckpoint = daySevenSnapshot()
+        paperCheckpoint.story.circle1B2.paperShown = false
+        paperCheckpoint.story.circle1B2.runCompleted = nil
+        local loop, store = loadSnapshot(paperCheckpoint)
+        eq(loop.player.day, 7)
+        eq(loop.endingPending, false, "an acknowledged but unfinished day-seven checkpoint is not terminal")
+        eq(loop.player.story.circle1B2.runCompleted, false)
+        local paper = assert(loop:GetStoryDialog())
+        eq(paper.kind, "paper", "old unread checkpoint may present the paper again")
+        local itemsBefore = loop.player.inventory:GetItems()
+        local moneyBefore = loop.player.money
+        local applesBefore = loop.player.elder.circle1B2.applesGiven
+        local decisionBefore = loop.player.elder.circle1B2.decision
+        assert(loop:NotifyStoryShown(paper.token))
+        assert(loop:CloseStoryDialog())
+        eq(loop.player.money, moneyBefore)
+        eq(loop.player.elder.circle1B2.applesGiven, applesBefore)
+        eq(loop.player.elder.circle1B2.decision, decisionBefore)
+        same(loop.player.inventory:GetItems(), itemsBefore, "paper replay gives no inventory reward")
+        eq(#store.saves, 0, "paper replay does not add an immediate save")
+        eq(loop.player.story.circle1B2.runCompleted, false)
+        assert(loop:Ready())
+
+        local oldCompletedSnapshot = daySevenSnapshot()
+        oldCompletedSnapshot.story.circle1B2.runCompleted = nil
+        local oldCompletedLoop = loadSnapshot(oldCompletedSnapshot)
+        eq(oldCompletedLoop.endingPending, false,
+            "legacy completed snapshots cannot be distinguished and conservatively remain playable")
+        eq(oldCompletedLoop.player.story.circle1B2.runCompleted, false)
+        assert(oldCompletedLoop:Ready())
+        return { loadedLegacyDays = 1, through = 7, missingFieldDefaultsFalse = true,
+            oldDaySevenPaperMayReplay = true, oldTerminalStateIndistinguishable = true }
+    end,
+}
+
+cases[#cases + 1] = {
+    name = "invalid runCompleted types and terminal state combinations are rejected",
+    run = function()
+        local completed = daySevenSnapshot()
+        completed.story.circle1B2.runCompleted = true
+        assert(Persistence.Restore(copy(completed)), "valid day-seven completion restores")
+
+        local invalid = {
+            { name = "nonboolean", mutate = function(data)
+                data.story.circle1B2.runCompleted = "true"
+            end },
+            { name = "before day seven", mutate = function(data)
+                data.day = 6
+                data.story.circle1B2.paperShown = false
+            end },
+            { name = "paper not confirmed", mutate = function(data)
+                data.story.circle1B2.paperShown = false
+            end },
+            { name = "elder decision pending", mutate = function(data)
+                data.elder.circle1B2.decision = "pending"
+            end },
+            { name = "invalid elder fate", mutate = function(data)
+                data.elder.circle1B2.decision = "unknown"
+            end },
+            { name = "day eight", mutate = function(data)
+                data.day = 8
+            end },
+        }
+        for _, case in ipairs(invalid) do
+            local data = copy(completed)
+            case.mutate(data)
+            local player = Persistence.Restore(data)
+            eq(player, nil, case.name .. " must be rejected")
+        end
+        return { validTerminal = true, invalidCombinationsRejected = #invalid }
     end,
 }
 
@@ -259,6 +794,7 @@ cases[#cases + 1] = {
         eq(loop:GetStoryDialog(), nil, "forced return does not replay the entry paper")
         eq(#store.saves, 1, "forced final settlement saves the acknowledged state")
         assert(store.saves[1].story.circle1B2.paperShown)
+        eq(store.saves[1].story.circle1B2.runCompleted, true)
         eq(loop.player.day, 7)
         eq(loop.player.stamina, 41, "forced final settlement has no next-day half-stamina recovery")
         store:FinishSave(1, true)
@@ -292,7 +828,6 @@ cases[#cases + 1] = {
         configureFinalResources(loop)
         assert(loop:EndToday())
         eq(loop:GetStoryDialog(), nil, "entry paper was already acknowledged")
-        local before = Persistence.Snapshot(loop.player)
         assert(loop:ConfirmSettlement())
         eq(loop.player.day, 7)
         store:FinishSave(1, false, "offline")
@@ -300,7 +835,9 @@ cases[#cases + 1] = {
         eq(loop.settlementPending, true)
         eq(loop.endingPending, true)
         eq(loop.player.day, 7)
-        same(Persistence.Snapshot(loop.player), before, "resources after failed final save")
+        local completedState = Persistence.Snapshot(loop.player)
+        eq(completedState.story.circle1B2.runCompleted, true)
+        same(Persistence.Snapshot(loop.player), completedState, "state after failed final save")
         eq(#nextDays, 0)
 
         assert(loop:ConfirmSettlement(), "failed final save can retry")
@@ -309,7 +846,7 @@ cases[#cases + 1] = {
         store:FinishSave(2, true)
         eq(loop.saveStatus, "saved")
         eq(loop.player.day, 7)
-        same(Persistence.Snapshot(loop.player), before, "resources after successful final retry")
+        same(Persistence.Snapshot(loop.player), completedState, "state after successful final retry")
         eq(loop:GetShopStock("apple"), 1, "retry does not refresh stock")
         eq(loop:GetShopStock("bait"), 0)
         eq(#nextDays, 0, "final retry never prepares day eight")
@@ -423,7 +960,7 @@ cases[#cases + 1] = {
             loadedDay = loop.player.day,
             paperShown = Progress.IsPaperShown(loop.player),
             loadedDaySevenPlayable = true,
-            terminalPersistence = "unresolved: paperShown is readable but cannot distinguish a finished final settlement",
+            terminalPersistence = "runCompleted distinguishes an unfinished day-seven save; only legacy snapshots missing the marker remain ambiguous",
         }
     end,
 }
@@ -448,7 +985,13 @@ cases[#cases + 1] = {
         assert(loop.endingPending)
         eq(loop.saveStatus, "skipped")
         eq(loop.player.day, 7, "skipping final save keeps day seven")
-        same(Persistence.Snapshot(loop.player), finalState, "final skip preserves the day-seven state")
+        assert(loop.lastMessage:find("重启后可能恢复此前检查点", 1, true),
+            "final skip explains the checkpoint fallback")
+        local skippedState = Persistence.Snapshot(loop.player)
+        eq(skippedState.story.circle1B2.runCompleted, true, "live ending remains complete after save skip")
+        local expectedSkippedState = copy(finalState)
+        expectedSkippedState.story.circle1B2.runCompleted = true
+        same(skippedState, expectedSkippedState, "final skip preserves all other live state")
         eq(loop:GetShopStock("apple"), finalStock.apple, "final skip does not refresh stock")
         eq(loop:GetShopStock("bait"), finalStock.bait)
         eq(#nextDays, 0, "final skip does not prepare another day")
@@ -472,6 +1015,7 @@ cases[#cases + 1] = {
         eq(loop.player.story.circle1B2.barrelStage, 0, "new run resets barrel stage")
         eq(loop.player.story.circle1B2.elderFateShown, false, "new run resets the day-four result")
         eq(loop.player.story.circle1B2.paperShown, false, "new run resets the paper event")
+        eq(loop.player.story.circle1B2.runCompleted, false, "new run clears the persisted terminal marker")
         eq(loop.player.story.chapter, nil)
         eq(loop.player.story.campaignMarker, nil)
         eq(loop.player.elder.circle1B2.applesGiven, 0)
@@ -570,13 +1114,17 @@ cases[#cases + 1] = {
         store:FinishSave(7, false, "offline")
         eq(loop.saveStatus, "error")
         same(store.persisted, oldSavedSnapshot, "failed final write retains old saved data")
-        same(Persistence.Snapshot(loop.player), daySevenResources, "failed final write keeps live resources")
+        local completedResources = copy(daySevenResources)
+        completedResources.story.circle1B2.runCompleted = true
+        same(Persistence.Snapshot(loop.player), completedResources,
+            "failed final write keeps live resources and in-memory completion")
 
         assert(loop:ContinueWithoutSaving(), "explicit final skip closes the failed save")
         eq(loop.endingPending, true)
         eq(loop.saveStatus, "skipped", "final skip is never reported as saved")
         eq(loop.player.day, 7)
-        same(Persistence.Snapshot(loop.player), daySevenResources, "final skip preserves day-seven resources")
+        same(Persistence.Snapshot(loop.player), completedResources,
+            "final skip keeps the live ending but does not save it implicitly")
         same(store.persisted, oldSavedSnapshot, "explicit skip leaves the actual old save intact")
         eq(loop:GetShopStock("apple"), stockBefore.apple)
         eq(loop:GetShopStock("bait"), stockBefore.bait)
@@ -587,7 +1135,7 @@ cases[#cases + 1] = {
         store:FinishSave(7, false, "late duplicate failure")
         eq(loop.saveStatus, "skipped", "late failure cannot turn a skip into a save")
         eq(loop.player.day, 7)
-        same(Persistence.Snapshot(loop.player), daySevenResources, "late callback cannot mutate live state")
+        same(Persistence.Snapshot(loop.player), completedResources, "late callback cannot mutate live state")
         same(store.persisted, oldSavedSnapshot, "late failed callback cannot replace old saved data")
         eq(loop:GetShopStock("apple"), stockBefore.apple)
         eq(loop:GetShopStock("bait"), stockBefore.bait)
@@ -618,7 +1166,7 @@ function Tests.Run()
         report.results[#report.results + 1] = row
     end
     report.limits = {
-        terminalRunPersistence = "A day-seven save with paperShown=true reloads as playable; current schema has no distinct persisted terminal marker.",
+        terminalRunPersistence = "Legacy schema-v1 day-seven snapshots without runCompleted conservatively restore as playable because their completion state cannot be distinguished.",
         endingContent = "No ending system or ending field is created or inferred by these tests.",
     }
     return report

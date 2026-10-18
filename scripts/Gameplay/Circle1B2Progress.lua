@@ -7,6 +7,7 @@ local STORY_DEFAULTS = {
     barrelStage = 0,
     elderFateShown = false,
     paperShown = false,
+    runCompleted = false,
     fishingSelectionShown = false,
 }
 
@@ -112,6 +113,9 @@ function Progress.Validate(data)
         if type(story.paperShown) ~= "boolean" then
             return false, "invalid_paper_shown"
         end
+        if story.runCompleted ~= nil and type(story.runCompleted) ~= "boolean" then
+            return false, "invalid_run_completed"
+        end
         if story.elderFateShown ~= nil and type(story.elderFateShown) ~= "boolean" then
             return false, "invalid_elder_fate_shown"
         end
@@ -129,6 +133,13 @@ function Progress.Validate(data)
         end
         if story.paperShown and (not integer(data.day, 1) or data.day < 7) then
             return false, "paper_shown_before_day_seven"
+        end
+        if story.runCompleted == true then
+            if data.day ~= 7 then return false, "run_completed_requires_day_seven" end
+            if story.paperShown ~= true then return false, "run_completed_requires_paper" end
+            if not elder or (elder.decision ~= "saved" and elder.decision ~= "dead") then
+                return false, "run_completed_requires_elder_decision"
+            end
         end
     end
 

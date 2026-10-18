@@ -1,0 +1,414 @@
+{
+  "phase": "final",
+  "generatedAt": "2026-10-18T07:34:44.661383+00:00",
+  "project": "C:\\codex\\taptap-sea-worktrees\\WORK-V26-PLAYTEST-FIX-01",
+  "runtimePath": "C:\\codex\\taptap-sea-worktrees\\WORK-V26-PLAYTEST-FIX-01\\.tmp\\circle1-review-runtime",
+  "suiteCount": 4,
+  "suites": [
+    {
+      "name": "Circle1B2ProgressTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\Circle1B2ProgressTests.lua",
+      "passed": true,
+      "subtestCount": 16,
+      "failures": [],
+      "returned": {
+        "results": [
+          {
+            "error": "",
+            "passed": true,
+            "name": "fishing selection hint persists across day/load and resets for a new run"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "elder counts food apples, displays other offerings without consuming them, and saves after three days"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "elder who received fewer than three apples is marked dead once on day four"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "failed apple progress rolls back the removed apple, stamina, and prior count"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "three apples offered on day one are counted cumulatively until day-four decision"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "three apples offered on day three still save the elder on day four"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "zero apples leave the elder dead after the one-time day-four decision"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "T15/T16 day-four fate result shows the finalized branch once without saving or changing resources"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "old day-four checkpoints may replay the fate prompt without repeating progress or rewards"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "partial same-schema story progress migrates missing elder fate marker as not shown"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "memory save retries once without double-advancing and restores progress through day seven"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "progress validation rejects malformed and inconsistent saved states"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "legacy snapshots preserve unknown progress while filling missing circle records"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "snapshot failure keeps the applied day-four decision and retries without advancing twice"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "T18/T19 day-seven paper auto-opens at port entry and acknowledgement does not autosave"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "old day-seven checkpoints may replay the paper without repeating settlement or rewards"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 30.793
+    },
+    {
+      "name": "Circle1B6EndingTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\Circle1B6EndingTests.lua",
+      "passed": true,
+      "subtestCount": 6,
+      "failures": [],
+      "returned": {
+        "metrics": [],
+        "results": [
+          {
+            "error": "",
+            "passed": true,
+            "name": "config declares maxDay = 7"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "day 1-6 settlement still advances the day without ending"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "day 7 settlement enters normal ending and keeps day = 7"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "3-apple saved elder produces the changed ending"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "day 7 forced-return settlement also ends the run"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "NewRun resets the ending state for a fresh run"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 22.406
+    },
+    {
+      "name": "Circle1BRunLifecycleTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\Circle1BRunLifecycleTests.lua",
+      "passed": true,
+      "subtestCount": 4,
+      "failures": [],
+      "returned": {
+        "checkCount": 4,
+        "passed": true,
+        "failed": 0,
+        "results": [
+          {
+            "error": "",
+            "passed": true,
+            "name": "terminal saves restore the normal and changed endings and block gameplay entries"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "schema-v1 missing markers default to false and old completed saves remain conservatively playable"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "invalid terminal marker combinations and day eight are rejected"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "new run after a restored ending clears completion and saves a playable day one"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 19.162
+    },
+    {
+      "name": "SevenDaysRunTests",
+      "kind": "run",
+      "file": "scripts\\Tests\\SevenDaysRunTests.lua",
+      "passed": true,
+      "subtestCount": 18,
+      "failures": [],
+      "returned": {
+        "limits": {
+          "terminalRunPersistence": "Legacy schema-v1 day-seven snapshots without runCompleted conservatively restore as playable because their completion state cannot be distinguished.",
+          "endingContent": "No ending system or ending field is created or inferred by these tests."
+        },
+        "passed": 18,
+        "failed": 0,
+        "results": [
+          {
+            "evidence": {
+              "endings": 2,
+              "terminalSettlements": 2
+            },
+            "error": "",
+            "passed": true,
+            "name": "terminal achievement settlement runs once for normal and changed endings"
+          },
+          {
+            "evidence": {
+              "snapshotAttempts": 2,
+              "achievementSettlements": 1,
+              "profileSaves": 1
+            },
+            "error": "",
+            "passed": true,
+            "name": "final snapshot exception retries through the same achievement settlement path"
+          },
+          {
+            "evidence": {
+              "endingSettlements": 1,
+              "mainSaveAttempts": 2
+            },
+            "error": "",
+            "passed": true,
+            "name": "main final save retries and duplicate callbacks do not repeat ending awards"
+          },
+          {
+            "evidence": {
+              "achievementSettlements": 1,
+              "profileSaveCalls": 2
+            },
+            "error": "",
+            "passed": true,
+            "name": "profile save call exception retries without replaying achievements"
+          },
+          {
+            "evidence": {
+              "A6": true,
+              "A4": true,
+              "cognition": 3,
+              "markCallsA6": 2
+            },
+            "error": "",
+            "passed": true,
+            "name": "partial ending award failure retries without duplicating A4 and settles A6 cognition"
+          },
+          {
+            "evidence": {
+              "newRunSettlements": 2,
+              "loadedTerminalAwards": 0
+            },
+            "error": "",
+            "passed": true,
+            "name": "new run resets ending settlement guards and completed loads do not re-award"
+          },
+          {
+            "evidence": {
+              "paperShown": true,
+              "money": 777,
+              "endingPending": true,
+              "day": 7,
+              "maxStamina": 160,
+              "saves": 7,
+              "nextDayHooks": 6,
+              "stamina": 63
+            },
+            "error": "",
+            "passed": true,
+            "name": "normal seven-day cycle reaches a terminal day-seven save without recovery"
+          },
+          {
+            "evidence": {
+              "terminalLoads": 2,
+              "branches": 2,
+              "gameplayEntriesBlocked": true
+            },
+            "error": "",
+            "passed": true,
+            "name": "completed day-seven snapshots restore both endings and block every gameplay settlement entry"
+          },
+          {
+            "evidence": {
+              "rejected": "day7_paper_required",
+              "portPreparationStarted": false
+            },
+            "error": "",
+            "passed": true,
+            "name": "day-seven completion admission rejects invalid final state before port preparation"
+          },
+          {
+            "evidence": {
+              "missingFieldDefaultsFalse": true,
+              "oldTerminalStateIndistinguishable": true,
+              "through": 7,
+              "loadedLegacyDays": 1,
+              "oldDaySevenPaperMayReplay": true
+            },
+            "error": "",
+            "passed": true,
+            "name": "schema-one saves without runCompleted stay playable, including day-seven paper checkpoints"
+          },
+          {
+            "evidence": {
+              "validTerminal": true,
+              "invalidCombinationsRejected": 6
+            },
+            "error": "",
+            "passed": true,
+            "name": "invalid runCompleted types and terminal state combinations are rejected"
+          },
+          {
+            "evidence": {
+              "paperShown": true,
+              "saveAttempts": 1,
+              "day": 7
+            },
+            "error": "",
+            "passed": true,
+            "name": "unread day-seven entry paper blocks ending until its visible acknowledgement"
+          },
+          {
+            "evidence": {
+              "paperShown": true,
+              "day": 7,
+              "saves": 1,
+              "nextDayHooks": 0,
+              "stamina": 41
+            },
+            "error": "",
+            "passed": true,
+            "name": "forced day-seven return after the entry paper was read reaches the same ending without replay"
+          },
+          {
+            "evidence": {
+              "saveStatus": "saved",
+              "saveAttempts": 2,
+              "nextDayHooks": 0,
+              "day": 7
+            },
+            "error": "",
+            "passed": true,
+            "name": "final save retry reuses the day-seven snapshot and never advances or refreshes"
+          },
+          {
+            "evidence": {
+              "endingPending": false,
+              "paperShownBeforeRead": false,
+              "nextDayHooks": 6,
+              "day": 7
+            },
+            "error": "",
+            "passed": true,
+            "name": "day-six save skip enters playable day seven without final-run state"
+          },
+          {
+            "evidence": {
+              "paperShown": true,
+              "loadedDaySevenPlayable": true,
+              "loadedDay": 7,
+              "terminalPersistence": "runCompleted distinguishes an unfinished day-seven save; only legacy snapshots missing the marker remain ambiguous",
+              "invalidDay": 8,
+              "invalidLoadPreservedPlayer": true
+            },
+            "error": "",
+            "passed": true,
+            "name": "day-eight save data is rejected intact while a loaded day-seven save remains playable"
+          },
+          {
+            "evidence": {
+              "finalSkipPreservedDaySeven": true,
+              "reloadedDay": 1,
+              "initialSaveAttempts": 2,
+              "reset": true,
+              "newRunDay": 1,
+              "staleFinalCallbackIgnored": true,
+              "initialSaveStatus": "saved"
+            },
+            "error": "",
+            "passed": true,
+            "name": "new run resets all run state, retries its initial save, and ignores stale final callbacks"
+          },
+          {
+            "evidence": {
+              "saveStatus": "skipped",
+              "oldSavePreserved": true,
+              "day": 7,
+              "nextDayHooks": 6,
+              "endingPending": true,
+              "livePaperShown": true,
+              "oldSavedDay": 7
+            },
+            "error": "",
+            "passed": true,
+            "name": "explicitly skipping a failed final save preserves the actual older save"
+          }
+        ]
+      },
+      "stdout": "",
+      "nvgCalls": {},
+      "nvgCallTotal": 0,
+      "durationMs": 24.413
+    }
+  ],
+  "luaVersion": "Lua 5.4",
+  "passedSuiteCount": 4,
+  "failedSuiteCount": 0,
+  "passed": true
+}

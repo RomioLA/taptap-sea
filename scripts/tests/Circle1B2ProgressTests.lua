@@ -20,6 +20,19 @@ local function copy(value)
     return result
 end
 
+local function same(actual, expected, label)
+    label = label or "table"
+    eq(type(actual), type(expected), label .. " type")
+    if type(expected) ~= "table" then
+        eq(actual, expected, label)
+        return
+    end
+    for key, value in pairs(expected) do same(actual[key], value, label .. "." .. tostring(key)) end
+    for key in pairs(actual) do
+        assert(expected[key] ~= nil, label .. " has unexpected key " .. tostring(key))
+    end
+end
+
 local function withPatched(target, key, createReplacement, run)
     local original = target[key]
     target[key] = createReplacement(original)
@@ -309,6 +322,55 @@ function Tests.Run()
         eq(dead.loop.player.elder.circle1B2.decision, "dead")
     end)
 
+    test("old day-four checkpoints may replay the fate prompt without repeating progress or rewards", function()
+        for _, variant in ipairs({
+            { gifts = { true, true, true }, decision = "saved", apples = 3 },
+            { gifts = { true, true, false }, decision = "dead", apples = 2 },
+        }) do
+            local fixture = decideElder(variant.gifts)
+            local store = fixture.store
+            local checkpoint = copy(store.data)
+            eq(checkpoint.day, 4)
+            eq(checkpoint.elder.circle1B2.decision, variant.decision)
+            eq(checkpoint.elder.circle1B2.applesGiven, variant.apples)
+            eq(checkpoint.story.circle1B2.elderFateShown, false)
+            local writes = store.writes
+
+            local firstDialog = assert(fixture.loop:GetStoryDialog())
+            local firstBefore = Persistence.Snapshot(fixture.loop.player)
+            assert(fixture.loop:NotifyStoryShown(firstDialog.token))
+            assert(fixture.loop:CloseStoryDialog())
+            local firstExpected = copy(firstBefore)
+            firstExpected.story.circle1B2.elderFateShown = true
+            same(Persistence.Snapshot(fixture.loop.player), firstExpected,
+                "first presentation changes only its in-memory shown marker")
+            same(store.data, checkpoint, "first presentation leaves the saved checkpoint unchanged")
+
+            local restored = Flow.Fixture({ store = store })
+            local loadResult, loadError
+            assert(restored.loop:LoadSaved(function(ok, err)
+                loadResult, loadError = ok, err
+            end))
+            assert(loadResult, tostring(loadError))
+            eq(restored.loop.player.day, 4)
+            eq(restored.loop.player.elder.circle1B2.decision, variant.decision,
+                "readback does not recompute the finalized fate")
+            eq(restored.loop.player.elder.circle1B2.applesGiven, variant.apples,
+                "readback does not charge apples again")
+            local replay = assert(restored.loop:GetStoryDialog())
+            eq(replay.kind, "elder_fate", "an old checkpoint may present its fate prompt again")
+            local replayBefore = Persistence.Snapshot(restored.loop.player)
+            assert(restored.loop:NotifyStoryShown(replay.token))
+            assert(restored.loop:CloseStoryDialog())
+            local replayExpected = copy(replayBefore)
+            replayExpected.story.circle1B2.elderFateShown = true
+            same(Persistence.Snapshot(restored.loop.player), replayExpected,
+                "replayed prompt grants no resource or memory reward")
+            eq(store.writes, writes, "prompt replay adds no save")
+            same(store.data, checkpoint, "prompt replay leaves the old checkpoint intact")
+        end
+    end)
+
     test("partial same-schema story progress migrates missing elder fate marker as not shown", function()
         local fixture = Flow.Fixture()
         local snapshot = Persistence.Snapshot(fixture.loop.player)
@@ -551,6 +613,46 @@ function Tests.Run()
         assert(restored.loop:LoadSaved(function(ok) secondLoad = ok end))
         assert(secondLoad)
         eq(restored.loop:GetStoryDialog(), nil)
+    end)
+
+    test("old day-seven checkpoints may replay the paper without repeating settlement or rewards", function()
+        local store = memoryStore()
+        local fixture = Flow.Fixture({ store = store })
+        local loop = fixture.loop
+        for _ = 1, 6 do advanceDay(loop, store) end
+        eq(loop.player.day, 7)
+        local checkpoint = copy(store.data)
+        eq(checkpoint.story.circle1B2.paperShown, false)
+        eq(checkpoint.story.circle1B2.runCompleted, false)
+        local writes = store.writes
+
+        local firstPaper = assert(loop:GetStoryDialog())
+        assert(loop:NotifyStoryShown(firstPaper.token))
+        assert(loop:CloseStoryDialog())
+        eq(loop.player.day, 7)
+        eq(loop.player.story.circle1B2.runCompleted, false)
+        eq(store.writes, writes, "first reading adds no save")
+        same(store.data, checkpoint, "first reading leaves the daily checkpoint unchanged")
+
+        local replay = Flow.Fixture({ store = store })
+        local loadResult, loadError
+        assert(replay.loop:LoadSaved(function(ok, err)
+            loadResult, loadError = ok, err
+        end))
+        assert(loadResult, tostring(loadError))
+        local dialog = assert(replay.loop:GetStoryDialog())
+        eq(dialog.kind, "paper")
+        eq(replay.loop.player.story.circle1B2.runCompleted, false)
+        local before = Persistence.Snapshot(replay.loop.player)
+        assert(replay.loop:NotifyStoryShown(dialog.token))
+        assert(replay.loop:CloseStoryDialog())
+        local expected = copy(before)
+        expected.story.circle1B2.paperShown = true
+        same(Persistence.Snapshot(replay.loop.player), expected,
+            "replayed paper changes only its in-memory acknowledgement marker")
+        eq(store.writes, writes, "replayed paper does not save or settle again")
+        same(store.data, checkpoint, "replay preserves the original day-seven checkpoint")
+        assert(replay.loop:Ready())
     end)
 
     return { results = results }

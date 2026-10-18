@@ -1,4 +1,4 @@
--- Run boundary, save migration, and NG+ reset contract for Circle 1 B.
+-- Persisted day-seven run boundary and schema-v1 compatibility tests.
 local Config = require "config.gameplay"
 local Loop = require "Gameplay.Loop"
 local Persistence = require "Gameplay.Persistence"
@@ -18,162 +18,194 @@ local function copy(value)
     return result
 end
 
-local function newLoop(options)
-    local store = { saves = {}, callbacks = {}, loaded = nil }
+local function newLoop()
+    local store = { saves = {}, saveCallbacks = {}, loadCallbacks = {} }
     function store:Save(snapshot, done)
-        self.saves[#self.saves + 1] = copy(snapshot)
-        self.callbacks[#self.callbacks + 1] = done
+        local index = #self.saves + 1
+        self.saves[index] = copy(snapshot)
+        self.saveCallbacks[index] = done
+        return true
     end
-    function store:Load(done) done(true, self.loaded) end
-    options = options or {}
-    options.store = store
-    options.initialRunRequired = true
-    return Loop.New(options), store
+    function store:Load(done)
+        local index = #self.loadCallbacks + 1
+        self.loadCallbacks[index] = done
+        return true
+    end
+    function store:FinishSave(index, ok, reason)
+        return assert(self.saveCallbacks[index], "save callback missing")(ok, reason)
+    end
+    function store:FinishLoad(index, ok, data)
+        return assert(self.loadCallbacks[index], "load callback missing")(ok, copy(data))
+    end
+    return Loop.New({ store = store }), store
 end
 
-local function startRun(loop, store)
-    eq(loop.player.runStatus, "not_started", "initial state")
-    eq(loop.player.runNumber, 0, "initial run number")
-    assert(loop:NewRun())
-    eq(#store.callbacks, 1, "initial save callback")
-    store.callbacks[1](true)
-    eq(loop.player.runStatus, "active", "started state")
-    eq(loop.player.runNumber, 1, "first run number")
-end
-
-local function settleDay(loop, store)
+local function finishFinalSettlement(decision)
+    local loop, store = newLoop()
+    local elder = loop.player.elder.circle1B2
+    loop.player.day = Config.clock.maxDay
+    elder.applesGiven = decision == "saved" and 3 or 0
+    elder.decision = decision
+    loop.player.story.circle1B2.paperShown = true
+    eq(loop.player.story.circle1B2.runCompleted, false)
     assert(loop:EndToday())
     assert(loop:ConfirmSettlement())
-    local callback = store.callbacks[#store.callbacks]
-    assert(callback, "settlement save callback missing")
-    callback(true)
+    eq(loop.player.day, 7)
+    eq(loop.player.story.circle1B2.runCompleted, true)
+    eq(store.saves[1].story.circle1B2.runCompleted, true)
+    store:FinishSave(1, true)
+    eq(loop.endingPending, true)
+    eq(loop.endingKind, decision == "saved" and "changed" or "normal")
+    return copy(store.saves[1])
+end
+
+local function loadSnapshot(snapshot)
+    local loop, store = newLoop()
+    assert(loop:LoadSaved())
+    store:FinishLoad(1, true, snapshot)
+    return loop, store
 end
 
 function Tests.Run()
     local results = {}
-    local function test(name, fn)
-        local ok, reason = pcall(fn)
-        local row = { name = name, passed = ok }
-        if not ok then row.error = tostring(reason) end
-        results[#results + 1] = row
+    local function test(name, run)
+        local ok, err = xpcall(run, debug.traceback)
+        results[#results + 1] = { name = name, passed = ok, error = ok and "" or tostring(err) }
     end
 
-    test("the seventh settlement closes the run without creating day eight", function()
-        local newDays = {}
-        local loop, store = newLoop({ onNewDay = function(day) newDays[#newDays + 1] = day end })
-        startRun(loop, store)
-        for day = 2, Config.run.days do
-            settleDay(loop, store)
-            eq(loop.player.day, day, "day after settlement")
-            eq(loop.player.runStatus, "active", "run stays active through the seventh day")
+    test("terminal saves restore the normal and changed endings and block gameplay entries", function()
+        for _, variant in ipairs({
+            { decision = "dead", ending = "normal" },
+            { decision = "saved", ending = "changed" },
+        }) do
+            local snapshot = finishFinalSettlement(variant.decision)
+            local loop, store = loadSnapshot(snapshot)
+            eq(loop.player.day, 7)
+            eq(loop.player.story.circle1B2.runCompleted, true)
+            eq(loop.endingPending, true)
+            eq(loop.endingKind, variant.ending)
+            eq(loop.settlementPending, false)
+            eq(loop:GetStoryDialog(), nil)
+            eq(loop.clock.pauseReasons.port, true)
+            eq(loop.clock:IsPaused(), true)
+
+            local before = Persistence.Snapshot(loop.player)
+            eq(loop:Ready(), false)
+            eq(loop:Depart(), false)
+            eq(loop:CanStartAction("fishing"), false)
+            eq(loop:EndToday(), false)
+            eq(loop:SettleDay(), false)
+            eq(loop:ConfirmSettlement(), false)
+            eq(loop:ConfirmForcedReturn(), false)
+            eq(loop:BeginNewDay(), false)
+            eq(loop:RecognizeLocation("terminal-only-location"), false)
+            eq(loop:LoadSaved(), false)
+            local clockBefore = loop.clock:GetState()
+            loop:Update(5, function() end)
+            local clockAfter = loop.clock:GetState()
+            eq(clockAfter.phase, clockBefore.phase)
+            eq(clockAfter.elapsed, clockBefore.elapsed)
+            eq(clockAfter.progress, clockBefore.progress)
+            eq(#store.saves, 0)
+            eq(#store.loadCallbacks, 1, "terminal LoadSaved rejects before a new request")
+            eq(Persistence.Snapshot(loop.player).story.circle1B2.runCompleted, true)
+            eq(Persistence.Snapshot(loop.player).day, before.day)
+            eq(Persistence.Snapshot(loop.player).money, before.money)
         end
-        settleDay(loop, store)
-        eq(#newDays, Config.run.days - 1, "new-day hook count")
-        eq(newDays[#newDays], Config.run.days, "last day hook")
-        eq(store.saves[#store.saves].day, Config.run.days, "final saved day")
-        eq(store.saves[#store.saves].runStatus, "awaiting_ending", "final saved state")
-        eq(loop:EndToday(), false, "cannot settle beyond final day")
-        eq(loop:Ready(), false, "completed run is not gameplay-ready")
     end)
 
-    test("completed state survives load and freezes world advancement", function()
-        local loop, store = newLoop()
-        startRun(loop, store)
-        for _ = 2, Config.run.days do settleDay(loop, store) end
-        settleDay(loop, store)
-        local finalSnapshot = copy(store.saves[#store.saves])
-        local restored = assert(Persistence.Restore(finalSnapshot))
-        eq(restored.day, Config.run.days, "restored day")
-        eq(restored.runNumber, 1, "restored run number")
-        eq(restored.runStatus, "awaiting_ending", "restored run status")
+    test("schema-v1 missing markers default to false and old completed saves remain conservatively playable", function()
+        eq(Config.persistence.schemaVersion, 1)
+        for day = 1, 6 do
+            local player = assert(PlayerState.New())
+            player.day = day
+            if day >= 4 then
+                player.elder.circle1B2.applesGiven = 0
+                player.elder.circle1B2.decision = "dead"
+            end
+            local snapshot = Persistence.Snapshot(player)
+            snapshot.story.circle1B2.runCompleted = nil
+            local restored = assert(Persistence.Restore(copy(snapshot)))
+            eq(restored.day, day)
+            eq(restored.story.circle1B2.runCompleted, false)
+            local loop = loadSnapshot(snapshot)
+            eq(loop.player.day, day)
+            eq(loop.endingPending, false)
+            eq(loop.player.story.circle1B2.runCompleted, false)
+            if loop:GetStoryDialog() then
+                local dialog = loop:GetStoryDialog()
+                eq(day, 4)
+                eq(dialog.kind, "elder_fate")
+                assert(loop:NotifyStoryShown(dialog.token))
+                assert(loop:CloseStoryDialog())
+            end
+            assert(loop:Ready())
+        end
 
-        local loadLoop, loadStore = newLoop()
-        loadStore.loaded = finalSnapshot
-        assert(loadLoop:LoadSaved())
-        eq(loadLoop.player.runStatus, "awaiting_ending", "loaded run status")
-        local worldSteps = 0
-        loadLoop:Update(5, function() worldSteps = worldSteps + 1 end)
-        eq(worldSteps, 0, "world does not advance after completion")
-        eq(loadLoop:Depart(), false, "cannot depart after completion")
-        assert(loadLoop.clock:IsPaused(), "completed run clock must stay paused")
+        local oldCompleted = finishFinalSettlement("dead")
+        oldCompleted.story.circle1B2.runCompleted = nil
+        local restored = assert(Persistence.Restore(copy(oldCompleted)))
+        eq(restored.story.circle1B2.runCompleted, false)
+        local loop = loadSnapshot(oldCompleted)
+        eq(loop.endingPending, false)
+        eq(loop.player.day, 7)
+        assert(loop:Ready(), "legacy completion cannot be inferred from day, paper, or fate")
     end)
 
-    test("an active run cannot be reset early; NG+ resets all run progress", function()
-        local loop, store = newLoop()
-        startRun(loop, store)
-        loop.player.money = 777
-        eq(loop:NewRun(), false, "premature new run")
-        eq(loop.player.money, 777, "early attempt preserves state")
-        eq(loop.player.runNumber, 1, "early attempt preserves run number")
+    test("invalid terminal marker combinations and day eight are rejected", function()
+        local valid = finishFinalSettlement("saved")
+        assert(Persistence.Restore(copy(valid)))
 
-        for _ = 2, Config.run.days do settleDay(loop, store) end
-        settleDay(loop, store)
-        loop.player.money = 777
-        loop.player.maxStamina, loop.player.stamina = 160, 17
-        loop.player.boatSpeedLevel = 3
-        assert(loop.player.inventory:Upgrade())
-        assert(loop.player.inventory:Add("tuna"))
-        assert(loop.player:MarkRecognized("old_island"))
-        loop.player.treasures.scopeLens = true
-        loop.player.story.circle1B2.barrelStage = 2
-        loop.player.story.circle1B2.paperShown = true
-        loop.player.elder.lastGivenItemId = "apple"
+        local invalid = {
+            { name = "nonboolean marker", mutate = function(data)
+                data.story.circle1B2.runCompleted = 1
+            end },
+            { name = "completion before day seven", mutate = function(data)
+                data.day = 6
+                data.story.circle1B2.paperShown = false
+            end },
+            { name = "paper not confirmed", mutate = function(data)
+                data.story.circle1B2.paperShown = false
+            end },
+            { name = "elder fate pending", mutate = function(data)
+                data.elder.circle1B2.decision = "pending"
+            end },
+            { name = "invalid elder fate", mutate = function(data)
+                data.elder.circle1B2.decision = "unknown"
+            end },
+            { name = "day eight", mutate = function(data)
+                data.day = 8
+            end },
+        }
+        for _, variant in ipairs(invalid) do
+            local data = copy(valid)
+            variant.mutate(data)
+            eq(Persistence.Restore(data), nil, variant.name)
+        end
+    end)
 
+    test("new run after a restored ending clears completion and saves a playable day one", function()
+        local snapshot = finishFinalSettlement("saved")
+        local loop, store = loadSnapshot(snapshot)
+        eq(loop.endingPending, true)
         assert(loop:NewRun())
-        eq(loop.player.runNumber, 2, "NG+ run number")
-        eq(loop.player.runStatus, "active", "NG+ status")
-        eq(loop.player.day, 1, "NG+ day")
-        eq(loop.player.money, Config.initial.money, "reset money")
-        eq(loop.player.maxStamina, Config.initial.maxStamina, "reset max stamina")
-        eq(loop.player.stamina, Config.initial.stamina, "reset stamina")
-        eq(loop.player.boatSpeedLevel, 1, "reset boat upgrade")
-        eq(loop.player.inventory:GetCapacity(), Config.inventory.capacities[1], "reset inventory size")
-        eq(#loop.player.inventory:GetItems(), #Config.initial.items, "reset inventory contents")
-        eq(loop.player:IsRecognized("old_island"), false, "reset discoveries")
-        eq(loop.player.treasures.scopeLens, false, "reset treasure progress")
-        eq(loop.player.story.circle1B2.barrelStage, 0, "reset story progress")
-        eq(loop.player.story.circle1B2.paperShown, false, "reset paper flag")
-        eq(loop.player.elder.circle1B2.applesGiven, 0, "reset elder progress")
-        eq(loop.player.elder.lastGivenItemId, nil, "reset elder interaction")
-        local nextRun = store.saves[#store.saves]
-        eq(nextRun.runNumber, 2, "NG+ saved run number")
-        eq(nextRun.day, 1, "NG+ saved day")
+        eq(loop.player.day, 1)
+        eq(loop.player.story.circle1B2.runCompleted, false)
+        eq(loop.player.story.circle1B2.paperShown, false)
+        eq(loop.endingPending, false)
+        eq(loop.entryPending, true)
+        eq(store.saves[1].day, 1)
+        eq(store.saves[1].story.circle1B2.runCompleted, false)
+        store:FinishSave(1, true)
+        eq(loop.entryPending, false)
+        assert(loop:Ready())
     end)
 
-    test("schema v1 saves migrate as run one and all saves reject day eight", function()
-        local snapshot = Persistence.Snapshot(assert(PlayerState.New()))
-        snapshot.schemaVersion = 1
-        snapshot.runNumber, snapshot.runStatus = nil, nil
-        local migrated = assert(Persistence.Restore(snapshot))
-        eq(migrated.runNumber, 1, "migrated run number")
-        eq(migrated.runStatus, "active", "migrated run status")
-
-        snapshot.day = Config.run.days + 1
-        eq(Persistence.Restore(snapshot), nil, "v1 day eight")
-        local current = Persistence.Snapshot(assert(PlayerState.New()))
-        current.day = Config.run.days + 1
-        eq(Persistence.Restore(current), nil, "v2 day eight")
-    end)
-
-    test("a failed port preparation retries the same pending run", function()
-        local attempts = 0
-        local loop, store = newLoop({ resetDynamicWorld = function()
-            attempts = attempts + 1
-            return attempts > 1
-        end })
-        eq(loop:NewRun(), false, "first preparation attempt")
-        eq(loop.pendingRunStart, true, "pending run marker")
-        eq(loop.player.runNumber, 1, "pending run number")
-        eq(loop.initialSaveStatus, "idle", "no save before world preparation")
-        assert(loop:NewRun())
-        eq(#store.saves, 1, "retry saves once")
-        eq(store.saves[1].runNumber, 1, "retry keeps run number")
-        store.callbacks[1](true)
-        eq(loop.pendingRunStart, false, "pending marker clears")
-        eq(loop.entryPending, false, "entry resumes")
-    end)
-
-    return { results = results }
+    local failed = 0
+    for _, row in ipairs(results) do
+        if not row.passed then failed = failed + 1 end
+    end
+    return { results = results, passed = failed == 0, failed = failed, checkCount = #results }
 end
 
 return Tests

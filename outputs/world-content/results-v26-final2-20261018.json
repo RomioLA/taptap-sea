@@ -1,0 +1,1690 @@
+{
+  "luaVersion": "Lua 5.4",
+  "lupaRoot": "C:\\codex\\taptap-sea\\.tmp\\game-loop-test-runtime",
+  "passed": true,
+  "allRequestedVerified": true,
+  "suiteCount": 15,
+  "testCount": 268,
+  "skippedCount": 0,
+  "suites": [
+    {
+      "name": "tests.WorldContentTests",
+      "passed": true,
+      "testCount": 64,
+      "skippedCount": 0,
+      "tests": [
+        {
+          "name": "first island exploration commits one matching memory for one 40-stamina cost",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "second island exploration grants its own memory and no first-island reward",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "completed island exploration cannot be replayed or charged again",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "T08/T09 committed exploration and salvage toast exact memory and actual remaining stamina once",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "cancelled world-content action creates no paid or memory toast",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "two services on one player cannot both commit the same island reward",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "world-content access accepts the five-meter boundary and rejects beyond it",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "low-stamina exploration stays visible but cannot start or charge",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "low-stamina marked treasure stays visible without a salvage receipt",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "T06 low-stamina island click explains the cost without starting or cancelling another action",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "exactly 40 stamina is sufficient and a successful action reaches zero",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "invalid content ids and wrong action kinds are rejected without cost",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "cancelling a partly elapsed exploration costs zero stamina",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "Advance rejects nil, negative, NaN, and infinite elapsed values",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "treasure scope discovery needs the lens and one continuous second",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "marked treasure stays marked after leaving scope and closing the lens",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "Advance(0) does not accumulate active-action or scope-observation time",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "unmarked treasure cannot start salvage even while visible in scope",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "marked salvage accepts a five-meter gap and remains free until commit",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "marked treasure rejects salvage just beyond the five-meter boundary",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "cancelling marked salvage preserves its mark and costs zero",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "salvage commits one matching treasure memory for one 40-stamina cost",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "completed treasure salvage cannot grant or charge its reward again",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "all three memories stay outside inventory and scopeLens is not a memory",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "owned memory query returns only owned fixed memory ids",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "world-content memories survive a day change through snapshot and restore",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "Player.Reset clears world memories and the next service initializes empty records",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "malformed completed/reward mismatch is rejected without auto-repair",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "malformed owned memory without completion is rejected",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "pre-owned memories with incomplete records reject explore and salvage without charging",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "completion and reward added after Begin cannot be charged or overwritten",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "malformed completed treasure without its discovery mark is rejected",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "unknown world-content record ids and fields are rejected",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "invalid world-content record types and boolean fields are rejected",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "Initialize rejects worldContent=false without throwing or repairing it",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "receipt and action-state snapshots cannot mutate the live receipt",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "world-content prompt switches from begin to token-bound cancel and back",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "load replacement makes an active receipt stale and cannot commit late",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "new-run generation and player replacement invalidate the old receipt",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "Player.Reset invalidates an active action through replaced progress containers",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "runtime identity replacement invalidates even with the same session generation",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "fixed world-content generation replacement invalidates an active action",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "GetActionState detects runtime replacement before any Advance call",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "GetReceipt detects runtime replacement before any Advance call",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "ordinary fishing generation changes do not stale fixed world-content work",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "fixed entity replacement during an action fails before charging",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "explicit invalidation finalizes active work without charging",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "ConsumeStamina returning false rolls back and leaves the action retryable",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "ConsumeStamina throwing before deduction rolls back safely",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "reentrant Advance, Cancel, and Begin calls during ConsumeStamina return busy",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "ConsumeStamina charging and then returning false restores the pre-commit balance",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "ConsumeStamina charging and then throwing restores the pre-commit balance",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "world generation change during ConsumeStamina rolls back with no net charge",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "Player.Reset inside ConsumeStamina keeps reset stamina instead of stale rollback",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "Progress.Commit returning false restores stamina and progress",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "Progress.Commit throwing after charge restores stamina and progress",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "Progress.Commit writing only completion before throw restores both fields",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "Progress.Commit writing only reward before throw restores both fields",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "partial Progress.Commit write followed by throw restores every touched field",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "Progress.Commit false after a partial write cannot leak completion or a reward",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "a false-success Progress.Commit result fails consistency checks and rolls back",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "Circle1B2 scope lens and barrel progress survive world-content initialization",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "malformed Circle1B2 lens/barrel state still blocks world-content initialization",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "world-content access rejects a mismatched returned id and stale generation",
+          "error": "",
+          "passed": true
+        }
+      ],
+      "failures": [],
+      "error": "",
+      "log": ""
+    },
+    {
+      "name": "tests.Circle1C1EmergenceTests",
+      "passed": true,
+      "testCount": 17,
+      "skippedCount": 0,
+      "tests": [
+        {
+          "name": "T01 fixed content migration preserves all V25 fields",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "T02 five NewRun cycles keep all authored positions unchanged",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "T03 NewRun clears world progress and hypothesis evidence without moving fixed content",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "T05 SurfaceSignals fishing birds cannot enter the island hypothesis",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "T06 ten same-day observations count as one distinct day",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "T07 three authoritative game days can satisfy the evidence count",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "three self-reported event dates cannot replace the current player day",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "stale World generation and unavailable recognition state are rejected",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "T08 bearing spread above 30 degrees does not confirm",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "T09 circular bearing spread at 30 degrees confirms and grants once",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "EvidenceSystem grants the production K-isl-1 knowledge entry exactly once",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "T10 confirmation grants only K-isl-1 and leaves World/island/player rewards unchanged",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "T11 EvidenceSystem and save/load preserve confirmed hypothesis evidence",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "T12 NewRun reset clears hypothesis progress",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "Loop records live World observations once per day and grants the confirmed hint",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "World event queue is FIFO, bounded to 256, drained, and generation isolated",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "T04 flock_commute is a three-bird trace and does not spawn or move an island",
+          "error": "",
+          "passed": true
+        }
+      ],
+      "failures": [],
+      "error": "",
+      "log": ""
+    },
+    {
+      "name": "tests.Circle1C2KeyCapabilityTests",
+      "passed": true,
+      "testCount": 9,
+      "skippedCount": 0,
+      "tests": [
+        {
+          "name": "missing required key rejects before starting salvage or changing progress",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "key consumption waits for successful commit and follows consumeKey true",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "consumeKey false retains the key after successful commit",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "cancelling keyed salvage leaves key and stamina untouched",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "post-consumption commit failure restores key with the existing receipt rollback",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "keyed content without explicit consumeKey policy is rejected",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "existing underwater treasure remains salvageable without a key",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "key ownership snapshots, restores, validates, and migrates old saves",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "PlayerState reset used by NewRun clears key ownership",
+          "error": "",
+          "passed": true
+        }
+      ],
+      "failures": [],
+      "error": "",
+      "log": ""
+    },
+    {
+      "name": "tests.Circle1C3ContentCapabilityTests",
+      "passed": true,
+      "testCount": 3,
+      "skippedCount": 0,
+      "tests": [
+        {
+          "name": "authored island and wreck relations resolve without changing production content",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "reef and coral use regular radius, location, and scope queries",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "invalid relative content does not register",
+          "error": "",
+          "passed": true
+        }
+      ],
+      "failures": [],
+      "error": "",
+      "log": ""
+    },
+    {
+      "name": "tests.Circle1C4LensKeyCapabilityTests",
+      "passed": true,
+      "testCount": 7,
+      "skippedCount": 0,
+      "tests": [
+        {
+          "name": "production fixed content has no key source, key location, or key reward",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "lens discovery does not mark at 0.99 seconds and Mark never grants a key",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "leaving lens scope clears the one-second observation timer",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "key source pickup requires Mark and explicit action metadata, then grants the key",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "each missing action field is rejected without a default",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "cancelling an explicit key action does not charge stamina or grant a key",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "key grant failure uses the existing receipt rollback path",
+          "error": "",
+          "passed": true
+        }
+      ],
+      "failures": [],
+      "error": "",
+      "log": ""
+    },
+    {
+      "name": "tests.Circle1B2BarrelTests",
+      "passed": true,
+      "testCount": 12,
+      "skippedCount": 0,
+      "tests": [
+        {
+          "name": "built-in timer advances with the ocean, blocks steering, and pauses for UI",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "barrel completion at night end commits once, while unfinished work cancels free",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "full hold escrows both first rewards and advances only after an atomic two-slot claim",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "controlled barrel receipts charge each stage once and grant lens without cargo",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "the three barrel stages survive real day settlements and memory save restore",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "a rejected first-stage progression rolls back stamina and both appended rewards",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "lens grant rejection rolls back the final-stage charge and leaves stage two intact",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "claim stage failure restores cargo and keeps the receipt retryable without charging again",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "a partial claim rollback is retried on Tick without auto-claiming its pending receipt",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "executor failure before evidence is free, but a synchronous completed receipt returns its token",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "observer errors do not discard an escrowed result and reset cancels an active receipt",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "cancellation and a replaced barrel world invalidate late completions for free",
+          "error": "",
+          "passed": true
+        }
+      ],
+      "failures": [],
+      "error": "",
+      "log": ""
+    },
+    {
+      "name": "tests.Circle1B2ProgressTests",
+      "passed": true,
+      "testCount": 14,
+      "skippedCount": 0,
+      "tests": [
+        {
+          "passed": true,
+          "error": "",
+          "name": "fishing selection hint persists across day/load and resets for a new run"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "elder counts food apples, displays other offerings without consuming them, and saves after three days"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "elder who received fewer than three apples is marked dead once on day four"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "failed apple progress rolls back the removed apple, stamina, and prior count"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "three apples offered on day one are counted cumulatively until day-four decision"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "three apples offered on day three still save the elder on day four"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "zero apples leave the elder dead after the one-time day-four decision"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "T15/T16 day-four fate result shows the finalized branch once without saving or changing resources"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "partial same-schema story progress migrates missing elder fate marker as not shown"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "memory save retries once without double-advancing and restores progress through day seven"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "progress validation rejects malformed and inconsistent saved states"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "legacy snapshots preserve unknown progress while filling missing circle records"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "snapshot failure keeps the applied day-four decision and retries without advancing twice"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "T18/T19 day-seven paper auto-opens at port entry and acknowledgement does not autosave"
+        }
+      ],
+      "failures": [],
+      "error": "",
+      "log": ""
+    },
+    {
+      "name": "tests.Circle1B2ScopeTests",
+      "passed": true,
+      "testCount": 5,
+      "skippedCount": 0,
+      "tests": [
+        {
+          "passed": true,
+          "error": "",
+          "name": "scope requires lens ownership and toggling does not pause the voyage"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "new run and saved-load both synchronize A scope off"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "false is a valid disabled result while rejection and exceptions fail readback"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "scope readback mismatch is reported and a later close can recover"
+        },
+        {
+          "passed": true,
+          "error": "",
+          "name": "snapshot and restore reject inconsistent Circle 1B2 progress"
+        }
+      ],
+      "failures": [],
+      "error": "",
+      "log": ""
+    },
+    {
+      "name": "tests.Circle1B2ThrowTests",
+      "passed": true,
+      "testCount": 5,
+      "skippedCount": 0,
+      "tests": [
+        {
+          "name": "selected inventory item is thrown at the inclusive twelve-meter boundary",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "out-of-range throw attempts consume the pointer without moving or losing the selection",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "receiver rejection rolls back cargo while consuming the throw pointer",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "ordinary sea pointers pass through without creating a drop target",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "all four item payloads preserve their configured world effect and twenty-second lifetime",
+          "error": "",
+          "passed": true
+        }
+      ],
+      "failures": [],
+      "error": "",
+      "log": ""
+    },
+    {
+      "name": "tests.Circle1B2UITests",
+      "passed": true,
+      "testCount": 6,
+      "skippedCount": 0,
+      "tests": [
+        {
+          "name": "first fishing selection shows a non-modal hint and still accepts the sea pointer",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "scope toggle stays disabled without a lens and toggles through A without pausing",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "non-edible bait hides the 食用 button and shows no use reason",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "elder exchanges render both lines only on success and failed gifts add no false bubble",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "barrel uses its built-in timer and exposes cancel without an instant-finish control",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "paper is marked only after the HUD visibly renders exact text and close resumes the clock",
+          "error": "",
+          "passed": true
+        }
+      ],
+      "failures": [],
+      "error": "",
+      "log": ""
+    },
+    {
+      "name": "tests.Circle1B3SpatialTests",
+      "passed": true,
+      "testCount": 6,
+      "skippedCount": 0,
+      "tests": [
+        {
+          "name": "standalone gameplay keeps port rules usable without a sea runtime",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "bound gameplay fails closed when the port position protocol is missing",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "ordinary return accepts exactly ten meters and never teleports",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "ordinary return rejects just beyond ten meters without moving the ship",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "shop and upgrade actions reject a ship outside the port radius atomically",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "port preparation requires reset support and verifies the resulting position",
+          "error": "",
+          "passed": true
+        }
+      ],
+      "failures": [],
+      "error": "",
+      "log": ""
+    },
+    {
+      "name": "tests.Circle1BFishingFlowTests",
+      "passed": true,
+      "testCount": 22,
+      "skippedCount": 0,
+      "tests": [
+        {
+          "name": "confirmation does not select or charge and early completion is rejected",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "the 0.5 second landing selects the then-nearest fish and locks once",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "the locked result stays fixed through four seconds and a replay cannot charge twice",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "empty water completes for free",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "cancel before or after landing is free and releases the owned lock",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "A2 re-tapping the fishing dock button mid-action cancels for free",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "fishing selection hint is pending only after first successful entry and never repeats",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "A1 whitelist: scope toggle stays available and dialogs stay blocked mid-action",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "A9 protected items cannot be dropped, thrown, or sold away",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "lock rejection is a free terminal failure and never selects a replacement",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "39 stamina rejects while 40 starts and a successful catch consumes exactly 40",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "pause freezes progress and time scale advances action time without scaling sea budget",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "large dt uses the real frame World once and clamps aggregate Ocean advancement",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "night exhaustion on the completion boundary cancels first and unlocks for free",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "forced return waits until night-interrupted fishing cleanup releases its lock",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "new run clears the old lock before a reused fish ID enters the new generation",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "scene stop cancellation clears a landed lock without charging",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "reentrant fishing during the lock callback cannot create a second transaction",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "mutation then throw during removal restores the exact fish, inventory and stamina",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "failed unlock stays pending and retries through the next real frame dispatch",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "throwing inventory snapshot during commit fails free and releases the fish",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "world-bound CompleteAction cannot charge for fishing without a bridge token",
+          "error": "",
+          "passed": true
+        }
+      ],
+      "failures": [],
+      "error": "",
+      "log": ""
+    },
+    {
+      "name": "tests.Circle1BPendingCatchTests",
+      "passed": true,
+      "testCount": 12,
+      "skippedCount": 0,
+      "tests": [
+        {
+          "name": "full hold can cast and an empty net completes without fee or forced receive",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "full hold preserves a successful catch, charges once and requires the cargo panel",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "using or dropping cargo frees one slot and claims the retained catch exactly once",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "claim restores the full post-freeing inventory after Add mutates then throws",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "claim retries inventory rollback before Add and blocks inventory use while rollback is pending",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "UseItem and DropItem roll back a Remove that mutates then throws before freeing cargo",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "rejected drop receiver restores cargo and allows one later successful release and claim",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "world removal mutation followed by an exception restores fish, inventory and stamina",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "night settlement and NewRun cannot discard an already completed pending catch",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "a successful catch completes the elder teaching marker (S6)",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "full-hold catch marks the teaching only after the claim lands (S6)",
+          "error": "",
+          "passed": true
+        },
+        {
+          "name": "teaching marker tolerates legacy saves without the field (S6)",
+          "error": "",
+          "passed": true
+        }
+      ],
+      "failures": [],
+      "error": "",
+      "log": ""
+    },
+    {
+      "name": "tests.Circle1B3SevenDaysTests",
+      "passed": true,
+      "testCount": 2,
+      "skippedCount": 0,
+      "tests": [
+        {
+          "fishingSeconds": 28.0,
+          "route": {
+            "portApiProductionVerified": false,
+            "realOceanRuntimeVerified": false,
+            "updateCalls": 135,
+            "giftDays": [
+              true,
+              true
+            ],
+            "directDayWrites": 0,
+            "pauseRealReadingTime": "not measured; pauseCategorySeconds contains injected test dt and overlapping reasons must not be added",
+            "pauseCategorySeconds": {
+              "port": 6.5,
+              "elder": 1.0,
+              "entry": 0.5,
+              "settlement": 1.5
+            },
+            "fishingSeconds": 28.0,
+            "endingDesignStatus": "not specified; no ending is invoked or inferred",
+            "usesDebugTools": false,
+            "day7State": {
+              "saveStatus": "saved",
+              "stamina": 60,
+              "elder": {
+                "present": false,
+                "decision": "dead",
+                "applesGiven": 2
+              },
+              "stock": {
+                "apple": 2,
+                "bait": 2
+              },
+              "inventory": [
+                "bait"
+              ],
+              "money": 560,
+              "day": 7
+            },
+            "terminalEndingTriggered": false,
+            "day4Elder": {
+              "present": false,
+              "decision": "dead",
+              "applesGiven": 2
+            },
+            "days": [
+              {
+                "fishingSeconds": 4.0,
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 2,
+                "afterTrade": {
+                  "saveStatus": "saved",
+                  "stamina": 60,
+                  "elder": {
+                    "present": true,
+                    "decision": "pending",
+                    "applesGiven": 1
+                  },
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
+                  },
+                  "inventory": [
+                    "bait"
+                  ],
+                  "money": 170,
+                  "day": 1
+                },
+                "saleAction": "出售 ¥70",
+                "nextDayElder": {
+                  "present": true,
+                  "decision": "pending",
+                  "applesGiven": 1
+                },
+                "day": 1
+              },
+              {
+                "fishingSeconds": 4.0,
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 3,
+                "afterTrade": {
+                  "saveStatus": "saved",
+                  "stamina": 60,
+                  "elder": {
+                    "present": true,
+                    "decision": "pending",
+                    "applesGiven": 2
+                  },
+                  "stock": {
+                    "apple": 1,
+                    "bait": 2
+                  },
+                  "inventory": [
+                    "bait"
+                  ],
+                  "money": 210,
+                  "day": 2
+                },
+                "saleAction": "出售 ¥70",
+                "nextDayElder": {
+                  "present": true,
+                  "decision": "pending",
+                  "applesGiven": 2
+                },
+                "day": 2
+              },
+              {
+                "fishingSeconds": 4.0,
+                "dayEntryStoryShown": true,
+                "afterTrade": {
+                  "saveStatus": "saved",
+                  "stamina": 60,
+                  "elder": {
+                    "present": true,
+                    "decision": "pending",
+                    "applesGiven": 2
+                  },
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
+                  },
+                  "inventory": [
+                    "bait"
+                  ],
+                  "money": 280,
+                  "day": 3
+                },
+                "saleAction": "出售 ¥70",
+                "nextDayElder": {
+                  "present": false,
+                  "decision": "dead",
+                  "applesGiven": 2
+                },
+                "day": 3,
+                "dayEntryStoryKind": "elder_fate",
+                "nextDay": 4,
+                "saveStatusAfterSettlement": "saved"
+              },
+              {
+                "fishingSeconds": 4.0,
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 5,
+                "afterTrade": {
+                  "saveStatus": "saved",
+                  "stamina": 60,
+                  "elder": {
+                    "present": false,
+                    "decision": "dead",
+                    "applesGiven": 2
+                  },
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
+                  },
+                  "inventory": [
+                    "bait"
+                  ],
+                  "money": 350,
+                  "day": 4
+                },
+                "saleAction": "出售 ¥70",
+                "nextDayElder": {
+                  "present": false,
+                  "decision": "dead",
+                  "applesGiven": 2
+                },
+                "day": 4
+              },
+              {
+                "fishingSeconds": 4.0,
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 6,
+                "afterTrade": {
+                  "saveStatus": "saved",
+                  "stamina": 60,
+                  "elder": {
+                    "present": false,
+                    "decision": "dead",
+                    "applesGiven": 2
+                  },
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
+                  },
+                  "inventory": [
+                    "bait"
+                  ],
+                  "money": 420,
+                  "day": 5
+                },
+                "saleAction": "出售 ¥70",
+                "nextDayElder": {
+                  "present": false,
+                  "decision": "dead",
+                  "applesGiven": 2
+                },
+                "day": 5
+              },
+              {
+                "fishingSeconds": 4.0,
+                "dayEntryStoryShown": true,
+                "afterTrade": {
+                  "saveStatus": "saved",
+                  "stamina": 60,
+                  "elder": {
+                    "present": false,
+                    "decision": "dead",
+                    "applesGiven": 2
+                  },
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
+                  },
+                  "inventory": [
+                    "bait"
+                  ],
+                  "money": 490,
+                  "day": 6
+                },
+                "saleAction": "出售 ¥70",
+                "nextDayElder": {
+                  "present": false,
+                  "decision": "dead",
+                  "applesGiven": 2
+                },
+                "day": 6,
+                "dayEntryStoryKind": "paper",
+                "nextDay": 7,
+                "saveStatusAfterSettlement": "saved"
+              },
+              {
+                "fishingSeconds": 4.0,
+                "saleAction": "出售 ¥70",
+                "afterTrade": {
+                  "saveStatus": "saved",
+                  "stamina": 60,
+                  "elder": {
+                    "present": false,
+                    "decision": "dead",
+                    "applesGiven": 2
+                  },
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
+                  },
+                  "inventory": [
+                    "bait"
+                  ],
+                  "money": 560,
+                  "day": 7
+                },
+                "day": 7
+              }
+            ],
+            "paperClosed": true,
+            "day4ElderAccess": {
+              "visible": true,
+              "explanation": "老人不在",
+              "label": "老人不在",
+              "enabled": true
+            },
+            "paperShown": true,
+            "navigationSeconds": 28.0,
+            "activeClockUpdateSeconds": 56.0,
+            "directPlayerResourceWrites": 0,
+            "simulationTime": 62.5,
+            "portAdapter": {
+              "resetCalls": 7,
+              "getCalls": 192,
+              "kind": "test-only ocean/port adapter"
+            },
+            "seekCalls": 0
+          },
+          "name": "two apples remain below the day-four save threshold",
+          "navigationSeconds": 28.0,
+          "error": "",
+          "paperShown": true,
+          "day4Decision": "dead",
+          "day4ElderAccess": {
+            "visible": true,
+            "explanation": "老人不在",
+            "label": "老人不在",
+            "enabled": true
+          },
+          "simulationTime": 62.5,
+          "terminalEndingTriggered": false,
+          "day7": 7,
+          "applesGiven": 2,
+          "pauseCategorySeconds": {
+            "port": 6.5,
+            "elder": 1.0,
+            "entry": 0.5,
+            "settlement": 1.5
+          },
+          "passed": true
+        },
+        {
+          "fishingSeconds": 28.0,
+          "route": {
+            "portApiProductionVerified": false,
+            "realOceanRuntimeVerified": false,
+            "updateCalls": 137,
+            "giftDays": [
+              true,
+              true,
+              true
+            ],
+            "directDayWrites": 0,
+            "pauseRealReadingTime": "not measured; pauseCategorySeconds contains injected test dt and overlapping reasons must not be added",
+            "pauseCategorySeconds": {
+              "port": 7.5,
+              "elder": 2.0,
+              "entry": 0.5,
+              "settlement": 1.5
+            },
+            "fishingSeconds": 28.0,
+            "endingDesignStatus": "not specified; no ending is invoked or inferred",
+            "usesDebugTools": false,
+            "day7State": {
+              "saveStatus": "saved",
+              "stamina": 60,
+              "elder": {
+                "present": true,
+                "decision": "saved",
+                "applesGiven": 3
+              },
+              "stock": {
+                "apple": 2,
+                "bait": 2
+              },
+              "inventory": [
+                "bait"
+              ],
+              "money": 530,
+              "day": 7
+            },
+            "terminalEndingTriggered": false,
+            "day4Elder": {
+              "present": true,
+              "decision": "saved",
+              "applesGiven": 3
+            },
+            "days": [
+              {
+                "fishingSeconds": 4.0,
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 2,
+                "afterTrade": {
+                  "saveStatus": "saved",
+                  "stamina": 60,
+                  "elder": {
+                    "present": true,
+                    "decision": "pending",
+                    "applesGiven": 1
+                  },
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
+                  },
+                  "inventory": [
+                    "bait"
+                  ],
+                  "money": 170,
+                  "day": 1
+                },
+                "saleAction": "出售 ¥70",
+                "nextDayElder": {
+                  "present": true,
+                  "decision": "pending",
+                  "applesGiven": 1
+                },
+                "day": 1
+              },
+              {
+                "fishingSeconds": 4.0,
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 3,
+                "afterTrade": {
+                  "saveStatus": "saved",
+                  "stamina": 60,
+                  "elder": {
+                    "present": true,
+                    "decision": "pending",
+                    "applesGiven": 2
+                  },
+                  "stock": {
+                    "apple": 1,
+                    "bait": 2
+                  },
+                  "inventory": [
+                    "bait"
+                  ],
+                  "money": 210,
+                  "day": 2
+                },
+                "saleAction": "出售 ¥70",
+                "nextDayElder": {
+                  "present": true,
+                  "decision": "pending",
+                  "applesGiven": 2
+                },
+                "day": 2
+              },
+              {
+                "fishingSeconds": 4.0,
+                "dayEntryStoryShown": true,
+                "afterTrade": {
+                  "saveStatus": "saved",
+                  "stamina": 60,
+                  "elder": {
+                    "present": true,
+                    "decision": "pending",
+                    "applesGiven": 3
+                  },
+                  "stock": {
+                    "apple": 1,
+                    "bait": 2
+                  },
+                  "inventory": [
+                    "bait"
+                  ],
+                  "money": 250,
+                  "day": 3
+                },
+                "saleAction": "出售 ¥70",
+                "nextDayElder": {
+                  "present": true,
+                  "decision": "saved",
+                  "applesGiven": 3
+                },
+                "day": 3,
+                "dayEntryStoryKind": "elder_fate",
+                "nextDay": 4,
+                "saveStatusAfterSettlement": "saved"
+              },
+              {
+                "fishingSeconds": 4.0,
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 5,
+                "afterTrade": {
+                  "saveStatus": "saved",
+                  "stamina": 60,
+                  "elder": {
+                    "present": true,
+                    "decision": "saved",
+                    "applesGiven": 3
+                  },
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
+                  },
+                  "inventory": [
+                    "bait"
+                  ],
+                  "money": 320,
+                  "day": 4
+                },
+                "saleAction": "出售 ¥70",
+                "nextDayElder": {
+                  "present": true,
+                  "decision": "saved",
+                  "applesGiven": 3
+                },
+                "day": 4
+              },
+              {
+                "fishingSeconds": 4.0,
+                "saveStatusAfterSettlement": "saved",
+                "nextDay": 6,
+                "afterTrade": {
+                  "saveStatus": "saved",
+                  "stamina": 60,
+                  "elder": {
+                    "present": true,
+                    "decision": "saved",
+                    "applesGiven": 3
+                  },
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
+                  },
+                  "inventory": [
+                    "bait"
+                  ],
+                  "money": 390,
+                  "day": 5
+                },
+                "saleAction": "出售 ¥70",
+                "nextDayElder": {
+                  "present": true,
+                  "decision": "saved",
+                  "applesGiven": 3
+                },
+                "day": 5
+              },
+              {
+                "fishingSeconds": 4.0,
+                "dayEntryStoryShown": true,
+                "afterTrade": {
+                  "saveStatus": "saved",
+                  "stamina": 60,
+                  "elder": {
+                    "present": true,
+                    "decision": "saved",
+                    "applesGiven": 3
+                  },
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
+                  },
+                  "inventory": [
+                    "bait"
+                  ],
+                  "money": 460,
+                  "day": 6
+                },
+                "saleAction": "出售 ¥70",
+                "nextDayElder": {
+                  "present": true,
+                  "decision": "saved",
+                  "applesGiven": 3
+                },
+                "day": 6,
+                "dayEntryStoryKind": "paper",
+                "nextDay": 7,
+                "saveStatusAfterSettlement": "saved"
+              },
+              {
+                "fishingSeconds": 4.0,
+                "saleAction": "出售 ¥70",
+                "afterTrade": {
+                  "saveStatus": "saved",
+                  "stamina": 60,
+                  "elder": {
+                    "present": true,
+                    "decision": "saved",
+                    "applesGiven": 3
+                  },
+                  "stock": {
+                    "apple": 2,
+                    "bait": 2
+                  },
+                  "inventory": [
+                    "bait"
+                  ],
+                  "money": 530,
+                  "day": 7
+                },
+                "day": 7
+              }
+            ],
+            "paperClosed": true,
+            "day4ElderAccess": {
+              "visible": true,
+              "opened": true,
+              "label": "拜访老人",
+              "enabled": true,
+              "closed": true,
+              "dialogStateShown": "老人获救"
+            },
+            "paperShown": true,
+            "navigationSeconds": 28.0,
+            "activeClockUpdateSeconds": 56.0,
+            "directPlayerResourceWrites": 0,
+            "simulationTime": 63.5,
+            "portAdapter": {
+              "resetCalls": 7,
+              "getCalls": 202,
+              "kind": "test-only ocean/port adapter"
+            },
+            "seekCalls": 0
+          },
+          "name": "one apple on each of days one through three saves by day four",
+          "navigationSeconds": 28.0,
+          "error": "",
+          "paperShown": true,
+          "day4Decision": "saved",
+          "day4ElderAccess": {
+            "visible": true,
+            "opened": true,
+            "label": "拜访老人",
+            "enabled": true,
+            "closed": true,
+            "dialogStateShown": "老人获救"
+          },
+          "simulationTime": 63.5,
+          "terminalEndingTriggered": false,
+          "day7": 7,
+          "applesGiven": 3,
+          "pauseCategorySeconds": {
+            "port": 7.5,
+            "elder": 2.0,
+            "entry": 0.5,
+            "settlement": 1.5
+          },
+          "passed": true
+        }
+      ],
+      "failures": [],
+      "error": "",
+      "log": ""
+    },
+    {
+      "name": "PersistenceRegressionSpec.lua",
+      "passed": true,
+      "testCount": 84,
+      "skippedCount": 0,
+      "tests": [
+        {
+          "name": "spec-completed",
+          "passed": true,
+          "assertionCount": 84
+        }
+      ],
+      "failures": [],
+      "error": "",
+      "log": "PERSISTENCE_REGRESSION_PASS 84"
+    }
+  ],
+  "failures": [],
+  "guiStarted": false
+}

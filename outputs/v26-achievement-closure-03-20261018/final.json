@@ -1,0 +1,13 @@
+{
+  "phase": "final",
+  "generatedAt": "2026-10-18T07:09:35.743907+00:00",
+  "project": "C:\\codex\\taptap-sea-worktrees\\WORK-V26-PLAYTEST-FIX-01",
+  "runtimePath": "C:\\codex\\taptap-sea-worktrees\\WORK-V26-PLAYTEST-FIX-01\\.tmp\\circle1-review-runtime",
+  "suiteCount": 4,
+  "suites": [],
+  "setupError": "RuntimeError: Unable to load Lupa Lua 5.4 from C:\\codex\\taptap-sea-worktrees\\WORK-V26-PLAYTEST-FIX-01\\.tmp\\circle1-review-runtime: ModuleNotFoundError: No module named 'lupa'",
+  "setupTraceback": "Traceback (most recent call last):\n  File \"C:\\codex\\taptap-sea-worktrees\\WORK-V26-PLAYTEST-FIX-01\\tests\\run_circle1_review.py\", line 140, in prepare_runtime\n    from lupa.lua54 import LuaRuntime, lua_type  # type: ignore[import-not-found]\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nModuleNotFoundError: No module named 'lupa'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"C:\\codex\\taptap-sea-worktrees\\WORK-V26-PLAYTEST-FIX-01\\tests\\run_circle1_review.py\", line 340, in main\n    LuaRuntime, lua_type, capture_module = prepare_runtime()\n                                           ^^^^^^^^^^^^^^^^^\n  File \"C:\\codex\\taptap-sea-worktrees\\WORK-V26-PLAYTEST-FIX-01\\tests\\run_circle1_review.py\", line 142, in prepare_runtime\n    raise RuntimeError(\nRuntimeError: Unable to load Lupa Lua 5.4 from C:\\codex\\taptap-sea-worktrees\\WORK-V26-PLAYTEST-FIX-01\\.tmp\\circle1-review-runtime: ModuleNotFoundError: No module named 'lupa'\n",
+  "passedSuiteCount": 0,
+  "failedSuiteCount": 0,
+  "passed": false
+}

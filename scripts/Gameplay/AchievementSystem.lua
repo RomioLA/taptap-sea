@@ -63,8 +63,8 @@ function AchievementSystem.New(opts)
 
     local function unlock(id)
         if granted[id] then return end
-        granted[id] = true
         if profile then profile:MarkAchievement(id) end
+        granted[id] = true
         if onUnlock then onUnlock(id, all[id]) end
     end
 

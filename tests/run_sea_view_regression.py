@@ -130,8 +130,12 @@ def summarize_report(report):
     passed = all(row["passed"] for row in rows)
     if value.get("passed") is False or str(value.get("status", "")).upper() == "FAIL":
         passed = False
-    if isinstance(value.get("passed"), (int, float)) and value.get("total"):
-        passed = passed and value["passed"] == value["total"]
+    reported_passed = value.get("passed")
+    reported_total = value.get("total")
+    if isinstance(reported_passed, bool):
+        passed = passed and reported_passed
+    elif type(reported_passed) in (int, float) and type(reported_total) in (int, float):
+        passed = passed and reported_passed == reported_total
     return {
         "passed": passed,
         "checks": rows,
