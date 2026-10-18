@@ -1,0 +1,72 @@
+[
+  {
+    "path": "scripts/Gameplay/GameClock.lua",
+    "new": false,
+    "sha256": "888272116bddc5c7818a6bc3dd78139788857bb1359781cbbf93a83a9cdbc6ea"
+  },
+  {
+    "path": "scripts/Gameplay/HUD.lua",
+    "new": false,
+    "sha256": "ac59e3f2d2ed6b296c2d1b37f162e7174d90779ad53b890cd5b54a89dd381dd2"
+  },
+  {
+    "path": "scripts/Gameplay/Loop.lua",
+    "new": false,
+    "sha256": "3c30609d57752f41d2e53ca851f15d1c6a128ac9fd1270d122d488895bf40f9f"
+  },
+  {
+    "path": "scripts/Gameplay/Persistence.lua",
+    "new": false,
+    "sha256": "57ab84e4bdcc5f41e3b331270833c0638f10e89e23ff93619dca3cbcac390d9a"
+  },
+  {
+    "path": "scripts/Integration/Scene.lua",
+    "new": false,
+    "sha256": "4babafa1afaa54cc3fc5bdd26c8b38c9b4e4ddf712c70ebb58d92d7701e1bbc6"
+  },
+  {
+    "path": "scripts/Ocean/Draw.lua",
+    "new": false,
+    "sha256": "61570aea639409dcfb1a9f721989f2aa7338489d388a6acfa3814f5a9d7af8be"
+  },
+  {
+    "path": "scripts/Ocean/SeaDraw.lua",
+    "new": false,
+    "sha256": "0bf92c8fffa9250a0a49f5fd68d767184a93525b6a9b5a67d7d4b781e5c67136"
+  },
+  {
+    "path": "scripts/Ocean/SeaViewArt.lua",
+    "new": false,
+    "sha256": "58c95f971c7c631cfbf692bce03e51986db7a18996c38020409b109d9e43c78e"
+  },
+  {
+    "path": "scripts/config/gameplay.lua",
+    "new": false,
+    "sha256": "498dfd2cc7216a9256c0ce9aed949ecdcddb59b6c0b5c93ea05a8970396ab9de"
+  },
+  {
+    "path": "scripts/tests/Circle1B3SevenDaysTests.lua",
+    "new": false,
+    "sha256": "7f69c3b79bcb87b79b79a3beb9ca15daf142477d020853a18b6ebd75f966abf7"
+  },
+  {
+    "path": "scripts/tests/GameLoopSpec.lua",
+    "new": false,
+    "sha256": "4fbd31e3612cc26f7d6d042c94ad812951162c6b61e85cd935ab2c79fdd9117a"
+  },
+  {
+    "path": "scripts/tests/SeaDayNightCycleTests.lua",
+    "new": true,
+    "sha256": "f8cf5e7a6f3e7a7ed0aad089faba0f0c29b9421beded892986a49684ce7ea559"
+  },
+  {
+    "path": "scripts/tests/SevenDaysRunTests.lua",
+    "new": true,
+    "sha256": "199ac958f1d5357a1c1972ead91a26e9c020677d757e98177edf49714b929808"
+  },
+  {
+    "path": "tests/run_seven_days_cycle.py",
+    "new": true,
+    "sha256": "fed13e2776738c9aeb5eb0d37fd1d7d7bcad5745e0af87452f9553b4fd1fe8b6"
+  }
+]

@@ -363,6 +363,18 @@ function Barrel:AcceptCompletion(record, evidence)
             or (record.stage == 0 and "取得1个苹果和1个鱼饵。" or "已取得透镜。"))
     end
     local barrelOutcome = record.result and record.result[2]
+    local costFeedback = string.format("消耗%d体力，剩余%d体力",
+        Config.barrel.cost, math.floor(tonumber(self.loop.player.stamina) or 0))
+    if record.stage == 2 then
+        local lensFeedback = "获得望远镜透镜。\n"
+            .. "它可以帮助你发现船前方的海底目标。\n"
+            .. "开启透镜，持续对准目标约1秒即可标记；靠近目标后可以打捞。"
+        if type(self.loop.QueueActionToast) == "function" then
+            self.loop:QueueActionToast(lensFeedback .. "\n" .. costFeedback, 7)
+        end
+    elseif type(self.loop.QueueActionToast) == "function" then
+        self.loop:QueueActionToast(costFeedback, 3)
+    end
     if barrelOutcome and barrelOutcome ~= "empty" then
         SoundSystem.Discovery()  -- 需求 行动：探索发现播放 discovery（木桶补给 / 透镜发现）
     end

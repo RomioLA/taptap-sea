@@ -5,6 +5,7 @@ local RECORD_KEY = "circle1B2"
 local ELDER_DEFAULTS = { applesGiven = 0, decision = "pending", teachingDone = false }
 local STORY_DEFAULTS = {
     barrelStage = 0,
+    elderFateShown = false,
     paperShown = false,
     fishingSelectionShown = false,
 }
@@ -111,7 +112,18 @@ function Progress.Validate(data)
         if type(story.paperShown) ~= "boolean" then
             return false, "invalid_paper_shown"
         end
-        -- 兼容本轮之前的同 schema 存档；Restore 后 Initialize 会补 false。
+        if story.elderFateShown ~= nil and type(story.elderFateShown) ~= "boolean" then
+            return false, "invalid_elder_fate_shown"
+        end
+        if story.elderFateShown == true then
+            if not integer(data.day, 1) or data.day < 4 then
+                return false, "elder_fate_shown_before_day_four"
+            end
+            if not elder or (elder.decision ~= "saved" and elder.decision ~= "dead") then
+                return false, "elder_fate_shown_without_final_decision"
+            end
+        end
+        -- 兼容本轮之前的同 schema 存档；Restore 后 Initialize 会补默认标记。
         if story.fishingSelectionShown ~= nil and type(story.fishingSelectionShown) ~= "boolean" then
             return false, "invalid_fishing_selection_hint"
         end
@@ -335,6 +347,37 @@ function Progress.SetBarrelStage(player, stage)
         if not hasLens then return false, "final_barrel_stage_requires_lens" end
     end
     record.barrelStage = stage
+    return true
+end
+
+---查询第4天老人命运结果是否已明确展示。
+---@param player table
+---@return boolean, string|nil
+function Progress.IsElderFateShown(player)
+    local record, reason = getRecord(player, "story", "story_progress")
+    if reason then return false, reason end
+    if not record or record.elderFateShown == nil then return false end
+    if type(record.elderFateShown) ~= "boolean" then return false, "invalid_elder_fate_shown" end
+    return record.elderFateShown
+end
+
+---标记第4天老人命运结果已展示，不保存或推进其他进度。
+---@param player table
+---@return boolean, string|nil
+function Progress.MarkElderFateShown(player)
+    if type(player) ~= "table" or not integer(player.day, 1) then return false, "invalid_day" end
+    if player.day < 4 then return false, "elder_fate_not_available" end
+    local elder, elderError = getRecord(player, "elder", "elder_progress")
+    if elderError then return false, elderError end
+    if not elder or (elder.decision ~= "saved" and elder.decision ~= "dead") then
+        return false, "elder_decision_pending"
+    end
+    local record, reason = ensureRecord(player, "story", STORY_DEFAULTS, "story_progress")
+    if not record then return false, reason end
+    if record.elderFateShown ~= nil and type(record.elderFateShown) ~= "boolean" then
+        return false, "invalid_elder_fate_shown"
+    end
+    record.elderFateShown = true
     return true
 end
 

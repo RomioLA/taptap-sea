@@ -1,0 +1,136 @@
+{
+  "initialized": true,
+  "missingDiagnostics": [],
+  "configuredErrorCount": 31,
+  "rawErrorCount": 78,
+  "priorRawErrorCount": 41,
+  "newRawErrors": [
+    {
+      "file": "tests/Circle1A3SignalsTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `id`. ",
+      "count": 1
+    },
+    {
+      "file": "tests/Circle1A3SignalsTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `sourceId`. ",
+      "count": 2
+    },
+    {
+      "file": "tests/Circle1A3SignalsTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `x`. ",
+      "count": 2
+    },
+    {
+      "file": "tests/Circle1A3SignalsTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `y`. ",
+      "count": 2
+    },
+    {
+      "file": "tests/Circle1A3SignalsTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `heading`. ",
+      "count": 2
+    },
+    {
+      "file": "tests/Circle1A3SignalsTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `diveProgress`. ",
+      "count": 1
+    },
+    {
+      "file": "tests/Circle1A3SignalsTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `remaining`. ",
+      "count": 1
+    },
+    {
+      "file": "tests/Circle1A3SignalsTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `lifetime`. ",
+      "count": 1
+    },
+    {
+      "file": "tests/Circle1A3SignalsTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `trailLength`. ",
+      "count": 1
+    },
+    {
+      "file": "Ocean/World.lua",
+      "code": "return-type-mismatch",
+      "message": "Annotations specify that return value 1 has a type of `nil`, returning value of type `boolean` here instead. ",
+      "count": 2
+    },
+    {
+      "file": "tests/Circle1A3PortTests.lua",
+      "code": "param-type-mismatch",
+      "message": "expected `(table<unknown,unknown>|unknown[]|{ [unknown]: unknown })` but found `nil`. ",
+      "count": 2
+    },
+    {
+      "file": "tests/Circle1A3ExperienceTests.lua",
+      "code": "param-type-mismatch",
+      "message": "expected `table` but found `never`. ",
+      "count": 2
+    },
+    {
+      "file": "tests/Circle1A3ExperienceTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `position`. ",
+      "count": 3
+    },
+    {
+      "file": "tests/Circle1A3ExperienceTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `id`. ",
+      "count": 6
+    },
+    {
+      "file": "tests/Circle1A3ExperienceTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `species`. ",
+      "count": 1
+    },
+    {
+      "file": "tests/Circle1A3ExperienceTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `generation`. ",
+      "count": 3
+    },
+    {
+      "file": "tests/Circle1A3StabilityTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `id`. ",
+      "count": 1
+    },
+    {
+      "file": "tests/Circle1A3StabilityTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `_tryEat`. ",
+      "count": 1
+    },
+    {
+      "file": "tests/Circle1A3StabilityTests.lua",
+      "code": "undefined-field",
+      "message": "Undefined field `[level]`. ",
+      "count": 1
+    },
+    {
+      "file": "tests/Circle1A3InputTests.lua",
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `nil` to `MouseMode`. ",
+      "count": 1
+    },
+    {
+      "file": "tests/Circle1A3InputTests.lua",
+      "code": "assign-type-mismatch",
+      "message": "Cannot assign `nil` to `boolean`. ",
+      "count": 1
+    }
+  ],
+  "passed": false
+}

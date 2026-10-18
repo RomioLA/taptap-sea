@@ -1,0 +1,13 @@
+{
+  "task": "isolated Lua regression across scripts/tests/*Tests.lua",
+  "sourceRoot": "C:\\codex\\taptap-sea\\scripts",
+  "status": "BLOCKED_ENVIRONMENT",
+  "luaVersion": null,
+  "lupaDependencyRoot": null,
+  "syntax": [],
+  "suites": [],
+  "nvgCapture": "record-only; no PNG export",
+  "nativeEngineVisualAcceptance": "NOT_RUN",
+  "nvgMockVisualAcceptance": false,
+  "error": "RuntimeError: Lupa Lua 5.4 is unavailable; checked no dependency directory"
+}

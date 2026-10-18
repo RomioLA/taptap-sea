@@ -412,6 +412,8 @@ function Actions:CompleteFishing(runtime,token,...)
         return false,record.reason
     end
     record.state='complete'
+    record.staminaCost = Config.stamina.fishingCost
+    record.staminaAfter = self.loop.player.stamina
     self._pendingFishing=nil
     record.result=table.pack(true,hasSpace and 'caught' or 'pending_catch',record.itemId)
     if self.loop.knowledge then self.loop.knowledge:OnFishingResolved({result = record.result}) end  -- ②③ 空网连击
@@ -448,7 +450,8 @@ function Actions:GetFishingState()
     return {state=record.state,center=copyPoint(record.center),elapsed=record.elapsed,duration=Config.fishing.durationSec,
         reason=record.reason,outcome=record.result and record.result[2] or nil,
         -- T2：结局/气泡文案需要鱼种明细；result[3]=itemId（'caught'/'pending_catch' 时存在）。
-        itemId=record.result and record.result[3] or nil}
+        itemId=record.result and record.result[3] or nil,
+        staminaCost=record.staminaCost, staminaAfter=record.staminaAfter}
 end
 function Actions:GetPendingCatch()
     local pending=self._pendingCatch

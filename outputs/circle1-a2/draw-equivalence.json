@@ -1,0 +1,34 @@
+[
+  {
+    "scene": "landscape",
+    "captures": [
+      {
+        "version": "before",
+        "sha256": "ed323de7c6e29bfc4cb2f82dcb7ee13eb7ebb115f6987322510100480bb021e5",
+        "nvgCalls": 1286
+      },
+      {
+        "version": "after",
+        "sha256": "ed323de7c6e29bfc4cb2f82dcb7ee13eb7ebb115f6987322510100480bb021e5",
+        "nvgCalls": 1198
+      }
+    ],
+    "pixelsIdentical": true
+  },
+  {
+    "scene": "portrait",
+    "captures": [
+      {
+        "version": "before",
+        "sha256": "1fb3e756b3b7c75141c073997684ed1e2a7909b3dd710bab8baf23d5fc5381a0",
+        "nvgCalls": 1286
+      },
+      {
+        "version": "after",
+        "sha256": "1fb3e756b3b7c75141c073997684ed1e2a7909b3dd710bab8baf23d5fc5381a0",
+        "nvgCalls": 1154
+      }
+    ],
+    "pixelsIdentical": true
+  }
+]

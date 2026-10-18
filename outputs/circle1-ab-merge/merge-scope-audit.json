@@ -1,0 +1,1797 @@
+{
+  "createdAtUtc": "2026-10-03T05:10:30.755511+00:00",
+  "source": "D:\\sillytavern-data\\taptap-sea-B",
+  "target": "C:\\codex\\taptap-sea",
+  "scope": "scripts/docs/data/assets; no outputs history, engine library, project environment or credentials compared.",
+  "fullProjectMergeCompleted": false,
+  "writesProductionOrPlanning": false,
+  "groups": {
+    "scripts": {
+      "cFiles": 105,
+      "dFiles": 91,
+      "counts": {
+        "onlyC": 15,
+        "missingFromC": 1,
+        "same": 63,
+        "different": 27
+      },
+      "records": [
+        {
+          "relativePath": "scripts/.luarc.json",
+          "status": "same",
+          "cSha256": "38a79e721ec852893637cd09e61fb7b9a26c307912008edbc3a9cbd8af3b34c9",
+          "dSha256": "38a79e721ec852893637cd09e61fb7b9a26c307912008edbc3a9cbd8af3b34c9"
+        },
+        {
+          "relativePath": "scripts/config/gameplay.lua",
+          "status": "different",
+          "cSha256": "178c212ca17207ce1aeea42417326351905163889c9c7c675d1db60a0f2cb73f",
+          "dSha256": "5bd72d98b517ae3b3171876745f80251917cb3ae72106f4f37dd36d9decb07e0"
+        },
+        {
+          "relativePath": "scripts/data/items.lua",
+          "status": "same",
+          "cSha256": "e0e74b36fa1fe33e17e5ac6797d37c9bbc2047ebcff64a5dedaab35ef9ae6eca",
+          "dSha256": "e0e74b36fa1fe33e17e5ac6797d37c9bbc2047ebcff64a5dedaab35ef9ae6eca"
+        },
+        {
+          "relativePath": "scripts/data/items.lua.meta",
+          "status": "same",
+          "cSha256": "9e46cbbf7f590fe28464666739c1146a9e0c1f2de3309e9ca983a1816980dc15",
+          "dSha256": "9e46cbbf7f590fe28464666739c1146a9e0c1f2de3309e9ca983a1816980dc15"
+        },
+        {
+          "relativePath": "scripts/Entities/EntityFactory.lua",
+          "status": "same",
+          "cSha256": "78a35ffc54ab3ed6642de732ec3d7af389183690ea2a3f8c5337d09e60e4ad34",
+          "dSha256": "78a35ffc54ab3ed6642de732ec3d7af389183690ea2a3f8c5337d09e60e4ad34"
+        },
+        {
+          "relativePath": "scripts/Entities/EntityFactory.lua.meta",
+          "status": "same",
+          "cSha256": "455554b17ce46fd6ae8072f0f156bd03d638b7d43f3a975b76f8aed87ce7a8f7",
+          "dSha256": "455554b17ce46fd6ae8072f0f156bd03d638b7d43f3a975b76f8aed87ce7a8f7"
+        },
+        {
+          "relativePath": "scripts/FSM/StateMachine.lua",
+          "status": "same",
+          "cSha256": "34376bb99d73878a4ea8b042ac810e0940f6549c0e67339dab042b9cdd003ee4",
+          "dSha256": "34376bb99d73878a4ea8b042ac810e0940f6549c0e67339dab042b9cdd003ee4"
+        },
+        {
+          "relativePath": "scripts/FSM/StateMachine.lua.meta",
+          "status": "same",
+          "cSha256": "76af020588116f7bfb70dae3ec19414f29b54f45133187f2dbcd23bdff53ef16",
+          "dSha256": "76af020588116f7bfb70dae3ec19414f29b54f45133187f2dbcd23bdff53ef16"
+        },
+        {
+          "relativePath": "scripts/Game/Game.lua",
+          "status": "different",
+          "cSha256": "c73b8dd4cc2b28b0e020d6a0df4dbd898fbf096ac76690c27bc7605ce35330dd",
+          "dSha256": "c3c442d39140c47f27f840334b0104737eaccb13f23bc167ee956b9c77b0fde4"
+        },
+        {
+          "relativePath": "scripts/Game/Game.lua.meta",
+          "status": "same",
+          "cSha256": "ae12f53bf1518f60196934bba5ce4827dd0aaed34fd95bd896e86832f9b7ae13",
+          "dSha256": "ae12f53bf1518f60196934bba5ce4827dd0aaed34fd95bd896e86832f9b7ae13"
+        },
+        {
+          "relativePath": "scripts/Game/World.lua",
+          "status": "same",
+          "cSha256": "566adfe3c4560b6f55d38059c72514b710485a290112e40172fa650b694c6ded",
+          "dSha256": "566adfe3c4560b6f55d38059c72514b710485a290112e40172fa650b694c6ded"
+        },
+        {
+          "relativePath": "scripts/Game/World.lua.meta",
+          "status": "same",
+          "cSha256": "e7ff06783830b7cb3bf54cb65abdcf1182308eb0b9caff64e0353c8ccebb9ef5",
+          "dSha256": "e7ff06783830b7cb3bf54cb65abdcf1182308eb0b9caff64e0353c8ccebb9ef5"
+        },
+        {
+          "relativePath": "scripts/Gameplay/Actions.lua",
+          "status": "same",
+          "cSha256": "6bba20b4d926ba1fb4f6bf97db853b3b6c483c0ff6a9b16004f8f6661a793e72",
+          "dSha256": "6bba20b4d926ba1fb4f6bf97db853b3b6c483c0ff6a9b16004f8f6661a793e72"
+        },
+        {
+          "relativePath": "scripts/Gameplay/Bootstrap.lua",
+          "status": "same",
+          "cSha256": "c27437b0283201464f17f3be6eb14baaccfbf2bad6cac337f445be15ea387e56",
+          "dSha256": "c27437b0283201464f17f3be6eb14baaccfbf2bad6cac337f445be15ea387e56"
+        },
+        {
+          "relativePath": "scripts/Gameplay/Circle1B2Barrel.lua",
+          "status": "different",
+          "cSha256": "47de71711a07b8044b4277d166bcd0c1d90b7f1ebdb56cdef8402a6f553cc39b",
+          "dSha256": "1938a0294a63a5b8d14dac7be60d97ceff90d3187ddbf61f802cf2d09f7c31ee"
+        },
+        {
+          "relativePath": "scripts/Gameplay/Circle1B2Progress.lua",
+          "status": "same",
+          "cSha256": "a49e1852b73304842f7a147b5b2846bf9a657d1f9a41e434a1177028f67b0d7a",
+          "dSha256": "a49e1852b73304842f7a147b5b2846bf9a657d1f9a41e434a1177028f67b0d7a"
+        },
+        {
+          "relativePath": "scripts/Gameplay/Debug.lua",
+          "status": "same",
+          "cSha256": "855e27643e641c7dbe25f45b3427ad4c8086161e7444607282cfa8b028e0dd3b",
+          "dSha256": "855e27643e641c7dbe25f45b3427ad4c8086161e7444607282cfa8b028e0dd3b"
+        },
+        {
+          "relativePath": "scripts/Gameplay/GameClock.lua",
+          "status": "different",
+          "cSha256": "76e5a617c5d6dc18b1634b2d6799ea1c983bf9af569031cb09c042727a48285b",
+          "dSha256": "09dbdb0783b279b9e3c92b407b7061635fbfec9e90344e6797b144fcee8af429"
+        },
+        {
+          "relativePath": "scripts/Gameplay/HUD.lua",
+          "status": "different",
+          "cSha256": "85547045f59f0c516c869b73d8fc1aa7ade4247c9a7e9108830d4bda3ab9b456",
+          "dSha256": "eef26abee6823e2b91771b798b73aaeb14c8e6b9442072ee7d27da0f8ce4cde9"
+        },
+        {
+          "relativePath": "scripts/Gameplay/Inventory.lua",
+          "status": "same",
+          "cSha256": "1bac7c8d4280cbceca3b6461704aa625143e2d6743ff1c4d18b0f31d67c58d84",
+          "dSha256": "1bac7c8d4280cbceca3b6461704aa625143e2d6743ff1c4d18b0f31d67c58d84"
+        },
+        {
+          "relativePath": "scripts/Gameplay/Loop.lua",
+          "status": "different",
+          "cSha256": "c7b7aaba85cd7d3a115d45f1ac55da636aaea73dd10021a9eeab2e9810a68e4a",
+          "dSha256": "1c2503ceb918a66193a9bbe40ce6aa1be2a0a2a7e53ed224a56b9403235b8824"
+        },
+        {
+          "relativePath": "scripts/Gameplay/Persistence.lua",
+          "status": "same",
+          "cSha256": "c42172b7260f51e103b51fef4caee268c59f5cfd27b6a2b07c0cac4e07359034",
+          "dSha256": "c42172b7260f51e103b51fef4caee268c59f5cfd27b6a2b07c0cac4e07359034"
+        },
+        {
+          "relativePath": "scripts/Gameplay/PlayerState.lua",
+          "status": "same",
+          "cSha256": "f00092bee77c5964550806e95b2b082a3e5e7e07b2e3d5daca7f4e650be149f4",
+          "dSha256": "f00092bee77c5964550806e95b2b082a3e5e7e07b2e3d5daca7f4e650be149f4"
+        },
+        {
+          "relativePath": "scripts/Gameplay/UpdateSystem.lua",
+          "status": "same",
+          "cSha256": "12a92a5c2117935faf0393188e23a2440beee11999ba7f268210c4a5d26a2cd1",
+          "dSha256": "12a92a5c2117935faf0393188e23a2440beee11999ba7f268210c4a5d26a2cd1"
+        },
+        {
+          "relativePath": "scripts/GeneratedData/Fish.lua",
+          "status": "same",
+          "cSha256": "65e35588f19ac41d1b6594294fe47eb5802258753dd309510b9b66c73d9fe9fb",
+          "dSha256": "65e35588f19ac41d1b6594294fe47eb5802258753dd309510b9b66c73d9fe9fb"
+        },
+        {
+          "relativePath": "scripts/GeneratedData/Items.lua",
+          "status": "same",
+          "cSha256": "33faef6384ff84bc973f2d0ba964f7b1a9572f886a39755dcdd53bef010433ec",
+          "dSha256": "33faef6384ff84bc973f2d0ba964f7b1a9572f886a39755dcdd53bef010433ec"
+        },
+        {
+          "relativePath": "scripts/Integration/Bridge.lua",
+          "status": "different",
+          "cSha256": "550b1299a6d5ea15e5c035852320702567c07ee847785537c6fa630b16fa1341",
+          "dSha256": "528bd55bf63f9e90cf688f801d279de123e5a767b4ee5d4d60baf9a688c6fca0"
+        },
+        {
+          "relativePath": "scripts/Integration/Circle1BInput.lua",
+          "status": "same",
+          "cSha256": "4c3f0ebf320ee3a1f392b0a7d1cd1a779afae591277b18bd9374adc2770190aa",
+          "dSha256": "4c3f0ebf320ee3a1f392b0a7d1cd1a779afae591277b18bd9374adc2770190aa"
+        },
+        {
+          "relativePath": "scripts/Integration/Scene.lua",
+          "status": "same",
+          "cSha256": "3f46f8952c1015164e275377b7d124ee8358650e0c3d4c4e8501246021b62d97",
+          "dSha256": "3f46f8952c1015164e275377b7d124ee8358650e0c3d4c4e8501246021b62d97"
+        },
+        {
+          "relativePath": "scripts/Main.lua",
+          "status": "same",
+          "cSha256": "7b14e1225833ed502b329a78681c5257fb1db75dcb72e1cccb6da906e322b7c2",
+          "dSha256": "7b14e1225833ed502b329a78681c5257fb1db75dcb72e1cccb6da906e322b7c2"
+        },
+        {
+          "relativePath": "scripts/Main.lua.meta",
+          "status": "same",
+          "cSha256": "3751505fdc385e1e8b57b25a6ada6a880412034b6d911bfbcbe761b0a5025cf7",
+          "dSha256": "3751505fdc385e1e8b57b25a6ada6a880412034b6d911bfbcbe761b0a5025cf7"
+        },
+        {
+          "relativePath": "scripts/Ocean/Bootstrap.lua",
+          "status": "different",
+          "cSha256": "dc6da15e2d8c3cf622591a757a81cc77f2c25f822856eb172e025514f36cf161",
+          "dSha256": "3b8a0402e3a2e77f5846830e0573dde0118121858bf850645b2c976894b79d54"
+        },
+        {
+          "relativePath": "scripts/Ocean/Config.lua",
+          "status": "different",
+          "cSha256": "ddcb679f469f11dca03fff62b2872278ee186c73b4f96fd93a96a869073df046",
+          "dSha256": "06efcd4f858673547dc402974582c57fd0c414d88a84ed9075ec71144a2ac135"
+        },
+        {
+          "relativePath": "scripts/Ocean/Config.lua.meta",
+          "status": "same",
+          "cSha256": "c49ca4fe2c65dba3f2183c56f5e65660a4ded77c6519ed6dd5f6ec6e43527571",
+          "dSha256": "c49ca4fe2c65dba3f2183c56f5e65660a4ded77c6519ed6dd5f6ec6e43527571"
+        },
+        {
+          "relativePath": "scripts/Ocean/Draw.lua",
+          "status": "same",
+          "cSha256": "8e2a8871ade22c2f35b196b81d5fab1fd1df15d17c3404f7769e22304b7adc10",
+          "dSha256": "8e2a8871ade22c2f35b196b81d5fab1fd1df15d17c3404f7769e22304b7adc10"
+        },
+        {
+          "relativePath": "scripts/Ocean/Draw.lua.meta",
+          "status": "same",
+          "cSha256": "80ce5f411043878b96e95c2482847b45c30b4c17c1bf7ee8987a3d985df14109",
+          "dSha256": "80ce5f411043878b96e95c2482847b45c30b4c17c1bf7ee8987a3d985df14109"
+        },
+        {
+          "relativePath": "scripts/Ocean/Fish.lua",
+          "status": "different",
+          "cSha256": "aaf4ccd132480cbf50dc8a502b8de1d2c2ab88275f1092bc8f7ee481a8983b41",
+          "dSha256": "a4967af9c27372a617fc5c591ee2d63823278c21d086ea670e25e8e109b9324a"
+        },
+        {
+          "relativePath": "scripts/Ocean/FishData.lua",
+          "status": "same",
+          "cSha256": "f8d494aa7cc8f5af357e8a8afe894be6f824ee2ae42802c762ad8ed9725bd299",
+          "dSha256": "f8d494aa7cc8f5af357e8a8afe894be6f824ee2ae42802c762ad8ed9725bd299"
+        },
+        {
+          "relativePath": "scripts/Ocean/FusedScene.lua",
+          "status": "same",
+          "cSha256": "8bfb660db1d2b5dd2e0b7a9eabe4e0f9b539b741fac9026ac7a55c9c8f81d6bf",
+          "dSha256": "8bfb660db1d2b5dd2e0b7a9eabe4e0f9b539b741fac9026ac7a55c9c8f81d6bf"
+        },
+        {
+          "relativePath": "scripts/Ocean/HUD.lua",
+          "status": "different",
+          "cSha256": "3e54576096a956becc6890a9aae91d1c1b2a781e62afd366658500cc31fff625",
+          "dSha256": "f9e0ebeb6704bef7f03891b062967a06f32fb78e7628e2e35f80936ea6ad040a"
+        },
+        {
+          "relativePath": "scripts/Ocean/HUD.lua.meta",
+          "status": "same",
+          "cSha256": "d20136f9a16280b69f7d6010417e169d4d84a05b695b29a188001ce920173006",
+          "dSha256": "d20136f9a16280b69f7d6010417e169d4d84a05b695b29a188001ce920173006"
+        },
+        {
+          "relativePath": "scripts/Ocean/Math.lua",
+          "status": "same",
+          "cSha256": "9cb75e3c99f667e1529944db1f777a99cd3a9eab3e45ebed631776b0a22e1a5d",
+          "dSha256": "9cb75e3c99f667e1529944db1f777a99cd3a9eab3e45ebed631776b0a22e1a5d"
+        },
+        {
+          "relativePath": "scripts/Ocean/Movement.lua",
+          "status": "different",
+          "cSha256": "50b6ff818f1d37142c0977b4855ea40e062be8c3b7c0f16b8b1826ade79a158d",
+          "dSha256": "04f424d10c1dba1987fbeed0f0bedc63265d7ec94649d4c29559ed3c0121e8df"
+        },
+        {
+          "relativePath": "scripts/Ocean/SceneState.lua",
+          "status": "same",
+          "cSha256": "f78aab095bd890f968564c05426cab843a5344aad519edbf724bbf49b5c3c5be",
+          "dSha256": "f78aab095bd890f968564c05426cab843a5344aad519edbf724bbf49b5c3c5be"
+        },
+        {
+          "relativePath": "scripts/Ocean/SeaDebug.lua",
+          "status": "same",
+          "cSha256": "9645d0673d933bdb9e3b50ac0dd0d3be436fed113875bbef23ba9c20fb4a0c31",
+          "dSha256": "9645d0673d933bdb9e3b50ac0dd0d3be436fed113875bbef23ba9c20fb4a0c31"
+        },
+        {
+          "relativePath": "scripts/Ocean/SeaDraw.lua",
+          "status": "different",
+          "cSha256": "a6245cbb49cb74efa28defb63d7546bd87f6b6c990a79e9af18c95888193534a",
+          "dSha256": "489541f4f18ced5533211bbe9706a7c35e95fe59f33660acab0a0fd7b90d2f03"
+        },
+        {
+          "relativePath": "scripts/Ocean/SeaRuntime.lua",
+          "status": "different",
+          "cSha256": "b914c87a2557ff528426f7c587d92638f96c66ce6956054a609104f1fa78219f",
+          "dSha256": "f3884bcede776cf57c821d4a240a2a15249471cc035609c39d75660b1ef51ade"
+        },
+        {
+          "relativePath": "scripts/Ocean/SpawnStrategy.lua",
+          "status": "same",
+          "cSha256": "dbb5b67e46b21b00f6d9a86f5de806bcb70d233678f59a7f1d730e3f484a5b9f",
+          "dSha256": "dbb5b67e46b21b00f6d9a86f5de806bcb70d233678f59a7f1d730e3f484a5b9f"
+        },
+        {
+          "relativePath": "scripts/Ocean/State.lua",
+          "status": "same",
+          "cSha256": "cb95df6447bd3ba046a1d4f1b25d84ec6014756422b9bc7abc46dc0a8ad1db52",
+          "dSha256": "cb95df6447bd3ba046a1d4f1b25d84ec6014756422b9bc7abc46dc0a8ad1db52"
+        },
+        {
+          "relativePath": "scripts/Ocean/State.lua.meta",
+          "status": "same",
+          "cSha256": "a165279f14b4a9108a5a462be800d0c0352aab73c28f1ef3ad61913de61d53f3",
+          "dSha256": "a165279f14b4a9108a5a462be800d0c0352aab73c28f1ef3ad61913de61d53f3"
+        },
+        {
+          "relativePath": "scripts/Ocean/SurfaceSignals.lua",
+          "status": "different",
+          "cSha256": "724390ae99c892205fd8606ed220dbf42d40cc8faad8cd0bd0feaba67a9fcbb3",
+          "dSha256": "f341aa49bc8a35b2218319a07c0d6f0c7c3a5bb124ba75f9f17d27fe61f214b0"
+        },
+        {
+          "relativePath": "scripts/Ocean/World.lua",
+          "status": "different",
+          "cSha256": "4c4f98ee088e30718c18886d80c6d014712a3dd4407d5a90412b646c6b49ed9b",
+          "dSha256": "1c178b6654ab712669da5e7f57ca91269ac527f0ac4ba9cae6d9c5652c9f4791"
+        },
+        {
+          "relativePath": "scripts/SeaPreviewEntry.lua",
+          "status": "same",
+          "cSha256": "6bd8f0140b149d75628424806f3eaf2950f7bfe40d8e9b95614d1b77ce6553fa",
+          "dSha256": "6bd8f0140b149d75628424806f3eaf2950f7bfe40d8e9b95614d1b77ce6553fa"
+        },
+        {
+          "relativePath": "scripts/Systems/EntityStateSystem.lua",
+          "status": "different",
+          "cSha256": "2c44801d07e2921c3d5a5492faf0832d2b86890a759d11e9ec23b597ec3e8f18",
+          "dSha256": "af2a94dece7b1831eef7e8c4719fa67443a48a1ea6c8fea24d54ca7e7bfab99a"
+        },
+        {
+          "relativePath": "scripts/Systems/EntityStateSystem.lua.meta",
+          "status": "same",
+          "cSha256": "ab356dafcafb374c30304bbf21e95dc594e7c36d5d03096b5ff222c5d9a5048b",
+          "dSha256": "ab356dafcafb374c30304bbf21e95dc594e7c36d5d03096b5ff222c5d9a5048b"
+        },
+        {
+          "relativePath": "scripts/Tests/__pycache__/Circle1B3Run.cpython-312.pyc",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "60a01b839c3053a62a3a4d32aae73f7bb502827c1e7a7652a2ad11d391b82cc9"
+        },
+        {
+          "relativePath": "scripts/Tests/ABIntegrationTests.lua",
+          "status": "different",
+          "cSha256": "de232115b234707f53eb87d980f1bd63672194a125f4b94586a578a11b40ab25",
+          "dSha256": "b69a55a6aacce973875cb040fd026eab964b18eed8e12d8d77285e9438b39975"
+        },
+        {
+          "relativePath": "scripts/Tests/ArchitectureIntegrationTests.lua",
+          "status": "same",
+          "cSha256": "aeca8b95918f02b42d5016b764252f643080f4c60cbe364b6885fdd75855012e",
+          "dSha256": "aeca8b95918f02b42d5016b764252f643080f4c60cbe364b6885fdd75855012e"
+        },
+        {
+          "relativePath": "scripts/Tests/check_game_loop_lsp.py",
+          "status": "same",
+          "cSha256": "4d83f568d94046c398ff5b9ccf06fbc99307c814260d8f2450e7a366b13c13da",
+          "dSha256": "4d83f568d94046c398ff5b9ccf06fbc99307c814260d8f2450e7a366b13c13da"
+        },
+        {
+          "relativePath": "scripts/tests/Circle1A2BarrelRenderTests.lua",
+          "status": "onlyC",
+          "cSha256": "5de403b5cb33e5b84d17254a3738fce26ed942450111178956562f4afb5eea35",
+          "dSha256": null
+        },
+        {
+          "relativePath": "scripts/tests/Circle1A2BarrelTests.lua",
+          "status": "onlyC",
+          "cSha256": "f9111b55da708a9082b7cbcfe51478bb7fc165a3c317443a1c2f5d2454e2f7aa",
+          "dSha256": null
+        },
+        {
+          "relativePath": "scripts/tests/Circle1A2FishingTests.lua",
+          "status": "onlyC",
+          "cSha256": "b9c5121c15e6610284b76cf147f28adce545d9876a45ff3c4075e61a7674562f",
+          "dSha256": null
+        },
+        {
+          "relativePath": "scripts/tests/Circle1A2ScopeTests.lua",
+          "status": "onlyC",
+          "cSha256": "a0993ca2011c8c07d0ec4b931ea7e1f286b8b86e88af10724362e2e2d3d8a8c8",
+          "dSha256": null
+        },
+        {
+          "relativePath": "scripts/tests/Circle1A2SignalsTests.lua",
+          "status": "onlyC",
+          "cSha256": "91ca8d70b764779e8a7c87276609841d174c179c371447bdbf0dbdbe3c946816",
+          "dSha256": null
+        },
+        {
+          "relativePath": "scripts/tests/Circle1A3ExperienceTests.lua",
+          "status": "onlyC",
+          "cSha256": "239252880bdf1953e840a99d07fd49bffc6e81c3aa1dbc13b07e6afe5264e6ac",
+          "dSha256": null
+        },
+        {
+          "relativePath": "scripts/tests/Circle1A3InputTests.lua",
+          "status": "onlyC",
+          "cSha256": "b86aa2fe35cfde09abb41ac0ac5b7dac57fd3117ba952a0c7813605658f68174",
+          "dSha256": null
+        },
+        {
+          "relativePath": "scripts/tests/Circle1A3PortTests.lua",
+          "status": "onlyC",
+          "cSha256": "3626dc7e0a9f344cb56672007f1eaafadbab887832b2afdaae34500387831f8d",
+          "dSha256": null
+        },
+        {
+          "relativePath": "scripts/tests/Circle1A3RecognitionTests.lua",
+          "status": "onlyC",
+          "cSha256": "81b41bef5416b0b5e6bb2690d70190036fd22e43c5b6929df9d47708ed9478bf",
+          "dSha256": null
+        },
+        {
+          "relativePath": "scripts/tests/Circle1A3SignalsTests.lua",
+          "status": "onlyC",
+          "cSha256": "2e131a4db6a298355b6961012711e3205584f557d519d27ee95af890dd15bc60",
+          "dSha256": null
+        },
+        {
+          "relativePath": "scripts/tests/Circle1A3StabilityTests.lua",
+          "status": "onlyC",
+          "cSha256": "87a7559ff7a6c55d005b7084dca21dc270ec7e100f233b6be0354f67ba0a5d0f",
+          "dSha256": null
+        },
+        {
+          "relativePath": "scripts/tests/Circle1ABMergeFrameBudgetTests.lua",
+          "status": "onlyC",
+          "cSha256": "63742f8b0c6548ef9a15c575fb0cfba12185ab8a085ba84db3920f52906f8caf",
+          "dSha256": null
+        },
+        {
+          "relativePath": "scripts/tests/Circle1AFishLocksTests.lua",
+          "status": "onlyC",
+          "cSha256": "a13c50914b92d1c47b8448c74aa2d4b4655bec7803b81d4a897ab5ddf2d718f7",
+          "dSha256": null
+        },
+        {
+          "relativePath": "scripts/tests/Circle1APredationCooldownTests.lua",
+          "status": "onlyC",
+          "cSha256": "0ed13d31b8d9f63d5f20c6171b5f92d7ea111bd36ffcef9747fc72315d9e5a75",
+          "dSha256": null
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1B2BarrelTests.lua",
+          "status": "different",
+          "cSha256": "4e8ecf17c6b38553dbb8a5690d262b7538633a62306a10d6d45fc8fd79f7ca0d",
+          "dSha256": "962b33f86e9694ebddf152c6f9d1dd94f66d8bb3d620cd189fd455b9eec1a814"
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1B2Lsp.py",
+          "status": "same",
+          "cSha256": "9a37122bed3d71ccb6d3e28e4587fddc2bcbafc1e136787ab0643988572af03f",
+          "dSha256": "9a37122bed3d71ccb6d3e28e4587fddc2bcbafc1e136787ab0643988572af03f"
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1B2ProgressTests.lua",
+          "status": "same",
+          "cSha256": "212f035472ee02acf2631e408835695cd72b56fd1b52c9fee8ec199127232f5d",
+          "dSha256": "212f035472ee02acf2631e408835695cd72b56fd1b52c9fee8ec199127232f5d"
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1B2Run.py",
+          "status": "same",
+          "cSha256": "fdc8bb6c931cb2dead7fab9e94e23f23557828ace0c934a41d4228e1548ed873",
+          "dSha256": "fdc8bb6c931cb2dead7fab9e94e23f23557828ace0c934a41d4228e1548ed873"
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1B2ScopeTests.lua",
+          "status": "different",
+          "cSha256": "7ec34542698cfaa77fea6c07fc9a98287d6ce95c9dc48f56eb4f98a32bf26097",
+          "dSha256": "f658f46e027b26e10e4e01ecfc8d3148c7d7f9bd0b81fb52a448dcb5f5b0c7f4"
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1B2ThrowTests.lua",
+          "status": "same",
+          "cSha256": "2a3a9a6a260e7a07eb0fb9ba911ab0cb35bf458036592b2680936c56125ee7a4",
+          "dSha256": "2a3a9a6a260e7a07eb0fb9ba911ab0cb35bf458036592b2680936c56125ee7a4"
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1B2UITests.lua",
+          "status": "different",
+          "cSha256": "5b3601e87daab21d30583e5e810da1b204a27b482abf84bda11991a737d08cf0",
+          "dSha256": "b4f264eb50ea8f3e149f8230542076ae694d4e0e50a1f70cfcfc83261a202a58"
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1B3ClockAsyncTests.lua",
+          "status": "different",
+          "cSha256": "4c64023790a655a9f236d5be85df3409ee0c0d92c31098720016f1ae279b0fc0",
+          "dSha256": "64bf42d835029b07cbc2b0fe9fea075a496656a739f9b142bddc460c5ea4e0c6"
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1B3CloudTests.lua",
+          "status": "same",
+          "cSha256": "1c9a626d9571c01415f8b920540c4618f986f725094c00b0ac4346a222943bee",
+          "dSha256": "1c9a626d9571c01415f8b920540c4618f986f725094c00b0ac4346a222943bee"
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1B3EconomyTests.lua",
+          "status": "same",
+          "cSha256": "553032e4ff17dee27a084c888ec7f3fdd89fba3cd2ae97a81261a6bfef27a5ef",
+          "dSha256": "553032e4ff17dee27a084c888ec7f3fdd89fba3cd2ae97a81261a6bfef27a5ef"
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1B3Lsp.py",
+          "status": "same",
+          "cSha256": "60dfd4abc7cc4ada2a21fdfaaa6831c6eb15a989ecc18518c4c9ea3bea2fc264",
+          "dSha256": "60dfd4abc7cc4ada2a21fdfaaa6831c6eb15a989ecc18518c4c9ea3bea2fc264"
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1B3Run.py",
+          "status": "same",
+          "cSha256": "f192780b86e9171dea1820c016f6aa0e25ec843f59c4a9d5bf6f89f61d0a696b",
+          "dSha256": "f192780b86e9171dea1820c016f6aa0e25ec843f59c4a9d5bf6f89f61d0a696b"
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1B3SceneUITests.lua",
+          "status": "different",
+          "cSha256": "7e3246f20de7f7ee94f62e027b2591c1dfd40d16184378ad1b359cc41872cf2f",
+          "dSha256": "c78dba6df1666e3bdd8488af2b76f8b50953e03db9218e01cadd180a558e9ee7"
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1B3SevenDaysTests.lua",
+          "status": "same",
+          "cSha256": "26d77e316038d6f90efc56cdc619ad43ed3b60bff4f6cf4cd308e608af75ea96",
+          "dSha256": "26d77e316038d6f90efc56cdc619ad43ed3b60bff4f6cf4cd308e608af75ea96"
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1B3SpatialTests.lua",
+          "status": "same",
+          "cSha256": "c3d9e3e5d0ca1917ffbaad8c960c742ba2b9c99faadd71478ec3420bc4914584",
+          "dSha256": "c3d9e3e5d0ca1917ffbaad8c960c742ba2b9c99faadd71478ec3420bc4914584"
+        },
+        {
+          "relativePath": "scripts/tests/Circle1B4Run.py",
+          "status": "onlyC",
+          "cSha256": "062a0a2e06448cecd96a73e907f2262e6d63e4ea05ebf6075bd0ab61ff7a97c0",
+          "dSha256": null
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1BFishingFlowTests.lua",
+          "status": "same",
+          "cSha256": "6a97a2b36371f9921f42b1959231dfd606df040c59473acf12ff57fe8dbbc6b4",
+          "dSha256": "6a97a2b36371f9921f42b1959231dfd606df040c59473acf12ff57fe8dbbc6b4"
+        },
+        {
+          "relativePath": "scripts/Tests/Circle1BPendingCatchTests.lua",
+          "status": "same",
+          "cSha256": "139371be715977964df734466b8f067d706b2cd8eb418c12b2a3a68692340159",
+          "dSha256": "139371be715977964df734466b8f067d706b2cd8eb418c12b2a3a68692340159"
+        },
+        {
+          "relativePath": "scripts/Tests/GameLoopSpec.lua",
+          "status": "different",
+          "cSha256": "92c4335d328ac61a7fc9bc41c7209dc2987c8848d360404d2854c410e1b13a11",
+          "dSha256": "5d8e95208e1a7ca621183bdd3d8b1f467f7a47c177920498769ec86eafe3c27f"
+        },
+        {
+          "relativePath": "scripts/Tests/GameLoopUISpec.lua",
+          "status": "same",
+          "cSha256": "4790f35844eaea5024b066582c745d2f95d125192a5745ef7723a62af205a8d1",
+          "dSha256": "4790f35844eaea5024b066582c745d2f95d125192a5745ef7723a62af205a8d1"
+        },
+        {
+          "relativePath": "scripts/Tests/NumericEconomySpec.lua",
+          "status": "different",
+          "cSha256": "f1993e331e481e9bfd5da77bf01d1d722bca21fb59cad1ba4369959d888d8213",
+          "dSha256": "5c1bbc301f0b587f9aa9e3083d95aa022d187c52d4201f7845927b853522f49e"
+        },
+        {
+          "relativePath": "scripts/Tests/PersistenceRegressionSpec.lua",
+          "status": "same",
+          "cSha256": "3d62fa898adfe0cbd3f4f9491add02c13b3389a207f9069a1971c8da070106c6",
+          "dSha256": "3d62fa898adfe0cbd3f4f9491add02c13b3389a207f9069a1971c8da070106c6"
+        },
+        {
+          "relativePath": "scripts/Tests/run_game_loop.py",
+          "status": "same",
+          "cSha256": "6f42af1a7613438883f9098466a98cfa976c1806a550d2f9e7ffc7cc1f25f294",
+          "dSha256": "6f42af1a7613438883f9098466a98cfa976c1806a550d2f9e7ffc7cc1f25f294"
+        },
+        {
+          "relativePath": "scripts/Tests/SeaEngineSmoke.lua",
+          "status": "same",
+          "cSha256": "700bdf37e55a805b33eb1950ff73f4110c611637e6dae42a0f85b74efdee6be7",
+          "dSha256": "700bdf37e55a805b33eb1950ff73f4110c611637e6dae42a0f85b74efdee6be7"
+        },
+        {
+          "relativePath": "scripts/Tests/SeaFusedSceneTests.lua",
+          "status": "same",
+          "cSha256": "8bff4d6069b16417028880ee0223169006a58fb75f914196904230f35ead5cec",
+          "dSha256": "8bff4d6069b16417028880ee0223169006a58fb75f914196904230f35ead5cec"
+        },
+        {
+          "relativePath": "scripts/Tests/SeaFusionRenderTests.lua",
+          "status": "same",
+          "cSha256": "44e322cf5b3e6a52f221a480f7faf42b38c522f9854f5acdbebbeb8eed702580",
+          "dSha256": "44e322cf5b3e6a52f221a480f7faf42b38c522f9854f5acdbebbeb8eed702580"
+        },
+        {
+          "relativePath": "scripts/Tests/SeaNativeVoyage.lua",
+          "status": "same",
+          "cSha256": "97927d01a089a7a186631fe09d398e48c6af598fd9a26852e8fba7a53485a145",
+          "dSha256": "97927d01a089a7a186631fe09d398e48c6af598fd9a26852e8fba7a53485a145"
+        },
+        {
+          "relativePath": "scripts/Tests/SeaNativeVoyageEntry.lua",
+          "status": "same",
+          "cSha256": "3d189d95774b774b3088268800b99785a6862934d9f988028a78df3b292d7faa",
+          "dSha256": "3d189d95774b774b3088268800b99785a6862934d9f988028a78df3b292d7faa"
+        },
+        {
+          "relativePath": "scripts/Tests/SeaRuntimeTests.lua",
+          "status": "same",
+          "cSha256": "2f2e2297b049e9743bb22f465e96c2d7abfc1afccf10d339ef796acf10cd5983",
+          "dSha256": "2f2e2297b049e9743bb22f465e96c2d7abfc1afccf10d339ef796acf10cd5983"
+        },
+        {
+          "relativePath": "scripts/Tests/SeaStabilityTests.lua",
+          "status": "same",
+          "cSha256": "464e66542dd485ca6f4417a2a486cb199db5bf5dfbadcf39b077198d2c7a9809",
+          "dSha256": "464e66542dd485ca6f4417a2a486cb199db5bf5dfbadcf39b077198d2c7a9809"
+        },
+        {
+          "relativePath": "scripts/Tests/ShopStockSpec.lua",
+          "status": "different",
+          "cSha256": "fc10e273bc935a90ae225f58571629c04a01abbe469326302bf60742148f5a4b",
+          "dSha256": "b8cf3ca99e2bf412d4bac6f6cd613718747e82f2bd011a59910868e0ccf96fcd"
+        },
+        {
+          "relativePath": "scripts/Tests/SurfaceRiseTests.lua",
+          "status": "same",
+          "cSha256": "092002a2f7aa9bc4937cd2aee927a6b6a5fd54fda83a2a784673f334027dc86c",
+          "dSha256": "092002a2f7aa9bc4937cd2aee927a6b6a5fd54fda83a2a784673f334027dc86c"
+        },
+        {
+          "relativePath": "scripts/Tests/SurfaceSignalsTests.lua",
+          "status": "different",
+          "cSha256": "077ed8223e39a150ebfa50e186bff9b7eeaca4946fb7291838862dccf78545f8",
+          "dSha256": "cabfbebbe86e450e9b47acc9bdf3be9fac3bfe4657503a77924394387361d450"
+        }
+      ],
+      "interpretation": "Difference is inventory evidence, not automatic copy authorization or a runtime bug."
+    },
+    "docs": {
+      "cFiles": 24,
+      "dFiles": 117,
+      "counts": {
+        "onlyC": 0,
+        "missingFromC": 93,
+        "same": 24,
+        "different": 0
+      },
+      "records": [
+        {
+          "relativePath": "docs/A_MODULE_ACCEPTANCE.md",
+          "status": "same",
+          "cSha256": "d4976832d4f70620bab0d1e89e2f87557d3a6c2540fba5782a3a7f09f6774048",
+          "dSha256": "d4976832d4f70620bab0d1e89e2f87557d3a6c2540fba5782a3a7f09f6774048"
+        },
+        {
+          "relativePath": "docs/A_NUMERIC_SUPPLEMENT_02.md",
+          "status": "same",
+          "cSha256": "a45591ca69ac5b7f958e731c3e4c53ef9cc430926eb8147693c959075b948f1b",
+          "dSha256": "a45591ca69ac5b7f958e731c3e4c53ef9cc430926eb8147693c959075b948f1b"
+        },
+        {
+          "relativePath": "docs/AB_LOCAL_INTEGRATION_01.md",
+          "status": "same",
+          "cSha256": "3bf09a7d8ea4b3516ab7d07cd9378f1254889e01aabe1f66e8eb5fd77bf479cf",
+          "dSha256": "3bf09a7d8ea4b3516ab7d07cd9378f1254889e01aabe1f66e8eb5fd77bf479cf"
+        },
+        {
+          "relativePath": "docs/AI_RULES.md",
+          "status": "same",
+          "cSha256": "2e6f33cbaad806e64d050ba70d8108a4e1cab17b803690583081fcb6170bf776",
+          "dSha256": "2e6f33cbaad806e64d050ba70d8108a4e1cab17b803690583081fcb6170bf776"
+        },
+        {
+          "relativePath": "docs/ARCHITECTURE_INTEGRATION_INTERNAL.md",
+          "status": "same",
+          "cSha256": "820403dc196e0b446893fd2f7ceab46b115f22ae618d26f3b332254ae9f4d888",
+          "dSha256": "820403dc196e0b446893fd2f7ceab46b115f22ae618d26f3b332254ae9f4d888"
+        },
+        {
+          "relativePath": "docs/ARCHITECTURE_LAYOUT.md",
+          "status": "same",
+          "cSha256": "4592ae70628b779f7d8c04845f6f77bfef70a4f3bb83fe84b86bac560f632222",
+          "dSha256": "4592ae70628b779f7d8c04845f6f77bfef70a4f3bb83fe84b86bac560f632222"
+        },
+        {
+          "relativePath": "docs/DATA_MIGRATION_INTERNAL.md",
+          "status": "same",
+          "cSha256": "a8bb758bacf0ef5ed9d66851f6e38c8710f964e4c932b07238dd4ce9b662d9d3",
+          "dSha256": "a8bb758bacf0ef5ed9d66851f6e38c8710f964e4c932b07238dd4ce9b662d9d3"
+        },
+        {
+          "relativePath": "docs/DATA_MIGRATION_REVIEW.md",
+          "status": "same",
+          "cSha256": "e4e5f1d5b3bc163e0d124344c22c794582cce5020bc747a9d3121ad47ddeee12",
+          "dSha256": "e4e5f1d5b3bc163e0d124344c22c794582cce5020bc747a9d3121ad47ddeee12"
+        },
+        {
+          "relativePath": "docs/DATA_SCHEMA.md",
+          "status": "same",
+          "cSha256": "abd467c86d1a5502b29f5f82a3656de45ada628cef515e124c0b4f1737f37304",
+          "dSha256": "abd467c86d1a5502b29f5f82a3656de45ada628cef515e124c0b4f1737f37304"
+        },
+        {
+          "relativePath": "docs/GAME_DIRECTION.md",
+          "status": "same",
+          "cSha256": "78b1043823be62703c70331f618d62ff4d95289d6643107a5ec19837b32bbf2a",
+          "dSha256": "78b1043823be62703c70331f618d62ff4d95289d6643107a5ec19837b32bbf2a"
+        },
+        {
+          "relativePath": "docs/GAME_LOOP_V1_B_NUMERIC_UPDATE.md",
+          "status": "same",
+          "cSha256": "355aa2b47d2c7b968725262d24144fea4c8085f182441b3d91ef977c190df0af",
+          "dSha256": "355aa2b47d2c7b968725262d24144fea4c8085f182441b3d91ef977c190df0af"
+        },
+        {
+          "relativePath": "docs/GAME_LOOP_V1_B_REPORT.md",
+          "status": "same",
+          "cSha256": "510f94478fcd666538d02110edb8a8665645f73353c69b3326407ca9bc17c258",
+          "dSha256": "510f94478fcd666538d02110edb8a8665645f73353c69b3326407ca9bc17c258"
+        },
+        {
+          "relativePath": "docs/GAME_LOOP_V1_B_SUPPLEMENT_02.md",
+          "status": "same",
+          "cSha256": "476d95e691706a90073eab03b12563e43051e767dde636da2046a6d7fc3ed0e2",
+          "dSha256": "476d95e691706a90073eab03b12563e43051e767dde636da2046a6d7fc3ed0e2"
+        },
+        {
+          "relativePath": "docs/planning/_archive/surface_2026-10-03/03_系统规则.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "86abfa6ed34f56c3e36ff089c3df9d44d4d475fe7814b995f8cdce7d4d7f1d05"
+        },
+        {
+          "relativePath": "docs/planning/_archive/surface_2026-10-03/04_数值与物品.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "7701ca15f22d6bc294d0adead4ff9aa38ac688976e9acaa64cb87d7a276e1196"
+        },
+        {
+          "relativePath": "docs/planning/_archive/surface_2026-10-03/05_剧情与事件.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "c9303f6fe83350c1c17054182419395c1bcf4b3138c7656d4ea76dbbef52217d"
+        },
+        {
+          "relativePath": "docs/planning/_archive/surface_2026-10-03/06_视听与交互.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "49f087063e423e5890d9654091c53fc29b7c6757ff3d1e159af6f582227a39ea"
+        },
+        {
+          "relativePath": "docs/planning/_archive/surface_2026-10-03/07_进度与待决策.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "f1221e8749ea84cc03db4e5b57a9b8b3eb4d9be29d8a434c49479d4472dfffa0"
+        },
+        {
+          "relativePath": "docs/planning/_archive/surface_2026-10-03/08_技术约定.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "cc6746311cf41cac50f79e2fac2d6b28470b3cf082391db8d04062888851e6c3"
+        },
+        {
+          "relativePath": "docs/planning/_archive/surface_2026-10-03/记录表_新版策划_2026-10-02_v2.1.xlsx",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "daa43ad39457504cc4080e5b676c16e14513a5848221dee32640836366f48b77"
+        },
+        {
+          "relativePath": "docs/planning/_archive/v2.1_2026-10-03/01_游戏总览.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "d739a05c92b8a52fc2c254fca12dd27b6ff36bf760b6846eefdf59966ce4410d"
+        },
+        {
+          "relativePath": "docs/planning/_archive/v2.1_2026-10-03/02_三圈范围.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "85b4086b141dcfff4fb08623b2056062d029e611473220a1ad1c22c50cd8f202"
+        },
+        {
+          "relativePath": "docs/planning/_archive/v2.1_2026-10-03/03_系统规则.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "b9d55339a6230bd2599fbc666803456537d63d0dc56e91ac0ad7594d13a75b76"
+        },
+        {
+          "relativePath": "docs/planning/_archive/v2.1_2026-10-03/04_数值与物品.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "4ce3bee0d0de67a35df9ae63c9cbd10755996483b53ba584b0022b1690482a55"
+        },
+        {
+          "relativePath": "docs/planning/_archive/v2.1_2026-10-03/05_剧情与事件.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "b29c897d24ef9fa6a997f677b4c2a8ae15cf814abb1dd69d3dc18365a698a87d"
+        },
+        {
+          "relativePath": "docs/planning/_archive/v2.1_2026-10-03/06_视听与交互.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "875d65572341dcd17b94cd43b3ce614be826503e77e19df1969e983b56dac237"
+        },
+        {
+          "relativePath": "docs/planning/_archive/v2.1_2026-10-03/07_进度与待决策.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "f79ef3eccd1c83618d44e9f3a359e17d4c2adf146bfadde28122218d75d98de5"
+        },
+        {
+          "relativePath": "docs/planning/_archive/v2.1_2026-10-03/08_技术约定.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "f6b863bdf115fc180b21393125835f073fd7cb8e835ca673538547a360342128"
+        },
+        {
+          "relativePath": "docs/planning/_archive/v2.1_2026-10-03/CONTROL.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "4313be84b7e241a4c4c7580010c5e0595c6df2f792492925956aaed1045e9187"
+        },
+        {
+          "relativePath": "docs/planning/CONTENT.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "7e67dbf630832f25edfbf49285d170b481635128890ce173c210ba0f99f1b0ff"
+        },
+        {
+          "relativePath": "docs/planning/CONTROL.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "fad1a72c441ecc5d8a8135218ba162cd7b783dea42f8ebcba70d227bc04f9bd9"
+        },
+        {
+          "relativePath": "docs/planning/DESIGN.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "c18530fb7a225b994da3f7ef7968e0b850d0d23dd292894d7846893eb6450be3"
+        },
+        {
+          "relativePath": "docs/planning/exports/.artifact_roundtrip.xlsx.inspect.ndjson",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "1ff2bc92d4c7416ca256211c2a5efe559bf564991ea3d84735650a04f2e5fb5c"
+        },
+        {
+          "relativePath": "docs/planning/exports/export_latest.log",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "a870ff6601084f84fe872ace30c0e88050c3136f5a5cfd67ce2e167ccf5b19e9"
+        },
+        {
+          "relativePath": "docs/planning/exports/export_manifest.json",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "7d446050e463762627231555c49c07cad8fc43f1b3e50c032e4b384242cd4f1a"
+        },
+        {
+          "relativePath": "docs/planning/exports/final_scope_preview.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "c99d16183e8aecaa83d429872d847cce0bf1c89db53c522d9842be6a8eab473b"
+        },
+        {
+          "relativePath": "docs/planning/exports/parameters_preview.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "26ccb8aa9962db4fbfd415f6d09437180ea7d38206edf22350ef7c777c2d5117"
+        },
+        {
+          "relativePath": "docs/planning/exports/planning_preview.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "e80d300d0bd5f22271732c251807927c5d797836fcb104cd202e3c9fa3c8889c"
+        },
+        {
+          "relativePath": "docs/planning/exports/preview_action_numbers.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "5897c9fcc70c01be82b0010171aa3ea81b1d9f71ab9331592bfde53c99d8f633"
+        },
+        {
+          "relativePath": "docs/planning/exports/preview_circle1_acceptance.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "8b7959061d72b9f8e622695f8f939c7c763241985a1324f5f9f8d6b351ddce2b"
+        },
+        {
+          "relativePath": "docs/planning/exports/preview_numbers.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "fcdeaad41db9214dc827f97620133b6b17796d5b80ccc0528871c5bd66bbf03a"
+        },
+        {
+          "relativePath": "docs/planning/exports/preview_overview.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "8259a038a1ef10b0c6572837e6d93363eea30cd2541abe1ca6e922d51205a750"
+        },
+        {
+          "relativePath": "docs/planning/exports/preview_progress.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "022db269ca6efb69fb2116882e7951b84ba3b930b9c6ade9d0f7ccf1d78e70cd"
+        },
+        {
+          "relativePath": "docs/planning/exports/preview_signals.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "2600dff3e180a225473f08eefce94c6f0b1f26dc9b710616cbe5a46df75a255a"
+        },
+        {
+          "relativePath": "docs/planning/exports/preview_systems.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "ab29f814dd393d6b92c301e7fd6cbb2640d7b695c08c17623b9c4b12f3f45333"
+        },
+        {
+          "relativePath": "docs/planning/exports/preview_technical.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "5519bed169eded24a0b9c74e9ad7cbc5ae326d345a01ebf8abb7003bcc627136"
+        },
+        {
+          "relativePath": "docs/planning/exports/preview_technical_parameters.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "ac86192eb4cf1835734c8f1bc5a71ed12db755410b40cb3a90499ef0c19b3151"
+        },
+        {
+          "relativePath": "docs/planning/exports/preview_theme.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "5a939b4fe82cffdaeb590ff2a4329451e9245cf1c9d359351626777890dec661"
+        },
+        {
+          "relativePath": "docs/planning/exports/preview_time_rules.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "bcbec60d65ee41fe1b15f2696e3edfadfd319c8f6188b92468e961c7fc349877"
+        },
+        {
+          "relativePath": "docs/planning/exports/questions_preview.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "a2c502745b88f03d5c557a0173d5cb5c2d5aad78da2eb577113fb0d0dfa060b9"
+        },
+        {
+          "relativePath": "docs/planning/exports/render_latest.log",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "d694004d4798688d34edcda427a0d3306255a52015c4e9d6e7247cfeb0a9cc81"
+        },
+        {
+          "relativePath": "docs/planning/exports/source_preview.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "f1fd50fae203290af410c648fd1511b7b2f4d3d74eb7f784da9eb0a242fc9e06"
+        },
+        {
+          "relativePath": "docs/planning/exports/status_preview.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "3c1fe50e0842035ec9d3b0f1db585925b64b531165e39309bd59f0921dd70eb5"
+        },
+        {
+          "relativePath": "docs/planning/exports/surface_authored.xlsx",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "e8898517b89f831b39e681906d98e7a5433576fa85849aac9ab535edc64d1dc7"
+        },
+        {
+          "relativePath": "docs/planning/exports/surface_authored.xlsx.inspect.ndjson",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "7502e9e338feb132cb1fca2b62969a171f4c0c33b9f17ccec15ff5f7d7c58fe6"
+        },
+        {
+          "relativePath": "docs/planning/exports/surface_baseline.json",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "f9ef2bb197e878f60a8c628c0f2b049ecf320e202c92b8bbfee74ff699e9d96f"
+        },
+        {
+          "relativePath": "docs/planning/exports/surface_before.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "1f00eff0fca2ee9845a91d5251c958e3eed5fc8fc6eea433bffa734ef17fff7e"
+        },
+        {
+          "relativePath": "docs/planning/exports/surface_edit.log",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "a6a97e8861906006cfac6a0fb13e4457077b9ef334dc1c99cc5740eeea56bb40"
+        },
+        {
+          "relativePath": "docs/planning/exports/surface_edits.json",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "31e7bff05beea0b79d2d34cba93828cd16c6329f9df296ba9c52766ba720f6c3"
+        },
+        {
+          "relativePath": "docs/planning/exports/surface_final_numbers.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "67e52cc75f1ae1dd13de62c81bd0c48aed3d8f47d3a5dc497dd70d584d76982a"
+        },
+        {
+          "relativePath": "docs/planning/exports/surface_final_rules.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "f5835921a549bcb49b4d932acf0e85e68b228c60d349b55e839b77369a5fb5c9"
+        },
+        {
+          "relativePath": "docs/planning/exports/surface_numbers.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "4453e8baad498eca8191d8a2a961bac487d9a596cf8667b7d3ac953d09b9bade"
+        },
+        {
+          "relativePath": "docs/planning/exports/surface_prepare.log",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "1d442f07cf3d9cd2557e2b43c1200a70a0e40f6a8ee121157d465b319e679204"
+        },
+        {
+          "relativePath": "docs/planning/exports/surface_progress.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "f84fa0c5b68b302a7d41c0f3b6a5e2af70d2910811aeea00d38a57ac90bf29be"
+        },
+        {
+          "relativePath": "docs/planning/exports/surface_rules.png",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "f5835921a549bcb49b4d932acf0e85e68b228c60d349b55e839b77369a5fb5c9"
+        },
+        {
+          "relativePath": "docs/planning/exports/surface_verify.log",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "5f0b53cbad1d63fe32d33c7baf684ee1cfee7e1697769c1bbe7343046c636073"
+        },
+        {
+          "relativePath": "docs/planning/exports/validation.json",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "2154df8d80de20dd85893da10ca94c76d525c9bbd8aab67ba128b06ce69af815"
+        },
+        {
+          "relativePath": "docs/planning/exports/记录表_上一版留档.xlsx",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "28fcf287eb9d17fd54c87af82f1089fe66242c16e550cd372b8c17edf87d8114"
+        },
+        {
+          "relativePath": "docs/planning/exports/记录表_主题与信号修订前.xlsx",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "2e277c6a525a584d5da09682703b126263067b263973b510e8e7422cbdbf277a"
+        },
+        {
+          "relativePath": "docs/planning/exports/记录表_信号与木桶测试基准前.xlsx",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "d905215d620666d007752690a8e7632b1e28a62c8cc6803c3ef1fab5858eea79"
+        },
+        {
+          "relativePath": "docs/planning/exports/记录表_新版策划_2026-10-02.xlsx",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "264371c4ed3db83229e6ca9eba0f13cf4806e5eefc75af45a756cc28f69a4dff"
+        },
+        {
+          "relativePath": "docs/planning/exports/记录表_新版策划_2026-10-02.xlsx.inspect.ndjson",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "39b848f740a839275f09052986316f3da925ef2d337b45c745cb1d3729f8c985"
+        },
+        {
+          "relativePath": "docs/planning/exports/记录表_新版策划_2026-10-02_v2.1.xlsx",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "c8eabbed18fb5ac0fa6eaa33ae3a5eb7d8db808cada837acb2246f332ab2649a"
+        },
+        {
+          "relativePath": "docs/planning/exports/记录表_补细节前留档.xlsx",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "14894165ef584c4bc05191ce51a285e3d312201528ee5a06f725cc31b95d79d6"
+        },
+        {
+          "relativePath": "docs/planning/PARAMETERS.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "ba2a817c92f3c22aca2017eb19e758967adf1a11dc94b3cb1cdd58902d47086b"
+        },
+        {
+          "relativePath": "docs/planning/QUESTIONS.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "4cada7abf1b26f3b617c8c737d0506a4f751a961cae42d0c0bbc2d679d9aff4a"
+        },
+        {
+          "relativePath": "docs/planning/REVIEW_补细节_2026-10-02.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "122cd87d7deec931ee8ad154065fcdd13159dba5bbb03853cf7502b4f6a02c9f"
+        },
+        {
+          "relativePath": "docs/planning/SOURCES.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "72f7f86eab6e57467985422b3015b6fd89c45bb6357ccf71dec47801d47d4711"
+        },
+        {
+          "relativePath": "docs/planning/sources/coverage.tsv",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "20ac71ad97a9a4f9eda8cb87d35dad6f58b79fe7c3d9923ca57450f14e002a5f"
+        },
+        {
+          "relativePath": "docs/planning/sources/original_workbook.json",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "035995df28d7594c75b6ee5972dbc1fbbe6582af0de06039cbd74bd542ffabaa"
+        },
+        {
+          "relativePath": "docs/planning/sources/S2_旧整合任务书.txt",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "f0c4c6db2f5d2d32ca802d47e257476b8507796ca4a320b6a9199b6b0e9614d8"
+        },
+        {
+          "relativePath": "docs/planning/sources/S3_离线合并报告.txt",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "845c3c06037556efb9adf74284eeabdfd4e6a866e4edbbdcb29b13cffa9447f4"
+        },
+        {
+          "relativePath": "docs/planning/sources/S4_合并后事实正文.txt",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "2c71f64977f0b179be89e63c8896842b2b6cb5d2bf06d51f43aa1a763205f75d"
+        },
+        {
+          "relativePath": "docs/planning/sources/原策划逐格记录.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "e673d746b76e599382075628104d8619bd65e440777f114718b3b6fbacbcec86"
+        },
+        {
+          "relativePath": "docs/planning/STATUS.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "4a9648b38a5bf0ff7a828699e676930109c361cb0ce3dae047d5fd9bbdb5a33c"
+        },
+        {
+          "relativePath": "docs/planning/team/01_游戏总览.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "c12324d8da250e3f1145477b6a5a8f4dcddc1c0dc3d065ab18421a5bf032aee2"
+        },
+        {
+          "relativePath": "docs/planning/team/02_三圈范围.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "f7452a96112e6e58e92d7f0d019a6c5649040de59b26ce92550147630645f78a"
+        },
+        {
+          "relativePath": "docs/planning/team/03_系统规则.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "a347f58d0150aad0e3351f1ef9e052bbd332ee64b7b8f21c2f47fc5c473ca0fe"
+        },
+        {
+          "relativePath": "docs/planning/team/04_数值与物品.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "eb317f1d20bcadcbad15fda2715959416e5332e46d34cbec20d02185199947ae"
+        },
+        {
+          "relativePath": "docs/planning/team/05_剧情与事件.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "54c041c2b715d1190f2f2cb70d386c79cb1097405773f04e325846bba9523466"
+        },
+        {
+          "relativePath": "docs/planning/team/06_视听与交互.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "3ab9f514a2c5260b47d1a85f78ed36ae955bf4647fd3d936d246f83a8ca52728"
+        },
+        {
+          "relativePath": "docs/planning/team/07_进度与待决策.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "01f9c2787b9f5f43bebeae22f81b153676a34bd6b1894b9d8be79c85779fb843"
+        },
+        {
+          "relativePath": "docs/planning/team/08_技术约定.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "839926b52b0d6a9d91e2f41dd39af696f6d554344f6093da9898bf5c15047f73"
+        },
+        {
+          "relativePath": "docs/planning/TEAM_VALIDATION.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "dc127e9cae1b7e256a82b9588c25e7c5b9d1d76cc43af2caa9fe8d519ac3d767"
+        },
+        {
+          "relativePath": "docs/planning/tools/__pycache__/extract_sources.cpython-312.pyc",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "a62721f76289e749a19482eb73223fbf3330f12baf86f8ecfdb4785977861e56"
+        },
+        {
+          "relativePath": "docs/planning/tools/edit_surface_v21.mjs",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "cbf1a5e53cd84e711f99309e5969c2192b528d68ac189d2602fdfbf8fc83ce01"
+        },
+        {
+          "relativePath": "docs/planning/tools/export_workbook.mjs",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "7527cfd429d3420e8d3222c85f69ce98746b3433a4322eeeafde15b95309772f"
+        },
+        {
+          "relativePath": "docs/planning/tools/extract_sources.py",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "179920ee84c8477f1a5d7d956015e018425206de8da245cbdefcde8b2f171d69"
+        },
+        {
+          "relativePath": "docs/planning/tools/finalize_surface_v21.py",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "08e6972377e0e01da52932f85b13432e1734015133097c108109c0d34977b0c6"
+        },
+        {
+          "relativePath": "docs/planning/tools/prepare_parameters.py",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "175e23bf9e9df26156e131c3499cf158714a59d7d1335e338c4935bf02e82956"
+        },
+        {
+          "relativePath": "docs/planning/tools/prepare_surface_v21.py",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "cc244e536e9cd1a23410a23ae391c107c439440dd755423af05f2caefd7a991d"
+        },
+        {
+          "relativePath": "docs/planning/tools/preserve_original_sheets.py",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "bc7073d0247540340d785f65f6e8d16e0f2556ecc5325807d5ccf408ee2d6550"
+        },
+        {
+          "relativePath": "docs/planning/tools/render_review.mjs",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "31c1100e89e008b95660da692f675ed5576152c353c59285857fba1cf96c540f"
+        },
+        {
+          "relativePath": "docs/planning/tools/validate_documents.py",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "0e6659b986f5ae0a7e42639f3d497d2dc813f2f36d61973087ca9937b526baaa"
+        },
+        {
+          "relativePath": "docs/planning/tools/validate_team_workbook.py",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "1527afee2f1d3ca7ed34ec308eb62062134b1df98f32737c43c213a57c8a1b5e"
+        },
+        {
+          "relativePath": "docs/planning/VALIDATION.md",
+          "status": "missingFromC",
+          "cSha256": null,
+          "dSha256": "690540051678da921bc5308432263e76bfe06df49412f937f15cbf8190fad6e0"
+        },
+        {
+          "relativePath": "docs/PROJECT_STRUCTURE.md",
+          "status": "same",
+          "cSha256": "149693b23db781aa066ec348151c20840efb6c1171fc61f43355498937ce6ec4",
+          "dSha256": "149693b23db781aa066ec348151c20840efb6c1171fc61f43355498937ce6ec4"
+        },
+        {
+          "relativePath": "docs/SAVE_FAILURE_CONTINUATION_INTERNAL.md",
+          "status": "same",
+          "cSha256": "21255e5960389fa73e17d7add978e48bef123d76ff64cbb4075e2d2b6a47a6a3",
+          "dSha256": "21255e5960389fa73e17d7add978e48bef123d76ff64cbb4075e2d2b6a47a6a3"
+        },
+        {
+          "relativePath": "docs/SEA_ART_FUSION.md",
+          "status": "same",
+          "cSha256": "5401da4f501d59b8c4ebef046e702caa3f761a44a255e5c43cb714dd8866f1db",
+          "dSha256": "5401da4f501d59b8c4ebef046e702caa3f761a44a255e5c43cb714dd8866f1db"
+        },
+        {
+          "relativePath": "docs/SEA_ART_PROMPT_CONFORMANCE_REPORT.md",
+          "status": "same",
+          "cSha256": "b4679d787bbffdabfcf1d5d63dc460f8e28570c946bdf5f7a711f1e89fbd3dbd",
+          "dSha256": "b4679d787bbffdabfcf1d5d63dc460f8e28570c946bdf5f7a711f1e89fbd3dbd"
+        },
+        {
+          "relativePath": "docs/SEA_RUNTIME_V1.md",
+          "status": "same",
+          "cSha256": "aadb938d2175da5757c524fce2f100f03c1165ae54cc21314775551706d0ab73",
+          "dSha256": "aadb938d2175da5757c524fce2f100f03c1165ae54cc21314775551706d0ab73"
+        },
+        {
+          "relativePath": "docs/SEA_RUNTIME_V1_ACCEPTANCE.md",
+          "status": "same",
+          "cSha256": "ac1d48f54aad4a03d7e9f7dc4def962baccf50abda716cdbeebadaf5d6d3144a",
+          "dSha256": "ac1d48f54aad4a03d7e9f7dc4def962baccf50abda716cdbeebadaf5d6d3144a"
+        },
+        {
+          "relativePath": "docs/SEA_RUNTIME_V1_DECISIONS.md",
+          "status": "same",
+          "cSha256": "89052accd7601878673470aef033ed730096cf3bc27efa8f033a682479360c0f",
+          "dSha256": "89052accd7601878673470aef033ed730096cf3bc27efa8f033a682479360c0f"
+        },
+        {
+          "relativePath": "docs/SEA_RUNTIME_V1_VALUES.md",
+          "status": "same",
+          "cSha256": "c21e8ac916bd7ea528a0bfd135cd2f9d8dd03ad1e453c137bec1217141e4d52e",
+          "dSha256": "c21e8ac916bd7ea528a0bfd135cd2f9d8dd03ad1e453c137bec1217141e4d52e"
+        },
+        {
+          "relativePath": "docs/STATE_SCHEDULER_INTERNAL.md",
+          "status": "same",
+          "cSha256": "424280a8c0d2d4522d31264c75c41ce825afc8c6d0357242dec2ae9b45242e92",
+          "dSha256": "424280a8c0d2d4522d31264c75c41ce825afc8c6d0357242dec2ae9b45242e92"
+        },
+        {
+          "relativePath": "docs/TASK_BOARD.md",
+          "status": "same",
+          "cSha256": "6d9ae27c236ff65b914c05f02c9a3f7b6da58b2f0e0a5d383c6d849a3f507fef",
+          "dSha256": "6d9ae27c236ff65b914c05f02c9a3f7b6da58b2f0e0a5d383c6d849a3f507fef"
+        },
+        {
+          "relativePath": "docs/TEAM_FILE_BOUNDARIES.md",
+          "status": "same",
+          "cSha256": "62b5ff23862d2f5fba3ec38eae9977db98fd355eb4206fb4aca1873e3276adf7",
+          "dSha256": "62b5ff23862d2f5fba3ec38eae9977db98fd355eb4206fb4aca1873e3276adf7"
+        }
+      ],
+      "interpretation": "Difference is inventory evidence, not automatic copy authorization or a runtime bug."
+    },
+    "data": {
+      "cFiles": 2,
+      "dFiles": 2,
+      "counts": {
+        "onlyC": 0,
+        "missingFromC": 0,
+        "same": 2,
+        "different": 0
+      },
+      "records": [
+        {
+          "relativePath": "data/fish.lua",
+          "status": "same",
+          "cSha256": "f6563e4cfc32c55adbd471118c43658e1c59d27fffc8d752dffc4c688bdd7a21",
+          "dSha256": "f6563e4cfc32c55adbd471118c43658e1c59d27fffc8d752dffc4c688bdd7a21"
+        },
+        {
+          "relativePath": "data/items.lua",
+          "status": "same",
+          "cSha256": "1a369da6cfe8ed9a0e1f1df975fe49896c08981dfc40f4cd86a2a254a6fedd45",
+          "dSha256": "1a369da6cfe8ed9a0e1f1df975fe49896c08981dfc40f4cd86a2a254a6fedd45"
+        }
+      ],
+      "interpretation": "Difference is inventory evidence, not automatic copy authorization or a runtime bug."
+    },
+    "assets": {
+      "cFiles": 2,
+      "dFiles": 2,
+      "counts": {
+        "onlyC": 0,
+        "missingFromC": 0,
+        "same": 2,
+        "different": 0
+      },
+      "records": [
+        {
+          "relativePath": "assets/image/航海第一视角_20261001094821.png",
+          "status": "same",
+          "cSha256": "a49499d45d0632c628fe83c930c656dc023fc2c9674e1919324b40f9fe5b3ff4",
+          "dSha256": "a49499d45d0632c628fe83c930c656dc023fc2c9674e1919324b40f9fe5b3ff4"
+        },
+        {
+          "relativePath": "assets/image/航海第一视角_20261001094821.png.meta",
+          "status": "same",
+          "cSha256": "821cd1289f50553ff221177975b402d555e7fc561e5c929d3543e1b599dc9629",
+          "dSha256": "821cd1289f50553ff221177975b402d555e7fc561e5c929d3543e1b599dc9629"
+        }
+      ],
+      "interpretation": "Difference is inventory evidence, not automatic copy authorization or a runtime bug."
+    }
+  },
+  "selectedSyncRecords": [
+    {
+      "manifest": "source-sync-production.json",
+      "path": "scripts/Gameplay/Actions.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "6bba20b4d926ba1fb4f6bf97db853b3b6c483c0ff6a9b16004f8f6661a793e72",
+      "preB4SyncSha256": "6BBA20B4D926BA1FB4F6BF97DB853B3B6C483C0FF6A9B16004F8F6661A793E72",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-production.json",
+      "path": "scripts/Gameplay/Bootstrap.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "c27437b0283201464f17f3be6eb14baaccfbf2bad6cac337f445be15ea387e56",
+      "preB4SyncSha256": "C27437B0283201464F17F3BE6EB14BAACCFBF2BAD6CAC337F445BE15EA387E56",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-production.json",
+      "path": "scripts/Gameplay/UpdateSystem.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "12a92a5c2117935faf0393188e23a2440beee11999ba7f268210c4a5d26a2cd1",
+      "preB4SyncSha256": "12A92A5C2117935FAF0393188E23A2440BEEE11999BA7F268210C4A5D26A2CD1",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-production.json",
+      "path": "scripts/Gameplay/PlayerState.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "f00092bee77c5964550806e95b2b082a3e5e7e07b2e3d5daca7f4e650be149f4",
+      "preB4SyncSha256": "F00092BEE77C5964550806E95B2B082A3E5E7E07B2E3D5DACA7F4E650BE149F4",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-production.json",
+      "path": "scripts/Gameplay/Persistence.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "c42172b7260f51e103b51fef4caee268c59f5cfd27b6a2b07c0cac4e07359034",
+      "preB4SyncSha256": "C42172B7260F51E103B51FEF4CAEE268C59F5CFD27B6A2B07C0CAC4E07359034",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-production.json",
+      "path": "scripts/Gameplay/Loop.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": false,
+      "currentSha256": "c7b7aaba85cd7d3a115d45f1ac55da636aaea73dd10021a9eeab2e9810a68e4a",
+      "preB4SyncSha256": "1C2503CEB918A66193A9BBE40CE6AA1BE2A0A2A7E53ED224A56B9403235B8824",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-production.json",
+      "path": "scripts/Gameplay/Inventory.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "1bac7c8d4280cbceca3b6461704aa625143e2d6743ff1c4d18b0f31d67c58d84",
+      "preB4SyncSha256": "1BAC7C8D4280CBCECA3B6461704AA625143E2D6743FF1C4D18B0F31D67C58D84",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-production.json",
+      "path": "scripts/Gameplay/HUD.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": false,
+      "currentSha256": "85547045f59f0c516c869b73d8fc1aa7ade4247c9a7e9108830d4bda3ab9b456",
+      "preB4SyncSha256": "EEF26ABEE6823E2B91771B798B73AAEB14C8E6B9442072EE7D27DA0F8CE4CDE9",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-production.json",
+      "path": "scripts/Gameplay/Circle1B2Progress.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "a49e1852b73304842f7a147b5b2846bf9a657d1f9a41e434a1177028f67b0d7a",
+      "preB4SyncSha256": "A49E1852B73304842F7A147B5B2846BF9A657D1F9A41E434A1177028F67B0D7A",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-production.json",
+      "path": "scripts/Gameplay/Circle1B2Barrel.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": false,
+      "currentSha256": "47de71711a07b8044b4277d166bcd0c1d90b7f1ebdb56cdef8402a6f553cc39b",
+      "preB4SyncSha256": "1938A0294A63A5B8D14DAC7BE60D97CEFF90D3187DDBF61F802CF2D09F7C31EE",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-production.json",
+      "path": "scripts/Integration/Bridge.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": false,
+      "currentSha256": "550b1299a6d5ea15e5c035852320702567c07ee847785537c6fa630b16fa1341",
+      "preB4SyncSha256": "528BD55BF63F9E90CF688F801D279DE123E5A767B4EE5D4D60BAF9A688C6FCA0",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-production.json",
+      "path": "scripts/Integration/Scene.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "3f46f8952c1015164e275377b7d124ee8358650e0c3d4c4e8501246021b62d97",
+      "preB4SyncSha256": "3F46F8952C1015164E275377B7D124EE8358650E0C3D4C4E8501246021B62D97",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-production.json",
+      "path": "scripts/Integration/Circle1BInput.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "4c3f0ebf320ee3a1f392b0a7d1cd1a779afae591277b18bd9374adc2770190aa",
+      "preB4SyncSha256": "4C3F0EBF320EE3A1F392B0A7D1CD1A779AFAE591277B18BD9374ADC2770190AA",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-production.json",
+      "path": "scripts/Game/Game.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": false,
+      "currentSha256": "c73b8dd4cc2b28b0e020d6a0df4dbd898fbf096ac76690c27bc7605ce35330dd",
+      "preB4SyncSha256": "C3C442D39140C47F27F840334B0104737EACCB13F23BC167EE956B9C77B0FDE4",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-production.json",
+      "path": "scripts/config/gameplay.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": false,
+      "currentSha256": "178c212ca17207ce1aeea42417326351905163889c9c7c675d1db60a0f2cb73f",
+      "preB4SyncSha256": "5BD72D98B517AE3B3171876745F80251917CB3AE72106F4F37DD36D9DECB07E0",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/ABIntegrationTests.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": false,
+      "currentSha256": "de232115b234707f53eb87d980f1bd63672194a125f4b94586a578a11b40ab25",
+      "preB4SyncSha256": "B69A55A6AACCE973875CB040FD026EAB964B18EED8E12D8D77285E9438B39975",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/ArchitectureIntegrationTests.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "aeca8b95918f02b42d5016b764252f643080f4c60cbe364b6885fdd75855012e",
+      "preB4SyncSha256": "AECA8B95918F02B42D5016B764252F643080F4C60CBE364B6885FDD75855012E",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/check_game_loop_lsp.py",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "4d83f568d94046c398ff5b9ccf06fbc99307c814260d8f2450e7a366b13c13da",
+      "preB4SyncSha256": "4D83F568D94046C398FF5B9CCF06FBC99307C814260D8F2450E7A366B13C13DA",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1B2BarrelTests.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": false,
+      "currentSha256": "4e8ecf17c6b38553dbb8a5690d262b7538633a62306a10d6d45fc8fd79f7ca0d",
+      "preB4SyncSha256": "962B33F86E9694EBDDF152C6F9D1DD94F66D8BB3D620CD189FD455B9EEC1A814",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1B2Lsp.py",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "9a37122bed3d71ccb6d3e28e4587fddc2bcbafc1e136787ab0643988572af03f",
+      "preB4SyncSha256": "9A37122BED3D71CCB6D3E28E4587FDDC2BCBAFC1E136787AB0643988572AF03F",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1B2ProgressTests.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "212f035472ee02acf2631e408835695cd72b56fd1b52c9fee8ec199127232f5d",
+      "preB4SyncSha256": "212F035472EE02ACF2631E408835695CD72B56FD1B52C9FEE8EC199127232F5D",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1B2Run.py",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "fdc8bb6c931cb2dead7fab9e94e23f23557828ace0c934a41d4228e1548ed873",
+      "preB4SyncSha256": "FDC8BB6C931CB2DEAD7FAB9E94E23F23557828ACE0C934A41D4228E1548ED873",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1B2ScopeTests.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": false,
+      "currentSha256": "7ec34542698cfaa77fea6c07fc9a98287d6ce95c9dc48f56eb4f98a32bf26097",
+      "preB4SyncSha256": "F658F46E027B26E10E4E01ECFC8D3148C7D7F9BD0B81FB52A448DCB5F5B0C7F4",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1B2ThrowTests.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "2a3a9a6a260e7a07eb0fb9ba911ab0cb35bf458036592b2680936c56125ee7a4",
+      "preB4SyncSha256": "2A3A9A6A260E7A07EB0FB9BA911AB0CB35BF458036592B2680936C56125EE7A4",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1B2UITests.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": false,
+      "currentSha256": "5b3601e87daab21d30583e5e810da1b204a27b482abf84bda11991a737d08cf0",
+      "preB4SyncSha256": "B4F264EB50EA8F3E149F8230542076AE694D4E0E50A1F70CFCFC83261A202A58",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1B3ClockAsyncTests.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": false,
+      "currentSha256": "4c64023790a655a9f236d5be85df3409ee0c0d92c31098720016f1ae279b0fc0",
+      "preB4SyncSha256": "64BF42D835029B07CBC2B0FE9FEA075A496656A739F9B142BDDC460C5EA4E0C6",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1B3CloudTests.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "1c9a626d9571c01415f8b920540c4618f986f725094c00b0ac4346a222943bee",
+      "preB4SyncSha256": "1C9A626D9571C01415F8B920540C4618F986F725094C00B0AC4346A222943BEE",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1B3EconomyTests.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "553032e4ff17dee27a084c888ec7f3fdd89fba3cd2ae97a81261a6bfef27a5ef",
+      "preB4SyncSha256": "553032E4FF17DEE27A084C888EC7F3FDD89FBA3CD2AE97A81261A6BFEF27A5EF",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1B3Lsp.py",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "60dfd4abc7cc4ada2a21fdfaaa6831c6eb15a989ecc18518c4c9ea3bea2fc264",
+      "preB4SyncSha256": "60DFD4ABC7CC4ADA2A21FDFAAA6831C6EB15A989ECC18518C4C9EA3BEA2FC264",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1B3Run.py",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "f192780b86e9171dea1820c016f6aa0e25ec843f59c4a9d5bf6f89f61d0a696b",
+      "preB4SyncSha256": "F192780B86E9171DEA1820C016F6AA0E25EC843F59C4A9D5BF6F89F61D0A696B",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1B3SceneUITests.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": false,
+      "currentSha256": "7e3246f20de7f7ee94f62e027b2591c1dfd40d16184378ad1b359cc41872cf2f",
+      "preB4SyncSha256": "C78DBA6DF1666E3BDD8488AF2B76F8B50953E03DB9218E01CADD180A558E9EE7",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1B3SevenDaysTests.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "26d77e316038d6f90efc56cdc619ad43ed3b60bff4f6cf4cd308e608af75ea96",
+      "preB4SyncSha256": "26D77E316038D6F90EFC56CDC619AD43ED3B60BFF4F6CF4CD308E608AF75EA96",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1B3SpatialTests.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "c3d9e3e5d0ca1917ffbaad8c960c742ba2b9c99faadd71478ec3420bc4914584",
+      "preB4SyncSha256": "C3D9E3E5D0CA1917FFBAAD8C960C742BA2B9C99FAADD71478EC3420BC4914584",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1BFishingFlowTests.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "6a97a2b36371f9921f42b1959231dfd606df040c59473acf12ff57fe8dbbc6b4",
+      "preB4SyncSha256": "6A97A2B36371F9921F42B1959231DFD606DF040C59473ACF12FF57FE8DBBC6B4",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/Circle1BPendingCatchTests.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "139371be715977964df734466b8f067d706b2cd8eb418c12b2a3a68692340159",
+      "preB4SyncSha256": "139371BE715977964DF734466B8F067D706B2CD8EB418C12B2A3A68692340159",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/GameLoopSpec.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": false,
+      "currentSha256": "92c4335d328ac61a7fc9bc41c7209dc2987c8848d360404d2854c410e1b13a11",
+      "preB4SyncSha256": "5D8E95208E1A7CA621183BDD3D8B1F467F7A47C177920498769EC86EAFE3C27F",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/GameLoopUISpec.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "4790f35844eaea5024b066582c745d2f95d125192a5745ef7723a62af205a8d1",
+      "preB4SyncSha256": "4790F35844EAEA5024B066582C745D2F95D125192A5745EF7723A62AF205A8D1",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/NumericEconomySpec.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": false,
+      "currentSha256": "f1993e331e481e9bfd5da77bf01d1d722bca21fb59cad1ba4369959d888d8213",
+      "preB4SyncSha256": "5C1BBC301F0B587F9AA9E3083D95AA022D187C52D4201F7845927B853522F49E",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/PersistenceRegressionSpec.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "3d62fa898adfe0cbd3f4f9491add02c13b3389a207f9069a1971c8da070106c6",
+      "preB4SyncSha256": "3D62FA898ADFE0CBD3F4F9491ADD02C13B3389A207F9069A1971C8DA070106C6",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "scripts/Tests/ShopStockSpec.lua",
+      "existsInC": true,
+      "matchesPreB4SyncHash": false,
+      "currentSha256": "fc10e273bc935a90ae225f58571629c04a01abbe469326302bf60742148f5a4b",
+      "preB4SyncSha256": "B8CF3CA99E2BF412D4BAC6F6CD613718747E82F2BD011A59910868E0CCF96FCD",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    },
+    {
+      "manifest": "source-sync-tests.json",
+      "path": "tests/run_circle1_b.py",
+      "existsInC": true,
+      "matchesPreB4SyncHash": true,
+      "currentSha256": "9fc337a733d584910326cd301b74cce8429d227368935d5fd608ae65db8a9ee4",
+      "preB4SyncSha256": "9FC337A733D584910326CD301B74CCE8429D227368935D5FD608AE65DB8A9EE4",
+      "interpretation": "A changed hash may be the reviewed B4/root correction; absence is a separate issue."
+    }
+  ],
+  "currentLuaMatchesFinalReviewedFreeze": true,
+  "frozenLuaFiles": 86
+}

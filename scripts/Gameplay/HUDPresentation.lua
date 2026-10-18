@@ -63,10 +63,16 @@ function Presentation.Create(UI, Config, Items)
         barrel_cancel_failed = "木桶检查取消失败，请稍后重试。",
         barrel_commit_failed = "木桶检查结果未能保存，请稍后重试。",
         barrel_rollback_pending = "木桶检查正在恢复物品，请稍后重试。",
+        insufficient_stamina_explore = "体力不足，探索需要40体力。",
+        insufficient_stamina_salvage = "体力不足，打捞需要40体力。",
         barrel_action_not_completed = "木桶检查尚未完成。",
         paper_day_required = "这张纸条要到第 7 天才能查看。",
         day_required = "这张纸条要到第 7 天才能查看。",
         paper_already_shown = "这张纸条已经看过了。",
+        paper_required = "请先阅读第7天的漂流瓶纸条。",
+        day7_paper_required = "请先阅读第7天的漂流瓶纸条。",
+        elder_fate_day_required = "老人命运结果要到第4天查看。",
+        elder_decision_pending = "老人命运尚未完成判定。",
         stale_story_dialog = "纸条状态已更新，请重新打开。",
         drop_receiver_unavailable = "附近没有接收地点，物品仍保留在船舱里",
         drop_rejected = "没有接收地点接收物品，物品仍保留在船舱里",
@@ -123,7 +129,8 @@ function Presentation.Create(UI, Config, Items)
 
     -- 开场教学（事物设定集：被救老人以陪伴者身份开场，赠旧背包——内含开局苹果与鱼饵）。
     -- HUD 演出层实现：不进 Loop 状态机、不阻塞出航/存档；每个周目(generation)在港演出一次。
-    local OPENING_ELDER_TEXT = "被救起的老人把一只旧背包递给你：“孩子，这海上讨生活，"
+    local OPENING_ELDER_TEXT = "系统提示：本轮旅程共7天。每天可以出海、捕鱼、探索或返港准备；"
+        .. "第7天结束后会进入结局，之后可以开始新周目。\n\n老人：被救起的老人把一只旧背包递给你：“孩子，这海上讨生活，"
         .. "先学会看海——海鸟盘旋、水面翻花的地方才有鱼。"
         .. "背包里有些苹果和鱼饵，出海去试试吧。出港往右看，那只木桶是我的旧物，靠近了敲一敲。”"
 

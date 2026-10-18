@@ -1,0 +1,70 @@
+{
+  "tests.SeaFusionRenderTests": {
+    "status": "PASS",
+    "tests": [
+      "draw_is_pure_for_runtime_state",
+      "original_sun_and_birds_reused",
+      "existing_world_shape_apis_reused",
+      "ordinary_fish_hidden_by_default",
+      "show_underwater_draws_both_fixture_fish",
+      "resize_keeps_camera_height_at_45_world_units",
+      "sea_scissor_tracks_wave_horizon_in_both_aspects",
+      "presentation_fixture_does_not_change_config_world",
+      "night_tint_precedes_boat_and_preserves_paused_gameplay_clock",
+      "daytime_removes_night_tint_and_nvg_state_stack_is_balanced"
+    ],
+    "metrics": {
+      "originalConfiguredBirds": 2,
+      "portrait": {
+        "viewHeight": 45,
+        "viewWidth": 46.95652173913044,
+        "shipScreenY": 690,
+        "revealedWorldFishCalls": 2,
+        "shipScreenX": 600,
+        "height": 1150,
+        "pixelsPerWorldUnit": 25.555555555555557,
+        "width": 1200
+      },
+      "originalFixedObjectCount": 3,
+      "landscape": {
+        "viewHeight": 45,
+        "viewWidth": 80,
+        "shipScreenY": 648,
+        "hiddenWorldFishCalls": 0,
+        "shipScreenX": 960,
+        "height": 1080,
+        "pixelsPerWorldUnit": 24,
+        "width": 1920
+      },
+      "previewFixtures": {
+        "island": "(-14,-12)",
+        "sardine": "(-8,-8)",
+        "tuna": "(8,-14)"
+      }
+    }
+  },
+  "tests.Circle1A2FishingTests": {
+    "results": [
+      {
+        "passed": true,
+        "name": "fishing_phase_geometry_and_readonly_snapshot"
+      },
+      {
+        "passed": true,
+        "name": "optional_sixth_argument_keeps_fifth_clock_and_absent_view"
+      },
+      {
+        "passed": true,
+        "name": "offscreen_fish_culling_keeps_partial_horizon_and_edge_shapes"
+      },
+      {
+        "passed": true,
+        "name": "pointer_consumption_preserves_navigation_and_guards"
+      },
+      {
+        "passed": true,
+        "name": "bootstrap_optional_callback_is_forwarded_without_mutation"
+      }
+    ]
+  }
+}

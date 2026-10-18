@@ -13,6 +13,7 @@ end
 
 function Bootstrap.Init(options)
     local initOptions = options or {}
+    initOptions.initialRunRequired = initOptions.loadSaved ~= false
     local loop = Loop.New(initOptions)
     local world = World.New()
     world:AddSystem(UpdateSystem.New(loop), "frame")

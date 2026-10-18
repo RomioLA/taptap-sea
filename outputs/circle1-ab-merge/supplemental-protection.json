@@ -1,0 +1,110 @@
+{
+  "scope": "Supplemental forbidden-source protection; hashes only, no source modification",
+  "files": [
+    {
+      "file": "data/fish.lua",
+      "sha256": "F6563E4CFC32C55ADBD471118C43658E1C59D27FFFC8D752DFFC4C688BDD7A21",
+      "currentSha256": "F6563E4CFC32C55ADBD471118C43658E1C59D27FFFC8D752DFFC4C688BDD7A21",
+      "baselineSource": "A3 before.json",
+      "matches": true
+    },
+    {
+      "file": "data/items.lua",
+      "sha256": "1A369DA6CFE8ED9A0E1F1DF975FE49896C08981DFC40F4CD86A2A254A6FEDD45",
+      "currentSha256": "1A369DA6CFE8ED9A0E1F1DF975FE49896C08981DFC40F4CD86A2A254A6FEDD45",
+      "baselineSource": "A3 before.json",
+      "matches": true
+    },
+    {
+      "file": "scripts/data/items.lua",
+      "sha256": "E0E74B36FA1FE33E17E5AC6797D37C9BBC2047EBCFF64A5DEDAAB35EF9AE6ECA",
+      "currentSha256": "E0E74B36FA1FE33E17E5AC6797D37C9BBC2047EBCFF64A5DEDAAB35EF9AE6ECA",
+      "baselineSource": "A3 before.json",
+      "matches": true
+    },
+    {
+      "file": "scripts/data/items.lua.meta",
+      "sha256": "9E46CBBF7F590FE28464666739C1146A9E0C1F2DE3309E9CA983A1816980DC15",
+      "currentSha256": "9E46CBBF7F590FE28464666739C1146A9E0C1F2DE3309E9CA983A1816980DC15",
+      "baselineSource": "A3 before.json",
+      "matches": true
+    },
+    {
+      "file": "scripts/Entities/EntityFactory.lua",
+      "sha256": "78A35FFC54AB3ED6642DE732EC3D7AF389183690EA2A3F8C5337D09E60E4AD34",
+      "currentSha256": "78A35FFC54AB3ED6642DE732EC3D7AF389183690EA2A3F8C5337D09E60E4AD34",
+      "baselineSource": "A3 before.json",
+      "matches": true
+    },
+    {
+      "file": "scripts/Entities/EntityFactory.lua.meta",
+      "sha256": "455554B17CE46FD6AE8072F0F156BD03D638B7D43F3A975B76F8AED87CE7A8F7",
+      "currentSha256": "455554B17CE46FD6AE8072F0F156BD03D638B7D43F3A975B76F8AED87CE7A8F7",
+      "baselineSource": "A3 before.json",
+      "matches": true
+    },
+    {
+      "file": "scripts/FSM/StateMachine.lua",
+      "sha256": "34376BB99D73878A4EA8B042AC810E0940F6549C0E67339DAB042B9CDD003EE4",
+      "currentSha256": "34376BB99D73878A4EA8B042AC810E0940F6549C0E67339DAB042B9CDD003EE4",
+      "baselineSource": "A3 before.json",
+      "matches": true
+    },
+    {
+      "file": "scripts/FSM/StateMachine.lua.meta",
+      "sha256": "76AF020588116F7BFB70DAE3EC19414F29B54F45133187F2DBCD23BDFF53EF16",
+      "currentSha256": "76AF020588116F7BFB70DAE3EC19414F29B54F45133187F2DBCD23BDFF53EF16",
+      "baselineSource": "A3 before.json",
+      "matches": true
+    },
+    {
+      "file": "scripts/Game/World.lua",
+      "sha256": "566ADFE3C4560B6F55D38059C72514B710485A290112E40172FA650B694C6DED",
+      "currentSha256": "566ADFE3C4560B6F55D38059C72514B710485A290112E40172FA650B694C6DED",
+      "baselineSource": "A3 before.json",
+      "matches": true
+    },
+    {
+      "file": "scripts/GeneratedData/Fish.lua",
+      "sha256": "65E35588F19AC41D1B6594294FE47EB5802258753DD309510B9B66C73D9FE9FB",
+      "currentSha256": "65E35588F19AC41D1B6594294FE47EB5802258753DD309510B9B66C73D9FE9FB",
+      "baselineSource": "A3 before.json",
+      "matches": true
+    },
+    {
+      "file": "scripts/GeneratedData/Items.lua",
+      "sha256": "33FAEF6384FF84BC973F2D0BA964F7B1A9572F886A39755DCDD53BEF010433EC",
+      "currentSha256": "33FAEF6384FF84BC973F2D0BA964F7B1A9572F886A39755DCDD53BEF010433EC",
+      "baselineSource": "A3 before.json",
+      "matches": true
+    },
+    {
+      "file": "scripts/Main.lua",
+      "sha256": "7B14E1225833ED502B329A78681C5257FB1DB75DCB72E1CCCB6DA906E322B7C2",
+      "currentSha256": "7B14E1225833ED502B329A78681C5257FB1DB75DCB72E1CCCB6DA906E322B7C2",
+      "baselineSource": "A3 before.json",
+      "matches": true
+    },
+    {
+      "file": "scripts/tests/SeaEngineSmoke.lua",
+      "sha256": "700BDF37E55A805B33EB1950FF73F4110C611637E6DAE42A0F85B74EFDEE6BE7",
+      "currentSha256": "700BDF37E55A805B33EB1950FF73F4110C611637E6DAE42A0F85B74EFDEE6BE7",
+      "baselineSource": "A3 before.json",
+      "matches": true
+    },
+    {
+      "file": "scripts/tests/SeaNativeVoyage.lua",
+      "sha256": "97927D01A089A7A186631FE09D398E48C6AF598FD9A26852E8FBA7A53485A145",
+      "currentSha256": "97927D01A089A7A186631FE09D398E48C6AF598FD9A26852E8FBA7A53485A145",
+      "baselineSource": "A3 before.json",
+      "matches": true
+    },
+    {
+      "file": "scripts/tests/SeaNativeVoyageEntry.lua",
+      "sha256": "3D189D95774B774B3088268800B99785A6862934D9F988028A78DF3B292D7FAA",
+      "currentSha256": "3D189D95774B774B3088268800B99785A6862934D9F988028A78DF3B292D7FAA",
+      "baselineSource": "A3 before.json",
+      "matches": true
+    }
+  ]
+}

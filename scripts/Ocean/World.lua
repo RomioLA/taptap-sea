@@ -2,6 +2,7 @@
 local Config = require("Ocean.Config")
 local M = require("Ocean.Math")
 local BaseWorld = require("Game.World")
+local Content = require("data.content")
 ---@class SeaEntity: OceanShip
 ---@field kind string
 ---@field entityType string
@@ -44,6 +45,13 @@ local SCOPE_LENGTH_SQUARED = SCOPE_LENGTH_METERS * SCOPE_LENGTH_METERS
 local SCOPE_HALF_ANGLE_RADIANS = math.rad(45.0)
 local SCOPE_HALF_ANGLE_TANGENT = math.tan(SCOPE_HALF_ANGLE_RADIANS)
 local VISIBILITY_EPSILON = Config.world.epsilon
+local EVENT_QUEUE_LIMIT = 256
+local EVENT_TYPES = {
+    observation_recorded = true,
+    hypothesis_confirmed = true,
+    content_marked = true,
+    trace_expired = true,
+}
 -- Process-local credentials, independent of fish refreshes and day seeds.
 -- A new World (including a separate Runtime.New) cannot reuse an old token.
 local barrelGenerationCounter = 0
@@ -51,6 +59,13 @@ local fixedContentGenerationCounter = 0
 
 local function clearArray(values)
     for index = #values, 1, -1 do values[index] = nil end
+end
+
+local function copyEvent(value)
+    if type(value) ~= "table" then return value end
+    local result = {}
+    for key, child in pairs(value) do result[key] = copyEvent(child) end
+    return result
 end
 
 local function queryWaterState(state, position, radius)
@@ -85,6 +100,43 @@ end
 
 local function isFiniteNumber(value)
     return type(value) == "number" and value == value and value > -math.huge and value < math.huge
+end
+
+local FIXED_CONTENT_ENTITY_TYPES = {
+    island = true, treasure = true, wreck = true, reef = true, coral = true,
+}
+
+local function isFinitePoint(point)
+    return type(point) == "table" and isFiniteNumber(point.x) and isFiniteNumber(point.y)
+end
+
+local function resolveFixedContentPosition(world, definition)
+    local hasPosition = definition.position ~= nil
+    local hasContainer = definition.at ~= nil
+    if hasPosition == hasContainer then return nil, "invalid_content_location" end
+
+    if hasPosition then
+        if not isFinitePoint(definition.position) or definition.localOffset ~= nil then
+            return nil, "invalid_content_location"
+        end
+        return M.copy(definition.position)
+    end
+
+    if definition.entityType ~= "treasure" or type(definition.at) ~= "table"
+        or (definition.at.kind ~= "island" and definition.at.kind ~= "wreck")
+        or type(definition.at.contentId) ~= "string" then
+        return nil, "invalid_content_container"
+    end
+    local container = world.fixedContentEntities[definition.at.contentId]
+    if not container or container.kind ~= "fixed" or container.entityType ~= definition.at.kind
+        or container.removed or container.alive == false then
+        return nil, "content_container_unavailable"
+    end
+
+    local offset = definition.localOffset
+    if offset == nil then offset = { x = 0, y = 0 } end
+    if not isFinitePoint(offset) then return nil, "invalid_content_offset" end
+    return { x = container.position.x + offset.x, y = container.position.y + offset.y }
 end
 
 -- This is a visibility test against the ship's current transform. It does not
@@ -136,25 +188,28 @@ function World:Init()
     self.scopeEnabled = false
     self.overlaps = {}
     self.events = {}
+    self.pendingEvents = {}
+    self.eventQueueDiagnostics = { overflowCount = 0, staleCount = 0 }
+    self.onDiagnostic = nil
     self.onOverlap = false
     fixedContentGenerationCounter = fixedContentGenerationCounter + 1
     self.fixedContentGeneration = fixedContentGenerationCounter
     self.fixedContentEntities = {}
-    for _, object in ipairs(Config.world.fixedObjects) do
-        local entity = self:spawn({ entityType = object.entityType, kind = "fixed", layer = "surface",
-            contentId = object.contentId, position = object.position, radius = object.radius, blocking = object.blocking })
-        if object.contentId then
-            assert(self.fixedContentEntities[object.contentId] == nil, "duplicate fixed contentId")
-            self.fixedContentEntities[object.contentId] = entity
+    self.fixedContentIds = {}
+    local fixedTreasureCount = 0
+    for _, object in ipairs(Content.fixed) do
+        if object.entityType == "treasure" then
+            fixedTreasureCount = fixedTreasureCount + 1
+            assert(object.contentId == "underwater_treasure_01" and object.layer == "underwater"
+                and object.blocking == false, "existing treasure contract changed")
+        end
+        local entity, reason = self:RegisterFixedContent(object)
+        assert(entity, reason or "invalid authored fixed content")
+        if object.entityType == "treasure" and object.contentId == "underwater_treasure_01" then
+            assert(self:isPositionFree(entity.position, entity.radius), "fixed treasure must be in open sea")
         end
     end
-    local treasure = Config.world.fixedTreasure
-    assert(treasure.contentId == "underwater_treasure_01", "fixed treasure content identity required")
-    assert(self.fixedContentEntities[treasure.contentId] == nil, "duplicate fixed contentId")
-    assert(self:isPositionFree(treasure.position, treasure.radius), "fixed treasure must be in open sea")
-    local treasureEntity = self:spawn({ entityType = treasure.entityType, kind = "fixed", layer = "underwater",
-        contentId = treasure.contentId, position = treasure.position, radius = treasure.radius, blocking = false })
-    self.fixedContentEntities[treasure.contentId] = treasureEntity
+    assert(fixedTreasureCount == 1, "the existing fixed treasure is the only production treasure")
     barrelGenerationCounter = barrelGenerationCounter + 1
     self.fixedBarrelGeneration = barrelGenerationCounter
     local barrel = Config.world.fixedBarrel
@@ -165,6 +220,33 @@ function World:Init()
     self.fixedBarrel = self:spawn({ entityType = "float", kind = "fixed", layer = "surface",
         contentId = "driftwood_barrel", position = barrel.position, radius = barrel.radius,
         blocking = true })
+end
+
+---Register one authored fixed content item in stable registration order.
+---@param definition table
+---@return SeaEntity?, string?
+function World:RegisterFixedContent(definition)
+    if self.retired then return nil, "world_retired" end
+    if type(definition) ~= "table" or type(definition.contentId) ~= "string"
+        or definition.contentId == "" or definition.kind ~= "fixed"
+        or not FIXED_CONTENT_ENTITY_TYPES[definition.entityType]
+        or not isFiniteNumber(definition.radius) or definition.radius < 0
+        or (definition.layer ~= "surface" and definition.layer ~= "underwater")
+        or type(definition.blocking) ~= "boolean" then
+        return nil, "invalid_authored_fixed_content"
+    end
+    if self.fixedContentEntities[definition.contentId] ~= nil then
+        return nil, "duplicate_content_id"
+    end
+
+    local position, positionError = resolveFixedContentPosition(self, definition)
+    if not position then return nil, positionError end
+    local entity = self:spawn({ entityType = definition.entityType, kind = definition.kind,
+        layer = definition.layer, contentId = definition.contentId, position = position,
+        radius = definition.radius, blocking = definition.blocking })
+    self.fixedContentEntities[definition.contentId] = entity
+    self.fixedContentIds[#self.fixedContentIds + 1] = definition.contentId
+    return entity
 end
 
 ---@return SeaEntity
@@ -289,8 +371,10 @@ function World:Retire()
     self.reveals = {}
     self.overlaps = {}
     self.events = {}
+    self.pendingEvents = {}
     self.fixedBarrel = nil
     self.fixedContentEntities = {}
+    self.fixedContentIds = {}
     self.systems = {}
     self.systemCadences = {}
     return true
@@ -304,6 +388,64 @@ end
 function World:Update(dt, cadence)
     if self.retired then return end
     BaseWorld.Update(self, dt, cadence)
+end
+
+local function reportEventQueueOverflow(self)
+    local diagnostics = self.eventQueueDiagnostics
+    diagnostics.overflowCount = diagnostics.overflowCount + 1
+    if type(self.onDiagnostic) == "function" then
+        pcall(self.onDiagnostic, self, "world_event_queue_overflow", {
+            limit = EVENT_QUEUE_LIMIT, droppedCount = diagnostics.overflowCount,
+        })
+    end
+    local logger = (type(log) == "table" or type(log) == "userdata") and log or nil
+    if logger and type(logger.Write) == "function" and type(LOG_WARNING) == "number" then
+        pcall(function()
+            logger:Write(LOG_WARNING, "[Ocean.World] bounded event queue overflow; dropped oldest event")
+        end)
+    end
+end
+
+---Queue a small cross-system event on this World instance only.
+---@param event table
+---@return boolean, string?
+function World:Emit(event)
+    if self.retired then return false, "world_retired" end
+    if type(event) ~= "table" then return false, "invalid_event" end
+    local eventType = rawget(event, "type")
+    if type(eventType) ~= "string" or not EVENT_TYPES[eventType] then
+        return false, "invalid_event_type"
+    end
+    local generation = rawget(event, "generation")
+    if generation ~= nil and generation ~= self.fixedContentGeneration then
+        return false, "stale_generation"
+    end
+    local queue = self.pendingEvents
+    if #queue >= EVENT_QUEUE_LIMIT then
+        table.remove(queue, 1)
+        reportEventQueueOverflow(self)
+    end
+    local queued = copyEvent(event)
+    queued.generation = self.fixedContentGeneration
+    queue[#queue + 1] = queued
+    return true
+end
+
+---Drain queued events FIFO and discard entries from another World generation.
+---@return table[]
+function World:DrainEvents()
+    local queued = self.pendingEvents or {}
+    self.pendingEvents = {}
+    local drained = {}
+    if self.retired then return drained end
+    for _, event in ipairs(queued) do
+        if event.generation == self.fixedContentGeneration then
+            drained[#drained + 1] = event
+        else
+            self.eventQueueDiagnostics.staleCount = self.eventQueueDiagnostics.staleCount + 1
+        end
+    end
+    return drained
 end
 
 -- Swept circle prevents tunnelling through islands even for a large caller delta.

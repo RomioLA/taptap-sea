@@ -213,6 +213,73 @@ local function nearbyEntities(runtime)
     return world.entities
 end
 
+-- Place a three-bird commuter formation on the current screen edge along the
+-- live ship-to-island bearing. It is presentation only; no World entity or
+-- authored route is created.
+local function commuterFlockLayout(runtime, width, height, isLocationRecognized)
+    if type(isLocationRecognized) ~= "function" then return nil end
+    local movement = runtime and runtime.movement
+    if not movement or movement.viewportReady ~= true or type(runtime.GetTrace) ~= "function" then return nil end
+    local trace = runtime:GetTrace("flock_commute")
+    if not trace or trace.valid ~= true or trace.sourceContentId ~= "island_02"
+        or trace.birdCount ~= 3 or trace.dives ~= false or trace.circlesFish ~= false
+        or not finite(trace.distance) or trace.distance <= Config.interaction.recognitionDistance
+        or not finite(trace.bearingRadians) then
+        return nil
+    end
+    local recognizedOk, recognized = pcall(isLocationRecognized, "island_02")
+    if not recognizedOk or recognized == true then return nil end
+
+    local ship = movement.ship
+    if not ship or type(ship.position) ~= "table" then return nil end
+    local altitude = Config.visual.projection.birdAltitude
+    local originX, originY = movement:WorldToScreen(ship.position, altitude)
+    if not finite(originX) or not finite(originY) then return nil end
+    local lookAhead = {
+        x = ship.position.x + math.cos(trace.bearingRadians) * 8,
+        y = ship.position.y + math.sin(trace.bearingRadians) * 8,
+    }
+    local aheadX, aheadY = movement:WorldToScreen(lookAhead, altitude)
+    if not finite(aheadX) or not finite(aheadY) then return nil end
+    local dx, dy = aheadX - originX, aheadY - originY
+    local length = math.sqrt(dx * dx + dy * dy)
+    if not finite(length) or length <= 1e-6 then return nil end
+    dx, dy = dx / length, dy / length
+
+    local margin = math.min(28, width * 0.08, height * 0.08)
+    local t = math.huge
+    if dx > 1e-6 then t = math.min(t, (width - margin - originX) / dx)
+    elseif dx < -1e-6 then t = math.min(t, (margin - originX) / dx) end
+    if dy > 1e-6 then t = math.min(t, (height - margin - originY) / dy)
+    elseif dy < -1e-6 then t = math.min(t, (margin - originY) / dy) end
+    if not finite(t) or t <= 0 then return nil end
+
+    local edgeX, edgeY = originX + dx * t, originY + dy * t
+    local perpendicularX, perpendicularY = -dy, dx
+    local elapsed = finite(runtime.time) and math.max(0, runtime.time) or 0
+    local flowOffset = -64 + ((elapsed * 0.2) % 1) * 48
+    return {
+        bearingRadians = trace.bearingRadians,
+        screenDirection = { x = dx, y = dy },
+        birds = {
+            { x = edgeX + dx * (flowOffset - 10), y = edgeY + dy * (flowOffset - 10) },
+            { x = edgeX + dx * (flowOffset - 34) + perpendicularX * 15,
+                y = edgeY + dy * (flowOffset - 34) + perpendicularY * 15 },
+            { x = edgeX + dx * (flowOffset - 34) - perpendicularX * 15,
+                y = edgeY + dy * (flowOffset - 34) - perpendicularY * 15 },
+        },
+    }
+end
+
+local function drawCommuterFlock(ctx, width, height, runtime, isLocationRecognized)
+    local layout = commuterFlockLayout(runtime, width, height, isLocationRecognized)
+    if not layout then return 0 end
+    for _, bird in ipairs(layout.birds) do
+        Draw.WorldSeabird(ctx, bird.x, bird.y, 14, layout.bearingRadians, 0)
+    end
+    return #layout.birds
+end
+
 local function drawFishing(ctx, runtime, view)
     if type(view) ~= "table" or type(view.center) ~= "table"
         or not finite(view.center.x) or not finite(view.center.y) then return end
@@ -408,8 +475,7 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
             end)
         end
     end
-    -- T5：世界实体（岛/船/木桶/浮标/海鸟）绘制完毕后统一染夜色。
-    if clock and clock.phase == "night" then Draw.NightOverlay(ctx, width, height, clock) end
+    drawCommuterFlock(ctx, width, height, runtime, isLocationRecognized)
     Atmosphere.Fog(ctx, movement, time, runtime.daySeed)
     drawFishing(ctx, runtime, fishingView)
     -- Grade all world content, including PNG ship/islands, fish in the scope,
@@ -436,5 +502,8 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
     nvgRestore(ctx)
     PerfProbe.Sample("scene", probeSceneStop())
 end
+
+-- Read-only screen-edge view used by Scene and the headless presentation tests.
+SeaDraw.BuildCommuterFlockLayout = commuterFlockLayout
 
 return SeaDraw

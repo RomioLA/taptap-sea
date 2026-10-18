@@ -1,0 +1,14 @@
+[
+  {
+    "name": "outline",
+    "distanceMeters": 25,
+    "engineScreenshot": false,
+    "png": "barrel-outline.png"
+  },
+  {
+    "name": "recognized",
+    "distanceMeters": 5,
+    "engineScreenshot": false,
+    "png": "barrel-recognized.png"
+  }
+]

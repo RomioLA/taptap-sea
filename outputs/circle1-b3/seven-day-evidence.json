@@ -1,0 +1,556 @@
+{
+  "kind": "headless two-route simulation; not a real-window playtest",
+  "suiteElapsedSeconds": 0.029915,
+  "routes": [
+    {
+      "navigationSeconds": 28.0,
+      "day4Elder": {
+        "decision": "dead",
+        "applesGiven": 2,
+        "present": false
+      },
+      "endingDesignStatus": "not specified; no ending is invoked or inferred",
+      "directDayWrites": 0,
+      "portAdapter": {
+        "getCalls": 141,
+        "resetCalls": 7,
+        "kind": "test-only ocean/port adapter"
+      },
+      "updateCalls": 136,
+      "usesDebugTools": false,
+      "days": [
+        {
+          "afterTrade": {
+            "saveStatus": "idle",
+            "stamina": 60,
+            "day": 1,
+            "elder": {
+              "decision": "pending",
+              "applesGiven": 1,
+              "present": true
+            },
+            "stock": {
+              "bait": 2,
+              "apple": 2
+            },
+            "money": 170,
+            "inventory": [
+              "bait"
+            ]
+          },
+          "nextDayElder": {
+            "decision": "pending",
+            "applesGiven": 1,
+            "present": true
+          },
+          "saleAction": "出售 ¥70",
+          "day": 1,
+          "fishingSeconds": 4.0,
+          "saveStatusAfterSettlement": "saved",
+          "nextDay": 2
+        },
+        {
+          "afterTrade": {
+            "saveStatus": "saved",
+            "stamina": 60,
+            "day": 2,
+            "elder": {
+              "decision": "pending",
+              "applesGiven": 2,
+              "present": true
+            },
+            "stock": {
+              "bait": 2,
+              "apple": 1
+            },
+            "money": 210,
+            "inventory": [
+              "bait"
+            ]
+          },
+          "nextDayElder": {
+            "decision": "pending",
+            "applesGiven": 2,
+            "present": true
+          },
+          "saleAction": "出售 ¥70",
+          "day": 2,
+          "fishingSeconds": 4.0,
+          "saveStatusAfterSettlement": "saved",
+          "nextDay": 3
+        },
+        {
+          "afterTrade": {
+            "saveStatus": "saved",
+            "stamina": 60,
+            "day": 3,
+            "elder": {
+              "decision": "pending",
+              "applesGiven": 2,
+              "present": true
+            },
+            "stock": {
+              "bait": 2,
+              "apple": 2
+            },
+            "money": 280,
+            "inventory": [
+              "bait"
+            ]
+          },
+          "nextDayElder": {
+            "decision": "dead",
+            "applesGiven": 2,
+            "present": false
+          },
+          "saleAction": "出售 ¥70",
+          "day": 3,
+          "fishingSeconds": 4.0,
+          "saveStatusAfterSettlement": "saved",
+          "nextDay": 4
+        },
+        {
+          "afterTrade": {
+            "saveStatus": "saved",
+            "stamina": 60,
+            "day": 4,
+            "elder": {
+              "decision": "dead",
+              "applesGiven": 2,
+              "present": false
+            },
+            "stock": {
+              "bait": 2,
+              "apple": 2
+            },
+            "money": 350,
+            "inventory": [
+              "bait"
+            ]
+          },
+          "nextDayElder": {
+            "decision": "dead",
+            "applesGiven": 2,
+            "present": false
+          },
+          "saleAction": "出售 ¥70",
+          "day": 4,
+          "fishingSeconds": 4.0,
+          "saveStatusAfterSettlement": "saved",
+          "nextDay": 5
+        },
+        {
+          "afterTrade": {
+            "saveStatus": "saved",
+            "stamina": 60,
+            "day": 5,
+            "elder": {
+              "decision": "dead",
+              "applesGiven": 2,
+              "present": false
+            },
+            "stock": {
+              "bait": 2,
+              "apple": 2
+            },
+            "money": 420,
+            "inventory": [
+              "bait"
+            ]
+          },
+          "nextDayElder": {
+            "decision": "dead",
+            "applesGiven": 2,
+            "present": false
+          },
+          "saleAction": "出售 ¥70",
+          "day": 5,
+          "fishingSeconds": 4.0,
+          "saveStatusAfterSettlement": "saved",
+          "nextDay": 6
+        },
+        {
+          "afterTrade": {
+            "saveStatus": "saved",
+            "stamina": 60,
+            "day": 6,
+            "elder": {
+              "decision": "dead",
+              "applesGiven": 2,
+              "present": false
+            },
+            "stock": {
+              "bait": 2,
+              "apple": 2
+            },
+            "money": 490,
+            "inventory": [
+              "bait"
+            ]
+          },
+          "nextDayElder": {
+            "decision": "dead",
+            "applesGiven": 2,
+            "present": false
+          },
+          "saleAction": "出售 ¥70",
+          "day": 6,
+          "fishingSeconds": 4.0,
+          "saveStatusAfterSettlement": "saved",
+          "nextDay": 7
+        },
+        {
+          "fishingSeconds": 4.0,
+          "afterTrade": {
+            "saveStatus": "saved",
+            "stamina": 60,
+            "day": 7,
+            "elder": {
+              "decision": "dead",
+              "applesGiven": 2,
+              "present": false
+            },
+            "stock": {
+              "bait": 2,
+              "apple": 2
+            },
+            "money": 560,
+            "inventory": [
+              "bait"
+            ]
+          },
+          "saleAction": "出售 ¥70",
+          "day": 7
+        }
+      ],
+      "realOceanRuntimeVerified": false,
+      "day7State": {
+        "saveStatus": "saved",
+        "stamina": 60,
+        "day": 7,
+        "elder": {
+          "decision": "dead",
+          "applesGiven": 2,
+          "present": false
+        },
+        "stock": {
+          "bait": 2,
+          "apple": 2
+        },
+        "money": 560,
+        "inventory": [
+          "bait"
+        ]
+      },
+      "directPlayerResourceWrites": 0,
+      "fishingSeconds": 28.0,
+      "paperShown": true,
+      "paperClosed": true,
+      "pauseRealReadingTime": "not measured; pauseCategorySeconds contains injected test dt and overlapping reasons must not be added",
+      "portApiProductionVerified": false,
+      "seekCalls": 0,
+      "day4ElderAccess": {
+        "explanation": "老人不在",
+        "visible": true,
+        "enabled": false,
+        "label": "老人不在"
+      },
+      "pauseCategorySeconds": {
+        "entry": 0.5,
+        "settlement": 1.5,
+        "port": 7.0,
+        "elder": 1.0,
+        "story": 0.5
+      },
+      "terminalEndingTriggered": false,
+      "activeClockUpdateSeconds": 56.0,
+      "giftDays": [
+        true,
+        true
+      ],
+      "simulationTime": 63.0
+    },
+    {
+      "navigationSeconds": 28.0,
+      "day4Elder": {
+        "decision": "saved",
+        "applesGiven": 3,
+        "present": true
+      },
+      "endingDesignStatus": "not specified; no ending is invoked or inferred",
+      "directDayWrites": 0,
+      "portAdapter": {
+        "getCalls": 150,
+        "resetCalls": 7,
+        "kind": "test-only ocean/port adapter"
+      },
+      "updateCalls": 138,
+      "usesDebugTools": false,
+      "days": [
+        {
+          "afterTrade": {
+            "saveStatus": "idle",
+            "stamina": 60,
+            "day": 1,
+            "elder": {
+              "decision": "pending",
+              "applesGiven": 1,
+              "present": true
+            },
+            "stock": {
+              "bait": 2,
+              "apple": 2
+            },
+            "money": 170,
+            "inventory": [
+              "bait"
+            ]
+          },
+          "nextDayElder": {
+            "decision": "pending",
+            "applesGiven": 1,
+            "present": true
+          },
+          "saleAction": "出售 ¥70",
+          "day": 1,
+          "fishingSeconds": 4.0,
+          "saveStatusAfterSettlement": "saved",
+          "nextDay": 2
+        },
+        {
+          "afterTrade": {
+            "saveStatus": "saved",
+            "stamina": 60,
+            "day": 2,
+            "elder": {
+              "decision": "pending",
+              "applesGiven": 2,
+              "present": true
+            },
+            "stock": {
+              "bait": 2,
+              "apple": 1
+            },
+            "money": 210,
+            "inventory": [
+              "bait"
+            ]
+          },
+          "nextDayElder": {
+            "decision": "pending",
+            "applesGiven": 2,
+            "present": true
+          },
+          "saleAction": "出售 ¥70",
+          "day": 2,
+          "fishingSeconds": 4.0,
+          "saveStatusAfterSettlement": "saved",
+          "nextDay": 3
+        },
+        {
+          "afterTrade": {
+            "saveStatus": "saved",
+            "stamina": 60,
+            "day": 3,
+            "elder": {
+              "decision": "pending",
+              "applesGiven": 3,
+              "present": true
+            },
+            "stock": {
+              "bait": 2,
+              "apple": 1
+            },
+            "money": 250,
+            "inventory": [
+              "bait"
+            ]
+          },
+          "nextDayElder": {
+            "decision": "saved",
+            "applesGiven": 3,
+            "present": true
+          },
+          "saleAction": "出售 ¥70",
+          "day": 3,
+          "fishingSeconds": 4.0,
+          "saveStatusAfterSettlement": "saved",
+          "nextDay": 4
+        },
+        {
+          "afterTrade": {
+            "saveStatus": "saved",
+            "stamina": 60,
+            "day": 4,
+            "elder": {
+              "decision": "saved",
+              "applesGiven": 3,
+              "present": true
+            },
+            "stock": {
+              "bait": 2,
+              "apple": 2
+            },
+            "money": 320,
+            "inventory": [
+              "bait"
+            ]
+          },
+          "nextDayElder": {
+            "decision": "saved",
+            "applesGiven": 3,
+            "present": true
+          },
+          "saleAction": "出售 ¥70",
+          "day": 4,
+          "fishingSeconds": 4.0,
+          "saveStatusAfterSettlement": "saved",
+          "nextDay": 5
+        },
+        {
+          "afterTrade": {
+            "saveStatus": "saved",
+            "stamina": 60,
+            "day": 5,
+            "elder": {
+              "decision": "saved",
+              "applesGiven": 3,
+              "present": true
+            },
+            "stock": {
+              "bait": 2,
+              "apple": 2
+            },
+            "money": 390,
+            "inventory": [
+              "bait"
+            ]
+          },
+          "nextDayElder": {
+            "decision": "saved",
+            "applesGiven": 3,
+            "present": true
+          },
+          "saleAction": "出售 ¥70",
+          "day": 5,
+          "fishingSeconds": 4.0,
+          "saveStatusAfterSettlement": "saved",
+          "nextDay": 6
+        },
+        {
+          "afterTrade": {
+            "saveStatus": "saved",
+            "stamina": 60,
+            "day": 6,
+            "elder": {
+              "decision": "saved",
+              "applesGiven": 3,
+              "present": true
+            },
+            "stock": {
+              "bait": 2,
+              "apple": 2
+            },
+            "money": 460,
+            "inventory": [
+              "bait"
+            ]
+          },
+          "nextDayElder": {
+            "decision": "saved",
+            "applesGiven": 3,
+            "present": true
+          },
+          "saleAction": "出售 ¥70",
+          "day": 6,
+          "fishingSeconds": 4.0,
+          "saveStatusAfterSettlement": "saved",
+          "nextDay": 7
+        },
+        {
+          "fishingSeconds": 4.0,
+          "afterTrade": {
+            "saveStatus": "saved",
+            "stamina": 60,
+            "day": 7,
+            "elder": {
+              "decision": "saved",
+              "applesGiven": 3,
+              "present": true
+            },
+            "stock": {
+              "bait": 2,
+              "apple": 2
+            },
+            "money": 530,
+            "inventory": [
+              "bait"
+            ]
+          },
+          "saleAction": "出售 ¥70",
+          "day": 7
+        }
+      ],
+      "realOceanRuntimeVerified": false,
+      "day7State": {
+        "saveStatus": "saved",
+        "stamina": 60,
+        "day": 7,
+        "elder": {
+          "decision": "saved",
+          "applesGiven": 3,
+          "present": true
+        },
+        "stock": {
+          "bait": 2,
+          "apple": 2
+        },
+        "money": 530,
+        "inventory": [
+          "bait"
+        ]
+      },
+      "directPlayerResourceWrites": 0,
+      "fishingSeconds": 28.0,
+      "paperShown": true,
+      "paperClosed": true,
+      "pauseRealReadingTime": "not measured; pauseCategorySeconds contains injected test dt and overlapping reasons must not be added",
+      "portApiProductionVerified": false,
+      "seekCalls": 0,
+      "day4ElderAccess": {
+        "visible": true,
+        "label": "拜访老人",
+        "dialogStateShown": "老人获救",
+        "opened": true,
+        "enabled": true,
+        "closed": true
+      },
+      "pauseCategorySeconds": {
+        "entry": 0.5,
+        "settlement": 1.5,
+        "port": 8.0,
+        "elder": 2.0,
+        "story": 0.5
+      },
+      "terminalEndingTriggered": false,
+      "activeClockUpdateSeconds": 56.0,
+      "giftDays": [
+        true,
+        true,
+        true
+      ],
+      "simulationTime": 64.0
+    }
+  ],
+  "constraints": {
+    "debugResourceCommandsUsed": false,
+    "seaFish": "deterministic simulated environment fish spawned by the protocol fixture",
+    "updateOnlyClockProgress": true,
+    "source": "official Gameplay.HUD callbacks plus Bridge.Update and public loop/paper entry",
+    "directDayOrPlayerResourceWrites": false,
+    "portProtocol": "test double around the B1 flow runtime; not evidence of production Ocean support",
+    "clockSeekUsed": false,
+    "ending": "day-seven paper entry only; no ending has been designed or invoked",
+    "realReaderTime": "unmeasured"
+  }
+}

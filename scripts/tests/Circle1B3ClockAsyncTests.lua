@@ -1,4 +1,5 @@
 -- Boundary and callback fault injection. No engine window or real cloud calls.
+local GameplayConfig = require("config.gameplay")
 local Loop = require("Gameplay.Loop")
 local Persistence = require("Gameplay.Persistence")
 local Flow = require("tests.Circle1BFishingFlowTests")
@@ -16,9 +17,24 @@ local function fixture(options)
     return Loop.New(options), store
 end
 
+local function acknowledgeStory(loop)
+    local story = loop:GetStoryDialog()
+    if not story then return end
+    assert(loop:NotifyStoryShown(story.token))
+    assert(loop:CloseStoryDialog())
+end
+
 local function settle(loop)
-    assert(loop:EndToday())
+    acknowledgeStory(loop)
+    local ended, reason = loop:EndToday()
+    assert(ended, reason)
+    if reason == "paper_opened" then
+        acknowledgeStory(loop)
+        ended, reason = loop:EndToday()
+        assert(ended, reason)
+    end
     assert(loop:ConfirmSettlement())
+    acknowledgeStory(loop)
 end
 
 function Tests.Run()
@@ -29,12 +45,13 @@ function Tests.Run()
     end
     check("late return formula keeps fractional seconds for every confirmed maximum", function()
         for _, maximum in ipairs({100, 160, 200}) do
-            for _, seconds in ipairs({0, 30, 30.001, 59.999}) do
+            for _, seconds in ipairs({0, 15, 15.001, 22.5, 29.999}) do
                 local loop = fixture()
                 loop.player.maxStamina = maximum
                 assert(loop:Depart())
                 loop.clock:Seek("night", seconds)
-                local expected = math.max(0, maximum - math.max(0, seconds - 30))
+                local expected = math.max(0, maximum
+                    - math.max(0, seconds - GameplayConfig.clock.graceSec) * GameplayConfig.clock.penaltyPerSec)
                 assert(math.abs(loop:GetNextDayStamina(false) - expected) < 1e-9)
             end
             local loop = fixture()
@@ -44,11 +61,11 @@ function Tests.Run()
     end)
     check("day-night warning uses the existing transition only", function()
         local loop = fixture()
-        assert(loop:Depart()); loop:Update(119.9)
+        assert(loop:Depart()); loop:Update(GameplayConfig.clock.daySec - 0.1)
         assert(not loop.lastMessage:find("黄昏", 1, true))
         loop:Update(0.1)
         assert(loop.clock.phase == "night" and loop.lastMessage:find("黄昏", 1, true))
-        assert(loop.lastMessage:find("30", 1, true))
+        assert(loop.lastMessage:find("15", 1, true))
     end)
     check("night boundary cancels locked cast and physically returns without refreshing fish", function()
         local env = Flow.Fixture()
@@ -59,7 +76,7 @@ function Tests.Run()
         assert(env.loop:Depart())
         env.runtime.ship.position = {x=25,y=0}
         env.runtime:spawnFish("sardine", {x=25,y=0})
-        env.loop.clock:Seek("night", 59)
+        env.loop.clock:Seek("night", env.loop.clock.nightSec - 1)
         local token = env.bridge:BeginFishing({x=25,y=0}); assert(token)
         env.bridge:Update(0.5)
         assert(env.runtime.lockCalls == 1)
@@ -72,7 +89,7 @@ function Tests.Run()
     check("missing forced-return interface never grants port access", function()
         local env = Flow.Fixture()
         env.runtime.ResetShipAtPort = false
-        assert(env.loop:Depart()); env.loop.clock:Seek("night",60); env.loop:RefreshClockStatus()
+        assert(env.loop:Depart()); env.loop.clock:Seek("night",env.loop.clock.nightSec); env.loop:RefreshClockStatus()
         assert(env.loop.forcedReturnPending and not env.loop.inPort)
         assert(not env.loop:ConfirmForcedReturn() and env.loop.player.day == 1)
     end)
@@ -80,7 +97,7 @@ function Tests.Run()
         local env = Flow.Fixture()
         assert(env.loop:Depart())
         env.runtime:spawnFish("sardine", env.runtime:GetShipPosition())
-        env.loop.clock:Seek("night",55)
+        env.loop.clock:Seek("night",env.loop.clock.nightSec - 5)
         assert(env.bridge:BeginFishing(env.runtime:GetShipPosition()))
         env.bridge:Update(5)
         assert(env.loop.forcedReturnPending)
@@ -91,7 +108,7 @@ function Tests.Run()
         local env = Flow.Fixture()
         assert(env.loop:Depart())
         local fish = env.runtime:spawnFish("sardine", env.runtime:GetShipPosition())
-        env.loop.clock:Seek("night",56)
+        env.loop.clock:Seek("night",env.loop.clock.nightSec - 4)
         local stamina = env.loop.player.stamina
         assert(env.bridge:BeginFishing(env.runtime:GetShipPosition()))
         env.bridge:Update(4)

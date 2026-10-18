@@ -12,6 +12,7 @@ local Progress = require("Gameplay.Circle1B2Progress")
 local Barrel = require("Gameplay.Circle1B2Barrel")
 local WorldContentActions = require("Gameplay.WorldContentActions")
 local WorldContentProgress = require("Gameplay.WorldContentProgress")
+local EvidenceSystem = require("Gameplay.EvidenceSystem")
 -- ②③ 认知度/成就系统执行器 + 跨局存档层
 local KnowledgeSystem = require("Gameplay.KnowledgeSystem")
 local AchievementSystem = require("Gameplay.AchievementSystem")
@@ -64,6 +65,11 @@ local ProfileStore = require("Gameplay.ProfileStore")
 ---@field requestSequence integer
 ---@field lastSettlementSaveId integer?
 local Loop = {}
+local WORLD_CONTENT_MEMORY_LABELS = {
+    island_01 = "岛屿记忆一",
+    island_02 = "岛屿记忆二",
+    underwater_treasure_01 = "海底记忆",
+}
 Loop.__index = Loop
 
 -- 逐物品正式对白尚未配置时，沿用现有交互反馈作为 fallback。
@@ -97,6 +103,7 @@ function Loop:Init(options)
     self.store = options.store or Persistence.Dual(options.cloud)
     self.generation = 0
     self.requestSequence = 0
+    self.actionToastSequence = 0
     self:ResetState()
     self.barrel = Barrel.New(self)
 end
@@ -120,6 +127,8 @@ function Loop:ResetState()
     Progress.Initialize(self.player)
     local contentInitialized, contentInitializeError = WorldContentProgress.Initialize(self.player)
     assert(contentInitialized, contentInitializeError or "invalid_world_content_progress")
+    local evidenceInitialized, evidenceInitializeError = EvidenceSystem.ResetRun(self.player)
+    assert(evidenceInitialized, evidenceInitializeError or "invalid_hypothesis_progress")
     Progress.OnDayStarted(self.player)
     -- ②③ 认知度/成就系统接线：profile 跨周目仅建一次；KS/AS 每局随 player 重建
     if not self.profileStore then
@@ -139,6 +148,7 @@ function Loop:ResetState()
     self.busy, self.loading = false, false
     self.dropInFlight = false
     self.saveStatus, self.lastMessage = "idle", "新周目已开始"
+    self.worldContentFeedbackToken, self.actionToast = nil, nil
     self.portNightElapsed = 0
     self.settlementForced = false
     self.settlementSnapshot = {}
@@ -163,7 +173,8 @@ function Loop:ResetState()
 end
 
 function Loop:Ready()
-    return not self.closed and not self.entryPending and not self.busy and not self.loading and not self.dropInFlight
+    return not self.closed and not self.endingPending and not self.entryPending
+        and not self.busy and not self.loading and not self.dropInFlight
         and not self.inventoryRollback
         and not self.forcedReturnPending and not self.settlementPending
         and not (self.actions and self.actions:IsBusy())
@@ -250,7 +261,7 @@ function Loop:Update(dt, advanceWorld)
             end
         end
         if previousPhase == "day" and clock.phase == "night" and not clock.exhausted then
-            self.lastMessage = "黄昏已至，请留意返港：夜晚前30秒返港体力全满；之后每晚归1秒次日少1体力，夜尽强返恢复上限的一半。"
+            self.lastMessage = "黄昏已至，请留意返港：夜晚前15秒返港体力全满；之后每晚归1秒次日少2体力，夜尽强返恢复上限的一半。"
         end
         local after = clock.elapsed + (clock.phase == "night" and clock.daySec or 0)
         local gameSeconds = math.max(0, after - before)
@@ -273,10 +284,93 @@ function Loop:Update(dt, advanceWorld)
         end
         remaining = math.max(0, remaining - slice)
     until remaining <= 1e-9
+    self:ProcessEmergenceEvents(dt > 0)
     if self.worldContentActions then
-        Diagnostics.Call("Loop", "world_content_advance",
+        local token = self.worldContentFeedbackToken
+        local callOk, advanced, result = Diagnostics.Call("Loop", "world_content_advance",
             self.worldContentActions.Advance, self.worldContentActions, worldContentElapsed)
+        if token ~= nil then
+            if callOk and advanced == true and result == "completed" then
+                local receiptOk, receipt = pcall(
+                    self.worldContentActions.GetReceipt, self.worldContentActions, token)
+                if receiptOk and type(receipt) == "table" and receipt.status == "completed"
+                    and receipt.commitState == "committed" then
+                    local cost = tonumber(receipt.staminaCost) or 0
+                    local remaining = math.floor(tonumber(self.player.stamina) or 0)
+                    local feedback = string.format("消耗%d体力，剩余%d体力", cost, remaining)
+                    local memoryName = WORLD_CONTENT_MEMORY_LABELS[receipt.contentId]
+                    if memoryName then
+                        self:QueueActionToast("获得记忆：" .. memoryName .. "\n" .. feedback, 3)
+                    else
+                        self:QueueActionToast(feedback, 3)
+                    end
+                end
+                self.lastMessage = ""
+                self.worldContentFeedbackToken = nil
+            elseif not callOk or result ~= "active" then
+                self.worldContentFeedbackToken = nil
+            end
+        end
     end
+end
+
+-- Only a fresh, currently observable commuter-flock event can enter the
+-- hypothesis. SurfaceSignals fishing birds do not use this path.
+function Loop:ProcessEmergenceEvents(allowObservation)
+    local runtime, player, clock = self.runtime, self.player, self.clock
+    local world = runtime and runtime.world
+    if not world or type(world.DrainEvents) ~= "function" then return false, "world_unavailable" end
+
+    local active = allowObservation == true and not self.closed and not self.inPort
+        and clock ~= nil and not clock:IsPaused() and not clock.exhausted
+        and player ~= nil and type(player.IsRecognized) == "function"
+        and runtime.movement ~= nil and runtime.movement.viewportReady == true
+        and type(runtime.BuildTraceObservation) == "function"
+    if active then
+        local state, stateError = EvidenceSystem.GetState(player, "H-isle-bearing-01")
+        local hasEvidence, evidenceError = EvidenceSystem.HasEvidenceForDay(
+            player, "H-isle-bearing-01", player.day)
+        if state and not state.confirmed and hasEvidence == false and not evidenceError
+            and not player:IsRecognized("island_02") then
+            local observation = runtime:BuildTraceObservation(
+                "flock_commute", player.day, false)
+            if observation then world:Emit(observation) end
+        elseif stateError or evidenceError then
+            Diagnostics.Event("Loop", "hypothesis_observation_rejected", {
+                reason = stateError or evidenceError, hypothesis_id = "H-isle-bearing-01",
+            })
+        end
+    end
+
+    local generation = type(runtime.GetFixedContentGeneration) == "function"
+        and runtime:GetFixedContentGeneration() or nil
+    for _, event in ipairs(world:DrainEvents()) do
+        if event.type == "observation_recorded" and active and event.traceId == "flock_commute"
+            and event.day == player.day and event.generation == generation then
+            local recognized = player:IsRecognized("island_02")
+            local current = runtime:BuildTraceObservation("flock_commute", player.day, recognized)
+            if current then
+                local bearingDelta = math.abs(event.bearing - current.bearing) % 360
+                if bearingDelta > 180 then bearingDelta = 360 - bearingDelta end
+                if bearingDelta <= 1e-9 and event.sourceContentId == current.sourceContentId
+                    and event.traceType == current.traceType and event.birdCount == current.birdCount
+                    and event.dives == current.dives and event.circlesFish == current.circlesFish
+                    and event.observable == true then
+                    local accepted, result, state = EvidenceSystem.RecordObservation(
+                        player, event, self.knowledge,
+                        { day = player.day, generation = generation })
+                    if accepted and result == "confirmed" and state then
+                        self.lastMessage = state.hint
+                        Diagnostics.Event("Loop", "hypothesis_confirmed", {
+                            hypothesis_id = state.hypothesisId, knowledge_id = "K-isl-1",
+                            distinct_days = state.distinctDays,
+                        })
+                    end
+                end
+            end
+        end
+    end
+    return true
 end
 
 function Loop:RefreshClockStatus()
@@ -384,6 +478,30 @@ end
 
 function Loop:SetMessage(message)
     self.lastMessage = message
+end
+
+---入队一个短暂的中央结果提示；HUD 显示后以 id 确认消费。
+function Loop:QueueActionToast(text, durationSec)
+    if type(text) ~= "string" or text == "" then return false, "invalid_toast_text" end
+    self.actionToastSequence = (self.actionToastSequence or 0) + 1
+    self.actionToast = {
+        id = self.actionToastSequence,
+        text = text,
+        durationSec = type(durationSec) == "number" and durationSec > 0 and durationSec or 3,
+    }
+    return true, self.actionToast.id
+end
+
+function Loop:GetActionToast()
+    local toast = self.actionToast
+    if not toast then return nil end
+    return { id = toast.id, text = toast.text, durationSec = toast.durationSec }
+end
+
+function Loop:AcknowledgeActionToast(id)
+    if not self.actionToast or self.actionToast.id ~= id then return false end
+    self.actionToast = nil
+    return true
 end
 
 function Loop:RecognizeLocation(locationId)
@@ -690,8 +808,17 @@ function Loop:Depart()
 end
 
 function Loop:EndToday()
+    if self.endingPending then return false, "ending_already_pending" end
     if self:HasPendingCatch() then return false, "pending_catch_required" end
     if not self:Ready() or not self.inPort then return false, "port_required" end
+    if self.player.day >= Config.clock.maxDay then
+        local paperShown, paperReason = Progress.IsPaperShown(self.player)
+        if paperShown ~= true then
+            local opened, openReason = self:OpenDay7PaperBeforeEnding()
+            if opened then return true, "paper_opened" end
+            return false, paperReason or openReason or "day7_paper_required"
+        end
+    end
     local near, reason = self:CanAccessPort()
     if not near then return false, reason end
     self.settlementPending, self.settlementForced = true, false
@@ -764,6 +891,8 @@ function Loop:BeginNewDay()
     -- 两支结局：3 苹果救活（elder.decision=="saved"）=改变结局，否则普通结局。
     -- 结局文案为占位，正式文本按 Q-006 由 B 侧内容生产替换后仅改 HUD 文案。
     if self.player.day >= Config.clock.maxDay then
+        local paperShown, paperReason = Progress.IsPaperShown(self.player)
+        if paperShown ~= true then return reject(paperReason or "day7_paper_required") end
         local elderRecord = self.player.elder and self.player.elder.circle1B2
         self.endingKind = elderRecord and elderRecord.decision == "saved" and "changed" or "normal"
         self.endingPending = true
@@ -827,7 +956,8 @@ local function finishSettlement(self, saved)
         return false, "no_settlement"
     end
     self.settlementSaveDecision = saved and "saved" or "skipped"
-    if self.options.onNewDay then
+    -- Day-seven entry still prepares its ocean; only the terminal settlement skips refresh.
+    if not self.endingPending and self.options.onNewDay then
         local hookOk, accepted, hookReason = Diagnostics.Call(
             "Loop", "new_day_world_prepare", self.options.onNewDay, self.player.day)
         if not hookOk or accepted == false then
@@ -851,6 +981,13 @@ local function finishSettlement(self, saved)
             and "本次出海已结束，进度已保存。"
             or "每日结算已保存，下一天已就绪")
         or "已跳过本次保存等待，下一天已就绪；未保存进度可能在退出后丢失，已发出的保存请求仍可能稍后写入。"
+    if self.inPort and not self.endingPending then
+        if self.player.day == 4 then
+            self:OpenDay4ElderFate()
+        elseif self.player.day == 7 then
+            self:OpenDay7PaperBeforeEnding()
+        end
+    end
     emit(self, "new_day_preparation", {
         kind = "operation", result = "ready", reason = saved and "saved" or "explicitly_skipped",
         day = self.player.day,
@@ -1120,6 +1257,12 @@ function Loop:LoadSaved(done)
             local restoreOk, player, err = Diagnostics.Call(
                 "Loop", "load_restore", Persistence.Restore, data)
             if restoreOk and player then
+                local evidenceOk, evidenceError = EvidenceSystem.Validate(player)
+                if not evidenceOk then
+                    restoreOk, err = false, evidenceError or "invalid_hypothesis_progress"
+                end
+            end
+            if restoreOk and player then
                 local prepared, prepareReason = self:PreparePort("restore")
                 if prepared and self.options.prepareLoadedWorld then
                     local hookOk, accepted = Diagnostics.Call(
@@ -1150,8 +1293,14 @@ function Loop:LoadSaved(done)
                 self.portNightElapsed = 0
                 self.inPort, self.dayExhausted = true, false
                 self.entryPending = false
+                self.worldContentFeedbackToken, self.actionToast = nil, nil
                 self.loadStatus, self.saveStatus = "loaded", "saved"
                 self.lastMessage = "已加载每日结算存档"
+                if self.player.day == 4 then
+                    self:OpenDay4ElderFate()
+                elseif self.player.day == 7 then
+                    self:OpenDay7PaperBeforeEnding()
+                end
             else ok, data = false, restoreOk and err or player end
         end
         if ok and data == nil then
@@ -1212,7 +1361,7 @@ function Loop:NewRun()
     end
     self:CloseStoryDialog()
     self:CancelThrowSelection()
-    if not self:Ready() and not self.entryPending then return reject("busy") end
+    if not self:Ready() and not self.entryPending and not self.endingPending then return reject("busy") end
     local prepared, prepareReason = self:PreparePort("new_run")
     if not prepared then
         emit(self, "new_run_preparation", {
@@ -1644,10 +1793,19 @@ function Loop:BeginWorldContentAction(contentId, actionKind)
     local method = actionKind == "explore" and actions.BeginExplore
         or actionKind == "salvage" and actions.BeginSalvage
     if type(method) ~= "function" then return false, "invalid_action_kind" end
+    local canPay = self.player:CanConsumeStamina(Config.stamina.salvageCost)
+    if not canPay then
+        local text, messageCode = actionKind == "explore"
+            and "探索" or "打捞", actionKind == "explore"
+            and "insufficient_stamina_explore" or "insufficient_stamina_salvage"
+        self.lastMessage = string.format("体力不足，%s需要%d体力。", text, Config.stamina.salvageCost)
+        return false, messageCode
+    end
     local cancelled, cancelError = self:CancelAutoReturn("world_content_action")
     if not cancelled then return false, cancelError or "auto_return_cancel_failed" end
     local token, reason = method(actions, contentId)
     if not token then return false, reason or "action_rejected" end
+    self.worldContentFeedbackToken = token
     self.lastMessage = actionKind == "explore" and "开始探索" or "开始打捞"
     return token
 end
@@ -1657,7 +1815,12 @@ function Loop:CancelWorldContentAction(token, reason)
     if not actions then return true, "idle" end
     local active = actions:GetActionState()
     if not active then return true, "idle" end
-    return actions:Cancel(token or active.token, reason or "cancelled")
+    local targetToken = token or active.token
+    local cancelled, result = actions:Cancel(targetToken, reason or "cancelled")
+    if cancelled and self.worldContentFeedbackToken == targetToken then
+        self.worldContentFeedbackToken = nil
+    end
+    return cancelled, result
 end
 
 function Loop:GetOwnedTreasures()
@@ -1865,9 +2028,30 @@ function Loop:ThrowItemAtShip(index)
     if not ok then self.actions:SetDropTarget(nil) end
     return ok, reason
 end
+function Loop:OpenDay4ElderFate()
+    if self.player.day ~= 4 then return false, "elder_fate_day_required" end
+    local status = self:GetElderStatus()
+    if status.decision ~= "saved" and status.decision ~= "dead" then
+        return false, "elder_decision_pending"
+    end
+    local shown, shownError = Progress.IsElderFateShown(self.player)
+    if shownError then return false, shownError end
+    if shown then return false, "elder_fate_already_shown" end
+    if self.storyDialog then return true end
+    if not self.inPort or not self:Ready() or self:HasPendingCatch() then return false, "busy" end
+    local text = status.decision == "saved"
+        and "第四天清晨，老人还在。\n他望着你说：“多亏这几天你一直照顾我。”\n这趟航行，你们还能继续同行。"
+        or "第四天清晨，老人再也没有醒来。\n往后的航行，只剩你一个人。"
+    self.storyDialog = { token = {}, kind = "elder_fate", text = text }
+    self.clock:Pause("story")
+    return true
+end
+
 function Loop:OpenDay7PaperBeforeEnding()
     if self.player.day ~= 7 then return false, "paper_day_required" end
-    if Progress.IsPaperShown(self.player) then return false, "paper_already_shown" end
+    local paperShown, paperError = Progress.IsPaperShown(self.player)
+    if paperError then return false, paperError end
+    if paperShown then return false, "paper_already_shown" end
     if self.storyDialog then return true end
     local bucketOnlyBusy = self.barrel and self.barrel:IsBusy()
         and not self.closed and not self.entryPending and not self.busy and not self.loading
@@ -1878,7 +2062,7 @@ function Loop:OpenDay7PaperBeforeEnding()
         return false, "busy"
     end
     self.storyDialog = { token = {}, kind = "paper",
-        text = "海岸边那只木桶，下面一定有什么东西，我想多打捞几次就能打捞上来吧。" }
+        text = "海边那只木桶还有秘密，快去再探探。" }
     self.clock:Pause("story")
     return true
 end
@@ -1888,9 +2072,18 @@ function Loop:GetStoryDialog()
 end
 function Loop:NotifyStoryShown(token)
     if not self.storyDialog or token ~= self.storyDialog.token then return false, "stale_story_dialog" end
-    return Progress.MarkPaperShown(self.player)
+    if self.storyDialog.kind == "paper" then return Progress.MarkPaperShown(self.player) end
+    if self.storyDialog.kind == "elder_fate" then return Progress.MarkElderFateShown(self.player) end
+    return false, "unknown_story_kind"
 end
 function Loop:CloseStoryDialog()
+    if self.storyDialog and self.storyDialog.kind == "paper" then
+        local shown, reason = Progress.IsPaperShown(self.player)
+        if shown ~= true then return false, reason or "paper_not_shown_yet" end
+    elseif self.storyDialog and self.storyDialog.kind == "elder_fate" then
+        local shown, reason = Progress.IsElderFateShown(self.player)
+        if shown ~= true then return false, reason or "elder_fate_not_shown_yet" end
+    end
     self.storyDialog = nil
     self.clock:Resume("story")
     return true

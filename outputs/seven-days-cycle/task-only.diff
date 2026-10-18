@@ -1,0 +1,1502 @@
+--- before/scripts/Gameplay/GameClock.lua
++++ current/scripts/Gameplay/GameClock.lua
+@@ -233,6 +233,8 @@
+     return {
+         phase = self.phase,
+         elapsed = self.elapsed,
++        duration = duration,
++        progress = math.max(0, math.min(1, self.elapsed / duration)),
+         remaining = math.max(0, duration - self.elapsed),
+         paused = self:IsPaused(),
+         pauseReasons = self:GetPauseReasons(),
+--- before/scripts/Gameplay/HUD.lua
++++ current/scripts/Gameplay/HUD.lua
+@@ -64,6 +64,8 @@
+     no_failed_settlement = "当前没有可放弃的保存。",
+     new_day_preparation_failed = "港口或海洋准备未完成，请重试。",
+     settlement_snapshot_failed = "日结快照尚未生成，请重试保存。",
++    paper_required = "请先阅读第7天纸条。",
++    invalid_run_day = "存档日期超出七天周目范围，当前状态保留。",
+     fishing_runtime_interface_unavailable = "捕鱼接口暂未就绪，请稍后重试。",
+     fishing_requires_bridge_token = "请从正式捕鱼按钮开始操作。",
+     pending_catch_required = "请先处理已有待接收收获；物品会完整保留。",
+@@ -1184,8 +1186,9 @@
+ 
+         local showEntry = loop.entryPending == true
+         local showForced = not showEntry and not pendingCatch and loop.forcedReturnPending == true
+-        local showSettlement = not showEntry and not pendingCatch and not showForced and loop.settlementPending == true
+-        local showStory = not pendingCatch and not showForced and not showSettlement and storyDialog ~= nil
++        local showStory = not showEntry and not pendingCatch and not showForced and storyDialog ~= nil
++        local showSettlement = not showEntry and not pendingCatch and not showForced and not showStory
++            and loop.settlementPending == true
+         local showElder = not showForced and not showSettlement and not showStory
+             and loop.elderOpen == true and elderPresent
+         refs.overlay:SetVisible(showEntry or showForced or showSettlement or showStory or showElder)
+@@ -1218,7 +1221,11 @@
+ 
+         if showSettlement then
+             local confirmed = loop.settlementApplied == true
+-            local text = loop.dayPreparationError and "本次保存选择已记录，但新日海洋准备失败；请重试准备，不会重复加天或保存。"
++            local finalDay = loop.settlementFinal == true or (not confirmed and player.day == Config.totalDays)
++            local text = finalDay and (confirmed and (busy and "第7天已结算，正在保存…"
++                or "保存失败，可重试或放弃本次保存。旧存档仍保留，退出后未保存进度可能丢失。")
++                or "保存第7天日结？本轮共7天。")
++                or loop.dayPreparationError and "本次保存选择已记录，但新日海洋准备失败；请重试准备，不会重复加天或保存。"
+                 or confirmed and (busy and "今日已结算，正在自动保存…"
+                 or "保存失败，可重试保存或明确放弃本次保存进入下一天。旧存档仍保留，退出后当天未保存进度可能丢失。")
+                 or "结束今日并进入下一天？确认后会自动保存。"
+@@ -1229,7 +1236,8 @@
+             settlementButton:SetDisabled(busy)
+             refs.settlementSkip:SetVisible(confirmed
+                 and (loop.saveStatus == "saving" or loop.saveStatus == "error"))
+-            refs.settlementSkip:SetText(loop.saveStatus == "saving" and "不等待保存，进入下一天"
++            refs.settlementSkip:SetText(finalDay and (loop.saveStatus == "saving" and "不等待本次保存" or "放弃本次保存")
++                or loop.saveStatus == "saving" and "不等待保存，进入下一天"
+                 or "放弃本次保存，进入下一天")
+             refs.settlementSkip:SetDisabled(loop.loading == true)
+         end
+--- before/scripts/Gameplay/Loop.lua
++++ current/scripts/Gameplay/Loop.lua
+@@ -41,6 +41,8 @@
+ ---@field worldPreparation GameplayWorldPreparation?
+ ---@field initialSaveStatus string
+ ---@field initialSaveBusy boolean
++---@field runEndPending boolean Runtime only: ending design/persistent completion contract is undecided.
++---@field settlementFinal boolean
+ local Loop = {}
+ Loop.__index = Loop
+ 
+@@ -78,6 +80,7 @@
+     self.inventoryOpen, self.elderOpen = false, false
+     self.forcedReturnPending, self.settlementPending = false, false
+     self.dayExhausted, self.settlementApplied = false, false
++    self.runEndPending, self.settlementFinal = false, false
+     self.busy, self.loading = false, false
+     self.dropInFlight = false
+     self.saveStatus, self.lastMessage = "idle", "新周目已开始"
+@@ -95,6 +98,7 @@
+     self.initialSaveStatus, self.initialSaveBusy, self.initialSaveSnapshot = "idle", false, nil
+     self.dayPreparationError = false
+     self.settlementSaveDecision = nil
++    self.settlementSkipInFlight = false
+     self.worldPreparation = nil
+     self.clock:Pause("port")
+     return true
+@@ -102,11 +106,14 @@
+ 
+ function Loop:Ready()
+     return not self.closed and not self.entryPending and not self.busy and not self.loading and not self.dropInFlight
+-        and not self.inventoryRollback
++        and not self.inventoryRollback and not self.runEndPending
+         and not self.forcedReturnPending and not self.settlementPending
+         and not (self.actions and self.actions:IsBusy())
+         and not (self.barrel and self.barrel:IsBusy()) and not self.storyDialog
+ end
++
++-- 仅暴露流程边界；不判定结局，也不把纸条已读冒充终局存档标记。
++function Loop:IsRunEndPending() return self.runEndPending end
+ 
+ -- 仅新周目、下一天应用或成功恢复每日结算快照时补货。
+ function Loop:ResetShopStock()
+@@ -413,9 +420,14 @@
+     if not self:Ready() or not self.inPort then return false, "port_required" end
+     local near, reason = self:CanAccessPort()
+     if not near then return false, reason end
++    if self.player.day == Config.totalDays and not Progress.IsPaperShown(self.player) then
++        local opened, paperReason = self:OpenDay7PaperBeforeEnding()
++        if not opened then return false, paperReason end
++    end
+     self.settlementPending, self.settlementForced = true, false
+     self.clock:Pause("settlement")
+-    self.lastMessage = "确认结束今天并进入下一天？"
++    self.lastMessage = self.player.day == Config.totalDays and "确认保存第7天日结？"
++        or "确认结束今天并进入下一天？"
+     return true
+ end
+ 
+@@ -453,6 +465,23 @@
+     if (self.barrel and self.barrel:IsBusy()) or self.storyDialog then return false, "busy" end
+     -- 对外只允许由已经确认的结算调用，防止海上绕过处罚/自动存档。
+     if not self.settlementPending or self.settlementApplied then return false, "settlement_required" end
++    self.settlementSkipInFlight = false
++    if self.player.day >= Config.totalDays then
++        if self.player.day ~= Config.totalDays then return false, "invalid_run_day" end
++        if not Progress.IsPaperShown(self.player) then return false, "paper_required" end
++        -- 最后一天没有第八天：保留最终资源、库存与世界，不恢复次日体力。
++        self.settlementFinal, self.settlementApplied = true, true
++        self.inventoryOpen, self.elderOpen = false, false
++        self:CancelThrowSelection()
++        local snapshotOk, snapshot = pcall(Persistence.Snapshot, self.player)
++        if not snapshotOk then
++            self.settlementSnapshot, self.saveStatus = nil, "error"
++            self:SetMessage("日结快照暂未生成，可重试；当天进度已保留。")
++            return false, "settlement_snapshot_failed"
++        end
++        self.settlementSnapshot = snapshot
++        return true
++    end
+     if not self.portPreparedForSettlement then
+         local prepared, reason = self:PreparePort("new_day")
+         if not prepared then return false, reason end
+@@ -488,7 +517,7 @@
+         return false, "no_settlement"
+     end
+     self.settlementSaveDecision = saved and "saved" or "skipped"
+-    if self.options.onNewDay then
++    if not self.settlementFinal and self.options.onNewDay then
+         local hookOk, accepted = pcall(self.options.onNewDay, self.player.day)
+         if not hookOk or accepted == false then
+             self.dayPreparationError = true
+@@ -501,7 +530,16 @@
+     self.portPreparedForSettlement = false
+     self.saveStatus = saved and "saved" or "skipped"
+     self.clock:Resume("settlement")
++    if self.settlementFinal then
++        self.runEndPending = true
++        self.clock:Pause("run_end")
++        self.lastMessage = saved and "第7天日结已保存，可开始新周目。"
++            or self.settlementSkipInFlight and "已不等待第7天保存，可开始新周目；远端请求仍可能稍后更新云档。"
++            or "第7天日结未保存；旧存档仍保留，可开始新周目。"
++        return true
++    end
+     self.lastMessage = saved and "每日结算已保存，下一天已就绪"
++        or self.settlementSkipInFlight and "已不等待本次保存，下一天已就绪；远端请求仍可能稍后更新云档。"
+         or "本次结算未保存，下一天已就绪；旧存档仍保留，退出后当天未保存进度可能丢失。"
+     return true
+ end
+@@ -530,6 +568,7 @@
+         end
+         -- The cloud call may still finish remotely. Invalidate its local callback so
+         -- a later response cannot change the explicit skip decision.
++        self.settlementSkipInFlight = true
+         self.activeRequest, self.busy = nil, false
+     end
+     return finishSettlement(self, false)
+@@ -541,6 +580,10 @@
+     if self.inventoryRollback or (self.actions and self.actions:IsBusy()) then return false, "busy" end
+     if (self.barrel and self.barrel:IsBusy()) or self.storyDialog then return false, "busy" end
+     if not self.settlementPending or self.busy or self.loading then return false, "no_settlement" end
++    if self.player.day == Config.totalDays and not self.settlementApplied
++        and not Progress.IsPaperShown(self.player) then
++        return self:OpenDay7PaperBeforeEnding()
++    end
+     if self.dayPreparationError then return finishSettlement(self, self.settlementSaveDecision == "saved") end
+     if not self.settlementApplied then
+         local started, reason = self:BeginNewDay()
+@@ -563,7 +606,9 @@
+         self.busy = false
+         self.saveStatus = ok and "saved" or "error"
+         if not ok then
+-            self.lastMessage = "结算存档失败，可重试保存，或明确放弃本次保存进入下一天。旧存档仍保留。"
++            self.lastMessage = self.settlementFinal
++                and "第7天结算存档失败，可重试或明确放弃本次保存。旧存档仍保留。"
++                or "结算存档失败，可重试保存，或明确放弃本次保存进入下一天。旧存档仍保留。"
+             return
+         end
+         finishSettlement(self, true)
+@@ -686,6 +731,7 @@
+                 self.inventoryOpen, self.elderOpen = false, false
+                 self.portNightElapsed = 0
+                 self.inPort, self.dayExhausted = true, false
++                self.runEndPending, self.settlementFinal = false, false
+                 self.entryPending = false
+                 self.loadStatus, self.saveStatus = "loaded", "saved"
+                 self.lastMessage = "已加载每日结算存档"
+@@ -721,7 +767,7 @@
+     end
+     self:CloseStoryDialog()
+     self:CancelThrowSelection()
+-    if not self:Ready() and not self.entryPending then return false, "busy" end
++    if not self:Ready() and not self.entryPending and not self.runEndPending then return false, "busy" end
+     local prepared, prepareReason = self:PreparePort("new_run")
+     if not prepared then return false, prepareReason end
+     local resetOk, resetReason = self:ResetState()
+@@ -1087,7 +1133,7 @@
+ end
+ function Loop:CancelThrowSelection() self.throwSelection = nil; return true end
+ function Loop:OpenDay7PaperBeforeEnding()
+-    if self.player.day ~= 7 then return false, "paper_day_required" end
++    if self.player.day ~= Config.totalDays then return false, "paper_day_required" end
+     if Progress.IsPaperShown(self.player) then return false, "paper_already_shown" end
+     if self.storyDialog then return true end
+     local bucketOnlyBusy = self.barrel and self.barrel:IsBusy()
+@@ -1095,7 +1141,13 @@
+         and not self.initialSaveBusy and not self.dropInFlight and not self.inventoryRollback
+         and not self.forcedReturnPending and not self.settlementPending
+         and not (self.actions and self.actions:IsBusy())
+-    if (not self:Ready() and not bucketOnlyBusy) or self:HasPendingCatch() or self:GetThrowSelection() then
++    local finalSettlement = self.settlementPending and not self.settlementApplied
++        and not self.closed and not self.entryPending and not self.busy and not self.loading
++        and not self.initialSaveBusy and not self.dropInFlight and not self.inventoryRollback
++        and not self.forcedReturnPending and not self.runEndPending
++        and not (self.actions and self.actions:IsBusy()) and not (self.barrel and self.barrel:IsBusy())
++    if (not self:Ready() and not bucketOnlyBusy and not finalSettlement)
++        or self:HasPendingCatch() or self:GetThrowSelection() then
+         return false, "busy"
+     end
+     self.storyDialog = { token = {}, kind = "paper",
+@@ -1112,6 +1164,8 @@
+     return Progress.MarkPaperShown(self.player)
+ end
+ function Loop:CloseStoryDialog()
++    if self.storyDialog and self.storyDialog.kind == "paper" and self.settlementPending
++        and not Progress.IsPaperShown(self.player) then return false, "paper_required" end
+     self.storyDialog = nil
+     self.clock:Resume("story")
+     return true
+--- before/scripts/Gameplay/Persistence.lua
++++ current/scripts/Gameplay/Persistence.lua
+@@ -39,6 +39,7 @@
+ ---@param player PlayerState
+ ---@return table
+ function Persistence.Snapshot(player)
++    assert(integer(player.day, 1) and player.day <= Config.totalDays, "invalid_run_day")
+     local progressValid, progressError = Progress.Validate(player)
+     assert(progressValid, progressError or "invalid_progress_state")
+     return {
+@@ -75,7 +76,8 @@
+         or boatSpeedLevel > #Config.upgrades.boatSpeed.metersPerSec then
+         return nil, "invalid_boat_speed_level"
+     end
+-    if not integer(data.day, 1) or not finite(data.maxStamina) or data.maxStamina <= 0
++    if not integer(data.day, 1) or data.day > Config.totalDays then return nil, "invalid_run_day" end
++    if not finite(data.maxStamina) or data.maxStamina <= 0
+         or not finite(data.stamina) or data.stamina < 0 or data.stamina > data.maxStamina
+         or not integer(data.money, 0)
+         or type(data.inventory) ~= "table" then return nil, "invalid_save_state" end
+--- before/scripts/Integration/Scene.lua
++++ current/scripts/Integration/Scene.lua
+@@ -220,7 +220,7 @@
+         error(seaOrError, 0)
+     end
+ 
+-    local sea = seaOrError
++    local sea = seaOrError --[[@as table]] -- pcall succeeded; FusedScene.Start returns the scene.
+     if not bridge then error("Integration scene requires initialized gameplay bridge", 0) end
+     ---@type GameplayOceanBridge
+     local initializedBridge = assert(bridge)
+--- before/scripts/Ocean/Draw.lua
++++ current/scripts/Ocean/Draw.lua
+@@ -30,6 +30,80 @@
+     nvgStroke(ctx)
+ end
+ 
++local function finiteNumber(value)
++    return type(value) == "number" and value == value and math.abs(value) < math.huge
++end
++
++-- The scene reads the normalized phase from the existing gameplay clock. The
++-- elapsed/duration fallback keeps older callers usable without adding a timer.
++local function clockVisualState(clock)
++    if type(clock) ~= "table" then return nil, nil end
++    local phase = clock.phase
++    if phase ~= "day" and phase ~= "night" then return nil, nil end
++
++    local progress = clock.progress
++    if not finiteNumber(progress) then
++        local duration = clock.duration
++        if not finiteNumber(duration) or duration <= 0 then
++            duration = phase == "day" and clock.daySec or clock.nightSec
++        end
++        if finiteNumber(clock.elapsed) and finiteNumber(duration) and duration > 0 then
++            progress = clock.elapsed / duration
++        else
++            progress = 0
++        end
++    end
++    return phase, math.max(0, math.min(1, progress))
++end
++
++local function mixChannel(from, to, amount)
++    return math.floor(from + (to - from) * amount + 0.5)
++end
++
++local function celestialPosition(w, h, phase, progress, radius, horizonAtX)
++    if not phase or not finiteNumber(progress) then return w * 0.76, h * 0.13 end
++
++    -- The same east-to-west arc serves the sun and moon. It is tied to phase
++    -- progress, so configured phase durations and pause state stay authoritative.
++    local camera = Config.camera or {}
++    local horizonRatio = finiteNumber(camera.horizonY) and camera.horizonY or 0.24
++    horizonRatio = math.max(0.18, math.min(0.38, horizonRatio))
++    local x = w * (0.94 - 0.88 * progress)
++    local horizonY = h * horizonRatio
++    if type(horizonAtX) == "function" then
++        local projectedHorizon = horizonAtX(x)
++        if finiteNumber(projectedHorizon) then horizonY = projectedHorizon end
++    end
++    -- Surface is painted after the sky, so place the whole disc behind the
++    -- horizon at both phase boundaries. Its visible portion then rises and
++    -- sets naturally as the sea layer covers or reveals it.
++    local startY = horizonY + radius
++    local topY = h * math.min(0.12, horizonRatio * 0.5)
++    local y = startY + (topY - startY) * math.sin(math.pi * progress)
++    return x, y
++end
++
++local function drawSun(ctx, x, y, radius, progress)
++    local daylight = math.sin(math.pi * progress)
++    local warmth = 1 - daylight
++    Ellipse(ctx, x, y, radius * 1.7, radius * 1.7,
++        { 255, mixChannel(225, 194, warmth), mixChannel(153, 112, warmth), 24 })
++    Ellipse(ctx, x, y, radius * 1.28, radius * 1.28,
++        { 255, mixChannel(229, 205, warmth), mixChannel(157, 122, warmth), 52 })
++    Ellipse(ctx, x, y, radius, radius,
++        { 255, mixChannel(237, 207, warmth), mixChannel(177, 136, warmth), 255 })
++end
++
++local function drawMoon(ctx, x, y, radius)
++    Ellipse(ctx, x, y, radius * 1.7, radius * 1.7, { 169, 207, 250, 24 })
++    Ellipse(ctx, x, y, radius * 1.28, radius * 1.28, { 185, 218, 252, 48 })
++    Ellipse(ctx, x, y, radius, radius, { 232, 241, 255, 248 })
++    Ellipse(ctx, x - radius * 0.27, y - radius * 0.18,
++        radius * 0.13, radius * 0.13, { 180, 198, 224, 92 })
++    Ellipse(ctx, x + radius * 0.28, y + radius * 0.24,
++        radius * 0.09, radius * 0.09, { 180, 198, 224, 76 })
++end
++
+ ---@param ctx NVGContextWrapper
+ local function Cloud(ctx, x, y, scale)
+     nvgSave(ctx)
+@@ -46,18 +120,41 @@
+ end
+ 
+ ---@param ctx NVGContextWrapper
+-local function Background(ctx, w, h, time)
++local function Background(ctx, w, h, time, clock, horizonAtX)
++    local phase, progress = clockVisualState(clock)
++    local topR, topG, topB = 216, 239, 229
++    local bottomR, bottomG, bottomB = 46, 138, 150
++    if phase == "day" then
++        -- A restrained warm cast near dawn and dusk, fading toward the brighter
++        -- middle of the day. The night wash is handled by the existing overlay.
++        local daylight = math.sin(math.pi * progress)
++        local twilight = math.max(0, math.min(1, (1 - daylight) * 0.16))
++        topR, topG, topB = mixChannel(topR, 244, twilight), mixChannel(topG, 202, twilight),
++            mixChannel(topB, 171, twilight)
++        bottomR, bottomG, bottomB = mixChannel(bottomR, 95, twilight), mixChannel(bottomG, 127, twilight),
++            mixChannel(bottomB, 133, twilight)
++    end
+     nvgBeginPath(ctx)
+     nvgRect(ctx, 0, 0, w, h)
+     nvgFillPaint(ctx, nvgLinearGradient(ctx, 0, 0, 0, h,
+-        nvgRGBA(216, 239, 229, 255), nvgRGBA(46, 138, 150, 255)))
++        nvgRGBA(topR, topG, topB, 255), nvgRGBA(bottomR, bottomG, bottomB, 255)))
+     nvgFill(ctx)
+ 
+-    local sunX, sunY = w * 0.76, h * 0.13
+     local sunRadius = math.min(w * 0.055, h * 0.065)
+-    Ellipse(ctx, sunX, sunY, sunRadius * 1.7, sunRadius * 1.7, { 255, 241, 177, 30 })
+-    Ellipse(ctx, sunX, sunY, sunRadius * 1.28, sunRadius * 1.28, { 255, 241, 177, 55 })
+-    Ellipse(ctx, sunX, sunY, sunRadius, sunRadius, { 255, 237, 177, 255 })
++    if phase == "day" then
++        local sunX, sunY = celestialPosition(w, h, phase, progress, sunRadius, horizonAtX)
++        drawSun(ctx, sunX, sunY, sunRadius, progress)
++    elseif phase == "night" then
++        local moonRadius = sunRadius * 0.78
++        local moonX, moonY = celestialPosition(w, h, phase, progress, moonRadius, horizonAtX)
++        drawMoon(ctx, moonX, moonY, moonRadius)
++    else
++        -- Preserve the original no-clock backdrop for previews and legacy callers.
++        local sunX, sunY = w * 0.76, h * 0.13
++        Ellipse(ctx, sunX, sunY, sunRadius * 1.7, sunRadius * 1.7, { 255, 241, 177, 30 })
++        Ellipse(ctx, sunX, sunY, sunRadius * 1.28, sunRadius * 1.28, { 255, 241, 177, 55 })
++        Ellipse(ctx, sunX, sunY, sunRadius, sunRadius, { 255, 237, 177, 255 })
++    end
+ 
+     local cloudScale = math.min(w / 560, h / 680)
+     Cloud(ctx, w * 0.2 + math.sin(time * 0.12) * 8, h * 0.15, cloudScale)
+@@ -550,11 +647,11 @@
+ ---@param w number
+ ---@param h number
+ ---@param time number
+-function Draw.SceneBackdrop(ctx, w, h, time, skyOnly)
++function Draw.SceneBackdrop(ctx, w, h, time, skyOnly, clock, horizonAtX)
+     if not ctx or w <= 0 or h <= 0 then return end
+     time = time or 0
+     local scale = math.min(w / 520, h / 800)
+-    Background(ctx, w, h, time)
++    Background(ctx, w, h, time, clock, horizonAtX)
+     if not skyOnly then Sea(ctx, w, h, time) end
+     for _, bird in ipairs(Config.birds) do
+         local x = w * bird.x + math.sin(time * 0.4 + bird.phase) * 15 * scale
+--- before/scripts/Ocean/SeaDraw.lua
++++ current/scripts/Ocean/SeaDraw.lua
+@@ -282,7 +282,7 @@
+     if not ctx or width <= 0 or height <= 0 or not runtime or not runtime.movement then return end
+     local movement, world, time = runtime.movement, runtime.world, runtime.time or 0
+     local horizon = movement:GetHorizonY()
+-    Art.Backdrop(ctx, width, height, time)
++    Art.Backdrop(ctx, width, height, time, clock, movement)
+     Art.Surface(ctx, movement, time)
+     -- Tint the water/sky before projected objects; depth ordering, ship and UI
+     -- stay legible. Rendering only reads the authoritative clock.
+--- before/scripts/Ocean/SeaViewArt.lua
++++ current/scripts/Ocean/SeaViewArt.lua
+@@ -165,10 +165,20 @@
+ 
+ 
+ -- The legacy scene backdrop owns the established sun, sky, and decorative birds.
+-function SeaViewArt.Backdrop(ctx, width, height, time)
++function SeaViewArt.Backdrop(ctx, width, height, time, clock, movement)
+     if not ctx or not finite(width) or not finite(height) or width <= 0 or height <= 0 then return end
+-    Draw.SceneBackdrop(ctx, width, height, time, true)
+-
++    ---@type (fun(x: number): number?)?
++    local horizonAtX
++    if type(movement) == "table" and type(movement.viewportWidth) == "number"
++        and type(movement.viewportHeight) == "number" and movement.viewportWidth > 0
++        and movement.viewportHeight > 0 then
++        horizonAtX = function(x)
++            local horizon = Projection.Horizon(movement, x)
++            if finite(horizon) then return clamp(horizon, 0, height) end
++            return nil
++        end
++    end
++    Draw.SceneBackdrop(ctx, width, height, time, true, clock, horizonAtX)
+ end
+ 
+ local function getSurfaceSettings()
+--- before/scripts/config/gameplay.lua
++++ current/scripts/config/gameplay.lua
+@@ -8,6 +8,7 @@
+     end
+ end
+ return {
++    totalDays = 7, -- 已确认：首轮和 NG+ 均为七天，不改变数值或掉率。
+     initial = {
+         maxStamina = 100,
+         stamina = 100,
+--- before/scripts/tests/Circle1B3SevenDaysTests.lua
++++ current/scripts/tests/Circle1B3SevenDaysTests.lua
+@@ -379,9 +379,7 @@
+         eq(routeData.day4Elder.decision,
+            #appleGiftDays >= 3 and "saved" or "dead", "day four elder decision")
+         eq(loop.player.day, 7, "route stops on day seven")
+-        local paperOpened, paperReason = loop:OpenDay7PaperBeforeEnding()
+-        assert(paperOpened, "day-seven paper entry unavailable: " .. tostring(paperReason))
+-        hud.Refresh()
++        clickButton(root, "结束今日") -- 正式日结入口强制纸条，不能进入第8天。
+         local dialog = loop:GetStoryDialog()
+         assert(dialog and dialog.kind == "paper", "day seven must expose only the existing paper entry")
+         eq(dialog.text, PAPER_TEXT, "existing paper text")
+@@ -389,7 +387,28 @@
+         routeData.paperShown = loop.player.story.circle1B2.paperShown == true
+         clickButton(root, "结束对话")
+         routeData.paperClosed = loop:GetStoryDialog() == nil
++        local finalStamina, finalMoney = loop.player.stamina, loop.player.money
++        clickButton(root, "确认结算")
++        eq(loop.player.day, 7, "final settlement must not create day eight")
++        eq(loop.player.stamina, finalStamina, "final settlement has no next-day recovery")
++        eq(loop.player.money, finalMoney, "final settlement has no invented reward")
++        assert(loop:IsRunEndPending(), "run must stop at the undecided ending interface")
++        assert(loop.clock:IsPaused())
++        assert(fixture.store.data.story.circle1B2.paperShown, "final daily snapshot persists the paper")
+         routeData.day7State = snapshot(loop)
++        routeData.finalSaveStatus = loop.saveStatus
++        clickButton(root, "开始新周目")
++        eq(loop.player.day, 1)
++        eq(loop.player.money, 100)
++        eq(loop.player.maxStamina, 100)
++        eq(loop.player.stamina, 100)
++        eq(loop.player.story.circle1B2.paperShown, false)
++        eq(loop.player.story.circle1B2.barrelStage, 0)
++        eq(loop.player.elder.circle1B2.applesGiven, 0)
++        eq(loop.player.elder.circle1B2.decision, "pending")
++        eq(fixture.store.data.day, 1, "NG+ replaces old run through initial-save contract")
++        eq(loop:IsRunEndPending(), false)
++        routeData.newRunState = snapshot(loop)
+         routeData.terminalEndingTriggered = false
+         routeData.endingDesignStatus = "not specified; no ending is invoked or inferred"
+         routeData.portApiProductionVerified = false
+@@ -442,7 +461,7 @@
+             portProtocol = "test double around the B1 flow runtime; not evidence of production Ocean support",
+             seaFish = "deterministic simulated environment fish spawned by the protocol fixture",
+             realReaderTime = "unmeasured",
+-            ending = "day-seven paper entry only; no ending has been designed or invoked",
++            ending = "final day saved at day seven, runtime ending boundary and HUD NG+; no ending inferred",
+         },
+     }
+ end
+--- before/scripts/tests/GameLoopSpec.lua
++++ current/scripts/tests/GameLoopSpec.lua
+@@ -254,9 +254,9 @@
+     local callback
+     function store:Load(done) callback = done end
+     assert(loop:LoadSaved()); eq(loop:Depart(),false); eq(loop:Buy("apple"),false)
+-    local savedPlayer = Player.New(); savedPlayer.money = 333; savedPlayer.day = 8
++    local savedPlayer = Player.New(); savedPlayer.money = 333; savedPlayer.day = 7
+     savedPlayer:MarkRecognized("saved_island")
+-    callback(true,Persistence.Snapshot(savedPlayer)); eq(loop.player.money,333); eq(loop.player.day,8)
++    callback(true,Persistence.Snapshot(savedPlayer)); eq(loop.player.money,333); eq(loop.player.day,7)
+     eq(loop.player:IsRecognized("saved_island"),true); eq(loop.loading,false)
+     assert(loop:LoadSaved()); callback(false,"offline"); eq(loop.player.money,333)
+     assert(loop:LoadSaved()); callback(true,{schemaVersion=99}); eq(loop.player.money,333)
+--- before/scripts/tests/SeaDayNightCycleTests.lua
++++ current/scripts/tests/SeaDayNightCycleTests.lua
+@@ -0,0 +1,272 @@
++-- Offline regression checks for clock-driven sun and moon rendering.
++-- The Python test runner supplies an NVG recorder and calls Run(recorder).
++local Tests = {}
++
++local Config = require("Ocean.Config")
++local Runtime = require("Ocean.SeaRuntime")
++local GameClock = require("Gameplay.GameClock")
++local Projection = require("Ocean.Projection")
++local SeaDraw = require("Ocean.SeaDraw")
++
++local WIDTH, HEIGHT = 1920, 1080
++
++local function near(actual, expected, tolerance)
++    return type(actual) == "number" and math.abs(actual - expected) <= (tolerance or 0.001)
++end
++
++local function snapshot(runtime)
++    local entities = {}
++    for index, entity in ipairs(runtime.world.entities) do
++        entities[index] = {
++            id = entity.id,
++            x = entity.position.x,
++            y = entity.position.y,
++            removed = entity.removed,
++            active = entity.active,
++            frozen = entity.frozen,
++        }
++    end
++    return {
++        time = runtime.time,
++        shipX = runtime.ship.position.x,
++        shipY = runtime.ship.position.y,
++        cameraX = runtime.movement.camera.x,
++        cameraY = runtime.movement.camera.y,
++        entityCount = #runtime.world.entities,
++        revealCount = #runtime.world.reveals,
++        showUnderwater = runtime.world.showUnderwater,
++        entities = entities,
++    }
++end
++
++local function assertUnchanged(before, runtime, label)
++    local after = snapshot(runtime)
++    assert(after.time == before.time, label .. " changed runtime.time")
++    assert(after.shipX == before.shipX and after.shipY == before.shipY,
++        label .. " moved the ship")
++    assert(after.cameraX == before.cameraX and after.cameraY == before.cameraY,
++        label .. " moved the camera")
++    assert(after.entityCount == before.entityCount and after.revealCount == before.revealCount,
++        label .. " changed runtime entities or visibility")
++    assert(after.showUnderwater == before.showUnderwater,
++        label .. " changed underwater visibility")
++    for index, entity in ipairs(after.entities) do
++        local old = before.entities[index]
++        assert(old and entity.id == old.id, label .. " reordered runtime entities")
++        assert(entity.x == old.x and entity.y == old.y,
++            label .. " moved a runtime entity")
++        assert(entity.removed == old.removed and entity.active == old.active
++            and entity.frozen == old.frozen, label .. " changed runtime entity state")
++    end
++end
++
++local function expectedCelestial(phase, progress, movement)
++    local radius = math.min(WIDTH * 0.055, HEIGHT * 0.065)
++    if phase == "night" then radius = radius * 0.78 end
++    local x = WIDTH * (0.94 - 0.88 * progress)
++    local horizonY = Projection.Horizon(movement, x)
++    local horizonRatio = Config.camera.horizonY or 0.24
++    horizonRatio = math.max(0.18, math.min(0.38, horizonRatio))
++    local startY = horizonY + radius
++    local topY = HEIGHT * math.min(0.12, horizonRatio * 0.5)
++    local y = startY + (topY - startY) * math.sin(math.pi * progress)
++    return x, y, radius, horizonY
++end
++
++function Tests.Run(recorder)
++    assert(recorder ~= nil and recorder.reset ~= nil and recorder.countEllipseArgs ~= nil,
++        "the NVG recorder must expose ellipse capture helpers")
++
++    local runtime = Runtime.New({ departure = { x = 0, y = 0 }, initializeRegions = false })
++    assert(runtime.movement:SetViewport(WIDTH, HEIGHT), "offline viewport was not applied")
++
++    local function render(state, label)
++        recorder.reset()
++        local before = snapshot(runtime)
++        SeaDraw.Scene({}, WIDTH, HEIGHT, runtime, state)
++        assertUnchanged(before, runtime, label)
++    end
++
++    local function assertCelestial(state, progress, label)
++        local x, y, radius, horizonY = expectedCelestial(state.phase, progress, runtime.movement)
++        local captured = recorder.countEllipseArgs(x, y, radius, radius, 0.02)
++        assert(captured == 1, string.format(
++            "%s should draw one celestial core at (%.3f, %.3f), found %d",
++            label, x, y, captured))
++        if progress == 0 or progress == 1 then
++            assert(y - radius >= horizonY - 0.02,
++                label .. " should put the full disc at or below the projected horizon")
++        else
++            assert(y - radius < horizonY,
++                label .. " should rise the disc above the projected horizon")
++        end
++        return x, y, radius, horizonY
++    end
++
++    local function assertSunCoreColor(color, label)
++        local count = recorder.countFillColor(color[1], color[2], color[3], color[4])
++        assert(count == 1, label .. " should record one sun core with its clock-driven color")
++    end
++
++    local clock = GameClock.New()
++    assert(clock.daySec == 120 and clock.nightSec == 60,
++        "the celestial cycle should reuse the existing 120/60 second configuration")
++
++    clock:Seek("day", 0)
++    local east = clock:GetState()
++    assert(east.progress == 0 and east.duration == 120,
++        "day state should expose normalized progress and configured duration")
++    render(east, "day sunrise draw")
++    local eastX, eastY, sunRadius, eastHorizon = assertCelestial(east, 0, "sunrise")
++    assertSunCoreColor({ 255, 207, 136, 255 }, "dawn")
++    assert(recorder.countFillColor(table.unpack(Config.visual.nightOverlay)) == 0,
++        "daytime should not use the night overlay")
++
++    clock:Seek("day", 60)
++    local noon = clock:GetState()
++    assert(noon.progress == 0.5, "the day midpoint should use half of its configured duration")
++    render(noon, "day midpoint draw")
++    local noonX, noonY = assertCelestial(noon, 0.5, "midday")
++    assertSunCoreColor({ 255, 237, 177, 255 }, "midday")
++    assert(recorder.countFillColor(255, 237, 177, 255)
++        ~= recorder.countFillColor(255, 207, 136, 255),
++        "the daylight color should brighten from dawn toward midday")
++    assert(noonX < eastX and noonY < eastY - sunRadius,
++        "the sun should move westward and rise above the horizon")
++
++    clock:Seek("day", 120)
++    local west = clock:GetState()
++    render(west, "day sunset draw")
++    local westX, westY, _, westHorizon = assertCelestial(west, 1, "sunset")
++    assert(westX < noonX and westX < WIDTH * 0.1,
++        "the sun should set at the western edge")
++    assert(westY - sunRadius >= westHorizon - 0.02,
++        "the sunset disc should be covered by the sea at the phase boundary")
++
++    clock:Seek("night", 30)
++    local moonState = clock:GetState()
++    assert(moonState.progress == 0.5 and moonState.duration == 60,
++        "night should use its own configured duration")
++    render(moonState, "night midpoint draw")
++    local moonX, moonY, moonRadius, moonHorizon = assertCelestial(moonState, 0.5, "moonrise arc")
++    assert(near(moonX, WIDTH * 0.5) and moonY < moonHorizon,
++        "the moon should follow the same east-to-west arc above the sea")
++    assert(recorder.countFillColor(table.unpack(Config.visual.nightOverlay)) == 1,
++        "night should reuse exactly one existing scene overlay")
++    local moonCore = recorder.countEllipseArgs(moonX, moonY, moonRadius, moonRadius, 0.02)
++    assert(moonCore == 1, "night should draw a single moon core")
++    render(clock, "raw GameClock night midpoint draw")
++    local rawMoonX, rawMoonY = assertCelestial(clock, 0.5, "raw GameClock moon")
++    assert(near(rawMoonX, moonX) and near(rawMoonY, moonY),
++        "SeaDraw should render the actual GameClock object like its normalized state")
++
++    -- The visual path follows normalized progress, not an assumed 120/60 timer.
++    clock.daySec = 240
++    clock:Seek("day", 60)
++    local longerDay = clock:GetState()
++    assert(longerDay.duration == 240 and longerDay.progress == 0.25,
++        "a changed day duration should be reflected in clock progress")
++    render(longerDay, "longer configured day draw")
++    local longerX, longerY = assertCelestial(longerDay, 0.25, "quarter-day sun")
++    clock.daySec = 120
++    clock:Seek("day", 30)
++    local defaultDayQuarter = clock:GetState()
++    render(defaultDayQuarter, "default configured day draw")
++    local defaultX, defaultY = assertCelestial(defaultDayQuarter, 0.25, "default quarter-day sun")
++    assert(near(longerX, defaultX) and near(longerY, defaultY),
++        "equal normalized day progress should draw the sun at the same position")
++    assertSunCoreColor({ 255, 228, 165, 255 }, "quarter-day twilight")
++    render(clock, "raw GameClock day quarter draw")
++    local rawSunX, rawSunY = assertCelestial(clock, 0.25, "raw GameClock quarter-day sun")
++    assert(near(rawSunX, defaultX) and near(rawSunY, defaultY),
++        "SeaDraw should use elapsed/phase duration when Bootstrap passes the GameClock object")
++
++    -- The same normalized night progress must work with a changed phase length.
++    clock.nightSec = 120
++    clock:Seek("night", 30)
++    local longerNight = clock:GetState()
++    assert(longerNight.duration == 120 and longerNight.progress == 0.25,
++        "a changed night duration should be reflected in clock progress")
++    render(longerNight, "longer configured night draw")
++    local longerMoonX, longerMoonY = assertCelestial(longerNight, 0.25, "quarter-night moon")
++    clock.nightSec = 60
++    clock:Seek("night", 15)
++    local defaultNightQuarter = clock:GetState()
++    render(defaultNightQuarter, "default configured night draw")
++    local defaultMoonX, defaultMoonY = assertCelestial(defaultNightQuarter, 0.25, "default quarter-night moon")
++    assert(near(longerMoonX, defaultMoonX) and near(longerMoonY, defaultMoonY),
++        "equal normalized night progress should draw the moon at the same position")
++
++    -- Prefer GameClock's normalized progress even if compatibility fields disagree.
++    local normalizedOnly = {
++        phase = "day", elapsed = 0, duration = 120, progress = 0.5,
++    }
++    render(normalizedOnly, "normalized progress priority draw")
++    assertCelestial(normalizedOnly, 0.5, "progress-priority sun")
++
++    -- Paused daytime holds both the twilight palette and the sun location.
++    clock:Seek("day", 30)
++    clock:Pause("settings")
++    local pausedDayBefore = clock:GetState()
++    clock:Update(17)
++    local pausedDayAfter = clock:GetState()
++    assert(pausedDayAfter.elapsed == pausedDayBefore.elapsed
++        and pausedDayAfter.progress == pausedDayBefore.progress and pausedDayAfter.paused,
++        "a paused daytime clock update should freeze progress")
++    render(clock, "paused daytime raw GameClock draw one")
++    local pausedSunX, pausedSunY = assertCelestial(clock, 0.25, "paused twilight sun")
++    assertSunCoreColor({ 255, 228, 165, 255 }, "paused twilight")
++    render(clock, "paused daytime raw GameClock draw two")
++    local repeatedSunX, repeatedSunY = assertCelestial(clock, 0.25, "repeated paused sun")
++    assertSunCoreColor({ 255, 228, 165, 255 }, "repeated paused twilight")
++    assert(near(pausedSunX, repeatedSunX) and near(pausedSunY, repeatedSunY),
++        "paused twilight draws should retain both sun position and color")
++    clock:Resume("settings")
++
++    -- Paused night also retains its moon location and the one existing overlay.
++    clock:Seek("night", 15)
++    clock:Pause("settings")
++    local pausedBefore = clock:GetState()
++    assert(pausedBefore.paused and pausedBefore.progress == 0.25,
++        "paused clock should retain its normalized night progress")
++    clock:Update(17)
++    local pausedAfter = clock:GetState()
++    assert(pausedAfter.elapsed == pausedBefore.elapsed
++        and pausedAfter.progress == pausedBefore.progress and pausedAfter.paused,
++        "a paused GameClock update should not advance the moon")
++    render(clock, "paused night raw GameClock draw one")
++    local pausedX, pausedY = assertCelestial(clock, 0.25, "paused moon")
++    render(clock, "paused night raw GameClock draw two")
++    local repeatedX, repeatedY = assertCelestial(clock, 0.25, "repeated paused moon")
++    assert(near(pausedX, repeatedX) and near(pausedY, repeatedY),
++        "repeated paused draws should retain the same celestial position")
++
++    return {
++        status = "PASS",
++        tests = {
++            "clock_normalized_progress_drives_actual_sun_and_moon_ellipses",
++            "sun_and_moon_rise_east_to_west_over_the_projected_horizon",
++            "celestial_discs_are_covered_at_phase_boundaries_by_existing_sea_surface",
++            "existing_120_60_second_clock_configuration_is_reused",
++            "equal_normalized_progress_is_independent_of_phase_duration",
++            "equal_normalized_night_progress_is_independent_of_phase_duration",
++            "sea_scene_accepts_the_raw_GameClock_used_by_Bootstrap_Render",
++            "normalized_progress_takes_priority_over_compatibility_elapsed_fields",
++            "daylight_core_color_changes_from_dawn_to_midday",
++            "paused_clock_and_repeated_draws_freeze_sun_position_and_twilight_color",
++            "paused_clock_and_repeated_draws_freeze_moon_position",
++            "scene_draw_does_not_mutate_runtime_state",
++            "night_reuses_one_existing_overlay_and_day_has_none",
++        },
++        metrics = {
++            viewport = { width = WIDTH, height = HEIGHT },
++            sunrise = { x = eastX, y = eastY, horizonY = eastHorizon },
++            midday = { x = noonX, y = noonY },
++            sunset = { x = westX, y = westY, horizonY = westHorizon },
++            moonMidpoint = { x = moonX, y = moonY, horizonY = moonHorizon, radius = moonRadius },
++            normalizedQuarterDay = { x = defaultX, y = defaultY },
++        },
++    }
++end
++
++return Tests
+--- before/scripts/tests/SevenDaysRunTests.lua
++++ current/scripts/tests/SevenDaysRunTests.lua
+@@ -0,0 +1,608 @@
++-- Boundary and persistence regressions for the seven-day run contract.
++-- These tests use the real Gameplay modules and a controllable asynchronous store.
++local Config = require("config.gameplay")
++local Loop = require("Gameplay.Loop")
++local Player = require("Gameplay.PlayerState")
++local Persistence = require("Gameplay.Persistence")
++local Progress = require("Gameplay.Circle1B2Progress")
++
++local Tests = {}
++local PAPER_TEXT = "海岸边那只木桶，下面一定有什么东西，我想多打捞几次就能打捞上来吧。"
++
++local function eq(actual, expected, label)
++    assert(actual == expected, (label or "value") .. ": expected " .. tostring(expected)
++        .. ", got " .. tostring(actual))
++end
++
++local function copy(value)
++    if type(value) ~= "table" then return value end
++    local result = {}
++    for key, child in pairs(value) do result[key] = copy(child) end
++    return result
++end
++
++local function same(actual, expected, label)
++    label = label or "table"
++    eq(type(actual), type(expected), label .. " type")
++    if type(expected) ~= "table" then
++        eq(actual, expected, label)
++        return
++    end
++    for key, value in pairs(expected) do same(actual[key], value, label .. "." .. tostring(key)) end
++    for key in pairs(actual) do
++        assert(expected[key] ~= nil, label .. " has unexpected key " .. tostring(key))
++    end
++end
++
++local function makeStore()
++    local store = { saves = {}, saveCallbacks = {}, loadCallbacks = {} }
++    function store:Save(snapshot, done)
++        local index = #self.saves + 1
++        self.saves[index] = copy(snapshot)
++        self.saveCallbacks[index] = done
++        return true
++    end
++    function store:Load(done)
++        local index = #self.loadCallbacks + 1
++        self.loadCallbacks[index] = done
++        return true
++    end
++    function store:FinishSave(index, ok, reason)
++        local callback = assert(self.saveCallbacks[index], "save callback missing: " .. tostring(index))
++        return callback(ok, reason)
++    end
++    function store:FinishLoad(index, ok, data)
++        local callback = assert(self.loadCallbacks[index], "load callback missing: " .. tostring(index))
++        return callback(ok, copy(data))
++    end
++    return store
++end
++
++local function newLoop(options)
++    options = options or {}
++    local store = makeStore()
++    options.store = store
++    return Loop.New(options), store
++end
++
++local function finishNormalDay(loop, store, day)
++    eq(loop.player.day, day, "day before normal settlement")
++    assert(loop:Depart())
++    assert(loop:ReturnToPort())
++    assert(loop:EndToday())
++    assert(loop:ConfirmSettlement())
++    eq(loop.player.day, day + 1, "normal day advances once")
++    eq(loop.settlementFinal, false, "ordinary day is not final")
++    store:FinishSave(#store.saves, true)
++    eq(loop.settlementPending, false, "ordinary settlement closes after save")
++end
++
++local function advanceToDay(loop, store, targetDay)
++    while loop.player.day < targetDay do
++        finishNormalDay(loop, store, loop.player.day)
++    end
++end
++
++local function preparePaper(loop)
++    local dialog = loop:GetStoryDialog()
++    assert(dialog and dialog.kind == "paper", "day seven paper must be the active story dialog")
++    eq(dialog.text, PAPER_TEXT, "existing paper copy")
++    eq(Progress.IsPaperShown(loop.player), false, "paper is not persisted before it is shown")
++    assert(loop:NotifyStoryShown(dialog.token), "visible paper should be acknowledged")
++    eq(Progress.IsPaperShown(loop.player), true, "paper acknowledgement marks the current run")
++    assert(loop:CloseStoryDialog(), "shown paper can close")
++    eq(loop:GetStoryDialog(), nil, "paper dialog closes once acknowledged")
++    return dialog.text
++end
++
++local function markDaySeven(loop)
++    loop.player.day = Config.totalDays
++    assert(Progress.OnDayStarted(loop.player))
++end
++
++local function configureFinalResources(loop)
++    loop.player.stamina, loop.player.maxStamina = 63, 160
++    loop.player.money = 777
++    loop.player.boatSpeedLevel = 3
++    assert(loop.player.inventory:Upgrade())
++    assert(loop.player.inventory:Upgrade())
++    assert(loop.player.inventory:Add("sardine"))
++    assert(loop.player:MarkRecognized("reef-east"))
++    assert(Progress.GrantLens(loop.player))
++    loop.player.treasures.wreckFound = true
++    assert(Progress.SetBarrelStage(loop.player, 2))
++    loop.player.story.chapter = 4
++    loop.player.elder.circle1B2.applesGiven = 3
++    loop.player.elder.circle1B2.decision = "saved"
++    loop.shopStock.apple = 1
++    loop.shopStock.bait = 0
++end
++
++local function daySevenSnapshot()
++    local player = assert(Player.New())
++    player.day, player.stamina, player.maxStamina, player.money = 7, 83, 200, 1250
++    player.boatSpeedLevel = 3
++    assert(player.inventory:Upgrade())
++    assert(player.inventory:Upgrade())
++    assert(player.inventory:Add("tuna"))
++    assert(player:MarkRecognized("saved-reef"))
++    assert(Progress.GrantLens(player))
++    player.treasures.wreckFound = true
++    player.story.chapter = 6
++    assert(Progress.SetBarrelStage(player, 3))
++    player.elder.circle1B2.applesGiven = 3
++    player.elder.circle1B2.decision = "saved"
++    assert(Progress.MarkPaperShown(player))
++    return Persistence.Snapshot(player)
++end
++
++local cases = {}
++
++cases[#cases + 1] = {
++    name = "normal seven-day cycle reaches a terminal day-seven save without recovery",
++    run = function()
++        local preparedDays = {}
++        local loop, store = newLoop({ onNewDay = function(day)
++            preparedDays[#preparedDays + 1] = day
++        end })
++        advanceToDay(loop, store, Config.totalDays)
++        eq(loop.player.day, 7, "six normal transitions reach day seven")
++        eq(#preparedDays, 6, "each saved ordinary transition prepares one next day")
++        configureFinalResources(loop)
++        local before = Persistence.Snapshot(loop.player)
++
++        assert(loop:EndToday(), "day-seven end must enter final settlement")
++        eq(loop.settlementPending, true, "paper presentation holds final settlement")
++        local dialog = loop:GetStoryDialog()
++        assert(dialog and dialog.kind == "paper")
++        eq(dialog.text, PAPER_TEXT)
++        eq(Progress.IsPaperShown(loop.player), false)
++        eq(#store.saves, 6, "opening the paper must not save or advance")
++        eq(loop:CloseStoryDialog(), false, "unread paper cannot be closed around final settlement")
++        assert(loop:GetStoryDialog(), "rejected close leaves paper visible")
++        eq(loop:ConfirmSettlement(), false, "settlement cannot bypass the visible paper")
++        eq(#store.saves, 6)
++
++        assert(loop:NotifyStoryShown(dialog.token))
++        assert(loop:CloseStoryDialog())
++        local finalState = Persistence.Snapshot(loop.player)
++        assert(finalState.story.circle1B2.paperShown)
++        assert(loop:ConfirmSettlement(), "read paper permits final save")
++        eq(loop.player.day, 7, "final settlement keeps day seven")
++        eq(loop.player.stamina, before.stamina, "final settlement does not restore stamina")
++        eq(loop.player.money, before.money, "final settlement keeps money")
++        eq(loop.player.maxStamina, before.maxStamina)
++        eq(loop.player.boatSpeedLevel, before.boatSpeedLevel)
++        same(Persistence.Snapshot(loop.player), finalState, "live final state")
++        eq(#store.saves, 7, "one final snapshot is written")
++        same(store.saves[7], finalState, "day-seven final snapshot")
++        eq(store.saves[7].day, 7)
++        eq(store.saves[7].story.circle1B2.paperShown, true)
++        eq(store.saves[7].runEndPending, nil, "runtime ending boundary is not persisted")
++        eq(store.saves[7].finished, nil, "no invented completion schema")
++        eq(store.saves[7].endingId, nil, "no invented ending identifier")
++
++        store:FinishSave(7, true)
++        eq(loop:IsRunEndPending(), true, "successful final save reaches runtime end boundary")
++        eq(loop:Ready(), false, "run-end boundary blocks gameplay")
++        eq(loop.clock.pauseReasons.run_end, true, "run-end boundary owns a pause reason")
++        eq(#preparedDays, 6, "final day never calls the next-day preparation hook")
++        eq(loop:GetShopStock("apple"), 1, "final day does not refresh shop stock")
++        eq(loop:GetShopStock("bait"), 0)
++        store:FinishSave(7, false, "duplicate final callback")
++        eq(loop:IsRunEndPending(), true, "duplicate final callback cannot undo completion")
++        eq(loop.saveStatus, "saved", "duplicate final callback cannot overwrite save status")
++        eq(loop.player.day, 7, "duplicate final callback cannot advance the day")
++        eq(#preparedDays, 6)
++
++        local clockBefore = loop.clock:GetState()
++        loop:Update(300)
++        local clockAfter = loop.clock:GetState()
++        eq(clockAfter.phase, clockBefore.phase, "run-end Update phase")
++        eq(clockAfter.elapsed, clockBefore.elapsed, "run-end Update elapsed")
++        eq(clockAfter.duration, clockBefore.duration, "run-end Update duration")
++        eq(clockAfter.progress, clockBefore.progress, "run-end Update progress")
++        eq(clockAfter.remaining, clockBefore.remaining, "run-end Update remaining")
++        return {
++            day = loop.player.day, stamina = loop.player.stamina, maxStamina = loop.player.maxStamina,
++            money = loop.player.money, saves = #store.saves, nextDayHooks = #preparedDays,
++            paperShown = store.saves[7].story.circle1B2.paperShown,
++            runEndPaused = loop.clock.pauseReasons.run_end == true,
++        }
++    end,
++}
++
++cases[#cases + 1] = {
++    name = "forced day-seven return opens the same paper and cannot skip its read acknowledgement",
++    run = function()
++        local nextDays = {}
++        local loop, store = newLoop({ onNewDay = function(day)
++            nextDays[#nextDays + 1] = day
++        end })
++        markDaySeven(loop)
++        loop.player.stamina = 41
++        assert(loop:Depart())
++        loop:Update(Config.clock.daySec + Config.clock.nightSec)
++        eq(loop.forcedReturnPending, true, "night end requests forced return")
++        assert(loop:ConfirmForcedReturn(), "forced return enters final settlement and paper flow")
++        eq(loop.settlementPending, true)
++        eq(loop.settlementForced, true)
++        eq(loop.settlementApplied, false, "day-seven settlement waits for the story read")
++        eq(#store.saves, 0, "forced return cannot save past the unread paper")
++        local dialog = loop:GetStoryDialog()
++        assert(dialog and dialog.kind == "paper")
++        eq(dialog.text, PAPER_TEXT)
++        eq(Progress.IsPaperShown(loop.player), false)
++        eq(loop:CloseStoryDialog(), false)
++        eq(loop:ConfirmSettlement(), false, "confirm cannot bypass an open paper dialog")
++        eq(#store.saves, 0)
++
++        assert(loop:NotifyStoryShown(dialog.token))
++        assert(loop:CloseStoryDialog())
++        assert(loop:ConfirmSettlement())
++        eq(#store.saves, 1)
++        eq(loop.player.day, 7)
++        eq(loop.player.stamina, 41, "forced final settlement has no next-day half-stamina recovery")
++        store:FinishSave(1, true)
++        eq(loop:IsRunEndPending(), true)
++        eq(#nextDays, 0, "forced final settlement has no next day hook")
++        eq(loop:EndToday(), false, "the shown paper and final save are not replayable")
++        eq(loop:GetStoryDialog(), nil, "paper is presented once in the run")
++        local saveCount = #store.saves
++        local clockBefore = loop.clock:GetState()
++        loop:Update(300)
++        local clockAfter = loop.clock:GetState()
++        eq(loop.forcedReturnPending, false, "run-end update cannot re-enter forced return")
++        eq(loop:GetStoryDialog(), nil, "run-end update cannot reopen the paper")
++        eq(#store.saves, saveCount, "run-end update cannot start another save")
++        eq(clockAfter.phase, clockBefore.phase)
++        eq(clockAfter.elapsed, clockBefore.elapsed)
++        eq(clockAfter.progress, clockBefore.progress)
++        return { day = loop.player.day, stamina = loop.player.stamina, saves = #store.saves,
++            nextDayHooks = #nextDays, paperShown = Progress.IsPaperShown(loop.player) }
++    end,
++}
++
++cases[#cases + 1] = {
++    name = "final save retry reuses the day-seven snapshot and never advances or refreshes",
++    run = function()
++        local nextDays = {}
++        local loop, store = newLoop({ onNewDay = function(day)
++            nextDays[#nextDays + 1] = day
++        end })
++        markDaySeven(loop)
++        configureFinalResources(loop)
++        assert(loop:EndToday())
++        local paper = loop:GetStoryDialog()
++        assert(paper and loop:NotifyStoryShown(paper.token))
++        assert(loop:CloseStoryDialog())
++        local before = Persistence.Snapshot(loop.player)
++        assert(loop:ConfirmSettlement())
++        eq(loop.player.day, 7)
++        store:FinishSave(1, false, "offline")
++        eq(loop.saveStatus, "error")
++        eq(loop.settlementPending, true)
++        eq(loop.settlementFinal, true)
++        eq(loop.player.day, 7)
++        same(Persistence.Snapshot(loop.player), before, "resources after failed final save")
++        eq(#nextDays, 0)
++
++        assert(loop:ConfirmSettlement(), "failed final save can retry")
++        eq(#store.saves, 2)
++        same(store.saves[1], store.saves[2], "final retry snapshot")
++        store:FinishSave(2, true)
++        eq(loop.saveStatus, "saved")
++        eq(loop.player.day, 7)
++        same(Persistence.Snapshot(loop.player), before, "resources after successful final retry")
++        eq(loop:GetShopStock("apple"), 1, "retry does not refresh stock")
++        eq(loop:GetShopStock("bait"), 0)
++        eq(#nextDays, 0, "final retry never prepares day eight")
++        assert(loop:IsRunEndPending())
++        return { day = loop.player.day, saveAttempts = #store.saves,
++            saveStatus = loop.saveStatus, nextDayHooks = #nextDays }
++    end,
++}
++
++cases[#cases + 1] = {
++    name = "day-six save skip enters playable day seven without final-run state",
++    run = function()
++        local nextDays = {}
++        local loop, store = newLoop({ onNewDay = function(day)
++            nextDays[#nextDays + 1] = day
++        end })
++        advanceToDay(loop, store, 6)
++        eq(#nextDays, 5)
++        loop.shopStock.apple = 0
++        assert(loop:Depart())
++        assert(loop:ReturnToPort())
++        assert(loop:EndToday())
++        assert(loop:ConfirmSettlement())
++        eq(loop.player.day, 7)
++        eq(loop.settlementFinal, false, "day-six settlement remains an ordinary transition")
++        eq(Progress.IsPaperShown(loop.player), false, "day-six transition does not show final paper")
++        eq(loop:GetStoryDialog(), nil)
++        store:FinishSave(6, false, "offline")
++        eq(loop.saveStatus, "error")
++        local daySevenStamina = loop.player.stamina
++        local appleStock = loop:GetShopStock("apple")
++        assert(loop:ContinueWithoutSaving(), "explicitly skipping an ordinary save enters day seven")
++        eq(loop.player.day, 7)
++        eq(loop.player.stamina, daySevenStamina, "skip does not restore stamina a second time")
++        eq(loop:GetShopStock("apple"), appleStock, "skip does not refresh stock a second time")
++        eq(loop.settlementFinal, false)
++        eq(loop:IsRunEndPending(), false, "day seven is not the run-end boundary")
++        eq(loop.clock.pauseReasons.run_end, nil)
++        eq(#nextDays, 6, "one day-seven preparation hook")
++        store:FinishSave(6, true, "late success")
++        eq(loop.saveStatus, "skipped", "late ordinary callback cannot undo explicit skip")
++        eq(loop.player.day, 7)
++        eq(#nextDays, 6)
++        assert(loop:Ready())
++        assert(loop:Depart(), "skipped day-six save leaves day seven playable")
++        assert(loop:ReturnToPort())
++        assert(loop:EndToday(), "only ending day seven opens the forced paper")
++        local paper = loop:GetStoryDialog()
++        assert(paper and paper.kind == "paper")
++        eq(paper.text, PAPER_TEXT)
++        return { day = loop.player.day, finalSettlement = loop.settlementFinal,
++            runEndPending = loop:IsRunEndPending(), nextDayHooks = #nextDays,
++            paperShownBeforeRead = Progress.IsPaperShown(loop.player) }
++    end,
++}
++
++cases[#cases + 1] = {
++    name = "day-eight save data is rejected intact while a loaded day-seven save remains playable",
++    run = function()
++        local savedDaySeven = daySevenSnapshot()
++        local invalidDayEight = copy(savedDaySeven)
++        invalidDayEight.day = Config.totalDays + 1
++
++        local badPlayer = assert(Player.New())
++        badPlayer.day = Config.totalDays + 1
++        local snapshotOk, snapshotError = pcall(Persistence.Snapshot, badPlayer)
++        eq(snapshotOk, false, "Snapshot rejects day eight")
++        assert(tostring(snapshotError):find("invalid_run_day", 1, true))
++        local restored, restoreError = Persistence.Restore(invalidDayEight)
++        eq(restored, nil, "Restore rejects day eight without truncating it")
++        eq(restoreError, "invalid_run_day")
++
++        local loop, store = newLoop()
++        loop.player.money, loop.player.stamina = 333, 27
++        assert(loop.player:MarkRecognized("keep-on-bad-load"))
++        local original = loop.player
++        local before = Persistence.Snapshot(original)
++        local completions = {}
++        assert(loop:LoadSaved(function(ok, reason)
++            completions[#completions + 1] = { ok = ok, reason = reason }
++        end))
++        store:FinishLoad(1, true, invalidDayEight)
++        eq(#completions, 1)
++        eq(completions[1].ok, false)
++        eq(loop.player, original, "invalid load retains the original player object")
++        same(Persistence.Snapshot(loop.player), before, "invalid load keeps original state")
++        eq(loop.loading, false)
++        local invalidLoadPreservedPlayer = loop.player == original
++
++        assert(loop:LoadSaved())
++        store:FinishLoad(2, true, savedDaySeven)
++        eq(loop.player.day, 7)
++        eq(Progress.IsPaperShown(loop.player), true, "paper-read state survives day-seven restore")
++        eq(loop:IsRunEndPending(), false, "terminal status is runtime-only")
++        eq(loop.runEndPending, false)
++        eq(loop:Ready(), true, "paperShown alone does not block a loaded day-seven run")
++        assert(loop:Depart(), "restored day seven remains playable")
++        assert(loop:ReturnToPort())
++        assert(loop:EndToday(), "paperShown prevents a second paper presentation")
++        eq(loop:GetStoryDialog(), nil, "a previously shown paper is not presented twice")
++        eq(loop.settlementPending, true)
++
++        assert(savedDaySeven.runEndPending == nil and savedDaySeven.finished == nil
++            and savedDaySeven.endingId == nil,
++            "current persistence schema must not invent an ending or terminal marker")
++        return {
++            invalidDay = invalidDayEight.day,
++            invalidLoadPreservedPlayer = invalidLoadPreservedPlayer,
++            loadedDay = loop.player.day,
++            paperShown = Progress.IsPaperShown(loop.player),
++            loadedDaySevenPlayable = true,
++            terminalPersistence = "unresolved: paperShown is readable but cannot distinguish a finished final settlement",
++        }
++    end,
++}
++
++cases[#cases + 1] = {
++    name = "new run resets all run state, retries its initial save, and ignores stale final callbacks",
++    run = function()
++        local nextDays = {}
++        local loop, store = newLoop({ onNewDay = function(day)
++            nextDays[#nextDays + 1] = day
++        end })
++        markDaySeven(loop)
++        configureFinalResources(loop)
++        loop.player.elder.lastGivenItemId = "apple"
++        loop.player.story.campaignMarker = "old-run"
++        assert(loop:EndToday())
++        local paper = loop:GetStoryDialog()
++        assert(paper and loop:NotifyStoryShown(paper.token))
++        assert(loop:CloseStoryDialog())
++        local finalState = Persistence.Snapshot(loop.player)
++        local finalStock = { apple = loop:GetShopStock("apple"), bait = loop:GetShopStock("bait") }
++        assert(loop:ConfirmSettlement())
++        assert(loop:ContinueWithoutSaving(), "final save can be explicitly skipped")
++        assert(loop:IsRunEndPending())
++        eq(loop.saveStatus, "skipped")
++        eq(loop.player.day, 7, "skipping final save keeps day seven")
++        same(Persistence.Snapshot(loop.player), finalState, "final skip preserves the day-seven state")
++        eq(loop:GetShopStock("apple"), finalStock.apple, "final skip does not refresh stock")
++        eq(loop:GetShopStock("bait"), finalStock.bait)
++        eq(#nextDays, 0, "final skip does not prepare another day")
++
++        assert(loop:NewRun(), "the existing new-run entry works after the run-end boundary")
++        eq(loop:IsRunEndPending(), false)
++        eq(loop.entryPending, true)
++        eq(loop.initialSaveStatus, "saving")
++        eq(loop.clock.pauseReasons.entry, true)
++        eq(loop.player.day, 1)
++        eq(loop.player.money, Config.initial.money)
++        eq(loop.player.stamina, Config.initial.stamina)
++        eq(loop.player.maxStamina, Config.initial.maxStamina)
++        eq(loop.player.boatSpeedLevel, 1)
++        eq(loop.player.inventory:GetLevel(), 1)
++        eq(loop.player.inventory:GetCapacity(), Config.inventory.capacities[1])
++        same(loop.player.inventory:GetItems(), Config.initial.items, "new-run inventory")
++        eq(next(loop.player.recognizedLocations), nil, "new run resets location recognition")
++        eq(loop.player.treasures.scopeLens, false, "new run resets the lens")
++        eq(loop.player.treasures.wreckFound, nil, "new run resets ordinary treasure progress")
++        eq(loop.player.story.circle1B2.barrelStage, 0, "new run resets barrel stage")
++        eq(loop.player.story.circle1B2.paperShown, false, "new run resets the paper event")
++        eq(loop.player.story.chapter, nil)
++        eq(loop.player.story.campaignMarker, nil)
++        eq(loop.player.elder.circle1B2.applesGiven, 0)
++        eq(loop.player.elder.circle1B2.decision, "pending")
++        eq(loop.player.elder.lastGivenItemId, nil)
++
++        store:FinishSave(1, true, "late final save success")
++        eq(loop.player.day, 1, "old final callback cannot replace the new-run state")
++        eq(loop.initialSaveStatus, "saving", "old final callback cannot finish the initial save")
++        eq(loop.entryPending, true)
++        eq(loop:IsRunEndPending(), false)
++
++        store:FinishSave(2, false, "offline")
++        eq(loop.initialSaveStatus, "error")
++        eq(loop.entryPending, true, "failed NG+ initial save keeps entry locked")
++        eq(loop.clock.pauseReasons.entry, true)
++        eq(loop:Ready(), false)
++        assert(loop:RetryInitialSave(), "failed NG+ initial save can retry")
++        eq(#store.saves, 3)
++        same(store.saves[2], store.saves[3], "NG+ initial save retry snapshot")
++        store:FinishSave(3, true)
++        eq(loop.initialSaveStatus, "saved")
++        eq(loop.entryPending, false)
++        eq(loop.clock.pauseReasons.entry, nil)
++        assert(loop:Ready())
++
++        assert(loop:LoadSaved(), "the successfully written NG+ start can be reloaded")
++        store:FinishLoad(1, true, store.saves[3])
++        eq(loop.player.day, 1)
++        eq(loop.player.money, Config.initial.money)
++        eq(loop.player.maxStamina, Config.initial.maxStamina)
++        eq(loop.player.stamina, Config.initial.stamina)
++        eq(loop.player.inventory:GetLevel(), 1)
++        same(loop.player.inventory:GetItems(), Config.initial.items, "reloaded NG+ inventory")
++        eq(loop.player.treasures.scopeLens, false)
++        eq(loop.player.story.circle1B2.paperShown, false)
++        eq(loop.player.elder.circle1B2.applesGiven, 0)
++        eq(loop:IsRunEndPending(), false)
++        assert(loop:Ready())
++        local reloaded = Persistence.Snapshot(loop.player)
++
++        store:FinishSave(1, false, "late duplicate final callback")
++        same(Persistence.Snapshot(loop.player), reloaded, "late final callback after load generation")
++        eq(loop.saveStatus, "saved", "late final callback cannot overwrite loaded status")
++        eq(loop.player.day, 1)
++        eq(loop:IsRunEndPending(), false)
++        return {
++            newRunDay = loop.player.day, initialSaveAttempts = 2,
++            initialSaveStatus = loop.initialSaveStatus, reloadedDay = loop.player.day,
++            staleFinalCallbackIgnored = true, reset = true, finalSkipPreservedDaySeven = true,
++        }
++    end,
++}
++
++cases[#cases + 1] = {
++    name = "explicitly skipping a failed final save preserves the actual older save",
++    run = function()
++        local nextDays = {}
++        local store = makeStore()
++        store.persisted = nil
++        local finishSave = store.FinishSave
++        function store:FinishSave(index, ok, reason)
++            if ok then self.persisted = copy(self.saves[index]) end
++            return finishSave(self, index, ok, reason)
++        end
++        local loop = Loop.New({ store = store, onNewDay = function(day)
++            nextDays[#nextDays + 1] = day
++        end })
++
++        advanceToDay(loop, store, 6)
++        configureFinalResources(loop)
++        loop.clock:Seek("night", 40)
++        assert(loop:Depart())
++        assert(loop:ReturnToPort())
++        assert(loop:EndToday())
++        assert(loop:ConfirmSettlement())
++        eq(loop.player.day, 7)
++        store:FinishSave(6, true)
++        eq(store.persisted.day, 7, "day-seven entry is the actual old save")
++        eq(store.persisted.story.circle1B2.paperShown, false)
++        local oldSavedSnapshot = copy(store.persisted)
++        eq(loop.player.stamina, oldSavedSnapshot.stamina)
++
++        loop.shopStock.apple, loop.shopStock.bait = 1, 0
++        local stockBefore = { apple = loop:GetShopStock("apple"), bait = loop:GetShopStock("bait") }
++        assert(loop:EndToday())
++        local paper = loop:GetStoryDialog()
++        assert(paper and loop:NotifyStoryShown(paper.token))
++        assert(loop:CloseStoryDialog())
++        local daySevenResources = Persistence.Snapshot(loop.player)
++        assert(loop:ConfirmSettlement())
++        eq(#store.saves, 7)
++        eq(store.saves[7].story.circle1B2.paperShown, true)
++        store:FinishSave(7, false, "offline")
++        eq(loop.saveStatus, "error")
++        same(store.persisted, oldSavedSnapshot, "failed final write retains old saved data")
++        same(Persistence.Snapshot(loop.player), daySevenResources, "failed final write keeps live resources")
++
++        assert(loop:ContinueWithoutSaving(), "explicit final skip closes the failed save")
++        eq(loop:IsRunEndPending(), true)
++        eq(loop.saveStatus, "skipped", "final skip is never reported as saved")
++        eq(loop.player.day, 7)
++        same(Persistence.Snapshot(loop.player), daySevenResources, "final skip preserves day-seven resources")
++        same(store.persisted, oldSavedSnapshot, "explicit skip leaves the actual old save intact")
++        eq(loop:GetShopStock("apple"), stockBefore.apple)
++        eq(loop:GetShopStock("bait"), stockBefore.bait)
++        eq(#nextDays, 6, "final skip does not run next-day preparation")
++        eq(loop:Ready(), false)
++
++        eq(loop:ContinueWithoutSaving(), false, "repeated skip is rejected")
++        store:FinishSave(7, false, "late duplicate failure")
++        eq(loop.saveStatus, "skipped", "late failure cannot turn a skip into a save")
++        eq(loop.player.day, 7)
++        same(Persistence.Snapshot(loop.player), daySevenResources, "late callback cannot mutate live state")
++        same(store.persisted, oldSavedSnapshot, "late failed callback cannot replace old saved data")
++        eq(loop:GetShopStock("apple"), stockBefore.apple)
++        eq(loop:GetShopStock("bait"), stockBefore.bait)
++        eq(#nextDays, 6)
++        return {
++            day = loop.player.day,
++            saveStatus = loop.saveStatus,
++            runEndPending = loop:IsRunEndPending(),
++            oldSavedDay = store.persisted.day,
++            oldSavePreserved = true,
++            livePaperShown = Progress.IsPaperShown(loop.player),
++            nextDayHooks = #nextDays,
++        }
++    end,
++}
++
++function Tests.Run()
++    local report = { results = {}, passed = 0, failed = 0 }
++    for _, case in ipairs(cases) do
++        local ok, evidence = xpcall(case.run, debug.traceback)
++        local row = { name = case.name, passed = ok, error = ok and "" or tostring(evidence) }
++        if ok then
++            row.evidence = evidence
++            report.passed = report.passed + 1
++        else
++            report.failed = report.failed + 1
++        end
++        report.results[#report.results + 1] = row
++    end
++    report.limits = {
++        terminalRunPersistence = "A day-seven save with paperShown=true reloads as playable; current schema has no distinct persisted terminal marker.",
++        endingContent = "No ending system or ending field is created or inferred by these tests.",
++    }
++    return report
++end
++
++return Tests
+--- before/tests/run_seven_days_cycle.py
++++ current/tests/run_seven_days_cycle.py
+@@ -0,0 +1,79 @@
++"""Local seven-day/NG+ and sea-cycle regression, without Maker or cloud writes.
++
++Reuses the project's isolated suites and NanoVG recorder. Reports go to this
++task's output directory; existing reports and test dependencies are preserved.
++"""
++from __future__ import annotations
++
++import importlib.util
++import json
++from pathlib import Path
++import sys
++
++sys.dont_write_bytecode = True
++ROOT = Path(__file__).resolve().parents[1]
++OUT = ROOT / "outputs/seven-days-cycle/final"
++for dependency in (ROOT / ".tmp/game-loop-test-runtime", ROOT / "outputs/seven-days-cycle/deps"):
++    sys.path.insert(0, str(dependency))
++
++
++def load_runner(name, source):
++    spec = importlib.util.spec_from_file_location(name, source)
++    module = importlib.util.module_from_spec(spec)
++    sys.modules[name] = module
++    spec.loader.exec_module(module)
++    return module
++
++
++def main():
++    from lupa.lua54 import LuaRuntime
++
++    sea = load_runner("cycle_sea_regression", ROOT / "tests/run_sea_view_regression.py")
++    player = load_runner("cycle_player_regression", ROOT / "scripts/tests/Circle1B3Run.py")
++    Recorder = sea.load_recorder_type()
++    # Internal legacy suites still require Tests.*, while newer files use tests.*.
++    # Normalize both names on case-sensitive hosts without filesystem changes.
++    original_runtime = sea.make_lua
++
++    def runtime(runtime_type):
++        lua = original_runtime(runtime_type)
++        lua.execute('''
++            table.insert(package.searchers, 2, function(name)
++                if name:sub(1, 6) ~= "Tests." then return nil end
++                local path = package.searchpath("tests." .. name:sub(7), package.path)
++                if path then return assert(loadfile(path)), path end
++            end)
++        ''')
++        return lua
++
++    sea.make_lua = runtime
++    def player_runtime(log):
++        lua = runtime(LuaRuntime)
++        lua.globals().print = lambda *args: log.append(" ".join(str(arg) for arg in args))
++        return lua
++
++    player.runtime = player_runtime
++    version, syntax = sea.run_syntax_checks(LuaRuntime, sorted((ROOT / "scripts").rglob("*.lua")))
++    suites = [sea.run_one(LuaRuntime, Recorder, path)
++              for path in sorted((ROOT / "scripts/tests").glob("*Tests.lua"))]
++    specs = [player.run_script(filename, "player") for filename in (
++        "GameLoopSpec.lua", "GameLoopUISpec.lua", "PersistenceRegressionSpec.lua",
++        "NumericEconomySpec.lua", "ShopStockSpec.lua")]
++    failed = [suite for suite in suites + specs if not suite["passed"]]
++    result = {"luaVersion": version, "syntax": syntax, "suites": suites,
++              "playerSpecs": specs, "failures": failed,
++              "passed": not failed and all(row["passed"] for row in syntax),
++              "nativePreviewVerified": False, "realCloudVerified": False}
++    OUT.mkdir(parents=True, exist_ok=True)
++    report = OUT / "regression.json"
++    report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
++    print(json.dumps({"passed": result["passed"], "syntaxFiles": len(syntax),
++                      "suites": len(suites), "playerSpecs": len(specs),
++                      "checks": sum(suite["checkCount"] for suite in suites),
++                      "failedSuites": [suite.get("suite", suite.get("name")) for suite in failed],
++                      "report": str(report)}, ensure_ascii=False))
++    return 0 if result["passed"] else 1
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())

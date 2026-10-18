@@ -27,10 +27,15 @@ for source_name, module_name in [('items.lua', 'Items.lua'), ('fish.lua', 'Fish.
                  'strictBytesMatch': generated == header + payload,
                  'contentAndHashMatchWithNormalizedNewlines': normalized(generated) == normalized(header + payload)})
 
+preview_path = OUT / 'preview-strength-check.json'
+if not preview_path.exists():
+    preview_path = OUT / 'preview-status-effects.json'
+preview = json.loads(preview_path.read_text(encoding='utf-8-sig')) if preview_path.exists() else {}
 result = {'lsp': {'currentErrors': len(new), 'baselineErrors': len(old),
                   'newErrors': sorted(new - old), 'resolvedErrors': sorted(old - new),
                   'allFilesReported': not current['missingDiagnostics']},
           'generatedData': data,
-          'nativeVisualAcceptance': 'UNDETERMINED: target is missing Maker binding'}
+          'preview': {key: preview.get(key) for key in ('session_id', 'reload_id', 'state', 'process_alive', 'ready', 'result', 'evidence_available', 'reason')},
+          'nativeVisualAcceptance': 'UNDETERMINED: native visual evidence has not been collected'}
 (OUT / 'checks-summary.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 print(json.dumps(result, ensure_ascii=False))

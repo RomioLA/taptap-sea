@@ -1,0 +1,110 @@
+[
+  {
+    "path": "scripts/Gameplay/Actions.lua",
+    "sha256": "6BBA20B4D926BA1FB4F6BF97DB853B3B6C483C0FF6A9B16004F8F6661A793E72",
+    "baselineSha256": "5260D1089F2F95EBDBD22740A1B0A9737F3CEA8C7CAA231AA9EC5CBCF5F6EC57",
+    "changedSinceBaseline": true
+  },
+  {
+    "path": "scripts/Gameplay/Loop.lua",
+    "sha256": "8DB1BBA46A79FAFD534022E9B26795578A0C23B78961B0BFC19389145B3AC8D1",
+    "baselineSha256": "A419624DE95187B736076034BF30D0EE42A7183F993D4273D2E10F778A9D3293",
+    "changedSinceBaseline": true
+  },
+  {
+    "path": "scripts/Gameplay/HUD.lua",
+    "sha256": "F79DBCF03173562A05DA016A50515740E634654CD693DF475946F0AFC7DF1A1C",
+    "baselineSha256": "CD39CD1FE738D55FDC198DCE8E70BB68494EFF89105E5E7A66AA63D592FC8B5B",
+    "changedSinceBaseline": true
+  },
+  {
+    "path": "scripts/Gameplay/Inventory.lua",
+    "sha256": "6656DD982A3584E4196723FBBB5B115ACB01334FCA8343C216AC550934886512",
+    "baselineSha256": "48397892D5BAFB7524DFE6D428FBFE8213E608F81880DC16FA33F6681C098C7B",
+    "changedSinceBaseline": true
+  },
+  {
+    "path": "scripts/Gameplay/UpdateSystem.lua",
+    "sha256": "12A92A5C2117935FAF0393188E23A2440BEEE11999BA7F268210C4A5D26A2CD1",
+    "baselineSha256": "79513CEBD48669606A6CA3FC728268BFCCB0570A25D607F2E440DE0CAD14F082",
+    "changedSinceBaseline": true
+  },
+  {
+    "path": "scripts/config/gameplay.lua",
+    "sha256": "CDFA81837D4FDEBA4A686654A81EB7EF32195E831602910591219967871E6836",
+    "baselineSha256": "3F22E5FB76C68C06E42BEEFCA2B988A8E698EBC4D04CDE0489111DD34512724C",
+    "changedSinceBaseline": true
+  },
+  {
+    "path": "scripts/Integration/Bridge.lua",
+    "sha256": "6CCAE700F96AA41AB83A8F475F0D9C5A3C94924FF2BE65E1BA01C509EAC5D843",
+    "baselineSha256": "1140DB8AB5E407CF0DA55E3B8CEA2892B6CEF80119146F60D1AA1DA98DABA81B",
+    "changedSinceBaseline": true
+  },
+  {
+    "path": "scripts/Integration/Scene.lua",
+    "sha256": "472E0D1645BC12819B5EA5338DB2777086FC00306D5C4DD1A7570DF9D0293879",
+    "baselineSha256": "3FCA7F66AAD6CF6439783BEEA2A41F3DAF9C388B0E3876B6057786DAADAF4735",
+    "changedSinceBaseline": true
+  },
+  {
+    "path": "scripts/Integration/Circle1BInput.lua",
+    "sha256": "430FF2B12692DB963DDC6FA1774ABF30E41F447A0C05A11D4687361587AF8746",
+    "baselineSha256": null,
+    "changedSinceBaseline": null
+  },
+  {
+    "path": "scripts/Game/Game.lua",
+    "sha256": "683874F2CDEF43B31F915B8BEB90EFE9DDBCD7F52CF43C3BD821E7A3036B2F7F",
+    "baselineSha256": "440F54E1A0E7BCD9E207FE971CF3F33B923A739A3BF6C7EFD7AD54D6B4F9BCF1",
+    "changedSinceBaseline": true
+  },
+  {
+    "path": "scripts/Tests/ABIntegrationTests.lua",
+    "sha256": "B69A55A6AACCE973875CB040FD026EAB964B18EED8E12D8D77285E9438B39975",
+    "baselineSha256": null,
+    "changedSinceBaseline": null
+  },
+  {
+    "path": "scripts/Tests/ArchitectureIntegrationTests.lua",
+    "sha256": "AECA8B95918F02B42D5016B764252F643080F4C60CBE364B6885FDD75855012E",
+    "baselineSha256": null,
+    "changedSinceBaseline": null
+  },
+  {
+    "path": "scripts/Tests/GameLoopUISpec.lua",
+    "sha256": "D48C260674751A9176E44ACC6ABB998691C13C677A0F5C78C3C469949751314E",
+    "baselineSha256": null,
+    "changedSinceBaseline": null
+  },
+  {
+    "path": "scripts/Tests/NumericEconomySpec.lua",
+    "sha256": "5C1BBC301F0B587F9AA9E3083D95AA022D187C52D4201F7845927B853522F49E",
+    "baselineSha256": null,
+    "changedSinceBaseline": null
+  },
+  {
+    "path": "scripts/Tests/check_game_loop_lsp.py",
+    "sha256": "4D83F568D94046C398FF5B9CCF06FBC99307C814260D8F2450E7A366B13C13DA",
+    "baselineSha256": null,
+    "changedSinceBaseline": null
+  },
+  {
+    "path": "scripts/Tests/Circle1BFishingFlowTests.lua",
+    "sha256": "9EEE49DE71466B223EC0AA4B6808F082BC76857A09CB4A56DA48E7B351F00A85",
+    "baselineSha256": null,
+    "changedSinceBaseline": null
+  },
+  {
+    "path": "scripts/Tests/Circle1BPendingCatchTests.lua",
+    "sha256": "139371BE715977964DF734466B8F067D706B2CD8EB418C12B2A3A68692340159",
+    "baselineSha256": null,
+    "changedSinceBaseline": null
+  },
+  {
+    "path": "tests/run_circle1_b.py",
+    "sha256": "9FC337A733D584910326CD301B74CCE8429D227368935D5FD608AE65DB8A9EE4",
+    "baselineSha256": null,
+    "changedSinceBaseline": null
+  }
+]

@@ -8,10 +8,10 @@ local AutoNavigation = require("Ocean.AutoNavigation")
 local Fish = require("Ocean.Fish")
 local DefaultStrategy = require("Ocean.SpawnStrategy")
 local EntityStateSystem = require("Systems.EntityStateSystem")
+local TraceSystem = require("Systems.TraceSystem")
 local SurfaceSignals = require("Ocean.SurfaceSignals")
 local Runtime = {}
 Runtime.__index = Runtime
-local FIXED_CONTENT_IDS = { "island_01", "island_02", "underwater_treasure_01" }
 
 function Runtime.New(options)
     local self = setmetatable({}, Runtime)
@@ -37,6 +37,8 @@ function Runtime:Init(options)
     -- separate from timed circular reveals and start it disabled on every reset.
     self.world.scopeShip = self.ship
     self.world.scopeEnabled = false
+    self.traceSystem = TraceSystem.New(self.world)
+    self.world:AddSystem(self.traceSystem)
     assert(self.world:isPositionFree(self.ship.position, self.ship.radius), "invalid ship departure")
     self.movement = Movement.New(self.world, self.ship)
     if options.shipLevel ~= nil then self:SetShipLevel(options.shipLevel) end
@@ -188,6 +190,28 @@ end
 ---@return OceanPoint
 function Runtime:GetPortPosition()
     return M.copy(Config.ship.start)
+end
+
+---Fresh commuter trace snapshot; returns nil when the trace runtime is unavailable.
+---@param traceId string
+---@return table?, string?
+function Runtime:GetTrace(traceId)
+    if not self.traceSystem or type(self.traceSystem.Query) ~= "function" then
+        return nil, "trace_unavailable"
+    end
+    return self.traceSystem:Query(traceId)
+end
+
+---Build one current-position observation event without mutating the World queue.
+---@param traceId string
+---@param day integer
+---@param alreadyRecognized boolean
+---@return table?, string?
+function Runtime:BuildTraceObservation(traceId, day, alreadyRecognized)
+    if not self.traceSystem or type(self.traceSystem.BuildObservation) ~= "function" then
+        return nil, "trace_unavailable"
+    end
+    return self.traceSystem:BuildObservation(traceId, day, alreadyRecognized)
 end
 
 ---@param portPosition OceanPoint?
@@ -348,11 +372,23 @@ function Runtime:GetWorldContent(contentId)
         ordinaryFish = entity.ordinaryFish == true })
 end
 
+---Register authored fixed content with this World and return its immutable snapshot.
+---@param definition table
+---@return table?, string?
+function Runtime:RegisterWorldContent(definition)
+    if not self.world or self.world.retired or type(self.world.RegisterFixedContent) ~= "function" then
+        return nil, "content_unavailable"
+    end
+    local entity, reason = self.world:RegisterFixedContent(definition)
+    if not entity then return nil, reason end
+    return self:GetWorldContent(entity.contentId)
+end
+
 ---Return fixed island and treasure snapshots in stable content-ID order.
 ---@return table
 function Runtime:GetFixedWorldContentSnapshots()
     local snapshots = {}
-    for _, contentId in ipairs(FIXED_CONTENT_IDS) do
+    for _, contentId in ipairs(self.world and self.world.fixedContentIds or {}) do
         local snapshot = self:GetWorldContent(contentId)
         if snapshot then snapshots[#snapshots + 1] = snapshot end
     end

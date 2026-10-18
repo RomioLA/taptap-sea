@@ -1,0 +1,946 @@
+{
+  "marine": {
+    "checks": [
+      {
+        "module": "tests.Circle1AFishLocksTests",
+        "passed": true,
+        "tests": [
+          {
+            "error": "",
+            "passed": true,
+            "name": "nearest target, empty net, hidden fish, and locked target exclusion"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "lock owner contract uses table identity and idempotent cleanup"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "captured sardine pauses AI and rise, clears birds, and resumes as the same entity"
+          },
+          {
+            "error": "",
+            "passed": true,
+            "name": "failed removal snapshot, owner replacement, day refresh, and reset generation"
+          }
+        ],
+        "metrics": {}
+      },
+      {
+        "module": "tests.Circle1APredationCooldownTests",
+        "passed": true,
+        "tests": [
+          {
+            "name": "successful scheduled predation starts one five-second world-time cooldown",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "cooldown blocks retargeting and eating but permits attraction, avoidance, and expiry",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "pause stops cooldown time while capture lock and freeze stop only fish AI",
+            "passed": true,
+            "error": ""
+          },
+          {
+            "name": "failed prey removal leaves prey alive and does not start cooldown",
+            "passed": true,
+            "error": ""
+          }
+        ],
+        "metrics": {}
+      },
+      {
+        "module": "tests.SeaRuntimeTests",
+        "passed": true,
+        "tests": [
+          {
+            "name": "supplement02 authoritative values and 16:9 full-height projection",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "cast confirms at30 meters, rejects beyond and uses radius8 single target",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "avoid prediction uses species4 and6 meter clearance before boundary",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "drop confirms at12 meters and rejection neither spawns nor changes payload",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "ordinary region spawn respects current boat exclusion plus day departure200",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "birth exclusion is not an AI barrier after generation",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "scope reveal uses20 and changes visibility only",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "four-second fishing contract never implicitly pauses world time",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "meter units, derived map and implementation values",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "configured ship levels move at 6, 8, 10 meters per second",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "invalid ship level leaves capability unchanged",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "camera framing changes without rescaling meter movement",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "fishing selects one nearest live hidden or frozen fish without removal",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "fishing respects validity filter and nearest distance to net center",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "empty net allows zero result including zero-radius queries",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "independent fishing selections have no daily three or six catch limit",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "ship straight speed and max clamp",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "diagonal travel no speed boost",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "keyboard cancels click target; opposite key axes stop",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "ship turn speed bound",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "click arrival and no movement within arrival radius",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "configured meter framing, anchor, inverse coordinates across aspects",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "camera deadzone stays still then smooth follows",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "all world edges block and outward intent produces feedback",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "held outward input still visibly pushes inward",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "swept island collision no tunnelling",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "small floats overlap without blocking",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "unique IDs and removed query exclusion",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "underwater hidden yet queryable; reveal changes visibility only",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "visibility switch does not change AI trajectory",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "sardine wander speed and timed direction choice",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "effect-based sardine attraction and priority over wander",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "NONE effect ignored; temporary TTL and payload copy",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "predator sees prey before sardine senses danger",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "danger outranks attraction; flee jitter remains away",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "avoid outranks danger and attraction",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "tuna true predation removes entity and query membership",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "tuna chase tracks moved prey; loss grace >2 sec",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "tuna displacement respects configured turn rate",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "moving predator and prey complete chase flee and real capture",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "confirmed big fish attraction uses centralized implementation values",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "supplement02 prey chase outranks big attraction",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "big attraction includes radius36 boundary and excludes outside",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "tuna attraction filters effects and respects turn rate",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "big attraction expiry restores available prey chase",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "tuna avoid outranks official big attraction and prey chase",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "activity hysteresis and frozen state retention",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "region seeds reproducible independent of exploration order",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "tuna first spawn exclusion on all initialized regions",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "same-day regions do not refill after catch/clear/return",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "daily refresh clears temps/fish preserves fixed objects/ship",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "local density measured across 100 day seeds away from departure",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "overlap callback removal leaves no stale entries after repeated collection",
+            "error": "",
+            "passed": true
+          }
+        ],
+        "metrics": {
+          "debugViewportSardine": 1.16,
+          "startTunaIn120": 0.0,
+          "startSardineIn120": 19.35,
+          "tunaRunning": 3.94,
+          "sardineIn120": 19.28,
+          "tunaIn120": 3.94,
+          "sardineRunning": 19.28,
+          "movingCaptureMeanSec": 10.046875,
+          "debugViewportTuna": 0.13,
+          "hiddenViewportFish": 0,
+          "movingCaptureMinSec": 8.5,
+          "movingCaptureMaxSec": 11.600000000000001
+        }
+      },
+      {
+        "module": "tests.SurfaceRiseTests",
+        "passed": true,
+        "tests": [
+          {
+            "error": "",
+            "name": "Flee rise uses the configured two seconds and leaves fish movement active",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "leaving Flee clears rise fields and re-entry starts a fresh rise",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "inactive, frozen, removed, paused, and missing config do not advance rise",
+            "passed": true
+          },
+          {
+            "error": "",
+            "name": "a rising Flee fish remains a valid tuna prey",
+            "passed": true
+          }
+        ],
+        "metrics": {}
+      },
+      {
+        "module": "tests.SurfaceSignalsTests",
+        "passed": true,
+        "tests": [
+          {
+            "name": "active sardines receive deterministic read-only bird groups",
+            "passed": true
+          },
+          {
+            "name": "bird polling is bounded and invalid sources disappear immediately",
+            "passed": true
+          },
+          {
+            "name": "normal tuna splash cadence snapshots position and expires after removal",
+            "passed": true
+          },
+          {
+            "name": "chasing tuna splash twice per second and zero dt never emits",
+            "passed": true
+          },
+          {
+            "name": "frozen tuna stops emitting while clear empties signal state",
+            "passed": true
+          },
+          {
+            "name": "missing signal config stays disabled for legacy worlds",
+            "passed": true
+          }
+        ],
+        "metrics": {}
+      },
+      {
+        "module": "tests.SeaStabilityTests",
+        "passed": true,
+        "tests": [
+          {
+            "name": "four seeded 180-second voyages across regions and mixed frame deltas",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "cleared explored regions do not refill during 180 seconds of same-day return",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "twenty daily rebuilds retain fixed objects and discard prior-day dynamic state",
+            "error": "",
+            "passed": true
+          }
+        ],
+        "metrics": {
+          "debugViewportSardineMean": 1.4736111111111112,
+          "frozenFrameAssertions": 1638124,
+          "maxLiveEntities": 175,
+          "radius120TunaMean": 1.5597222222222222,
+          "debugViewportTunaMean": 0.1111111111111111,
+          "fullAIAliveMean": 22.25,
+          "voyageCount": 4,
+          "radius120SardineMean": 16.616666666666667,
+          "simulatedSecondsPerVoyage": 180,
+          "sameDayReturnVisits": 9,
+          "populationSamples": 720,
+          "dailyRebuilds": 20,
+          "maxFrozenFish": 152,
+          "eatenDuringVoyages": 72,
+          "fullAITunaMean": 2.0375,
+          "fullAISardineMean": 20.2125
+        }
+      },
+      {
+        "module": "tests.Circle1A2ScopeTests",
+        "passed": true,
+        "tests": [
+          {
+            "name": "persistent scope defaults off and accepts only explicit true",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "scope includes the 20m forward edge and inclusive 45 degree sides",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "scope follows ship movement and keeps its last heading while stopped",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "scope toggle changes visibility only and leaves fish eligible",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "scope does not change same-seed fish behavior",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "pause retains scope without advancing boat and reset disables it",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "legacy timed circular reveal remains independent and compatible",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "scope safely rejects invalid transforms and tight outside boundaries",
+            "error": "",
+            "passed": true
+          },
+          {
+            "name": "transient water queries match full scans for every current blocker",
+            "error": "",
+            "passed": true
+          }
+        ],
+        "metrics": {}
+      },
+      {
+        "module": "tests.Circle1A2SignalsTests",
+        "passed": true,
+        "tests": [
+          {
+            "passed": true,
+            "name": "Circle1A2 birds preserve confirmed geometry and legal water",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "Circle1A2 first bird dive lasts 1.5 seconds and getters are read-only",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "Circle1A2 getters reject stale or illegal current fish positions",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "Circle1A2 locked, frozen, inactive, invalid, and removed sources lose cues",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "Circle1A2 pause freezes splash timers and reset clears cues",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "Circle1A2 chase splashes follow the confirmed half-second cadence",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "Circle1A2 clearing cues does not advance or reset world time",
+            "error": ""
+          }
+        ],
+        "metrics": {}
+      },
+      {
+        "module": "tests.ArchitectureIntegrationTests",
+        "passed": true,
+        "tests": [
+          {
+            "passed": true,
+            "name": "shared registry and factory retain entity identity"
+          },
+          {
+            "passed": true,
+            "name": "one automatic fish update per sea substep"
+          },
+          {
+            "passed": true,
+            "name": "frozen and removed entities never receive FSM updates"
+          },
+          {
+            "passed": true,
+            "name": "paused Game leaves sea and temporary lifetime unchanged"
+          },
+          {
+            "passed": true,
+            "name": "Game uses reset runtime world rather than cached registry"
+          },
+          {
+            "passed": true,
+            "name": "shared FSM calls enter exit and update once"
+          },
+          {
+            "passed": true,
+            "name": "base skeleton retains numeric IDs and remove/clear interfaces"
+          },
+          {
+            "passed": true,
+            "name": "Integration owns references while Gameplay owns transient action records"
+          },
+          {
+            "passed": true,
+            "name": "registered frame System keeps raw clock dt separate from sea substeps"
+          },
+          {
+            "passed": true,
+            "name": "runtime replacement rejects old tokens even when fish IDs are reused"
+          },
+          {
+            "passed": true,
+            "name": "Ocean rollback restores removed fish identity and active FSM"
+          },
+          {
+            "passed": true,
+            "name": "Bridge works through public Runtime APIs without sea internals"
+          }
+        ],
+        "metrics": {}
+      },
+      {
+        "module": "tests.ABIntegrationTests",
+        "passed": true,
+        "tests": [
+          {
+            "passed": true,
+            "name": "Bridge construction uses the real A runtime and starts paused at port",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "one bridge Update advances B's clock and A's world by the same delta",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "B clock keeps raw dt while A simulation applies its own frame clamp",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "large dt forces the B return pause before A can simulate that frame",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "multiple pause reasons stop both layers until the final reason resumes",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "manual pause is a named B clock reason and coexists with UI pauses",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "drop requires a selected copied position and spawns a 20-second world item",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "throwing farther than twelve meters rejects the handoff without losing the item",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "invalid drop selection clears the prior target and receiver reentry stays single-flight",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "all four B inventory items become real A drops with category, effect and TTL",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "exact thirty-meter fishing cast works and anything beyond it is rejected",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "net includes its eight-meter boundary and a single cast catches only one fish",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "hidden fish remain selectable and the nearest of several candidates is caught",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "empty-water casts receive a valid token and repeated completion only charges once",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "fishing prechecks require sea access, forty stamina and one free inventory slot",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "B fishing failures run before the A fish selector",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "single-flight and cancellation leave fish, stamina and inventory untouched",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "fishing charge and partially failed delivery roll back player and fish state",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "stale targets and a pause at completion reject without partial costs",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "recognition accepts twenty meters, rejects farther points and reads immutable coordinates",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "moving A fish and ship state cannot alter the B-only save snapshot",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "new run resets B discovery and A temporary fish while preserving fixed objects and ship",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "new-day world refresh waits for save success and retry is idempotent",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "explicit unsaved continuation refreshes the sea once and releases settlement pause",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "successful load restores saved boat speed and refreshes A before one callback",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "offline load fails explicitly without calling a cloud adapter",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "Scene starts one B HUD over A renderer and shows offline status without legacy HUD",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "Scene ticks B once, gates pointer input immediately and records the sea pointer drop target",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "Scene offline store returns a clear error and never touches cloud or auto-loads",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "Scene Stop releases five subscriptions, renderer, HUD and UI exactly once",
+            "error": ""
+          }
+        ],
+        "metrics": {}
+      },
+      {
+        "module": "tests.SeaFusedSceneTests",
+        "passed": true,
+        "tests": [
+          {
+            "passed": true,
+            "name": "original HUD directional contract drives the real ship",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "original HUD pause and reset synchronize and preserve ship level",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "fused scene retains the original HUD root and appends hidden debug tools",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "sky clicks do not sail; sea clicks target world meters; UI blocks clicks",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "one event owner updates and renders the real simulation at mode-B DPR",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "keyboard pause reset and hidden debug visibility keep the HUD synchronized",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "shutdown is idempotent and releases only this event owner and UI",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "render receives the live external clock without advancing it",
+            "error": ""
+          },
+          {
+            "passed": true,
+            "name": "B may supply a UI factory without replacing or initializing its UI",
+            "error": ""
+          }
+        ],
+        "metrics": {}
+      }
+    ],
+    "missingModules": [],
+    "passed": true
+  },
+  "render": {
+    "checks": [
+      {
+        "module": "tests.SeaFusionRenderTests",
+        "report": {
+          "status": "PASS",
+          "tests": [
+            "draw_is_pure_for_runtime_state",
+            "original_sun_and_birds_reused",
+            "existing_world_shape_apis_reused",
+            "ordinary_fish_hidden_by_default",
+            "show_underwater_draws_both_fixture_fish",
+            "resize_keeps_camera_height_at_45_world_units",
+            "sea_scissor_tracks_wave_horizon_in_both_aspects",
+            "presentation_fixture_does_not_change_config_world",
+            "night_tint_precedes_boat_and_preserves_paused_gameplay_clock",
+            "daytime_removes_night_tint_and_nvg_state_stack_is_balanced"
+          ],
+          "metrics": {
+            "originalFixedObjectCount": 3,
+            "previewFixtures": {
+              "island": "(-14,-12)",
+              "tuna": "(8,-14)",
+              "sardine": "(-8,-8)"
+            },
+            "portrait": {
+              "width": 1200,
+              "pixelsPerWorldUnit": 25.555555555555557,
+              "shipScreenY": 690,
+              "revealedWorldFishCalls": 2,
+              "height": 1150,
+              "viewWidth": 46.95652173913044,
+              "shipScreenX": 600,
+              "viewHeight": 45
+            },
+            "landscape": {
+              "width": 1920,
+              "pixelsPerWorldUnit": 24,
+              "shipScreenY": 648,
+              "shipScreenX": 960,
+              "height": 1080,
+              "viewWidth": 80,
+              "hiddenWorldFishCalls": 0,
+              "viewHeight": 45
+            },
+            "originalConfiguredBirds": 2
+          }
+        },
+        "nvgCalls": {
+          "nvgBeginPath": 177,
+          "nvgBezierTo": 24,
+          "nvgCircle": 4,
+          "nvgClosePath": 44,
+          "nvgEllipse": 60,
+          "nvgFill": 114,
+          "nvgFillColor": 110,
+          "nvgFillPaint": 4,
+          "nvgLineTo": 293,
+          "nvgLinearGradient": 4,
+          "nvgMoveTo": 103,
+          "nvgQuadTo": 87,
+          "nvgRect": 1,
+          "nvgRestore": 13,
+          "nvgRotate": 1,
+          "nvgRoundedRect": 11,
+          "nvgSave": 13,
+          "nvgScale": 12,
+          "nvgScissor": 1,
+          "nvgStroke": 63,
+          "nvgStrokeColor": 63,
+          "nvgStrokeWidth": 63,
+          "nvgTranslate": 12
+        },
+        "nvgCallTotal": 1277,
+        "capturedElements": 177,
+        "passed": true,
+        "testFailures": []
+      },
+      {
+        "module": "tests.Circle1A2FishingTests",
+        "report": {
+          "results": [
+            {
+              "passed": false,
+              "name": "fishing_phase_geometry_and_readonly_snapshot",
+              "error": "C:/codex/taptap-sea/scripts/tests\\Circle1A2FishingTests.lua:56: C:/codex/taptap-sea/scripts/tests\\Circle1A2FishingTests.lua:53: draw selected/spawned/removed entity"
+            },
+            {
+              "passed": true,
+              "name": "optional_sixth_argument_keeps_fifth_clock_and_absent_view"
+            },
+            {
+              "passed": true,
+              "name": "offscreen_fish_culling_keeps_partial_horizon_and_edge_shapes"
+            },
+            {
+              "passed": true,
+              "name": "pointer_consumption_preserves_navigation_and_guards"
+            },
+            {
+              "passed": true,
+              "name": "bootstrap_optional_callback_is_forwarded_without_mutation"
+            }
+          ]
+        },
+        "nvgCalls": {
+          "nvgBeginPath": 283,
+          "nvgBezierTo": 40,
+          "nvgCircle": 8,
+          "nvgClosePath": 64,
+          "nvgEllipse": 86,
+          "nvgFill": 175,
+          "nvgFillColor": 167,
+          "nvgFillPaint": 8,
+          "nvgLineTo": 572,
+          "nvgLinearGradient": 8,
+          "nvgMoveTo": 168,
+          "nvgQuadTo": 130,
+          "nvgRect": 3,
+          "nvgRestore": 25,
+          "nvgRotate": 4,
+          "nvgRoundedRect": 22,
+          "nvgSave": 25,
+          "nvgScale": 20,
+          "nvgScissor": 3,
+          "nvgStroke": 108,
+          "nvgStrokeColor": 108,
+          "nvgStrokeWidth": 108,
+          "nvgTranslate": 22
+        },
+        "nvgCallTotal": 2157,
+        "capturedElements": 283,
+        "passed": false,
+        "testFailures": [
+          {
+            "passed": false,
+            "name": "fishing_phase_geometry_and_readonly_snapshot",
+            "error": "C:/codex/taptap-sea/scripts/tests\\Circle1A2FishingTests.lua:56: C:/codex/taptap-sea/scripts/tests\\Circle1A2FishingTests.lua:53: draw selected/spawned/removed entity"
+          }
+        ]
+      }
+    ],
+    "passed": false
+  }
+}

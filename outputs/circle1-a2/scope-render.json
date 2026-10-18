@@ -1,0 +1,23 @@
+{
+  "evidence": "offline NanoVG capture, not native engine",
+  "views": [
+    {
+      "name": "scope-off",
+      "scopeEnabled": false,
+      "fishVisible": [
+        false,
+        false
+      ],
+      "png": "outputs/circle1-a2/scope-off.png"
+    },
+    {
+      "name": "scope-on",
+      "scopeEnabled": true,
+      "fishVisible": [
+        true,
+        true
+      ],
+      "png": "outputs/circle1-a2/scope-on.png"
+    }
+  ]
+}

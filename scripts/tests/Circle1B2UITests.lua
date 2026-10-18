@@ -3,7 +3,7 @@ local Flow = require("tests.Circle1BFishingFlowTests")
 local Progress = require("Gameplay.Circle1B2Progress")
 
 local Tests = {}
-local PAPER_TEXT = "海岸边那只木桶，下面一定有什么东西，我想多打捞几次就能打捞上来吧。"
+local PAPER_TEXT = "海边那只木桶还有秘密，快去再探探。"
 local FISHING_HINT = "点击附近海面下网"
 local activeUI = nil
 
@@ -198,6 +198,11 @@ end
 
 local function settleToDaySeven(loop)
     for _ = 1, 6 do
+        local pendingStory = loop:GetStoryDialog()
+        if pendingStory then
+            assert(loop:NotifyStoryShown(pendingStory.token))
+            assert(loop:CloseStoryDialog())
+        end
         assert(loop:EndToday())
         assert(loop:ConfirmSettlement())
     end
@@ -215,7 +220,7 @@ function Tests.Run()
         local f = atSea()
         withHUD(function(HUD)
             local hud = HUD.Create(f.loop)
-            click(button(hud.root, "捕鱼", true))
+            click(button(hud.root, "捕鱼 · 40体力", true))
             eq(f.loop:GetFishingState().state, "selecting", "the button enters selection first")
             assert(exactLabel(hud.root, FISHING_HINT, true), "the first selection must show the exact hint")
             eq(f.loop:GetStoryDialog(), nil, "the hint must not open a modal story dialog")
@@ -397,12 +402,10 @@ function Tests.Run()
     test("paper is marked only after the HUD visibly renders exact text and close resumes the clock", function()
         local f = Flow.Fixture()
         settleToDaySeven(f.loop)
-        assert(f.loop:Depart())
-        eq(f.loop.player.story.circle1B2.paperShown, false)
-        eq(f.loop.clock:IsPaused(), false)
-
-        assert(f.loop:OpenDay7PaperBeforeEnding())
-        eq(f.loop.player.story.circle1B2.paperShown, false, "opening the entry is not an acknowledgement")
+        local entryPaper = assert(f.loop:GetStoryDialog(), "day-seven port entry opens the paper")
+        eq(entryPaper.kind, "paper")
+        eq(entryPaper.text, PAPER_TEXT)
+        eq(f.loop.player.story.circle1B2.paperShown, false, "opening is not an acknowledgement")
         eq(f.loop.clock.pauseReasons.story, true)
         eq(f.loop.clock:IsPaused(), true)
 
@@ -435,8 +438,10 @@ function Tests.Run()
             click(button(hud.root, "结束对话", true))
             eq(f.loop:GetStoryDialog(), nil)
             eq(f.loop.clock.pauseReasons.story, nil)
-            eq(f.loop.clock:IsPaused(), false)
+            eq(f.loop.clock:IsPaused(), true, "port pause remains after reading")
             assert(f.loop.player.story.circle1B2.paperShown)
+            assert(f.loop:Depart())
+            eq(f.loop.clock:IsPaused(), false, "reading the paper permits normal departure")
             hud.Refresh()
             eq(notifyCalls, 1)
         end)

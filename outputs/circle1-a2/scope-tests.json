@@ -1,0 +1,41 @@
+{
+  "luaVersion": "Lua 5.4",
+  "tests": [
+    {
+      "error": "",
+      "passed": true,
+      "name": "persistent scope defaults off and accepts only explicit true"
+    },
+    {
+      "error": "",
+      "passed": true,
+      "name": "scope includes the 20m forward edge and inclusive 45 degree sides"
+    },
+    {
+      "error": "",
+      "passed": true,
+      "name": "scope follows ship movement and keeps its last heading while stopped"
+    },
+    {
+      "error": "",
+      "passed": true,
+      "name": "scope toggle changes visibility only and leaves fish eligible"
+    },
+    {
+      "error": "",
+      "passed": true,
+      "name": "scope does not change same-seed fish behavior"
+    },
+    {
+      "error": "",
+      "passed": true,
+      "name": "pause retains scope without advancing boat and reset disables it"
+    },
+    {
+      "error": "",
+      "passed": true,
+      "name": "legacy timed circular reveal remains independent and compatible"
+    }
+  ],
+  "passed": true
+}

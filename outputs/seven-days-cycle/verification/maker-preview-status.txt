@@ -1,0 +1,36 @@
+Maker local preview status evidence
+Project: C:\codex\taptap-sea
+Recorded: 2026-10-04 (Asia/Hong_Kong)
+
+Workflow source:
+- Read full `taptap-maker-local` skill from C:\Users\80739\.taptap-maker\mcp-runtime\0.0.36\skills\taptap-maker-local\SKILL.md.
+- Local Window Preview requires `preview status --target-dir <PROJECT> --json`; a stopped/missing session must not be started or revived.
+
+Launcher evidence:
+- Active Codex config path inspected: C:\Users\80739\.codex\config.toml. It contains node_repl and project trust only; no Maker server entry/command/args.
+- Maker tools are absent from this session's tool list.
+- `taptap-maker` is not resolvable by the normal PowerShell command lookup. The exact global shim exists at C:\Users\80739\AppData\Roaming\npm\taptap-maker.cmd, but normal sandbox process start returned Access Denied.
+- The installed Maker self-runtime package and local version policy both identify @taptap/maker 0.0.36; policy decision is `current`.
+- `npm cache ls '@taptap/maker'` failed with EPERM reading C:\Users\80739\AppData\Local\npm-cache\_cacache\index-v5. No npx invocation, package install, PATH/cwd/trust/credential changes, or config repair was made.
+
+Command attempted (read-only):
+`& 'C:\Users\80739\AppData\Roaming\npm\taptap-maker.cmd' preview status --target-dir 'C:\codex\taptap-sea' --json`
+Normal sandbox result: process could not start (Access Denied). Retried the same command with the approved execution context; exit code 0 and JSON status returned.
+
+Result:
+- state: stopped
+- process_alive: false
+- ready: false
+- install_state: ready
+- session_id: f5d82139-8fba-4e13-bbb7-e66fd587943f
+- reload_id: 0
+- runtime_version: unknown
+- launch_mode: loopback_manifest
+- existing last-session errors: `Could not find resource Cube/Day/DaySpecularHDR.dds`; `Can not load themis_x64.dll`
+- status message explicitly says process status only; gameplay/visuals/cloud/server are not verified.
+
+No preview start, refresh, logs, check, installation, or runtime repair was performed because the active session is stopped. The status is a current process-state check; listed errors belong to retained session evidence and are not a new running-session failure.
+
+The project owner independently confirmed an equivalent successful read-only status using the installed Node bundle:
+`& 'C:\Program Files\nodejs\node.exe' 'C:\Users\80739\.taptap-maker\mcp-runtime\0.0.36\dist\maker.js' preview status --target-dir 'C:\codex\taptap-sea' --json`
+It returned the same stopped state and session ID.

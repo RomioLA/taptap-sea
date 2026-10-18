@@ -1,0 +1,159 @@
+{
+  "checks": [
+    {
+      "module": "tests.Circle1A3StabilityTests",
+      "passed": false,
+      "results": [
+        {
+          "passed": false,
+          "name": "normal density multi-seed long out-and-back voyage never regenerates a visited region",
+          "error": "...dex/taptap-sea/scripts/tests\\Circle1A3StabilityTests.lua:188: one or more normal-population voyages failed; see per-seed details"
+        },
+        {
+          "passed": true,
+          "name": "new day clears ordinary fish and temporary items but keeps the exact fixed barrel",
+          "error": ""
+        },
+        {
+          "passed": true,
+          "name": "manual pause freezes ship, fish AI, bait lifetime, cooldowns, and surface signals",
+          "error": ""
+        },
+        {
+          "passed": false,
+          "name": "cancel, predation, catch removal, and reset leave no stale locks or signal cues",
+          "error": "...dex/taptap-sea/scripts/tests\\Circle1A3StabilityTests.lua:331: assertion failed!"
+        },
+        {
+          "passed": true,
+          "name": "repeated Runtime rebuilds retire old worlds and never reschedule a shared frame System",
+          "error": ""
+        },
+        {
+          "passed": true,
+          "name": "ship levels 6, 8, and 10 use real configured speed, turning, and swept island collision",
+          "error": ""
+        }
+      ],
+      "metrics": {
+        "ship levels 6, 8, and 10 use real configured speed, turning, and swept island collision": {
+          "speeds": [
+            6.0,
+            8.0,
+            10.0
+          ],
+          "levels": 3
+        },
+        "speedAndCollision": [
+          {
+            "collisionCalls": 27,
+            "level": 1,
+            "speedMetersPerSecond": 6.0,
+            "finalTurnRadians": 1.9080180628919194,
+            "islandClearance": 97.97211670351348,
+            "expectedQuarterSecondTravel": 1.5
+          },
+          {
+            "collisionCalls": 31,
+            "level": 2,
+            "speedMetersPerSecond": 8.0,
+            "finalTurnRadians": 1.9207818445201927,
+            "islandClearance": 98.35033258031375,
+            "expectedQuarterSecondTravel": 2.0
+          },
+          {
+            "collisionCalls": 36,
+            "level": 3,
+            "speedMetersPerSecond": 10.0,
+            "finalTurnRadians": 1.9524069261831896,
+            "islandClearance": 98.22420547164644,
+            "expectedQuarterSecondTravel": 2.5
+          }
+        ],
+        "repeated Runtime rebuilds retire old worlds and never reschedule a shared frame System": {
+          "eachCurrentWorldSystemCount": 3,
+          "currentFrameAdvances": 5,
+          "staleFrameAdvances": 0,
+          "retiredEntityArraysEmpty": true,
+          "rebuilds": 5
+        },
+        "new day clears ordinary fish and temporary items but keeps the exact fixed barrel": {
+          "oldFishRemoved": "sea-6",
+          "seedBefore": 314159,
+          "temporaryItemReason": "newDay",
+          "seedAfter": 314160,
+          "fixedBarrelId": "sea-4",
+          "newDayFishCount": 64
+        },
+        "longVoyages": [
+          {
+            "initialSardines": 57,
+            "regionsVisited": 16,
+            "barrelGeneration": 1,
+            "barrelId": "sea-4",
+            "caughtFishStayedRemoved": true,
+            "totalSteps": 2446,
+            "simulatedSeconds": 122.2999999999952,
+            "initialFishCount": 63,
+            "initialRegions": 9,
+            "seed": 271828,
+            "peakFishCount": 106,
+            "removedFishId": "sea-6",
+            "initialTuna": 6,
+            "maxGenerationCallsPerRegion": 1
+          }
+        ],
+        "normalRuntimeFishLimitRaised": false,
+        "longVoyageFailures": [
+          {
+            "error": "...dex/taptap-sea/scripts/tests\\Circle1A3StabilityTests.lua:132: same-day sailing must retain the original seed",
+            "seed": 314159
+          },
+          {
+            "error": "...dex/taptap-sea/scripts/tests\\Circle1A3StabilityTests.lua:132: same-day sailing must retain the original seed",
+            "seed": 161803
+          }
+        ],
+        "configuredDensityTargets": {
+          "sardine": 20,
+          "tuna": 4
+        },
+        "manual pause freezes ship, fish AI, bait lifetime, cooldowns, and surface signals": {
+          "worldDeltaWhilePaused": 0,
+          "birdCount": 2,
+          "pausedWallDelta": 2,
+          "cooldownRemainingAtPause": 3.9499999999999993,
+          "baitAge": 1.1000000000000003,
+          "splashCount": 1
+        },
+        "repeatedRebuilds": 5
+      }
+    },
+    {
+      "module": "tests.Circle1A3ExperienceTests",
+      "passed": false,
+      "results": [
+        {
+          "name": "normal seeded barrel and open-sea route supports repeatable bird, fishing, and moving-lens feedback",
+          "error": "...ex/taptap-sea/scripts/tests\\Circle1A3ExperienceTests.lua:143: moving scope cone did not reveal any normal-population fish",
+          "passed": false
+        }
+      ],
+      "metrics": {
+        "repeatedDigestMatch": false,
+        "normalVoyages": [
+          {
+            "seed": 271828,
+            "error": "...ex/taptap-sea/scripts/tests\\Circle1A3ExperienceTests.lua:143: moving scope cone did not reveal any normal-population fish",
+            "passed": false
+          }
+        ],
+        "nativeHumanPlayMeasured": false,
+        "syntheticNormalRouteFishOrSignalsUsed": false,
+        "experienceSeed": 271828
+      }
+    }
+  ],
+  "passed": false,
+  "verificationKind": "pure-Lua/Lupa runtime; no native player or engine UI"
+}

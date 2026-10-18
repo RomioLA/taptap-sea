@@ -57,7 +57,11 @@ end
 local function button(root,text,first)
     local found
     walk(root,function(widget)
-        if widget.kind=="Button" and widget.props.text==text and (not first or not found) then found=widget end
+        local actual=widget.kind=="Button" and widget.props.text or nil
+        local costSuffix=" · "
+        local matches=actual==text or (type(actual)=="string" and actual:sub(1,#text)==text
+            and actual:sub(#text+1,#text+#costSuffix)==costSuffix)
+        if matches and (not first or not found) then found=widget end
     end,true)
     assert(found,"missing visible button: "..text)
     assert(not found.disabled,"disabled button: "..text)
@@ -80,8 +84,8 @@ test("HUD always visible information, host subtree and core button wiring",funct
     local mock=store(); local parent=UI.Panel{}
     local loop,hud,update,stop=Bootstrap.Init{store=mock,parent=parent}
     eq(#parent.children,1); eq(loop.loading,false)
-    contains(hud.root,"第 1 天"); contains(hud.root,"白天"); contains(hud.root,"120")
-    contains(hud.root,"100/100"); contains(hud.root,"钱：100"); contains(hud.root,"2 / 5")
+    contains(hud.root,"第 1 天"); contains(hud.root,"白天"); contains(hud.root,"60")
+    contains(hud.root,"体力 100/100")
     contains(hud.root,"苹果"); contains(hud.root,"鱼饵"); contains(hud.root,"暂停：port")
     button(hud.root,"收起信息")
     assert(hasButton(hud.root,"港口商店"),"the collapsed port-shop entry must be available in port")
@@ -104,7 +108,7 @@ end)
 
 test("forced return modal and failed save retry through actual callbacks",function()
     local mock=store(); local loop,hud,update=Bootstrap.Init{store=mock}
-    button(hud.root,"出航"); update(180)
+    button(hud.root,"出航"); update(loop.clock.daySec + loop.clock.nightSec)
     contains(hud.root,"夜深了，你必须返港。"); button(hud.root,"确认返港")
     eq(loop.player.day,2); eq(loop.player.stamina,50); eq(#mock.saves,1)
     mock.callbacks[1](false,"offline"); hud.Refresh(); contains(hud.root,"保存失败")
@@ -146,11 +150,13 @@ test("debug restricted to development, config steps and freeze during save",func
     assert(debug:Execute("clearInventory")); eq(#loop.player.inventory:GetItems(),0)
     for _,id in ipairs({"apple","bait","sardine","tuna"}) do assert(debug:Execute("addItem",id)) end
     eq(#loop.player.inventory:GetItems(),4)
-    assert(debug:Execute("seekNight",55)); eq(loop.clock.elapsed,55)
-    eq(debug:Execute("seekNight",61),false); eq(loop.clock.elapsed,55)
+    local nightTestElapsed = loop.clock.nightSec - 5
+    assert(debug:Execute("seekNight",nightTestElapsed)); eq(loop.clock.elapsed,nightTestElapsed)
+    eq(debug:Execute("seekNight",loop.clock.nightSec + 1),false); eq(loop.clock.elapsed,nightTestElapsed)
     assert(debug:Execute("timeScale",20)); eq(loop.clock.timeScale,20)
     assert(debug:Execute("pauseReasons")); assert(debug:Execute("settleDay"))
-    eq(loop.player.stamina,75)
+    eq(loop.player.stamina,math.max(0, Config.initial.stamina
+        - (nightTestElapsed - Config.clock.graceSec) * Config.clock.penaltyPerSec))
     eq(debug:Execute("moneyPlus"),false); eq(debug:Execute("clearInventory"),false)
     eq(debug:Execute("seekDay",0),false); eq(loop.player.money,200)
     mock.callbacks[1](true)

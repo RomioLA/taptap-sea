@@ -1,0 +1,147 @@
+[
+  {
+    "path": "outputs/circle1-b3/交付说明.md",
+    "bytes": 14888,
+    "sha256": "840D01D468EC518C15B51ECA0B1D0A6A950684A56F8CBCD1C4BA948A1ED077DB"
+  },
+  {
+    "path": "outputs/circle1-b3/验收清单.md",
+    "bytes": 1717,
+    "sha256": "A2DA1987513701A56C7586BE8D657A4098B2E49D1B5E14341AFB8ACF2A5221FD"
+  },
+  {
+    "path": "outputs/circle1-b3/integration-evidence.json",
+    "bytes": 1322,
+    "sha256": "AF6C4F129345B81F5DFC9D8FD2A16658EA5AC234E9B06E7CBEB02F8AC8D668AD"
+  },
+  {
+    "path": "outputs/circle1-b3/lsp-result.json",
+    "bytes": 5293,
+    "sha256": "818D47FDF6CEAA528C519C5B06BF376D271DE3C4438A69C2116B6DFCA8CD293A"
+  },
+  {
+    "path": "outputs/circle1-b3/preview-status-final.json",
+    "bytes": 2932,
+    "sha256": "74C6414797EC675C6F93B9CA7DEFC1B322FDBFE455DEB0CCE1527035547A28E4"
+  },
+  {
+    "path": "outputs/circle1-b3/protected-before.json",
+    "bytes": 41911,
+    "sha256": "6D90618F181D992FC2D6431245D7D02754F0417466F388355602EBC23578EFBF"
+  },
+  {
+    "path": "outputs/circle1-b3/protected-result.json",
+    "bytes": 978,
+    "sha256": "AC2687E6A994FDB72D76E53D8A0D57D5B8119C643CA9EC321EA7BB91D4F5BFDF"
+  },
+  {
+    "path": "outputs/circle1-b3/regression-console.txt",
+    "bytes": 3802,
+    "sha256": "88B3C0994B8D8729C16FBD183A5859A9059CCBC3F2FEC671BD4917F08AF613D7"
+  },
+  {
+    "path": "outputs/circle1-b3/regression-result.json",
+    "bytes": 144886,
+    "sha256": "15BDC3655272B1E4694CEAB9B382918D932BFAD463B3F6C9C02B0A29F3A0BB57"
+  },
+  {
+    "path": "outputs/circle1-b3/seven-day-evidence.json",
+    "bytes": 14790,
+    "sha256": "EAC503D80962479AD15EDF26F0D7BB627C2C5C47EF4CBF4FC6C679625030EB4C"
+  },
+  {
+    "path": "outputs/circle1-b3/verification-time.json",
+    "bytes": 118,
+    "sha256": "7982253FE0770E1721788C29A8E6474392646DB170C21861912EA94685AED1EA"
+  },
+  {
+    "path": "outputs/circle1-b3/whitespace-result.json",
+    "bytes": 105,
+    "sha256": "B94A3EAAF5AA251DEDE5321384F64390949E43D35D7510F982250DFEEE5BF2CA"
+  },
+  {
+    "path": "scripts/Gameplay/HUD.lua",
+    "bytes": 63198,
+    "sha256": "EEF26ABEE6823E2B91771B798B73AAEB14C8E6B9442072EE7D27DA0F8CE4CDE9"
+  },
+  {
+    "path": "scripts/Gameplay/Inventory.lua",
+    "bytes": 6060,
+    "sha256": "1BAC7C8D4280CBCECA3B6461704AA625143E2D6743FF1C4D18B0F31D67C58D84"
+  },
+  {
+    "path": "scripts/Gameplay/Loop.lua",
+    "bytes": 45664,
+    "sha256": "1C2503CEB918A66193A9BBE40CE6AA1BE2A0A2A7E53ED224A56B9403235B8824"
+  },
+  {
+    "path": "scripts/Gameplay/Persistence.lua",
+    "bytes": 8896,
+    "sha256": "C42172B7260F51E103B51FEF4CAEE268C59F5CFD27B6A2B07C0CAC4E07359034"
+  },
+  {
+    "path": "scripts/Integration/Bridge.lua",
+    "bytes": 10359,
+    "sha256": "528BD55BF63F9E90CF688F801D279DE123E5A767B4EE5D4D60BAF9A688C6FCA0"
+  },
+  {
+    "path": "scripts/Integration/Scene.lua",
+    "bytes": 10666,
+    "sha256": "3F46F8952C1015164E275377B7D124EE8358650E0C3D4C4E8501246021B62D97"
+  },
+  {
+    "path": "scripts/Tests/Circle1B3ClockAsyncTests.lua",
+    "bytes": 10690,
+    "sha256": "64BF42D835029B07CBC2B0FE9FEA075A496656A739F9B142BDDC460C5EA4E0C6"
+  },
+  {
+    "path": "scripts/Tests/Circle1B3CloudTests.lua",
+    "bytes": 8467,
+    "sha256": "1C9A626D9571C01415F8B920540C4618F986F725094C00B0AC4346A222943BEE"
+  },
+  {
+    "path": "scripts/Tests/Circle1B3EconomyTests.lua",
+    "bytes": 16781,
+    "sha256": "553032E4FF17DEE27A084C888EC7F3FDD89FBA3CD2AE97A81261A6BFEF27A5EF"
+  },
+  {
+    "path": "scripts/Tests/Circle1B3Lsp.py",
+    "bytes": 6209,
+    "sha256": "60DFD4ABC7CC4ADA2A21FDFAAA6831C6EB15A989ECC18518C4C9EA3BEA2FC264"
+  },
+  {
+    "path": "scripts/Tests/Circle1B3Run.py",
+    "bytes": 7968,
+    "sha256": "F192780B86E9171DEA1820C016F6AA0E25EC843F59C4A9D5BF6F89F61D0A696B"
+  },
+  {
+    "path": "scripts/Tests/Circle1B3SceneUITests.lua",
+    "bytes": 11276,
+    "sha256": "C78DBA6DF1666E3BDD8488AF2B76F8B50953E03DB9218E01CADD180A558E9EE7"
+  },
+  {
+    "path": "scripts/Tests/Circle1B3SevenDaysTests.lua",
+    "bytes": 19375,
+    "sha256": "26D77E316038D6F90EFC56CDC619AD43ED3B60BFF4F6CF4CD308E608AF75EA96"
+  },
+  {
+    "path": "scripts/Tests/Circle1B3SpatialTests.lua",
+    "bytes": 7001,
+    "sha256": "C3D9E3E5D0CA1917FFBAAD8C960C742BA2B9C99FAADD71478EC3420BC4914584"
+  },
+  {
+    "path": "scripts/Tests/Circle1BFishingFlowTests.lua",
+    "bytes": 31694,
+    "sha256": "6A97A2B36371F9921F42B1959231DFD606DF040C59473ACF12FF57FE8DBBC6B4"
+  },
+  {
+    "path": "scripts/Tests/GameLoopSpec.lua",
+    "bytes": 17119,
+    "sha256": "5D8E95208E1A7CA621183BDD3D8B1F467F7A47C177920498769EC86EAFE3C27F"
+  },
+  {
+    "path": "scripts/Tests/GameLoopUISpec.lua",
+    "bytes": 12801,
+    "sha256": "4790F35844EAEA5024B066582C745D2F95D125192A5745EF7723A62AF205A8D1"
+  }
+]

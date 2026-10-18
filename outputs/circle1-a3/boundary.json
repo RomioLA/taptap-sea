@@ -1,0 +1,22 @@
+{
+  "changed": [
+    "scripts/Ocean/SeaDraw.lua",
+    "scripts/Ocean/SeaRuntime.lua",
+    "scripts/Ocean/World.lua",
+    "scripts/Ocean/SurfaceSignals.lua",
+    "scripts/Ocean/Bootstrap.lua",
+    "scripts/Ocean/Movement.lua"
+  ],
+  "added": [
+    "scripts/tests/Circle1A3ExperienceTests.lua",
+    "scripts/tests/Circle1A3InputTests.lua",
+    "scripts/tests/Circle1A3PortTests.lua",
+    "scripts/tests/Circle1A3RecognitionTests.lua",
+    "scripts/tests/Circle1A3SignalsTests.lua",
+    "scripts/tests/Circle1A3StabilityTests.lua"
+  ],
+  "violations": [],
+  "priorEvidencePreserved": true,
+  "passed": true,
+  "baseline": "start-of-A3 working files, not git HEAD"
+}

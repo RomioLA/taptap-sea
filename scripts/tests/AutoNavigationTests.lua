@@ -871,17 +871,47 @@ function Tests.Run()
     end)
 
     check("real blockers at forty twelve reject safely without moving the ship", function()
+        local diagnostics = {}
         local runtime = Runtime.New({
             initializeRegions = false,
             daySeed = 314159,
-            autoReturnDiagnostic = quietDiagnostic,
+            autoReturnDiagnostic = function(event, fields)
+                diagnostics[#diagnostics + 1] = { event = event, fields = fields }
+            end,
             departure = point(40, 12),
         })
+        local island
+        for _, entity in ipairs(runtime.world.entities) do
+            if entity and entity.blocking == true
+                and entity.position.x == 35 and entity.position.y == 25 then
+                island = entity
+                break
+            end
+        end
+        assert(island, "fixed-seed fixture must include the real blocking island")
+        eq(island.id, "sea-1")
+        eq(island.entityType, "island")
+        eq(island.kind, "fixed")
+        near(island.radius, 12)
+        near(distance(runtime.ship.position, island.position), math.sqrt(194), 0.001,
+            "ship center is 13.93m from island center")
+
         local before = copyPoint(runtime.ship.position)
         local started, reason = runtime:StartAutoReturn()
         eq(started, false)
         eq(reason, "no_viable_detour")
-        eq(runtime:GetAutoReturnFailure(), "no_viable_detour")
+        local state = runtime:GetAutoReturnState()
+        eq(state.phase, "failed")
+        eq(state.failureReason, "no_viable_detour")
+        eq(state.obstacleId, nil, "no waypoint obstacle was selected")
+        eq(state.planCount, 1)
+        eq(#diagnostics, 3)
+        eq(diagnostics[2].event, "AUTO_RETURN_PLAN_FAILED")
+        eq(diagnostics[2].fields.reason, "no_viable_detour")
+        eq(diagnostics[2].fields.obstacleId, nil)
+        eq(diagnostics[2].fields.planCount, 1)
+        eq(diagnostics[3].event, "AUTO_RETURN_FAILED")
+        eq(diagnostics[3].fields.reason, "no_viable_detour")
         eq(runtime.movement.target, nil)
         near(runtime.ship.position.x, before.x)
         near(runtime.ship.position.y, before.y)

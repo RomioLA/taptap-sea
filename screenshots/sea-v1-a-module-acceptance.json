@@ -1,0 +1,63 @@
+{
+  "A_MODULE_ACCEPTANCE": "PASS",
+  "checkedAt": "2026-10-02T11:04:57.921759+08:00",
+  "scope": "A module automated acceptance; hardware/visual validation and named environment issues are separate by user instruction",
+  "checks": {
+    "centralD1D2": true,
+    "logicAndAllLuaSyntax": true,
+    "stabilityAllGroups": true,
+    "allStaticDiagnostics": true,
+    "engineSmokeAllStages": true,
+    "nativeVoyage": true,
+    "noUnexpectedRuntimeErrors": true,
+    "completeCurrentRoundLogs": true,
+    "previewTerminal": true,
+    "sharedMainRestored": true,
+    "protectedFilesAndBEntryUntouched": true,
+    "correctProject": true
+  },
+  "logicTests": 38,
+  "luaSyntaxFiles": 21,
+  "stabilityGroups": 3,
+  "staticErrors": 0,
+  "nativeSession": "3904e5e5-6dcd-419a-b4d4-2c204367e7c5",
+  "nativeSimulatedSec": 180.011,
+  "nativeUpdates": 10517,
+  "nativeRenders": 10516,
+  "ENVIRONMENT_RUNTIME_ISSUE": [
+    "[2026-10-02 10_56_45_975][0] ERROR: Could not find resource Cube/Day/DaySpecularHDR.dds\r",
+    "[2026-10-02 10_56_46_113][0] ERROR: Can not load themis_x64.dll.\r"
+  ],
+  "previewCliResult": "FAIL",
+  "unknownRuntimeErrors": [],
+  "mainSHA256": "45dfcaba2a0f31975db4998debdd5929416ac6f249c5cf113b0e422ec0be6f68",
+  "sourceSHA256": {
+    "scripts\\Main.lua": "45dfcaba2a0f31975db4998debdd5929416ac6f249c5cf113b0e422ec0be6f68",
+    "scripts\\Ocean\\Bootstrap.lua": "028799a65b6dda73006ffb54abb3b440afdfd94a3b4d72a6e419fa8fe9b693f8",
+    "scripts\\Ocean\\Config.lua": "a5280ba354a8db945bd16dd5d9279fadfe68217ce7521d94268294fc28269209",
+    "scripts\\Ocean\\Draw.lua": "bd4d4fea3d8d0184b56d772361fcaed004bbd4b03879df75f5e784f454d6f3b3",
+    "scripts\\Ocean\\Fish.lua": "1edd9ea7122ccf1826a7b11c98cfff2d9a5ac180e9e942d7c9f14143450269c3",
+    "scripts\\Ocean\\FishData.lua": "a237a5b378fe192cb4c7a5d39d8fc704ea8100dda55b825ae0913759cc890473",
+    "scripts\\Ocean\\HUD.lua": "3e54576096a956becc6890a9aae91d1c1b2a781e62afd366658500cc31fff625",
+    "scripts\\Ocean\\Math.lua": "9cb75e3c99f667e1529944db1f777a99cd3a9eab3e45ebed631776b0a22e1a5d",
+    "scripts\\Ocean\\Movement.lua": "cfc0367b584a9b558e53883bbd651c8477ce894322f3c586ac5d3572bd01d425",
+    "scripts\\Ocean\\SeaDebug.lua": "71ca9e7d96be968b078863c75e572c12d7dc4ba1a905e59e9cb59b51c82fe236",
+    "scripts\\Ocean\\SeaDraw.lua": "2fb9e3e7cff0c6e4d185492a610522b9aad0516f75d98ff64482bd8200b47a9d",
+    "scripts\\Ocean\\SeaRuntime.lua": "823fd016e09860d10e142fe620e699727ec220b6bc25df6ca0b38b4f20a125de",
+    "scripts\\Ocean\\SpawnStrategy.lua": "24be0515ed05723e2bdf7d3b501ce898978987bb67a459cc0a1ad8e896114acb",
+    "scripts\\Ocean\\State.lua": "cb95df6447bd3ba046a1d4f1b25d84ec6014756422b9bc7abc46dc0a8ad1db52",
+    "scripts\\Ocean\\World.lua": "4154ccdcb4021e8161e08d87987b6f3263fcc2efed4897e840cd041b81d4defe",
+    "scripts\\SeaPreviewEntry.lua": "6bd8f0140b149d75628424806f3eaf2950f7bfe40d8e9b95614d1b77ce6553fa",
+    "scripts\\tests\\SeaEngineSmoke.lua": "700bdf37e55a805b33eb1950ff73f4110c611637e6dae42a0f85b74efdee6be7",
+    "scripts\\tests\\SeaNativeVoyage.lua": "97927d01a089a7a186631fe09d398e48c6af598fd9a26852e8fba7a53485a145",
+    "scripts\\tests\\SeaNativeVoyageEntry.lua": "3d189d95774b774b3088268800b99785a6862934d9f988028a78df3b292d7faa",
+    "scripts\\tests\\SeaRuntimeTests.lua": "921495e1042c8788ccd875fcb97f4404e6d060ccd8ab204b8cf15dd68aec6083",
+    "scripts\\tests\\SeaStabilityTests.lua": "464e66542dd485ca6f4417a2a486cb199db5bf5dfbadcf39b077198d2c7a9809"
+  },
+  "manualVerificationPending": [
+    "hardware mouse/touch/WASD/arrows",
+    "dead-zone and edge sea/push visuals",
+    "hidden fish/Debug and BIG attraction visual behavior"
+  ],
+  "gitStatus": " M .gitignore\n M scripts/Ocean/Config.lua\n?? docs/SEA_RUNTIME_V1.md\n?? docs/SEA_RUNTIME_V1_ACCEPTANCE.md\n?? docs/SEA_RUNTIME_V1_DECISIONS.md\n?? screenshots/sea-v1-a-module-native-logs-before.json\n?? screenshots/sea-v1-a-module-native-logs.json\n?? screenshots/sea-v1-a-module-native-run-before.json\n?? screenshots/sea-v1-a-module-native-run.json\n?? screenshots/sea-v1-doctor.json\n?? screenshots/sea-v1-logic-tests.json\n?? screenshots/sea-v1-lsp.json\n?? screenshots/sea-v1-native-voyage-interrupted.json\n?? screenshots/sea-v1-native-voyage-launch-before.json\n?? screenshots/sea-v1-native-voyage-logs.json\n?? screenshots/sea-v1-native-voyage-run.json\n?? screenshots/sea-v1-overlap-regression-before.json\n?? screenshots/sea-v1-preview-engine-smoke.json\n?? screenshots/sea-v1-preview-event-before.json\n?? screenshots/sea-v1-preview-events-final.json\n?? screenshots/sea-v1-preview-final.json\n?? screenshots/sea-v1-preview-log-round1.json\n?? screenshots/sea-v1-repair-recheck.json\n?? screenshots/sea-v1-runtime-resource-audit.json\n?? screenshots/sea-v1-stability-tests.json\n?? scripts/Ocean/Bootstrap.lua\n?? scripts/Ocean/Fish.lua\n?? scripts/Ocean/FishData.lua\n?? scripts/Ocean/Math.lua\n?? scripts/Ocean/Movement.lua\n?? scripts/Ocean/SeaDebug.lua\n?? scripts/Ocean/SeaDraw.lua\n?? scripts/Ocean/SeaRuntime.lua\n?? scripts/Ocean/SpawnStrategy.lua\n?? scripts/Ocean/World.lua\n?? scripts/SeaPreviewEntry.lua\n?? scripts/tests/\n?? tests/\n"
+}

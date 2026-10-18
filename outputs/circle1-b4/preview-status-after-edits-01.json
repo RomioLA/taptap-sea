@@ -1,0 +1,7 @@
+{
+  "checked_at": "2026-10-03T11:47:24.7052950+08:00",
+  "tool_status": "unavailable",
+  "action": "No local preview started or refreshed.",
+  "reason": "No Maker status or preview-status tool is exposed to this task; taptap-maker CLI is not on PATH.",
+  "process_alive": "UNDETERMINED"
+}

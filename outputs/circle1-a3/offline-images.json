@@ -1,0 +1,18 @@
+[
+  {
+    "name": "barrel-25m-unknown",
+    "recognized": false,
+    "distanceMeters": 25,
+    "engineScreenshot": false,
+    "kind": "NanoVG render fixture",
+    "png": "barrel-25m-unknown.png"
+  },
+  {
+    "name": "barrel-25m-remembered",
+    "recognized": true,
+    "distanceMeters": 25,
+    "engineScreenshot": false,
+    "kind": "NanoVG render fixture",
+    "png": "barrel-25m-remembered.png"
+  }
+]

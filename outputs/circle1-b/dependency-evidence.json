@@ -1,0 +1,7 @@
+{
+  "lock": "nil",
+  "unlock": "nil",
+  "error": "[string \"<python>\"]:4: attempt to call a nil value (method 'IsPaused')",
+  "callPassed": false,
+  "sceneStateIsPaused": "nil"
+}

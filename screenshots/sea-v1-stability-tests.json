@@ -1,0 +1,41 @@
+{
+  "luaVersion": "Lua 5.4",
+  "tests": [
+    {
+      "name": "four seeded 180-second voyages across regions and mixed frame deltas",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "cleared explored regions do not refill during 180 seconds of same-day return",
+      "error": "",
+      "passed": true
+    },
+    {
+      "name": "twenty daily rebuilds retain fixed objects and discard prior-day dynamic state",
+      "error": "",
+      "passed": true
+    }
+  ],
+  "metrics": {
+    "radius120SardineMean": 15.852777777777778,
+    "radius120TunaMean": 1.5347222222222223,
+    "simulatedSecondsPerVoyage": 180,
+    "dailyRebuilds": 20,
+    "voyageCount": 4,
+    "populationSamples": 720,
+    "sameDayReturnVisits": 9,
+    "debugViewportTunaMean": 0.15416666666666667,
+    "eatenDuringVoyages": 102,
+    "fullAISardineMean": 19.355555555555554,
+    "frozenFrameAssertions": 1597588,
+    "maxLiveEntities": 172,
+    "fullAIAliveMean": 21.47222222222222,
+    "maxFrozenFish": 150,
+    "fullAITunaMean": 2.1166666666666667,
+    "debugViewportSardineMean": 1.4180555555555556
+  },
+  "wallTimeSec": 14.24771039999905,
+  "nativeRenderingPerformanceMeasured": false,
+  "passed": true
+}

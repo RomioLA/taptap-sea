@@ -385,15 +385,17 @@ function Tests.Run()
             assert(runtime.ship ~= previousShip and runtime.world.scopeShip == runtime.ship)
             assert(runtime.surfaceSignals ~= previousSignals and runtime.surfaceSignals.world == currentWorld)
             assert(currentWorld.surfaceSignals == runtime.surfaceSignals)
-            assert(#currentWorld.systems == 3)
+            assert(#currentWorld.systems == 4)
 
-            local entityStateRegistrations, signalRegistrations, frameRegistrations = 0, 0, 0
+            local entityStateRegistrations, signalRegistrations, traceRegistrations, frameRegistrations = 0, 0, 0, 0
             for _, system in ipairs(currentWorld.systems) do
                 if system == EntityStateSystem then entityStateRegistrations = entityStateRegistrations + 1 end
                 if system == runtime.surfaceSignals then signalRegistrations = signalRegistrations + 1 end
+                if system == runtime.traceSystem then traceRegistrations = traceRegistrations + 1 end
                 if system == game.gameplaySystem then frameRegistrations = frameRegistrations + 1 end
             end
-            assert(entityStateRegistrations == 1 and signalRegistrations == 1 and frameRegistrations == 1,
+            assert(entityStateRegistrations == 1 and signalRegistrations == 1
+                and traceRegistrations == 1 and frameRegistrations == 1,
                 "rebuild must register each live System exactly once")
 
             local frameCount = frameLoop.calls
@@ -405,7 +407,7 @@ function Tests.Run()
                 "the current World advances the shared Gameplay loop exactly once")
         end
         metrics.repeatedRebuilds = #oldWorlds
-        return { rebuilds = #oldWorlds, eachCurrentWorldSystemCount = 3,
+        return { rebuilds = #oldWorlds, eachCurrentWorldSystemCount = 4,
             retiredEntityArraysEmpty = true, staleFrameAdvances = 0,
             currentFrameAdvances = frameLoop.calls }
     end)

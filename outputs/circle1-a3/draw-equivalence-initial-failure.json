@@ -1,0 +1,106 @@
+{
+  "scenes": [
+    {
+      "seed": 271828,
+      "departure": 0,
+      "normalPopulation": true,
+      "sameInput": "1000*0.05 sec, keyboard (1,0)",
+      "captures": [
+        {
+          "version": "before",
+          "svgSha256": "040fc0c30e365042479f8816a7b9bd5165f8e5fbe9d27adf48c7b429c9639c3f",
+          "nvgCalls": 917,
+          "birds": 52,
+          "splashes": 3,
+          "entityCount": 118
+        },
+        {
+          "version": "after",
+          "svgSha256": "09ce87124b79a4f16ae6179e6af5a4a12486626726ae80086c5a853c73bb0a75",
+          "nvgCalls": 767,
+          "birds": 0,
+          "splashes": 0,
+          "entityCount": 118
+        }
+      ],
+      "equivalent": false
+    },
+    {
+      "seed": 271828,
+      "departure": 400,
+      "normalPopulation": true,
+      "sameInput": "1000*0.05 sec, keyboard (1,0)",
+      "captures": [
+        {
+          "version": "before",
+          "svgSha256": "09ce87124b79a4f16ae6179e6af5a4a12486626726ae80086c5a853c73bb0a75",
+          "nvgCalls": 767,
+          "birds": 60,
+          "splashes": 2,
+          "entityCount": 121
+        },
+        {
+          "version": "after",
+          "svgSha256": "09ce87124b79a4f16ae6179e6af5a4a12486626726ae80086c5a853c73bb0a75",
+          "nvgCalls": 767,
+          "birds": 0,
+          "splashes": 0,
+          "entityCount": 121
+        }
+      ],
+      "equivalent": false
+    },
+    {
+      "seed": 314159,
+      "departure": 0,
+      "normalPopulation": true,
+      "sameInput": "1000*0.05 sec, keyboard (1,0)",
+      "captures": [
+        {
+          "version": "before",
+          "svgSha256": "75cd5ade5572136f9798e78b9402a836eed6f2d92fde2f6adb63e085845873b3",
+          "nvgCalls": 917,
+          "birds": 40,
+          "splashes": 2,
+          "entityCount": 116
+        },
+        {
+          "version": "after",
+          "svgSha256": "09ce87124b79a4f16ae6179e6af5a4a12486626726ae80086c5a853c73bb0a75",
+          "nvgCalls": 767,
+          "birds": 0,
+          "splashes": 0,
+          "entityCount": 116
+        }
+      ],
+      "equivalent": false
+    },
+    {
+      "seed": 314159,
+      "departure": 400,
+      "normalPopulation": true,
+      "sameInput": "1000*0.05 sec, keyboard (1,0)",
+      "captures": [
+        {
+          "version": "before",
+          "svgSha256": "09ce87124b79a4f16ae6179e6af5a4a12486626726ae80086c5a853c73bb0a75",
+          "nvgCalls": 767,
+          "birds": 42,
+          "splashes": 2,
+          "entityCount": 120
+        },
+        {
+          "version": "after",
+          "svgSha256": "09ce87124b79a4f16ae6179e6af5a4a12486626726ae80086c5a853c73bb0a75",
+          "nvgCalls": 767,
+          "birds": 0,
+          "splashes": 0,
+          "entityCount": 120
+        }
+      ],
+      "equivalent": false
+    }
+  ],
+  "passed": false,
+  "kind": "offline NanoVG recorder with normal seeded Runtime, not native screenshot/FPS"
+}
