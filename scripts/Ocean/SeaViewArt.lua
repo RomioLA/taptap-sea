@@ -951,44 +951,6 @@ local function variantGeometry(entity, center, radius, variant)
     return geometry
 end
 
--- 变体散石：世界椭圆点阵（rx=s*r*0.55 / ry=s*r*0.38），石色填充+深色描边。
-local function drawIslandRock(ctx, movement, center, radius, rock, bounds, airMix, frame)
-    local rx = rock.s * radius * 0.55
-    local ry = rock.s * radius * 0.38
-    local cx = center.x + rock.x * radius
-    local cy = center.y + rock.y * radius
-    local points = {}
-    for index = 0, 7 do
-        local angle = TWO_PI * index / 8
-        points[#points + 1] = addPoint(cx + math.cos(angle) * rx, cy + math.sin(angle) * ry)
-    end
-    if Geometry.WorldBoundsVisible(movement, points) then
-        fillWorldPolygon(ctx, movement, points, rgba({168,160,146,235}, nil, nil, airMix), bounds, nil, frame)
-        strokeWorldPolygon(ctx, movement, points, rgba({110,102,90,215}, nil, nil, airMix), 1.0, bounds, nil, frame)
-    end
-end
-
--- 变体中央石柱（stele 石碑岛）：世界梯形柱体（带上收 altitude）+ 顶面投影填充。
-local function drawIslandPillar(ctx, movement, center, radius, pillar, bounds, airMix, frame)
-    local height = math.min(3.2, radius * 0.55) * (pillar.h or 0.9)
-    local baseX = center.x + (pillar.x or 0) * radius
-    local baseY = center.y + (pillar.y or 0) * radius
-    local bottomHalf = radius * 0.13
-    local topHalf = radius * 0.085
-    local body = {
-        { x = baseX - bottomHalf, y = baseY - bottomHalf * 0.6, altitude = 0 },
-        { x = baseX + bottomHalf, y = baseY - bottomHalf * 0.6, altitude = 0 },
-        { x = baseX + topHalf, y = baseY + topHalf * 0.6, altitude = height },
-        { x = baseX - topHalf, y = baseY + topHalf * 0.6, altitude = height },
-    }
-    if Geometry.WorldBoundsVisible(movement, body) then
-        local projected = Geometry.ProjectPolygon(movement, body, nil, nil, frame)
-        for _, point in ipairs(projected) do includeScreenPoint(bounds, point) end
-        fillPolygon(ctx, projected, rgba({172,164,148,245}, nil, nil, airMix))
-        strokeWorldPolygon(ctx, movement, body, rgba({96,90,78,220}, nil, nil, airMix), 1.1, bounds, nil, frame)
-    end
-end
-
 -- World-space island disc with a projected shoreline and raised, screen-scaled landmarks.
 -- Returns a screen-space envelope for optional depth/occlusion checks.
 function SeaViewArt.Island(ctx, movement, entity, time, airMix)
@@ -1156,42 +1118,41 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
                 clamp(radius * VARIANT_BILLBOARD_RATIO, VARIANT_BILLBOARD_MIN, VARIANT_BILLBOARD_MAX), 1)
         end
     end
-    -- 矢量岸块填色：变体岛延后至此，覆盖立牌成功则跳过（贴图即岛体）。
-    if not hasImage and not (variant and variantBillboard) then
-        for _, poly in ipairs(outerPolys) do
-            local outerScreen = fillWorldPolygon(ctx, movement, poly, shoreColor, bounds, nil, frame)
-            if #outerScreen >= 3 then
-                strokeWorldPolygon(ctx, movement, poly, rgba({160,139,105,190},nil,nil,airMix),1.25,bounds,0,frame)
+    -- 2026-10-19（用户指令「矢量底图删除不叠加」，范围=变体岛六座新岛）：变体岛改为
+    -- 纯贴图渲染——矢量轮廓只作覆盖立牌的**尺寸标准**（上方 vectorBounds），不参与
+    -- 任何绘制：岸块（SAND_SHORE/SAGE_LAND）不填色不描边，丘/树/散石/石柱不绘制。
+    -- 理由：贴图内容主体四周存在透明留边，压不住下层矢量色块，真机呈现「岛心一小团
+    -- 贴图 + 四周大块土黄/橄榄矩形」（01:30 红框 box2/box3/box4，逐通道采样确认即
+    -- 矢量岸块本身）。且 UprightCover 无亚像素剔除（仅 catalog 缺失/图片加载失败才返回
+    -- false，与 Upright 的 UPRIGHT_MIN_PX 不同），真机已验证六岛贴图均可加载，故矢量
+    -- 不保留绘制路径。
+    -- 变体岛散石/石柱的矢量绘制函数（drawIslandRock/drawIslandPillar）同步下线；
+    -- 布点数据仍留在 ISLAND_VARIANTS（若将来恢复矢量路径可直接复用）。
+    -- 映射岛（island_01/02）与圆形岛**不在本次范围**：贴图缺失时仍走矢量岸块兜底。
+    if not variant then
+        if hasImage then
+            for _, poly in ipairs(outerPolys) do
+                for _, point in ipairs(Geometry.ProjectPolygon(movement, poly, 0, nil, frame)) do
+                    includeScreenPoint(bounds, point)
+                end
+            end
+        else
+            for _, poly in ipairs(outerPolys) do
+                local outerScreen = fillWorldPolygon(ctx, movement, poly, shoreColor, bounds, nil, frame)
+                if #outerScreen >= 3 then
+                    strokeWorldPolygon(ctx, movement, poly, rgba({160,139,105,190},nil,nil,airMix),1.25,bounds,0,frame)
+                end
+            end
+            for _, poly in ipairs(landPolys) do
+                local landScreen = fillWorldPolygon(ctx, movement, poly, landColor, bounds, nil, frame)
+                if #landScreen >= 3 then
+                    strokeWorldPolygon(ctx,movement,poly,rgba({107,131,101,170},nil,nil,airMix),1,bounds,0,frame)
+                end
             end
         end
-        for _, poly in ipairs(landPolys) do
-            local landScreen = fillWorldPolygon(ctx, movement, poly, landColor, bounds, nil, frame)
-            if #landScreen >= 3 then
-                strokeWorldPolygon(ctx,movement,poly,rgba({107,131,101,170},nil,nil,airMix),1,bounds,0,frame)
-            end
-        end
-    elseif hasImage then
-        for _, poly in ipairs(outerPolys) do
-            for _, point in ipairs(Geometry.ProjectPolygon(movement, poly, 0, nil, frame)) do
-                includeScreenPoint(bounds, point)
-            end
-        end
-    end
-    local vectorDecorSuppressed = variant and variantBillboard
-    if not vectorDecorSuppressed then
         drawHill(ctx, movement, center, radius, bounds, airMix,geometry.hills,frame,geometry.hillName)
         for _,tree in ipairs(geometry.trees) do
             drawTree(ctx,movement,tree.base,tree.height,bounds,tree.palette,airMix,tree.shape,frame,tree.name)
-        end
-    end
-    -- 2026-10-18：变体岛散石与中央石柱（stele）。rocks 为归一化布点（乘 r），
-    -- pillar 仅 island_stele_v1 装配；纯装饰，零碰撞/半径/玩法改动。
-    if variant and not vectorDecorSuppressed then
-        for _, rock in ipairs(geometry.rocks or {}) do
-            drawIslandRock(ctx, movement, center, radius, rock, bounds, airMix, frame)
-        end
-        if geometry.pillar then
-            drawIslandPillar(ctx, movement, center, radius, geometry.pillar, bounds, airMix, frame)
         end
     end
     -- C2（2026-10-17，用户仲裁批准）：island_01 固定岛饰（OceanComponents sign_* 七件）。

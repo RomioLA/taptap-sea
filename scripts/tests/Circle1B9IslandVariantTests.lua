@@ -5,24 +5,26 @@
 -- Config.world.fixedIslands 独立清单 + World:Init kind="scenery" + blocking=true
 -- （实体阻挡，进 blockingList，island_01/02 同构；A2 冻结契约数 kind=="fixed" 不变）
 -- + ISLAND_VARIANTS 变体数据；渲染=竖幅公告板优先（2026-10-18 真机二轮：Plane
--- 平铺呈漂浮贴图块被否决，改 Upright——contentId 即 catalog 条目名，底沿坐岛心、
--- 高度=clamp(r*0.55, 2.6, 6.0)）、加载失败回退变体矢量轮廓（立牌成功时矢量
--- 丘/树/石/柱抑制）。
+-- 平铺呈漂浮贴图块被否决，改 Upright——contentId 即 catalog 条目名、底沿坐岛心、
+-- 高度=clamp(r*0.55, 2.6, 6.0)）；2026-10-19 用户指令「矢量底图删除不叠加」后，
+-- 变体岛为纯贴图渲染，矢量轮廓只作立牌定尺基准、不再绘制。
 -- 守护契约：
 --   1) 注册与冻结：6 岛全部以 kind="scenery"+blocking=true 注册且 contentId 防重登记；
 --      冻结契约不受影响（fixedObjects 双岛、kind=="fixed" 计数不变）；blockingList
 --      含全部六岛（实体体积）；
 --   2) 立牌优先：绘制时以 contentId 名调用 Upright 恰一次（位置=岛心、高度口径
---      锚定），零 Plane 调用（防回退平铺），且矢量植被被抑制（nvgFill 低于兜底）；
---   3) 矢量兜底：立牌加载失败时 Upright 仍尝试恰一次，零 Plane 调用
---      （不回退 island.png），矢量填充 ≥ 镜像布点下界；
---   4) 轮廓分量：nvgFill 下界 = outline 多边形数 + land + hills + trees + rocks + pillar
---      （镜像 ISLAND_VARIANTS 数据，布点漂移即红）；
---   5) 礁石群：5 个子多边形各自独立成岸块（无 land），beginPath 下界 10；
---   6) 石碑岛：中央石柱 + 双散石确有绘制（pillar 增量高于裸轮廓）；
+--      锚定），零 Plane 调用（防回退平铺）；
+--   3) 立牌失败：仍以 contentId 尝试恰一次、零 Plane，且**矢量零绘制**；
+--   4) 矢量数据完整：轮廓仍投影出有效 cover 矩形（用户钦定「矢量图做尺寸的
+--      标准」——数据是立牌定尺基准，不能随绘制一起删）+ 绘制侧零 fill/零 beginPath；
+--   5) 礁石群：五洲轮廓数据在（cover 有效）、绘制为零；
+--   6) 石碑岛：轮廓数据在、绘制为零；
 --   7) 放置间距：两两岛距 ≥ r_i+r_j+4m，距 island_01/02/barrel ≥ r+r_block+4m；
 --   8) 尺寸比例：Config radius 与镜像一致且 ≤ 贴图外接半径×12/512（island_01 口径）；
 --   9) 零状态改写：Island 不推进 time/世界/船/相机/实体。
+-- 2026-10-19（用户指令「矢量底图删除不叠加」）：变体岛改为纯贴图渲染，矢量
+-- 轮廓只作立牌定尺基准、不参与绘制。契约 3~6 已相应重写——原「矢量兜底必须有
+-- fill」的断言作废，改为「矢量零绘制 + 轮廓数据仍在」。
 -- 与 Circle1B5ComponentPlacementTests（island_01/02 底图+岛饰）/ B6（scenery 投放
 -- 机制）资产作用域互不重叠：本套件守 fixedIslands 清单与 ISLAND_VARIANTS 数据。
 local Tests = {}
@@ -147,6 +149,37 @@ local function drawVariantIsland(entry)
     end)
 end
 
+-- 捕获覆盖立牌的定尺矩形（2026-10-19「矢量底图删除不叠加」后，矢量数据仍须完整
+-- 投影出 cover——它是用户钦定的「矢量图做尺寸的标准」，数据丢了立牌就退化成固定
+-- 高度）。桩 UprightCover 返回 true 只记参数不绘制，故 nvg 计数不受污染。
+local function captureCoverRectangle(entry)
+    local original = ImageArt.UprightCover
+    local captured, captureError = nil, nil
+    ImageArt.UprightCover = function(_, name, cover)
+        if captured == nil then
+            local ok, err = pcall(function()
+                assert(type(cover) == "table" and cover.minX ~= nil and cover.maxX ~= nil
+                    and cover.minY ~= nil and cover.maxY ~= nil,
+                    "cover rectangle missing axes for " .. tostring(name))
+                captured = {
+                    minX = cover.minX, maxX = cover.maxX,
+                    minY = cover.minY, maxY = cover.maxY,
+                }
+            end)
+            if not ok then captureError = err end
+        end
+        return true
+    end
+    local runtime = makeRuntime(vantageOf(entry))
+    local ok, err = pcall(function()
+        SeaViewArt.Island({}, runtime.movement, islandEntity(entry), 0, 0)
+    end)
+    ImageArt.UprightCover = original
+    assert(ok, tostring(err))
+    assert(not captureError, tostring(captureError))
+    return captured
+end
+
 local function captureState(runtime)
     return {
         runtimeTime = runtime.time,
@@ -252,29 +285,29 @@ function Tests.Run(recorder)
                     .. " != " .. expectedHeight)
             assert(planes == 0,
                 variant.contentId .. " must never draw a flat texture plane, got " .. planes)
+            -- 2026-10-19（用户指令「矢量底图删除不叠加」）：变体岛无论立牌成功与否
+            -- 都零矢量绘制——立牌路径与立牌失败路径的 nvgFill 同为 0。
+            -- 旧口径断言「立牌比矢量兜底至少少 hills+trees+rocks+pillar 个 fill」，
+            -- 该差值现恒为 0，故改为直接锁定两条路径各自零填充。
             recorder.reset()
             withBillboardRecorder(true, function()
                 local runtime = makeRuntime(vantageOf(entry))
                 SeaViewArt.Island({}, runtime.movement, islandEntity(entry), 0, 0)
             end)
             local textureFills = recorder.callCount("nvgFill")
-            local vectorEntry = assert(fixedIsland(variant.contentId), variant.contentId .. " missing")
-            recorder.reset()
-            drawVariantIsland(vectorEntry)
-            local vectorFills = recorder.callCount("nvgFill")
-            -- 抑制量下界：立牌路径比兜底至少少 hills+trees+rocks+pillar 个 fill
-            -- （每树/丘实际产主体+高光多个 fill，只做下界；reefcluster 无植被则 0）。
-            local suppressedExpected = variant.hills + variant.trees + variant.rocks + variant.pillar
-            assert(vectorFills - textureFills >= suppressedExpected,
-                variant.contentId .. " billboard must suppress its vector decor: delta "
-                    .. (vectorFills - textureFills) .. " < " .. suppressedExpected)
+            assert(textureFills == 0,
+                variant.contentId .. " drew vector fills on the billboard path: "
+                    .. textureFills .. " (expected 0)")
         end
     end)
 
     check("variant_islands_fallback_to_vector_on_load_failure", function()
-        -- 立牌加载失败回退变体矢量轮廓（与映射岛的「贴图优先/矢量兜底」同构；
-        -- 桩环境无图即此路径）。Upright 以 contentId 尝试恰一次，且零 Plane 调用
+        -- 立牌加载失败时仍以 contentId 尝试恰一次 Upright，且零 Plane 调用
         -- （不回退 island.png，也不回退平铺）。
+        -- 2026-10-19（用户指令「矢量底图删除不叠加」）：变体岛**不再回退矢量岸块**
+        -- ——旧断言「矢量兜底 added no fills → 要求 >0」已作废，改为矢量零绘制。
+        -- 该口径成立的前提：ImageArt.UprightCover 无亚像素剔除（仅 catalog 缺失/图片
+        -- 加载失败才返回 false），故不存在「远处小岛恒失败 → 隐形墙」风险。
         for _, variant in ipairs(VARIANT_MIRROR) do
             local entry = assert(fixedIsland(variant.contentId), variant.contentId .. " missing")
             recorder.reset()
@@ -287,8 +320,9 @@ function Tests.Run(recorder)
                     variant.contentId .. " fallback must not draw any flat plane, got "
                         .. tostring(call.name))
             end
-            assert(recorder.callCount("nvgFill") > 0,
-                variant.contentId .. " vector fallback added no fills")
+            assert(recorder.callCount("nvgFill") == 0,
+                variant.contentId .. " must not paint vector shore blocks on load failure: "
+                    .. recorder.callCount("nvgFill") .. " fills (expected 0)")
         end
     end)
 
@@ -297,35 +331,55 @@ function Tests.Run(recorder)
             local entry = assert(fixedIsland(variant.contentId), variant.contentId .. " missing")
             recorder.reset()
             drawVariantIsland(entry)
-            local expectedFills = variant.outlines + variant.land + variant.hills
-                + variant.trees + variant.rocks + variant.pillar
-            assert(recorder.callCount("nvgFill") >= expectedFills,
-                variant.contentId .. " fills below outline data: " .. recorder.callCount("nvgFill")
-                    .. " < " .. expectedFills)
-            assert(recorder.callCount("nvgBeginPath") >= 2 * (variant.outlines + variant.land),
-                variant.contentId .. " begin paths below outline polygons")
+            -- 2026-10-19（用户指令「矢量底图删除不叠加」）：矢量不再绘制，但矢量
+            -- **数据**必须保留——它是覆盖立牌的尺寸标准（用户原话「矢量图做尺寸的
+            -- 标准」）。故改为锁「矢量轮廓仍投影出有效包围盒」：若 outline/land 布点
+            -- 被清空，cover 矩形会退化，立牌退化为固定高度。
+            -- （ISLAND_VARIANTS 是 SeaViewArt 私有 local，测试不可直接引用，改由
+            --   桩 UprightCover 捕获实际定尺矩形来间接验证数据完整性。）
+            local cover = captureCoverRectangle(entry)
+            assert(cover ~= nil,
+                variant.contentId .. " produced no billboard cover rectangle (vector outline lost)")
+            assert(cover.maxX > cover.minX and cover.maxY > cover.minY,
+                variant.contentId .. " billboard cover rectangle degenerated")
+            -- 绘制侧：矢量零输出。
+            assert(recorder.callCount("nvgFill") == 0,
+                variant.contentId .. " must not paint vector data: "
+                    .. recorder.callCount("nvgFill") .. " fills (expected 0)")
+            assert(recorder.callCount("nvgBeginPath") == 0,
+                variant.contentId .. " must not open vector paths: "
+                    .. recorder.callCount("nvgBeginPath") .. " (expected 0)")
         end
     end)
 
     check("variant_reefcluster_draws_five_independent_shoals", function()
         -- 礁石群：5 个子多边形各自独立成岸块（outline 全收、无 land）。
+        -- 2026-10-19：矢量不绘制后，「绘制五洲」已不成立；保留的是**定尺数据**——
+        -- 五洲轮廓仍须投影出覆盖立牌的包围盒（宽显著大于单洲，否则说明只剩一洲）。
         local variant = assert(variantByContentId("island_reefcluster_v1"), "reefcluster mirror missing")
         local entry = assert(fixedIsland("island_reefcluster_v1"), "reefcluster placement missing")
+        local cover = assert(captureCoverRectangle(entry),
+            "reefcluster must project a billboard cover rectangle from its five shoals")
+        assert(cover.maxX - cover.minX > 0,
+            "reefcluster cover rectangle has no width")
         recorder.reset()
         drawVariantIsland(entry)
-        assert(recorder.callCount("nvgBeginPath") >= variant.outlines * 2,
-            "reefcluster must draw five independent shoals (fill+stroke each)")
-        assert(recorder.callCount("nvgFill") >= variant.outlines,
-            "reefcluster fills below five shoals")
+        assert(recorder.callCount("nvgFill") == 0,
+            "reefcluster must not paint shoals, got " .. recorder.callCount("nvgFill"))
     end)
 
     check("variant_stele_draws_pillar_and_rocks", function()
-        -- 石碑岛：中央石柱 + 双散石（pillar 增量高于裸轮廓+陆地 2 fill）。
+        -- 石碑岛：中央石柱 + 双散石。
+        -- 2026-10-19：矢量不绘制后改为锁「轮廓数据仍在」（cover 矩形有效）+
+        -- 绘制侧为零。石柱/散石布点保留在 ISLAND_VARIANTS 作为矢量资产留档。
         local entry = assert(fixedIsland("island_stele_v1"), "stele placement missing")
+        local cover = assert(captureCoverRectangle(entry),
+            "stele must project a billboard cover rectangle from its outline")
+        assert(cover.maxY - cover.minY > 0, "stele cover rectangle has no height")
         recorder.reset()
         drawVariantIsland(entry)
-        assert(recorder.callCount("nvgFill") >= 5,
-            "stele must fill outline+land+2 rocks+pillar, got " .. recorder.callCount("nvgFill"))
+        assert(recorder.callCount("nvgFill") == 0,
+            "stele must not paint pillar and rocks, got " .. recorder.callCount("nvgFill"))
     end)
 
     check("variant_placement_keeps_clearance", function()
