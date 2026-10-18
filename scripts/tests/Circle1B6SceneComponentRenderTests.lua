@@ -4,7 +4,8 @@
 -- island_02←礁石，由 Circle1B5ComponentPlacementTests 的 ISLAND_BASE_TEXTURES 契约
 -- 守护）。本套件改以夹具清单守护投放机制本身（回填 Config.world.fixedComponents 即可
 -- 复用），生产口径断言礁石/海岸零投放。守护契约：
---   1) 生产零投放：Config.world.fixedComponents 为空，World:Init 后 scenery 仅沉船；
+--   1) 生产零投放：Config.world.fixedComponents 为空，World:Init 后 scenery 为沉船一件
+--      + 六座矢量变体岛（fixedIslands，2026-10-18 新增，kind="scenery" 非阻挡）；
 --      夹具清单下 World:Init 仍以 kind="scenery" 正确注册地表组件（机制不退化）；
 --      冻结契约不受影响：fixedObjects 仍为双岛、kind=="fixed" 仍为 2 岛+宝藏+木桶；
 --   2) 地表贴图：夹具 reef/coast 经 SeaViewArt.Component 走 Plane（catalog 名 +
@@ -136,7 +137,7 @@ function Tests.Run(recorder)
     end
 
     check("scenery_entities_registered_at_world_init", function()
-        -- 生产口径（2026-10-18 真机验收）：礁石/海岸零投放，scenery 仅沉船一件。
+        -- 生产口径（2026-10-18 真机验收）：礁石/海岸零投放，scenery 为沉船 + 六座矢量变体岛。
         assert(#Config.world.fixedComponents == 0,
             "reef/coast must no longer float as surface components (moved to island bases)")
         local production = makeRuntime({ x = 0, y = 0 })
@@ -144,8 +145,8 @@ function Tests.Run(recorder)
         for _, entity in ipairs(production.world.entities) do
             if entity.kind == "scenery" then productionScenery = productionScenery + 1 end
         end
-        assert(productionScenery == #Config.world.fixedWrecks,
-            "production scenery must be the wreck only, got " .. productionScenery)
+        assert(productionScenery == #Config.world.fixedWrecks + #Config.world.fixedIslands,
+            "production scenery must be the wreck + variant islands, got " .. productionScenery)
         -- 机制口径：夹具清单下注册链路不退化（回填条目即复用）。
         withComponentFixtures(function()
             local runtime = makeRuntime({ x = 0, y = 0 })
@@ -181,8 +182,8 @@ function Tests.Run(recorder)
                 if entity.kind == "scenery" then sceneryKind = sceneryKind + 1 end
             end
             assert(fixedKind == 4, "fixed-kind entities must stay 2 islands + treasure + barrel, got " .. fixedKind)
-            assert(sceneryKind == #COMPONENT_FIXTURES + #Config.world.fixedWrecks,
-                "scenery-kind entities must match the fixture + wreck placement lists")
+            assert(sceneryKind == #COMPONENT_FIXTURES + #Config.world.fixedWrecks + #Config.world.fixedIslands,
+                "scenery-kind entities must match the fixture + wreck + variant island placement lists")
         end)
     end)
 

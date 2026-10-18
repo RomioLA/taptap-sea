@@ -706,6 +706,73 @@ local ISLAND_BASE_TEXTURES = {
     island_02 = "reef_rocks_v1",
 }
 
+-- ISLAND_VARIANTS：6 座新岛屿矢量变体数据（2026-10-18，用户指令按图比例矢量化）。
+-- 归一化坐标（[-1,1]）乘各岛世界 radius 得世界偏移；y 为世界北向。
+-- 轮廓按贴图形态手工布点（自动提取被水纹桥接否决，实验记录见工作区
+-- .tmp/island_mask_check2.png）；外接半径锚定贴图实测实体外接半径。
+-- hills: 丘位+h 峰比例（丘高换算 min(4.4, r*0.27)*h）；trees: 树位+s 尺寸比例
+-- （树高 clamp(r*0.30,2.2,5.4)*s）；rocks: 散石+s；pillar: 中央石柱（stele）。
+local ISLAND_VARIANTS = {
+    island_peak_v1 = {
+        radius = 7,
+        landInset = 0.82,
+        outline = {
+            { {x=-0.05, y=0.95}, {x=0.25, y=0.62}, {x=0.55, y=0.30}, {x=0.85, y=0.05}, {x=0.80, y=-0.25}, {x=0.55, y=-0.45}, {x=0.20, y=-0.52}, {x=-0.25, y=-0.50}, {x=-0.60, y=-0.38}, {x=-0.85, y=-0.10}, {x=-0.80, y=0.22}, {x=-0.55, y=0.50}, {x=-0.30, y=0.72} },
+        },
+        hills = { {x=-0.05, y=0.05, h=1.00}, {x=0.35, y=0.25, h=0.45} },
+        trees = { {x=-0.35, y=0.15, s=0.80}, {x=0.25, y=0.45, s=0.70}, {x=-0.15, y=-0.30, s=0.65} },
+        rocks = { {x=0.72, y=0.58, s=0.10}, {x=-0.68, y=0.62, s=0.08} },
+    },
+    island_reefcluster_v1 = {
+        radius = 9,
+        outline = {
+            { {x=-0.68, y=0.48}, {x=-0.52, y=0.58}, {x=-0.38, y=0.50}, {x=-0.42, y=0.34}, {x=-0.60, y=0.32} },
+            { {x=0.02, y=0.62}, {x=0.20, y=0.68}, {x=0.34, y=0.56}, {x=0.22, y=0.44}, {x=0.04, y=0.46} },
+            { {x=-0.38, y=-0.02}, {x=-0.20, y=0.08}, {x=-0.06, y=0.00}, {x=-0.12, y=-0.16}, {x=-0.32, y=-0.14} },
+            { {x=0.28, y=-0.06}, {x=0.46, y=0.02}, {x=0.54, y=-0.14}, {x=0.40, y=-0.26}, {x=0.26, y=-0.20} },
+            { {x=-0.16, y=-0.62}, {x=0.02, y=-0.54}, {x=0.16, y=-0.64}, {x=0.08, y=-0.78}, {x=-0.10, y=-0.76} },
+        },
+    },
+    island_cliff_v1 = {
+        radius = 9,
+        landInset = 0.82,
+        outline = {
+            { {x=-0.32, y=0.78}, {x=0.32, y=0.78}, {x=0.42, y=0.35}, {x=0.24, y=-0.02}, {x=0.50, y=-0.30}, {x=0.46, y=-0.46}, {x=0.08, y=-0.55}, {x=-0.30, y=-0.50}, {x=-0.50, y=-0.28}, {x=-0.26, y=0.02}, {x=-0.44, y=0.38} },
+        },
+        hills = { {x=0.00, y=-0.05, h=1.00} },
+        trees = { {x=-0.20, y=0.45, s=0.40}, {x=0.25, y=0.40, s=0.35} },
+        rocks = { {x=0.62, y=0.55, s=0.10} },
+    },
+    island_stele_v1 = {
+        radius = 4,
+        landInset = 0.82,
+        outline = {
+            { {x=0.00, y=0.42}, {x=0.30, y=0.30}, {x=0.45, y=0.00}, {x=0.30, y=-0.30}, {x=0.00, y=-0.42}, {x=-0.30, y=-0.30}, {x=-0.45, y=0.00}, {x=-0.30, y=0.30} },
+        },
+        rocks = { {x=0.70, y=0.30, s=0.12}, {x=-0.65, y=-0.35, s=0.10} },
+        pillar = {x=0.00, y=0.02, h=0.90},
+    },
+    island_twinhills_v1 = {
+        radius = 10,
+        landInset = 0.82,
+        outline = {
+            { {x=-0.78, y=0.08}, {x=-0.66, y=0.44}, {x=-0.34, y=0.55}, {x=-0.06, y=0.34}, {x=0.22, y=0.50}, {x=0.56, y=0.44}, {x=0.80, y=0.06}, {x=0.58, y=-0.36}, {x=0.05, y=-0.50}, {x=-0.52, y=-0.42} },
+        },
+        hills = { {x=-0.32, y=0.05, h=0.75}, {x=0.30, y=0.05, h=0.65} },
+        trees = { {x=-0.35, y=0.35, s=0.55}, {x=0.30, y=0.35, s=0.50} },
+        rocks = { {x=-0.62, y=-0.45, s=0.08} },
+    },
+    island_sandbar_v1 = {
+        radius = 10,
+        landInset = 0.82,
+        outline = {
+            { {x=0.88, y=0.06}, {x=0.72, y=0.34}, {x=0.26, y=0.46}, {x=-0.28, y=0.44}, {x=-0.72, y=0.22}, {x=-0.86, y=-0.12}, {x=-0.48, y=-0.38}, {x=0.24, y=-0.42}, {x=0.70, y=-0.24} },
+        },
+        trees = { {x=-0.30, y=0.00, s=0.50}, {x=0.10, y=0.15, s=0.45}, {x=0.45, y=-0.10, s=0.40} },
+        rocks = { {x=0.55, y=0.35, s=0.09}, {x=-0.55, y=0.30, s=0.07}, {x=0.10, y=-0.45, s=0.06} },
+    },
+}
+
 local function treeShape(base,heightMeters)
     local crownWidth = heightMeters * 0.38
     local function raised(x,h) return {x=base.x+x,y=base.y,altitude=h} end
@@ -794,6 +861,92 @@ function SeaViewArt.Component(ctx, name, movement, center, sizeMeters, heading, 
     return ImageArt.Plane(ctx, name, movement, center, canvasLength, canvasWidth, heading or 0, 0, alpha)
 end
 
+-- 2026-10-18：6 座新岛屿矢量变体（OceanIslands 藏品，Config.world.fixedIslands 以
+-- kind="scenery" 注册）。世界内形态=矢量（用户指令「在世界生成这几张图的矢量图，
+-- 参考复用现有实体岛屿，矢量绘画根据图中尺寸比例绘制」）： oblique 贴图独立投放
+-- 已被真机验收否决（漂浮贴图块），故变体岛不走贴图层，直接按 ISLAND_VARIANTS
+-- 轮廓比例绘制；贴图经 catalog preload=false 入资产库备用。几何缓存复用
+-- islandGeometry（与圆形岛同键不同构：variant 标记区分），只读渲染零状态改写。
+local function variantGeometry(entity, center, radius, variant)
+    local cached = islandGeometry[entity]
+    if cached and cached.variant == variant and cached.x == center.x
+        and cached.y == center.y and cached.radius == radius then
+        return cached
+    end
+    local geometry = { variant = variant, x = center.x, y = center.y, radius = radius,
+        outerPolys = {}, landPolys = {}, hills = {}, trees = {}, rocks = {}, pillar = nil }
+    for _, poly in ipairs(variant.outline) do
+        local points, land = {}, {}
+        for _, p in ipairs(poly) do
+            points[#points + 1] = addPoint(center.x + p.x * radius, center.y + p.y * radius)
+            land[#land + 1] = addPoint(center.x + p.x * radius * (variant.landInset or 0.82),
+                center.y + p.y * radius * (variant.landInset or 0.82))
+        end
+        geometry.outerPolys[#geometry.outerPolys + 1] = points
+        if variant.landInset then
+            geometry.landPolys[#geometry.landPolys + 1] = land
+        end
+    end
+    local peak = math.min(HILL_PEAK_MAX, radius * HILL_PEAK_RATIO)
+    for _, hill in ipairs(variant.hills or {}) do
+        geometry.hills[#geometry.hills + 1] = {
+            { x = center.x + (hill.x - 0.42) * radius, y = center.y + (hill.y + 0.08) * radius, altitude = 0.15 },
+            { x = center.x + (hill.x + 0.35) * radius, y = center.y + (hill.y + 0.04) * radius, altitude = 0.15 },
+            { x = center.x + hill.x * radius, y = center.y + (hill.y + 0.03) * radius, altitude = peak * hill.h },
+        }
+    end
+    local treeHeight = clamp(radius * 0.30, 2.2, 5.4)
+    for index, tree in ipairs(variant.trees or {}) do
+        local base = localIslandPoint(center, tree.x * radius, tree.y * radius)
+        local height = treeHeight * tree.s
+        geometry.trees[#geometry.trees + 1] = { base = base, height = height,
+            palette = index % 2, name = index % 2 == 0 and "tree_round" or "tree_palm",
+            shape = treeShape(base, height) }
+    end
+    geometry.rocks = variant.rocks or {}
+    geometry.pillar = variant.pillar
+    islandGeometry[entity] = geometry
+    return geometry
+end
+
+-- 变体散石：世界椭圆点阵（rx=s*r*0.55 / ry=s*r*0.38），石色填充+深色描边。
+local function drawIslandRock(ctx, movement, center, radius, rock, bounds, airMix, frame)
+    local rx = rock.s * radius * 0.55
+    local ry = rock.s * radius * 0.38
+    local cx = center.x + rock.x * radius
+    local cy = center.y + rock.y * radius
+    local points = {}
+    for index = 0, 7 do
+        local angle = TWO_PI * index / 8
+        points[#points + 1] = addPoint(cx + math.cos(angle) * rx, cy + math.sin(angle) * ry)
+    end
+    if Geometry.WorldBoundsVisible(movement, points) then
+        fillWorldPolygon(ctx, movement, points, rgba({168,160,146,235}, nil, nil, airMix), bounds, nil, frame)
+        strokeWorldPolygon(ctx, movement, points, rgba({110,102,90,215}, nil, nil, airMix), 1.0, bounds, nil, frame)
+    end
+end
+
+-- 变体中央石柱（stele 石碑岛）：世界梯形柱体（带上收 altitude）+ 顶面投影填充。
+local function drawIslandPillar(ctx, movement, center, radius, pillar, bounds, airMix, frame)
+    local height = math.min(3.2, radius * 0.55) * (pillar.h or 0.9)
+    local baseX = center.x + (pillar.x or 0) * radius
+    local baseY = center.y + (pillar.y or 0) * radius
+    local bottomHalf = radius * 0.13
+    local topHalf = radius * 0.085
+    local body = {
+        { x = baseX - bottomHalf, y = baseY - bottomHalf * 0.6, altitude = 0 },
+        { x = baseX + bottomHalf, y = baseY - bottomHalf * 0.6, altitude = 0 },
+        { x = baseX + topHalf, y = baseY + topHalf * 0.6, altitude = height },
+        { x = baseX - topHalf, y = baseY + topHalf * 0.6, altitude = height },
+    }
+    if Geometry.WorldBoundsVisible(movement, body) then
+        local projected = Geometry.ProjectPolygon(movement, body, nil, nil, frame)
+        for _, point in ipairs(projected) do includeScreenPoint(bounds, point) end
+        fillPolygon(ctx, projected, rgba({172,164,148,245}, nil, nil, airMix))
+        strokeWorldPolygon(ctx, movement, body, rgba({96,90,78,220}, nil, nil, airMix), 1.1, bounds, nil, frame)
+    end
+end
+
 -- World-space island disc with a projected shoreline and raised, screen-scaled landmarks.
 -- Returns a screen-space envelope for optional depth/occlusion checks.
 function SeaViewArt.Island(ctx, movement, entity, time, airMix)
@@ -806,6 +959,10 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     -- 2026-10-18 真机验收：映射岛（ISLAND_BASE_TEXTURES）以 oblique 底图（海岸/礁石）
     -- 替代完整岛 PNG 与 island.png 作岛体底图；未映射岛走原完整 PNG/贴图/矢量口径。
     local baseName = ISLAND_BASE_TEXTURES[entity.contentId or ""]
+    -- 2026-10-18：6 座新岛屿矢量变体（ISLAND_VARIANTS）。变体岛世界内形态=矢量
+    -- （oblique 贴图独立投放已被真机否决）：跳过完整岛 PNG 与贴图 Plane，
+    -- 按变体轮廓比例绘制；贴图在 catalog 备用不参与渲染。
+    local variant = ISLAND_VARIANTS[entity.contentId or ""]
     local probeTotalStop = PerfProbe.Timer()
     -- A complete top-down PNG contains beach, hills, vegetation and static shore
     -- decoration. Skip only their draw cost, before constructing vector geometry.
@@ -813,7 +970,7 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     -- loading takes the original cached/culled vector path below, unchanged.
     local imageSpec = ImageArt.GetSpec("island")
     local probeCompletePngStop = PerfProbe.Timer()
-    local drewCompleteIsland = not baseName and imageSpec and imageSpec.completeIsland
+    local drewCompleteIsland = not baseName and not variant and imageSpec and imageSpec.completeIsland
         and ImageArt.Sprite(ctx, "island", movement,
             center, radius * 2, 0, 0, 1, radius * 2)
     PerfProbe.Sample("islandPng", probeCompletePngStop())
@@ -835,7 +992,10 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     local segmentCount = math.max(16, math.floor(settings.circleSegments or 48))
     ---@type table
     local geometry=islandGeometry[entity]
-    if not geometry or geometry.x~=center.x or geometry.y~=center.y
+    if variant then
+        -- 变体岛：variantGeometry 自带缓存（variant 标记+坐标+半径命中即复用）。
+        geometry = variantGeometry(entity, center, radius, variant)
+    elseif not geometry or geometry.x~=center.x or geometry.y~=center.y
         or geometry.radius~=radius or geometry.segments~=segmentCount then
         geometry={x=center.x,y=center.y,radius=radius,segments=segmentCount,
             outer=circlePoints(center,radius,segmentCount),
@@ -870,6 +1030,9 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
 
     local outerWorld = geometry.outer
     local landWorld = geometry.land
+    -- 变体岛轮廓为多边形组（outline 每子多边形一岸块），圆形岛为单点阵。
+    local outerPolys = geometry.outerPolys or { outerWorld }
+    local landPolys = geometry.landPolys or { landWorld }
     -- 仅替换岛面纹理；保留原岛的高处几何、遮挡、弱键缓存和泡沫。
     -- 方案 A（2026-10-16）：缩放口径从硬编码 0.88（旧版 island.png 的内容比
     -- 900/1024）改为按 catalog 内容主体计算——story 版内容比 730/1024=0.713，
@@ -880,10 +1043,12 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     -- 走 Plane（懒加载+LOD）而非 Sprite（严格 IsLoaded，SeaDebug 切换变体会漏绘）。
     -- 2026-10-18 真机验收：映射岛（ISLAND_BASE_TEXTURES）以 oblique 底图（海岸/礁石）
     -- 替代 island.png 作岛体底图；底图加载失败回退 island.png，再失败走矢量兜底。
+    -- 变体岛（ISLAND_VARIANTS）不走贴图：oblique 独立投放已被真机否决，世界内
+    -- 形态=矢量（hasImage 恒 false；贴图在 catalog preload=false 备用）。
     local baseName = ISLAND_BASE_TEXTURES[entity.contentId or ""]
     local canvasLength, canvasWidth = ImageArt.ContentPlaneSize(baseName or "island", radius * 2)
     local hasImage = false
-    if canvasLength then
+    if not variant and canvasLength then
         hasImage = ImageArt.Plane(ctx, baseName or "island", movement, center,
             canvasLength, canvasWidth, 0, 0)
     end
@@ -897,17 +1062,23 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     PerfProbe.Sample("islandPng", probePngStop())
     local probeVectorStop = PerfProbe.Timer()
     if not hasImage then
-        local outerScreen = fillWorldPolygon(ctx, movement, outerWorld, shoreColor, bounds, nil, frame)
-        if #outerScreen >= 3 then
-            strokeWorldPolygon(ctx, movement, outerWorld, rgba({160,139,105,190},nil,nil,airMix),1.25,bounds,0,frame)
+        for _, poly in ipairs(outerPolys) do
+            local outerScreen = fillWorldPolygon(ctx, movement, poly, shoreColor, bounds, nil, frame)
+            if #outerScreen >= 3 then
+                strokeWorldPolygon(ctx, movement, poly, rgba({160,139,105,190},nil,nil,airMix),1.25,bounds,0,frame)
+            end
         end
-        local landScreen = fillWorldPolygon(ctx, movement, landWorld, landColor, bounds, nil, frame)
-        if #landScreen >= 3 then
-            strokeWorldPolygon(ctx,movement,landWorld,rgba({107,131,101,170},nil,nil,airMix),1,bounds,0,frame)
+        for _, poly in ipairs(landPolys) do
+            local landScreen = fillWorldPolygon(ctx, movement, poly, landColor, bounds, nil, frame)
+            if #landScreen >= 3 then
+                strokeWorldPolygon(ctx,movement,poly,rgba({107,131,101,170},nil,nil,airMix),1,bounds,0,frame)
+            end
         end
     else
-        for _, point in ipairs(Geometry.ProjectPolygon(movement, outerWorld, 0, nil, frame)) do
-            includeScreenPoint(bounds, point)
+        for _, poly in ipairs(outerPolys) do
+            for _, point in ipairs(Geometry.ProjectPolygon(movement, poly, 0, nil, frame)) do
+                includeScreenPoint(bounds, point)
+            end
         end
     end
     drawShoreFoam(ctx, movement, center, radius, finite(time) and time or 0, bounds,frame)
@@ -915,6 +1086,16 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     drawHill(ctx, movement, center, radius, bounds, airMix,geometry.hills,frame,geometry.hillName)
     for _,tree in ipairs(geometry.trees) do
         drawTree(ctx,movement,tree.base,tree.height,bounds,tree.palette,airMix,tree.shape,frame,tree.name)
+    end
+    -- 2026-10-18：变体岛散石与中央石柱（stele）。rocks 为归一化布点（乘 r），
+    -- pillar 仅 island_stele_v1 装配；纯装饰，零碰撞/半径/玩法改动。
+    if variant then
+        for _, rock in ipairs(geometry.rocks or {}) do
+            drawIslandRock(ctx, movement, center, radius, rock, bounds, airMix, frame)
+        end
+        if geometry.pillar then
+            drawIslandPillar(ctx, movement, center, radius, geometry.pillar, bounds, airMix, frame)
+        end
     end
     -- C2（2026-10-17，用户仲裁批准）：island_01 固定岛饰（OceanComponents sign_* 七件）。
     -- 2026-10-18 真机验收改竖幅公告板投影（Upright）：原平铺在世界平面上，棕榈/阔叶

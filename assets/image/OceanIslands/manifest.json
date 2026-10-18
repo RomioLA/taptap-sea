@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "style": "读海日系水彩绘本风，主场景岛屿变体（尖峰主岛/礁石群/悬崖岩柱/石碑微岛/双丘沙湾/沙盘岛），与 OceanComponents/OceanDecor 同代同链派生",
+  "format": "RGBA PNG，直通 Alpha；白底区域增长去底（口径同 component_remove_bg.py）；入库后经 FASTOCTREE 256 色量化",
+  "placement": "2026-10-18 用户指令「和以上会话的岛屿的同样方法处理这几个岛屿图，并在世界生成这几张图的矢量图，参考复用现有实体岛屿，矢量绘画根据图中尺寸比例绘制」：六图去底量化入本目录（catalog preload=false 备用）；世界内以 kind=\"scenery\" 非阻挡装饰实体注册（Config.world.fixedIslands），SeaViewArt.Island 按 ISLAND_VARIANTS 变体数据矢量绘制（轮廓由贴图 content_bounds 比例提取），不走 oblique 贴图独立平铺（真机验收已否决漂浮贴图块形态）",
+  "projection": "Ocean.Projection 世界平面投影（矢量路径与 island_01/02 同构，泡沫环/丘/树/描边全沿用）",
+  "references": [
+    "assets/image/OceanComponents/manifest.json",
+    "scripts/Ocean/SeaViewArt.lua",
+    "scripts/Ocean/ImageArt.lua"
+  ],
+  "assets": {
+    "island_peak_v1": {
+      "path": "image/OceanIslands/island_peak_v1.png",
+      "source": "image/OceanIslands/island_peak_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        39,
+        205,
+        993,
+        805
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.65655517578125,
+      "sha256": "3e97b897f79512c15a7062631f577f34224eb8335b1e31f3145c0092bf092cb3",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "island_variant",
+      "placement": "尖峰主岛（大山丘+密林+沙滩+周礁）（Config.world.fixedIslands kind=scenery 非阻挡装饰实体，SeaViewArt.Island 变体矢量路径按贴图轮廓比例绘制；贴图入 catalog preload=false 备用，世界内不走贴图平铺）",
+      "status": "placed"
+    },
+    "island_reefcluster_v1": {
+      "path": "image/OceanIslands/island_reefcluster_v1.png",
+      "source": "image/OceanIslands/island_reefcluster_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        96,
+        239,
+        930,
+        793
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7305536270141602,
+      "sha256": "d60ee582d11dbdde2372587f76e52efe37a3d42c4b1c75b89d5f8c24c8c33d41",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "island_variant",
+      "placement": "浅滩礁石群（5 块带草礁岩）（Config.world.fixedIslands kind=scenery 非阻挡装饰实体，SeaViewArt.Island 变体矢量路径按贴图轮廓比例绘制；贴图入 catalog preload=false 备用，世界内不走贴图平铺）",
+      "status": "placed"
+    },
+    "island_cliff_v1": {
+      "path": "image/OceanIslands/island_cliff_v1.png",
+      "source": "image/OceanIslands/island_cliff_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        26,
+        188,
+        997,
+        909
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.6162939071655273,
+      "sha256": "f94f9d12a72b9df904088acbe27e4614bc200e8e6bab562eb020b9ba5f48a017",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "island_variant",
+      "placement": "悬崖岩柱岛（层叠绿植岩柱）（Config.world.fixedIslands kind=scenery 非阻挡装饰实体，SeaViewArt.Island 变体矢量路径按贴图轮廓比例绘制；贴图入 catalog preload=false 备用，世界内不走贴图平铺）",
+      "status": "placed"
+    },
+    "island_stele_v1": {
+      "path": "image/OceanIslands/island_stele_v1.png",
+      "source": "image/OceanIslands/island_stele_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        4,
+        222,
+        948,
+        806
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7598342895507812,
+      "sha256": "7a530f0ded8545da351606c99c7ef3314b4bbe4ab911a920ec5a5ac388cdba07",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "island_variant",
+      "placement": "微型石碑岛（沙环+中央石柱）（Config.world.fixedIslands kind=scenery 非阻挡装饰实体，SeaViewArt.Island 变体矢量路径按贴图轮廓比例绘制；贴图入 catalog preload=false 备用，世界内不走贴图平铺）",
+      "status": "placed"
+    },
+    "island_twinhills_v1": {
+      "path": "image/OceanIslands/island_twinhills_v1.png",
+      "source": "image/OceanIslands/island_twinhills_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        43,
+        157,
+        1016,
+        1016
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7264184951782227,
+      "sha256": "c86c4bf6fca2f4aafec9991a7e7ba8b15b41ee830eea9e1ee01c85c20eeed440",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "island_variant",
+      "placement": "双丘沙湾岛（双圆丘+内湾沙滩）（Config.world.fixedIslands kind=scenery 非阻挡装饰实体，SeaViewArt.Island 变体矢量路径按贴图轮廓比例绘制；贴图入 catalog preload=false 备用，世界内不走贴图平铺）",
+      "status": "placed"
+    },
+    "island_sandbar_v1": {
+      "path": "image/OceanIslands/island_sandbar_v1.png",
+      "source": "image/OceanIslands/island_sandbar_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        17,
+        215,
+        1016,
+        1016
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.6166620254516602,
+      "sha256": "cae74fc7b626f833a26659937b5496a96774a3d07681160be0d4f9c2fc8f74ec",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "island_variant",
+      "placement": "沙盘岛（大沙滩+散石+草丛）（Config.world.fixedIslands kind=scenery 非阻挡装饰实体，SeaViewArt.Island 变体矢量路径按贴图轮廓比例绘制；贴图入 catalog preload=false 备用，世界内不走贴图平铺）",
+      "status": "placed"
+    }
+  }
+}

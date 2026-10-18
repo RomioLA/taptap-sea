@@ -26,7 +26,7 @@ ASSETS = ROOT / "assets/image"
 CATALOG = ROOT / "scripts/GeneratedData/OceanImageCatalog.lua"
 MANIFESTS = [ASSETS / "OceanLoop/manifest.json", ASSETS / "OceanReady/manifest.json",
              ASSETS / "OceanStoryLayer/manifest.json", ASSETS / "OceanDecor/manifest.json",
-             ASSETS / "OceanComponents/manifest.json"]
+             ASSETS / "OceanComponents/manifest.json", ASSETS / "OceanIslands/manifest.json"]
 WATERPAPER = ASSETS / "OceanLoop/waterpaper.png"
 WATERPAPER_STORY = ASSETS / "OceanStory_waterpaper_20261005114940.png"
 

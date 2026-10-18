@@ -46,6 +46,7 @@ def catalog_text():
     story = json.loads((ROOT / "assets/image/OceanStoryLayer/manifest.json").read_text(encoding="utf-8"))
     decor = json.loads((ROOT / "assets/image/OceanDecor/manifest.json").read_text(encoding="utf-8"))
     components = json.loads((ROOT / "assets/image/OceanComponents/manifest.json").read_text(encoding="utf-8"))
+    islands = json.loads((ROOT / "assets/image/OceanIslands/manifest.json").read_text(encoding="utf-8"))
     eco = json.loads((OUT / "manifest.json").read_text(encoding="utf-8"))
     # SeaSurface（纯海面 v2，2026-10-17）：屏幕空间材质层，由 tests/prepare_ocean_sea_art.py 入库；
     # 清单缺失时按空合集处理（尚未入库的旧工作区可直接跑本脚本的 eco 部分）。
@@ -55,9 +56,11 @@ def catalog_text():
     # eco/SeaSurface 合集按条目自带 preload（per-entry，如 sea_surface_day/dusk=true、
     # night=false），其余合集沿用既有默认；与 prepare_ocean_ready_art.py 的 catalog_text
     # 保持同构（单一生成器原则：两处输出必须字节一致，任一 --check 才能互证）。
+    # OceanIslands（2026-10-18 六座新岛）：世界内走矢量变体绘制，贴图 preload=false 备用。
     for collection, preload, per_entry in ((loop["assets"], True, False), (ready["assets"], False, False),
                                            (story["assets"], False, False), (decor["assets"], False, False),
-                                           (components["assets"], False, False), (eco["assets"], False, True),
+                                           (components["assets"], False, False), (islands["assets"], False, False),
+                                           (eco["assets"], False, True),
                                            (sea["assets"], False, True)):
         for name, entry in collection.items():
             entries[name] = {**entry, "preload": entry.get("preload", preload) if per_entry else preload}

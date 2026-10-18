@@ -80,6 +80,35 @@ local Config = {
             position = { x = 35, y = 60 }, radius = 3, blocking = false,
             tuningStatus = "C2_PLAYTEST_GEOMETRY" },
     },
+    -- 2026-10-18：6 座新岛屿矢量变体（assets/image/OceanIslands，用户指令
+    -- 「在世界生成这几张图的矢量图，参考复用现有实体岛屿，矢量绘画根据图中
+    -- 尺寸比例绘制」）。与 fixedComponents 同构的独立清单：World:Init 以
+    -- kind="scenery" 注册的非阻挡装饰实体（entityType="island" 复用既有岛屿
+    -- 绘制入口 SeaViewArt.Island，contentId 命中 ISLAND_VARIANTS 走变体矢量
+    -- 路径——oblique 贴图独立投放已被 10-18 真机验收否决，贴图仅入 catalog
+    -- 备用）。半径=贴图实体外接半径×12/512（island_01 口径）取整；坐标满足
+    -- isPositionFree（避 island_01 r12 / island_02 r20 / barrel r2 碰撞圈，
+    -- 彼此视觉间距 ≥ r_i+r_j+4）。放置参数待真机观感调校。
+    fixedIslands = {
+        { entityType = "island", contentId = "island_peak_v1",
+            position = { x = 70, y = 10 }, radius = 7, blocking = false,
+            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+        { entityType = "island", contentId = "island_reefcluster_v1",
+            position = { x = 55, y = -20 }, radius = 9, blocking = false,
+            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+        { entityType = "island", contentId = "island_cliff_v1",
+            position = { x = -30, y = -15 }, radius = 9, blocking = false,
+            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+        { entityType = "island", contentId = "island_stele_v1",
+            position = { x = 20, y = -30 }, radius = 4, blocking = false,
+            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+        { entityType = "island", contentId = "island_twinhills_v1",
+            position = { x = 5, y = 55 }, radius = 10, blocking = false,
+            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+        { entityType = "island", contentId = "island_sandbar_v1",
+            position = { x = -15, y = 40 }, radius = 10, blocking = false,
+            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+    },
 },
     camera = { tuningStatus = "SEA_VIEW_VISUAL_TEST_VALUE",
     minX = 0.35, maxX = 0.65, minY = 0.45, maxY = 0.75,
