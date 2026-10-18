@@ -1027,12 +1027,8 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     end
     local center = entity.position
     local radius = math.max(0.5, finite(entity.radius) and entity.radius or 4)
-    -- 2026-10-18 真机验收：映射岛（ISLAND_BASE_TEXTURES）以 oblique 底图（海岸/礁石）
-    -- 替代完整岛 PNG 与 island.png 作岛体底图；未映射岛走原完整 PNG/贴图/矢量口径。
-    local baseName = ISLAND_BASE_TEXTURES[entity.contentId or ""]
-    -- 2026-10-18：6 座新岛屿矢量变体（ISLAND_VARIANTS）。变体岛世界内形态=矢量
-    -- （oblique 贴图独立投放已被真机否决）：跳过完整岛 PNG 与贴图 Plane，
-    -- 按变体轮廓比例绘制；贴图在 catalog 备用不参与渲染。
+    -- 2026-10-18：6 座新岛屿变体（ISLAND_VARIANTS）。不走完整岛 PNG 早退
+    -- （drewCompleteIsland）；贴图/矢量口径统一在下方底图段（贴图优先、矢量兜底）。
     local variant = ISLAND_VARIANTS[entity.contentId or ""]
     local probeTotalStop = PerfProbe.Timer()
     -- A complete top-down PNG contains beach, hills, vegetation and static shore
@@ -1041,7 +1037,8 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     -- loading takes the original cached/culled vector path below, unchanged.
     local imageSpec = ImageArt.GetSpec("island")
     local probeCompletePngStop = PerfProbe.Timer()
-    local drewCompleteIsland = not baseName and not variant and imageSpec and imageSpec.completeIsland
+    local drewCompleteIsland = not ISLAND_BASE_TEXTURES[entity.contentId or ""] and not variant
+        and imageSpec and imageSpec.completeIsland
         and ImageArt.Sprite(ctx, "island", movement,
             center, radius * 2, 0, 0, 1, radius * 2)
     PerfProbe.Sample("islandPng", probeCompletePngStop())
@@ -1114,16 +1111,19 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     -- 走 Plane（懒加载+LOD）而非 Sprite（严格 IsLoaded，SeaDebug 切换变体会漏绘）。
     -- 2026-10-18 真机验收：映射岛（ISLAND_BASE_TEXTURES）以 oblique 底图（海岸/礁石）
     -- 替代 island.png 作岛体底图；底图加载失败回退 island.png，再失败走矢量兜底。
-    -- 变体岛（ISLAND_VARIANTS）不走贴图：oblique 独立投放已被真机否决，世界内
-    -- 形态=矢量（hasImage 恒 false；贴图在 catalog preload=false 备用）。
+    -- 2026-10-18 晚（用户「对应岛屿素材渲染接入」）：变体岛贴图从备用转正——
+    -- contentId 即 catalog 条目名（island_peak_v1 等 6 条），走同一 Plane 底图
+    -- 路径（世界锚定+内容比对齐+懒加载+LOD）；加载失败不回退 island.png（形态
+    -- 完全不同），直接回退变体矢量轮廓（贴图优先/矢量兜底与映射岛同构）。
     local baseName = ISLAND_BASE_TEXTURES[entity.contentId or ""]
+        or (variant and entity.contentId or nil)
     local canvasLength, canvasWidth = ImageArt.ContentPlaneSize(baseName or "island", radius * 2)
     local hasImage = false
-    if not variant and canvasLength then
+    if canvasLength then
         hasImage = ImageArt.Plane(ctx, baseName or "island", movement, center,
             canvasLength, canvasWidth, 0, 0)
     end
-    if baseName and not hasImage then
+    if baseName and not hasImage and not variant then
         canvasLength, canvasWidth = ImageArt.ContentPlaneSize("island", radius * 2)
         if canvasLength then
             hasImage = ImageArt.Plane(ctx, "island", movement, center,
@@ -1154,13 +1154,18 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     end
     drawShoreFoam(ctx, movement, center, radius, finite(time) and time or 0, bounds,frame)
 
-    drawHill(ctx, movement, center, radius, bounds, airMix,geometry.hills,frame,geometry.hillName)
-    for _,tree in ipairs(geometry.trees) do
-        drawTree(ctx,movement,tree.base,tree.height,bounds,tree.palette,airMix,tree.shape,frame,tree.name)
+    -- 变体岛贴图成功时跳过矢量丘/树/散石/石柱（PNG 完整顶视图自带，避免与贴图
+    -- 内容叠加错位）；泡沫为水域效果保留。非变体岛（映射岛）维持贴图+矢量丘树现状。
+    local vectorDecorSuppressed = variant and hasImage
+    if not vectorDecorSuppressed then
+        drawHill(ctx, movement, center, radius, bounds, airMix,geometry.hills,frame,geometry.hillName)
+        for _,tree in ipairs(geometry.trees) do
+            drawTree(ctx,movement,tree.base,tree.height,bounds,tree.palette,airMix,tree.shape,frame,tree.name)
+        end
     end
     -- 2026-10-18：变体岛散石与中央石柱（stele）。rocks 为归一化布点（乘 r），
     -- pillar 仅 island_stele_v1 装配；纯装饰，零碰撞/半径/玩法改动。
-    if variant then
+    if variant and not hasImage then
         for _, rock in ipairs(geometry.rocks or {}) do
             drawIslandRock(ctx, movement, center, radius, rock, bounds, airMix, frame)
         end

@@ -1,21 +1,25 @@
--- 2026-10-18：6 座新岛屿矢量变体放置契约白盒测试（OceanIslands 批次）。
+-- 2026-10-18：6 座新岛屿变体放置契约白盒测试（OceanIslands 批次）。
 -- 用户指令：「和以上会话的岛屿的同样方法处理这几个岛屿图，并在世界生成这几张图的
--- 矢量图，参考复用现有实体岛屿，矢量绘画根据图中尺寸比例绘制」。落地口径：
--- Config.world.fixedIslands 独立清单 + World:Init kind="scenery" 注册（非阻挡装饰，
--- entityType="island" 复用 SeaViewArt.Island 入口）+ ISLAND_VARIANTS 变体矢量路径
--- （oblique 贴图独立投放已被 10-18 真机验收否决，贴图仅 catalog preload=false 备用）。
+-- 矢量图，参考复用现有实体岛屿，矢量绘画根据图中尺寸比例绘制」；2026-10-18 晚追加
+-- 「做实体体积和对应岛屿素材渲染接入」。落地口径：
+-- Config.world.fixedIslands 独立清单 + World:Init kind="scenery" + blocking=true
+-- （实体阻挡，进 blockingList，island_01/02 同构；A2 冻结契约数 kind=="fixed" 不变）
+-- + ISLAND_VARIANTS 变体数据；渲染=贴图优先（contentId 即 catalog 条目名走 Plane
+-- 世界锚定底图）、加载失败回退变体矢量轮廓（贴图成功时矢量丘/树/石/柱抑制）。
 -- 守护契约：
---   1) 注册与冻结：6 岛全部以 kind="scenery" 注册且 contentId 防重登记；冻结契约不受
---      影响（fixedObjects 双岛、kind=="fixed" 计数不变、blockingList 不含新岛）；
---   2) 世界内形态=矢量：变体岛绘制时对该岛贴图名零 Plane 调用（oblique 独立投放
---      否决口径），且确有矢量填充（nvgFill>0）；
---   3) 轮廓分量：nvgFill 下界 = outline 多边形数 + land + hills + trees + rocks + pillar
+--   1) 注册与冻结：6 岛全部以 kind="scenery"+blocking=true 注册且 contentId 防重登记；
+--      冻结契约不受影响（fixedObjects 双岛、kind=="fixed" 计数不变）；blockingList
+--      含全部六岛（实体体积）；
+--   2) 贴图优先：绘制时以 contentId 名调用 Plane 恰一次，且矢量植被被抑制
+--      （nvgFill 低于兜底路径）；
+--   3) 矢量兜底：贴图加载失败时 Plane 仍尝试恰一次，矢量填充 ≥ 镜像布点下界；
+--   4) 轮廓分量：nvgFill 下界 = outline 多边形数 + land + hills + trees + rocks + pillar
 --      （镜像 ISLAND_VARIANTS 数据，布点漂移即红）；
---   4) 礁石群：5 个子多边形各自独立成岸块（无 land），beginPath 下界 10；
---   5) 石碑岛：中央石柱 + 双散石确有绘制（pillar 增量高于裸轮廓）；
---   6) 放置间距：两两岛距 ≥ r_i+r_j+4m，距 island_01/02/barrel ≥ r+r_block+4m；
---   7) 尺寸比例：Config radius 与镜像一致且 ≤ 贴图外接半径×12/512（island_01 口径）；
---   8) 零状态改写：Island 不推进 time/世界/船/相机/实体。
+--   5) 礁石群：5 个子多边形各自独立成岸块（无 land），beginPath 下界 10；
+--   6) 石碑岛：中央石柱 + 双散石确有绘制（pillar 增量高于裸轮廓）；
+--   7) 放置间距：两两岛距 ≥ r_i+r_j+4m，距 island_01/02/barrel ≥ r+r_block+4m；
+--   8) 尺寸比例：Config radius 与镜像一致且 ≤ 贴图外接半径×12/512（island_01 口径）；
+--   9) 零状态改写：Island 不推进 time/世界/船/相机/实体。
 -- 与 Circle1B5ComponentPlacementTests（island_01/02 底图+岛饰）/ B6（scenery 投放
 -- 机制）资产作用域互不重叠：本套件守 fixedIslands 清单与 ISLAND_VARIANTS 数据。
 local Tests = {}
@@ -81,7 +85,7 @@ local function variantByContentId(contentId)
     return nil
 end
 
--- 观察点：岛体为非阻挡 scenery，停泊点取岛南 25m 可航水域（避开 blocking 碰撞圈）。
+-- 观察点：岛体为阻挡实体，停泊点取岛南 25m 可航水域（避开 blocking 碰撞圈）。
 local function vantageOf(entry)
     return { x = entry.position.x, y = entry.position.y - 25 }
 end
@@ -177,37 +181,78 @@ function Tests.Run(recorder)
                 assert(entity.entityType == "island",
                     entity.contentId .. " must reuse the island entity type")
                 assert(entity.layer == "surface", entity.contentId .. " must be a surface entity")
-                assert(entity.blocking == false, entity.contentId .. " must not block navigation")
+                -- 实体体积（2026-10-18 晚）：blocking=true 进 blockingList，船不可穿越。
+                assert(entity.blocking == true,
+                    entity.contentId .. " must block navigation (solid island volume)")
                 assert(world.fixedContentEntities[entity.contentId] == entity,
                     entity.contentId .. " must register into fixedContentEntities")
                 sceneryCount = sceneryCount + 1
             end
         end
         assert(sceneryCount == 6, "all six variant islands must register, got " .. sceneryCount)
-        -- 冻结契约复核：双岛集 / fixed 计数 / blockingList 均不因本批扩张。
+        -- 冻结契约复核：双岛集 / fixed 计数不因本批扩张（六岛 kind=="scenery"）。
         assert(#Config.world.fixedObjects == 2, "the frozen fixed-object set must stay at two")
         local fixedKind = 0
         for _, entity in ipairs(world.entities) do
             if entity.kind == "fixed" then fixedKind = fixedKind + 1 end
         end
         assert(fixedKind == 4, "kind==fixed count drifted: " .. fixedKind)
+        -- 实体体积：blockingList 必须含全部六岛，且各恰好一次。
+        local blockedVariants = {}
         for _, entity in ipairs(world.blockingList) do
-            assert(not VARIANT_TEXTURE_NAMES[entity.contentId or ""],
-                "variant islands must never enter the blocking list")
+            if entity.contentId and VARIANT_TEXTURE_NAMES[entity.contentId] then
+                blockedVariants[entity.contentId] = (blockedVariants[entity.contentId] or 0) + 1
+            end
+        end
+        for _, variant in ipairs(VARIANT_MIRROR) do
+            assert(blockedVariants[variant.contentId] == 1,
+                variant.contentId .. " must enter the blocking list exactly once, got "
+                    .. tostring(blockedVariants[variant.contentId]))
         end
     end)
 
-    check("variant_islands_draw_vector_without_texture", function()
-        -- oblique 贴图独立投放已被真机验收否决：变体岛世界内形态=矢量，
-        -- 绘制时对该岛贴图名零 Plane 调用，且确有矢量填充。
+    check("variant_islands_draw_texture_plane_first", function()
+        -- 素材渲染接入（2026-10-18 晚）：贴图优先——以 contentId 名走 Plane 世界
+        -- 锚定底图；贴图成功时矢量丘/树/石/柱被抑制（fills 低于兜底路径）。
+        for _, variant in ipairs(VARIANT_MIRROR) do
+            local entry = assert(fixedIsland(variant.contentId), variant.contentId .. " missing")
+            recorder.reset()
+            local textureCalls = withPlaneRecorder(true, function()
+                local runtime = makeRuntime(vantageOf(entry))
+                SeaViewArt.Island({}, runtime.movement, islandEntity(entry), 0, 0)
+            end)
+            assert(countCalls(textureCalls, variant.contentId) == 1,
+                variant.contentId .. " must draw its texture plane exactly once, got "
+                    .. countCalls(textureCalls, variant.contentId))
+            local textureFills
+            recorder.reset()
+            withPlaneRecorder(true, function()
+                local runtime = makeRuntime(vantageOf(entry))
+                SeaViewArt.Island({}, runtime.movement, islandEntity(entry), 0, 0)
+            end)
+            textureFills = recorder.callCount("nvgFill")
+            local vectorEntry = assert(fixedIsland(variant.contentId), variant.contentId .. " missing")
+            recorder.reset()
+            drawVariantIsland(vectorEntry)
+            local vectorFills = recorder.callCount("nvgFill")
+            assert(textureFills < vectorFills,
+                variant.contentId .. " vector decor must be suppressed when the texture draws: "
+                    .. textureFills .. " >= " .. vectorFills)
+        end
+    end)
+
+    check("variant_islands_fallback_to_vector_on_load_failure", function()
+        -- 贴图加载失败回退变体矢量轮廓（与映射岛的「贴图优先/矢量兜底」同构；
+        -- 桩环境无图即此路径）。Plane 以 contentId 尝试恰一次（不回退 island.png）。
         for _, variant in ipairs(VARIANT_MIRROR) do
             local entry = assert(fixedIsland(variant.contentId), variant.contentId .. " missing")
             recorder.reset()
             local calls = drawVariantIsland(entry)
-            assert(countCalls(calls, variant.contentId) == 0,
-                variant.contentId .. " must not draw through the texture plane (vector only)")
+            assert(countCalls(calls, variant.contentId) == 1,
+                variant.contentId .. " fallback must attempt its texture plane once, got "
+                    .. countCalls(calls, variant.contentId))
             assert(recorder.callCount("nvgFill") > 0,
-                variant.contentId .. " vector outline added no fills")
+                variant.contentId .. " vector fallback added no fills")
         end
     end)
 

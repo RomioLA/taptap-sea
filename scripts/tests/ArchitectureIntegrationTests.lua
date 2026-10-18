@@ -31,7 +31,7 @@ function Tests.Run()
     end
     test("shared registry and factory retain entity identity", function()
         local r = runtime()
-        local fish = r:spawnFish("sardine", { x = -30, y = -20 })
+        local fish = r:spawnFish("sardine", { x = -30, y = -32 })
         assert(r.world:GetEntity(fish.id) == fish and r.world:get(fish.id) == fish)
         assert(r.world.entityFactory.nextId - 1 == r.world.nextId)
         assert(fish.fsm == r.behaviors[fish.id].fsm)
@@ -43,7 +43,7 @@ function Tests.Run()
     end)
     test("one automatic fish update per sea substep", function()
         local r = runtime()
-        local fish = r:spawnFish("sardine", { x = -30, y = -20 })
+        local fish = r:spawnFish("sardine", { x = -30, y = -32 })
         local behavior = r.behaviors[fish.id]
         local updates, seconds = 0, 0
         local original = behavior.Update
@@ -150,7 +150,7 @@ function Tests.Run()
         local r = runtime()
         local b = Bridge.New(r)
         assert(b.loop:Depart())
-        local fish = r:spawnFish("sardine", { x = -30, y = -20 })
+        local fish = r:spawnFish("sardine", { x = -30, y = -32 })
         local clockCalls, fishCalls = 0, 0
         local updateLoop = b.loop.Update
         b.loop.Update = function(self, dt, advanceWorld)

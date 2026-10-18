@@ -15,7 +15,10 @@ local function audit(runtime)
         ids[entity.id] = true
         assert(runtime.world:get(entity.id) == entity, "entity lookup mismatch")
         assert(finite(entity.position.x) and finite(entity.position.y) and finite(entity.rotation), "nonfinite transform")
-        if entity.kind ~= "fixed" then
+        if entity.kind ~= "fixed" and not runtime.world.fixedContentEntities[entity.contentId or ""] then
+            -- fixedContentEntities 豁免（2026-10-18 六岛 blocking 化）：固定内容实体
+            -- （沉船/变体岛等）位置由配置定局，不受动态实体自由水域审计约束；
+            -- blocking 岛对自身碰撞圈 isPositionFree 恒 false 属预期。
             assert(runtime.world:isPositionFree(entity.position, entity.radius), "entity outside free sea: "..entity.id)
         end
         if entity.ordinaryFish then
