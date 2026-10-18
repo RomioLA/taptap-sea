@@ -3,7 +3,7 @@
 -- 权威身份是 commit（云构建取 Maker 远端 HEAD）；version 为 .project/project.json 快照。
 return {
     version = "1.0.67",
-    commit = "997c164",
+    commit = "a194a42",
     commitDate = "2026-10-19",
     note = "auto-stamped by prepush_check",
 }
