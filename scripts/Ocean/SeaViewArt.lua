@@ -719,6 +719,8 @@ end
 -- 立牌口径常数见下（变体岛贴图竖幅公告板高度）。
 local HILL_PEAK_MAX, HILL_PEAK_RATIO = 4.4, 0.27
 local VARIANT_BILLBOARD_RATIO, VARIANT_BILLBOARD_MIN, VARIANT_BILLBOARD_MAX = 0.55, 2.6, 6.0
+-- 2026-10-19：变体岛贴图覆盖矢量轮廓时的外扩比例（按矢量岛投影高的百分比）。
+local VARIANT_BILLBOARD_COVER_PAD = 0.04
 
 local function drawHill(ctx, movement, center, radius, bounds, airMix,shapes,frame,imageName)
     if imageName and radius >= 3 then
@@ -1137,8 +1139,26 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     -- 契约直测）。
     local variantBillboard = false
     if variant then
-        variantBillboard = ImageArt.Upright(ctx, entity.contentId, movement, center,
-            clamp(radius * VARIANT_BILLBOARD_RATIO, VARIANT_BILLBOARD_MIN, VARIANT_BILLBOARD_MAX), 1)
+        -- 2026-10-19 真机反馈（红框截图，新接入岛屿全数命中）：按岛半径比例给
+        -- 立牌定高，贴图既盖不住矢量岛、又会随深度缩小成「漂浮贴图块」。改以
+        -- 矢量岛投影包围盒为尺寸标准（用户指令「矢量图做尺寸的标准」）：屏幕
+        -- 空间覆盖模式让贴图内容主体精确铺满矢量轮廓并居中，外扩 4% 掩边；
+        -- 覆盖模式不可用（目录缺失/加载失败）时回退按半径定高的旧立牌口径。
+        local cover
+        if bounds.minX ~= math.huge and bounds.minY ~= math.huge then
+            local pad = math.max(2, (bounds.maxY - bounds.minY) * VARIANT_BILLBOARD_COVER_PAD)
+            cover = {
+                minX = bounds.minX - pad, maxX = bounds.maxX + pad,
+                minY = bounds.minY - pad, maxY = bounds.maxY + pad,
+            }
+        end
+        if cover and type(ImageArt.UprightCover) == "function" then
+            variantBillboard = ImageArt.UprightCover(ctx, entity.contentId, cover, 1)
+        end
+        if not variantBillboard then
+            variantBillboard = ImageArt.Upright(ctx, entity.contentId, movement, center,
+                clamp(radius * VARIANT_BILLBOARD_RATIO, VARIANT_BILLBOARD_MIN, VARIANT_BILLBOARD_MAX), 1)
+        end
     end
     local vectorDecorSuppressed = variant and variantBillboard
     if not vectorDecorSuppressed then

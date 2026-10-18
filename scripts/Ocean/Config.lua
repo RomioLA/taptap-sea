@@ -156,7 +156,9 @@ local Config = {
     -- （.tmp/ripple_alpha_boost.py，笔画核心 alpha>160、接缝保持 0.0），alpha 0.5→0.6。
     -- 随船移动：scrollScale=1 按近水速率随相机横移（与 SeaSurface scroll 同口径，
     -- 1 世界米 = height/viewHeight 屏距）；0=钉死屏幕。
-    seaRipple = { enabled = true, alpha = 0.6, tileScale = 1.0, scrollScale = 1.0 },
+    -- 2026-10-19 真机二轮：白波纹「太淡不明显 + 密度过大」→ alpha 0.6→0.9、
+    -- tileScale 1.0→1.6（瓦片放大，同屏波纹数量降到约 1/2.6，笔画也随之更粗）。
+    seaRipple = { enabled = true, alpha = 0.9, tileScale = 1.6, scrollScale = 1.0 },
     -- 天空图图层（2026-10-18 读海美术接入）：屏幕空间满幅天空贴图，绘于背景渐变
     -- 之上、日月云鸟之下（方案 B：不依赖 scissor，零回归）。昼夜相位复用 seaSurface
     -- 的 duskFrom/duskSpan/nightFade 映射（SkyFrame 委托 SeaSurfaceFrame，仅改写键名

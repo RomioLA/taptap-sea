@@ -60,6 +60,22 @@ local function entityHeading(entity)
     return heading
 end
 
+-- BIRD_SPAN_METERS（2026-10-19 海鸟立牌）：eco_bird_f* 内容主体的世界翼展（米）。
+-- 取 1.8m 与旧 Plane 口径的实际可见翼展对齐（3.2m 画布 × 580/1024 ≈ 1.81m），
+-- 保证本次改造只改投影模式、不改海鸟在画面里的体量，便于真机直接对比。
+local BIRD_SPAN_METERS = 1.8
+-- 立牌水平镜像死区（cos heading 的绝对值）：正前/正后飞时 cos≈0，若跟随符号翻转
+-- 会每帧抖动，故 ±0.26 内一律不翻转（≈ ±15°），保留"明显朝左/朝右"的朝向可读性。
+local BIRD_FLIP_DEADZONE = 0.26
+
+-- 屏幕空间水平朝向：投影为固定偏航（无相机偏航旋转），世界 heading 的屏幕横向
+-- 分量 ∝ cos(heading)。素材头朝 +X，故 cos<0（朝世界 -X）时需水平镜像才朝对方向。
+local function birdFlipsScreen(heading)
+    local cosine = math.cos(heading or 0)
+    if math.abs(cosine) < BIRD_FLIP_DEADZONE then return false end
+    return cosine < 0
+end
+
 -- Keep the existing vector silhouettes, projecting each meter-space path
 -- through the same surface and height occlusion as islands and water.
 local function groundFrame(ctx, movement, point, altitude, callback, extentMeters)
@@ -541,8 +557,11 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
         local radius = entity and (entity.species
             and ((speciesData and speciesData.renderLength) or entity.radius or 1)
             or (entity.radius or 1)) or math.max(3, entry.length or 0)
+        -- 广相剔除高度：立牌海鸟的顶端在 birdAltitude + 立牌高（内容高宽比 < 1，
+        -- 取 BIRD_SPAN_METERS 作保守上界），否则公告板顶部会被地平线遮挡误剔除。
         local altitude = entry.kind == "entity" and entity.entityType == "island" and 5.4
-            or entry.kind == "bird" and Config.visual.projection.birdAltitude or 0
+            or entry.kind == "bird"
+                and (Config.visual.projection.birdAltitude + BIRD_SPAN_METERS) or 0
         if entry.kind == "ship" then
             Art.Boat(ctx, movement, entity, time)
         else
@@ -579,21 +598,31 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
                             { 221, 239, 235, math.floor(alpha * 150) }, 1.2)
                     end
                 elseif entry.kind == "bird" then
-                    local birdAltitude = Config.visual.projection.birdAltitude * (1 - (entry.dive or 0))
-                    -- C2：生态层海鸟三帧（上张翅/展平/下张翅）循环优先；失败按俯冲态
-                    -- 回退 gull_dive（V26 俯冲贴图）或旧 gull 图，再回退矢量。
-                    -- flapScale 振翅节律只作用于回退链——生态三帧自身即振翅帧。
-                    local birdLength = 3.2
-                    local birdSpan = birdLength * (1 - 0.62 * (entry.dive or 0))
-                    if not ImageArt.Plane(ctx, ecoFrameName("eco_bird", time, 0), movement, point,
-                        birdLength, birdSpan, entry.heading, birdAltitude) then
+                    -- 2026-10-19 真机验收：eco_bird_f* 是水彩侧视素材（ART_PIPELINE
+                    -- 合规正视图），按 Plane 平铺在世界平面会被引擎斜投影二次压扁，
+                    -- 真机呈「漂浮贴图块」（用户红框标注）——与 10-18 木桶/岛饰/丘/树
+                    -- 同一病根，改竖幅公告板投影（Upright，与岛饰同一口径）立起。
+                    -- 尺寸口径由「画布米制」改为「内容主体米制」：Upright 的 worldWidth
+                    -- 直接是 catalog 内容框宽度，1.8m 与旧平铺的实际可见翼展
+                    -- （3.2m 画布 × 580/1024 ≈ 1.81m）一致，故本次只改投影模式不改体量。
+                    -- 悬停高度透传为立牌底沿 altitude（否则会站在水面上）；朝向按
+                    -- heading 的屏幕横向分量镜像（固定偏航投影下 ∝ cos(heading)，
+                    -- 死区避免正前/正后飞时来回翻转）。回退链不变：俯视素材
+                    -- gull/gull_dive 保持 Plane（正俯视本就该平铺），再失败走矢量。
+                    local dive = entry.dive or 0
+                    local birdAltitude = Config.visual.projection.birdAltitude * (1 - dive)
+                    local birdWidth = BIRD_SPAN_METERS * (1 - 0.62 * dive)
+                    if not ImageArt.Upright(ctx, ecoFrameName("eco_bird", time, 0), movement,
+                        point, nil, 1, birdWidth, birdAltitude, birdFlipsScreen(entry.heading)) then
                         local flapScale = 1 + math.sin(time * 3.2) * 0.035
-                        local fallback = (entry.dive or 0) > 0.05
+                        local fallback = dive > 0.05
                             and ImageArt.IsLoaded(ctx, "gull_dive") and "gull_dive" or "gull"
+                        local birdLength = 3.2
+                        local birdSpan = birdLength * (1 - 0.62 * dive)
                         if not ImageArt.Plane(ctx, fallback, movement, point, birdLength,
                             birdSpan * flapScale, entry.heading, birdAltitude) then
                             groundFrame(ctx, movement, point, birdAltitude, function(scale, api)
-                                Draw.WorldSeabird(ctx, 0, 0, scale, entry.heading, entry.dive, api)
+                                Draw.WorldSeabird(ctx, 0, 0, scale, entry.heading, dive, api)
                             end)
                         end
                     end
