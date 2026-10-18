@@ -20,6 +20,8 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "assets/image/OceanEco"
 CATALOG = ROOT / "scripts/GeneratedData/OceanImageCatalog.lua"
+SELECTION = ROOT / "docs/art-runtime-selection.json"
+WAVE2_OUT = ROOT / "assets/image/OceanWave2"
 SOURCE_DIR = Path("E:/workbath/Fishing/_gen_eco_v2/final")
 # 基础名 -> 是否需要水平翻转（头朝左 -> 头朝右）
 FRAMES = {
@@ -49,27 +51,42 @@ def catalog_text():
     # 清单缺失时按空合集处理（尚未入库的旧工作区可直接跑本脚本的 eco 部分）。
     sea_manifest = ROOT / "assets/image/SeaSurface/manifest.json"
     sea = json.loads(sea_manifest.read_text(encoding="utf-8")) if sea_manifest.exists() else {"assets": {}}
+    entries = {}
+    # eco/SeaSurface 合集按条目自带 preload（per-entry，如 sea_surface_day/dusk=true、
+    # night=false），其余合集沿用既有默认；与 prepare_ocean_ready_art.py 的 catalog_text
+    # 保持同构（单一生成器原则：两处输出必须字节一致，任一 --check 才能互证）。
+    for collection, preload, per_entry in ((loop["assets"], True, False), (ready["assets"], False, False),
+                                           (story["assets"], False, False), (decor["assets"], False, False),
+                                           (components["assets"], False, False), (eco["assets"], False, True),
+                                           (sea["assets"], False, True)):
+        for name, entry in collection.items():
+            entries[name] = {**entry, "preload": entry.get("preload", preload) if per_entry else preload}
+    selected = json.loads((WAVE2_OUT / "manifest.json").read_text(encoding="utf-8"))["assets"] \
+        if SELECTION.exists() else {}
+    # Keep the current main-branch art decisions: the boat is vector-drawn, and
+    # the island remains a layered base/decor composition. W2 files stay in the
+    # candidate manifest and are still validated, but these two do not replace
+    # their runtime catalog entries.
+    for name, entry in selected.items():
+        if name not in ("boat", "island"):
+            entries[name] = entry
     repeat_names = ("waterpaper", "waterpaper_story", "ocean_tile",
                     "sea_surface_day", "sea_surface_dusk", "sea_surface_night")
     lines = ["-- 自动生成：python3 tests/prepare_ocean_eco_art.py；禁止手工编辑。",
              "-- 只含图片规格，不含实体、玩法数值或更新逻辑。", "return {"]
-    for collection, default_preload in ((loop["assets"], True), (ready["assets"], False),
-                                        (story["assets"], False), (decor["assets"], False),
-                                        (components["assets"], False), (eco["assets"], False),
-                                        (sea["assets"], False)):
-        for name, entry in sorted(collection.items()):
-            size, bounds = entry["size"], entry["content_bounds"]
-            preload = entry.get("preload", default_preload)
-            lines.extend([
-                "    " + name + " = {",
-                "        path = " + json.dumps(entry["path"]) + ",",
-                f"        pixelWidth = {size[0]}, pixelHeight = {size[1]},",
-                f"        contentWidth = {bounds[2] - bounds[0]}, contentHeight = {bounds[3] - bounds[1]},",
-                "        anchorX = 0.5, anchorY = 0.5,",
-                "        preload = " + str(preload).lower() + ",",
-                "        repeatTexture = " + str(name in repeat_names).lower() + ",",
-                "    },",
-            ])
+    for name, entry in sorted(entries.items()):
+        size, bounds = entry["size"], entry["content_bounds"]
+        lines.extend([
+            "    " + name + " = {",
+            "        path = " + json.dumps(entry["path"]) + ",",
+            f"        pixelWidth = {size[0]}, pixelHeight = {size[1]},",
+            f"        contentWidth = {bounds[2] - bounds[0]}, contentHeight = {bounds[3] - bounds[1]},",
+            "        anchorX = 0.5, anchorY = 0.5,",
+            "        preload = " + str(entry["preload"]).lower() + ",",
+            "        repeatTexture = " + str(name in repeat_names).lower() + ",",
+            "        completeIsland = " + str(entry.get("complete_island", False)).lower() + ",",
+            "    },",
+        ])
     lines.append("}")
     return "\n".join(lines) + "\n"
 
