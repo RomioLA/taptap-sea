@@ -225,6 +225,9 @@ function Scene.Start(options)
     oceanOptions.isLocationRecognized = function(contentId)
         return bridge ~= nil and bridge.loop.player:IsRecognized(contentId) == true
     end
+    oceanOptions.isWorldContentMarked = function(contentId)
+        return bridge ~= nil and bridge.loop:IsWorldContentMarked(contentId) == true
+    end
     oceanOptions.beforePointer = function()
         if bridge then bridge:Sync() end
     end
@@ -244,7 +247,13 @@ function Scene.Start(options)
         return { phase = phase, center = state.center, elapsedSec = phase == "aim" and 0 or state.elapsed }
     end
 
+    -- 场景切换时间戳（2026-10-15 卡顿排查）：与音频 initMs、图片 loadMs、
+    -- 操作 wall_ms 共同构成一条墙钟时间线，用于对齐卡顿发生的阶段。
+    local sceneStartMs = (type(os) == "table" and type(os.clock) == "function") and os.clock() * 1000 or nil
     local ok, seaOrError = Diagnostics.Call("Integration", "scene_start", FusedScene.Start, oceanOptions)
+    if sceneStartMs and type(os) == "table" and type(os.clock) == "function" then
+        print(string.format("[Integration] scene_start wallMs=%.1f", (os.clock() * 1000) - sceneStartMs))
+    end
     if not ok then
         if hud then Diagnostics.Call("Integration", "hud_destroy", hud.Destroy) end
         UI.Shutdown()
@@ -294,8 +303,9 @@ function Scene.Start(options)
             initializedBridge.loop:SetMessage("透镜观察未能关闭，请重试关闭场景。")
             return false, scopeReason
         end
+        local loopClosed, loopCloseReason = initializedBridge.loop:Close()
+        if not loopClosed then return false, loopCloseReason or "scene_close_failed" end
         if pendingPointerListener then UI.Input.Off("PointerDown", pendingPointerListener) end
-        initializedBridge.loop:Close()
         uiShutdown = true
         local stopOk, stopError = Diagnostics.Call("Integration", "scene_stop", oceanStop, self)
         if activeSea == self then activeSea = nil end

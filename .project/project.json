@@ -5,29 +5,47 @@
     "id": "340992998"
   },
   "entry": "Main.lua",
-  "version": "1.0.50",
+  "version": "1.0.57",
   "taptap_publish": {
-    "title": "渔夫漂流记",
+    "title": "观鱼读海",
     "description": "扮演一名与老人同行出海的少年，在七天航程中驾驶小船、观察海面与鱼群、撒网捕鱼，并带着渔获回港整理。通过每日航行和交谈，慢慢了解这片海，也看看这趟旅程会走向何处。",
-    "category": "casual",
+    "category": "simulation",
     "screen_orientation": "landscape",
     "collection_type": "sce",
-    "trial_note": "",
+    "trial_note": "全员新手会碰撞出怎么样的车祸现场，欢迎点评，请多指教！",
     "app_platforms": "1,2",
     "app_id": 954419,
     "developer_id": 459714,
-    "miniapp_id": "tapmcafwqun9cspwz9"
+    "miniapp_id": "tapmcafwqun9cspwz9",
+    "gameplay_demo_video_source": "https://tapcode-sce.spark.xd.com/videos/6fb01c73-66b3-4356-b987-3669be7f8a44/1791888019486-uploaded_7db3c6cc.mp4",
+    "release_phase": "public_test"
   },
   "assets": {
-    "icon": "assets/store/icon_512.png",
-    "screenshots": [],
-    "promotional_image": "assets/store/promotional_16x9_1920x1080.jpg"
+    "icon": "./game_material/ICON_2026-10-13T10-44-02_01.png",
+    "screenshots": [
+      "./_uploads/a6891c319e59bf16638d7b955bf031e15c8bd221e74ab3c899a8e95847b7274c.jpg",
+      "./_uploads/cc40277eeace888b4907bff1dde2e063a0a15bee75aad43d0e2e739595ed1151.jpg",
+      "./_uploads/640af5891c2c3268aea78f54a3ca958bb67a10c36f2e54127c591896943cb5fb.jpg"
+    ],
+    "promotional_image": "./game_material/PROMO_2026-10-13T10-48-08_01.jpg",
+    "icon_url": "https://tapcode-sce.spark.xd.com/assets/game_material/观鱼读海/ICON_2026-10-13T10-44-02_01.png",
+    "screenshot_urls": [
+      "https://tapcode-sce.spark.xd.com/assets/game_material/m_009f/a6891c319e59bf16638d7b955bf031e15c8bd221e74ab3c899a8e95847b7274c.jpg",
+      "https://tapcode-sce.spark.xd.com/assets/game_material/m_009f/cc40277eeace888b4907bff1dde2e063a0a15bee75aad43d0e2e739595ed1151.jpg",
+      "https://tapcode-sce.spark.xd.com/assets/game_material/m_009f/640af5891c2c3268aea78f54a3ca958bb67a10c36f2e54127c591896943cb5fb.jpg"
+    ],
+    "promotional_image_url": "https://tapcode-sce.spark.xd.com/assets/game_material/观鱼读海/PROMO_2026-10-13T10-48-08_01.jpg",
+    "cover_vertical": "./.project/game_material/COVER_VERTICAL_2026-10-13T10-49-32_01.png",
+    "cover_vertical_url": "https://tapcode-sce.spark.xd.com/assets/game_material/观鱼读海/COVER_VERTICAL_2026-10-13T10-49-32_01.png",
+    "cover_horizontal": "./.project/game_material/COVER_HORIZONTAL_2026-10-13T10-49-32_01.png",
+    "cover_horizontal_url": "https://tapcode-sce.spark.xd.com/assets/game_material/观鱼读海/COVER_HORIZONTAL_2026-10-13T10-49-32_01.png"
   },
   "metadata": {
-    "updated_at": "2026-10-13T05:19:47.261Z"
+    "updated_at": "2026-10-16T15:34:26.436Z",
+    "promo_dependent_hash": "3ccb6b4718699de02c25d31dbc2af61e"
   },
   "test_qrcode": {
-    "url": "https://tapcode-sce.spark.xd.com/qrcode/m_009f_1791868787133.png",
-    "generated_at": "2026-10-13T05:19:47.261Z"
+    "url": "https://tapcode-sce.spark.xd.com/qrcode/m_009f_1792164866330.png",
+    "generated_at": "2026-10-16T15:34:26.436Z"
   }
 }

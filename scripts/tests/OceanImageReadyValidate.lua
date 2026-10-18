@@ -60,7 +60,8 @@ V.atFrame(125, function()
     for _, sample in ipairs(samples) do
         V.assert(not Art.IsLoaded(Test.context, sample.name), sample.name .. " 停止后释放纹理")
     end
-    V.assert(Art.IsLoaded(Test.scene.context, "boat"), "候选纹理释放不影响正式场景船图")
+    -- 2026-10-16：船贴图移除，改验岛图（preload=true，随正式场景启动加载）。
+    V.assert(Art.IsLoaded(Test.scene.context, "island"), "候选纹理释放不影响正式场景岛图")
 end)
 
 V.atFrame(140, function()

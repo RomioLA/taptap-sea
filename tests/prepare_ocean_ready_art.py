@@ -1,11 +1,18 @@
-"""整理新增航海绘本素材并生成只读运行目录；--check 仅校验，不覆盖文件。"""
+"""整理新增航海绘本素材并生成只读运行目录；--check 仅校验，不覆盖文件。
+
+注意（2026-10-15）：OUT（assets/image/OceanReady）当前是 tests/slim_ocean_art.py
+量化后的 256 色 P 模式瘦身产物；直接运行 prepare() 会以 RGBA 全彩重写这四张图、
+回退 P3 瘦身（体积约 5 倍）。新增素材（如 OceanDecor）只应：
+  1) 用 catalog_text(manifest) 重写 scripts/GeneratedData/OceanImageCatalog.lua；
+  2) 运行 --check 校验清单、PNG、源图与运行目录一致性。
+除非明确要重新导入 OceanReady 源图，否则不要运行 prepare()。
+"""
 import argparse
 import hashlib
 import importlib.util
 import json
 import sys
 from pathlib import Path
-from PIL import Image
 
 sys.dont_write_bytecode = True
 
@@ -29,15 +36,31 @@ def importer():
     return module
 
 
+def image_module():
+    from PIL import Image
+    return Image
+
+
 def catalog_text(manifest):
     existing = json.loads((ROOT / "assets/image/OceanLoop/manifest.json").read_text(encoding="utf-8"))
     story = json.loads((ROOT / "assets/image/OceanStoryLayer/manifest.json").read_text(encoding="utf-8"))
-    entries = {name: {**entry, "preload": preload}
-               for collection, preload in ((existing["assets"], True), (manifest["assets"], False), (story["assets"], False))
-               for name, entry in collection.items()}
-    if SELECTION.exists():
-        selected = json.loads((WAVE2_OUT / "manifest.json").read_text(encoding="utf-8"))
-        entries.update(selected["assets"])
+    decor = json.loads((ROOT / "assets/image/OceanDecor/manifest.json").read_text(encoding="utf-8"))
+    components = json.loads((ROOT / "assets/image/OceanComponents/manifest.json").read_text(encoding="utf-8"))
+    entries = {}
+    for collection, preload in ((existing["assets"], True), (manifest["assets"], False),
+                                (story["assets"], False), (decor["assets"], False),
+                                (components["assets"], False)):
+        for name, entry in collection.items():
+            entries[name] = {**entry, "preload": preload}
+    selected = json.loads((WAVE2_OUT / "manifest.json").read_text(encoding="utf-8"))["assets"] \
+        if SELECTION.exists() else {}
+    # Keep the current main-branch art decisions: the boat is vector-drawn, and
+    # the island remains a layered base/decor composition. W2 files stay in the
+    # candidate manifest and are still validated, but these two do not replace
+    # their runtime catalog entries.
+    for name, entry in selected.items():
+        if name not in ("boat", "island"):
+            entries[name] = entry
     lines = ["-- 自动生成：python3 tests/prepare_ocean_ready_art.py；禁止手工编辑。",
              "-- 只含图片规格，不含实体、玩法数值或更新逻辑。", "return {"]
     for name, entry in sorted(entries.items()):
@@ -61,6 +84,7 @@ def prepare_selected():
     """W2 selection is import input, not an art finalisation or gameplay source."""
     if not SELECTION.exists():
         return
+    Image = image_module()
     module = importer()
     selection = json.loads(SELECTION.read_text(encoding="utf-8"))
     assert selection["status"] == "CURRENT_RUNTIME_CANDIDATE"
@@ -101,6 +125,7 @@ def generate_catalog():
 
 def extend_transparent_rgb(image):
     """保留可见的细描边，只修复高饱和彩点并向零 Alpha 留边扩展 RGB。"""
+    Image = image_module()
     import numpy as np
     from scipy.ndimage import distance_transform_edt
     values = np.array(image.convert("RGBA"))
@@ -123,6 +148,7 @@ def extend_transparent_rgb(image):
 
 
 def prepare():
+    Image = image_module()
     module = importer()
     OUT.mkdir(parents=True, exist_ok=True)
     entries = {}
@@ -167,18 +193,22 @@ def prepare():
 
 
 def check():
+    Image = image_module()
     module = importer()
     manifest = json.loads((OUT / "manifest.json").read_text(encoding="utf-8"))
     existing = json.loads((ROOT / "assets/image/OceanLoop/manifest.json").read_text(encoding="utf-8"))
     story = json.loads((ROOT / "assets/image/OceanStoryLayer/manifest.json").read_text(encoding="utf-8"))
+    decor = json.loads((ROOT / "assets/image/OceanDecor/manifest.json").read_text(encoding="utf-8"))
+    components = json.loads((ROOT / "assets/image/OceanComponents/manifest.json").read_text(encoding="utf-8"))
     full_bleed = ("waterpaper", "waterpaper_story", "ocean_tile")  # 整幅材质，无透明留边契约
     selected = json.loads((WAVE2_OUT / "manifest.json").read_text(encoding="utf-8"))["assets"] if SELECTION.exists() else {}
     # Check legacy files too: overriding a catalog entry never deletes its fallback asset.
     all_assets = list(existing["assets"].items()) + list(manifest["assets"].items()) \
-        + list(story["assets"].items()) + list(selected.items())
+        + list(story["assets"].items()) + list(decor["assets"].items()) \
+        + list(components["assets"].items()) + list(selected.items())
     for name, entry in all_assets:
         path = ROOT / "assets" / entry["path"]
-        if path.is_absolute() and not path.resolve().is_relative_to((ROOT / "assets").resolve()):
+        if not path.resolve().is_relative_to((ROOT / "assets").resolve()):
             raise ValueError("素材路径越界")
         with Image.open(path) as image:
             # P3 瘦身（tests/slim_ocean_art.py）产出 256 色调色板 PNG + tRNS，
@@ -208,6 +238,7 @@ def check():
             assert entry["runtime_bytes"] == (ROOT / "assets" / entry["path"]).stat().st_size
     print(json.dumps({"passed": True, "existing_assets": len(existing["assets"]),
                       "new_assets": len(manifest["assets"]), "story_assets": len(story["assets"]),
+                      "decor_assets": len(decor["assets"]), "component_assets": len(components["assets"]),
                       "selected_assets": len(selected),
                       "catalog": CATALOG.relative_to(ROOT).as_posix()}, ensure_ascii=False))
 

@@ -9,6 +9,7 @@ local FishData = require("Ocean.FishData")
 local FramePerf = require("Ocean.FramePerf")
 local ImageArt = require("Ocean.ImageArt")
 local ArtVariants = require("Ocean.ArtVariants")
+local BuildInfo = require("GeneratedData.BuildInfo")
 
 local SeaDebug = {}
 
@@ -199,6 +200,11 @@ local function updateFishLabels(runtime, pool)
     hideUnusedLabels(pool.entries, used)
 end
 
+local function buildStampText()
+    return string.format("Build v%s · %s · %s", tostring(BuildInfo.version),
+        tostring(BuildInfo.commit), tostring(BuildInfo.commitDate))
+end
+
 local function countsText(runtime)
     local world = runtime.world
     local runningCounts = world and type(world.getCounts) == "function" and world:getCounts() or {}
@@ -321,10 +327,14 @@ function SeaDebug.Create(runtime, options)
         flexDirection = "column",
         gap = 6,
         children = {
+            -- 构建身份戳：PC 预览与真机同屏对读，版本不一致类事故的判读依据。
+            UI.Label { id = "seaDebugBuild", text = buildStampText(), fontSize = 10, fontColor = { 168, 226, 178, 255 } },
             UI.Label { id = "seaDebugPopulation", text = countsText(runtime), fontSize = 10, fontColor = { 220, 237, 239, 255 } },
             UI.Label { id = "seaDebugWorldCounts", text = "World 0  |  dropped 0", fontSize = 10, fontColor = { 180, 207, 216, 255 } },
             UI.Label { id = "seaDebugActivityCounts", text = "World active 0  |  frozen 0", fontSize = 10, fontColor = { 180, 207, 216, 255 } },
             UI.Label { id = "seaDebugPerf", text = "Perf: --", fontSize = 10, fontColor = { 255, 214, 140, 255 } },
+            UI.Label { id = "seaDebugPerfTiming", text = "dt: --", fontSize = 10, fontColor = { 255, 214, 140, 255 } },
+            UI.Label { id = "seaDebugPerfSplit", text = "Upd split: --", fontSize = 10, fontColor = { 255, 214, 140, 255 } },
             row({
                 buildButton("seaDebugUnderwater", "Underwater OFF", function() toggle("showUnderwater") end),
                 buildButton("seaDebugStates", "States OFF", function() toggle("showStates") end),
@@ -426,6 +436,8 @@ function SeaDebug.Create(runtime, options)
     local worldCountsLabel = toolContents:FindById("seaDebugWorldCounts") --[[@as Label?]]
     local activityCountsLabel = toolContents:FindById("seaDebugActivityCounts") --[[@as Label?]]
     local perfLabel = toolContents:FindById("seaDebugPerf") --[[@as Label?]]
+    local perfTimingLabel = toolContents:FindById("seaDebugPerfTiming") --[[@as Label?]]
+    local perfSplitLabel = toolContents:FindById("seaDebugPerfSplit") --[[@as Label?]]
 
     local controller = {}
     controller.refresh = function(dt)
@@ -439,16 +451,46 @@ function SeaDebug.Create(runtime, options)
         if worldCountsLabel and worldCountsLabel:GetText() ~= worldText then worldCountsLabel:SetText(worldText) end
         if activityCountsLabel and activityCountsLabel:GetText() ~= activityText then activityCountsLabel:SetText(activityText) end
 
-        if perfLabel then
+        if perfLabel or perfTimingLabel then
+            -- 快照每窗口只取一次（SnapshotAndReset 会清零累计器），两行标签共用。
             local snapshot = FramePerf.SnapshotAndReset()
-            local perfText = "Perf: waiting first frame"
-            if snapshot then
-                local fillsPerFrame = snapshot.frames > 0
-                    and ImageArt.FillsSnapshotAndReset() / snapshot.frames or 0
-                perfText = string.format("Upd %.1f | Draw %.1f | Fill %d/f | Lua %dKB",
-                    snapshot.updateMs, snapshot.drawMs, math.floor(fillsPerFrame + 0.5), snapshot.luaKB)
+            if perfLabel then
+                local perfText = "Perf: waiting first frame"
+                if snapshot then
+                    local fillsPerFrame = snapshot.frames > 0
+                        and ImageArt.FillsSnapshotAndReset() / snapshot.frames or 0
+                    perfText = string.format("Upd %.1f | Draw %.1f | Fill %d/f | Lua %dKB",
+                        snapshot.updateMs, snapshot.drawMs, math.floor(fillsPerFrame + 0.5), snapshot.luaKB)
+                end
+                if perfLabel:GetText() ~= perfText then perfLabel:SetText(perfText) end
             end
-            if perfLabel:GetText() ~= perfText then perfLabel:SetText(perfText) end
+
+            -- dt 直采行（2026-10-15 卡顿排查）：dtMax≈帧耗时=引擎未钳制 TimeStep；
+            -- dtMax 钉在 ~0.1 而 Upd+Draw 远大于 0.1s = 被钳制（游戏时间慢于墙钟，
+            -- 4s 操作变 6s 的直接机制）。>0.1s 计数为该窗口内被钳帧数。
+            if perfTimingLabel then
+                local timingText = "dt: n/a (os.clock unavailable)"
+                if not FramePerf.IsEnabled() then
+                    timingText = "dt: n/a (os.clock unavailable)"
+                elseif snapshot then
+                    timingText = string.format("dt avg %.3f max %.3f | >0.1s %d/%d | fps %.1f",
+                        snapshot.dtAvg or 0, snapshot.dtMax or 0,
+                        snapshot.dtOverStep or 0, snapshot.frames, snapshot.fps or 0)
+                else
+                    timingText = "dt: waiting first frame"
+                end
+                if perfTimingLabel:GetText() ~= timingText then perfTimingLabel:SetText(timingText) end
+            end
+
+            -- Upd 分段：sim=玩法+海洋模拟，tools=HUD/调试刷新；定位 57ms 级的大头。
+            if perfSplitLabel then
+                local splitText = "Upd split: waiting"
+                if snapshot then
+                    splitText = string.format("Upd split: sim %.1f | tools %.1f | upd %.1f",
+                        snapshot.simMs or 0, snapshot.toolsMs or 0, snapshot.updateMs)
+                end
+                if perfSplitLabel:GetText() ~= splitText then perfSplitLabel:SetText(splitText) end
+            end
         end
 
         updateButtonText(buttons.seaDebugUnderwater, "Underwater " .. (flagValue(runtime, "showUnderwater") and "ON" or "OFF"))

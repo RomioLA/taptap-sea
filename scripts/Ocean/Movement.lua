@@ -124,6 +124,17 @@ function Movement:SetTarget(position)
     return self
 end
 
+-- Stop movement intent and pending collision retreat without changing the
+-- transform, speed level, steering rules, camera, wake or visual turn feedback.
+---@return OceanMovement
+function Movement:Stop()
+    self.target = nil
+    self.pushRemaining = 0
+    self.pushNormal.x, self.pushNormal.y = 0, 0
+    self.ship.isMoving = false
+    return self
+end
+
 -- Reset only the existing ship transform and transient steering feedback. The
 -- owning World/entity, current speed level, and any outside sea state survive.
 ---@param position OceanPoint

@@ -6,6 +6,15 @@
   再生 OceanImageCatalog，保证 --check 全绿；
 - 运行前置：tests/prepare_ocean_ready_art.py 曾运行过（manifest 存在）。
   若之后任何人重跑 prepare（非 check 模式），需再跑一次本脚本。
+
+扩展（2026-10-15，卡顿优化线）：① waterpaper_story 同步降采样 512²（当年只降了
+基础版，story 层漏网）；② manifest 刷新范围扩到 OceanStoryLayer 与 OceanDecor
+（decor 为 10-15 新导入的 AI 水彩岛饰，FASTOCTREE 量化后仍需人工对比画质，
+见 _tmp 试点报告）；③ ocean_tile 未接入（D3 待真机 A/B），不降采样。
+
+扩展（2026-10-16，主场景组件线）：④ manifest 刷新范围扩到 OceanComponents
+（本批 10 件 AI 水彩主场景组件：海岸底图/礁石/沉船/告示牌替换元素，
+与 OceanDecor 同代同链；libimagequant 不可用，沿用 FASTOCTREE）。
 """
 import importlib.util
 import json
@@ -15,8 +24,11 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets/image"
 CATALOG = ROOT / "scripts/GeneratedData/OceanImageCatalog.lua"
-MANIFESTS = [ASSETS / "OceanLoop/manifest.json", ASSETS / "OceanReady/manifest.json"]
+MANIFESTS = [ASSETS / "OceanLoop/manifest.json", ASSETS / "OceanReady/manifest.json",
+             ASSETS / "OceanStoryLayer/manifest.json", ASSETS / "OceanDecor/manifest.json",
+             ASSETS / "OceanComponents/manifest.json"]
 WATERPAPER = ASSETS / "OceanLoop/waterpaper.png"
+WATERPAPER_STORY = ASSETS / "OceanStory_waterpaper_20261005114940.png"
 
 
 def load_module(path, name):
@@ -38,10 +50,17 @@ def collect_targets():
 def downscale_waterpaper():
     image = Image.open(WATERPAPER).convert("RGBA")
     if image.width <= 512:
-        return "already<=512"
-    image = image.resize((512, 512), Image.Resampling.LANCZOS)
-    image.save(WATERPAPER, optimize=True)
-    return "resized 1024->512"
+        base = "already<=512"
+    else:
+        image = image.resize((512, 512), Image.Resampling.LANCZOS)
+        image.save(WATERPAPER, optimize=True)
+        base = "resized 1024->512"
+    story = Image.open(WATERPAPER_STORY).convert("RGBA")
+    if story.width <= 512:
+        return base + " | story already<=512"
+    story = story.resize((512, 512), Image.Resampling.LANCZOS)
+    story.save(WATERPAPER_STORY, optimize=True)
+    return base + " | story resized 1024->512"
 
 
 def quantize(path):
@@ -77,7 +96,7 @@ def main():
     ocean_art = load_module(ROOT / "tests/prepare_ocean_art.py", "ocean_art_import")
     ready_art = load_module(ROOT / "tests/prepare_ocean_ready_art.py", "ocean_ready_import")
 
-    report = {"waterpaper": downscale_waterpaper(), "files": [], "savedKB": 0}
+    report = {"downscale": downscale_waterpaper(), "files": [], "savedKB": 0}
     for path in collect_targets():
         before = path.stat().st_size
         delta = quantize(path)

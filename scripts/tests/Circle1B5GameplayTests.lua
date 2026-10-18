@@ -18,6 +18,7 @@ local function portRuntime(distance)
     function runtime:GetPortPosition() return { x = self.port.x, y = self.port.y } end
     function runtime:ClearMovementTarget() return true end
     function runtime:ResetShipAtPort() self.ship = { x = self.port.x, y = self.port.y }; return true end
+    function runtime:CancelAutoReturn() return true end
     return runtime
 end
 

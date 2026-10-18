@@ -7,6 +7,8 @@ local Runtime = require("Ocean.SeaRuntime")
 local FishData = require("Ocean.FishData")
 local Draw = require("Ocean.Draw")
 local Art = require("Ocean.SeaViewArt")
+local Projection = require("Ocean.Projection")
+local GameClock = require("Gameplay.GameClock")
 local SeaDraw = require("Ocean.SeaDraw")
 
 local function near(actual, expected, tolerance)
@@ -43,6 +45,34 @@ local function snapshot(runtime)
     }
 end
 
+local function captureBackdrop(clock, movement, width, height)
+    local originalEllipse, originalRgba = nvgEllipse, nvgRGBA
+    local ellipses, colors = {}, {}
+    nvgEllipse = function(ctx, x, y, rx, ry)
+        ellipses[#ellipses + 1] = { x = x, y = y, rx = rx, ry = ry }
+        return originalEllipse(ctx, x, y, rx, ry)
+    end
+    nvgRGBA = function(r, g, b, a)
+        colors[#colors + 1] = { r = r, g = g, b = b, a = a }
+        return originalRgba(r, g, b, a)
+    end
+    local ok, err = pcall(function()
+        Art.Backdrop({}, width, height, 0, clock, movement)
+    end)
+    nvgEllipse, nvgRGBA = originalEllipse, originalRgba
+    if not ok then error(err) end
+    return { ellipses = ellipses, colors = colors }
+end
+
+local function findCircle(capture, radius)
+    for _, ellipse in ipairs(capture.ellipses) do
+        if near(ellipse.rx, radius, 0.001) and near(ellipse.ry, radius, 0.001) then
+            return ellipse
+        end
+    end
+    return nil
+end
+
 local function assertUnchanged(before, runtime, label)
     local after = snapshot(runtime)
     assert(after.time == before.time, label .. " changed runtime.time")
@@ -66,6 +96,7 @@ local function wrapDrawMethod(calls, originals, name, key)
     originals[name] = original
     Draw[name] = function(...)
         calls[key] = (calls[key] or 0) + 1
+        if name == "SceneBackdrop" then calls.sceneBackdropArgs = { ... } end
         return original(...)
     end
 end
@@ -156,6 +187,74 @@ function Tests.Run(recorder)
             "the original background sun ellipses were not drawn at their configured center")
         assert(recorder.countEllipseArgs(1, 1, 16, 6, 0.001) == #Config.birds,
             "the original configured birds were not drawn")
+        local sunRadius = math.min(1920 * 0.055, 1080 * 0.065)
+        local moonRadius = sunRadius * 0.78
+        local celestialClock = GameClock.New()
+        celestialClock:Seek("day", celestialClock.daySec * 0.001)
+        local sunrise = captureBackdrop(celestialClock, runtime.movement, 1920, 1080)
+        local sunriseSun = findCircle(sunrise, sunRadius)
+        assert(sunriseSun and sunriseSun.x > 1920 * 0.9,
+            "day progress near zero must place the sun low on the eastern horizon")
+        local sunriseHorizon = Projection.Horizon(runtime.movement, sunriseSun.x)
+        assert(type(sunriseHorizon) == "number", "sunrise did not query the projected sea horizon")
+        assertNear(sunriseSun.y - sunRadius, sunriseHorizon, "sunrise projected horizon", 1)
+
+        celestialClock:Seek("day", celestialClock.daySec * 0.5)
+        local midday = captureBackdrop(celestialClock, runtime.movement, 1920, 1080)
+        local middaySun = findCircle(midday, sunRadius)
+        assert(middaySun and middaySun.x > 1920 * 0.45 and middaySun.x < 1920 * 0.55,
+            "midday sun must be near the center of the sky")
+        assert(middaySun.y < sunriseSun.y - 1080 * 0.1,
+            "midday sun must rise clearly above its sunrise position")
+        local middayRepeat = captureBackdrop(celestialClock, runtime.movement, 1920, 1080)
+        local repeatedSun = findCircle(middayRepeat, sunRadius)
+        assert(repeatedSun and repeatedSun.x == middaySun.x and repeatedSun.y == middaySun.y,
+            "redrawing the same GameClock state must be deterministic")
+        local sunriseTop, middayTop = sunrise.colors[1], midday.colors[1]
+        assert(sunriseTop and middayTop and sunriseTop.r > middayTop.r
+            and sunriseTop.g < middayTop.g and sunriseTop.b < middayTop.b,
+            "sky gradient must warm near dawn and return toward its midday palette")
+
+        celestialClock:Seek("day", celestialClock.daySec * 0.999)
+        local sunset = captureBackdrop(celestialClock, runtime.movement, 1920, 1080)
+        local sunsetSun = findCircle(sunset, sunRadius)
+        assert(sunsetSun and sunsetSun.x < 1920 * 0.1,
+            "day progress near one must place the sun low on the western horizon")
+        local sunsetHorizon = Projection.Horizon(runtime.movement, sunsetSun.x)
+        assert(type(sunsetHorizon) == "number", "sunset did not query the projected sea horizon")
+        assertNear(sunsetSun.y - sunRadius, sunsetHorizon, "sunset projected horizon", 1)
+
+        local moonClock = GameClock.New()
+        moonClock:Seek("night", moonClock.nightSec * 0.25)
+        local moonQuarter = captureBackdrop(moonClock, runtime.movement, 1920, 1080)
+        local quarterMoon = findCircle(moonQuarter, moonRadius)
+        assert(quarterMoon and quarterMoon.x > 1920 * 0.65,
+            "night rendering must draw the moon on the eastern arc")
+        assert(findCircle(moonQuarter, sunRadius) == nil,
+            "night rendering must not draw the dynamic day sun")
+        moonClock:Seek("night", moonClock.nightSec * 0.75)
+        local moonLate = captureBackdrop(moonClock, runtime.movement, 1920, 1080)
+        local lateMoon = findCircle(moonLate, moonRadius)
+        assert(lateMoon and lateMoon.x < quarterMoon.x,
+            "moon position must move with authoritative night progress")
+
+        local pausedClock = GameClock.New()
+        pausedClock:Seek("night", pausedClock.nightSec * 0.37)
+        pausedClock:Pause("celestial-test")
+        local pausedElapsed = pausedClock.elapsed
+        pausedClock:Update(10)
+        local pausedFirst = captureBackdrop(pausedClock, runtime.movement, 1920, 1080)
+        local pausedSecond = captureBackdrop(pausedClock, runtime.movement, 1920, 1080)
+        local firstPausedMoon = findCircle(pausedFirst, moonRadius)
+        local secondPausedMoon = findCircle(pausedSecond, moonRadius)
+        assert(pausedClock.elapsed == pausedElapsed and firstPausedMoon and secondPausedMoon
+            and firstPausedMoon.x == secondPausedMoon.x and firstPausedMoon.y == secondPausedMoon.y,
+            "paused GameClock must freeze celestial position across frames")
+
+        local noClock = captureBackdrop(nil, nil, 1920, 1080)
+        local fallbackSun = findCircle(noClock, sunRadius)
+        assert(fallbackSun and fallbackSun.x == 1920 * 0.76 and fallbackSun.y == 1080 * 0.13,
+            "clockless headless or legacy previews must keep the fixed sun fallback")
         assert(recorder.callCount("nvgScissor") == 0,
             "a scene-wide horizontal scissor must not cut raised island silhouettes")
         local landscapeHorizon = runtime.movement:GetHorizonY()
@@ -196,7 +295,7 @@ function Tests.Run(recorder)
             "offline presentation fixtures changed formal Config fixedObjects")
 
         runtime:setDebugFlag("showUnderwater", false)
-        local clock = require("Gameplay.GameClock").New()
+        local clock = GameClock.New()
         clock:Seek("night", 10)
         clock:Pause("inventory")
         local elapsed = clock.elapsed
@@ -211,8 +310,11 @@ function Tests.Run(recorder)
         assert(clock.elapsed == elapsed and clock.phase == "night" and clock:IsPaused(),
             "rendering mutated the existing gameplay clock")
         assert(calls.nightOverlay == 1, "night rendering must tint the scene exactly once")
-        assert(recorder.countFillColor(table.unpack(nightColor)) == expectedTintCount,
-            "world night grade must be applied once after world objects")
+        assert(calls.sceneBackdropArgs and calls.sceneBackdropArgs[6] == clock
+            and type(calls.sceneBackdropArgs[7]) == "function",
+            "SeaDraw must forward the authoritative Gameplay clock and projected horizon query")
+        assert(recorder.countFillColor(table.unpack(nightColor)) == 1,
+            "night overlay must contribute exactly one tint layer")
         assert(recorder.callCount("nvgSave") == recorder.callCount("nvgRestore"),
             "night tint left the NanoVG state stack unbalanced")
         expectedTintCount = 0
@@ -228,6 +330,11 @@ function Tests.Run(recorder)
             tests = {
                 "draw_is_pure_for_runtime_state",
                 "original_sun_and_birds_reused",
+                "clock_driven_sun_arc_horizon_and_twilight",
+                "clock_driven_moon_replaces_sun_and_tracks_night_progress",
+                "paused_game_clock_freezes_celestial_position",
+                "clockless_preview_keeps_legacy_sun_fallback",
+                "night_overlay_is_drawn_once_after_world_entities",
                 "projected_sea_view_art_apis_reused",
                 "ordinary_fish_hidden_by_default",
                 "show_underwater_draws_both_fixture_fish",

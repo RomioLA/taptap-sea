@@ -170,6 +170,7 @@ function Bridge.New(runtime, options)
     self.loop:EnableWorldActions():BindRuntime(runtime)
     self.loop:BindRuntime(runtime)
     self.game = Game.New(runtime, self.loop)
+    self.game.afterWorldUpdate = function() self:ProcessAutoReturnArrival() end
     self.loop:SetStateObserver(function() self:Sync() end)
 
     self:Sync()
@@ -190,6 +191,12 @@ end
 ---@return boolean, number|string
 function Bridge:Update(dt, axisX, axisY)
     if not isFiniteNumber(dt) or dt < 0 then return false, "invalid_dt" end
+    local keyboardActive = isFiniteNumber(axisX) and math.abs(axisX) > OceanConfig.world.epsilon
+        or isFiniteNumber(axisY) and math.abs(axisY) > OceanConfig.world.epsilon
+    if keyboardActive then
+        local cancelled, reason = self.loop:CancelAutoReturn("keyboard_movement")
+        if not cancelled then return false, reason or "auto_return_cancel_failed" end
+    end
     self.game:Update(dt, axisX, axisY)
     -- 逐帧识别（契约：getter 异常只记一次直至恢复；快照必须每次新鲜）。
     -- GC 优化只做无闭包化（handler 提升），不节流、不改快照语义。
@@ -200,7 +207,8 @@ end
 ---Toggle only the manual pause reason; other pause owners remain intact.
 ---@return boolean, boolean
 function Bridge:TogglePause()
-    self.loop:ToggleManualPause()
+    local toggled, reason = self.loop:ToggleManualPause()
+    if not toggled then return false, reason end
     self:Sync()
     return true, self.loop.clock:IsPaused()
 end
@@ -228,6 +236,8 @@ function Bridge:SetDropTarget(position)
 end
 
 function Bridge:BeginFishing(center)
+    local cancelled, reason = self.loop:CancelAutoReturn("fishing")
+    if not cancelled then return false, reason end
     return assert(self.loop.actions):BeginFishing(center, self.runtime)
 end
 
@@ -257,6 +267,11 @@ end
 -- The consumption return value is the new Ocean input protocol. Clearing its
 -- movement target also protects the older local adapter that ignores this value.
 function Bridge:OnSeaPointer(position)
+    local cancelled, cancelReason = self.loop:CancelAutoReturn("manual_sea_pointer")
+    if not cancelled then
+        self.loop:SetMessage(tostring(cancelReason or "auto_return_cancel_failed"))
+        return true
+    end
     local fishing = self.loop:GetFishingState()
     if fishing.state == "selecting" then
         self.runtime:ClearMovementTarget()
@@ -284,6 +299,63 @@ end
 ---@param locationId string
 ---@param position any
 ---@return boolean, boolean|string
+function Bridge:ProcessAutoReturnArrival()
+    local runtime = self.runtime
+    if type(runtime.ConsumeAutoReturnArrival) ~= "function" then return true end
+    local consumed, arrival = Diagnostics.Call("Integration", "auto_return_consume_arrival",
+        runtime.ConsumeAutoReturnArrival, runtime)
+    if not consumed then return false, "auto_return_arrival_read_failed" end
+    if not arrival then return true end
+    local returnedOk, returned, reason = Diagnostics.Call("Integration", "auto_return_return_to_port",
+        self.loop.ReturnToPort, self.loop)
+    if not returnedOk then reason, returned = returned, false end
+    if returned == true then return true end
+    local failureReason = type(reason) == "string" and reason or "return_to_port_rejected"
+    local rejected, accepted = Diagnostics.Call("Integration", "auto_return_reject_arrival",
+        runtime.RejectAutoReturnArrival, runtime, failureReason)
+    if not rejected or accepted == false then
+        Diagnostics.Event("Integration", "auto_return_arrival_rejection_failed", {
+            kind = "failure", reason = failureReason })
+    end
+    return false, failureReason
+end
+
+function Bridge:RequestAutoReturn()
+    return self.loop:RequestAutoReturn()
+end
+
+function Bridge:CancelAutoReturn(reason)
+    return self.loop:CancelAutoReturn(reason)
+end
+
+function Bridge:GetAutoReturnState()
+    return self.loop:GetAutoReturnState()
+end
+
+function Bridge:GetWorldContentPrompt()
+    return self.loop:GetWorldContentPrompt()
+end
+
+function Bridge:BeginWorldContentAction(contentId, actionKind)
+    return self.loop:BeginWorldContentAction(contentId, actionKind)
+end
+
+function Bridge:CancelWorldContentAction(token, reason)
+    return self.loop:CancelWorldContentAction(token, reason)
+end
+
+function Bridge:GetWorldContentActionState()
+    return self.loop:GetWorldContentActionState()
+end
+
+function Bridge:GetOwnedTreasures()
+    return self.loop:GetOwnedTreasures()
+end
+
+function Bridge:ShowTreasureToElder(treasureId)
+    return self.loop:ShowTreasureToElder(treasureId)
+end
+
 function Bridge:RecognizeLocation(locationId, position)
     if type(locationId) ~= "string" or locationId == "" then
         return false, "invalid_location_id"

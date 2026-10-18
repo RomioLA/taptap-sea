@@ -31,6 +31,7 @@ end
 ---@field seaGeneration number
 ---@field state string
 ---@field elapsed number
+---@field wallStartMs number? 卡顿排查埋点：操作开始墙钟毫秒（os.clock 不可用时为 nil）
 ---@field reason string?
 ---@field result table?
 ---@field rollback table?
@@ -71,6 +72,26 @@ local function fishingCall(record, runtime, name, ...)
     local event = 'fishing_runtime_' .. name
     if record then return recordCall(record, event, runtime[name], runtime, ...) end
     return Diagnostics.Call('Actions', event, runtime[name], runtime, ...)
+end
+-- 墙钟计时埋点（2026-10-15 卡顿排查）：捕鱼 4s 操作实测变 6s 时，
+-- 用 wall_ms（真实耗时）与 game_elapsed（游戏时间）的比值定位是
+-- 「引擎 TimeStep 钳制」还是「计时逻辑本身」。os.clock 不可用时静默跳过。
+local wallClock = (type(os) == "table" and type(os.clock) == "function") and os.clock or nil
+local function wallMs() return wallClock and wallClock() * 1000 or nil end
+local function emitFishingTiming(record, outcome)
+    if not record or not record.wallStartMs then return end
+    local endMs = wallMs()
+    if not endMs then return end
+    Diagnostics.Event("Actions", "fishing_timing", {
+        outcome = outcome, state = record.state,
+        wall_start_ms = math.floor(record.wallStartMs + 0.5),
+        wall_end_ms = math.floor(endMs + 0.5),
+        wall_ms = math.floor(endMs - record.wallStartMs + 0.5),
+        game_elapsed = record.elapsed,
+        duration_sec = Config.fishing.durationSec,
+        id = record.id,
+    })
+    record.wallStartMs = nil
 end
 local function actionEvent(event, record, kind, result, reason)
     Diagnostics.Event('Actions', event, {
@@ -161,6 +182,7 @@ function Actions:FinishAbort(record)
     record.result=table.pack(false,record.reason or 'fishing_failed')
     if self._pendingFishing==record then self._pendingFishing=nil end
     self._lastFishing=record
+    emitFishingTiming(record, record.state)
     actionEvent('fishing_terminal', record, interrupted and 'operation' or 'failure', record.state, record.reason)
     return true
 end
@@ -287,7 +309,7 @@ function Actions:BeginFishing(center,runtime)
     self._fishingSequence=self._fishingSequence+1
     ---@type GameplayFishingRecord
     local record={id=self._fishingSequence,token=token,runtime=runtime,center=copyPoint(center),generation=self.loop.generation,
-        seaGeneration=generation,state='casting',elapsed=0}
+        seaGeneration=generation,state='casting',elapsed=0,wallStartMs=wallMs()}
     self._pendingFishing,self._lastFishing=record,record
     self._fishingTokens[token]=record
     self.loop:SetMessage('抛网中，可取消；捕鱼期间船只停止移动。')
@@ -348,6 +370,7 @@ function Actions:CompleteFishing(runtime,token,...)
         record.state,record.result='complete',table.pack(true,'empty')
         self._pendingFishing=nil
         self.loop:SetMessage('空网，本次不扣体力。')
+        emitFishingTiming(record, 'empty')
         actionEvent('fishing_complete', record, 'operation', 'empty')
         if self.loop.knowledge then self.loop.knowledge:OnFishingResolved({result = record.result}) end  -- ②③ emptyNetWhileFlee
         if self.loop.achievements then self.loop.achievements:OnFishingResolved(record, false, false) end
@@ -393,6 +416,7 @@ function Actions:CompleteFishing(runtime,token,...)
     record.result=table.pack(true,hasSpace and 'caught' or 'pending_catch',record.itemId)
     if self.loop.knowledge then self.loop.knowledge:OnFishingResolved({result = record.result}) end  -- ②③ 空网连击
     if self.loop.achievements then self.loop.achievements:OnFishingResolved(record, isBigFishItem(record.itemId), true) end  -- ②③ A2/A5
+    emitFishingTiming(record, hasSpace and 'caught' or 'pending_catch')
     actionEvent('fishing_complete', record, 'operation', hasSpace and 'caught' or 'pending_catch')
     SoundSystem.CaptureSuccess()  -- 需求 行动：捕获成功播放 fish_capture
     -- S6 教学：成功捕获即完成"投饵→捕鱼→结果反馈"闭环（05 页 P6）；

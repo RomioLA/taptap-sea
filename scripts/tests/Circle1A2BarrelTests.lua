@@ -263,8 +263,8 @@ function Tests.Run()
         -- 演示漂浮物 float(10,0) 已按真机反馈删除；world 中不再有泛型 float。
         assert(otherFloatCount == 0,
             "the demo generic float was removed; only the barrel remains")
-        assert(otherFixedCount == #Config.world.fixedObjects,
-            "the barrel should be added beside the original fixed objects")
+        assert(otherFixedCount == #Config.world.fixedObjects + 1,
+            "the fixed treasure should be registered beside the original fixed objects")
 
         local writeSucceeded = pcall(function() first.id = "changed" end)
         assert(not writeSucceeded, "top-level snapshot writes must fail")

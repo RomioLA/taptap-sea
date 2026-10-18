@@ -35,33 +35,6 @@
       "layer": "story",
       "status": "variant_not_wired_default_off"
     },
-    "boat_story": {
-      "path": "image/OceanStory_boat_20261005114947.png",
-      "source": "image/OceanStory_boat_20261005114947.png",
-      "size": [
-        768,
-        1536
-      ],
-      "content_bounds": [
-        155,
-        82,
-        614,
-        1437
-      ],
-      "alpha_range": [
-        0,
-        255
-      ],
-      "transparent_ratio": 0.6324801974826388,
-      "sha256": "9eca06ac3431916d72e411c99c80ab7c2e8dd71c00062769fc826d46dcd2c348",
-      "source_sha256": "9eca06ac3431916d72e411c99c80ab7c2e8dd71c00062769fc826d46dcd2c348",
-      "anchor": [
-        0.5,
-        0.5
-      ],
-      "layer": "story",
-      "status": "variant_not_wired_default_off"
-    },
     "barrel_story": {
       "path": "image/OceanStory_barrel_20261005115009.png",
       "source": "image/OceanStory_barrel_20261005115009.png",
@@ -120,21 +93,21 @@
       "path": "image/OceanStory_waterpaper_20261005114940.png",
       "source": "image/OceanStory_waterpaper_20261005114940.png",
       "size": [
-        1024,
-        1024
+        512,
+        512
       ],
       "content_bounds": [
         0,
         0,
-        1024,
-        1024
+        512,
+        512
       ],
       "alpha_range": [
         254,
         255
       ],
       "transparent_ratio": 0.0,
-      "sha256": "9d2de78709f917f0db3ac7104636b0fc6ab9ba383e3d3ee7eeb2a7483e7963ee",
+      "sha256": "bd21f7bfe113de656eca80bcdcd710bcd213fc2520d7e5fd22b0d471a502414a",
       "source_sha256": "9d2de78709f917f0db3ac7104636b0fc6ab9ba383e3d3ee7eeb2a7483e7963ee",
       "anchor": [
         0.5,

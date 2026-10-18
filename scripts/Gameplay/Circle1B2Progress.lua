@@ -3,7 +3,11 @@ local Progress = {}
 
 local RECORD_KEY = "circle1B2"
 local ELDER_DEFAULTS = { applesGiven = 0, decision = "pending", teachingDone = false }
-local STORY_DEFAULTS = { barrelStage = 0, paperShown = false }
+local STORY_DEFAULTS = {
+    barrelStage = 0,
+    paperShown = false,
+    fishingSelectionShown = false,
+}
 
 local function finite(value)
     return type(value) == "number"
@@ -106,6 +110,10 @@ function Progress.Validate(data)
         end
         if type(story.paperShown) ~= "boolean" then
             return false, "invalid_paper_shown"
+        end
+        -- 兼容本轮之前的同 schema 存档；Restore 后 Initialize 会补 false。
+        if story.fishingSelectionShown ~= nil and type(story.fishingSelectionShown) ~= "boolean" then
+            return false, "invalid_fishing_selection_hint"
         end
         if story.paperShown and (not integer(data.day, 1) or data.day < 7) then
             return false, "paper_shown_before_day_seven"
@@ -237,6 +245,35 @@ function Progress.MarkTeachingDone(player)
     end
     record.teachingDone = true
     return true
+end
+
+---查询本周目是否已经展示过捕鱼选点提示。
+---@param player table
+---@return boolean, string|nil
+function Progress.IsFishingSelectionHintShown(player)
+    if type(player) ~= "table" then return false, "invalid_player_state" end
+    local record, reason = getRecord(player, "story", "story_progress")
+    if reason then return false, reason end
+    if not record or record.fishingSelectionShown == nil then return false end
+    if type(record.fishingSelectionShown) ~= "boolean" then
+        return false, "invalid_fishing_selection_hint"
+    end
+    return record.fishingSelectionShown
+end
+
+---标记本周目已经展示捕鱼选点提示；第二返回值仅在本次首次置位时为 true。
+---@param player table
+---@return boolean, boolean|string
+function Progress.MarkFishingSelectionHintShown(player)
+    if type(player) ~= "table" or not integer(player.day, 1) then return false, "invalid_day" end
+    local record, reason = ensureRecord(player, "story", STORY_DEFAULTS, "story_progress")
+    if not record then return false, reason or "invalid_story_progress" end
+    if type(record.fishingSelectionShown) ~= "boolean" then
+        return false, "invalid_fishing_selection_hint"
+    end
+    local newlyShown = record.fishingSelectionShown ~= true
+    record.fishingSelectionShown = true
+    return true, newlyShown
 end
 
 ---查询是否持有透镜。

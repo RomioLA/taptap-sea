@@ -3,33 +3,13 @@
   "date": "2026-10-05",
   "reference": "_uploads/c3fb8b9b0834ca6c098bcb452e23f0c1a899c2747c3b9787e317156cb7abd5b8.png",
   "style": "暖赭细描边、简化色块、轻水彩纸感",
-  "format": "RGBA PNG，直通 Alpha；透明边RGB扩边；船和海鸥船头/鸟喙朝 +X",
+  "format": "RGBA PNG，直通 Alpha；透明边RGB扩边；海鸥鸟喙朝 +X",
   "projection": "现有 Ocean.Projection；贴图在世界平面先旋转，再分片投影",
   "anchor": [
     0.5,
     0.5
   ],
   "assets": {
-    "boat": {
-      "path": "image/OceanLoop/boat.png",
-      "source": "assets/image/OceanStory_boat_20261005114947.png",
-      "size": [
-        1024,
-        512
-      ],
-      "content_bounds": [
-        62,
-        30,
-        962,
-        481
-      ],
-      "alpha_range": [
-        0,
-        255
-      ],
-      "transparent_ratio": 0.45902061462402344,
-      "sha256": "88da791c1b911c724307b1c773ce9bcc854d1e6257579bc03862fea370a5122c"
-    },
     "island": {
       "path": "image/OceanLoop/island.png",
       "source": "assets/image/OceanStory_island_20261005114948.png",

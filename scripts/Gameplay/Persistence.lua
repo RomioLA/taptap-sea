@@ -4,6 +4,7 @@ local PlayerState = require("Gameplay.PlayerState")
 local Inventory = require("Gameplay.Inventory")
 local Items = require("data.items")
 local Progress = require("Gameplay.Circle1B2Progress")
+local WorldContentProgress = require("Gameplay.WorldContentProgress")
 local Diagnostics = require("Gameplay.Diagnostics")
 local LocalSaveBackend = require("Gameplay.LocalSaveBackend")
 local Persistence = {}
@@ -41,7 +42,9 @@ end
 ---@param player PlayerState
 ---@return table
 function Persistence.Snapshot(player)
-    local progressValid, progressError = Progress.Validate(player)
+    local initialized, initializeError = WorldContentProgress.Initialize(player)
+    assert(initialized, initializeError or "invalid_progress_state")
+    local progressValid, progressError = WorldContentProgress.Validate(player)
     assert(progressValid, progressError or "invalid_progress_state")
     return {
         schemaVersion = Config.persistence.schemaVersion,
@@ -105,6 +108,8 @@ local function restoreValidated(data)
     if not originalProgressValid then
         return nil, originalProgressError or "invalid_progress_state"
     end
+    local worldContentValid, worldContentError = WorldContentProgress.Validate(data)
+    if not worldContentValid then return nil, worldContentError or "invalid_progress_state" end
     local player = assert(PlayerState.New())
     player.day, player.maxStamina = data.day, data.maxStamina
     player.stamina, player.money = data.stamina, data.money
@@ -114,7 +119,11 @@ local function restoreValidated(data)
     player.story, player.elder = copy(story), copy(elder)
     local initialized, initializeError = Progress.Initialize(player)
     if not initialized then return nil, initializeError or "invalid_progress_state" end
-    local progressValid, progressError = Progress.Validate(player)
+    local worldContentInitialized, worldContentInitializeError = WorldContentProgress.Initialize(player)
+    if not worldContentInitialized then
+        return nil, worldContentInitializeError or "invalid_progress_state"
+    end
+    local progressValid, progressError = WorldContentProgress.Validate(player)
     if not progressValid then return nil, progressError or "invalid_progress_state" end
     return player
 end

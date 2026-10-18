@@ -47,6 +47,13 @@ local function walk(root, visit, visibleOnly)
     visit(root)
     for _,child in ipairs(root.children) do walk(child,visit,visibleOnly) end
 end
+local function hasButton(root,text)
+    local found=false
+    walk(root,function(widget)
+        if widget.kind=="Button" and widget.props.text==text then found=true end
+    end,true)
+    return found
+end
 local function button(root,text,first)
     local found
     walk(root,function(widget)
@@ -76,13 +83,22 @@ test("HUD always visible information, host subtree and core button wiring",funct
     contains(hud.root,"第 1 天"); contains(hud.root,"白天"); contains(hud.root,"120")
     contains(hud.root,"100/100"); contains(hud.root,"钱：100"); contains(hud.root,"2 / 5")
     contains(hud.root,"苹果"); contains(hud.root,"鱼饵"); contains(hud.root,"暂停：port")
-    button(hud.root,"出航"); update(10); eq(loop.clock.elapsed,10)
-    button(hud.root,"船舱"); update(10); eq(loop.clock.elapsed,10); eq(loop.inventoryOpen,true)
-    button(hud.root,"船舱"); update(5); eq(loop.clock.elapsed,15)
+    button(hud.root,"收起信息")
+    assert(hasButton(hud.root,"港口商店"),"the collapsed port-shop entry must be available in port")
+    button(hud.root,"出航")
+    assert(not hasButton(hud.root,"港口商店"),"the port-shop entry must hide immediately after departure")
+    update(10); eq(loop.clock.elapsed,10)
+    button(hud.root,"船舱"); eq(hasButton(hud.root,"收起船舱"),true)
+    update(10); eq(loop.clock.elapsed,10); eq(loop.inventoryOpen,true)
+    button(hud.root,"收起船舱"); eq(hasButton(hud.root,"船舱"),true)
+    update(5); eq(loop.clock.elapsed,15)
     button(hud.root,"返港"); button(hud.root,"拜访老人"); eq(loop.elderOpen,true)
     -- v2.3 二级化：先点「给予 ▸」分类键展开物品列表，再点物品行的「给予」
     button(hud.root,"给予 ▸"); button(hud.root,"给予"); eq(#loop.player.inventory:GetItems(),1)
-    button(hud.root,"结束对话"); eq(loop.elderOpen,false)
+    assert(not texts(hud.root):find("已给予老人苹果",1,true),"elder apple progress must not be shown in the UI")
+    assert(not hasButton(hud.root,"聊天记录"),"elder card must not have a chat-log button")
+    assert(not hasButton(hud.root,"结束对话"),"elder card must not have its own end button")
+    button(hud.root,"收起"); eq(loop.elderOpen,false); assert(hasButton(hud.root,"拜访老人"))
     stop(); eq(#parent.children,0); eq((hud.root --[[@as table]]).destroyed,true); eq(update(1),false)
 end)
 
@@ -222,7 +238,7 @@ test("pending cabin menu returns without closing then consumes and claims exactl
     eq(env.loop:HasPendingCatch(),false);eq(env.loop.player.stamina,stamina)
     eq(#env.loop.player.inventory:GetItems(),5)
     eq(env.loop:ClaimPendingCatch(),false)
-    button(hud.root,"船舱");eq(env.loop.inventoryOpen,false)
+    button(hud.root,"收起船舱");eq(env.loop.inventoryOpen,false)
 end)
 
 test("pending cabin pointer chooses drop position while paused with mouse and touch",function()

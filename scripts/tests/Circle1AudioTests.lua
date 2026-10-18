@@ -236,6 +236,20 @@ function Tests.Run()
         end)
     end)
 
+    check("懒加载：初始化零音效解码，仅使用时按 key 加载", function()
+        withAudioEngine(function(engine, director)
+            assert(director.Play("ui.button_click"))
+            assert(engine.loads == 1, "首次播放只允许加载 1 个音效，不得批量预载")
+            assert(director.Play("ui.button_click"))
+            assert(engine.loads == 1, "缓存命中不得重复加载")
+            assert(director.SetBed("amb.calm_sea", true))
+            assert(engine.loads == 2, "启床才加载声床音效")
+            director.SetBed("amb.night_ocean", false)
+            assert(engine.loads == 2, "停一首未播过的床不得触发加载")
+            assert(director.Status():find("懒加载2/18", 1, true))
+        end)
+    end)
+
     check("部分组件创建失败释放宿主，退避后重试不残留声源", function()
         withAudioEngine(function(engine, director)
             engine.failComponentAt = 4
@@ -262,7 +276,7 @@ function Tests.Run()
             sound.Click()
             director.SetFishing(true)
             director.SetPaused(true)
-            local sources, loads = #engine.sources, engine.loads
+            local sources = #engine.sources
             assert(engine:ActiveCount() == 2)
             sound.Reset()
             assert(engine:ActiveCount() == 0 and next(engine.paused) == nil)
@@ -273,6 +287,12 @@ function Tests.Run()
             assert(engine:ActivePath() == "audio/sfx/amb_morning_sea_ai.wav")
             sound.SyncAmbient("day", true)
             assert(engine:ActivePath() == "audio/sfx/ambience_calm_sea_loop.wav")
+            -- 懒加载语义：昼/夜/清晨/老人四床此前未加载过，此处属首次加载；
+            -- 捕获点置于全部在床首次加载之后，验证 reset 不重复加载已缓存音效。
+            local loads = engine.loads
+            sound.Reset()
+            sound.SyncAmbient("day", false)
+            sound.SyncAmbient("day", true)
             assert(#engine.sources == sources and engine.loads == loads, "reset 不得重复加载或注册")
         end)
     end)
@@ -291,10 +311,13 @@ function Tests.Run()
             local count = #engine.sources
             sound.Shutdown()
             assert(#engine.sources == count and next(engine.registered) == nil)
+            local loadsBefore = engine.loads
             sound.SyncAmbient("day", true)
             assert(engine:ActiveCount() == 1)
             assert(engine:ActivePath() == "audio/sfx/ambience_calm_sea_loop.wav")
-            assert(director.Status():find("加载18/18", 1, true))
+            -- 懒加载语义：Shutdown 后重新初始化只加载当前实际使用的昼床。
+            assert(engine.loads - loadsBefore == 1, "重新初始化后仅允许加载 1 个音效")
+            assert(director.Status():find("懒加载1/18", 1, true))
         end)
     end)
 

@@ -33,6 +33,8 @@ local BaseWorld = require("Game.World")
 ---@field scopeEnabled boolean
 ---@field fixedBarrel SeaEntity?
 ---@field fixedBarrelGeneration integer
+---@field fixedContentEntities table<string, SeaEntity>
+---@field fixedContentGeneration integer
 ---@field retired boolean
 local World = setmetatable({}, { __index = BaseWorld })
 World.__index = World
@@ -45,6 +47,7 @@ local VISIBILITY_EPSILON = Config.world.epsilon
 -- Process-local credentials, independent of fish refreshes and day seeds.
 -- A new World (including a separate Runtime.New) cannot reuse an old token.
 local barrelGenerationCounter = 0
+local fixedContentGenerationCounter = 0
 
 local function clearArray(values)
     for index = #values, 1, -1 do values[index] = nil end
@@ -134,10 +137,24 @@ function World:Init()
     self.overlaps = {}
     self.events = {}
     self.onOverlap = false
+    fixedContentGenerationCounter = fixedContentGenerationCounter + 1
+    self.fixedContentGeneration = fixedContentGenerationCounter
+    self.fixedContentEntities = {}
     for _, object in ipairs(Config.world.fixedObjects) do
-        self:spawn({ entityType = object.entityType, kind = "fixed", layer = "surface",
-            position = object.position, radius = object.radius, blocking = object.blocking })
+        local entity = self:spawn({ entityType = object.entityType, kind = "fixed", layer = "surface",
+            contentId = object.contentId, position = object.position, radius = object.radius, blocking = object.blocking })
+        if object.contentId then
+            assert(self.fixedContentEntities[object.contentId] == nil, "duplicate fixed contentId")
+            self.fixedContentEntities[object.contentId] = entity
+        end
     end
+    local treasure = Config.world.fixedTreasure
+    assert(treasure.contentId == "underwater_treasure_01", "fixed treasure content identity required")
+    assert(self.fixedContentEntities[treasure.contentId] == nil, "duplicate fixed contentId")
+    assert(self:isPositionFree(treasure.position, treasure.radius), "fixed treasure must be in open sea")
+    local treasureEntity = self:spawn({ entityType = treasure.entityType, kind = "fixed", layer = "underwater",
+        contentId = treasure.contentId, position = treasure.position, radius = treasure.radius, blocking = false })
+    self.fixedContentEntities[treasure.contentId] = treasureEntity
     barrelGenerationCounter = barrelGenerationCounter + 1
     self.fixedBarrelGeneration = barrelGenerationCounter
     local barrel = Config.world.fixedBarrel
@@ -199,9 +216,13 @@ local function matches(entity, filter)
 end
 
 -- Visibility/frozen flags never implicitly filter this interaction query.
-function World:queryEntitiesInRadius(center, radius, filter)
+-- S1-c（2026-10-15 卡顿排查）：可选 out 参数。Fish 行为树每鱼每步 3 次查询
+-- （danger/attract/prey），此前每次调用分配新结果表；热调用方（Fish:_nearestEntity）
+-- 改传复用的 scratch 表，零分配。不传 out 时行为与原先完全一致。
+function World:queryEntitiesInRadius(center, radius, filter, out)
     assert(type(radius) == "number" and radius >= 0, "radius must be nonnegative")
-    local found = {}
+    local found = out or {}
+    if out then clearArray(out) end
     for _, entity in ipairs(self.entities) do
         if not entity.removed and M.distanceSquared(center, entity.position) <= radius * radius and matches(entity, filter) then
             found[#found + 1] = entity
@@ -213,8 +234,9 @@ end
 function World:isPositionFree(position, radius)
     local bound = Config.world.halfSize - radius
     if math.abs(position.x) > bound or math.abs(position.y) > bound then return false end
-    for _, object in ipairs(self.entities) do
-        if not object.removed and object.blocking and M.distanceSquared(position, object.position) < (radius + object.radius)^2 then
+    -- S1-b：blockingList 只含未移除的 blocking 实体（CreateEntity 入/RemoveEntity 摘）。
+    for _, object in ipairs(self.blockingList) do
+        if M.distanceSquared(position, object.position) < (radius + object.radius)^2 then
             return false
         end
     end
@@ -235,10 +257,9 @@ function World:CreateWaterQuery(workspace)
     state.halfSize = Config.world.halfSize
     state.usePublicPredicate = self.isPositionFree ~= World.isPositionFree
     if not state.usePublicPredicate then
-        for _, entity in ipairs(self.entities) do
-            if not entity.removed and entity.blocking then
-                state.blockers[#state.blockers + 1] = entity
-            end
+        -- S1-b：快照源改 blockingList（与 isPositionFree 同源，语义不变）。
+        for _, entity in ipairs(self.blockingList) do
+            state.blockers[#state.blockers + 1] = entity
         end
     end
     return waterQueryForState(state)
@@ -269,6 +290,7 @@ function World:Retire()
     self.overlaps = {}
     self.events = {}
     self.fixedBarrel = nil
+    self.fixedContentEntities = {}
     self.systems = {}
     self.systemCadences = {}
     return true
@@ -304,8 +326,11 @@ function World:moveEntity(entity, dx, dy)
     if dy < 0 and start.y+dy < -bound then contact((-bound-start.y)/dy, 0, 1) end
     local a = dx*dx + dy*dy
     if a > epsilon then
-        for _, object in ipairs(self.entities) do
-            if not object.removed and object.blocking and object.id ~= entity.id then
+        -- S1-e（2026-10-16 卡顿排查续）：swept 检测只关心 blocking 实体，
+        -- 直接遍历 blockingList（CreateEntity 入/RemoveEntity 摘，只含未移除的
+        -- blocking 实体），不再全表扫描 entities（船每步移动 + 每鱼每步都走这里）。
+        for _, object in ipairs(self.blockingList) do
+            if object.id ~= entity.id then
                 local ox, oy = start.x-object.position.x, start.y-object.position.y
                 local combined = entity.radius+object.radius
                 local b = 2*(ox*dx + oy*dy)
@@ -329,8 +354,8 @@ function World:moveEntity(entity, dx, dy)
     local t = hit and math.max(0, first-epsilon) or 1
     local result = { x = M.clamp(start.x+dx*t, -bound, bound), y = M.clamp(start.y+dy*t, -bound, bound) }
     -- Final projection also repairs externally moved/debug entities inside a collider.
-    for _, object in ipairs(self.entities) do
-        if not object.removed and object.blocking and object.id ~= entity.id then
+    for _, object in ipairs(self.blockingList) do
+        if object.id ~= entity.id then
             local combined = entity.radius+object.radius
             local ox, oy = result.x-object.position.x, result.y-object.position.y
             if ox*ox+oy*oy < combined*combined then
@@ -352,8 +377,8 @@ function World:getAvoidance(entity, margin)
     local ax, ay = 0, 0
     if x >= bound then ax = ax-1 elseif x <= -bound then ax = ax+1 end
     if y >= bound then ay = ay-1 elseif y <= -bound then ay = ay+1 end
-    for _, object in ipairs(self.entities) do
-        if not object.removed and object.blocking and object.id ~= entity.id then
+    for _, object in ipairs(self.blockingList) do
+        if object.id ~= entity.id then
             local ox, oy = x-object.position.x, y-object.position.y
             if ox*ox+oy*oy <= (object.radius+entity.radius+margin)^2 then
                 local nx, ny = M.normal(ox, oy)
@@ -430,6 +455,16 @@ function World:isVisible(entity)
         if M.distanceSquared(entity.position, reveal.center) <= reveal.radius^2 then return true end
     end
     return false
+end
+
+-- Use the live authorization wedge, never debug/reveal visibility.
+function World:IsEntityInScope(entity)
+    if self.retired or self.scopeEnabled ~= true then return false end
+    if type(entity) ~= "table" or entity.id == nil
+        or self:get(entity.id) ~= entity or entity.removed or entity.alive == false then
+        return nil, "content_unavailable"
+    end
+    return isInsideScope(self.scopeShip, entity)
 end
 
 -- Presentation reads the very same constants as isInsideScope; it cannot

@@ -323,7 +323,7 @@ function Tests.Run()
         end)
     end)
 
-    check("Render forwards the clock, fishing view, and seventh recognition callback", function()
+    check("Render forwards clock, fishing view, recognition, and world-content mark callbacks", function()
         withEngineStubs(function(env)
             local Bootstrap = require("Ocean.Bootstrap")
             local SeaDraw = require("Ocean.SeaDraw")
@@ -332,19 +332,22 @@ function Tests.Run()
             local clock = { phase = "night" }
             local fishingView = { phase = "aim" }
             local recognized = function(contentId) return contentId == "driftwood_barrel" end
+            local marked = function(contentId) return contentId == "underwater_treasure_01" end
             SeaDraw.Scene = function(...) received = table.pack(...) end
             local instance = Bootstrap.Start({ initializeRegions = false, ownsUI = false,
                 getClock = function() return clock end,
                 getFishingView = function() return fishingView end,
                 isLocationRecognized = recognized,
+                isWorldContentMarked = marked,
                 uiFactory = function() return { refresh = function() end, handleKey = function() return false end } end,
             })
             instance:Render()
-            assert(received and received.n == 7, "SeaDraw.Scene did not receive seven ordered arguments")
+            assert(received and received.n == 8, "SeaDraw.Scene did not receive eight ordered arguments")
             assert(received[4] == instance.runtime)
             assert(received[5] == clock and received[6] == fishingView,
                 "the existing clock/fishing view argument positions changed")
             assert(received[7] == recognized, "recognition callback was not forwarded by identity")
+            assert(received[8] == marked, "world-content marked callback was not forwarded by identity")
             instance:Stop()
             SeaDraw.Scene = oldScene
             assert(env.tracker.activeCount == 0)

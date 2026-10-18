@@ -33,6 +33,8 @@ end
 local function portRuntime(distance, options)
     options = options or {}
     local runtime = {
+        world = {},
+        fixedContentGeneration = 1,
         port = { x = 0, y = 0 },
         ship = { x = distance or 0, y = 0 },
         resetCalls = 0,
@@ -43,6 +45,10 @@ local function portRuntime(distance, options)
     if not options.missingPort then
         function runtime:GetPortPosition() return copyPoint(self.port) end
     end
+    function runtime:GetFixedContentGeneration() return self.fixedContentGeneration end
+    function runtime:GetWorldContentAccess() return nil, "content_unavailable" end
+    function runtime:IsWorldContentInScope() return false end
+    function runtime:CancelAutoReturn() return true end
     function runtime:GetShipPosition() return copyPoint(self.ship) end
     function runtime:ClearMovementTarget() self.clearCalls = self.clearCalls + 1 end
     if not options.missingReset then

@@ -66,11 +66,19 @@ function Tests.Run(recorder)
         local movement=newRuntime(1280,720).movement
         recorder.reset()
         local called=false
+        local drawnAlpha
         assert(Presentation.Draw({},movement,{x=0,y=111},2,0,function(state)
             called=true;assert(state.risePixels==0)
+            drawnAlpha=state.alpha
             Geometry.WorldCircle({},movement,{x=0,y=111},2,{184,130,90,255})
         end))
-        assert(called and recorder.countFillColor(184,130,90,255)>0,
+        -- 两种 recorder 口径都证明"可见足迹被真实绘制"：run_circle1_review 的包装器
+        -- 自带 globalAlpha 跟踪、不烧录进填充色（记录值恒为 255）；run_sea_view_regression
+        -- 的 NVGCapture 直接绑定 set_global_alpha，_element 按 alpha 缩放填充色
+        -- （255×alpha，depth=111 空气透视下约 138）。故两种记录值均可接受。
+        local baked=drawnAlpha and math.floor(255*drawnAlpha+0.5) or 255
+        assert(called and (recorder.countFillColor(184,130,90,255)>0
+            or recorder.countFillColor(184,130,90,baked)>0),
             "a center beyond the horizon must still draw its visible footprint")
         assert(recorder.globalAlpha()==1 and recorder.callCount("nvgSave")==recorder.callCount("nvgRestore"))
         assert(recorder.callCount("nvgScissor")==0 and recorder.callCount("nvgIntersectScissor")==0,

@@ -173,10 +173,20 @@ end
 
 
 -- The legacy scene backdrop owns the established sun, sky, and decorative birds.
-function SeaViewArt.Backdrop(ctx, width, height, time)
+function SeaViewArt.Backdrop(ctx, width, height, time, clock, movement)
     if not ctx or not finite(width) or not finite(height) or width <= 0 or height <= 0 then return end
-    Draw.SceneBackdrop(ctx, width, height, time, true)
-
+    ---@type (fun(x: number): number?)?
+    local horizonAtX
+    if type(movement) == "table" and type(movement.viewportWidth) == "number"
+        and type(movement.viewportHeight) == "number" and movement.viewportWidth > 0
+        and movement.viewportHeight > 0 then
+        horizonAtX = function(x)
+            local horizon = Projection.Horizon(movement, x)
+            if finite(horizon) then return clamp(horizon, 0, height) end
+            return nil
+        end
+    end
+    Draw.SceneBackdrop(ctx, width, height, time, true, clock, horizonAtX)
 end
 
 local function getSurfaceSettings()
@@ -559,7 +569,30 @@ local function hillShapes(center,radius)
     return shapes
 end
 
-local function drawHill(ctx, movement, center, radius, bounds, airMix,shapes,frame)
+-- 岛饰贴图接入常数（2026-10-15 接入，2026-10-16 方案 A 投影模式修正）。
+-- 山/树是正视图素材：10-15 曾按 Plane 平铺进世界平面，被斜投影压扁剪切、丢失矢量版
+-- 的立体高度（SeaFusionRenderTests 的 hasGreenFillAboveY 契约要求岛饰高出地平线，
+-- 平铺在真机上做不到，只因离线测试图片加载失败走矢量兜底才没红）。现改走
+-- ImageArt.Upright 竖幅公告板：世界锚点+深度缩放，高度直接沿用矢量版口径
+-- （丘峰 min(4.4, r*0.27)、树高 clamp(r*0.30, 2.2, 5.4)），底沿坐世界锚点，
+-- 宽度按源图内容宽高比推导——正视图素材无需重绘。
+-- 泡沫环：内容带内/外缘=0.66/0.84（半画幅，实测径向 alpha）。令外缘落在岸线外
+-- 1.24r：画幅半边=1.24r/0.84，内缘 0.974r 恰好被岛体贴图边缘（r）盖住，只露岸线外；
+-- alpha 0.85→0.5（原值盖住岛贴图有机岸线呈"贴纸感"），呼吸弧 6→12 段保留"活"感。
+local HILL_PEAK_MAX, HILL_PEAK_RATIO = 4.4, 0.27
+local FOAM_RING_BAND_OUTER, FOAM_RING_REACH = 0.84, 1.24
+local FOAM_RING_ALPHA, FOAM_RING_ARC_MAX = 0.5, 12
+
+local function drawHill(ctx, movement, center, radius, bounds, airMix,shapes,frame,imageName)
+    if imageName and radius >= 3 then
+        -- 方案 A（2026-10-16）：沙丘/草坡是正视图素材，走竖幅公告板；
+        -- 丘高沿用矢量丘峰口径 min(4.4, r*0.27)，底沿坐岛心。
+        if ImageArt.Upright(ctx, imageName, movement, center,
+            math.min(HILL_PEAK_MAX, radius * HILL_PEAK_RATIO), 1) then
+            return
+        end
+        -- Upright 返回 false 仅发生于加载失败（不缓存重试），保持矢量回退。
+    end
     for _,worldPoints in ipairs(shapes or hillShapes(center,radius)) do
         if Geometry.WorldBoundsVisible(movement,worldPoints) then
             local projected = Geometry.ProjectPolygon(movement, worldPoints,nil,nil,frame)
@@ -589,7 +622,15 @@ local function treeShape(base,heightMeters)
         envelope={stem[1],stem[2],left,right,top}}
 end
 
-local function drawTree(ctx, movement, base, heightMeters, bounds, paletteShift, airMix,shape,frame)
+local function drawTree(ctx, movement, base, heightMeters, bounds, paletteShift, airMix,shape,frame,imageName)
+    if imageName then
+        -- 方案 A（2026-10-16）：树是正视图素材，走竖幅公告板；高度沿用矢量树口径，
+        -- 底沿坐世界树基（与矢量 treeShape 的 stem[1] 同点），宽度按内容宽高比推导。
+        if ImageArt.Upright(ctx, imageName, movement, base, heightMeters, 1) then
+            return
+        end
+        -- 加载失败保持矢量回退（下方原路径）。
+    end
     shape=shape or treeShape(base,heightMeters)
     if not Geometry.WorldBoundsVisible(movement,shape.envelope) then return end
     Geometry.StrokeWorldLine(ctx,movement,shape.stem[1],shape.stem[2],
@@ -607,6 +648,15 @@ local function drawShoreFoam(ctx, movement, center, shorelineRadius, time, bound
     if settings.enabled == false then return end
     local count = clamp(math.floor(settings.bubbleCount or 24), 1, 64)
     local baseOpacity = clamp(settings.opacity or 165, 0, 255)
+    -- 方案 A（2026-10-16）：静态泡沫环外移到岸线外（内容带外缘 0.84 半画幅 → 1.24r），
+    -- 内缘 0.974r 被岛体贴图边缘盖住只露岸线外；alpha 0.5；呼吸弧 12 段提供"活"感，
+    -- 加载失败则全矢量（count 保持 settings.bubbleCount）。
+    if ImageArt.Plane(ctx, "foam_ring", movement, center,
+        shorelineRadius * 2 * FOAM_RING_REACH / FOAM_RING_BAND_OUTER,
+        shorelineRadius * 2 * FOAM_RING_REACH / FOAM_RING_BAND_OUTER,
+        0, 0, FOAM_RING_ALPHA) then
+        count = math.min(count, FOAM_RING_ARC_MAX)
+    end
     for index = 1, count do
         local arc = SurfaceEffects.ShoreFoamArc(center, shorelineRadius, index, count, time, settings)
         if arc and arc.strength > 0.02 and Geometry.WorldBoundsVisible(movement,arc.points,0) then
@@ -667,7 +717,9 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
         geometry={x=center.x,y=center.y,radius=radius,segments=segmentCount,
             outer=circlePoints(center,radius,segmentCount),
             land=circlePoints(center,radius*.89,segmentCount),
-            hills=hillShapes(center,radius),trees={}}
+            hills=hillShapes(center,radius),trees={},
+            -- 山造型按岛世界位置轮换沙丘/草坡（位置 hash 稳定，相邻岛不同造型）。
+            hillName=(math.floor(center.x*7+center.y*13)%2==0) and "hill_sand" or "hill_grass"}
         if radius>=5 then
             local treeHeight=clamp(radius*.30,2.2,5.4)
             for index,layout in ipairs(TREE_LAYOUT) do
@@ -676,7 +728,9 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
                     local base=localIslandPoint(center,x,y)
                     local height=treeHeight*layout.size
                     geometry.trees[#geometry.trees+1]={base=base,height=height,
-                        palette=index%2,shape=treeShape(base,height)}
+                        palette=index%2,
+                        name=index%2==0 and "tree_round" or "tree_palm",
+                        shape=treeShape(base,height)}
                 end
             end
         end
@@ -694,9 +748,19 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     local outerWorld = geometry.outer
     local landWorld = geometry.land
     -- 仅替换岛面纹理；保留原岛的高处几何、遮挡、弱键缓存和泡沫。
+    -- 方案 A（2026-10-16）：缩放口径从硬编码 0.88（旧版 island.png 的内容比
+    -- 900/1024）改为按 catalog 内容主体计算——story 版内容比 730/1024=0.713，
+    -- 旧口径令岛贴图只画到世界半径的 0.80，与碰撞/泡沫口径脱节。
     local probePngStop = PerfProbe.Timer()
-    local hasImage = ImageArt.Plane(ctx, "island", movement, center,
-        radius * 2 / 0.88, radius * 2 / 0.88, 0, 0)
+    -- 内容主体填满世界直径（2r）：catalog 内容比（story 730/739=0.713，
+    -- loop 900/901=0.879）→ 画幅 2r*pixel/content，岛贴图边缘与世界岸线对齐。
+    -- 走 Plane（懒加载+LOD）而非 Sprite（严格 IsLoaded，SeaDebug 切换变体会漏绘）。
+    local canvasLength, canvasWidth = ImageArt.ContentPlaneSize("island", radius * 2)
+    local hasImage = false
+    if canvasLength then
+        hasImage = ImageArt.Plane(ctx, "island", movement, center,
+            canvasLength, canvasWidth, 0, 0)
+    end
     PerfProbe.Sample("islandPng", probePngStop())
     local probeVectorStop = PerfProbe.Timer()
     if not hasImage then
@@ -715,9 +779,9 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     end
     drawShoreFoam(ctx, movement, center, radius, finite(time) and time or 0, bounds,frame)
 
-    drawHill(ctx, movement, center, radius, bounds, airMix,geometry.hills,frame)
+    drawHill(ctx, movement, center, radius, bounds, airMix,geometry.hills,frame,geometry.hillName)
     for _,tree in ipairs(geometry.trees) do
-        drawTree(ctx,movement,tree.base,tree.height,bounds,tree.palette,airMix,tree.shape,frame)
+        drawTree(ctx,movement,tree.base,tree.height,bounds,tree.palette,airMix,tree.shape,frame,tree.name)
     end
     PerfProbe.Sample("islandVector", probeVectorStop())
     PerfProbe.Sample("islandTotal", probeTotalStop())
@@ -835,10 +899,9 @@ function SeaViewArt.Boat(ctx, movement, ship, time)
         shadow[#shadow + 1] = { x = point.x + 1.5, y = point.y + 3, scale = point.scale }
     end
     fillPolygon(ctx, shadow, nvgRGBA(49, 99, 101, 65))
-    if ImageArt.Sprite(ctx, "boat", movement, ship.position, length,
-        rotation, heave, 1, width, roll) then
-        return finishScreenBounds(bounds)
-    end
+    -- 2026-10-16 用户裁决：船贴图替换效果不好（竖幅画布被压进横幅世界矩形约 4×
+    -- 压扁、艏向偏 90°），还原无贴图矢量形态（艇身+甲板+立帆）。
+    -- boat/boat_story 目录项、ArtVariants 映射与素材文件已同步移除，无贴图加载路径。
     fillPolygon(ctx, hullScreen, rgba(visual.ship, { 251, 222, 139, 255 }))
     strokePolygon(ctx, hullScreen, nvgRGBA(100, 67, 51, 245), 1.5)
 

@@ -117,7 +117,7 @@ end
 
 function Bootstrap:Update(dt)
     if self.stopped then return end
-    FramePerf.BeginUpdate()
+    FramePerf.BeginUpdate(dt)
     self:SyncViewport()
     local x, y = 0, 0
     if not uiHasTextInputFocus() then
@@ -127,11 +127,19 @@ function Bootstrap:Update(dt)
         if input:GetKeyDown(KEY_S) or input:GetKeyDown(KEY_DOWN) then y = y-1 end
     end
     if type(self.options.simulationUpdate) == "function" then
+        FramePerf.BeginPhase("sim")
         self.options.simulationUpdate(self.runtime, dt, x, y)
+        FramePerf.EndPhase()
     else
+        FramePerf.BeginPhase("sim")
         self.runtime:Update(dt, x, y)
+        FramePerf.EndPhase()
     end
-    if self.tools and type(self.tools.refresh) == "function" then self.tools.refresh(dt) end
+    if self.tools and type(self.tools.refresh) == "function" then
+        FramePerf.BeginPhase("tools")
+        self.tools.refresh(dt)
+        FramePerf.EndPhase()
+    end
     FramePerf.EndUpdate()
 end
 
@@ -147,7 +155,8 @@ function Bootstrap:Render()
     ---@type table?
     local fishingView = nil
     if type(self.options.getFishingView) == "function" then fishingView = self.options.getFishingView() end
-    Draw.Scene(self.context, w, h, self.runtime, clock, fishingView, self.options.isLocationRecognized)
+    Draw.Scene(self.context, w, h, self.runtime, clock, fishingView,
+        self.options.isLocationRecognized, self.options.isWorldContentMarked)
     nvgEndFrame(self.context)
     FramePerf.EndDraw()
     if self.firstFrame then

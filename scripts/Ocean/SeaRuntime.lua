@@ -4,12 +4,14 @@ local FishData = require("Ocean.FishData")
 local M = require("Ocean.Math")
 local World = require("Ocean.World")
 local Movement = require("Ocean.Movement")
+local AutoNavigation = require("Ocean.AutoNavigation")
 local Fish = require("Ocean.Fish")
 local DefaultStrategy = require("Ocean.SpawnStrategy")
 local EntityStateSystem = require("Systems.EntityStateSystem")
 local SurfaceSignals = require("Ocean.SurfaceSignals")
 local Runtime = {}
 Runtime.__index = Runtime
+local FIXED_CONTENT_IDS = { "island_01", "island_02", "underwater_treasure_01" }
 
 function Runtime.New(options)
     local self = setmetatable({}, Runtime)
@@ -18,6 +20,10 @@ function Runtime.New(options)
 end
 
 function Runtime:Init(options)
+    if self.autoNavigation then
+        self.autoNavigation:Cancel("runtime_reset")
+        self.autoNavigation = nil
+    end
     if self.world then self.world:Retire() end
     self.fishingGeneration = (self.fishingGeneration or 0) + 1
     self.world = World.New()
@@ -34,6 +40,50 @@ function Runtime:Init(options)
     assert(self.world:isPositionFree(self.ship.position, self.ship.radius), "invalid ship departure")
     self.movement = Movement.New(self.world, self.ship)
     if options.shipLevel ~= nil then self:SetShipLevel(options.shipLevel) end
+    local navWorld, navShip, navMovement = self.world, self.ship, self.movement
+    local adapter = {
+        getPosition = function()
+            return M.copy(navShip.position)
+        end,
+        getBlockers = function()
+            local blockers = {}
+            for _, entity in pairs(navWorld.entities) do
+                if entity and not entity.removed and entity.blocking == true then
+                    blockers[#blockers + 1] = {
+                        id = tostring(entity.id),
+                        position = M.copy(entity.position),
+                        radius = entity.radius,
+                        blocking = true,
+                    }
+                end
+            end
+            return blockers
+        end,
+        getTarget = function()
+            return navMovement.target
+        end,
+        ---@param point OceanPoint?
+        setTarget = function(point)
+            if point == nil then
+                -- AutoNavigation clears only after its target identity check.
+                navMovement:Stop()
+            else
+                navMovement:SetTarget(point)
+            end
+            return navMovement.target
+        end,
+        isValid = function()
+            return not navWorld.retired
+                and navWorld:get(navShip.id) == navShip
+                and navShip.alive and not navShip.removed
+                and navMovement.ship == navShip
+        end,
+        shipRadius = navShip.radius,
+        halfSize = Config.world.halfSize,
+        diagnostic = options.autoReturnDiagnostic,
+    }
+    ---@type OceanAutoNavigation
+    self.autoNavigation = AutoNavigation.New(adapter)
     ---@type table<string, FishBehavior>
     self.behaviors = {}
     self.initializedRegions = {}
@@ -50,7 +100,9 @@ function Runtime:Init(options)
     if self.initializeRegions then self:ensureNearbyRegions() end
 end
 
-function Runtime:spawnFish(species, position, rotation)
+-- deferActivity=true 时跳过逐鱼活跃度刷新，由调用方在批量生成结束后
+-- 统一调一次 updateActivity——逐鱼刷新是 O(N²)（新区域移动卡顿根因）。
+function Runtime:spawnFish(species, position, rotation, deferActivity)
     local data = assert(FishData[species], "unsupported fish species")
     assert(self.world:isPositionFree(position, data.radius), "fish spawn must be in free sea")
     self.spawnSequence = self.spawnSequence+1
@@ -58,7 +110,7 @@ function Runtime:spawnFish(species, position, rotation)
         species = species, ordinaryFish = true, position = position, rotation = rotation or 0,
         radius = data.radius, state = "Wander", active = false, frozen = true })
     self.behaviors[entity.id] = Fish.New(self.world, entity, data, M.rng(self.daySeed+self.spawnSequence))
-    self.world:updateActivity(self.ship.position)
+    if not deferActivity then self.world:updateActivity(self.ship.position) end
     return entity
 end
 
@@ -80,9 +132,11 @@ function Runtime:ensureNearbyRegions()
             if not self.initializedRegions[key] and M.distanceSquared(pos, nearest) <= radius*radius then
                 local placements = self.strategy.GenerateRegion(self.world, self.daySeed, ix, iy, self.departure, FishData, pos)
                 for _, placement in ipairs(placements) do
-                    self:spawnFish(placement.species, placement.position, placement.rotation)
+                    self:spawnFish(placement.species, placement.position, placement.rotation, true)
                 end
                 self.initializedRegions[key] = true
+                -- 区域批量生成后统一刷新一次活跃度（spawnFish 已逐条 defer）。
+                self.world:updateActivity(self.ship.position)
             end
         end
     end
@@ -136,6 +190,41 @@ function Runtime:GetPortPosition()
     return M.copy(Config.ship.start)
 end
 
+---@param portPosition OceanPoint?
+---@return boolean, string?
+function Runtime:StartAutoReturn(portPosition)
+    if self.paused then return false, "runtime_paused" end
+    if portPosition == nil then portPosition = self:GetPortPosition() end
+    return self.autoNavigation:Start(portPosition)
+end
+
+---@param reason string?
+---@return boolean
+function Runtime:CancelAutoReturn(reason)
+    return self.autoNavigation:Cancel(reason)
+end
+
+---@return table
+function Runtime:GetAutoReturnState()
+    return self.autoNavigation:GetState()
+end
+
+---@return table?
+function Runtime:ConsumeAutoReturnArrival()
+    return self.autoNavigation:ConsumeArrival()
+end
+
+---@param reason string
+---@return boolean, string?
+function Runtime:RejectAutoReturnArrival(reason)
+    return self.autoNavigation:RejectArrival(reason)
+end
+
+---@return string?
+function Runtime:GetAutoReturnFailure()
+    return self.autoNavigation:GetFailure()
+end
+
 local function isFiniteNumber(value)
     return type(value) == "number" and value == value and math.abs(value) < math.huge
 end
@@ -174,6 +263,7 @@ function Runtime:ResetShipAtPort()
     local port = self:GetPortPosition()
     local free, reason = isPortFreeForShip(world, ship, port)
     if not free then return false, reason end
+    self.autoNavigation:Cancel("port_reset")
     movement:ResetAtPosition(port)
     return true
 end
@@ -223,6 +313,87 @@ function Runtime:GetFixedBarrel()
         position = readOnlySnapshot(M.copy(barrel.position)) })
 end
 
+local function currentFixedContent(world, contentId)
+    if type(contentId) ~= "string" or not world or world.retired
+        or type(world.fixedContentEntities) ~= "table" then return nil end
+    local entity = world.fixedContentEntities[contentId]
+    if not entity or type(world.get) ~= "function" or world:get(entity.id) ~= entity
+        or entity.removed or entity.alive == false or entity.kind ~= "fixed"
+        or entity.contentId ~= contentId or not validBarrelPoint(entity.position)
+        or not isFiniteNumber(entity.radius) or entity.radius < 0 then
+        return nil
+    end
+    return entity
+end
+
+---The identity changes only when a new fixed Ocean World is created.
+---@return integer?
+function Runtime:GetFixedContentGeneration()
+    if not self.world or self.world.retired then return nil end
+    local generation = self.world and self.world.fixedContentGeneration
+    if type(generation) ~= "number" or generation < 1 or generation ~= math.floor(generation) then return nil end
+    return generation
+end
+
+---Fresh immutable value snapshot; no entity or mutable position table escapes.
+---@param contentId string
+---@return table?
+function Runtime:GetWorldContent(contentId)
+    local entity = currentFixedContent(self.world, contentId)
+    if not entity then return nil end
+    return readOnlySnapshot({ id = entity.id, entityId = entity.id, contentId = contentId,
+        generation = self.world.fixedContentGeneration, entityType = entity.entityType,
+        layer = entity.layer, position = readOnlySnapshot(M.copy(entity.position)),
+        radius = entity.radius, blocking = entity.blocking == true,
+        ordinaryFish = entity.ordinaryFish == true })
+end
+
+---Return fixed island and treasure snapshots in stable content-ID order.
+---@return table
+function Runtime:GetFixedWorldContentSnapshots()
+    local snapshots = {}
+    for _, contentId in ipairs(FIXED_CONTENT_IDS) do
+        local snapshot = self:GetWorldContent(contentId)
+        if snapshot then snapshots[#snapshots + 1] = snapshot end
+    end
+    return snapshots
+end
+
+---Ocean owns all geometry; edgeDistance is to the content edge and
+---surfaceGap also accounts for the ship collision radius.
+---@param contentId string
+---@return table?, string?
+function Runtime:GetWorldContentAccess(contentId)
+    local entity = currentFixedContent(self.world, contentId)
+    if not entity then return nil, "content_unavailable" end
+    local ship = self.ship
+    if not ship or self.world:get(ship.id) ~= ship or ship.removed or ship.alive == false
+        or not validBarrelPoint(ship.position) or not isFiniteNumber(ship.radius) or ship.radius < 0 then
+        return nil, "ship_unavailable"
+    end
+    local dx, dy = entity.position.x - ship.position.x, entity.position.y - ship.position.y
+    local distance = math.sqrt(dx * dx + dy * dy)
+    if not isFiniteNumber(distance) then return nil, "invalid_content_distance" end
+    local edgeDistance = math.max(0, distance - entity.radius)
+    local surfaceGap = math.max(0, edgeDistance - ship.radius)
+    return readOnlySnapshot({ exists = true, contentId = contentId, entityId = entity.id,
+        generation = self.world.fixedContentGeneration, distance = distance,
+        edgeDistance = edgeDistance, surfaceGap = surfaceGap })
+end
+
+---Use only the real scope-enabled wedge; reveal/debug visibility grants no access.
+---@param contentId string
+---@return boolean?, string?
+function Runtime:IsWorldContentInScope(contentId)
+    local entity = currentFixedContent(self.world, contentId)
+    if not entity then return nil, "content_unavailable" end
+    if entity.layer ~= "underwater" then return nil, "scope_not_applicable" end
+    if not self.world or type(self.world.IsEntityInScope) ~= "function" then
+        return nil, "scope_unavailable"
+    end
+    return self.world:IsEntityInScope(entity)
+end
+
 ---木桶操作半径（新手教程点位按钮显隐用），权威值仍在 Config.interaction。
 function Runtime:GetBarrelOperateDistance()
     return Config.interaction.operateDistance
@@ -250,6 +421,7 @@ function Runtime:IsPositionFree(position, radius)
 end
 
 function Runtime:ClearMovementTarget()
+    self.autoNavigation:Cancel("movement_cleared")
     self.movement:SetTarget(nil)
 end
 
@@ -422,7 +594,10 @@ function Runtime:setDebugFlag(name, value)
     return true
 end
 
-function Runtime:TogglePause() self.paused = not self.paused end
+function Runtime:TogglePause()
+    self.paused = not self.paused
+    if self.paused then self.autoNavigation:Cancel("paused") end
+end
 function Runtime:Reset()
     local seed, strategy = self.daySeed, self.strategy
     self:Init({ daySeed = seed, strategy = strategy, initializeRegions = self.initializeRegions,
@@ -430,12 +605,19 @@ function Runtime:Reset()
 end
 
 function Runtime:Update(dt, axisX, axisY)
-    if self.paused then return end
+    if self.paused then
+        self.autoNavigation:Cancel("paused")
+        return
+    end
+    local inputX, inputY = axisX or 0, axisY or 0
+    local hasManualInput = math.sqrt(inputX * inputX + inputY * inputY) > Config.world.epsilon
+    if hasManualInput then self.autoNavigation:Cancel("manual_input") end
     local remaining = M.clamp(dt, 0, Config.world.maxFrameSec)
     while remaining > Config.world.epsilon do
         local step = math.min(remaining, Config.world.maxStepSec)
         self.time = self.time+step
-        self.movement:Update(step, axisX or 0, axisY or 0)
+        self.movement:Update(step, inputX, inputY)
+        self.autoNavigation:Update(step)
         if self.initializeRegions then self:ensureNearbyRegions() end
         self.world:updateActivity(self.ship.position)
         self.world:updateLifecycle(step, self.ship)

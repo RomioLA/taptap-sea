@@ -13,6 +13,7 @@ local SoundSystem = require("Systems.SoundSystem")
 ---@field stage integer
 ---@field state string
 ---@field elapsed number
+---@field wallStartMs number? 卡顿排查埋点：操作开始墙钟毫秒（os.clock 不可用时为 nil）
 ---@field result table?
 ---@field cancel (fun())?
 ---@field reason string?
@@ -53,6 +54,25 @@ local function emit(eventName, kind, record, extra)
     end
     for key, value in pairs(extra or {}) do fields[key] = value end
     Diagnostics.Event("barrel", eventName, fields)
+end
+-- 墙钟计时埋点（2026-10-15 卡顿排查）：与 Actions.fishing_timing 同构，
+-- 用 wall_ms / game_elapsed 比值区分「引擎 TimeStep 钳制」与「计时逻辑」。
+local wallClock = (type(os) == "table" and type(os.clock) == "function") and os.clock or nil
+local function wallMs() return wallClock and wallClock() * 1000 or nil end
+local function emitBarrelTiming(record, outcome)
+    if not record or not record.wallStartMs then return end
+    local endMs = wallMs()
+    if not endMs then return end
+    Diagnostics.Event("barrel", "timing", {
+        outcome = outcome, state = record.state,
+        wall_start_ms = math.floor(record.wallStartMs + 0.5),
+        wall_end_ms = math.floor(endMs + 0.5),
+        wall_ms = math.floor(endMs - record.wallStartMs + 0.5),
+        game_elapsed = record.elapsed,
+        duration_sec = Config.barrel.durationSec,
+        action_id = record.actionId,
+    })
+    record.wallStartMs = nil
 end
 local function rejectBegin(reason, stage, target)
     local fields = { reason = reason }
@@ -127,6 +147,7 @@ function Barrel:Cancel(reason)
     -- Close the receipt before cancellation callbacks, so a late completion cannot grant.
     record.state, record.result = "cancelled", table.pack(false, reason or "cancelled")
     self.active = nil
+    emitBarrelTiming(record, "cancelled")
     local failed = reason == "barrel_executor_failed"
     emit(failed and "action_failed" or "cancelled", failed and "failure" or "operation", record,
         { reason = reason or "cancelled", outcome = "cancelled" })
@@ -248,7 +269,8 @@ function Barrel:Begin()
     ---@type Circle1B2BarrelRecord
     local record = { token = token, runtime = assert(self.runtime), id = target.id, generation = target.generation,
         actionId = nextActionId,
-        loopGeneration = self.loop.generation, stage = stage, state = "waiting", elapsed = 0 }
+        loopGeneration = self.loop.generation, stage = stage, state = "waiting", elapsed = 0,
+        wallStartMs = wallMs() }
     local valid, invalidReason = self:Valid(record, true)
     if not valid then return rejectBegin(invalidReason, stage, target) end
     self.active, self.receipts[token] = record, record
@@ -345,6 +367,7 @@ function Barrel:AcceptCompletion(record, evidence)
         SoundSystem.Discovery()  -- 需求 行动：探索发现播放 discovery（木桶补给 / 透镜发现）
     end
     emit("completed", "operation", record, { outcome = record.result[2], pending = self.pending ~= nil })
+    emitBarrelTiming(record, record.result[2])
     return table.unpack(record.result, 1, record.result.n)
 end
 function Barrel:Claim()

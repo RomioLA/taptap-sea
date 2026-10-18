@@ -231,7 +231,7 @@ function Tests.Run()
             local titles = {}
             for _, card in ipairs(host.children) do titles[#titles + 1] = cardTitle(card) end
             assert(#titles >= 3, "three cards must hang under the host, got " .. #titles)
-            for _, want in ipairs({ "船舱", "港口商店", "拜访老人" }) do
+            for _, want in ipairs({ "船舱", "港口商店", "老人" }) do
                 local hit = false
                 for _, title in ipairs(titles) do if title == want then hit = true end end
                 assert(hit, "host must carry the card titled " .. want)
@@ -346,11 +346,19 @@ function Tests.Run()
             -- v2.3 契约：打开即见一级键（分类键带 ▸ 后缀避免与物品按钮撞名）。
             -- v3.2（2026-10-13）：提问二级随智能体功能整体移除，一级键剩两枚；
             -- 全局键行常驻 footer（四段式，footer 恒定 1 行）。
-            for _, want in ipairs({ "给予 ▸", "展示 ▸", "聊天记录", "结束对话" }) do
+            for _, want in ipairs({ "给予 ▸", "展示 ▸" }) do
                 local button = findButton(hud.root, want, true)
                 assert(button, "elder card must expose " .. want .. " immediately")
                 assert(isVisible(button), want .. " must be visible immediately")
             end
+            assert(not findButton(hud.root, "聊天记录", true), "elder card must not expose a chat-log button")
+            assert(not findButton(hud.root, "结束对话", true), "elder card must not expose its own end button")
+            for _, text in ipairs(visibleButtonTexts(hud.root)) do
+                assert(not text:find("提问", 1, true) and not text:find("问答", 1, true)
+                    and not text:find("自由", 1, true), "elder card must not expose a Q&A button: " .. text)
+            end
+            assert(package.loaded["Gameplay.ElderQA"] == nil, "the removed ElderQA module must stay unloaded")
+            assert(findButton(hud.root, "收起", true), "the external elder entry must offer collapse while open")
             -- 二级·展示：点分类键展开，物品行出现（行结构守 %02d 契约）
             click_first(findButton(hud.root, "展示 ▸", true))
             hud.Refresh()
@@ -395,38 +403,24 @@ function Tests.Run()
             assert(not findLabelContaining(hud.root, "更早对话已折叠"),
                 "the parchment scroll renders everything; no fold notice may exist")
 
-            -- v2.3 回看态：点[聊天记录] → 选项区收起为把手；点把手展开/收起
-            hud.Refresh()
-            click_first(findButton(hud.root, "聊天记录", true))
-            hud.Refresh()
-            assert(findButton(hud.root, "选项 ▴", true), "review mode must collapse options into a handle")
-            assert(not findButton(hud.root, "给予 ▸", true),
-                "level-1 keys must hide while reviewing the chat log")
+            -- R5 removes the review button, but R6 keeps the full transcript on the card.
             local speakers = 0
             local function countSpeakers(widget)
-                if widget.visible and widget.kind == "Label"
+                if isVisible(widget) and widget.kind == "Label"
                     and (widget.props.text == "老人" or widget.props.text == "你") then
                     speakers = speakers + 1
                 end
                 for _, child in ipairs(widget.children or {}) do countSpeakers(child) end
             end
             countSpeakers(hud.root)
-            assert(speakers >= 5, "the chat log must keep the full history, got " .. speakers)
-            -- 点把手展开选项区
-            click_first(findButton(hud.root, "选项 ▴", true))
+            assert(speakers >= 5, "the dialogue stream must keep the full history, got " .. speakers)
+            assert(findButton(hud.root, "给予 ▸", true) and findButton(hud.root, "展示 ▸", true),
+                "the action categories must remain available without a chat-log mode")
+
+            click_first(findButton(hud.root, "收起", true))
             hud.Refresh()
-            assert(findButton(hud.root, "给予 ▸", true), "the handle must expand the option keys")
-            assert(findButton(hud.root, "结束对话", true), "ending the dialogue must stay reachable in review mode")
-            -- 再点收起
-            click_first(findButton(hud.root, "选项 ▾", true))
-            hud.Refresh()
-            assert(findButton(hud.root, "选项 ▴", true) and not findButton(hud.root, "给予 ▸", true),
-                "the handle must collapse the option keys again")
-            -- 收起记录回常态：一级键恢复（文案带 ▾ 后缀，用前缀匹配）
-            click_first(findButtonPrefix(hud.root, "收起记录"))
-            hud.Refresh()
-            assert(findButton(hud.root, "给予 ▸", true) and not findButton(hud.root, "选项 ▴", true),
-                "leaving review mode must restore the level-1 keys")
+            assert(loop.elderOpen ~= true, "the external collapse entry must close the elder card")
+            assert(findButton(hud.root, "拜访老人", true), "the closed elder entry must return to visit text")
         end)
     end)
 
@@ -441,9 +435,9 @@ function Tests.Run()
 
             click_first(findButton(hud.root, "拜访老人", true))
             hud.Refresh()
-            eq(table.concat(visibleCardTitles(host), "/"), "拜访老人", "elder card wins the host")
+            eq(table.concat(visibleCardTitles(host), "/"), "老人", "elder card wins the host")
 
-            click_first(findButton(hud.root, "结束对话", true))
+            click_first(findButton(hud.root, "收起", true))
             hud.Refresh()
             click_first(findButton(hud.root, "船舱", true))
             hud.Refresh()

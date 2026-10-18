@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "style": "读海日系水彩绘本风，岛饰（山/树/泡沫）替换矢量装饰",
+  "format": "RGBA PNG，直通 Alpha；AI 抠图去底，透明边 RGB 保留主体色",
+  "placement": "岛内装饰；SeaViewArt.Island 的 drawHill/drawTree/drawShoreFoam 贴图路径，加载失败保持矢量回退",
+  "projection": "Ocean.Projection 世界平面分片投影（与 island/boat 同构，0.88 画幅修正）",
+  "references": [
+    "assets/image/OceanStory_island_20261005114948.png",
+    "scripts/Ocean/SeaViewArt.lua",
+    "scripts/Ocean/ImageArt.lua"
+  ],
+  "assets": {
+    "hill_sand": {
+      "path": "image/OceanDecor_hill_sand_20261015225230.png",
+      "source": "image/OceanDecor_hill_sand_20261015225230.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "content_bounds": [
+        27,
+        279,
+        1536,
+        742
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7394453684488932,
+      "sha256": "345f7de0d9d3a4f3c3296d41d6b5d4f060e6b123c4c4f2ebf3048ea50f32e0b2",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "decor",
+      "status": "ready_island_decor"
+    },
+    "hill_grass": {
+      "path": "image/OceanDecor_hill_grass_20261015225230.png",
+      "source": "image/OceanDecor_hill_grass_20261015225230.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "content_bounds": [
+        34,
+        282,
+        1529,
+        786
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7054907480875651,
+      "sha256": "9315edd12ce96c02c6a2e2ac97acfc36771f4b402e0a19ed42f47fe7a99d3e08",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "decor",
+      "status": "ready_island_decor"
+    },
+    "tree_palm": {
+      "path": "image/OceanDecor_tree_palm_20261015225230.png",
+      "source": "image/OceanDecor_tree_palm_20261015225230.png",
+      "size": [
+        1024,
+        1536
+      ],
+      "content_bounds": [
+        95,
+        77,
+        927,
+        1435
+      ],
+      "alpha_range": [
+        0,
+        254
+      ],
+      "transparent_ratio": 0.836175282796224,
+      "sha256": "301c059f3660eba14e45acbee3a63255cddd1a41cf08af2ac931bbdcbdeae91f",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "decor",
+      "status": "ready_island_decor"
+    },
+    "tree_round": {
+      "path": "image/OceanDecor_tree_round_20261015225230.png",
+      "source": "image/OceanDecor_tree_round_20261015225230.png",
+      "size": [
+        1024,
+        1536
+      ],
+      "content_bounds": [
+        85,
+        64,
+        943,
+        1536
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.6109256744384766,
+      "sha256": "8335f476d2ad02563c3602ee51d1c227b5d582853f6aeaae7f12afccf513e6ef",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "decor",
+      "status": "ready_island_decor"
+    },
+    "foam_ring": {
+      "path": "image/OceanDecor_foam_ring_20261015225230.png",
+      "source": "image/OceanDecor_foam_ring_20261015225230.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        68,
+        68,
+        958,
+        949
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.8599615097045898,
+      "sha256": "078400e782eba2eddd3912204a3f7af102bf94d77c30a696cada6f6bb23c2e29",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "decor",
+      "status": "ready_island_decor"
+    }
+  }
+}

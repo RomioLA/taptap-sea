@@ -14,6 +14,12 @@ local ArtVariants = require("Ocean.ArtVariants")
 local LOD_TINY_PX, LOD_SMALL_PX, LOD_MID_PX = 2, 64, 256
 -- 岛屿类图片：最低细分档 2×2（远景单四边形会压平岸线曲率）。
 local MIN_GRID_2 = { island = true, island_story = true }
+-- 竖幅公告板（Art.Upright）最小绘制高度：更小的直接在像素级以下剔除。
+local UPRIGHT_MIN_PX = 2
+
+local function finite(value)
+    return type(value) == "number" and value == value and math.abs(value) < math.huge
+end
 
 -- P0：nvgFill 计数（SeaDebug 性能行读数）。无条件累计，读取即清零。
 local fillCounter = 0
@@ -34,7 +40,8 @@ function Art.GetSpec(name)
         completeIsland = spec.completeIsland }
 end
 
--- 库内候选按需显式加载，不随场景启动批量占用纹理或自动生成对象。
+-- 库内候选显式加载：preload=true 基础图与（ArtVariants 开启时）story 变体
+-- 随场景启动装入；其余候选保持按需，由 Plane/WaterPaper 首次使用时触发。
 ---@param ctx NVGContextWrapper
 ---@param name string
 function Art.LoadImage(ctx, name)
@@ -49,10 +56,15 @@ function Art.LoadImage(ctx, name)
     local flags = spec.repeatTexture
         and (NVG_IMAGE_REPEATX | NVG_IMAGE_REPEATY | NVG_IMAGE_GENERATE_MIPMAPS)
         or NVG_IMAGE_GENERATE_MIPMAPS
+    -- 卡顿排查埋点（2026-10-15）：story 变体默认随场景启动预载（见 Art.Load），
+    -- 运行中切换 StoryArt 触发的按需加载仍会在此打出单帧尖峰；loadMs 直接量化。
+    local loadStartMs = (type(os) == "table" and type(os.clock) == "function") and os.clock() * 1000 or nil
     local handle = nvgCreateImage(ctx, spec.path, flags) or -1
     images[name] = handle
     if handle > 0 then
-        print("[OceanArt] loaded " .. name .. " path=" .. spec.path)
+        local loadMs = loadStartMs and ((os.clock() * 1000) - loadStartMs) or nil
+        print("[OceanArt] loaded " .. name .. " path=" .. spec.path
+            .. (loadMs and (" loadMs=" .. string.format("%.1f", loadMs)) or ""))
     else
         print("[OceanArt] load failed " .. spec.path .. "; retaining vector fallback")
     end
@@ -63,6 +75,17 @@ end
 function Art.Load(ctx)
     for name, spec in pairs(catalog) do
         if spec.preload then Art.LoadImage(ctx, name) end
+    end
+    -- 2026-10-15 修复（卡顿排查根因）：story 变体 preload=false 且自批1接入
+    -- （59c1f9b）起没有任何加载路径——Art.Load 只载 preload=true 的基础图，
+    -- Plane/Sprite/WaterPaper 解析到 story 名后 images[name] 恒为 nil；
+    -- ArtVariants 默认开启，导致全量静默走矢量回退（SeaDebug 读数 Fill 0/f，
+    -- Draw 111ms 的主因之一）。变体开启时随场景启动预载，把同步解码+上传的
+    -- 成本移到加载期，避免首帧绘制尖峰。
+    if ArtVariants.IsEnabled() then
+        for _, storyName in ipairs(ArtVariants.StoryTargets()) do
+            if catalog[storyName] then Art.LoadImage(ctx, storyName) end
+        end
     end
 end
 
@@ -158,7 +181,15 @@ function Art.Plane(ctx, name, movement, origin, length, width, heading, altitude
     name = ArtVariants.Resolve(name)
     local images = contexts[ctx]
     local image = images and images[name] or 0
-    if image <= 0 then return false end
+    if image <= 0 then
+        -- 按需加载（2026-10-15 修复）：覆盖 SeaDebug 运行中切换 StoryArt 的场景；
+        -- 启动预载漏项（如变体当时关闭）也在此兜底。加载失败时 -1 已缓存，
+        -- 不会每帧重试，保持矢量回退语义。
+        Art.LoadImage(ctx, name)
+        images = contexts[ctx]
+        image = images and images[name] or 0
+        if image <= 0 then return false end
+    end
     local cosine, sine = math.cos(heading or 0), math.sin(heading or 0)
     local rollSin = math.sin(roll or 0)
     local function vertex(u, v)
@@ -205,6 +236,78 @@ function Art.Plane(ctx, name, movement, origin, length, width, heading, altitude
     return true
 end
 
+-- 内容主体世界尺寸 → 画幅（UV 0-1）世界尺寸。缩放口径按 catalog 实测内容比逐素材
+-- 计算，替代历史硬编码 0.88（那只对旧版 island/boat 的 900/1024 成立；story 版
+-- island 是 730/1024=0.713，旧口径令岛贴图只画到世界半径的 0.80）。
+-- 调用方拿返回值走 Plane（保留其懒加载与岛屿 LOD 契约）；目录缺失返回 nil。
+---@param name string
+---@param contentLength number 内容主体沿 u 的世界长度（米）。
+---@param contentWidth number? 内容主体沿 v 的世界宽度（米）；省略保持源图主体比例。
+---@return number?, number?
+function Art.ContentPlaneSize(name, contentLength, contentWidth)
+    local spec = catalog[ArtVariants.Resolve(name)]
+    if not spec or not spec.contentWidth or spec.contentWidth <= 0
+        or not spec.contentHeight or spec.contentHeight <= 0 then return nil end
+    if type(contentLength) ~= "number" or contentLength <= 0 then return nil end
+    local width = contentWidth or contentLength * spec.contentHeight / spec.contentWidth
+    if type(width) ~= "number" or width <= 0 then return nil end
+    return contentLength * spec.pixelWidth / spec.contentWidth,
+        width * spec.pixelHeight / spec.contentHeight
+end
+
+-- 竖幅公告板（2026-10-16，方案 A：正视图素材的投影模式修正）。
+-- 树/沙丘等正视图贴图不再平铺在世界平面（会被斜投影压扁剪切、丢失矢量版的立体高度），
+-- 改绘为相机朝向的竖面：底沿落在世界锚点、高度=世界米制、宽度按源图内容宽高比推导。
+-- 本投影下世界 altitude 直接映射为屏幕向上（×该深度 scale），竖幅与真三维竖面投影等价
+-- （屏幕矩形画法沿用 MIF 归档 Art.Layer，锚点/scale 取自 Projection.ProjectFunction）。
+-- 内容主体居中假设（内容中心≈画布中心，误差≤2%）：若未来素材内容偏心，
+-- 需在 catalog 增加 contentX/contentY 偏移字段后再扩展（同 MIF 归档约定）。
+-- 不做朝向旋转：树/沙丘不需要；若需按 heading 旋转再扩展。
+---@param ctx NVGContextWrapper
+---@param name string
+---@param movement table
+---@param position table 世界锚点（内容主体底沿中心）
+---@param worldHeight number 内容主体高度（米）
+---@param alpha number?
+function Art.Upright(ctx, name, movement, position, worldHeight, alpha)
+    name = ArtVariants.Resolve(name)
+    local spec = catalog[name]
+    if not spec or type(worldHeight) ~= "number" or worldHeight <= 0
+        or not spec.contentWidth or spec.contentWidth <= 0
+        or not spec.contentHeight or spec.contentHeight <= 0 then return false end
+    -- 懒加载（与 Plane 同口径）：decor 素材 preload=false，首次绘制时加载；
+    -- 失败不缓存重试路径之外的状态，返回 false 由调用方走矢量兜底。
+    local images = contexts[ctx]
+    local image = images and images[name] or 0
+    if image <= 0 then
+        Art.LoadImage(ctx, name)
+        images = contexts[ctx]
+        image = images and images[name] or 0
+        if image <= 0 then return false end
+    end
+    if type(position) ~= "table" or not finite(position.x) or not finite(position.y) then return false end
+    local project = Projection.ProjectFunction(movement)
+    if not project then return false end
+    local x, y, scale = project(position.x, position.y, 0)
+    if not x or type(scale) ~= "number" or scale <= 0 then return false end
+    local screenHeight = worldHeight * scale
+    if screenHeight < UPRIGHT_MIN_PX then return true end
+    local canvasHeight = screenHeight * spec.pixelHeight / spec.contentHeight
+    local canvasWidth = canvasHeight * spec.pixelWidth / spec.pixelHeight
+    -- 内容主体底沿落在锚点：画布中心 = 锚点 − 屏高/2（居中假设下内容底=锚点）。
+    local boxX = x - canvasWidth * 0.5
+    local boxY = y - screenHeight * 0.5 - canvasHeight * 0.5
+    nvgSave(ctx)
+    nvgBeginPath(ctx)
+    nvgRect(ctx, boxX, boxY, canvasWidth, canvasHeight)
+    nvgClosePath(ctx)
+    nvgFillPaint(ctx, nvgImagePattern(ctx, boxX, boxY, canvasWidth, canvasHeight, 0, image, alpha or 1))
+    fillCounter = fillCounter + 1
+    nvgFill(ctx)
+    nvgRestore(ctx)
+    return true
+end
+
 -- 按可见主体宽度适配透明留边；默认保持主体比例，尺寸仅用于绘制，不是碰撞范围。
 ---@param ctx NVGContextWrapper
 ---@param name string
@@ -233,7 +336,13 @@ function Art.WaterPaper(ctx, movement, width, height)
     local name = ArtVariants.Resolve("waterpaper")
     local images = contexts[ctx]
     local image = images and images[name] or 0
-    if image <= 0 then return false end
+    if image <= 0 then
+        -- 按需加载（2026-10-15 修复）：与 Plane 同构，兜底运行中切换与漏项。
+        Art.LoadImage(ctx, name)
+        images = contexts[ctx]
+        image = images and images[name] or 0
+        if image <= 0 then return false end
+    end
     local horizon = Projection.HorizonFunction(movement)
     if not horizon then return false end
     nvgSave(ctx)

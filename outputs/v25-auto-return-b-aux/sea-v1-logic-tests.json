@@ -1,0 +1,1012 @@
+{
+  "luaVersion": "Lua 5.4",
+  "syntax": [
+    {
+      "file": "scripts\\config\\gameplay.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\data\\achievements.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\data\\events.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\data\\fish.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\data\\items.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\data\\knowledge.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Entities\\EntityFactory.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\FSM\\StateMachine.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Game\\Game.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Game\\World.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\Achievements.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\AchievementSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\Actions.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\AudioDirector.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\Bootstrap.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\Circle1B2Barrel.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\Circle1B2Progress.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\Debug.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\Diagnostics.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\DialogueStyle.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\EMCues.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\GameClock.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\HUD.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\HUDPresentation.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\Inventory.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\KnowledgeSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\LocalSaveBackend.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\Loop.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\Persistence.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\PlayerState.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\ProfileStore.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\UiKit.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\UiLayout.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Gameplay\\UpdateSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\GeneratedData\\Fish.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\GeneratedData\\Items.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\GeneratedData\\OceanImageCatalog.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Integration\\Bridge.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Integration\\Circle1BInput.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Integration\\Scene.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Main.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\ArtVariants.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\AutoNavigation.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\Bootstrap.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\Camera.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\Config.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\Draw.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\EntityDraw.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\Fish.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\FishData.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\FramePerf.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\FusedScene.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\HUD.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\ImageArt.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\Math.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\Movement.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\PerfProbe.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\ProjectedGeometry.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\Projection.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\SceneState.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\SeaAtmosphere.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\SeaDebug.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\SeaDraw.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\SeaPresentation.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\SeaRuntime.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\SeaSurfaceEffects.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\SeaViewArt.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\SpawnStrategy.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\State.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\SurfaceSignals.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\Wake.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Ocean\\World.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\SeaPreviewEntry.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Systems\\BirdSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Systems\\ClockSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Systems\\EntityStateSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Systems\\FishSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\Systems\\SoundSystem.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\ABIntegrationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\ArchitectureIntegrationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\AudioRuntimeProbe.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\AutoNavigationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1A2BarrelRenderTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1A2BarrelTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1A2FishingTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1A2ScopeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1A2SignalsTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1A3ExperienceTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1A3InputTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1A3PortTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1A3RecognitionTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1A3SignalsTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1A3StabilityTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1ABMergeFrameBudgetTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1AFishLocksTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1APredationCooldownTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1AudioTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B2BarrelTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B2ProgressTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B2ScopeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B2ThrowTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B2UITests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B3ClockAsyncTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B3CloudTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B3EconomyTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B3SceneUITests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B3SevenDaysTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B3SpatialTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B5DiagnosticsIntegrationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B5GameplayTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B5PersistenceBarrelTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B5PortDrawTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B6EndingTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B7CardLayoutTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1B8UiLayoutTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1BFishingFlowTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1BPendingCatchTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\Circle1HUDReviewTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\GameLoopSpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\GameLoopUISpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\LocalSaveLoopTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\NumericEconomySpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\OceanArtRuntimeValidate.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\OceanArtVisualValidate.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\OceanImageCatalogTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\OceanImageReadyValidate.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\PersistenceRegressionSpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaAtmosphereTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaCurvatureTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaEngineSmoke.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaFusedSceneTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaFusionRenderTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaHorizonOcclusionTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaMotionEffectsTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaNativeVoyage.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaNativeVoyageEntry.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaPresentationTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaRuntimeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaStabilityTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SeaViewUpgradeTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\ShipScareTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\ShopStockSpec.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SurfaceRiseTests.lua",
+      "passed": true,
+      "error": null
+    },
+    {
+      "file": "scripts\\tests\\SurfaceSignalsTests.lua",
+      "passed": true,
+      "error": null
+    }
+  ],
+  "tests": [
+    {
+      "name": "supplement02 authoritative values and 16:9 full-height projection",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "cast confirms at30 meters, rejects beyond and uses radius8 single target",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "avoid prediction uses species4 and6 meter clearance before boundary",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "drop confirms at12 meters and rejection neither spawns nor changes payload",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "ordinary region spawn respects current boat exclusion plus day departure200",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "S1 spawn distribution prefers sardine near day start and tuna in far band, soft fallback keeps far regions stocked",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "birth exclusion is not an AI barrier after generation",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "scope reveal uses20 and changes visibility only",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "four-second fishing contract never implicitly pauses world time",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "meter units, derived map and implementation values",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "configured ship levels move at the configured meters per second",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "invalid ship level leaves capability unchanged",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "camera framing changes without rescaling meter movement",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "fishing selects one nearest live hidden or frozen fish without removal",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "fishing respects validity filter and nearest distance to net center",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "empty net allows zero result including zero-radius queries",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "independent fishing selections have no daily three or six catch limit",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "ship straight speed and max clamp",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "diagonal travel no speed boost",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "keyboard cancels click target; opposite key axes stop",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "ship turn speed bound",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "click arrival and no movement within arrival radius",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "configured meter framing, anchor, inverse coordinates across aspects",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "camera continuously smooth follows and settles",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "all world edges block and outward intent produces feedback",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "held outward input still visibly pushes inward",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "swept island collision no tunnelling",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "small floats overlap without blocking",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "unique IDs and removed query exclusion",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "underwater hidden yet queryable; reveal changes visibility only",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "visibility switch does not change AI trajectory",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "sardine wander speed and timed direction choice",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "effect-based sardine attraction and priority over wander",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "NONE effect ignored; temporary TTL and payload copy",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "predator sees prey before sardine senses danger",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "danger outranks attraction; flee jitter remains away",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "avoid outranks danger and attraction",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "tuna true predation removes entity and query membership",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "tuna chase tracks moved prey; loss grace >2 sec",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "tuna displacement respects configured turn rate",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "moving predator and prey complete chase flee and real capture",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "confirmed big fish attraction uses centralized implementation values",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "supplement02 prey chase outranks big attraction",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "big attraction includes radius36 boundary and excludes outside",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "tuna attraction filters effects and respects turn rate",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "big attraction expiry restores available prey chase",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "tuna avoid outranks official big attraction and prey chase",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "activity hysteresis and frozen state retention",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "region seeds reproducible independent of exploration order",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "tuna first spawn exclusion on all initialized regions",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "same-day regions do not refill after catch/clear/return",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "daily refresh clears temps/fish preserves fixed objects/ship",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "local density measured across 100 day seeds away from departure",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "name": "overlap callback removal leaves no stale entries after repeated collection",
+      "passed": true,
+      "error": ""
+    }
+  ],
+  "metrics": {
+    "sardineRunning": 19.57,
+    "hiddenViewportFish": 0,
+    "startTunaIn120": 0.0,
+    "tunaRunning": 3.1,
+    "movingCaptureMinSec": 8.5,
+    "sardineIn120": 19.57,
+    "debugViewportSardine": 8.11,
+    "tunaIn120": 3.1,
+    "movingCaptureMeanSec": 10.046875,
+    "movingCaptureMaxSec": 11.600000000000001,
+    "debugViewportTuna": 1.36,
+    "startSardineIn120": 20.8
+  },
+  "passed": true
+}
