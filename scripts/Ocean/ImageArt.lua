@@ -407,6 +407,51 @@ function Art.SeaSurface(ctx, movement, width, height, name, alpha, scrollX)
     return true
 end
 
+-- 海面波纹平铺层（2026-10-18 C4，用户提供水彩波纹纹理 sea_ripple_serene_v1）：
+-- 屏幕空间材质层，地平线 48 段裁剪 + imagePattern 双向平铺（REPEATX|REPEATY），
+-- 叠加于海面底图之上、替换程序 crest marks（Surface 门控：本层绘制成功即跳过
+-- crests，失败回退 crests）。瓦片尺寸=catalog 像素尺寸×tileScale，alpha 透传；
+-- 懒加载/失败缓存与 Plane、SeaSurface 同口径。
+---@param tileScale number? 瓦片缩放（1=资产原生像素；非法值回退 1）
+function Art.SeaRipple(ctx, movement, width, height, alpha, tileScale)
+    local name = "sea_ripple_overlay"
+    local spec = Art.GetSpec(name)
+    if not spec then return false end
+    local images = contexts[ctx]
+    local image = images and images[name] or 0
+    if image <= 0 then
+        Art.LoadImage(ctx, name)
+        images = contexts[ctx]
+        image = images and images[name] or 0
+        if image <= 0 then return false end
+    end
+    local horizon = Projection.HorizonFunction(movement)
+    if not horizon then return false end
+    local scale = tileScale
+    if type(scale) ~= "number" or scale <= 0 then scale = 1 end
+    local tileWidth = (spec.pixelWidth or 512) * scale
+    local tileHeight = (spec.pixelHeight or 288) * scale
+    local rippleAlpha = alpha
+    if type(rippleAlpha) ~= "number" or rippleAlpha < 0 or rippleAlpha > 1 then
+        rippleAlpha = 0.28
+    end
+    nvgSave(ctx)
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, 0, horizon(0))
+    for index = 1, 48 do
+        local x = width * index / 48
+        nvgLineTo(ctx, x, horizon(x))
+    end
+    nvgLineTo(ctx, width, height)
+    nvgLineTo(ctx, 0, height)
+    nvgClosePath(ctx)
+    nvgFillPaint(ctx, nvgImagePattern(ctx, 0, 0, tileWidth, tileHeight, 0, image, rippleAlpha))
+    fillCounter = fillCounter + 1
+    nvgFill(ctx)
+    nvgRestore(ctx)
+    return true
+end
+
 -- 波纹只读现有 voyage time；暂停自然冻结，不生成粒子或寿命表。
 function Art.ContactRipple(ctx, movement, position, time, radius)
     local phase = ((time or 0) * 0.48) % 1

@@ -316,6 +316,15 @@ return {
         repeatTexture = false,
         completeIsland = false,
     },
+    sea_ripple_overlay = {
+        path = "image/SeaSurface/sea_ripple_overlay.png",
+        pixelWidth = 512, pixelHeight = 288,
+        contentWidth = 512, contentHeight = 288,
+        anchorX = 0.5, anchorY = 0.5,
+        preload = true,
+        repeatTexture = true,
+        completeIsland = false,
+    },
     sea_surface_day = {
         path = "image/SeaSurface/sea_surface_day.png",
         pixelWidth = 1920, pixelHeight = 1080,

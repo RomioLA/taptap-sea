@@ -74,7 +74,8 @@ def catalog_text():
         if name not in ("boat", "island"):
             entries[name] = entry
     repeat_names = ("waterpaper", "waterpaper_story", "ocean_tile",
-                    "sea_surface_day", "sea_surface_dusk", "sea_surface_night")
+                    "sea_surface_day", "sea_surface_dusk", "sea_surface_night",
+                    "sea_ripple_overlay")
     lines = ["-- 自动生成：python3 tests/prepare_ocean_eco_art.py；禁止手工编辑。",
              "-- 只含图片规格，不含实体、玩法数值或更新逻辑。", "return {"]
     for name, entry in sorted(entries.items()):

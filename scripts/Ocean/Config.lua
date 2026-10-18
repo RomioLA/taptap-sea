@@ -140,6 +140,12 @@ local Config = {
     -- 世界实体（岛/桶/波纹）与贴图速率脱节；保留开关供 SeaDebug/后续方案回退。
     seaSurface = { enabled = true, alpha = 1.0, duskFrom = 0.8, duskSpan = 0.2,
         nightFade = 0.1, scroll = false, scrollScale = 1.0 },
+    -- 波纹平铺层（2026-10-18 C4，用户提供水彩波纹纹理 sea_ripple_overlay）：
+    -- 屏幕空间双向平铺（imagePattern REPEATX|REPEATY），叠加于海面底图之上，
+    -- 替换程序 crest marks（贴图优先、加载失败回退 crests，零回归）。
+    -- alpha 为叠加不透明度（纹理近白，偏低值即可显纹）；tileScale 为瓦片缩放
+    -- （1=资产原生 512×288，调大=波纹更稀）。
+    seaRipple = { enabled = true, alpha = 0.28, tileScale = 1.0 },
     wake = { lifetimeSec = 3, spacingMeters = 0.6, minSpeed = 0.15, maxSamples = 96,
         initialWidth = 0.65, spreadPerSec = 0.45, sternOffset = 2.5, opacity = 125 },
     projection = { circleSegments = 48, sectorSegments = 32, birdAltitude = 1.2 },

@@ -497,7 +497,8 @@ function SeaViewArt.SeaSurfaceFrame(clock)
     return { base = "sea_surface_day", over = "sea_surface_dusk", blend = blend }
 end
 
--- A screen-fixed gradient follows the projected horizon while world-grid
+-- A screen-fixed gradient follows the projected horizon; the tiled ripple layer
+-- (2026-10-18 C4) replaces world-grid crests when its art is available, otherwise
 -- crests transition from broad near marks to finer distant detail.
 function SeaViewArt.Surface(ctx, movement, time, clock)
     if not ctx or type(movement) ~= "table" then return end
@@ -569,6 +570,16 @@ function SeaViewArt.Surface(ctx, movement, time, clock)
     if not seaDrawn and type(ImageArt.WaterPaper) == "function" then
         ImageArt.WaterPaper(ctx, movement, width, height)
     end
+    -- 波纹平铺层（2026-10-18 C4，用户提供水彩波纹纹理 sea_ripple_overlay）：
+    -- 屏幕空间双向平铺，叠加于海面底图之上，替换程序 crest marks——本层绘制
+    -- 成功即跳过 crests（静态水彩波纹让位），加载失败/显式关闭则 crests 照旧
+    -- （贴图优先、失败回退，零回归）。alpha/瓦片缩放经 Config.visual.seaRipple 透传。
+    local rippleDrawn = false
+    local rippleSettings = Config.visual.seaRipple or {}
+    if rippleSettings.enabled ~= false and type(ImageArt.SeaRipple) == "function" then
+        rippleDrawn = ImageArt.SeaRipple(ctx, movement, width, height,
+            rippleSettings.alpha, rippleSettings.tileScale)
+    end
 
     -- Draw the same sampled curve over the fill so the two edges stay aligned.
     nvgBeginPath(ctx)
@@ -580,6 +591,9 @@ function SeaViewArt.Surface(ctx, movement, time, clock)
     nvgStrokeWidth(ctx, 1.15)
     nvgStroke(ctx)
 
+    -- 波纹平铺层已承接海面细节：跳过程序 crest marks（GetViewBounds 是 crest 段
+    -- 入口，测试以此断言是否进入浪脊格绘制）。
+    if rippleDrawn then return end
     local settings = getSurfaceSettings()
     if type(movement.GetViewBounds) ~= "function" then return end
     local bounds = movement:GetViewBounds(settings.length * 0.75)

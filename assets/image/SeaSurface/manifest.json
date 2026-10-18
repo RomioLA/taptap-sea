@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "style": "读海日系水彩绘本风，纯海面满幅（无天空/地平线），锚点链派生：风格参考图→日间锚点→黄昏/夜晚",
-  "format": "不透明 RGB PNG 满幅；上浅下深纵深过渡；左右边缘无缝可横向循环拼接",
-  "projection": "屏幕空间材质层（ImageArt.SeaSurface）：地平线裁剪 + imagePattern + 相机横向滚动，非世界平面",
-  "placement": "SeaViewArt.Surface 相位映射（方案 A 夜罩不动）：day 承载日间与夜间（夜间=昼图过夜罩），dusk 用于昼相 progress≥0.8 交叉淡入，night 留 SeaDebug/后续方案",
+  "style": "读海日系水彩绘本风：日间海面为 2026-10-18 用户提供水彩海面（宁静，纯海面满幅），黄昏/夜晚为 miora 锚点链派生 v2；波纹平铺层为 2026-10-18 用户提供水彩波纹纹理",
+  "format": "不透明 RGB 满幅/瓦片；上浅下深纵深过渡；海面左右边缘无缝可横向循环拼接，波纹瓦片双向无缝可 REPEATX|REPEATY 平铺",
+  "projection": "屏幕空间材质层：海面（ImageArt.SeaSurface）地平线裁剪 + imagePattern + 相机横向滚动；波纹（ImageArt.SeaRipple）地平线裁剪 + 双向 imagePattern 平铺",
+  "placement": "SeaViewArt.Surface 相位映射（方案 A 夜罩不动）：day 承载日间与夜间（夜间=昼图过夜罩），dusk 用于昼相 progress≥0.8 交叉淡入，night 留 SeaDebug/后续方案；波纹层每帧叠加于海面之上，替换程序 crest marks（加载失败回退 crests）",
   "references": [
     "scripts/Ocean/SeaViewArt.lua",
     "scripts/Ocean/ImageArt.lua",
@@ -12,7 +12,7 @@
   "assets": {
     "sea_surface_day": {
       "path": "image/SeaSurface/sea_surface_day.png",
-      "source": "E:/workbath/Fishing/_gen_pure_sea/pure_sea_day_v2.png",
+      "source": "E:/workbath/Fishing/_gen_pure_sea/pure_sea_serene_v1.png",
       "size": [
         1920,
         1080
@@ -28,8 +28,8 @@
         255
       ],
       "transparent_ratio": 0.0,
-      "sha256": "363aa32dcc53b2f0d9e79f8dc2c7f11007b67c89f09a1aa38e110ba7f088cfe2",
-      "source_sha256": "a485f7e00b4548dbbc66e66fc3c637f52c5681615b24b0ba567b57c7539654b1",
+      "sha256": "d688f41e5073ccf9eae32e61b0a6beaf999fa0eaa53afb117ed4c690b4a4ca86",
+      "source_sha256": "34123c44e56289522e0507dce1058ac14ed5806da4d8dd3406659ec48d379099",
       "preload": true,
       "anchor": [
         0.5,
@@ -96,6 +96,35 @@
       "layer": "sea_surface",
       "status": "ready_wired",
       "period": "night"
+    },
+    "sea_ripple_overlay": {
+      "path": "image/SeaSurface/sea_ripple_overlay.png",
+      "source": "E:/workbath/Fishing/_gen_pure_sea/sea_ripple_serene_v1.png",
+      "size": [
+        512,
+        288
+      ],
+      "content_bounds": [
+        0,
+        0,
+        512,
+        288
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "b7bc20aaea7c43f44ca914d92a1cefec82e7ccaaaa2a204e615537b2cce5bb48",
+      "source_sha256": "b7bc20aaea7c43f44ca914d92a1cefec82e7ccaaaa2a204e615537b2cce5bb48",
+      "preload": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "sea_surface",
+      "status": "ready_wired",
+      "period": "all"
     }
   }
 }

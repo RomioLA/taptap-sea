@@ -1,4 +1,4 @@
-"""纯海面 v2（SeaSurface）入库：三张时段海面 → assets/image/SeaSurface/ + manifest + catalog 重生成。
+"""纯海面 v2（SeaSurface）入库：三张时段海面 + 波纹平铺层 → assets/image/SeaSurface/ + manifest + catalog 重生成。
 
 素材来源：E:/workbath/Fishing/_gen_pure_sea/pure_sea_{day,dusk,night}_v2.png
 （miora 锚点链生成 + .tmp/sea_postprocess_v2.py 去右下角 AI 水印 / 1920×1080 校正 / 左右 96px 无缝融合）。
@@ -34,19 +34,29 @@ SOURCES = {
     "sea_surface_day": "pure_sea_day_v2.png",
     "sea_surface_dusk": "pure_sea_dusk_v2.png",
     "sea_surface_night": "pure_sea_night_v2.png",
+    "sea_ripple_overlay": "sea_ripple_serene_v1.png",
+}
+# 各素材目标像素尺寸：海面满幅 1920×1080；波纹平铺瓦片 512×288
+PIXEL_SIZES = {
+    "sea_surface_day": (1920, 1080),
+    "sea_surface_dusk": (1920, 1080),
+    "sea_surface_night": (1920, 1080),
+    "sea_ripple_overlay": (512, 288),
 }
 # day/dusk 随场景启动预载（首帧即需 / 昼相末段淡入目标）；night 懒载（方案 A 不自动映射）
+# ripple 预载（每帧叠加于海面之上，替换程序 crest marks）
 PRELOAD = {
     "sea_surface_day": True,
     "sea_surface_dusk": True,
     "sea_surface_night": False,
+    "sea_ripple_overlay": True,
 }
 PERIODS = {
     "sea_surface_day": "day",
     "sea_surface_dusk": "dusk",
     "sea_surface_night": "night",
+    "sea_ripple_overlay": "all",
 }
-PIXEL_SIZE = (1920, 1080)
 
 
 def importer():
@@ -74,7 +84,7 @@ def prepare():
     for name, filename in SOURCES.items():
         source = SOURCE_DIR / filename
         image = Image.open(source).convert("RGB")
-        assert image.size == PIXEL_SIZE, f"{name} 源图尺寸 {image.size} != {PIXEL_SIZE}"
+        assert image.size == PIXEL_SIZES[name], f"{name} 源图尺寸 {image.size} != {PIXEL_SIZES[name]}"
         path = OUT / (name + ".png")
         image.save(path, optimize=True)
         entry = module.describe(path, source.as_posix())
@@ -105,7 +115,7 @@ def check():
         assert path.is_file(), f"{name} 运行目录缺失"
         with Image.open(path) as image:
             assert image.mode == "RGB", f"{name} 应为不透明 RGB 满幅"
-            assert image.size == PIXEL_SIZE, f"{name} 尺寸不符（1920×1080 契约）"
+            assert image.size == PIXEL_SIZES[name], f"{name} 尺寸不符（{PIXEL_SIZES[name]} 契约）"
             assert image.size == tuple(entry["size"]), f"{name} 清单尺寸不符"
         source = Path(entry["source"])
         if source.is_file():
@@ -119,7 +129,7 @@ def check():
             assert actual[key] == entry[key], f"{name} 的 {key} 与清单不一致"
         # 海面契约：满幅不透明（与组件类的透明留边相反）
         assert entry["alpha_range"] == [255, 255], f"{name} 应完全不透明"
-        assert entry["content_bounds"] == [0, 0, PIXEL_SIZE[0], PIXEL_SIZE[1]], f"{name} 应满幅无留边"
+        assert entry["content_bounds"] == [0, 0, *PIXEL_SIZES[name]], f"{name} 应满幅无留边"
         assert entry["preload"] == PRELOAD[name], f"{name} preload 与方案 A 契约不符"
     text = CATALOG.read_text(encoding="utf-8")
     assert text == eco_importer().catalog_text(), "运行目录与素材清单不同步（catalog 需重生成）"

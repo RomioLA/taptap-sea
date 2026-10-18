@@ -19,7 +19,7 @@ function Tests.Run()
     -- 候选保留在素材清单，但不替换主线矢量船和分层岛屿的运行目录项。
     local startupNames = { "island", "barrel", "gull", "ripple", "waterpaper",
         "gull_dive", "splash", "island_story", "barrel_story", "gull_story", "waterpaper_story",
-        "sea_surface_day", "sea_surface_dusk" }
+        "sea_surface_day", "sea_surface_dusk", "sea_ripple_overlay" }
     local startupCount = #startupNames
     local a, b, c = {}, {}, {}
     NVG_IMAGE_GENERATE_MIPMAPS, NVG_IMAGE_REPEATX, NVG_IMAGE_REPEATY = 1, 2, 4
