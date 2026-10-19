@@ -24,7 +24,8 @@ if '--baseline' in sys.argv:
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_bytes(subprocess.check_output(['git', 'show', 'HEAD:' + relative], cwd=ROOT))
     ROOT = baseline_root
-PACKAGE = Path(r'C:\Users\80739\.taptap-maker\lua-lsp-venv\Lib\site-packages\maker_lua_lsp')
+PACKAGE = Path(os.environ.get('MAKER_LUA_LSP_PACKAGE',
+    Path.home() / '.taptap-maker' / 'lua-lsp-venv' / 'Lib' / 'site-packages' / 'maker_lua_lsp'))
 spec = importlib.util.spec_from_file_location('sea_maker_lsp', PACKAGE / '__main__.py')
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)

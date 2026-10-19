@@ -436,6 +436,14 @@ function Tests.Run()
         eq(ownedCount(env.bridge:GetOwnedTreasures(), "memory_island_01"), 1,
             "duplicate advance cannot duplicate a memory")
 
+        -- V2.8：W-08 正文已定稿，首次取得记忆会先弹出标题+正文模态（世界暂停）；
+        -- 关闭后才能继续老人展示流程。
+        local memoryDialog = env.loop:GetStoryDialog()
+        if memoryDialog then
+            eq(memoryDialog.kind, "memory_fragment")
+            assert(env.loop:NotifyStoryShown(memoryDialog.token))
+            assert(env.loop:CloseStoryDialog())
+        end
         assert(env.loop:SetElderOpen(true))
         local cargoCount = #env.loop.player.inventory:GetItems()
         local shown, response = env.bridge:ShowTreasureToElder("memory_island_01")

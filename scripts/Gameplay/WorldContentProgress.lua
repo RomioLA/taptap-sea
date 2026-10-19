@@ -12,6 +12,16 @@ local function finite(value)
     return type(value) == "number" and value == value and math.abs(value) < math.huge
 end
 
+-- V2.8 authored content declares its own周目 state fields; those records live in
+-- story.v28.content so the legacy worldContent schema stays strict.
+local V28_IDS, V28_DEFINITIONS = {}, {}
+for _, definition in ipairs(Content.fixed) do
+    if type(definition.contentId) == "string" and type(definition.stateFields) == "table" then
+        V28_IDS[#V28_IDS + 1] = definition.contentId
+        V28_DEFINITIONS[definition.contentId] = true
+    end
+end
+
 local function validLensKeySource(definition)
     local action = definition.action
     return type(definition.contentId) == "string" and definition.contentId ~= ""
@@ -60,6 +70,11 @@ local function validateContentProgress(data)
     local contentProgress = story and rawget(story, STORY_KEY)
     if contentProgress ~= nil and type(contentProgress) ~= "table" then
         return false, "invalid_world_content_progress"
+    end
+    -- V2.8: validate the separate周目 namespace without relaxing the legacy one.
+    local v28 = story and rawget(story, "v28")
+    if v28 ~= nil and type(v28) ~= "table" then
+        return false, "invalid_v28_progress"
     end
 
     if contentProgress then
@@ -161,6 +176,10 @@ function Progress.Initialize(player)
             rawset(treasures, definition.rewardId, false)
         end
     end
+    -- V2.8 周目状态与独立道具栏持有位（旧档按 false 迁移）。
+    local V28 = require "Gameplay.V28Progress"
+    local v28Ok, v28Error = V28.Initialize(player)
+    if not v28Ok then return false, v28Error end
     return Progress.Validate(player)
 end
 
@@ -171,7 +190,19 @@ local function prepare(player, contentId)
     return true
 end
 
+---V2.8 content state lives in story.v28.content; legacy content stays in story.worldContent.
+---@param player table
+---@param contentId string
+---@return table|nil, string|nil
+local function v28StateFor(player, contentId)
+    local V28 = require "Gameplay.V28Progress"
+    local ok, reason = V28.Initialize(player)
+    if not ok then return nil, reason end
+    return V28.GetProgressState(player, contentId)
+end
+
 local function stateFor(player, contentId)
+    if V28_DEFINITIONS[contentId] then return v28StateFor(player, contentId) end
     local story = rawget(player, "story")
     local treasures = rawget(player, "treasures")
     local record = rawget(rawget(story, STORY_KEY), contentId)
@@ -190,6 +221,11 @@ end
 ---@param contentId string
 ---@return table|nil, string|nil
 function Progress.GetState(player, contentId)
+    if V28_DEFINITIONS[contentId] then
+        local initialized, initError = Progress.Initialize(player)
+        if not initialized then return nil, initError end
+        return v28StateFor(player, contentId)
+    end
     local ready, reason = prepare(player, contentId)
     if not ready then return nil, reason end
     return stateFor(player, contentId)
@@ -200,6 +236,14 @@ end
 ---@param contentId string
 ---@return boolean, string|nil
 function Progress.Mark(player, contentId)
+    if V28_DEFINITIONS[contentId] then
+        local V28 = require "Gameplay.V28Progress"
+        local initialized, initError = Progress.Initialize(player)
+        if not initialized then return false, initError end
+        local ok, reason = V28.SetFlag(player, contentId, "marked", true)
+        if not ok then return false, reason end
+        return true
+    end
     if not validContentId(contentId) then return false, "invalid_content_id" end
     local definition = assert(CONTENT_DEFINITIONS[contentId])
     if not definition.markable then
@@ -232,6 +276,12 @@ end
 ---@param contentId string
 ---@return table|nil, string|nil
 function Progress.Snapshot(player, contentId)
+    if V28_DEFINITIONS[contentId] then
+        local V28 = require "Gameplay.V28Progress"
+        local initialized, initError = Progress.Initialize(player)
+        if not initialized then return nil, initError end
+        return V28.Snapshot(player, contentId)
+    end
     local ready, reason = prepare(player, contentId)
     if not ready then return nil, reason end
     return snapshotFor(contentId, stateFor(player, contentId))
@@ -243,6 +293,12 @@ end
 ---@param snapshot table
 ---@return boolean, string|nil
 function Progress.Restore(player, contentId, snapshot)
+    if V28_DEFINITIONS[contentId] then
+        local V28 = require "Gameplay.V28Progress"
+        local initialized, initError = Progress.Initialize(player)
+        if not initialized then return false, initError end
+        return V28.Restore(player, contentId, snapshot)
+    end
     local ready, reason = prepare(player, contentId)
     if not ready then return false, reason end
     local definition = assert(CONTENT_DEFINITIONS[contentId])

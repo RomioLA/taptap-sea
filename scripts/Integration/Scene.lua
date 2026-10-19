@@ -9,6 +9,7 @@ local SeaDebug = require("Ocean.SeaDebug")
 local SeaConfig = require("Ocean.Config")
 local Circle1BInput = require("Integration.Circle1BInput")
 local Persistence = require("Gameplay.Persistence")
+local V28Progress = require("Gameplay.V28Progress")
 local Diagnostics = require("Gameplay.Diagnostics")
 
 local Scene = {}
@@ -265,6 +266,10 @@ function Scene.Start(options)
     end
     oceanOptions.isWorldContentMarked = function(contentId)
         return bridge ~= nil and bridge.loop:IsWorldContentMarked(contentId) == true
+    end
+    -- V2.8：漂流瓶拾取态由残页持有推导；只读查询，供 SeaDraw 隐藏已拾取的瓶体。
+    oceanOptions.isV28Picked = function(contentId)
+        return bridge ~= nil and bridge.loop and V28Progress.IsBottlePicked(bridge.loop.player, contentId) == true
     end
     oceanOptions.beforePointer = function()
         if bridge then bridge:Sync() end

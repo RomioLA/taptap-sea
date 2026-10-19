@@ -201,6 +201,34 @@ local Config = {
         birdDiveSeconds = 1.5, birdAngularSpeed = 1.8, birdAnimationStatus = "VISUAL_TEST_VALUE",
         splashInterval = 1, chaseSplashInterval = 0.5, splashLifetime = 0.6, trailLength = 2,
     },
+    -- V2.8 首版试玩参数（集中存放，实机可单独调参而不改规则）：
+    -- 海眼 60m 吸小鱼 / 90m 吸大鱼、持续 20 秒；巨骨分区 4小+2大；
+    -- 探海镜连续观察 1 秒；固定内容交互 ≤5m；打捞 40 体力 / 4 秒。
+    v28 = {
+        tuningStatus = "V28_PLAYTEST_PARAMETERS",
+        interactDistance = 5,
+        lensMarkDurationSec = 1,
+        salvageDurationSec = 4,
+        salvageStaminaCost = 40,
+        vortex = {
+            smallFishAttractRadius = 60,
+            bigFishAttractRadius = 90,
+            attractDurationSec = 20,
+            dropRadius = 5,
+            noNetRadius = 3,
+            observeRadius = 5,
+            pearlItemId = "abyss_pearl",
+        },
+        -- 巨骨所在 120×120m 中海分区：默认 5小1大 → 4小2大（总数仍 6）。
+        leviathan = {
+            contentId = "leviathan_bones_01",
+            regionSize = 120,
+            sardineCount = 4,
+            tunaCount = 2,
+            bigFishRingMin = 15,
+            bigFishRingMax = 45,
+        },
+    },
     seaTitle = "渔夫漂流记 · Sea Runtime V1",
 }
 -- Compatibility speed alias; all level speeds and the map derive from this one table.

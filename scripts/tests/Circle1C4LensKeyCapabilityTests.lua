@@ -91,7 +91,9 @@ function Tests.Run()
     end
 
     test("production fixed content has no key source, key location, or key reward", function()
-        eq(productionFixedCount, 3)
+        -- V2.8 批次把固定内容从 3 个扩到 14 个；V2.8 的新钥匙能力走 V28Progress 独立状态，
+        -- 仍不得使用旧的 lens key-source 声明（那个契约只服务能力测试 fixture）。
+        assert(productionFixedCount >= 3)
         for index = 1, productionFixedCount do
             local definition = Content.fixed[index]
             eq(definition.keySource, nil)

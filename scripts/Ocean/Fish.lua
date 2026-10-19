@@ -100,6 +100,10 @@ local function lengthSquared(x, y)
     return x * x + y * y
 end
 
+local function finitePositive(value)
+    return type(value) == "number" and value == value and value > 0 and value < math.huge
+end
+
 ---@param world table
 ---@param entity table
 ---@param speciesData table
@@ -259,6 +263,7 @@ function Fish:_findDanger()
 end
 
 ---@return table? attraction
+---@return number nearestDistanceSquared
 function Fish:_findAttraction()
     local data = self.speciesData
     local radius = data.attractRadius
@@ -267,10 +272,28 @@ function Fish:_findAttraction()
         or type(speed) ~= "number" or speed <= 0 then
         -- Missing/nonpositive species tuning disables attraction without discarding
         -- the effect payload. Official tuna tuning is supplied by FishData.
-        return nil
+        return nil, math.huge
     end
 
-    return self:_nearestEntity(radius, self.attractFilter, self.queryScratch)
+    local nearest, nearestDistanceSquared = self:_nearestEntity(radius, self.attractFilter, self.queryScratch)
+    if nearest then return nearest, nearestDistanceSquared end
+
+    -- V2.8 海眼：仅当世界里确实存在携带更大半径的临时诱饵时，才做第二次更宽查询。
+    -- 常规情况仍然只有 1 次全表查询（S1-d 节流契约不变）。
+    local boost = self.world.attractBoostRadius
+    local boostedRadius = type(boost) == "table" and boost[data.attractEffect] or nil
+    if not finitePositive(boostedRadius) or boostedRadius <= radius then
+        return nil, math.huge
+    end
+    nearest, nearestDistanceSquared = self:_nearestEntity(
+        boostedRadius, self.attractFilter, self.queryScratch)
+    if not nearest then return nil, math.huge end
+    local payload = nearest.payload
+    local effective = type(payload) == "table" and payload.attractRadius or radius
+    if not finitePositive(effective) or nearestDistanceSquared > effective * effective then
+        return nil, math.huge
+    end
+    return nearest, nearestDistanceSquared
 end
 
 ---@param candidate table?

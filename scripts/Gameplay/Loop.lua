@@ -12,6 +12,8 @@ local Progress = require("Gameplay.Circle1B2Progress")
 local Barrel = require("Gameplay.Circle1B2Barrel")
 local WorldContentActions = require("Gameplay.WorldContentActions")
 local WorldContentProgress = require("Gameplay.WorldContentProgress")
+local V28Progress = require("Gameplay.V28Progress")
+local V28ContentActions = require("Gameplay.V28ContentActions")
 local MemoryFragments = require("Gameplay.MemoryFragments")
 local EvidenceSystem = require("Gameplay.EvidenceSystem")
 -- ②③ 认知度/成就系统执行器 + 跨局存档层
@@ -56,6 +58,9 @@ local ProfileStore = require("Gameplay.ProfileStore")
 ---@field barrel Circle1B2Barrel
 ---@field worldContentActions WorldContentActions?
 ---@field worldContentAdapter table?
+---@field v28Actions V28ContentActions?
+---@field v28FeedbackToken number?
+---@field v28Notice table?
 ---@field runtime table?
 ---@field throwSelection table?
 ---@field storyDialog table?
@@ -68,10 +73,11 @@ local ProfileStore = require("Gameplay.ProfileStore")
 ---@field requestSequence integer
 ---@field lastSettlementSaveId integer?
 local Loop = {}
+-- V2.8（W-08 定稿）：三枚记忆碎片使用正式标题。
 local WORLD_CONTENT_MEMORY_LABELS = {
-    island_01 = "岛屿记忆一",
-    island_02 = "岛屿记忆二",
-    underwater_treasure_01 = "海底记忆",
+    island_01 = "《有人牵着我的手》",
+    island_02 = "《第一次自己走远》",
+    underwater_treasure_01 = "《那盏还亮着的灯》",
 }
 Loop.__index = Loop
 
@@ -152,6 +158,8 @@ function Loop:ResetState()
     self.dropInFlight = false
     self.saveStatus, self.lastMessage = "idle", "新周目已开始"
     self.worldContentFeedbackToken, self.actionToast = nil, nil
+    self.v28FeedbackToken, self.v28Notice = nil, nil
+    self.v28NetChoice = nil
     self.portNightElapsed = 0
     self.settlementForced = false
     self.settlementSnapshot = {}
@@ -185,6 +193,7 @@ function Loop:Ready()
         and not (self.actions and self.actions:IsBusy())
         and not (self.barrel and self.barrel:IsBusy()) and not self.storyDialog
         and not (self.worldContentActions and self.worldContentActions:GetActionState())
+        and not (self.v28Actions and self.v28Actions:GetActionState())
 end
 
 -- 仅新周目、下一天应用或成功恢复每日结算快照时补货。
@@ -350,6 +359,381 @@ function Loop:Update(dt, advanceWorld)
             end
         end
     end
+    self:AdvanceV28Actions(worldContentElapsed)
+end
+
+---V2.8 固定海上内容的 4 秒事务与探海镜 1 秒标记推进。
+---@param elapsed number
+function Loop:AdvanceV28Actions(elapsed)
+    local actions = self.v28Actions
+    if not actions then return end
+    local token = self.v28FeedbackToken
+    local receipt
+    if token ~= nil then
+        local ok, value = pcall(actions.GetReceipt, actions, token)
+        if ok then receipt = value end
+    end
+    local completed = type(receipt) == "table" and receipt.status == "completed"
+        and receipt.commitState == "committed"
+    local callOk, advanced, result
+    if completed then
+        callOk, advanced, result = true, true, "completed"
+    else
+        callOk, advanced, result = Diagnostics.Call("Loop", "v28_action_advance",
+            actions.Advance, actions, elapsed)
+    end
+    if token ~= nil then
+        if callOk and advanced == true and result == "completed" then
+            if not completed then
+                local ok, value = pcall(actions.GetReceipt, actions, token)
+                if ok then receipt = value end
+            end
+            if type(receipt) == "table" and receipt.status == "completed"
+                and receipt.commitState == "committed" then
+                self:FinishV28Receipt(receipt)
+            else
+                self.lastMessage = ""
+                self.v28FeedbackToken = nil
+            end
+        elseif not callOk or result ~= "active" then
+            self.v28FeedbackToken = nil
+        end
+    end
+    -- 探海镜 1 秒标记/识别：顶部轻提示一次，不写盘、不暂停世界。
+    local notice = actions:ConsumeLensNotice()
+    if notice and type(notice.text) == "string" and notice.text ~= "" then
+        self:QueueActionToast(notice.text, 3)
+    end
+end
+
+---V2.8 4 秒事务成功后的统一反馈（沉船 / 浮藻假岛 / 破渔网分支A）。
+---@param receipt table
+function Loop:FinishV28Receipt(receipt)
+    local definition = V28ContentActions.Definition(receipt.contentId)
+    local action = definition and (definition.v28Action
+        or (definition.net and definition.net.branchA)) or nil
+    local cost = tonumber(receipt.staminaCost) or 0
+    local staminaLeft = math.floor(tonumber(self.player.stamina) or 0)
+    local lines = {}
+    if action and type(action.successText) == "string" and action.successText ~= "" then
+        lines[#lines + 1] = action.successText
+    end
+    if receipt.contentId == "trapped_net_01" then
+        lines[#lines + 1] = "你把两条小鱼收进了船舱。网底那把旧钥匙在拉扯中崩断绳结，沉入了深海。"
+    end
+    lines[#lines + 1] = string.format("消耗%d体力，剩余%d体力", cost, staminaLeft)
+    local text = table.concat(lines, "\n")
+    self.lastMessage = ""
+    self.v28FeedbackToken = nil
+    if action and type(action.successText) == "string" and action.successText ~= "" then
+        self.storyDialog = { token = {}, kind = "v28_result", text = text }
+        self.clock:Pause("story")
+    else
+        self:QueueActionToast(text, 4)
+    end
+end
+
+---当前可用的 V2.8 动态场景按钮（观察/拾取/探索/打捞）。
+---@return table|nil, string|nil
+function Loop:GetV28Prompt()
+    local actions = self.v28Actions
+    if not actions then return nil, "v28_unavailable" end
+    local active = actions:GetActionState()
+    if active then return actions:GetPrompt() end
+    if self.inPort or self.clock:IsPaused() or self.clock.exhausted or self.inventoryOpen
+        or self.elderOpen or self:HasPendingCatch() or not self:Ready() then
+        return nil
+    end
+    -- 捕鱼选点 / 投放选点 / 4 秒动作期间统一隐藏 0 体力场景按钮。
+    local fishing = self:GetFishingState()
+    if fishing and fishing.state ~= "idle" then return nil end
+    if self:GetThrowSelection() or self:GetThrowPicker() then return nil end
+    if self:IsMovementBlocked() then return nil end
+    return actions:GetPrompt()
+end
+
+---0 体力场景观察（礁石 / 木板 / 海眼）。
+---@param contentId string
+---@return boolean, string|nil
+function Loop:ObserveV28Content(contentId)
+    local actions = self.v28Actions
+    if not actions then return false, "v28_unavailable" end
+    if not self:CanStartV28SceneAction() then return false, "action_blocked" end
+    local cancelled, cancelError = self:CancelAutoReturn("v28_observe")
+    if not cancelled then return false, cancelError or "auto_return_cancel_failed" end
+    if self.runtime and type(self.runtime.ClearMovementTarget) == "function" then
+        self.runtime:ClearMovementTarget()
+    end
+    local ok, reason, detail = actions:Observe(contentId)
+    if not ok then
+        self.lastMessage = tostring(reason or "content_not_observable")
+        return false, reason
+    end
+    self.lastMessage = detail and detail.text or ""
+    self.v28Notice = detail
+    return true
+end
+
+---0 体力拾取固定漂流瓶；残页进独立道具栏。
+---@param contentId string
+---@return boolean, string|nil
+function Loop:PickupV28Content(contentId)
+    local actions = self.v28Actions
+    if not actions then return false, "v28_unavailable" end
+    if not self:CanStartV28SceneAction() then return false, "action_blocked" end
+    local cancelled, cancelError = self:CancelAutoReturn("v28_pickup")
+    if not cancelled then return false, cancelError or "auto_return_cancel_failed" end
+    if self.runtime and type(self.runtime.ClearMovementTarget) == "function" then
+        self.runtime:ClearMovementTarget()
+    end
+    local ok, reason, detail = actions:Pickup(contentId)
+    if not ok then
+        self.lastMessage = tostring(reason or "content_not_pickable")
+        return false, reason
+    end
+    self.lastMessage = detail and detail.text or ""
+    -- 拾取后立即弹出残页阅读模态（可随时重读；不消耗物品）。
+    if detail and type(detail.readText) == "string" and detail.readText:match("%S") then
+        self.storyDialog = { token = {}, kind = "v28_note",
+            title = detail.readTitle or "航海残页", text = detail.readText }
+        self.clock:Pause("story")
+    end
+    return true
+end
+
+---0 体力场景动作（观察/拾取）通用门禁。
+---@return boolean
+function Loop:CanStartV28SceneAction()
+    if not self:Ready() or self.inPort or self.clock:IsPaused() or self.clock.exhausted then return false end
+    if self:HasPendingCatch() or self:GetThrowSelection() or self:GetThrowPicker() then return false end
+    local fishing = self:GetFishingState()
+    if fishing and fishing.state ~= "idle" then return false end
+    return true
+end
+
+---开始 40 体力/4 秒打捞（沉船 / 浮藻假岛货箱）。
+---@param contentId string
+---@return boolean, string|nil
+function Loop:BeginV28Salvage(contentId)
+    local actions = self.v28Actions
+    if not actions then return false, "v28_unavailable" end
+    if not self:CanStartV28SceneAction() then return false, "action_blocked" end
+    if self.v28FeedbackToken ~= nil then return false, "action_pending" end
+    local definition = V28ContentActions.Definition(contentId)
+    local action = definition and definition.v28Action
+    if not action then return false, "invalid_content_id" end
+    if not self.player:CanConsumeStamina(action.staminaCost) then
+        self.lastMessage = action.refusals and action.refusals.insufficient_stamina
+            or string.format("体力不足，这个动作需要%d体力。", action.staminaCost)
+        return false, "insufficient_stamina"
+    end
+    local cancelled, cancelError = self:CancelAutoReturn("v28_salvage")
+    if not cancelled then return false, cancelError or "auto_return_cancel_failed" end
+    local token, reason = actions:BeginAction(contentId)
+    if not token then
+        local refusal = action.refusals and action.refusals[reason]
+        self.lastMessage = refusal or tostring(reason or "action_rejected")
+        return false, reason
+    end
+    self.v28FeedbackToken = token
+    self.lastMessage = action.beginText or "开始打捞"
+    return true
+end
+
+---破渔网双分支：A=40体力/4秒收网，B=0体力即时割网。
+---@param contentId string
+---@param branch string "A"|"B"
+---@return boolean, string|nil
+function Loop:ResolveTrappedNet(contentId, branch)
+    local actions = self.v28Actions
+    if not actions then return false, "v28_unavailable" end
+    if not self:CanStartV28SceneAction() then return false, "action_blocked" end
+    if branch == "B" then
+        local cancelled, cancelError = self:CancelAutoReturn("v28_net_cut")
+        if not cancelled then return false, cancelError or "auto_return_cancel_failed" end
+        local runtime = self.runtime
+        local release = runtime and type(runtime.ReleaseFishAtContent) == "function"
+            and function(species, count) return runtime:ReleaseFishAtContent(contentId, species, count) end
+            or nil
+        local ok, reason, detail = actions:ResolveNetCut(contentId, release)
+        if not ok then
+            self.lastMessage = tostring(reason or "net_resolution_failed")
+            return false, reason
+        end
+        self.lastMessage = detail and detail.text or ""
+        if detail and type(detail.text) == "string" and detail.text:match("%S") then
+            self.storyDialog = { token = {}, kind = "v28_result", text = detail.text }
+            self.clock:Pause("story")
+        end
+        return true
+    end
+    if branch ~= "A" then return false, "invalid_branch" end
+    local definition = V28ContentActions.Definition(contentId)
+    local action = definition and definition.net and definition.net.branchA
+    if not action then return false, "invalid_content_id" end
+    if not self.player:CanConsumeStamina(action.staminaCost) then
+        self.lastMessage = action.refusals.insufficient_stamina
+        return false, "insufficient_stamina"
+    end
+    if not self.player.inventory:HasSpace(action.freeSlots or 0) then
+        self.lastMessage = action.refusals.inventory_full
+        return false, "inventory_full"
+    end
+    local cancelled, cancelError = self:CancelAutoReturn("v28_net_collect")
+    if not cancelled then return false, cancelError or "auto_return_cancel_failed" end
+    local token, reason = actions:BeginNetCollect(contentId)
+    if not token then
+        self.lastMessage = (action.refusals and action.refusals[reason]) or tostring(reason or "action_rejected")
+        return false, reason
+    end
+    self.v28FeedbackToken = token
+    self.lastMessage = "开始收网"
+    return true
+end
+
+---V2.8：打开破渔网双分支选择面板（0 体力，不暂停世界）。
+---@param contentId string
+---@return boolean, string|nil
+function Loop:OpenTrappedNetChoice(contentId)
+    local definition = V28ContentActions.Definition(contentId)
+    if not definition or not definition.net then return false, "content_not_net" end
+    local state = V28Progress.GetProgressState(self.player, contentId)
+    if not state or state.completed then return false, "already_completed" end
+    if not self:CanStartV28SceneAction() then return false, "action_blocked" end
+    self.v28NetChoice = contentId
+    return true
+end
+
+---@return string|nil
+function Loop:GetTrappedNetChoice()
+    return self.v28NetChoice
+end
+
+---@return boolean
+function Loop:CloseTrappedNetChoice()
+    self.v28NetChoice = nil
+    return true
+end
+
+---取消当前 V2.8 4 秒事务（免费、不发奖、不改状态）。
+---@param token number|nil
+---@return boolean, string|nil
+function Loop:CancelV28Action(token)
+    local actions = self.v28Actions
+    if not actions then return true, "idle" end
+    local active = actions:GetActionState()
+    if not active then return true, "idle" end
+    local target = token or active.token
+    local cancelled, reason = actions:Cancel(target, "cancelled")
+    if cancelled and self.v28FeedbackToken == target then self.v28FeedbackToken = nil end
+    return cancelled, reason
+end
+
+---V2.8：使用/查看独立道具栏持有物（航海残页重读、生锈钥匙查看）。
+---@param treasureId string
+---@return boolean, string|nil
+function Loop:UseV28Treasure(treasureId)
+    if not V28Progress.HasTreasure(self.player, treasureId) then return false, "treasure_unavailable" end
+    local definition = Items.GetDefinition(treasureId)
+    if not definition then return false, "treasure_unavailable" end
+    if not self:CanManageInventory() and not self.inPort then return false, "busy" end
+    if type(definition.useText) == "string" and definition.useText ~= "" then
+        if definition.readTitle then
+            self.storyDialog = { token = {}, kind = "v28_note",
+                title = definition.readTitle, text = definition.useText }
+            self.clock:Pause("story")
+        else
+            self.lastMessage = definition.useText
+            self:QueueActionToast(definition.useText, 4)
+        end
+        return true
+    end
+    self.lastMessage = definition.name .. "没有可用的使用效果。"
+    return false, "item_has_no_use"
+end
+
+---V2.8：向老人展示独立道具栏持有物（不消耗）。
+---@param treasureId string
+---@return boolean, string|nil
+function Loop:ShowV28TreasureToElder(treasureId)
+    local present, reason = self:IsElderPresent()
+    if not present then
+        self.lastMessage = "老人已经不在了，无法再把东西交给他。"
+        return false, reason or "elder_not_present"
+    end
+    if not self.elderOpen then return false, "elder_dialog_required" end
+    if not self:CanManageInventory() then return false, "busy" end
+    if not V28Progress.HasTreasure(self.player, treasureId) then return false, "treasure_unavailable" end
+    local definition = Items.GetDefinition(treasureId)
+    if not definition then return false, "treasure_unavailable" end
+    self.lastMessage = definition.elderText or ("向老人展示了" .. definition.name .. "，物品仍保留。")
+    return true, self.lastMessage, elderExchange(self, treasureId, "show",
+        "展示 " .. definition.name, self.lastMessage)
+end
+
+---读取 V2.8 独立道具栏持有物（航海残页 / 生锈钥匙）。
+---@return string[]
+function Loop:GetV28Treasures()
+    local result = {}
+    for _, id in ipairs({ "sea_note_01", "sea_note_02", "rusty_key" }) do
+        if V28Progress.HasTreasure(self.player, id) then result[#result + 1] = id end
+    end
+    return result
+end
+
+---V2.8 内容周目状态（供 HUD / 绘制只读查询）。
+---@param contentId string
+---@return table|nil
+function Loop:GetV28State(contentId)
+    return V28Progress.GetProgressState(self.player, contentId)
+end
+
+---海眼珍珠是否已在周目内领取（卖/丢后仍为 true）。
+---@return boolean
+function Loop:IsVortexPearlClaimed()
+    return V28Progress.IsPearlClaimed(self.player)
+end
+
+---V2.8 海眼：本周目首次正式投放大鱼 → 深海珍珠原子结算。
+---同一事务里：消耗大鱼（调用方已从船舱移除）→ 释放 1 格 → 珍珠直接进该格
+---→ vortexPearlClaimed=true。后置演出失败不回滚本事务。
+---@param payload table 已由 WorldDrop 接受的投放载荷
+---@return boolean, string|nil
+function Loop:ClaimVortexPearl(payload)
+    local player = self.player
+    if V28Progress.IsPearlClaimed(player) then return false, "pearl_already_claimed" end
+    local pearl = "abyss_pearl"
+    if not Items.GetDefinition(pearl) then return false, "invalid_pearl_item" end
+    -- 释放的 1 格就是刚被移除的大鱼腾出的格位；此处只要求存在空位。
+    if not player.inventory:HasSpace(1) then return false, "inventory_full" end
+    local items = player.inventory:GetItems()
+    local stamina = player.stamina
+    local added, addError = player.inventory:Add(pearl)
+    if not added then return false, addError or "inventory_add_failed" end
+    local flagged, flagError = V28Progress.SetPearlClaimed(player, true)
+    if not flagged then
+        player.inventory:RestoreItems(items)
+        player.stamina = stamina
+        return false, flagError or "pearl_claim_failed"
+    end
+    local valid, validError = V28Progress.Validate(player)
+    if not valid then
+        player.inventory:RestoreItems(items)
+        V28Progress.SetPearlClaimed(player, false)
+        return false, validError or "pearl_claim_failed"
+    end
+    self.lastMessage = "海眼深处翻涌了一下，吐出一颗【深海珍珠】。"
+    if payload then payload.vortexPearl = pearl end
+    return true, "claimed"
+end
+
+---V2.8 海眼：已领取过珍珠后再次投大鱼——仍正常消耗，不再产珍珠。
+---@param payload table
+---@return boolean
+function Loop:ConsumeVortexBigFish(payload)
+    if payload then payload.vortexConsumed = true end
+    self.lastMessage = "海眼把大鱼卷了进去，这一次没有再吐出什么。"
+    return true
 end
 
 -- Only a fresh, currently observable commuter-flock event can enter the
@@ -592,7 +976,16 @@ function Loop:RecognizeLocation(locationId)
     local wasRecognized = self.player:IsRecognized(locationId)
     local marked, markError = self.player:MarkRecognized(locationId)
     if not marked then return false, markError or "recognition_rejected" end
-    return true, not wasRecognized
+    local newlyRecognized = not wasRecognized
+    -- V2.8：浮藻假岛 20m 识破为藻层——顶部轻提示一次，不新增 shown 存档。
+    if newlyRecognized then
+        local definition = V28ContentActions.Definition(locationId)
+        if definition and type(definition.recognizeText) == "string" then
+            V28Progress.MarkRecognized(self.player, locationId)
+            self:QueueActionToast(definition.recognizeText, 4)
+        end
+    end
+    return true, newlyRecognized
 end
 
 function Loop:RestoreActionResources(previousItems, oldStamina, portSnapshot)
@@ -1524,6 +1917,8 @@ function Loop:LoadSaved(done)
                 self.inPort, self.dayExhausted = true, false
                 self.entryPending = false
                 self.worldContentFeedbackToken, self.actionToast = nil, nil
+    self.v28FeedbackToken, self.v28Notice = nil, nil
+    self.v28NetChoice = nil
                 self.loadStatus, self.saveStatus = "loaded", "saved"
                 self.lastMessage = "已加载每日结算存档"
                 if not runCompleted then
@@ -1652,6 +2047,18 @@ function Loop:UseItem(index)
         self.lastMessage = "物品已不存在。"
         return false, "invalid_item"
     end
+    -- V2.8：交易品与关键道具的「使用」= 查看/重读，不消耗、不恢复体力。
+    if definition.useText and type(definition.useText) == "string" and definition.useText ~= "" then
+        if definition.readTitle then
+            self.storyDialog = { token = {}, kind = "v28_note",
+                title = definition.readTitle, text = definition.useText }
+            self.clock:Pause("story")
+        else
+            self.lastMessage = definition.useText
+            self:QueueActionToast(definition.useText, 4)
+        end
+        return true
+    end
     if not definition.heal or definition.heal <= 0 then
         -- V2.7：每个物品的每个选项都有反馈，不用置灰代替。
         self.lastMessage = definition.name .. "没有可用的使用效果。"
@@ -1704,8 +2111,16 @@ function Loop:DropItem(index)
         self.lastMessage = "附近没有接收地点，物品仍保留在船舱里。"
         return false, "drop_receiver_unavailable"
     end
+    -- V2.8：区分「正式投放」与「背包丢弃」。
+    -- 只有通过 SetDropTarget 显式选定的海面投放点（底部【投放】/ 鱼饵“使用”选点）
+    -- 才是正式 WorldDrop；物品菜单【丢弃】与 ThrowItemAtShip 快捷路径没有该选点，
+    -- 因此绝不触发海眼特殊回应。
+    local officialThrow = self.actions ~= nil
+        and type(self.actions.GetDropTarget) == "function"
+        and self.actions:GetDropTarget() ~= nil
     local payload = { itemId = id, category = definition.category,
-        worldEffect = definition.worldEffect, lifetimeSec = definition.lifetimeSec }
+        worldEffect = definition.worldEffect, lifetimeSec = definition.lifetimeSec,
+        officialThrow = officialThrow == true }
     self.dropInFlight = true
     local removed, previous, stamina = self:RemoveCargo(index)
     if not removed then self.dropInFlight = false; return false, previous end
@@ -1713,7 +2128,12 @@ function Loop:DropItem(index)
     local ok, accepted = Diagnostics.Call("Loop", "drop_receiver", self.options.dropReceiver, payload)
     self.dropInFlight = false
     if not ok or accepted ~= true then return self:RollbackInventory(previous, stamina, "drop_rejected") end
-    self.lastMessage = "已交接投放请求：" .. definition.name
+    -- V2.8：海眼等接收方可以给出自己的反馈，优先于默认的“已交接投放请求”。
+    if type(payload.vortexFeedback) == "string" and payload.vortexFeedback ~= "" then
+        self.lastMessage = payload.vortexFeedback
+    else
+        self.lastMessage = "已交接投放请求：" .. definition.name
+    end
     if self.knowledge and payload and payload.worldEffect then
         self.knowledge:OnDropItem(payload)  -- ②③ attractOnBait/birdSignalCast/repeatCastNoBird
     end
@@ -1733,8 +2153,11 @@ function Loop:DropBaitBesideShip(index, definition)
         self.lastMessage = "物品已不存在。"
         return false, "invalid_item"
     end
+    -- V2.8：鱼饵「丢弃」= 船边即时投饵，不是正式投放；明确标记为非正式，
+    -- 因此即使落在海眼核心也不会触发海眼特殊回应。
     local payload = { itemId = definition.id, category = definition.category,
-        worldEffect = definition.worldEffect, lifetimeSec = definition.lifetimeSec }
+        worldEffect = definition.worldEffect, lifetimeSec = definition.lifetimeSec,
+        officialThrow = false }
 
     -- 港内：没有可投饵水域，直接移除完成腾格（C-08 已确认）。
     if self.inPort then
@@ -1881,7 +2304,10 @@ function Loop:Sell(index, expectedItemId, expectedRevision)
     if expectedItemId ~= nil and expectedItemId ~= id then return false, "cargo_changed" end
     return self:PortTransaction(function()
     local definition = id and Items.GetDefinition(id)
-    if not definition or definition.category ~= "fish" or not definition.sellPrice or definition.sellPrice <= 0 then
+    -- V2.8：新增交易品（珠宝/珊瑚枝/深海珍珠/海底金属货箱）为 category=misc，
+    -- 仍占普通船舱 1 格、可在港口出售；独立道具栏持有物不可出售。
+    if not definition or definition.independentBar
+        or not V28Progress.IsSellableCargo(definition) then
         return false, "not_sellable"
     end
     local ok, err = self.player.inventory:Remove(index)
@@ -1903,8 +2329,8 @@ function Loop:SellAll()
         for index = #items, 1, -1 do
             local id = items[index]
             local definition = id and Items.GetDefinition(id)
-            if definition and definition.category == "fish"
-                and definition.sellPrice and definition.sellPrice > 0 then
+            if definition and V28Progress.IsSellableCargo(definition)
+                and not definition.independentBar then
                 -- A9（S3）：关键物品不可卖掉（05 页），整体出售时跳过并保留在船舱。
                 if definition.protected then
                     keptProtected = keptProtected + 1
@@ -2070,12 +2496,14 @@ end
 function Loop:IsMovementBlocked()
     return (self.actions ~= nil and self.actions:IsBusy()) or (self.barrel and self.barrel:IsBusy())
         or (self.worldContentActions and self.worldContentActions:GetActionState() ~= nil)
+        or (self.v28Actions and self.v28Actions:GetActionState() ~= nil)
         or self.throwSelection ~= nil
 end
 function Loop:CanManageInventory()
     if self.busy or self.loading or self.dropInFlight or (self.actions and self.actions:IsBusy())
         or (self.barrel and self.barrel:IsBusy()) or self.storyDialog then return false end
     if self.worldContentActions and self.worldContentActions:GetActionState() then return false end
+    if self.v28Actions and self.v28Actions:GetActionState() then return false end
     if self.inventoryRollback then return false end
     if self.actions and self.actions:IsClaimBlocked() then return false end
     if self.barrel and not self.barrel:CanEditCargo() then return false end
@@ -2103,6 +2531,10 @@ function Loop:CompleteEventOperation()
 end
 
 function Loop:InvalidateWorldContent(reason)
+    if self.v28Actions then
+        local ok, err = self.v28Actions:Invalidate(reason or "stale_generation")
+        if not ok then return false, err end
+    end
     if not self.worldContentActions then return true end
     return self.worldContentActions:Invalidate(reason or "stale_generation")
 end
@@ -2229,6 +2661,10 @@ function Loop:BindRuntime(runtime)
         local actions, actionError = WorldContentActions.New(adapter)
         assert(actions, actionError or "world_content_initialization_failed")
         self.worldContentActions, self.worldContentAdapter = actions, adapter
+        -- V2.8 固定海上内容复用同一 adapter 契约（只读空间查询 + 固定内容代际）。
+        local v28, v28Error = V28ContentActions.New(adapter)
+        assert(v28, v28Error or "v28_content_initialization_failed")
+        self.v28Actions = v28
     end
     self:SetupKnowledgeSystems()  -- runtime 就绪后补建 KS/AS（首帧 Init 时 runtime 可能尚未绑定）
     return self
@@ -2530,6 +2966,8 @@ function Loop:NotifyStoryShown(token)
     end
     -- W-08 copy uses the existing modal without a separate persisted shown marker.
     if self.storyDialog.kind == "memory_fragment" then return true end
+    -- V2.8：航海残页重读与 4 秒事务结果复用同一模态，不新增 shown 存档。
+    if self.storyDialog.kind == "v28_note" or self.storyDialog.kind == "v28_result" then return true end
     return false, "unknown_story_kind"
 end
 function Loop:CloseStoryDialog()

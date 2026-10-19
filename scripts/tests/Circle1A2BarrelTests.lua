@@ -1,4 +1,5 @@
 local Config = require("Ocean.Config")
+local Content = require("data.content")
 local Math = require("Ocean.Math")
 local Runtime = require("Ocean.SeaRuntime")
 
@@ -263,8 +264,9 @@ function Tests.Run()
         -- 演示漂浮物 float(10,0) 已按真机反馈删除；world 中不再有泛型 float。
         assert(otherFloatCount == 0,
             "the demo generic float was removed; only the barrel remains")
-        assert(otherFixedCount == #Config.world.fixedObjects + 1,
-            "the fixed treasure should be registered beside the original fixed objects")
+        -- V2.8：固定内容由 3 个扩到 14 个；除木桶外的固定实体都应计入。
+        assert(otherFixedCount == #Content.fixed,
+            "all authored fixed content should be registered beside the barrel")
 
         local writeSucceeded = pcall(function() first.id = "changed" end)
         assert(not writeSucceeded, "top-level snapshot writes must fail")

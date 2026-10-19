@@ -3,6 +3,7 @@
 -- reuse that day's entities rather than refill it on every activity update.
 local Config = require("Ocean.Config")
 local Math = require("Ocean.Math")
+local Content = require("data.content")
 
 local SpawnStrategy = {}
 
@@ -83,6 +84,51 @@ local function speciesKeys(fishData)
     return keys
 end
 
+-- V2.8 固定生态特例（系统规则·V2.8固定生态特例）：
+-- leviathan_bones_01 所在 120×120m 中海分区每日首次激活时总数仍为 6，
+-- 但配比覆写为 4 小鱼 + 2 大鱼；大鱼优先在距巨骨 15～45m 环带内采样。
+-- 只改这一个固定分区的初始化组成，不新增鱼 AI 状态、不增加每日总鱼数。
+local function leviathanOverride(regionX, regionY)
+    local v28 = Config.v28
+    local leviathan = type(v28) == "table" and v28.leviathan or nil
+    if type(leviathan) ~= "table" then return nil end
+    local config = Config.world
+    local size = leviathan.regionSize or config.regionSize
+    local left = -config.halfSize + regionX * config.regionSize
+    local bottom = -config.halfSize + regionY * config.regionSize
+    local centerX, centerY = left + size * 0.5, bottom + size * 0.5
+    -- 分区中心距巨骨不超过半分区对角线时视为包含该节点。
+    local content = nil
+    for _, definition in ipairs(Content.fixed) do
+        if definition.contentId == leviathan.contentId then content = definition end
+    end
+    if not content then return nil end
+    local dx, dy = content.position.x - centerX, content.position.y - centerY
+    if dx * dx + dy * dy > (size * 0.7072) ^ 2 then return nil end
+    return {
+        content = content,
+        sardineCount = leviathan.sardineCount,
+        tunaCount = leviathan.tunaCount,
+        ringMin = leviathan.bigFishRingMin,
+        ringMax = leviathan.bigFishRingMax,
+    }
+end
+
+local function ringPositionInRegion(region, ring, maxAttempts, rng, accept)
+    local config = Config.world
+    local center = ring.content.position
+    for _ = 1, maxAttempts do
+        local angle = rng() * TWO_PI
+        local distance = ring.ringMin + rng() * (ring.ringMax - ring.ringMin)
+        local position = { x = center.x + math.cos(angle) * distance,
+            y = center.y + math.sin(angle) * distance }
+        local insideRegion = position.x >= region.left and position.x <= region.right
+            and position.y >= region.bottom and position.y <= region.top
+        if insideRegion and accept(position) then return position end
+    end
+    return nil
+end
+
 function SpawnStrategy.GenerateRegion(world, daySeed, regionX, regionY, departure, fishData, shipPosition)
     assert(type(world) == "table" and type(world.isPositionFree) == "function",
         "GenerateRegion requires a world with isPositionFree(position, radius)")
@@ -119,12 +165,20 @@ function SpawnStrategy.GenerateRegion(world, daySeed, regionX, regionY, departur
     local output = {}
     local maxAttempts = math.floor(config.spawnAttempts or 0)
     assert(maxAttempts > 0, "world.spawnAttempts must be positive")
+    local ring = leviathanOverride(regionX, regionY)
+    local regionBounds = { left = left, bottom = bottom, right = right, top = top }
 
     for _, key in ipairs(speciesKeys(fishData)) do
         local data = fishData[key]
         local speciesId = data.id or key
         local rng = Math.rng(mixSeed(daySeed, regionX, regionY, speciesId))
         local count = targetCount(data, regionArea, activeArea, rng)
+        local overrideCount = nil
+        if ring then
+            if speciesId == "sardine" then overrideCount = ring.sardineCount
+            elseif speciesId == "tuna" then overrideCount = ring.tunaCount end
+        end
+        if overrideCount ~= nil then count = overrideCount end
         local radius = data.radius or 0
         local minSpawnDistance = data.minSpawnDistance
         local minShipDistance = data.minShipSpawnDistance or 0
@@ -168,7 +222,17 @@ function SpawnStrategy.GenerateRegion(world, daySeed, regionX, regionY, departur
             -- out-of-band candidate as fallback. Deterministic for a fixed seed.
             local chosenPosition = nil
             local fallbackPosition = nil
+            -- V2.8：巨骨分区的两条大鱼优先在距巨骨 15～45m 环带内采样，
+            -- 但仍必须满足全部既有硬约束；环带内无合法点时回退常规合法位置。
+            if ring and speciesId == "tuna" then
+                chosenPosition = ringPositionInRegion(regionBounds, ring, maxAttempts, rng,
+                    function(position)
+                        return inRegion(world, position, radius, departure, minSpawnDistance,
+                            shipPosition, minShipDistance)
+                    end)
+            end
             for _attempt = 1, maxAttempts do
+                if chosenPosition then break end
                 local position = {
                     x = left + rng() * width,
                     y = bottom + rng() * height,
