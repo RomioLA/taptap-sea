@@ -12,6 +12,7 @@ local PerfProbe = require("Ocean.PerfProbe")
 local SeaDraw = {}
 local FIXED_BARREL_CONTENT_ID = "driftwood_barrel"
 local PORT_MARK_RADIUS = 16
+local BIRD_SPAN_METERS = Presentation.BIRD_SPAN_METERS
 
 local function finite(value)
     return type(value) == "number" and value == value and math.abs(value) < math.huge
@@ -61,10 +62,6 @@ local function entityHeading(entity)
     return heading
 end
 
--- BIRD_SPAN_METERS（2026-10-19 海鸟立牌）：eco_bird_f* 内容主体的世界翼展（米）。
--- 取 1.8m 与旧 Plane 口径的实际可见翼展对齐（3.2m 画布 × 580/1024 ≈ 1.81m），
--- 保证本次改造只改投影模式、不改海鸟在画面里的体量，便于真机直接对比。
-local BIRD_SPAN_METERS = 1.8
 -- 海鸥立牌的屏幕空间最小翼展（像素）。2026-10-19 真机二轮反馈：俯冲姿态下翼展
 -- 缩到 0.68m，远处按透视折算后不足 ImageArt.UPRIGHT_MIN_PX=2 亚像素剔除线，
 -- 立牌返回 false 回退 WorldSeabird 矢量折线鸟——真机天空呈现三只白色折线鸟。
@@ -569,6 +566,9 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
         local altitude = entry.kind == "entity" and entity.entityType == "island" and 5.4
             or entry.kind == "bird"
                 and (Config.visual.projection.birdAltitude + BIRD_SPAN_METERS) or 0
+        if entry.kind == "bird" or entry.kind == "splash" then
+            radius, altitude = Presentation.SignalBounds(entry.kind, entry.length)
+        end
         if entry.kind == "ship" then
             Art.Boat(ctx, movement, entity, time)
         else

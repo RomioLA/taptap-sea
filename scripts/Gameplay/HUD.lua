@@ -45,7 +45,8 @@ local HUD = {}
 
 ---@class HUDStoryDialog
 ---@field token table
----@field kind "paper"
+---@field kind "paper"|"elder"|"elder_fate"|"teaching"|"apple_basket"|"memory_fragment"
+---@field title string?
 ---@field text string
 
 ---@class HUDThrowSelection
@@ -885,10 +886,11 @@ local header = UI.Panel {
     refs.throwPickerPanel:SetVisible(false)
     root:AddChild(refs.throwPickerPanel)
 
-    refs.throwSelectionPanel = card("投掷物品")
+    -- V2.7：玩家侧统一用「投放」。
+    refs.throwSelectionPanel = card("投放选点")
     refs.throwSelectionText = makeLabel("", UiKit.fontSize.body, UiKit.ink.title, "bold")
     refs.throwSelectionPanel:AddChild(refs.throwSelectionText)
-    refs.throwSelectionCancel = makeButton("取消投掷", function()
+    refs.throwSelectionCancel = makeButton("取消投放", function()
         invokeLoop("CancelThrowSelection")
     end, "secondary", 94)
     refs.throwSelectionPanel:AddChild(refs.throwSelectionCancel)
@@ -1013,7 +1015,7 @@ local header = UI.Panel {
     refs.itemUse = makeButton("使用", function()
         if state.selectedItemIndex then invokeLoop("UseItem", state.selectedItemIndex) end
     end, "success", 56)
-    refs.itemGive = makeButton("给予", function()
+    refs.itemGive = makeButton("给老人", function()
         local itemIndex = state.selectedItemIndex
         if not itemIndex then return end
         -- 打开对话会刷新物品行并清除选择，先保存原槽位与品名；失败时不交付物品。
@@ -1902,14 +1904,20 @@ local header = UI.Panel {
     end
 
     -- V2.7（S-01）：【投放】——列表为空时只给顶部轻提示，不弹模态。
+    -- 再点一次就取消（列表或选点）；取消不消耗物品。
     openThrowPicker = function()
         if type(loop.OpenThrowPicker) ~= "function" then
             state.localMessage = "投放暂不可用。"
             refresh()
             return
         end
+        local alreadyOpen = state.throwPickerOpen == true
+            or (type(loop.GetThrowPicker) == "function" and loop:GetThrowPicker() ~= nil)
         local ok, result = invokeLoop("OpenThrowPicker")
-        if ok and type(result) == "table" then
+        if alreadyOpen then
+            state.throwPickerOpen = false
+            state.localMessage = ""
+        elseif ok and type(result) == "table" then
             state.throwPickerOpen = true
         else
             state.throwPickerOpen = false
@@ -2423,10 +2431,12 @@ local header = UI.Panel {
             logText = state.autoReturnFailureMessage
         elseif localMessage then
             logText = localMessage
+        elseif lastMessageEvent then
+            -- V2.7：刚发生的玩家反馈优先于“已自动保存”的常驻状态，
+            -- 否则教学/拒绝等一次性反馈会被存档提示吞掉。
+            logText = lastMessageEvent
         elseif saveStatus == "saved" then
             logText = saveText(loop)
-        elseif lastMessageEvent then
-            logText = lastMessageEvent
         elseif loop.loading == true or saveStatus == "loading" or saveStatus == "saving" then
             logText = saveText(loop)
         elseif portHintActive then
@@ -2504,8 +2514,10 @@ local header = UI.Panel {
             local ok, value = pcall(loop.GetStoryDialog, loop)
             if ok and type(value) == "table"
                 and (value.kind == "paper" or value.kind == "elder" or value.kind == "elder_fate"
-                    or value.kind == "teaching" or value.kind == "apple_basket")
-                and type(value.token) == "table" and type(value.text) == "string" then
+                    or value.kind == "teaching" or value.kind == "apple_basket"
+                    or value.kind == "memory_fragment")
+                and type(value.token) == "table" and type(value.text) == "string"
+                and (value.kind ~= "memory_fragment" or value.text:match("%S") ~= nil) then
                 storyDialog = value
             end
         end
@@ -2577,6 +2589,7 @@ local header = UI.Panel {
         -- 收网结果气泡：进入终态时记录文本并展示约 5 秒；离开终态后允许下次收网重弹。
         -- （os.time 缺失的运行时静默禁用气泡，结果仍见捕鱼小卡的结果行。）
         local nowStamp = bubbleTime()
+        if storyDialog then refs.catchBubble:SetVisible(false) end
         if nowStamp then
             local actionToast
             if type(loop.GetActionToast) == "function" then
@@ -2593,7 +2606,8 @@ local header = UI.Panel {
                         loop.AcknowledgeActionToast, loop, actionToast.id)
                 end
             end
-            local actionToastVisible = state.actionToastUntil ~= nil and nowStamp < state.actionToastUntil
+            local actionToastVisible = storyDialog == nil
+                and state.actionToastUntil ~= nil and nowStamp < state.actionToastUntil
             if actionToastVisible then
                 refs.catchBubble:SetVisible(true)
                 setText(refs.catchBubbleText, "catchBubbleText", state.actionToastText or "")
@@ -2608,7 +2622,8 @@ local header = UI.Panel {
                 elseif not fishingTerminal and state.bubbleKey ~= nil then
                     state.bubbleKey = nil
                 end
-                local bubbleVisible = state.bubbleUntil ~= nil and nowStamp < state.bubbleUntil
+                local bubbleVisible = storyDialog == nil
+                    and state.bubbleUntil ~= nil and nowStamp < state.bubbleUntil
                 refs.catchBubble:SetVisible(bubbleVisible)
                 if bubbleVisible then
                     setText(refs.catchBubbleText, "catchBubbleText", state.bubbleText or "")
@@ -2880,7 +2895,7 @@ local header = UI.Panel {
             setText(refs.barrelStatus, "barrelStatus", "木桶补给等待领取，请先处理待领取奖励。")
             refs.barrelCancel:SetVisible(false)
         elseif barrelFinished then
-            setText(refs.barrelStatus, "barrelStatus", "木桶调查已完成。")
+            setText(refs.barrelStatus, "barrelStatus", "这只木桶已经被你仔细翻过了。")
             refs.barrelCancel:SetVisible(false)
         elseif barrelActive then
             local seconds = math.max(0, tonumber(barrelState.remaining) or 0)
@@ -2946,7 +2961,7 @@ local header = UI.Panel {
         refs.throwSelectionPanel:SetVisible(throwSelection ~= nil)
         if throwSelection then
             setText(refs.throwSelectionText, "throwSelectionText",
-                "已选择" .. itemName(throwSelection.itemId) .. "，请点击 12 米内海面投掷；也可以取消。")
+                "已选择" .. itemName(throwSelection.itemId) .. "，请点击 12 米内海面投放；也可以取消。")
             refs.throwSelectionCancel:SetDisabled(false)
         end
 
@@ -2993,22 +3008,18 @@ local header = UI.Panel {
         -- v1.5 选中态：选择变化只改样式不重建行（见 applyItemRowSelection）。
         applyItemRowSelection()
         local selectedItem = state.selectedItemIndex and items[state.selectedItemIndex]
-        local selectedDefinition = selectedItem and Items.GetDefinition(selectedItem)
-        local itemUseAvailable = selectedDefinition ~= nil and selectedDefinition.canEat == true
-            and selectedDefinition.heal > 0
         refs.itemMenu:SetVisible(showInventory and selectedItem ~= nil)
         if selectedItem then
             setText(refs.itemMenuTitle, "itemMenuTitle", string.format("%02d · %s", state.selectedItemIndex, itemName(selectedItem)))
         end
         -- V2.7：所有可持有物品固定显示「使用／给老人／丢弃」三个入口；
         -- 不能执行时不置灰、不隐藏，由 Loop 返回清晰原因。
-        refs.itemUse:SetVisible(selectedDefinition ~= nil)
-        refs.itemGive:SetVisible(selectedDefinition ~= nil)
-        refs.itemDrop:SetVisible(selectedDefinition ~= nil)
-        refs.itemUse:SetDisabled(busy or fishingRestricted or not itemUseAvailable)
-        refs.itemGive:SetText(selectedDefinition and selectedDefinition.category == "food" and "给予" or "展示")
+        refs.itemUse:SetVisible(selectedItem ~= nil)
+        refs.itemGive:SetVisible(selectedItem ~= nil)
+        refs.itemDrop:SetVisible(selectedItem ~= nil)
+        refs.itemUse:SetDisabled(busy or fishingRestricted)
         refs.itemGive:SetDisabled(busy or fishingRestricted)
-        refs.itemDrop:SetDisabled(busy or fishingRestricted or selectedDefinition == nil)
+        refs.itemDrop:SetDisabled(busy or fishingRestricted)
         refs.itemMenuBack:SetDisabled(false)
 
         local pendingIds = pendingData and pendingData.itemIds or {}
@@ -3077,6 +3088,9 @@ local header = UI.Panel {
             or storyDialog and storyDialog.kind == "apple_basket" and "第6天 · 船舱"
             or storyDialog and storyDialog.kind == "teaching" and "老人"
             or storyDialog and storyDialog.kind == "elder" and "海岸边的老人"
+            or storyDialog and storyDialog.kind == "memory_fragment"
+                and (type(storyDialog.title) == "string" and storyDialog.title:match("%S")
+                    and storyDialog.title or "故事片段")
             or "漂流瓶里的纸条"
         local overlayTitle = showEntry and "云存档" or showForced and "夜晚返港"
             or (showNewRunConfirm and "重新开始"
@@ -3190,11 +3204,32 @@ local header = UI.Panel {
         end
 
         if showEnding then
-            -- [PLACEHOLDER] 结局占位文案；正式版按 Q-006 由 B 侧内容生产替换。
-            local endingCopy = loop.endingKind == "changed"
-                and "老人活了下来。你们约好，明天继续出海。"
-                or "七天过去，风平浪静，无事发生。日子还得继续。"
-            setText(refs.endingText, "endingText", endingCopy)
+            local endingCopy, endingTitle
+            if loop.endingKind == "changed" then
+                -- W-05：2026-10-19 用户确认采用现版「改变结局｜有人同行」。
+                endingTitle = "改变结局｜有人同行"
+                endingCopy = "第七天，你把船驶回港口时，老人还站在旁边，眯着眼望向海面。\n"
+                    .. "“是你把我带回来的。”他说，声音还是有点沙哑，却带着笑。\n"
+                    .. "你想起一路上的鱼群、鸟影与浪花：海没有因为谁的愿望改变规律。"
+                    .. "你学着观察，也学着在该行动的时候行动。"
+                    .. "前三天留给老人的那几只苹果，便是其中一个选择。\n"
+                    .. "老人轻轻拍了拍船舷。“往后遇上不懂的，别急着问答案。先看，再试。”\n"
+                    .. "你把那张纸条收好，知道这片海里仍有许多没看懂的事。\n\n"
+                    .. "本轮旅程已结束。海上仍有这次没来得及探索的地方。"
+            else
+                -- W-04（已定稿）+ W-06 未救路线引导。
+                endingTitle = "普通结局｜独自归港"
+                endingCopy = "七天过去了，你已经能独自把船开回港口。"
+                    .. "海鸟仍在盘旋，水花仍沿着风和浪消散。"
+                    .. "那些曾经听不明白的叮嘱，如今你渐渐懂了，可老人再也不会在船边应上一声。\n"
+                    .. "你想起前三天那只苹果篮，和他望着它的样子。"
+                    .. "海没有故意为难谁，它只是照着自己的规律运转。\n"
+                    .. "回港时，你把那张纸条收好。"
+                    .. "也许下一次出海，你能更早读懂某个信号，也更早做出选择。\n\n"
+                    .. "本轮旅程已结束。前三天的那只苹果篮、海边的那只木桶……"
+                    .. "还有很多事，值得换一种方式再试一次。"
+            end
+            setText(refs.endingText, "endingText", endingTitle .. "\n\n" .. endingCopy)
             refs.endingNewRun:SetDisabled(busy)
         end
 

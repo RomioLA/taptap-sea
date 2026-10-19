@@ -12,6 +12,7 @@ local Progress = require("Gameplay.Circle1B2Progress")
 local Barrel = require("Gameplay.Circle1B2Barrel")
 local WorldContentActions = require("Gameplay.WorldContentActions")
 local WorldContentProgress = require("Gameplay.WorldContentProgress")
+local MemoryFragments = require("Gameplay.MemoryFragments")
 local EvidenceSystem = require("Gameplay.EvidenceSystem")
 -- ②③ 认知度/成就系统执行器 + 跨局存档层
 local KnowledgeSystem = require("Gameplay.KnowledgeSystem")
@@ -292,26 +293,58 @@ function Loop:Update(dt, advanceWorld)
     self:ProcessContextTeaching(dt > 0)
     if self.worldContentActions then
         local token = self.worldContentFeedbackToken
-        local callOk, advanced, result = Diagnostics.Call("Loop", "world_content_advance",
-            self.worldContentActions.Advance, self.worldContentActions, worldContentElapsed)
+        local receipt
+        local receiptOk = false
+        if token ~= nil then
+            receiptOk, receipt = pcall(
+                self.worldContentActions.GetReceipt, self.worldContentActions, token)
+            if not receiptOk then receipt = nil end
+        end
+        local completedReceipt = type(receipt) == "table" and receipt.status == "completed"
+            and receipt.commitState == "committed"
+        local callOk, advanced, result
+        if completedReceipt then
+            callOk, advanced, result = true, true, "completed"
+        else
+            callOk, advanced, result = Diagnostics.Call("Loop", "world_content_advance",
+                self.worldContentActions.Advance, self.worldContentActions, worldContentElapsed)
+        end
         if token ~= nil then
             if callOk and advanced == true and result == "completed" then
-                local receiptOk, receipt = pcall(
-                    self.worldContentActions.GetReceipt, self.worldContentActions, token)
+                if not completedReceipt then
+                    receiptOk, receipt = pcall(
+                        self.worldContentActions.GetReceipt, self.worldContentActions, token)
+                end
                 if receiptOk and type(receipt) == "table" and receipt.status == "completed"
                     and receipt.commitState == "committed" then
-                    local cost = tonumber(receipt.staminaCost) or 0
-                    local remaining = math.floor(tonumber(self.player.stamina) or 0)
-                    local feedback = string.format("消耗%d体力，剩余%d体力", cost, remaining)
-                    local memoryName = WORLD_CONTENT_MEMORY_LABELS[receipt.contentId]
-                    if memoryName then
-                        self:QueueActionToast("获得记忆：" .. memoryName .. "\n" .. feedback, 3)
-                    else
-                        self:QueueActionToast(feedback, 3)
+                    local newlyOwned = type(receipt.begin) == "table"
+                        and receipt.begin.completed == false and receipt.begin.rewardOwned == false
+                    local story = newlyOwned
+                        and MemoryFragments.GetOwnedStory(self.player, receipt.contentId) or nil
+                    -- An earlier story modal (for example D2/D3 teaching) may own this frame.
+                    -- Keep the completed receipt token until that modal closes, then show W-08.
+                    if not story or not self.storyDialog then
+                        local cost = tonumber(receipt.staminaCost) or 0
+                        local remaining = math.floor(tonumber(self.player.stamina) or 0)
+                        local feedback = string.format("消耗%d体力，剩余%d体力", cost, remaining)
+                        local memoryName = WORLD_CONTENT_MEMORY_LABELS[receipt.contentId]
+                        if memoryName then
+                            self:QueueActionToast("获得记忆：" .. memoryName .. "\n" .. feedback, 3)
+                        else
+                            self:QueueActionToast(feedback, 3)
+                        end
+                        if story then
+                            self.storyDialog = { token = {}, kind = "memory_fragment",
+                                title = story.title, text = story.text }
+                            self.clock:Pause("story")
+                        end
+                        self.lastMessage = ""
+                        self.worldContentFeedbackToken = nil
                     end
+                else
+                    self.lastMessage = ""
+                    self.worldContentFeedbackToken = nil
                 end
-                self.lastMessage = ""
-                self.worldContentFeedbackToken = nil
             elseif not callOk or result ~= "active" then
                 self.worldContentFeedbackToken = nil
             end
@@ -378,10 +411,9 @@ function Loop:ProcessEmergenceEvents(allowObservation)
     return true
 end
 
--- V2.7 同行情境教学（D2 海鸟 / D3 水花）：只在玩家真实看到对应现象时触发。
--- 判定依据：runtime.surfaceSignals 的 GetBirds / GetSplashes 返回的是
--- 当前真实活跃且已进入可见状态的信号（不是装饰物）。对应日未看到则
--- 保持未置位，顺延到以后第一次真实看到时再触发。
+-- V2.7 同行情境教学（D2 海鸟 / D3 水花）：使用 Runtime 与 SeaDraw 共用的
+-- broad-phase 绘制准入判断当前活跃信号是否具备触发资格；这不是像素级可见证明。
+-- 对应日未满足准入则保持未置位，顺延到以后第一次满足时再触发。
 -- 世界暂停/在港/已耗尽/已有剧情模态时不判定，避免在错误时机弹出。
 local MIN_TEACHING_DAY = { bird = 2, splash = 3 }
 
@@ -395,25 +427,24 @@ function Loop:ProcessContextTeaching(allowObservation)
     if self.storyDialog or self:HasPendingCatch() then return false end
     if not self:IsElderPresent() then return false end
     local runtime = self.runtime
-    local signals = runtime and runtime.surfaceSignals
-    if not signals then return false end
+    if not runtime or type(runtime.HasSurfaceSignalInView) ~= "function" then return false end
 
     local day = tonumber(self.player.day) or 1
     -- 海鸟优先于水花（剧情与事件 R34：前期海鸟教学先于水花教学）。
     if day >= (MIN_TEACHING_DAY.bird or 2)
-        and Progress.IsTeachingShown(self.player, "bird") == false
-        and type(signals.GetBirds) == "function" then
-        local ok, birds = pcall(signals.GetBirds, signals)
-        if ok and type(birds) == "table" and #birds > 0 then
-            if self:TryShowContextTeaching("bird") then return true end
+        and Progress.IsTeachingShown(self.player, "bird") == false then
+        local ok, inView = pcall(runtime.HasSurfaceSignalInView, runtime, "bird")
+        if ok and inView == true then
+            local line = self:TryShowContextTeaching("bird")
+            if line then self.lastMessage = line; return true end
         end
     end
     if day >= (MIN_TEACHING_DAY.splash or 3)
-        and Progress.IsTeachingShown(self.player, "splash") == false
-        and type(signals.GetSplashes) == "function" then
-        local ok, splashes = pcall(signals.GetSplashes, signals)
-        if ok and type(splashes) == "table" and #splashes > 0 then
-            if self:TryShowContextTeaching("splash") then return true end
+        and Progress.IsTeachingShown(self.player, "splash") == false then
+        local ok, inView = pcall(runtime.HasSurfaceSignalInView, runtime, "splash")
+        if ok and inView == true then
+            local line = self:TryShowContextTeaching("splash")
+            if line then self.lastMessage = line; return true end
         end
     end
     return false
@@ -539,6 +570,8 @@ function Loop:QueueActionToast(text, durationSec)
 end
 
 function Loop:GetActionToast()
+    -- A story modal has priority; leave its action toast queued for delivery after close.
+    if self.storyDialog then return nil end
     local toast = self.actionToast
     if not toast then return nil end
     return { id = toast.id, text = toast.text, durationSec = toast.durationSec }
@@ -634,12 +667,9 @@ end
 function Loop:SetInventoryOpen(open)
     if open == false and self:HasPendingCatch() then return false, "pending_catch_required" end
     if type(open) ~= "boolean" then return false, "busy" end
-    local bucketOnlyBusy = self.barrel and self.barrel:IsBusy() and (open or self.inventoryOpen)
-        and not self.closed and not self.entryPending and not self.busy and not self.loading
-        and not self.initialSaveBusy and not self.dropInFlight and not self.inventoryRollback
-        and not self.forcedReturnPending and not self.settlementPending
-        and not (self.actions and self.actions:IsBusy()) and not self.storyDialog
-    if not self:Ready() and not (open and self:CanManageInventory()) and not bucketOnlyBusy then return false, "busy" end
+    -- V2.7（系统规则 A16）：4 秒高成本事务进行中禁止打开船舱。
+    -- 木桶待领奖（pending）不算 IsBusy，仍允许腾格。
+    if not self:Ready() and not (open and self:CanManageInventory()) then return false, "busy" end
     if open then
         local cancelled, reason = self:CancelAutoReturn("inventory_open")
         if not cancelled then return false, reason or "auto_return_cancel_failed" end
@@ -657,12 +687,8 @@ function Loop:SetElderOpen(open)
         return false, reason or "elder_not_present"
     end
     if type(open) ~= "boolean" then return false, "busy" end
-    local bucketOnlyBusy = self.barrel and self.barrel:IsBusy() and (open or self.elderOpen)
-        and not self.closed and not self.entryPending and not self.busy and not self.loading
-        and not self.initialSaveBusy and not self.dropInFlight and not self.inventoryRollback
-        and not self.forcedReturnPending and not self.settlementPending
-        and not (self.actions and self.actions:IsBusy()) and not self.storyDialog
-    if not self:Ready() and not self:CanManageInventory() and not bucketOnlyBusy then return false, "busy" end
+    -- V2.7（系统规则 A16）：4 秒事务期间禁止插入老人互动。
+    if not self:Ready() and not self:CanManageInventory() then return false, "busy" end
     if open then
         local cancelled, cancelError = self:CancelAutoReturn("elder_open")
         if not cancelled then return false, cancelError or "auto_return_cancel_failed" end
@@ -862,8 +888,16 @@ function Loop:Depart()
     -- V2.7：D1 首次出航进入海上时，由同行老人一次性教停船投饵 + 晚归规则。
     -- 用顶部轻量提示（05 页 R14：教学/知识提示不进模态队列、不暂停世界），
     -- 因此不破坏「出航解除港口暂停」的既有契约。
-    self:TryShowContextTeaching("basic")
-    self:TryShowAdvancedTeaching()
+    -- 两条教学共存时不能互相覆盖：先收集本次真正新触发的文本，
+    -- 再合并成一条可读的顶部提示（同一帧不丢任何一条）。
+    local teachingLines = {}
+    local basicText = self:TryShowContextTeaching("basic")
+    if basicText then teachingLines[#teachingLines + 1] = basicText end
+    local advancedText = self:TryShowAdvancedTeaching()
+    if advancedText then teachingLines[#teachingLines + 1] = advancedText end
+    if #teachingLines > 0 then
+        self.lastMessage = table.concat(teachingLines, "\n")
+    end
     return true
 end
 
@@ -885,8 +919,7 @@ function Loop:TryShowAdvancedTeaching()
     if Progress.IsAdvancedTeachingShownForDay(self.player, day) ~= false then return false end
     local marked, newlyShown = Progress.MarkAdvancedTeachingShown(self.player, day)
     if marked ~= true or newlyShown ~= true then return false end
-    self.lastMessage = "老人：" .. text
-    return true
+    return "老人：" .. text
 end
 
 ---情境教学：按 V2.7 规则在真实条件满足时给一次老人提示，并标记 shown。
@@ -913,9 +946,8 @@ function Loop:TryShowContextTeaching(kind)
     end
     local marked, newlyShown = Progress.MarkTeachingShown(self.player, kind)
     if marked ~= true or newlyShown ~= true then return false end
-    -- 顶部轻量提示（状态行），不占用捕鱼/木桶/探索的结果 toast 通道。
-    self.lastMessage = "老人：" .. text
-    return true
+    -- 返回本次新触发的文本，由调用方决定如何展示（便于合并）。
+    return "老人：" .. text
 end
 
 ---D6 未救路线：日初一次苹果篮回想。
@@ -1642,11 +1674,6 @@ function Loop:DropItem(index)
         self.lastMessage = "现在不能丢弃物品，请先完成或取消当前动作。"
         return false, "busy"
     end
-    if self.inPort then
-        -- V2.7：港内丢弃被拒绝时也要给出原因（不用置灰代替反馈）。
-        self.lastMessage = "船上才能丢弃物品，请先出海。"
-        return false, "sea_required"
-    end
     local id = self.player.inventory:GetItems()[index]
     local definition = id and Items.GetDefinition(id)
     if not definition then
@@ -1662,6 +1689,16 @@ function Loop:DropItem(index)
         -- V2.7：宝藏不占船舱格，丢弃不能腾格；给客观原因。
         self.lastMessage = definition.name .. "是宝藏，不能丢弃。"
         return false, "treasure_protected"
+    end
+    -- V2.7（P-06/C-08）鱼饵例外：点「丢弃」= 船边即时投饵，不进入投放选点；
+    -- 若在港内或贴岸无合法水域，则直接移除完成腾格，不报错卡死。
+    if definition.category == "bait" then
+        return self:DropBaitBesideShip(index, definition)
+    end
+    if self.inPort then
+        -- V2.7：港内丢弃被拒绝时也要给出原因（不用置灰代替反馈）。
+        self.lastMessage = "船上才能丢弃物品，请先出海。"
+        return false, "sea_required"
     end
     if not self.options.dropReceiver then
         self.lastMessage = "附近没有接收地点，物品仍保留在船舱里。"
@@ -1682,6 +1719,66 @@ function Loop:DropItem(index)
     end
     self:CancelThrowSelection()
     return true, payload
+end
+
+---V2.7（P-06/C-08）：鱼饵「丢弃」——船边即时投饵；
+---港内或贴岸无合法水域时直接移除完成腾格，不报错卡死。
+---注意：超距不属于本例外（超距必须拒绝并保留物品）。
+---@param index integer
+---@param definition ItemDefinition
+---@return boolean, table|string
+function Loop:DropBaitBesideShip(index, definition)
+    definition = definition or Items.GetDefinition(self.player.inventory:GetItems()[index])
+    if not definition then
+        self.lastMessage = "物品已不存在。"
+        return false, "invalid_item"
+    end
+    local payload = { itemId = definition.id, category = definition.category,
+        worldEffect = definition.worldEffect, lifetimeSec = definition.lifetimeSec }
+
+    -- 港内：没有可投饵水域，直接移除完成腾格（C-08 已确认）。
+    if self.inPort then
+        local removed, reason = self.player.inventory:Remove(index)
+        if removed ~= true then return false, reason or "inventory_remove_failed" end
+        self.lastMessage = "你把鱼饵丢进了水里。"
+        self:CancelThrowSelection()
+        return true, payload
+    end
+
+    if not self.options.dropReceiver then
+        self.lastMessage = "附近没有接收地点，物品仍保留在船舱里。"
+        return false, "drop_receiver_unavailable"
+    end
+
+    self.dropInFlight = true
+    local removed, previous, stamina = self:RemoveCargo(index)
+    if not removed then
+        self.dropInFlight = false
+        return false, previous
+    end
+    local ok, accepted = Diagnostics.Call("Loop", "drop_receiver", self.options.dropReceiver, payload)
+    self.dropInFlight = false
+    if ok and accepted == true then
+        self.lastMessage = "鱼饵沉入水中，泛起一点细小的波纹。也许附近的小鱼很快就会察觉。"
+        if self.knowledge and payload.worldEffect then
+            self.knowledge:OnDropItem(payload)
+        end
+        self:CancelThrowSelection()
+        return true, payload
+    end
+
+    -- 世界未接受：贴岸无法水域时按 C-08 直接移除腾格；
+    -- 但超距必须拒绝并保留物品，因此需区分拒绝原因。
+    local reasonText = type(accepted) == "string" and accepted or ""
+    local outOfRange = reasonText:find("distance", 1, true) ~= nil
+        or reasonText:find("range", 1, true) ~= nil
+        or reasonText:find("far", 1, true) ~= nil
+        or reasonText:find("throw_out_of_range", 1, true) ~= nil
+    if outOfRange then
+        return self:RollbackInventory(previous, stamina, "drop_rejected")
+    end
+    -- 其它拒绝（如无法水域）：保留物品并给出原因，不强行移除。
+    return self:RollbackInventory(previous, stamina, "drop_rejected")
 end
 
 function Loop:GiveToElder(index)
@@ -2018,6 +2115,7 @@ function Loop:GetWorldContentPrompt()
     local actions = self.worldContentActions
     if not actions then return nil, "world_content_unavailable" end
     if actions:GetActionState() then return actions:GetWorldContentPrompt() end
+    if self.worldContentFeedbackToken ~= nil then return nil end
     if self.inPort or self.clock:IsPaused() or self.clock.exhausted or self.inventoryOpen or self.elderOpen
         or self:HasPendingCatch() or not self:Ready() then return nil end
     return actions:GetWorldContentPrompt()
@@ -2030,6 +2128,7 @@ function Loop:BeginWorldContentAction(contentId, actionKind)
         or self:HasPendingCatch() or not self:Ready() or self:IsMovementBlocked() then
         return false, "action_blocked"
     end
+    if self.worldContentFeedbackToken ~= nil then return false, "world_content_feedback_pending" end
     local method = actionKind == "explore" and actions.BeginExplore
         or actionKind == "salvage" and actions.BeginSalvage
     if type(method) ~= "function" then return false, "invalid_action_kind" end
@@ -2269,9 +2368,24 @@ end
 ---列表为空时不弹模态，用顶部轻量文字提示“船舱里没有可以投放的物品。”。
 ---@return boolean, string|table
 function Loop:OpenThrowPicker()
-    if self.inPort then return false, "sea_required" end
-    if not self:CanManageInventory() then return false, "busy" end
-    if self:GetThrowSelection() then return self:CancelThrowSelection(), "cancelled" end
+    if self.inPort then
+        self.lastMessage = "请先出海再投放。"
+        return false, "sea_required"
+    end
+    if not self:CanManageInventory() then
+        self.lastMessage = "现在不能投放，请先完成或取消当前动作。"
+        return false, "busy"
+    end
+    -- V2.7（S-01）：再点【投放】就取消当前选点/列表，不消耗物品。
+    if self:GetThrowSelection() then
+        self:CancelThrowSelection()
+        self.throwPicker = nil
+        return false, "cancelled"
+    end
+    if self.throwPicker then
+        self.throwPicker = nil
+        return false, "cancelled"
+    end
     local candidates = self:GetThrowCandidates()
     if #candidates == 0 then
         self.lastMessage = "船舱里没有可以投放的物品。"
@@ -2290,7 +2404,12 @@ function Loop:CloseThrowPicker()
     self.throwPicker = nil
     return true
 end
-function Loop:CancelThrowSelection() self.throwSelection = nil; return true end
+function Loop:CancelThrowSelection()
+    -- V2.7：取消投放选点时也要收起列表，避免返港/换日后残留。
+    self.throwSelection = nil
+    self.throwPicker = nil
+    return true
+end
 
 ---背包内一键投掷：以船当前位置为投放点直接执行投放。
 ---真机反馈（2026-10-05）：先 BeginThrowItem 再点海面的两段式流程会被背包
@@ -2398,7 +2517,7 @@ end
 function Loop:GetStoryDialog()
     local dialog = self.storyDialog
     if not dialog then return nil end
-    return { token = dialog.token, kind = dialog.kind, text = dialog.text,
+    return { token = dialog.token, kind = dialog.kind, title = dialog.title, text = dialog.text,
         teachingKind = dialog.teachingKind }
 end
 function Loop:NotifyStoryShown(token)
@@ -2409,6 +2528,8 @@ function Loop:NotifyStoryShown(token)
     if self.storyDialog.kind == "teaching" or self.storyDialog.kind == "apple_basket" then
         return true
     end
+    -- W-08 copy uses the existing modal without a separate persisted shown marker.
+    if self.storyDialog.kind == "memory_fragment" then return true end
     return false, "unknown_story_kind"
 end
 function Loop:CloseStoryDialog()

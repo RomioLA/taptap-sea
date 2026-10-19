@@ -2,6 +2,25 @@
 local Config = require("Ocean.Config")
 local Projection = require("Ocean.Projection")
 local Presentation = {}
+-- eco_bird_f* content width: the existing 3.2m canvas × 580/1024 visible span.
+local BIRD_SPAN_METERS = 1.8
+
+-- Keep the broad-phase bounds shared by signal teaching and SeaDraw. These
+-- describe the Presentation.State call, not a guarantee of visible pixels.
+Presentation.BIRD_SPAN_METERS = BIRD_SPAN_METERS
+
+---@param kind "bird"|"splash"
+---@param length number?
+---@return number?, number?
+function Presentation.SignalBounds(kind, length)
+    if kind == "bird" then
+        return 3, Config.visual.projection.birdAltitude + BIRD_SPAN_METERS
+    end
+    if kind == "splash" then
+        return math.max(3, length or 0), 0
+    end
+    return nil, nil
+end
 
 local function smooth(value)
     local t = math.max(0, math.min(1, value))
