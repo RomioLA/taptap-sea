@@ -92,7 +92,8 @@ def main():
                              'Circle1B8SeaSurfaceTests',
                              'Circle1B9IslandVariantTests',
                              'Circle1B10SkyLayerTests',
-                             'Circle1B11SkyDecorTests'}
+                             'Circle1B11SkyDecorTests',
+                             'Circle1C4ScopeLensRenderTests'}
             report = plain(module.Run(recorder_table) if name in render_suites else module.Run())
             if isinstance(report, list):
                 checks = report

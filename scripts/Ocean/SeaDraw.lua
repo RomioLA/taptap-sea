@@ -155,7 +155,96 @@ local function drawDroppedItem(ctx, movement, entity)
     end
 end
 
-local function drawFish(ctx, movement, entity, showActivity, time)
+-- 距离衰减系数（探海镜水体，2026-10-19 用户锁定 A 全套）：近处 1.0 线性淡出到
+-- 远端 settings.fadeFarAlpha，强化「越远越沉入水色」的纵深。纯函数，渲染与契约
+-- 测试共用；缺省 settings / 非有限值一律返回 1（零衰减、零回归）。
+function SeaDraw.ScopeLensFade(settings, distance, radius)
+    if not settings or not finite(distance) or not finite(radius) or radius <= 0 then return 1 end
+    local start = radius * (settings.fadeStartRatio or 0.35)
+    local span = radius - start
+    if span <= 0 or distance <= start then return 1 end
+    local t = math.min(1, (distance - start) / span)
+    return 1 - (1 - (settings.fadeFarAlpha or 1)) * t
+end
+
+-- 探海镜水体（2026-10-19 用户红框反馈「镜内水下鱼与海面融为一体、无法区分」，
+-- 裁决 A 全套 + 远端 0.55）：把 90° 扇区从「一层 alpha=24 淡青描边」升级为
+-- 「一块越往里越深的水」。渐变轴=船→扇区远端（世界坐标投影到屏幕），船转向时
+-- 水体整体跟着转，无任何额外状态；鱼在实体循环内随后绘制，天然位于水体之上。
+-- 顺序：水深渐变底 → 双光柱 → 外圈柔光 → 亮 rim（先宽后窄叠出 Fresnel 感）。
+local function drawScopeWater(ctx, movement, scope)
+    local settings = Config.visual.scopeLens
+    if not settings or settings.enabled == false then
+        -- 旧观感回退：一层淡青填充 + 亮青描边（2026-10-19 水体层之前的口径）
+        Geometry.WorldSector(ctx, movement, scope.center, scope.radius, scope.heading, scope.halfAngle,
+            { 172, 232, 224, 24 }, { 197, 243, 226, 130 }, 1.2)
+        return
+    end
+    local shipX, shipY = movement:WorldToScreen(scope.center)
+    local farPoint = { x = scope.center.x + math.cos(scope.heading) * scope.radius,
+        y = scope.center.y + math.sin(scope.heading) * scope.radius }
+    local farX, farY = movement:WorldToScreen(farPoint)
+    if not shipX or not farX then return end
+    -- ① 水深渐变底：近端浅青、远端深蓝青且压明度（0.55），鱼从海面波纹里沉出来
+    local paint = nvgLinearGradient(ctx, shipX, shipY, farX, farY,
+        nvgRGBA(settings.nearColor[1], settings.nearColor[2], settings.nearColor[3],
+            math.floor(255 * settings.nearAlpha)),
+        nvgRGBA(settings.farColor[1], settings.farColor[2], settings.farColor[3],
+            math.floor(255 * settings.farAlpha)))
+    Geometry.WorldSector(ctx, movement, scope.center, scope.radius, scope.heading, scope.halfAngle,
+        nil, nil, nil, 0, paint)
+    -- ③ 双光柱：自船身发散入水的微弱楔形（低 alpha，仅作水体体积光暗示）
+    for _, sign in ipairs({ -1, 1 }) do
+        local base = scope.heading + sign * scope.halfAngle * 0.55
+        local spread = 0.05
+        local function tip(angle)
+            return movement:WorldToScreen({
+                x = scope.center.x + math.cos(angle) * scope.radius * 0.98,
+                y = scope.center.y + math.sin(angle) * scope.radius * 0.98 })
+        end
+        local ax, ay = tip(base - spread)
+        local bx, by = tip(base + spread)
+        if ax and bx then
+            nvgBeginPath(ctx)
+            nvgMoveTo(ctx, shipX, shipY)
+            nvgLineTo(ctx, ax, ay)
+            nvgLineTo(ctx, bx, by)
+            nvgClosePath(ctx)
+            nvgFillColor(ctx, nvgRGBA(settings.shaftColor[1], settings.shaftColor[2],
+                settings.shaftColor[3], settings.shaftAlpha))
+            nvgFill(ctx)
+        end
+    end
+    -- ③ 外圈柔光 + 亮 rim
+    Geometry.WorldSector(ctx, movement, scope.center, scope.radius, scope.heading, scope.halfAngle,
+        nil, { settings.glowColor[1], settings.glowColor[2], settings.glowColor[3], settings.glowAlpha },
+        settings.glowWidth)
+    Geometry.WorldSector(ctx, movement, scope.center, scope.radius, scope.heading, scope.halfAngle,
+        nil, { settings.rimColor[1], settings.rimColor[2], settings.rimColor[3], settings.rimAlpha },
+        settings.rimWidth)
+end
+
+-- 背光高光：鱼体背脊两颗小高光点（世界坐标沿 heading 偏移，随曲面投影落位），
+-- 贴图与矢量两路鱼体通用；尺寸随屏幕像素收敛，远处不过曝。
+local function drawFishGlint(ctx, movement, entity, renderLength, fishPx, lens)
+    local heading = entityHeading(entity)
+    local cosine, sine = math.cos(heading), math.sin(heading)
+    for _, offset in ipairs({ { 0.20, 0.10 }, { 0.00, 0.13 } }) do
+        local along, side = offset[1] * renderLength, offset[2] * renderLength
+        local gx, gy = movement:WorldToScreen({
+            x = entity.position.x + cosine * along - sine * side,
+            y = entity.position.y + sine * along + cosine * side })
+        if gx then
+            nvgBeginPath(ctx)
+            nvgEllipse(ctx, gx, gy, math.max(0.6, fishPx * 0.06), math.max(0.5, fishPx * 0.05))
+            nvgFillColor(ctx, nvgRGBA(lens.glintColor[1], lens.glintColor[2],
+                lens.glintColor[3], lens.glintAlpha))
+            nvgFill(ctx)
+        end
+    end
+end
+
+local function drawFish(ctx, movement, entity, showActivity, time, inLens, scopeRadius)
     if not FishData[entity.species] then return end
     if showActivity then
         local tint = entity.frozen and { 179, 190, 202, 180 }
@@ -164,16 +253,52 @@ local function drawFish(ctx, movement, entity, showActivity, time)
             nil, tint, 1.3)
     end
     local renderLength = FishData[entity.species].renderLength or 1
+    -- 探海镜水体三件套 + 远景剪影兜底：仅「镜内可见鱼」挂载——inLens 且 scope 实际
+    -- 开启（scopeRadius 非空即 GetScopeView 有值）；镜关闭/调试直显路径零变化，
+    -- 保证 WorldFish 调用计数等旧契约不回退（Circle1A2FishingTests 剔除计数）。
+    local lens = inLens and scopeRadius and Config.visual.scopeLens or nil
+    local fishPx, fishAlpha
+    if lens and lens.enabled ~= false then
+        local screenX, screenY, screenScale = movement:WorldToScreen(entity.position)
+        if screenX and screenScale then
+            fishPx = renderLength * screenScale
+            -- ④ 远景兜底：屏幕长度不足阈值切暗色剪影（复用 WorldRise 剪影+亮环语言）
+            if fishPx < (lens.silhouetteMinPx or 14) then
+                local riseCopy = { species = entity.species, rotation = entityHeading(entity),
+                    direction = entity.direction, phase = entity.phase or 0, surfaceDepth = 1 }
+                groundFrame(ctx, movement, entity.position, 0, function(scale, api)
+                    Draw.WorldRise(ctx, 0, 0, scale, riseCopy, time, api)
+                end, renderLength * 1.2)
+                return
+            end
+            -- ②a 接触阴影：鱼体前下方暗青椭圆（世界坐标偏移，随曲面投影落位）
+            Geometry.WorldCircle(ctx, movement,
+                { x = entity.position.x, y = entity.position.y - renderLength * 0.12 },
+                renderLength * 0.62,
+                { lens.shadowColor[1], lens.shadowColor[2], lens.shadowColor[3], lens.shadowAlpha })
+            -- ②c 距离衰减：按到船（相机锚点）的世界距离淡出（仅贴图路可传 alpha）
+            local camera = movement.camera
+            if camera and scopeRadius then
+                local dx, dy = entity.position.x - camera.x, entity.position.y - camera.y
+                fishAlpha = SeaDraw.ScopeLensFade(lens, math.sqrt(dx * dx + dy * dy), scopeRadius)
+            end
+        end
+    end
     -- C2：生态层鱼贴图（sardine→小鱼 / tuna→大鱼）三帧摆尾优先，heading 直传实体朝向；
     -- 贴图加载失败保持原矢量鱼体（含尾摆动画与 FSM 配色），零行为变化。
     local base = ECO_SPECIES_BASE[entity.species]
-    if base and ImageArt.Plane(ctx, ecoFrameName(base, time, ecoEntityPhase(entity)), movement,
-        entity.position, renderLength, renderLength, entityHeading(entity), 0) then
-        return
+    local drawn = false
+    if base then
+        drawn = ImageArt.Plane(ctx, ecoFrameName(base, time, ecoEntityPhase(entity)), movement,
+            entity.position, renderLength, renderLength, entityHeading(entity), 0, fishAlpha)
     end
-    groundFrame(ctx, movement, entity.position, 0, function(scale, api)
-        Draw.WorldFish(ctx, 0, 0, scale, entity, time, api)
-    end, renderLength * 1.2)
+    if not drawn then
+        groundFrame(ctx, movement, entity.position, 0, function(scale, api)
+            Draw.WorldFish(ctx, 0, 0, scale, entity, time, api)
+        end, renderLength * 1.2)
+    end
+    -- ②b 背光高光（鱼体之上，两路通用）
+    if lens and fishPx then drawFishGlint(ctx, movement, entity, renderLength, fishPx, lens) end
 end
 
 -- Ocean validates fixed identity and visibility; Gameplay contributes only the
@@ -524,14 +649,11 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
     Atmosphere.CloudShadows(ctx, movement, time, runtime.daySeed)
     local flags, entities = runtime.debug or Config.debug, nearbyEntities(runtime)
     local scope = world and type(world.GetScopeView) == "function" and world:GetScopeView() or nil
-    if scope then
-        Geometry.WorldSector(ctx, movement, scope.center, scope.radius, scope.heading, scope.halfAngle,
-            { 172, 232, 224, 24 }, { 197, 243, 226, 130 }, 1.2)
-    end
+    if scope then drawScopeWater(ctx, movement, scope) end
     for _, entity in ipairs(entities) do
         if not entity.removed and entity.species and entity.layer == "underwater" and isVisible(world, entity) then
             Presentation.Draw(ctx, movement, entity.position, FishData[entity.species].renderLength, 0,
-                function() drawFish(ctx, movement, entity, flags.showActivity, time) end)
+                function() drawFish(ctx, movement, entity, flags.showActivity, time, true, scope and scope.radius) end)
         elseif not entity.removed and entity.layer == "underwater" and entity.entityType == "treasure"
             and entity.contentId == "underwater_treasure_01" then
             local marked = false

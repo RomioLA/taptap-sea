@@ -171,6 +171,30 @@ local Config = {
     -- day 末段按 seaSurface 同源 blend 交叉淡入夜云）。贴图优先、加载失败回退矢量
     -- （零回归）；preload=false 懒加载；enabled=false 整层回退矢量旧观感。
     skyDecor = { enabled = true, alpha = 1.0 },
+    -- 探海镜水体光学层（2026-10-19 用户红框反馈「透镜 90° 扇形内水下鱼与海面渲染
+    -- 融为一体、肉眼无法区分」，裁决 A 全套 + 远端 0.55）。病根双重：生态鱼贴图
+    -- （蓝绿水彩）与海面贴图（青绿水彩）同色相同明度同笔触；且 SeaDraw 层级中鱼
+    -- （ImageArt.Plane altitude=0）与海面同平面相贴，中间没有水体介质。本组把扇区
+    -- 从「一层 alpha=24 淡青描边」升级为「一块有光学性质的水」：
+    --   ① 水深渐变：以船→扇区远端为渐变轴，近端浅青、远端深蓝青且压明度——鱼从
+    --      海面波纹里「沉」出来；渐变随船转向，无需额外状态；
+    --   ② 鱼体三件套：接触阴影（把鱼压进水体的接触感）+ 背光高光（水面透光的
+    --      湿感）+ 距离衰减（远处鱼化开水色、强化纵深）；
+    --   ③ 透镜边缘：亮青白 rim + 外圈柔光 glow + 双光柱 shaft（神器感与玻璃感）；
+    --   ④ 远景兜底：鱼屏幕长度 < silhouetteMinPx 切暗色剪影（复用 WorldRise 语言）。
+    -- 纯渲染层：零新素材、零包体增长、零行为/零世界状态变化；enabled=false 一鍵回退。
+    scopeLens = {
+        enabled = true,
+        nearColor = { 150, 225, 215 }, farColor = { 18, 84, 104 },
+        nearAlpha = 0.30, farAlpha = 0.55,
+        rimColor = { 235, 252, 246 }, rimAlpha = 190, rimWidth = 1.4,
+        glowColor = { 200, 240, 235 }, glowAlpha = 60, glowWidth = 4.0,
+        shaftColor = { 235, 250, 245 }, shaftAlpha = 24,
+        shadowColor = { 10, 50, 66 }, shadowAlpha = 70,
+        glintColor = { 255, 250, 225 }, glintAlpha = 150,
+        fadeFarAlpha = 0.82, fadeStartRatio = 0.35,
+        silhouetteMinPx = 14,
+    },
     wake = { lifetimeSec = 3, spacingMeters = 0.6, minSpeed = 0.15, maxSamples = 96,
         initialWidth = 0.65, spreadPerSec = 0.45, sternOffset = 2.5, opacity = 125 },
     projection = { circleSegments = 48, sectorSegments = 32, birdAltitude = 1.2 },
