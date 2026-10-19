@@ -990,6 +990,37 @@ function Tests.Run()
         eq(receipt.status, "failed")
     end)
 
+    test("kelp mirage keeps its 80m surface illusion visible without the scope", function()
+        -- 策划（系统规则 15 / 12 浮藻假岛）：80m 内显岛影轮廓、20m 内识破为藻层。
+        -- 该节点登记在 underwater 层（水下货箱需探海镜），但岛影是海面假象，
+        -- 必须不依赖探海镜可见性绘制，否则 80m 轮廓永远不会出现。
+        -- 这里只验证绘制前置条件（层/可见性/距离），渲染细节由实机 GUI 验收。
+        local runtime = Runtime.New({ departure = { x = 0, y = 0 }, initializeRegions = false })
+        local kelp = assert(runtime.world.fixedContentEntities["kelp_mirage_01"])
+        eq(kelp.layer, "underwater", "the kelp node stays on the underwater layer")
+        -- visualRadius 由 data.content 携带，World 注册实体时不复制该字段。
+        eq(definition("kelp_mirage_01").visualRadius, 14, "the authored 80m island silhouette radius")
+        eq(definition("kelp_mirage_01").recognizeDistance, 20, "the authored 20m reveal distance")
+
+        runtime.world.showUnderwater = false
+        runtime.world.scopeEnabled = false
+        runtime.ship.position = { x = kelp.position.x, y = kelp.position.y - 60 }
+        -- 无探海镜、水下隐藏时，underwater 实体默认不可见。
+        eq(runtime.world:isVisible(kelp), false,
+            "the underwater kelp box stays hidden without the scope")
+        -- 因此海面假象必须由 SeaDraw 单独按 outlineDistance 绘制，不能依赖 isVisible。
+        truthy(Config.interaction.outlineDistance == 80, "outline range is the authored 80m")
+        local dx = kelp.position.x - runtime.ship.position.x
+        local dy = kelp.position.y - runtime.ship.position.y
+        truthy(dx * dx + dy * dy <= Config.interaction.outlineDistance ^ 2,
+            "at 60m the illusion is inside the 80m outline range")
+        runtime.ship.position = { x = kelp.position.x, y = kelp.position.y - 80.01 }
+        dx = kelp.position.x - runtime.ship.position.x
+        dy = kelp.position.y - runtime.ship.position.y
+        falsy(dx * dx + dy * dy <= Config.interaction.outlineDistance ^ 2,
+            "beyond 80m the illusion must not draw")
+    end)
+
     return { results = results }
 end
 
