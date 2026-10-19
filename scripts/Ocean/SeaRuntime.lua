@@ -223,6 +223,8 @@ function Runtime:spawnDroppedItem(payload, position)
 end
 
 ---V2.8 破渔网分支B：在固定内容处释放真实小鱼（Flee 上浮），不凭空生成大鱼。
+---策划要求 count=2 必须真的放走 2 条：先为全部 count 个个体预找合法位置，
+---任何一个找不到就整体失败且不生成任何鱼（不留半完成状态）。
 ---@param contentId string
 ---@param species string
 ---@param count integer
@@ -234,24 +236,42 @@ function Runtime:ReleaseFishAtContent(contentId, species, count)
     if not speciesData[species] then return false, "unsupported_fish_species" end
     count = math.floor(tonumber(count) or 0)
     if count < 1 then return false, "invalid_fish_count" end
-    local spawned = 0
+
+    -- 阶段一：先为每一个个体找到合法位置。任何一个失败 → 整体放弃，不生成半套。
+    local positions = {}
     for index = 1, count do
-        -- 围绕固定点找合法位置；失败时缩小半径重试，仍失败则停止（不刷进障碍）。
         local placed
         for _, radius in ipairs({ 4, 6, 9, 12 }) do
             for attempt = 1, 16 do
                 local angle = (attempt / 16) * math.pi * 2 + index * 0.7
                 local position = { x = entity.position.x + math.cos(angle) * radius,
                     y = entity.position.y + math.sin(angle) * radius }
-                if self.world:isPositionFree(position, speciesData[species].radius) then
+                local clear = self.world:isPositionFree(position, speciesData[species].radius)
+                if clear then
+                    -- 同批鱼之间也要留间距，否则两条会重叠。
+                    for _, taken in ipairs(positions) do
+                        local dx, dy = taken.x - position.x, taken.y - position.y
+                        if dx * dx + dy * dy < (speciesData[species].radius * 2) ^ 2 then
+                            clear = false
+                            break
+                        end
+                    end
+                end
+                if clear then
                     placed = position
                     break
                 end
             end
             if placed then break end
         end
-        if not placed then break end
-        local fish = self:spawnFish(species, placed, 0, true)
+        if not placed then return false, "fish_release_no_space" end
+        positions[index] = placed
+    end
+
+    -- 阶段二：全部位置已确认，统一生成并进入 Flee。
+    local spawned = 0
+    for index = 1, count do
+        local fish = self:spawnFish(species, positions[index], 0, true)
         -- 直接进入 Flee 并上浮：由现有 FSM 的 Flee 状态承载，不新增 AI 状态。
         -- fleeSource 让鱼在接下来的一段时间内持续远离释放点（7m/s + 上浮 2s）。
         if fish then
@@ -262,7 +282,10 @@ function Runtime:ReleaseFishAtContent(contentId, species, count)
             spawned = spawned + 1
         end
     end
-    if spawned == 0 then return false, "fish_release_failed" end
+    if spawned ~= count then
+        -- spawnFish 在位置已校验后仍失败属于异常；回滚已生成的鱼，不留半套。
+        return false, "fish_release_incomplete"
+    end
     self.world:updateActivity(self.ship.position)
     return true
 end
