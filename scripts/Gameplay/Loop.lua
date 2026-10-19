@@ -2746,6 +2746,13 @@ function Loop:SyncScope()
 end
 function Loop:ToggleScope()
     if not self:HasLens() then return false, "scope_not_owned" end
+    -- V2.8（系统规则）：所有约 4 秒高成本事务进行中禁止切换探海镜。
+    if (self.worldContentActions and self.worldContentActions:GetActionState())
+        or (self.v28Actions and self.v28Actions:GetActionState())
+        or (self.barrel and self.barrel:IsBusy()) then
+        self.lastMessage = "动作进行中，无法切换探海镜。"
+        return false, "action_blocked"
+    end
     local before = self.scopeEnabled
     self.scopeEnabled = not before
     local ok, reason = self:SyncScope()

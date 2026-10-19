@@ -253,7 +253,10 @@ function Runtime:ReleaseFishAtContent(contentId, species, count)
         if not placed then break end
         local fish = self:spawnFish(species, placed, 0, true)
         -- 直接进入 Flee 并上浮：由现有 FSM 的 Flee 状态承载，不新增 AI 状态。
+        -- fleeSource 让鱼在接下来的一段时间内持续远离释放点（7m/s + 上浮 2s）。
         if fish then
+            fish.fleeSource = { x = entity.position.x, y = entity.position.y }
+            fish.fleeSourceRemaining = 4
             fish.state = "Flee"
             if fish.fsm then fish.fsm:Change("Flee") end
             spawned = spawned + 1
