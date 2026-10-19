@@ -989,11 +989,23 @@ local header = UI.Panel {
     refs.scopePanel:AddChild(refs.scopeStatus)
     content:AddChild(refs.scopePanel)
     -- 宝物是既有player.treasures状态，不占有限格inventory；开关复用既有探海镜入口。
+    -- V2.8 Closure：本卡原挂在永远隐藏的 gameplayInventoryDrawer 下
+    -- （refs.drawer:SetVisible(false) 写死），玩家实际看不到任何内容。
+    -- 现挂到常驻 cardHost，与背包/商店/老人三卡同级（卡自身仍需有持有时才显）。
     refs.treasurePanel = card("记忆与探海镜")
     refs.treasureSummary = makeLabel("已获得的记忆与探海镜会在此显示，不占船舱格。",
         UiKit.fontSize.teaching, UiKit.ink.dim)
     refs.treasurePanel:AddChild(refs.treasureSummary)
-    drawerContent:AddChild(refs.treasurePanel)
+    -- V2.8 Closure：独立道具栏（航海残页 / 生锈钥匙）的真实可点击操作入口。
+    -- 策划要求【使用】重读/查看、【给老人】展示、【丢弃】拒绝并给原因；
+    -- 不再只拼进 treasureSummary 文字。每帧按持有状态重建行，条目极少（≤3）。
+    refs.v28TreasureRows = UI.Panel {
+        width = "100%",
+        flexDirection = "column",
+        gap = 6,
+    }
+    refs.treasurePanel:AddChild(refs.v28TreasureRows)
+    cardHost:AddChild(refs.treasurePanel)
 
     -- v2.2 背包卡重构（信息完整 + 选项不被遮挡）：
     -- 旧结构问题：
@@ -2585,10 +2597,14 @@ local header = UI.Panel {
         local storyDialog
         if type(loop.GetStoryDialog) == "function" then
             local ok, value = pcall(loop.GetStoryDialog, loop)
+            -- P0（V2.8 Closure）：v28_note / v28_result 必须走正式 HUD 模态。
+            -- 漏掉这两种 kind 时 Loop 已经 clock:Pause("story")，但 HUD 不显示弹窗，
+            -- 造成“世界暂停、玩家看不到也关不掉”的隐形软锁。
             if ok and type(value) == "table"
                 and (value.kind == "paper" or value.kind == "elder" or value.kind == "elder_fate"
                     or value.kind == "teaching" or value.kind == "apple_basket"
-                    or value.kind == "memory_fragment")
+                    or value.kind == "memory_fragment"
+                    or value.kind == "v28_note" or value.kind == "v28_result")
                 and type(value.token) == "table" and type(value.text) == "string"
                 and (value.kind ~= "memory_fragment" or value.text:match("%S") ~= nil) then
                 storyDialog = value
@@ -2816,6 +2832,45 @@ local header = UI.Panel {
             treasureSummary = treasureSummary .. " 已获得的记忆会单独保留，不占船舱格。"
         end
         setText(refs.treasureSummary, "treasureSummary", treasureSummary)
+        -- V2.8 Closure：独立道具栏真实可点击操作行（航海残页重读 / 生锈钥匙查看 + 给老人）。
+        -- 条目极少（≤3），每帧重建代价可忽。
+        if refs.v28TreasureRows then
+            destroyChildren(refs.v28TreasureRows)
+            local okActs, acts = pcall(loop.GetV28TreasureActions, loop)
+            if okActs and type(acts) == "table" then
+                for _, entry in ipairs(acts) do
+                    local row = UI.Panel {
+                        width = "100%", flexDirection = "row", alignItems = "center", gap = 6,
+                    }
+                    row:AddChild(makeLabel(entry.name, UiKit.fontSize.teaching,
+                        UiKit.ink.title, "bold", { flexGrow = 1, flexBasis = 0 }))
+                    local treasureId = entry.treasureId
+                    local useBtn = makeButton(entry.useLabel or "查看", function()
+                        invokeLoop("UseV28Treasure", treasureId)
+                        refresh()
+                    end, "secondary", 62)
+                    useBtn:SetDisabled(busy or entry.canUse ~= true)
+                    row:AddChild(useBtn)
+                    local giveBtn = makeButton("给老人", function()
+                        invokeLoop("ShowV28TreasureToElder", treasureId)
+                        refresh()
+                    end, "secondary", 70)
+                    giveBtn:SetDisabled(busy or entry.canGive ~= true)
+                    row:AddChild(giveBtn)
+                    local discardBtn = makeButton("丢弃", function()
+                        invokeLoop("DiscardV28Treasure", treasureId)
+                        refresh()
+                    end, "secondary", 62)
+                    -- 策划：航海残页/生锈钥匙不可丢弃；保留按钮但置灰，
+                    -- 点击路径仍会给出明确原因（不用置灰代替反馈）。
+                    discardBtn:SetDisabled(entry.canDiscard ~= true)
+                    row:AddChild(discardBtn)
+                    refs.v28TreasureRows:AddChild(row)
+                end
+            end
+            -- 独立道具栏空时不占版面；有持有时才显示该卡。
+            refs.treasurePanel:SetVisible(hasLens or #(refs.v28TreasureRows.children or {}) > 0)
+        end
         -- 信息滚动屏开合（真机反馈 2026-10-05）：纯派生态，不写用户偏好——
         -- · 需要点击海面的流程（捕鱼选点/投放选点）强制收起（流程结束自动恢复）；
         -- · 用户未操作过（nil）时：在港默认展开（商店/读取可用），出海默认收起；
