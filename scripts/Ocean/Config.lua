@@ -158,7 +158,28 @@ local Config = {
     -- 1 世界米 = height/viewHeight 屏距）；0=钉死屏幕。
     -- 2026-10-19 真机二轮：白波纹「太淡不明显 + 密度过大」→ alpha 0.6→0.9、
     -- tileScale 1.0→1.6（瓦片放大，同屏波纹数量降到约 1/2.6，笔画也随之更粗）。
-    seaRipple = { enabled = true, alpha = 0.9, tileScale = 1.6, scrollScale = 1.0 },
+    -- 2026-10-20 用户裁定：波纹改回程序 crest marks（enabled=false，绘制成功即
+    -- 跳过 crests 的门控天然失效），贴图样式改由程序层参考实现（见 visual.crest）。
+    -- 本层资产与代码路径完整保留：enabled=true 即一键回切旧口径，不删不弃。
+    seaRipple = { enabled = false, alpha = 0.9, tileScale = 1.6, scrollScale = 1.0 },
+    -- 程序 crest marks 贴图样式（2026-10-20 用户裁定「参考贴图样式」）。以
+    -- sea_ripple_overlay 水彩波纹贴图的笔触特征为参照目标：白沫色、细短弧线、
+    -- 缓 S 形、两端渐细、疏朗分布。全部为表现层参数，不触碰世界/玩法。
+    --   skipRatio      世界格密度呼吸：按格哈希跳过该比例（贴图式疏朗，也省 draw）
+    --   lengthJitter   长短笔触变化幅度（0=等长机械，1=长短错落如贴图）
+    --   skewMax        手绘感非对称弯度上限（贝塞尔控制点偏移）
+    --   taperAt/taperTip  尾端渐细：在 t 处拆分三次贝塞尔，后段线宽×taperTip
+    --   haloWidth/haloAlpha  水彩晕染柔边：整条再描一遍更宽更淡的同色笔画
+    --   companionChance/companionScale  伴生短笔触（贴图里主弧旁的卫星小笔）
+    --   color          白沫主色（贴图取色）；altColor 冷调变体（笔触色相抖动，
+    --                  配了才分桶；近景笔画仅 1~1.7px，冷暖差肉眼几乎不可辨却
+    --                  使 stroke 批次翻倍，故默认不配，留作可选旋钮）
+    --   alpha 为 color[4]，沿用 visual.wave 同口径（×layerWeight×0.66）。
+    crest = { skipRatio = 0.3, lengthJitter = 0.9, skewMax = 0.3,
+        taperAt = 0.6, taperTip = 0.62,
+        haloWidth = 1.85, haloAlpha = 0.38,
+        companionChance = 0.45, companionScale = 0.55,
+        color = { 244, 250, 242, 150 } },
     -- 天空图图层（2026-10-18 读海美术接入）：屏幕空间满幅天空贴图，绘于背景渐变
     -- 之上、日月云鸟之下（方案 B：不依赖 scissor，零回归）。昼夜相位复用 seaSurface
     -- 的 duskFrom/duskSpan/nightFade 映射（SkyFrame 委托 SeaSurfaceFrame，仅改写键名
