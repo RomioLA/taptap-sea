@@ -16,6 +16,29 @@ local INDEPENDENT_BAR = {
     rusty_key = true,
 }
 
+-- V2.8 Closure：明确的「可投放」能力表（底部【投放】的唯一白名单）。
+-- 不再用 category ~= "treasure" / protected == false / worldEffect 推断——
+-- 那些推断会把 worldEffect=NONE 的普通交易品（珠宝/珊瑚枝/深海珍珠/货箱）
+-- 自动带进投放列表，也会让 V2.9 新增物品重蹈覆辙。
+-- 新增物品默认不可投放，必须在此显式登记。
+local WORLD_DROPPABLE = {
+    apple = true,
+    bait = true,
+    sardine = true,
+    tuna = true,
+}
+
+-- V2.8 Closure：海眼正式接受物（明确 item identity，不看 worldEffect）。
+--   small = 吸引小鱼（苹果/鱼饵）；big = 吸引大鱼（小鱼）；
+--   pearl = 本周目首次置换为深海珍珠（大鱼 tuna）。
+-- 未登记物品（珠宝/珊瑚枝/深海珍珠/货箱/钥匙/残页）一律不接受。
+local VORTEX_ACCEPTS = {
+    apple = "small",
+    bait = "small",
+    sardine = "big",
+    tuna = "pearl",
+}
+
 ---@class ItemDefinition
 ---@field id string
 ---@field name string
@@ -103,6 +126,23 @@ end
 ---@return boolean
 function Items.IsIndependentBar(itemId)
     return type(itemId) == "string" and INDEPENDENT_BAR[itemId] == true
+end
+
+---该物品是否允许进入底部【投放】（正式 WorldDrop）。
+---显式白名单：未知物品一律返回 false，不按 category/worldEffect 推断。
+---@param itemId string
+---@return boolean
+function Items.CanWorldDrop(itemId)
+    return type(itemId) == "string" and WORLD_DROPPABLE[itemId] == true
+end
+
+---该物品在海眼里的正式作用（"small"/"big"/"pearl"）。
+---未登记物品返回 nil，表示海眼不接受。
+---@param itemId string
+---@return string|nil
+function Items.VortexRole(itemId)
+    if type(itemId) ~= "string" then return nil end
+    return VORTEX_ACCEPTS[itemId]
 end
 
 return Items

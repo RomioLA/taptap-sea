@@ -681,6 +681,44 @@ function Loop:GetV28Treasures()
     return result
 end
 
+---V2.8 Closure：独立道具栏的逐件操作视图（供 HUD 真实按钮使用）。
+---每项固定给出使用/给老人/丢弃三个动作及其是否可用、禁用原因。
+---航海残页与生锈钥匙都不可丢弃（策划：独立道具栏、不可丢弃）。
+---@return table[]
+function Loop:GetV28TreasureActions()
+    local result = {}
+    local elderPresent = self:IsElderPresent() == true
+    for _, id in ipairs(self:GetV28Treasures()) do
+        local definition = Items.GetDefinition(id)
+        if definition then
+            result[#result + 1] = {
+                treasureId = id,
+                name = definition.name,
+                useLabel = definition.readTitle and "重读" or "查看",
+                canUse = true,
+                canGive = definition.canGive == true,
+                giveDisabledReason = elderPresent and nil or "老人已经不在了。",
+                canDiscard = false,
+                discardDisabledReason = definition.name .. "是独立道具栏的关键物品，不能丢弃。",
+            }
+        end
+    end
+    return result
+end
+
+---V2.8 Closure：独立道具栏物品的【丢弃】尝试（策划：不可丢弃，给出明确原因）。
+---@param treasureId string
+---@return boolean, string
+function Loop:DiscardV28Treasure(treasureId)
+    local definition = Items.GetDefinition(treasureId)
+    if not definition or not V28Progress.HasTreasure(self.player, treasureId) then
+        self.lastMessage = "物品已不存在。"
+        return false, "treasure_unavailable"
+    end
+    self.lastMessage = definition.name .. "是独立道具栏的关键物品，不能丢弃。"
+    return false, "treasure_protected"
+end
+
 ---V2.8 内容周目状态（供 HUD / 绘制只读查询）。
 ---@param contentId string
 ---@return table|nil
@@ -2107,6 +2145,22 @@ function Loop:DropItem(index)
         self.lastMessage = "船上才能丢弃物品，请先出海。"
         return false, "sea_required"
     end
+    -- V2.8 Closure：区分「丢弃」与「投放」。
+    -- 【丢弃】= 从船舱删除物品腾格，不产生 WorldDrop、不参与鱼 AI、不参与海眼、
+    -- 不需要海面坐标；【投放】才是底部【投放】→ 选点 → WorldDrop。
+    -- 只有显式登记在 Items.CanWorldDrop 的生态物（苹果/鱼饵/小鱼/大鱼）
+    -- 才走下面的 WorldDrop 交接；其余普通交易品（珠宝/珊瑚枝/深海珍珠/
+    -- 海底金属货箱）直接销毁腾格。
+    if not Items.CanWorldDrop(id) then
+        local removed, reason = self.player.inventory:Remove(index)
+        if removed ~= true then
+            self.lastMessage = "物品已不存在。"
+            return false, reason or "inventory_remove_failed"
+        end
+        self.lastMessage = "你把" .. definition.name .. "丢进了海里，船舱腾出了一格。"
+        self:CancelThrowSelection()
+        return true, "discarded"
+    end
     if not self.options.dropReceiver then
         self.lastMessage = "附近没有接收地点，物品仍保留在船舱里。"
         return false, "drop_receiver_unavailable"
@@ -2763,11 +2817,12 @@ function Loop:BeginThrowItem(index)
     if not self:CanManageInventory() or self.inPort then return false, "sea_required" end
     local item = self.player.inventory:GetItems()[index]
     local definition = item and Items.GetDefinition(item)
-    if not definition or definition.category == "treasure" then return false, "invalid_item" end
-    -- A9（S3）：关键物品不可投掷（等同丢弃路径），给明确解释且不消耗。
-    if definition.protected then
-        self.lastMessage = definition.name .. "是关键物品，不能投掷。"
-        return false, "protected_item"
+    if not definition then return false, "invalid_item" end
+    -- V2.8 Closure：投放入口统一用显式能力表，与 GetThrowCandidates 同源。
+    -- 否则玩家可以绕过列表直接调用此接口把普通交易品送进 WorldDrop。
+    if not Items.CanWorldDrop(item) then
+        self.lastMessage = definition.name .. "不能投放到海里。"
+        return false, "item_not_throwable"
     end
     local cancelled, cancelError = self:CancelAutoReturn("throw_selection")
     if not cancelled then return false, cancelError or "auto_return_cancel_failed" end
@@ -2794,7 +2849,11 @@ function Loop:GetThrowCandidates()
     for index = 1, #items do
         local itemId = items[index]
         local definition = Items.GetDefinition(itemId)
-        if definition and definition.category ~= "treasure" and not definition.protected then
+        -- V2.8 Closure：底部【投放】只用显式能力表 Items.CanWorldDrop。
+        -- 不再用 category ~= "treasure" / not protected 推断，否则
+        -- worldEffect=NONE 的普通交易品（珠宝/珊瑚枝/深海珍珠/货箱）会
+        -- 自动进入投放列表。
+        if definition and Items.CanWorldDrop(itemId) then
             if not byId[itemId] then
                 byId[itemId] = { itemId = itemId, name = definition.name,
                     category = definition.category, count = 0, index = index }
@@ -2864,10 +2923,11 @@ function Loop:ThrowItemAtShip(index)
     if not self:CanManageInventory() or self.inPort then return false, "sea_required" end
     local item = self.player.inventory:GetItems()[index]
     local definition = item and Items.GetDefinition(item)
-    if not definition or definition.category == "treasure" then return false, "invalid_item" end
-    if definition.protected then
-        self.lastMessage = definition.name .. "是关键物品，不能投掷。"
-        return false, "protected_item"
+    if not definition then return false, "invalid_item" end
+    -- V2.8 Closure：快捷投掷与底部【投放】共用同一能力表，不得绕过。
+    if not Items.CanWorldDrop(item) then
+        self.lastMessage = definition.name .. "不能投放到海里。"
+        return false, "item_not_throwable"
     end
     if not self.actions then return false, "fishing_runtime_interface_unavailable" end
     local position = self.runtime and type(self.runtime.GetShipPosition) == "function"

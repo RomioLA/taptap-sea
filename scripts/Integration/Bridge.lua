@@ -3,6 +3,7 @@
 local OceanConfig = require("Ocean.Config")
 local OceanMath = require("Ocean.Math")
 local Loop = require("Gameplay.Loop")
+local Items = require("data.items")
 local V28Progress = require("Gameplay.V28Progress")
 local Game = require("Game.Game")
 local Diagnostics = require("Gameplay.Diagnostics")
@@ -123,31 +124,45 @@ end
 ---V2.8 海眼：正式 WorldDrop 落在核心 ≤5m 时的原子结算。
 ---只在 receiveDrop（底部【投放】选点 / 鱼饵“使用”选点）里调用；
 ---背包【丢弃】与鱼饵船边即时投饵都不走这里，因此绝不触发海眼。
+---物品类型一律由 Items.VortexRole 的显式身份表决定，不用 worldEffect 推断：
+---worldEffect=NONE 同时也是珠宝/珊瑚枝/深海珍珠/货箱的值，拿它当“大鱼”会串类型。
 ---@param self GameplayOceanBridge
 ---@param payload table
 ---@param position table
 ---@return boolean, table|nil 已处理=true 时不再走常规掉落
 local function receiveVortexDrop(self, payload, position)
     local runtime, loop = self.runtime, self.loop
-    if type(runtime.HandleVortexDrop) ~= "function" then return false end
+    if type(runtime.HandleVortexDrop) ~= "function" then return nil end
     local inside = type(runtime.IsInsideVortexDropRadius) == "function"
         and runtime:IsInsideVortexDropRadius(position)
-    if not inside then return false end
+    if not inside then return nil end
 
-    -- 大鱼：本周目首次 → 同一事务里消耗大鱼、释放 1 格、珍珠直接进该格。
-    if payload.worldEffect == "NONE" or payload.worldEffect == nil then
+    -- 海眼只接受明确登记过的生态物；其余物品当作普通掉落处理（不触发海眼）。
+    -- 三态返回：nil = 不归海眼管（走普通掉落）；true = 已处理；false = 归海眼管但本次拒绝。
+    local role = Items.VortexRole(payload.itemId)
+    if role == nil then return nil end
+
+    if role == "pearl" then
+        -- 大鱼：本周目首次 → 同一事务里消耗大鱼、释放 1 格、珍珠直接进该格。
         if not V28Progress.IsPearlClaimed(loop.player) then
-            local claimed, reason = loop:ClaimVortexPearl(payload)
-            payload.vortexFeedback = loop.lastMessage
-            if claimed then
-                local handled = runtime:HandleVortexDrop(payload, position)
-                if not handled then
-                    -- 海眼后置表现失败不回滚已完成的物品事务。
-                    Diagnostics.Event("Integration", "vortex_post_effect_failed", {
-                        kind = "failure", reason = tostring(reason or "post_effect_failed") })
-                end
-                return true
+            -- 原子性（V2.8 Closure）：先确认海眼后置表现真的可执行，
+            -- 再提交珍珠/claim 状态。否则会出现「鱼被消耗 + 珍珠已发 + claim=true，
+            -- 但海眼表现失败」的半完成态，且后续再投大鱼会落入「已领过」分支。
+            local probeOk, probe = pcall(runtime.HandleVortexDrop, runtime, payload, position)
+            if probeOk and probe then
+                local claimed, reason = loop:ClaimVortexPearl(payload)
+                payload.vortexFeedback = loop.lastMessage
+                if claimed then return true end
+                -- 珍珠发放失败：没有任何状态变更（ClaimVortexPearl 自回滚），
+                -- 本次投放按普通掉落继续，不吞鱼。
+                Diagnostics.Event("Integration", "vortex_pearl_claim_failed", {
+                    kind = "failure", reason = tostring(reason or "pearl_claim_failed") })
+                return false
             end
+            -- 海眼后置表现不可执行：不消耗大鱼、不发珍珠、不置 claim。
+            Diagnostics.Event("Integration", "vortex_post_effect_unavailable", {
+                kind = "failure", reason = "post_effect_unavailable" })
+            return false
         end
         -- 已领取过：仍消耗大鱼、不再产珍珠，只给反馈。
         local consumed = loop:ConsumeVortexBigFish(payload)
@@ -185,13 +200,19 @@ local function receiveDrop(self, payload)
 
     -- V2.8 海眼：只响应正式投放（底部【投放】/ 鱼饵“使用”选点）。
     -- 背包【丢弃】与鱼饵船边即时投饵没有 officialThrow 标记，绝不触发。
-    local vortexHandled, vortexOk = false, nil
     if payload.officialThrow == true then
-        vortexHandled, vortexOk = receiveVortexDrop(self, payload, position)
-    end
-    if vortexHandled then
-        assert(self.loop.actions):SetDropTarget(nil)
-        return vortexOk ~= false
+        -- receiveVortexDrop 三态：nil = 不归海眼管（走普通掉落）；
+        -- true = 已处理；false = 归海眼管但本次拒绝。
+        local vortexHandled = receiveVortexDrop(self, payload, position)
+        if vortexHandled == false then
+            -- 本该由海眼处理的物品被拒（例如珍珠写入失败）：必须终止整个投放并让
+            -- DropItem 回滚，不能掉进普通 WorldDrop——否则会出现“鱼被消耗、珍珠没发”。
+            assert(self.loop.actions):SetDropTarget(nil)
+            return false
+        elseif vortexHandled == true then
+            assert(self.loop.actions):SetDropTarget(nil)
+            return true
+        end
     end
 
     local spawnOk, entity = Diagnostics.Call("Integration", "drop_spawn", self.runtime.spawnDroppedItem, self.runtime, payload, position)
