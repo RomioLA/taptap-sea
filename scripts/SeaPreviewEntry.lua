@@ -1,4 +1,4 @@
--- Standalone preview entry. Shared Main.lua is not permanently wired to this module.
+-- Standalone preview entry. Shared main.lua is not permanently wired to this module.
 local Bootstrap = require("Ocean.Bootstrap")
 ---@type table?
 local sea = nil

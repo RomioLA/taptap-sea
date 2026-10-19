@@ -1122,7 +1122,7 @@ workspace/
 - 本项目主航海画面是 **UrhoX + Lua + NanoVG + 世界米制坐标 + 自实现斜视投影的 2D/2.5D 渲染**，不是传统 3D 模型场景。不得因美术接入自行改成 3D 资产链或另建平行图片/投影系统。
 - **美术任务入口**：涉及主场景美术、Maker 资源生成、图片接入、风格调整、昼夜视觉、船/岛/漂浮物/海面信号时，执行前必须完整阅读 docs/ART_PIPELINE.md。该文档是当前美术生产与接入的 ACTIVE BASELINE；如需求与其冲突，先报告冲突并等待用户确认。具体实现仍须读取当前源码，不得只按文档摘要改代码。
 - 目录职责应遵守 `docs/ARCHITECTURE_LAYOUT.md`：保留轻量 `Game/Entities/FSM/Systems` 骨架，海洋能力放 `Ocean/`，玩家玩法放 `Gameplay/`，装配与事务编排放 `Integration/`；不引入完整 ECS 或重型继承。本节规定架构要求，不作为文件存在性或实施进度的证明。
-- `scripts/Main.lua` 仅负责 Maker 生命周期和场景接线；引擎输入、渲染事件适配在场景层，规则不写进入口。
+- `scripts/main.lua` 仅负责 Maker 生命周期和场景接线；引擎输入、渲染事件适配在场景层，规则不写进入口。
 - `Game/Game.lua` 应发起整局更新和暂停同步；Gameplay 更新须以 System 经 `World:AddSystem` 注册，由 World 统一调度，不再由 Game 或 Integration 单独调用 Gameplay.Update。玩家状态、昼夜与保存应由 `Gameplay/` 持有；Game 不另建玩家状态或时钟。
 - `Game/World.lua` 应负责唯一的 Entity 注册和 System 调度；`Entities/EntityFactory.lua` 应创建轻量数据对象。每个运行实例只能有一套对象集合和 ID 索引。调度须区分每帧更新与海洋子步更新：Gameplay 每帧使用完整帧时间，海洋保留步长与帧时间限制；不得让昼夜时钟随海洋子步重复推进。暂停、夜尽强制返港的判定与同步须先于本帧海洋模拟。
 - `Ocean/World.lua` 应作为 `Game/World.lua` 的海洋扩展：通过模块委托或浅层扩展复用同一实例的 Entity 集合、ID 索引与调度器，只增加碰撞、空间查询、临时对象与揭示能力；不得另建注册表或调度器。保留两个模块名，引用应写明 `Game.World` 与 `Ocean.World`，需要兼容时通过公开方法适配。
@@ -1140,7 +1140,7 @@ workspace/
 
 ## 构建约定（A 于 2026-10-02 登记，B 维护）
 
-- **入口大小写**：本项目入口是 `scripts/Main.lua`（大写 M）。Maker 远程构建默认找小写 `main.lua`，会静默失败（报"入口文件不存在"），导致 git push 后云端构建从未成功、Web 预览停留在旧构建。**调用 `maker_build_current_directory` 必须显式传 `entry="Main.lua"`、`scriptsPath="scripts"`。**
+- **入口大小写**：本项目入口统一为 `scripts/main.lua`（小写 m）。早期曾因大小写不一致（`Main.lua` vs `main.lua`）导致 Maker 云端构建报"入口文件不存在"而静默失败；现已统一为小写，`project.json` 的 `entry` 同步为 `main.lua`，push 后自动构建直接命中入口。禁止再改回大写。
 - 构建成功会自动启动运行日志 watcher（写入 `.maker/logs/runtime/runtime.log`），验收优先读该日志而非人工观察画面。
 - 数据表位于 `scripts/data/`（曾为根目录 `data/`，因打包根=scripts/ 于 2026-10-02 迁入），运行时 `require("data.fish")` 直接可达。
 - **两种数据链（2026-10-05 澄清，回应 B 侧 Q-006 契约提问）**：
