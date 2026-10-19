@@ -393,8 +393,8 @@ function Tests.Run()
         fixture({}, function(_loop, hud)
             assert(hasVisibleLabel(hud.root,
                 "系统提示：本轮旅程共7天。每天可以出海、捕鱼、探索或返港准备；第7天结束后会进入结局，之后可以开始新周目。"))
-            assert(hasVisibleLabel(hud.root, "老人：被救起的老人把一只旧背包递给你："),
-                "the rule note remains separate from elder speech")
+            assert(not hasVisibleLabel(hud.root, "被救起的老人把一只旧背包递给你"),
+                "elder speech stays in the elder dialogue, not duplicated in the opening note")
         end)
     end)
     return { results = results, guiVerified = false }

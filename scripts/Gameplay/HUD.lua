@@ -3094,7 +3094,7 @@ local header = UI.Panel {
             or "漂流瓶里的纸条"
         local overlayTitle = showEntry and "云存档" or showForced and "夜晚返港"
             or (showNewRunConfirm and "重新开始"
-            or (showSettlement and "每日结算" or (showOpening and "海岸边的老人")
+            or (showSettlement and "每日结算" or (showOpening and "出海须知")
             or (showEnding and "第 7 天 · 结局" or (showStory and storyTitle
             or (showCompendium and "图鉴 · 成就" or "")))))
         setText(refs.modalTitle, "modalTitle", overlayTitle)
