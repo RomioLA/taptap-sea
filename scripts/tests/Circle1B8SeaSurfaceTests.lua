@@ -14,8 +14,8 @@
 --      缺地平线函数返回 false；
 --   5) Surface 接入：波纹层可用即跳过 crests（GetViewBounds 入口断言），失败/
 --      enabled=false 回退 crests；alpha/tileScale 经 config 透传；
---   6) catalog 规格：海面三图（preload/repeatTexture/1920×1080）+ 波纹层
---      （preload=true/repeatTexture=true/512×288）。
+--   6) catalog 规格：海面三图（preload/repeatTexture/昼·黄昏 1728×972 用户水彩
+--      纹理 v2、夜 1920×1080）+ 波纹层（preload=true/repeatTexture=true/512×288）。
 local Tests = {}
 
 local SeaViewArt = require("Ocean.SeaViewArt")
@@ -417,16 +417,21 @@ function Tests.Run(recorder)
         ripple.alpha, ripple.tileScale = oldAlpha, oldScale
     end)
 
-    check("catalog 四图规格：海面三图 1920×1080 + 波纹层 512×288", function()
+    check("catalog 四图规格：昼/黄昏 1728×972 + 夜 1920×1080 + 波纹层 512×288", function()
         local day = assert(ImageArt.GetSpec("sea_surface_day"))
         assert(day.preload == true and day.repeatTexture == true)
-        assert(day.pixelWidth == 1920 and day.pixelHeight == 1080)
+        assert(day.pixelWidth == 1728 and day.pixelHeight == 972,
+            "2026-10-20 换装：昼图=用户水彩海面纹理 v2（1728×972 精确 16:9）")
         local dusk = assert(ImageArt.GetSpec("sea_surface_dusk"))
         assert(dusk.preload == true and dusk.repeatTexture == true)
+        assert(dusk.pixelWidth == 1728 and dusk.pixelHeight == 972,
+            "2026-10-20 换装：黄昏图=用户水彩海面纹理 v2 黄昏版")
         local night = assert(ImageArt.GetSpec("sea_surface_night"))
         assert(night.preload == false,
             "夜图留 SeaDebug/后续方案：不随场景启动预载")
         assert(night.repeatTexture == true, "夜图保持横拼标志备用")
+        assert(night.pixelWidth == 1920 and night.pixelHeight == 1080,
+            "夜图沿用锚点链 v2 满幅 1920×1080")
         local ripple = assert(ImageArt.GetSpec("sea_ripple_overlay"))
         assert(ripple.preload == true, "波纹层随场景启动预载，避免首帧尖峰")
         assert(ripple.repeatTexture == true, "双向平铺标志")
