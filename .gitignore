@@ -76,3 +76,7 @@ urhox-libs/
 # Local-only preview launcher (machine-specific paths; never commit)
 /本地测试.cmd
 /start-local-preview.ps1
+
+# Maker 默认忽略规则（自动补充；平台内容不应提交）
+.org.chromium.Chromium.??????
+AGENTS.md
