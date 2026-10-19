@@ -107,6 +107,33 @@ function Scene.Start(options)
     local seaDebugTools = nil
     ---@type number
     local lastLayoutWidth = 0
+    -- V2.7：Esc 优先取消选点（捕鱼选点 / 投放列表 / 投放选点）。
+    -- 返回 true 表示已消耗该次输入，不再进入全局暂停。
+    local function cancelPendingSelection(sceneBridge)
+        local loop = sceneBridge and sceneBridge.loop
+        if not loop then return false end
+        local picker = type(loop.GetThrowPicker) == "function" and loop:GetThrowPicker() or nil
+        if picker then
+            if type(loop.CloseThrowPicker) == "function" then loop:CloseThrowPicker() end
+            sceneBridge:Sync()
+            return true
+        end
+        if type(loop.GetThrowSelection) == "function" and loop:GetThrowSelection() then
+            loop:CancelThrowSelection()
+            sceneBridge:Sync()
+            return true
+        end
+        if type(loop.GetFishingState) == "function" then
+            local state = loop:GetFishingState()
+            if state and state.state == "selecting" then
+                loop:CancelFishingAction()
+                sceneBridge:Sync()
+                return true
+            end
+        end
+        return false
+    end
+
     local oceanOptions = copyOptions(settings)
     oceanOptions.ownsUI = false
     oceanOptions.debugUI = false
@@ -191,6 +218,17 @@ function Scene.Start(options)
             end,
             handleKey = function(key)
                 sceneBridge:Sync()
+                -- V2.7（S-01/S-02）：Esc 优先取消当前选点；
+                -- 只有完全没有选点状态时，才打开全局暂停。
+                if key == KEY_ESCAPE then
+                    if cancelPendingSelection(sceneBridge) then
+                        refreshNow()
+                        return true
+                    end
+                    sceneBridge:TogglePause()
+                    refreshNow()
+                    return true
+                end
                 if key == KEY_SPACE then
                     sceneBridge:TogglePause()
                     refreshNow()

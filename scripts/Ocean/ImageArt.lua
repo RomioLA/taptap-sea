@@ -255,6 +255,62 @@ function Art.ContentPlaneSize(name, contentLength, contentWidth)
         width * spec.pixelHeight / spec.contentHeight
 end
 
+-- 竖幅公告板·覆盖模式（2026-10-19 真机反馈「告示牌没盖住矢量岛」）。
+-- Upright 以「世界高度」定尺寸，深度缩放后屏幕尺寸随岛距变化——贴图常小于矢量岛，
+-- 浮在岛上方像「漂浮贴图块」。本入口改为纯屏幕像素口径：调用方给出矢量图的投影
+-- 包围盒（minX/maxX/minY/maxY），立牌内容主体精确铺满该矩形并居中对齐，贴图即
+-- 覆盖矢量轮廓（矢量图做尺寸标准）。不需要投影/深度换算，故远处小岛同样成立。
+---@param ctx NVGContextWrapper
+---@param name string catalog 键
+---@param cover table { minX, maxX, minY, maxY } 目标屏幕矩形（像素）
+---@param alpha number?
+---@return boolean 是否绘制（false=目录缺失/矩形退化/加载失败，调用方走矢量兜底）
+function Art.UprightCover(ctx, name, cover, alpha)
+    name = ArtVariants.Resolve(name)
+    local spec = catalog[name]
+    if not spec or type(cover) ~= "table"
+        or not finite(cover.minX) or not finite(cover.maxX)
+        or not finite(cover.minY) or not finite(cover.maxY) then return false end
+    if not spec.contentWidth or spec.contentWidth <= 0
+        or not spec.contentHeight or spec.contentHeight <= 0 then return false end
+    local images = contexts[ctx]
+    local image = images and images[name] or 0
+    if image <= 0 then
+        Art.LoadImage(ctx, name)
+        images = contexts[ctx]
+        image = images and images[name] or 0
+        if image <= 0 then return false end
+    end
+    local coverWidth = cover.maxX - cover.minX
+    local coverHeight = cover.maxY - cover.minY
+    if coverWidth < 1 or coverHeight < 1 then return false end
+    -- 内容主体须「包住」cover 矩形（等比不变形）：按两轴中更紧的一轴定尺。
+    -- 远处岛的投影包围盒又宽又扁，若一律按高定尺，左右两翼会盖不满。
+    local contentAspect = spec.contentWidth / spec.contentHeight
+    local contentWidth, contentHeight
+    if coverWidth / coverHeight >= contentAspect then
+        contentWidth = coverWidth
+        contentHeight = contentWidth / contentAspect
+    else
+        contentHeight = coverHeight
+        contentWidth = contentHeight * contentAspect
+    end
+    -- 画布按 catalog 像素/内容比外扩透明留边，内容主体在画布内居中。
+    local canvasHeight = contentHeight * spec.pixelHeight / spec.contentHeight
+    local canvasWidth = canvasHeight * spec.pixelWidth / spec.pixelHeight
+    local boxX = (cover.minX + cover.maxX) * 0.5 - canvasWidth * 0.5
+    local boxY = (cover.minY + cover.maxY) * 0.5 - canvasHeight * 0.5
+    nvgSave(ctx)
+    nvgBeginPath(ctx)
+    nvgRect(ctx, boxX, boxY, canvasWidth, canvasHeight)
+    nvgClosePath(ctx)
+    nvgFillPaint(ctx, nvgImagePattern(ctx, boxX, boxY, canvasWidth, canvasHeight, 0, image, alpha or 1))
+    fillCounter = fillCounter + 1
+    nvgFill(ctx)
+    nvgRestore(ctx)
+    return true
+end
+
 -- 竖幅公告板（2026-10-16，方案 A：正视图素材的投影模式修正）。
 -- 树/沙丘等正视图贴图不再平铺在世界平面（会被斜投影压扁剪切、丢失矢量版的立体高度），
 -- 改绘为相机朝向的竖面：底沿落在世界锚点、高度=世界米制、宽度按源图内容宽高比推导。
@@ -262,19 +318,31 @@ end
 -- （屏幕矩形画法沿用 MIF 归档 Art.Layer，锚点/scale 取自 Projection.ProjectFunction）。
 -- 内容主体居中假设（内容中心≈画布中心，误差≤2%）：若未来素材内容偏心，
 -- 需在 catalog 增加 contentX/contentY 偏移字段后再扩展（同 MIF 归档约定）。
--- 不做朝向旋转：树/沙丘不需要；若需按 heading 旋转再扩展。
+-- 不做三维朝向旋转（公告板恒面向相机，树/沙丘/木桶同理）。三个可选参数为
+-- 2026-10-19 海鸟立牌接入，全部纯增量、老调用逐字等价：
+--   worldWidth 内容主体宽度（米）。海鸟是横向主体（翼展远大于体高），按宽度定
+--              尺寸比按高度更贴近素材形态；省略时仍按 worldHeight × 内容比推导。
+--   altitude   内容主体底沿的世界高度（米）。海鸟悬停在海面上方 birdAltitude，
+--              立牌底沿须随之抬起，否则会"站"在水面上；省略 0（坐海平面）。
+--   flipX      屏幕空间水平镜像。海鸟靠镜像表达"朝哪边飞"（素材头朝 +X，向左飞
+--              时置 true），由调用方按 heading 的屏幕横向分量决定。
 ---@param ctx NVGContextWrapper
 ---@param name string
 ---@param movement table
 ---@param position table 世界锚点（内容主体底沿中心）
 ---@param worldHeight number 内容主体高度（米）
 ---@param alpha number?
-function Art.Upright(ctx, name, movement, position, worldHeight, alpha)
+---@param worldWidth number? 内容主体宽度（米），优先于 worldHeight
+---@param altitude number? 底沿世界高度（米），省略 0
+---@param flipX boolean? 屏幕空间水平镜像
+function Art.Upright(ctx, name, movement, position, worldHeight, alpha, worldWidth, altitude, flipX)
     name = ArtVariants.Resolve(name)
     local spec = catalog[name]
-    if not spec or type(worldHeight) ~= "number" or worldHeight <= 0
-        or not spec.contentWidth or spec.contentWidth <= 0
+    if not spec or not spec.contentWidth or spec.contentWidth <= 0
         or not spec.contentHeight or spec.contentHeight <= 0 then return false end
+    -- 尺寸口径：宽度与高度二选一，另一边按 catalog 内容宽高比推导（等比不变形）。
+    local byWidth = type(worldWidth) == "number" and worldWidth > 0
+    if not byWidth and (type(worldHeight) ~= "number" or worldHeight <= 0) then return false end
     -- 懒加载（与 Plane 同口径）：decor 素材 preload=false，首次绘制时加载；
     -- 失败不缓存重试路径之外的状态，返回 false 由调用方走矢量兜底。
     local images = contexts[ctx]
@@ -288,16 +356,34 @@ function Art.Upright(ctx, name, movement, position, worldHeight, alpha)
     if type(position) ~= "table" or not finite(position.x) or not finite(position.y) then return false end
     local project = Projection.ProjectFunction(movement)
     if not project then return false end
-    local x, y, scale = project(position.x, position.y, 0)
+    local base = finite(altitude) and altitude or 0
+    local x, y, scale = project(position.x, position.y, base)
     if not x or type(scale) ~= "number" or scale <= 0 then return false end
-    local screenHeight = worldHeight * scale
-    if screenHeight < UPRIGHT_MIN_PX then return true end
+    -- 屏幕内容主体尺寸：宽高同源 catalog 内容比，等比不变形。
+    local screenHeight, screenWidth
+    if byWidth then
+        screenWidth = worldWidth * scale
+        screenHeight = screenWidth * spec.contentHeight / spec.contentWidth
+    else
+        screenHeight = worldHeight * scale
+        screenWidth = screenHeight * spec.contentWidth / spec.contentHeight
+    end
+    -- 2026-10-19：亚像素尺寸返回 false（此前 return true 但不绘制，调用方据此误判
+    -- 「已绘制」而抑制矢量兜底 → 远处小岛只剩矢量裸底图）。
+    if math.min(screenHeight, screenWidth) < UPRIGHT_MIN_PX then return false end
     local canvasHeight = screenHeight * spec.pixelHeight / spec.contentHeight
-    local canvasWidth = canvasHeight * spec.pixelWidth / spec.pixelHeight
+    local canvasWidth = screenWidth * spec.pixelWidth / spec.contentWidth
     -- 内容主体底沿落在锚点：画布中心 = 锚点 − 屏高/2（居中假设下内容底=锚点）。
     local boxX = x - canvasWidth * 0.5
     local boxY = y - screenHeight * 0.5 - canvasHeight * 0.5
     nvgSave(ctx)
+    if flipX then
+        -- 公告板恒面向相机，朝向只做屏幕水平镜像：绕锚点竖轴翻转画布，
+        -- 锚点 x 不动，故 boxX 映射为 x + canvasWidth/2。
+        nvgTranslate(ctx, x * 2, 0)
+        nvgScale(ctx, -1, 1)
+        nvgTranslate(ctx, -x * 2, 0)
+    end
     nvgBeginPath(ctx)
     nvgRect(ctx, boxX, boxY, canvasWidth, canvasHeight)
     nvgClosePath(ctx)
@@ -444,6 +530,9 @@ end
 -- 叠加于海面底图之上、替换程序 crest marks（Surface 门控：本层绘制成功即跳过
 -- crests，失败回退 crests）。瓦片尺寸=catalog 像素尺寸×tileScale，alpha 透传；
 -- 懒加载/失败缓存与 Plane、SeaSurface 同口径。
+-- 随船移动（2026-10-19 真机反馈）：pattern 原点按相机横移偏移（近水速率
+-- 1 世界米 = height/viewHeight 屏距，与 SeaSurface scroll 同口径），对 tileWidth
+-- 取模保证 REPEAT 无缝循环；scrollScale 经 Config.visual.seaRipple 透传，0=钉死屏幕。
 ---@param tileScale number? 瓦片缩放（1=资产原生像素；非法值回退 1）
 function Art.SeaRipple(ctx, movement, width, height, alpha, tileScale)
     local name = "sea_ripple_overlay"
@@ -467,6 +556,17 @@ function Art.SeaRipple(ctx, movement, width, height, alpha, tileScale)
     if type(rippleAlpha) ~= "number" or rippleAlpha < 0 or rippleAlpha > 1 then
         rippleAlpha = 0.28
     end
+    local scrollScale = Config.visual.seaRipple and Config.visual.seaRipple.scrollScale or 1
+    if type(scrollScale) ~= "number" or scrollScale < 0 then scrollScale = 1 end
+    local originX = 0
+    if scrollScale > 0 then
+        local camera = movement.camera
+        local cameraX = type(camera) == "table" and camera.x or 0
+        if not finite(cameraX) then cameraX = 0 end
+        local viewHeight = Config.camera and Config.camera.viewHeight or 45
+        local base = height / viewHeight
+        originX = -((cameraX * base * scrollScale) % tileWidth)
+    end
     nvgSave(ctx)
     nvgBeginPath(ctx)
     nvgMoveTo(ctx, 0, horizon(0))
@@ -477,7 +577,42 @@ function Art.SeaRipple(ctx, movement, width, height, alpha, tileScale)
     nvgLineTo(ctx, width, height)
     nvgLineTo(ctx, 0, height)
     nvgClosePath(ctx)
-    nvgFillPaint(ctx, nvgImagePattern(ctx, 0, 0, tileWidth, tileHeight, 0, image, rippleAlpha))
+    nvgFillPaint(ctx, nvgImagePattern(ctx, originX, 0, tileWidth, tileHeight, 0, image, rippleAlpha))
+    fillCounter = fillCounter + 1
+    nvgFill(ctx)
+    nvgRestore(ctx)
+    return true
+end
+
+-- 屏幕空间居中精灵（2026-10-19 日月云接入）：不经世界投影，直接以屏幕像素
+-- 中心点绘制；宽度=目标像素宽，高度按源图宽高比推导。懒加载/失败缓存与
+-- Plane 同口径；decor 素材 preload=false 首帧按需加载一次。
+---@param ctx NVGContextWrapper
+---@param name string
+---@param cx number 屏幕中心 x
+---@param cy number 屏幕中心 y
+---@param widthPx number 目标像素宽
+---@param alpha number?
+function Art.ScreenSprite(ctx, name, cx, cy, widthPx, alpha)
+    name = ArtVariants.Resolve(name)
+    local spec = catalog[name]
+    if not spec or type(widthPx) ~= "number" or widthPx <= 0
+        or not finite(cx) or not finite(cy) then return false end
+    local images = contexts[ctx]
+    local image = images and images[name] or 0
+    if image <= 0 then
+        Art.LoadImage(ctx, name)
+        images = contexts[ctx]
+        image = images and images[name] or 0
+        if image <= 0 then return false end
+    end
+    local heightPx = widthPx * (spec.pixelHeight or 1) / math.max(spec.pixelWidth or 1, 1)
+    local x, y = cx - widthPx * 0.5, cy - heightPx * 0.5
+    nvgSave(ctx)
+    nvgBeginPath(ctx)
+    nvgRect(ctx, x, y, widthPx, heightPx)
+    nvgClosePath(ctx)
+    nvgFillPaint(ctx, nvgImagePattern(ctx, x, y, widthPx, heightPx, 0, image, alpha or 1))
     fillCounter = fillCounter + 1
     nvgFill(ctx)
     nvgRestore(ctx)

@@ -239,14 +239,14 @@ function Tests.Run()
         assert(scopeSynced, "the fake A scope interface should clear the initial missing-interface status")
         withHUD(function(HUD)
             local hud = HUD.Create(f.loop)
-            -- UI精简 v1.0 §六：无透镜时透镜按钮直接隐藏，不显示"透镜未获得"
-            local noLensButtons = findButtons(hud.root, "透镜未获得", true)
+            -- UI精简 v1.0 §六：无探海镜时探海镜按钮直接隐藏，不显示"探海镜未获得"
+            local noLensButtons = findButtons(hud.root, "探海镜未获得", true)
             assert(#noLensButtons == 0, "lens button must be hidden when no lens is owned")
             eq(f.loop:IsScopeEnabled(), false)
 
             assert(Progress.GrantLens(f.loop.player))
             hud.Refresh()
-            local openButton = button(hud.root, "开启望远镜", true)
+            local openButton = button(hud.root, "开启探海镜", true)
             assert(not openButton.disabled)
             eq(f.loop.clock:IsPaused(), false)
             click(openButton)
@@ -255,7 +255,7 @@ function Tests.Run()
             eq(f.loop:IsScopeEnabled(), true)
             eq(f.loop.clock:IsPaused(), false)
 
-            local closeButton = button(hud.root, "关闭望远镜", true)
+            local closeButton = button(hud.root, "关闭探海镜", true)
             click(closeButton)
             eq(f.runtime.scopeEnabled, false)
             eq(f.runtime.scopeSetCalls, 2)
@@ -265,18 +265,31 @@ function Tests.Run()
         end)
     end)
 
-    test("non-edible bait hides the 食用 button and shows no use reason", function()
+    test("V2.7 non-edible bait keeps fixed menu actions and shows the Loop rejection", function()
         local f = Flow.Fixture({ items = { "bait", "sardine" } })
         withHUD(function(HUD)
             local hud = HUD.Create(f.loop)
             click(button(hud.root, "船舱", true))
             local operations = findButtons(hud.root, "操作", true)
             eq(#operations, 2)
-        click(operations[1]) -- select the bait
+            click(operations[1]) -- select the bait
 
-        -- UI精简 v1.0 §四：非食用物品不显示"食用"按钮，也无理由文案
-        local useButtons = findButtons(hud.root, "食用", true)
-        assert(#useButtons == 0, "edible-only 食用 button must be hidden for non-food bait")
+            local useButtons = findButtons(hud.root, "使用", true)
+            local giveButtons = findButtons(hud.root, "给老人", true)
+            local dropButtons = findButtons(hud.root, "丢弃", true)
+            eq(#useButtons, 1, "use stays available for a non-edible item")
+            eq(#giveButtons, 1, "the give action keeps its fixed label")
+            eq(#dropButtons, 1, "drop stays available for a non-edible item")
+            assert(not useButtons[1].disabled, "item type does not disable use")
+            assert(not giveButtons[1].disabled, "item type does not disable give")
+            assert(not dropButtons[1].disabled, "item type does not disable drop")
+
+            click(useButtons[1])
+            assert(f.loop.lastMessage:find("没有可用的使用效果", 1, true),
+                "Loop returns a natural-language reason for an unavailable use")
+            assert(exactLabel(hud.root, f.loop.lastMessage, true),
+                "the HUD log displays Loop's natural-language rejection")
+            eq(f.loop.player.inventory:GetItems()[1], "bait", "a rejected use keeps the item")
 
             click(button(hud.root, "收起船舱", true))
             click(button(hud.root, "拜访老人", true))
@@ -293,6 +306,26 @@ function Tests.Run()
             eq(#displays, 2)
             click(displays[2])
             items(f.loop.player.inventory:GetItems(), before, "displayed fish remains in cargo")
+        end)
+    end)
+
+    test("V2.7 busy transactions and active fishing still freeze item actions", function()
+        local f = Flow.Fixture({ items = { "bait" } })
+        f.loop.inventoryOpen = true
+        f.loop.busy = true
+        withHUD(function(HUD)
+            local hud = HUD.Create(f.loop)
+            local useButton = assert(findButtons(hud.root, "使用", false)[1])
+            local giveButton = assert(findButtons(hud.root, "给老人", false)[1])
+            local dropButton = assert(findButtons(hud.root, "丢弃", false)[1])
+            assert(useButton.disabled and giveButton.disabled and dropButton.disabled,
+                "busy transactions freeze all three item actions")
+
+            f.loop.busy = false
+            f.loop.GetFishingState = function() return { state = "casting" } end
+            hud.Refresh()
+            assert(useButton.disabled and giveButton.disabled and dropButton.disabled,
+                "active fishing continues to freeze all three item actions")
         end)
     end)
 
@@ -397,6 +430,31 @@ function Tests.Run()
         assert(f.loop:CancelBarrelInspection())
         eq(f.loop.player.stamina, stamina)
         assert(type(token) == "table")
+    end)
+
+    test("W-05 changed ending shows the approved title and current copy", function()
+        local f = Flow.Fixture()
+        f.loop.endingPending = true
+        f.loop.endingKind = "changed"
+
+        withHUD(function(HUD)
+            local hud = HUD.Create(f.loop)
+            local visibleLabels = {}
+            walk(hud.root, function(widget)
+                if widget.kind == "Label" and type(widget.props.text) == "string" then
+                    visibleLabels[#visibleLabels + 1] = widget.props.text
+                end
+            end, true)
+            local visibleText = table.concat(visibleLabels, "\n")
+
+            assert(visibleText:find("改变结局｜有人同行", 1, true),
+                "the approved W-05 title must be visible")
+            assert(visibleText:find(
+                "海没有因为谁的愿望改变规律。你学着观察，也学着在该行动的时候行动。前三天留给老人的那几只苹果，便是其中一个选择。",
+                1, true), "the approved changed-ending paragraph must be visible")
+            assert(not visibleText:find("安稳", 1, true),
+                "the superseded calm-ending draft must not be visible")
+        end)
     end)
 
     test("paper is marked only after the HUD visibly renders exact text and close resumes the clock", function()

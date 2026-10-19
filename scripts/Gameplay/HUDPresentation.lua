@@ -44,14 +44,15 @@ function Presentation.Create(UI, Config, Items)
         invalid_item = "物品已不存在或无法使用",
         sea_required = "请先出海",
         elder_dialog_required = "请先打开老人对话",
-        elder_not_present = "老人不在船上，当前无法赠送。",
+        elder_not_present = "老人已经不在了，无法再把东西交给他。",
+        -- V2.7：老人已离世时的拒绝语与上面同句，保证入口点击后反馈一致。
         item_has_no_use = "该物品没有可用效果，无法使用。",
         throw_selection_pending = "请先完成或取消当前投掷选择。",
-        treasure_unavailable = "当前没有可展示的透镜。",
-        scope_not_owned = "尚未获得透镜。",
+        treasure_unavailable = "当前没有可展示的探海镜。",
+        scope_not_owned = "尚未获得探海镜。",
         elder_progress_failed = "老人救助进度未能更新，苹果已保留，请重试。",
-        scope_interface_unavailable = "望远镜控制接口暂不可用。",
-        scope_sync_failed = "望远镜状态同步失败，请重试关闭。",
+        scope_interface_unavailable = "探海镜控制接口暂不可用。",
+        scope_sync_failed = "探海镜状态同步失败，请重试关闭。",
         stale_barrel_action = "木桶已变化，当前检查已取消，请重新开始。",
         stale_barrel_stage = "木桶进度已变化，请重新检查。",
         barrel_executor_failed = "木桶检查未能完成，本次不扣体力。",
@@ -124,7 +125,7 @@ function Presentation.Create(UI, Config, Items)
 
     local ITEM_NAME_FALLBACK = {
         apple = "苹果", bait = "鱼饵", sardine = "沙丁鱼", tuna = "金枪鱼",
-        wood = "木材", mineral = "矿产", scopeLens = "望远镜",
+        wood = "木材", mineral = "矿产", scopeLens = "探海镜",
     }
 
     -- 开场教学（事物设定集：被救老人以陪伴者身份开场，赠旧背包——内含开局苹果与鱼饵）。

@@ -325,11 +325,15 @@ function Tests.Run()
             -- 选中物品后，操作区出现在固定操作条而非列表上方
             click_first(findButton(hud.root, "操作", true))
             hud.Refresh()
-            for _, want in ipairs({ "食用", "丢弃", "投掷" }) do
+            -- V2.7：物品菜单固定三个操作（使用／给老人／丢弃）；
+            -- 投海统一走底部【投放】，不再单独提供「投掷」。
+            for _, want in ipairs({ "使用", "丢弃" }) do
                 local button = findButton(hud.root, want, true)
                 assert(button, "selected item must expose " .. want)
                 assert(isVisible(button), want .. " must stay visible after selecting a row")
             end
+            assert(findButton(hud.root, "投掷", true) == nil,
+                "the legacy throw entry must be gone from the item menu")
         end)
     end)
 

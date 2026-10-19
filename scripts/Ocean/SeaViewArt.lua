@@ -629,8 +629,9 @@ function SeaViewArt.Surface(ctx, movement, time, clock)
     end
     -- 波纹平铺层（2026-10-18 C4，用户提供水彩波纹纹理 sea_ripple_overlay）：
     -- 屏幕空间双向平铺，叠加于海面底图之上，替换程序 crest marks——本层绘制
-    -- 成功即跳过 crests（静态水彩波纹让位），加载失败/显式关闭则 crests 照旧
-    -- （贴图优先、失败回退，零回归）。alpha/瓦片缩放经 Config.visual.seaRipple 透传。
+    -- 成功即跳过 crests（2026-10-19 起波纹按近水速率随船横移，scrollScale 可关），
+    -- 加载失败/显式关闭则 crests 照旧（贴图优先、失败回退，零回归）。
+    -- alpha/瓦片缩放/滚动速率经 Config.visual.seaRipple 透传。
     local rippleDrawn = false
     local rippleSettings = Config.visual.seaRipple or {}
     if rippleSettings.enabled ~= false and type(ImageArt.SeaRipple) == "function" then
@@ -712,12 +713,14 @@ end
 -- ImageArt.Upright 竖幅公告板：世界锚点+深度缩放，高度直接沿用矢量版口径
 -- （丘峰 min(4.4, r*0.27)、树高 clamp(r*0.30, 2.2, 5.4)），底沿坐世界锚点，
 -- 宽度按源图内容宽高比推导——正视图素材无需重绘。
--- 泡沫环：内容带内/外缘=0.66/0.84（半画幅，实测径向 alpha）。令外缘落在岸线外
--- 1.24r：画幅半边=1.24r/0.84，内缘 0.974r 恰好被岛体贴图边缘（r）盖住，只露岸线外；
--- alpha 0.85→0.5（原值盖住岛贴图有机岸线呈"贴纸感"），呼吸弧 6→12 段保留"活"感。
+-- 泡沫环（foam_ring 贴图 + 程序弧）：2026-10-18 真机反馈「所有岛屿外围的白色
+-- 泡沫效果不好」→ 全体岛屿移除。drawShoreFoam 与 FOAM_RING_* 常数一并下线；
+-- SurfaceEffects.ShoreFoamArc 数学函数保留（SeaMotionEffectsTests 契约直测），
+-- 立牌口径常数见下（变体岛贴图竖幅公告板高度）。
 local HILL_PEAK_MAX, HILL_PEAK_RATIO = 4.4, 0.27
-local FOAM_RING_BAND_OUTER, FOAM_RING_REACH = 0.84, 1.24
-local FOAM_RING_ALPHA, FOAM_RING_ARC_MAX = 0.5, 12
+local VARIANT_BILLBOARD_RATIO, VARIANT_BILLBOARD_MIN, VARIANT_BILLBOARD_MAX = 0.55, 2.6, 6.0
+-- 2026-10-19：变体岛贴图覆盖矢量轮廓时的外扩比例（按矢量岛投影高的百分比）。
+local VARIANT_BILLBOARD_COVER_PAD = 0.04
 
 local function drawHill(ctx, movement, center, radius, bounds, airMix,shapes,frame,imageName)
     if imageName and radius >= 3 then
@@ -877,38 +880,6 @@ local function drawTree(ctx, movement, base, heightMeters, bounds, paletteShift,
         rgba({142,165,132,245},nil,nil,airMix))
 end
 
-local function drawShoreFoam(ctx, movement, center, shorelineRadius, time, bounds,frame)
-    local settings = (Config.visual and Config.visual.shoreFoam) or {}
-    if settings.enabled == false then return end
-    local count = clamp(math.floor(settings.bubbleCount or 24), 1, 64)
-    local baseOpacity = clamp(settings.opacity or 165, 0, 255)
-    -- 方案 A（2026-10-16）：静态泡沫环外移到岸线外（内容带外缘 0.84 半画幅 → 1.24r），
-    -- 内缘 0.974r 被岛体贴图边缘盖住只露岸线外；alpha 0.5；呼吸弧 12 段提供"活"感，
-    -- 加载失败则全矢量（count 保持 settings.bubbleCount）。
-    if ImageArt.Plane(ctx, "foam_ring", movement, center,
-        shorelineRadius * 2 * FOAM_RING_REACH / FOAM_RING_BAND_OUTER,
-        shorelineRadius * 2 * FOAM_RING_REACH / FOAM_RING_BAND_OUTER,
-        0, 0, FOAM_RING_ALPHA) then
-        count = math.min(count, FOAM_RING_ARC_MAX)
-    end
-    for index = 1, count do
-        local arc = SurfaceEffects.ShoreFoamArc(center, shorelineRadius, index, count, time, settings)
-        if arc and arc.strength > 0.02 and Geometry.WorldBoundsVisible(movement,arc.points,0) then
-            local alpha=math.floor(baseOpacity*arc.strength+.5)
-            local width={meters=arc.strokeWidthMeters,minPixels=.65,maxPixels=1.9}
-            local tint=nvgRGBA(239,250,246,alpha)
-            for pointIndex=1,#arc.points-1 do
-                local _,ax,ay,bx,by=Geometry.StrokeWorldLine(ctx,movement,
-                    arc.points[pointIndex],arc.points[pointIndex+1],tint,width,0,frame)
-                if ax and bx then
-                    includeScreenPoint(bounds,{x=ax,y=ay},1.2)
-                    includeScreenPoint(bounds,{x=bx,y=by},1.2)
-                end
-            end
-        end
-    end
-end
-
 -- C2（2026-10-17）：海面组件渲染入口（OceanComponents 藏品：coast_base/reef_rocks 等
 -- oblique 海面组件）。此前这批素材只有 catalog 条目、无渲染器（status=ready_not_placed）；
 -- 本函数提供与 island/barrel 同构的世界平面放置能力：内容主体尺寸经
@@ -980,44 +951,6 @@ local function variantGeometry(entity, center, radius, variant)
     return geometry
 end
 
--- 变体散石：世界椭圆点阵（rx=s*r*0.55 / ry=s*r*0.38），石色填充+深色描边。
-local function drawIslandRock(ctx, movement, center, radius, rock, bounds, airMix, frame)
-    local rx = rock.s * radius * 0.55
-    local ry = rock.s * radius * 0.38
-    local cx = center.x + rock.x * radius
-    local cy = center.y + rock.y * radius
-    local points = {}
-    for index = 0, 7 do
-        local angle = TWO_PI * index / 8
-        points[#points + 1] = addPoint(cx + math.cos(angle) * rx, cy + math.sin(angle) * ry)
-    end
-    if Geometry.WorldBoundsVisible(movement, points) then
-        fillWorldPolygon(ctx, movement, points, rgba({168,160,146,235}, nil, nil, airMix), bounds, nil, frame)
-        strokeWorldPolygon(ctx, movement, points, rgba({110,102,90,215}, nil, nil, airMix), 1.0, bounds, nil, frame)
-    end
-end
-
--- 变体中央石柱（stele 石碑岛）：世界梯形柱体（带上收 altitude）+ 顶面投影填充。
-local function drawIslandPillar(ctx, movement, center, radius, pillar, bounds, airMix, frame)
-    local height = math.min(3.2, radius * 0.55) * (pillar.h or 0.9)
-    local baseX = center.x + (pillar.x or 0) * radius
-    local baseY = center.y + (pillar.y or 0) * radius
-    local bottomHalf = radius * 0.13
-    local topHalf = radius * 0.085
-    local body = {
-        { x = baseX - bottomHalf, y = baseY - bottomHalf * 0.6, altitude = 0 },
-        { x = baseX + bottomHalf, y = baseY - bottomHalf * 0.6, altitude = 0 },
-        { x = baseX + topHalf, y = baseY + topHalf * 0.6, altitude = height },
-        { x = baseX - topHalf, y = baseY + topHalf * 0.6, altitude = height },
-    }
-    if Geometry.WorldBoundsVisible(movement, body) then
-        local projected = Geometry.ProjectPolygon(movement, body, nil, nil, frame)
-        for _, point in ipairs(projected) do includeScreenPoint(bounds, point) end
-        fillPolygon(ctx, projected, rgba({172,164,148,245}, nil, nil, airMix))
-        strokeWorldPolygon(ctx, movement, body, rgba({96,90,78,220}, nil, nil, airMix), 1.1, bounds, nil, frame)
-    end
-end
-
 -- World-space island disc with a projected shoreline and raised, screen-scaled landmarks.
 -- Returns a screen-space envelope for optional depth/occlusion checks.
 function SeaViewArt.Island(ctx, movement, entity, time, airMix)
@@ -1027,12 +960,8 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     end
     local center = entity.position
     local radius = math.max(0.5, finite(entity.radius) and entity.radius or 4)
-    -- 2026-10-18 真机验收：映射岛（ISLAND_BASE_TEXTURES）以 oblique 底图（海岸/礁石）
-    -- 替代完整岛 PNG 与 island.png 作岛体底图；未映射岛走原完整 PNG/贴图/矢量口径。
-    local baseName = ISLAND_BASE_TEXTURES[entity.contentId or ""]
-    -- 2026-10-18：6 座新岛屿矢量变体（ISLAND_VARIANTS）。变体岛世界内形态=矢量
-    -- （oblique 贴图独立投放已被真机否决）：跳过完整岛 PNG 与贴图 Plane，
-    -- 按变体轮廓比例绘制；贴图在 catalog 备用不参与渲染。
+    -- 2026-10-18：6 座新岛屿变体（ISLAND_VARIANTS）。不走完整岛 PNG 早退
+    -- （drewCompleteIsland）；贴图/矢量口径统一在下方底图段（贴图优先、矢量兜底）。
     local variant = ISLAND_VARIANTS[entity.contentId or ""]
     local probeTotalStop = PerfProbe.Timer()
     -- A complete top-down PNG contains beach, hills, vegetation and static shore
@@ -1041,7 +970,8 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     -- loading takes the original cached/culled vector path below, unchanged.
     local imageSpec = ImageArt.GetSpec("island")
     local probeCompletePngStop = PerfProbe.Timer()
-    local drewCompleteIsland = not baseName and not variant and imageSpec and imageSpec.completeIsland
+    local drewCompleteIsland = not ISLAND_BASE_TEXTURES[entity.contentId or ""] and not variant
+        and imageSpec and imageSpec.completeIsland
         and ImageArt.Sprite(ctx, "island", movement,
             center, radius * 2, 0, 0, 1, radius * 2)
     PerfProbe.Sample("islandPng", probeCompletePngStop())
@@ -1114,58 +1044,115 @@ function SeaViewArt.Island(ctx, movement, entity, time, airMix)
     -- 走 Plane（懒加载+LOD）而非 Sprite（严格 IsLoaded，SeaDebug 切换变体会漏绘）。
     -- 2026-10-18 真机验收：映射岛（ISLAND_BASE_TEXTURES）以 oblique 底图（海岸/礁石）
     -- 替代 island.png 作岛体底图；底图加载失败回退 island.png，再失败走矢量兜底。
-    -- 变体岛（ISLAND_VARIANTS）不走贴图：oblique 独立投放已被真机否决，世界内
-    -- 形态=矢量（hasImage 恒 false；贴图在 catalog preload=false 备用）。
+    -- 2026-10-18 晚（用户「对应岛屿素材渲染接入」）：变体岛贴图从备用转正。
+    -- 2026-10-18 真机二轮反馈（红框截图）：变体岛贴图走 Plane 世界平面平铺呈
+    -- 「漂浮贴图块」观感，与 oblique 独立投放同病——现改竖幅公告板投影
+    -- （ImageArt.Upright，与 sign_* 岛饰/丘/树同一投影口径）：contentId 即
+    -- catalog 条目名，底沿坐岛心、高度按岛半径比例 clamp，加载失败回退变体
+    -- 矢量轮廓（不回退 island.png，形态完全不同）。映射岛（island_01/02）
+    -- 维持 Plane 底图口径（用户前轮亲定，本批不涉及）。
     local baseName = ISLAND_BASE_TEXTURES[entity.contentId or ""]
-    local canvasLength, canvasWidth = ImageArt.ContentPlaneSize(baseName or "island", radius * 2)
+    local canvasLength, canvasWidth
     local hasImage = false
-    if not variant and canvasLength then
-        hasImage = ImageArt.Plane(ctx, baseName or "island", movement, center,
-            canvasLength, canvasWidth, 0, 0)
-    end
-    if baseName and not hasImage then
-        canvasLength, canvasWidth = ImageArt.ContentPlaneSize("island", radius * 2)
+    -- 变体岛零 Plane（贴图走 Upright 立牌，见下方 variantBillboard 段）；
+    -- 映射岛 Plane 底图、失败回退 island.png；其余岛走 island.png Plane。
+    if not variant then
+        canvasLength, canvasWidth = ImageArt.ContentPlaneSize(baseName or "island", radius * 2)
         if canvasLength then
-            hasImage = ImageArt.Plane(ctx, "island", movement, center,
+            hasImage = ImageArt.Plane(ctx, baseName or "island", movement, center,
                 canvasLength, canvasWidth, 0, 0)
+        end
+        if baseName and not hasImage then
+            canvasLength, canvasWidth = ImageArt.ContentPlaneSize("island", radius * 2)
+            if canvasLength then
+                hasImage = ImageArt.Plane(ctx, "island", movement, center,
+                    canvasLength, canvasWidth, 0, 0)
+            end
         end
     end
     PerfProbe.Sample("islandPng", probePngStop())
+    -- 矢量岸块。变体岛先用「只投影不填色」探测矢量轮廓的屏幕包围盒（shore+land
+    -- 两层都要，外框比内芯大），据此给覆盖立牌定尺（用户指令「矢量图做尺寸的
+    -- 标准」）；填色延后到立牌判定之后——覆盖成功则不填，否则贴图内容主体的透明
+    -- 留边压不住下层色块，真机呈现「岛心一团贴图 + 四周大块土黄/橄榄矩形」。
+    -- 非变体岛（无覆盖立牌）与覆盖失败回退路径仍走原矢量填色。
     local probeVectorStop = PerfProbe.Timer()
-    if not hasImage then
-        for _, poly in ipairs(outerPolys) do
-            local outerScreen = fillWorldPolygon(ctx, movement, poly, shoreColor, bounds, nil, frame)
-            if #outerScreen >= 3 then
-                strokeWorldPolygon(ctx, movement, poly, rgba({160,139,105,190},nil,nil,airMix),1.25,bounds,0,frame)
-            end
-        end
-        for _, poly in ipairs(landPolys) do
-            local landScreen = fillWorldPolygon(ctx, movement, poly, landColor, bounds, nil, frame)
-            if #landScreen >= 3 then
-                strokeWorldPolygon(ctx,movement,poly,rgba({107,131,101,170},nil,nil,airMix),1,bounds,0,frame)
-            end
-        end
-    else
-        for _, poly in ipairs(outerPolys) do
-            for _, point in ipairs(Geometry.ProjectPolygon(movement, poly, 0, nil, frame)) do
-                includeScreenPoint(bounds, point)
-            end
-        end
-    end
-    drawShoreFoam(ctx, movement, center, radius, finite(time) and time or 0, bounds,frame)
-
-    drawHill(ctx, movement, center, radius, bounds, airMix,geometry.hills,frame,geometry.hillName)
-    for _,tree in ipairs(geometry.trees) do
-        drawTree(ctx,movement,tree.base,tree.height,bounds,tree.palette,airMix,tree.shape,frame,tree.name)
-    end
-    -- 2026-10-18：变体岛散石与中央石柱（stele）。rocks 为归一化布点（乘 r），
-    -- pillar 仅 island_stele_v1 装配；纯装饰，零碰撞/半径/玩法改动。
+    local vectorBounds
     if variant then
-        for _, rock in ipairs(geometry.rocks or {}) do
-            drawIslandRock(ctx, movement, center, radius, rock, bounds, airMix, frame)
+        local probe = newScreenBounds()
+        local collect = function(polys)
+            for _, poly in ipairs(polys) do
+                if Geometry.WorldBoundsVisible(movement, poly) then
+                    for _, point in ipairs(Geometry.ProjectPolygon(movement, poly, 0, nil, frame)) do
+                        includeScreenPoint(probe, point)
+                        includeScreenPoint(bounds, point)
+                    end
+                end
+            end
         end
-        if geometry.pillar then
-            drawIslandPillar(ctx, movement, center, radius, geometry.pillar, bounds, airMix, frame)
+        collect(outerPolys)
+        collect(landPolys)
+        vectorBounds = probe
+    end
+    -- 变体岛贴图=竖幅公告板（覆盖模式，以矢量轮廓投影包围盒为尺寸标准）。
+    -- 2026-10-19 真机二轮反馈（新接入岛屿全数命中）：上一版无论立牌成败都先填矢量
+    -- 岸块，贴图内容主体的透明留边压不住下层色块，真机呈现「岛心一小团贴图 + 四周
+    -- 大块土黄(SAND_SHORE)/橄榄(SAGE_LAND)矩形」。现改为：矢量岸块延后到本段之后
+    -- 填色——覆盖立牌成功即抑制（贴图自身即完整岛体），失败才回落矢量轮廓。
+    local variantBillboard = false
+    if variant then
+        -- 尺寸标准=矢量岸块（shore+land 外扩）的屏幕包围盒，外扩 4% 掩边。
+        local cover
+        if vectorBounds.minX ~= math.huge and vectorBounds.minY ~= math.huge then
+            local pad = math.max(2, (vectorBounds.maxY - vectorBounds.minY) * VARIANT_BILLBOARD_COVER_PAD)
+            cover = {
+                minX = vectorBounds.minX - pad, maxX = vectorBounds.maxX + pad,
+                minY = vectorBounds.minY - pad, maxY = vectorBounds.maxY + pad,
+            }
+        end
+        if cover and type(ImageArt.UprightCover) == "function" then
+            variantBillboard = ImageArt.UprightCover(ctx, entity.contentId, cover, 1)
+        end
+        if not variantBillboard then
+            variantBillboard = ImageArt.Upright(ctx, entity.contentId, movement, center,
+                clamp(radius * VARIANT_BILLBOARD_RATIO, VARIANT_BILLBOARD_MIN, VARIANT_BILLBOARD_MAX), 1)
+        end
+    end
+    -- 2026-10-19（用户指令「矢量底图删除不叠加」，范围=变体岛六座新岛）：变体岛改为
+    -- 纯贴图渲染——矢量轮廓只作覆盖立牌的**尺寸标准**（上方 vectorBounds），不参与
+    -- 任何绘制：岸块（SAND_SHORE/SAGE_LAND）不填色不描边，丘/树/散石/石柱不绘制。
+    -- 理由：贴图内容主体四周存在透明留边，压不住下层矢量色块，真机呈现「岛心一小团
+    -- 贴图 + 四周大块土黄/橄榄矩形」（01:30 红框 box2/box3/box4，逐通道采样确认即
+    -- 矢量岸块本身）。且 UprightCover 无亚像素剔除（仅 catalog 缺失/图片加载失败才返回
+    -- false，与 Upright 的 UPRIGHT_MIN_PX 不同），真机已验证六岛贴图均可加载，故矢量
+    -- 不保留绘制路径。
+    -- 变体岛散石/石柱的矢量绘制函数（drawIslandRock/drawIslandPillar）同步下线；
+    -- 布点数据仍留在 ISLAND_VARIANTS（若将来恢复矢量路径可直接复用）。
+    -- 映射岛（island_01/02）与圆形岛**不在本次范围**：贴图缺失时仍走矢量岸块兜底。
+    if not variant then
+        if hasImage then
+            for _, poly in ipairs(outerPolys) do
+                for _, point in ipairs(Geometry.ProjectPolygon(movement, poly, 0, nil, frame)) do
+                    includeScreenPoint(bounds, point)
+                end
+            end
+        else
+            for _, poly in ipairs(outerPolys) do
+                local outerScreen = fillWorldPolygon(ctx, movement, poly, shoreColor, bounds, nil, frame)
+                if #outerScreen >= 3 then
+                    strokeWorldPolygon(ctx, movement, poly, rgba({160,139,105,190},nil,nil,airMix),1.25,bounds,0,frame)
+                end
+            end
+            for _, poly in ipairs(landPolys) do
+                local landScreen = fillWorldPolygon(ctx, movement, poly, landColor, bounds, nil, frame)
+                if #landScreen >= 3 then
+                    strokeWorldPolygon(ctx,movement,poly,rgba({107,131,101,170},nil,nil,airMix),1,bounds,0,frame)
+                end
+            end
+        end
+        drawHill(ctx, movement, center, radius, bounds, airMix,geometry.hills,frame,geometry.hillName)
+        for _,tree in ipairs(geometry.trees) do
+            drawTree(ctx,movement,tree.base,tree.height,bounds,tree.palette,airMix,tree.shape,frame,tree.name)
         end
     end
     -- C2（2026-10-17，用户仲裁批准）：island_01 固定岛饰（OceanComponents sign_* 七件）。

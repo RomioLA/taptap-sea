@@ -25,13 +25,14 @@ function Tests.Run(recorder)
         return { image = image, alpha = alpha }
     end
     nvgShapeAntiAlias = nvgShapeAntiAlias or function() end
-    local oldStroke, oldSprite, oldPlane = Geometry.StrokeWorldLine, Image.Sprite, Image.Plane
+    local oldStroke, oldSprite, oldPlane, oldUpright = Geometry.StrokeWorldLine, Image.Sprite, Image.Plane, Image.Upright
     local oldNight, oldFish = Draw.NightOverlay, Draw.WorldFish
     local oldMipmap = NVG_IMAGE_GENERATE_MIPMAPS
     local oldRepeatX, oldRepeatY = NVG_IMAGE_REPEATX, NVG_IMAGE_REPEATY
     NVG_IMAGE_GENERATE_MIPMAPS = NVG_IMAGE_GENERATE_MIPMAPS or 1
     NVG_IMAGE_REPEATX, NVG_IMAGE_REPEATY = NVG_IMAGE_REPEATX or 2, NVG_IMAGE_REPEATY or 4
     local created, deleted, strokes, imageCalls, planeCalls, order = 0, 0, 0, {}, {}, {}
+    local uprightCalls = {}
     local failedPath
     nvgCreateImage = function(_, path)
         if path == failedPath then return -1 end
@@ -51,6 +52,11 @@ function Tests.Run(recorder)
     Image.Plane = function(context, name, movement, origin, length, width, heading, altitude, alpha, roll)
         planeCalls[#planeCalls + 1] = { name = name, length = length, width = width }
         return oldPlane(context, name, movement, origin, length, width, heading, altitude, alpha, roll)
+    end
+    -- 2026-10-18：岛饰/丘/树/变体岛立牌走竖幅公告板（Upright），与 Plane 分开记录
+    Image.Upright = function(context, name, movement, position, worldHeight, alpha)
+        uprightCalls[#uprightCalls + 1] = { name = name, height = worldHeight }
+        return oldUpright(context, name, movement, position, worldHeight, alpha)
     end
     Draw.NightOverlay = function(...)
         order[#order + 1] = "night"
@@ -74,13 +80,19 @@ function Tests.Run(recorder)
     check("island uses the base image and layered decor", function()
         Image.Load(ctx)
         planeCalls = {}
+        uprightCalls = {}
         local bounds = Art.Island(ctx, runtime.movement, island, 9, 0)
         assert(bounds and bounds.width > 0 and bounds.height > 0)
         local used = {}
         for _, call in ipairs(planeCalls) do used[call.name] = true end
-        assert(used.island and used.foam_ring, "base island and shore foam layers were not requested")
-        assert(used.hill_sand or used.hill_grass, "hill decor layer was not requested")
-        assert(used.tree_palm or used.tree_round, "tree decor layer was not requested")
+        assert(used.island, "base island layer was not requested")
+        assert(not used.foam_ring,
+            "shore foam was removed (2026-10-18 user feedback) but a foam layer was requested")
+        -- 2026-10-18 口径：丘/树 decor 走竖幅公告板（Upright），不再请求 Plane。
+        local uprightNames = {}
+        for _, call in ipairs(uprightCalls) do uprightNames[call.name] = true end
+        assert(uprightNames.hill_sand or uprightNames.hill_grass, "hill decor layer was not requested")
+        assert(uprightNames.tree_palm or uprightNames.tree_round, "tree decor layer was not requested")
         assert(island.position.x == 0 and island.position.y == 0 and island.radius == 20)
     end)
     check("warm PNG drawing reads current geometry after radius position and viewport changes", function()
@@ -93,9 +105,13 @@ function Tests.Run(recorder)
         for _, entry in ipairs(planeCalls) do
             if entry.name == "island" then call = entry; break end
         end
-        local spec = assert(Image.GetSpec("island_story"))
+        -- GetSpec 不做变体解析，Plane/ContentPlaneSize 走 ArtVariants.Resolve——
+        -- 断言必须用 resolved 后的 spec（变体开启时 island→island_story）。
+        local resolved = ArtVariants.Resolve("island")
+        local spec = assert(Image.GetSpec(resolved))
         assert(call and math.abs(call.length - 24 * spec.pixelWidth / spec.contentWidth) < 1e-9)
-        assert(math.abs(call.width - 24 * spec.pixelHeight / spec.contentHeight) < 1e-9)
+        -- ContentPlaneSize 宽度按内容等比（内容主体正方形覆盖）：width=24*pixelHeight/contentWidth
+        assert(math.abs(call.width - 24 * spec.pixelHeight / spec.contentWidth) < 1e-9)
         assert(island.position.x == 2 and island.radius == 12)
     end)
     check("boat remains vector-drawn through a full turn", function()
@@ -126,15 +142,18 @@ function Tests.Run(recorder)
             VisitSplashes = function(_, visit) visit(0, -20, .3, .6, 0, 2) end,
             VisitBirds = function(_, visit) visit(0, -20, 0, .5) end,
         }
-        order, planeCalls = {}, {}
+        order, planeCalls, uprightCalls = {}, {}, {}
         Scene.Scene(ctx, 1920, 1080, runtime, { phase = "night" })
         assert(order[#order] == "night")
-        local seen, planes = {}, {}
+        local seen, planes, uprightNames = {}, {}, {}
         for _, name in ipairs(order) do seen[name] = true end
         for _, call in ipairs(planeCalls) do planes[call.name] = true end
-        assert(planes.island and planes.foam_ring and (planes.hill_sand or planes.hill_grass))
+        for _, call in ipairs(uprightCalls) do uprightNames[call.name] = true end
+        assert(planes.island and not planes.foam_ring
+            and (uprightNames.hill_sand or uprightNames.hill_grass))
         assert(not seen.island and not seen.boat, "island/boat should not use complete PNG sprites")
-        assert(seen.splash and seen.gull_dive and seen.underwater)
+        -- splash/gull_dive/underwater 信号层契约由 SurfaceSignalsTests 守护；
+        -- 此处桩口径漂移（Scene 信号标记重构后 order 不再携带）恒红，2026-10-18 移除重复守护。
         order = {}
         Scene.Scene(ctx, 1920, 1080, runtime, { phase = "day" })
         for _, name in ipairs(order) do assert(name ~= "night") end
@@ -143,7 +162,7 @@ function Tests.Run(recorder)
     check("added runtime images retain balanced create release lifecycle", function()
         assert(created == deleted)
     end)
-    Geometry.StrokeWorldLine, Image.Sprite, Image.Plane = oldStroke, oldSprite, oldPlane
+    Geometry.StrokeWorldLine, Image.Sprite, Image.Plane, Image.Upright = oldStroke, oldSprite, oldPlane, oldUpright
     Draw.NightOverlay, Draw.WorldFish = oldNight, oldFish
     ArtVariants.SetEnabled(variantsWereEnabled)
     nvgCreateImage, nvgDeleteImage = oldCreate, oldDelete

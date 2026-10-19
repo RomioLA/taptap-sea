@@ -60,7 +60,9 @@ local function click(root,text)
 end
 
 local function startNewRun(sea,sdk)
+    -- V2.7（W-06）：NewRun 必须二次确认后才写 D1 初始存档。
     click(sea.uiRoot,"开始新周目")
+    click(sea.uiRoot,"确定重新开始")
     assert(sea.loop.entryPending and sea.loop.initialSaveStatus=="saving")
     local request=assert(sdk.sets[#sdk.sets],"new run must immediately save its starting snapshot")
     request.callbacks.ok()
@@ -129,6 +131,8 @@ function Tests.Run()
             sdk.gets[2].error(500,"offline"); sea.hud.Refresh()
             assert(sea.loop.loadStatus=="error" and not sea.loop:Depart())
             click(sea.uiRoot,"开始新周目")
+            -- V2.7（W-06）：二次确认后才真正开始新周目。
+            click(sea.uiRoot,"确定重新开始")
             -- 新周目先落盘 profile（sets[1]）再写主存档初始快照（sets[2]）
             assert(sea.loop.entryPending and sea.loop.player.day==1 and #sdk.sets==2)
             assert(sdk.sets[1].snapshot.knowledgeLog ~= nil and sdk.sets[2].snapshot.day==1)
@@ -144,6 +148,7 @@ function Tests.Run()
             sdk.gets[2].ok({}) -- 主存档空档 → 提供「开始新周目」
             sea.hud.Refresh()
             click(sea.uiRoot,"开始新周目")
+            click(sea.uiRoot,"确定重新开始")
             -- sets[1]=profile 落盘，sets[2]=主存档初始快照
             assert(#sdk.sets==2 and sea.loop.entryPending and sea.loop.initialSaveBusy)
             assert(sdk.sets[2].snapshot.day==1)
@@ -176,7 +181,9 @@ function Tests.Run()
     end)
     check("missing port API does not turn empty cloud into a fake playable new run",function()
         withScene(function(sea,sdk)
-            sdk.gets[1].ok({}); sdk.gets[2].ok({}); sea.hud.Refresh(); click(sea.uiRoot,"开始新周目")
+            sdk.gets[1].ok({}); sdk.gets[2].ok({}); sea.hud.Refresh()
+            click(sea.uiRoot,"开始新周目")
+            click(sea.uiRoot,"确定重新开始")
             assert(sea.loop.entryPending and not sea.loop:Depart())
             assert(sea.loop.player.day==1)
             -- NewRun 入口先落盘 profile（至多 1 个 Set，且不带 gameplay 快照字段）；

@@ -337,7 +337,7 @@ function Barrel:AcceptCompletion(record, evidence)
             if Progress.SetBarrelStage(self.loop.player, 2) ~= true then return false end
         else
             if Progress.GrantLens(self.loop.player) ~= true then return false end
-            if self.loop.achievements then self.loop.achievements:NoteLensUnlocked(self.loop.player.day) end  -- ②③ A1 首日透镜
+            if self.loop.achievements then self.loop.achievements:NoteLensUnlocked(self.loop.player.day) end  -- ②③ A1 首日探海镜
             if Progress.SetBarrelStage(self.loop.player, 3) ~= true then return false end
         end
         return true
@@ -360,15 +360,15 @@ function Barrel:AcceptCompletion(record, evidence)
     else
         record.result = table.pack(true, record.stage == 1 and "empty" or "rewarded")
         Diagnostics.Call("barrel", "message", self.loop.SetMessage, self.loop, record.stage == 1 and "什么都没有捕捞到"
-            or (record.stage == 0 and "取得1个苹果和1个鱼饵。" or "已取得透镜。"))
+            or (record.stage == 0 and "取得1个苹果和1个鱼饵。" or "已取得探海镜。"))
     end
     local barrelOutcome = record.result and record.result[2]
     local costFeedback = string.format("消耗%d体力，剩余%d体力",
         Config.barrel.cost, math.floor(tonumber(self.loop.player.stamina) or 0))
     if record.stage == 2 then
-        local lensFeedback = "获得望远镜透镜。\n"
-            .. "它可以帮助你发现船前方的海底目标。\n"
-            .. "开启透镜，持续对准目标约1秒即可标记；靠近目标后可以打捞。"
+        local lensFeedback = "获得探海镜。\n"
+            .. "打开探海镜，可看见船前方约20米、总角度90°的水下区域；船转向时观察方向也会跟着改变。\n"
+            .. "持续对准目标约1秒即可标记；靠近目标后可以打捞。"
         if type(self.loop.QueueActionToast) == "function" then
             self.loop:QueueActionToast(lensFeedback .. "\n" .. costFeedback, 7)
         end
@@ -376,7 +376,7 @@ function Barrel:AcceptCompletion(record, evidence)
         self.loop:QueueActionToast(costFeedback, 3)
     end
     if barrelOutcome and barrelOutcome ~= "empty" then
-        SoundSystem.Discovery()  -- 需求 行动：探索发现播放 discovery（木桶补给 / 透镜发现）
+        SoundSystem.Discovery()  -- 需求 行动：探索发现播放 discovery（木桶补给 / 探海镜发现）
     end
     emit("completed", "operation", record, { outcome = record.result[2], pending = self.pending ~= nil })
     emitBarrelTiming(record, record.result[2])

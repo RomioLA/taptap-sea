@@ -296,7 +296,8 @@ function Tests.Run()
         local loop = saved.loop
         local dialog = assert(loop:GetStoryDialog())
         eq(dialog.kind, "elder_fate")
-        eq(dialog.text, "第四天清晨，老人还在。\n他望着你说：“多亏这几天你一直照顾我。”\n这趟航行，你们还能继续同行。")
+        -- V2.7（W-03）：救活结果须明确“状态转好”，不直接说明 3 苹果条件。
+        eq(dialog.text, "第四天清晨，老人还在。\n他缓缓坐起身，眼里恢复了些神气：“缓过来了……这天，还能跟你一起出海。”\n这趟航行，你们还能继续同行。")
         eq(loop:GetElderStatus().decision, "saved")
         eq(Progress.IsElderFateShown(loop.player), false)
         local stamina, writes = loop.player.stamina, saved.store.writes
@@ -315,7 +316,10 @@ function Tests.Run()
         eq(dead.loop:GetElderStatus().applesGiven, 2)
         eq(dead.loop:GetElderStatus().decision, "dead")
         eq(deadDialog.kind, "elder_fate")
-        eq(deadDialog.text, "第四天清晨，老人再也没有醒来。\n往后的航行，只剩你一个人。")
+        -- V2.7（W-02，文案回审采纳）：离世结果 + “甲板上静悄悄的……日子还是得照样过”。
+        eq(deadDialog.text, "清晨，船边安静得出奇。老人没像往常那样叫你起身。你走近时才发现，他已经没有了呼吸。\n"
+            .. "海浪依旧拍着船舷，仿佛不知道少了一个人。\n"
+            .. "你独自把船整理好，甲板上静悄悄的……日子还是得照样过。")
         assert(dead.loop:NotifyStoryShown(deadDialog.token))
         assert(dead.loop:CloseStoryDialog())
         eq(dead.loop.player.elder.circle1B2.applesGiven, 2, "presentation does not change the apple threshold")

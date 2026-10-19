@@ -83,30 +83,33 @@ local Config = {
     -- 2026-10-18：6 座新岛屿矢量变体（assets/image/OceanIslands，用户指令
     -- 「在世界生成这几张图的矢量图，参考复用现有实体岛屿，矢量绘画根据图中
     -- 尺寸比例绘制」）。与 fixedComponents 同构的独立清单：World:Init 以
-    -- kind="scenery" 注册的非阻挡装饰实体（entityType="island" 复用既有岛屿
-    -- 绘制入口 SeaViewArt.Island，contentId 命中 ISLAND_VARIANTS 走变体矢量
-    -- 路径——oblique 贴图独立投放已被 10-18 真机验收否决，贴图仅入 catalog
-    -- 备用）。半径=贴图实体外接半径×12/512（island_01 口径）取整；坐标满足
-    -- isPositionFree（避 island_01 r12 / island_02 r20 / barrel r2 碰撞圈，
-    -- 彼此视觉间距 ≥ r_i+r_j+4）。放置参数待真机观感调校。
+    -- kind="scenery" 注册（entityType="island" 复用既有岛屿绘制入口
+    -- SeaViewArt.Island，contentId 命中 ISLAND_VARIANTS；渲染=贴图优先走
+    -- Plane（contentId 即 catalog 条目名）、加载失败回退变体矢量轮廓）。
+    -- 2026-10-18 晚（用户「做实体体积和对应岛屿素材渲染接入」）：blocking=true
+    -- 进 blockingList（船不可穿越，island_01/02 同构实体体积；A2 冻结契约数
+    -- kind=="fixed" 不受影响）；贴图从备用转正为岛体底图。半径=贴图实体外接
+    -- 半径×12/512（island_01 口径）取整；坐标满足 isPositionFree（避 island_01
+    -- r12 / island_02 r20 / barrel r2 碰撞圈，彼此视觉间距 ≥ r_i+r_j+4）。
+    -- 放置参数待真机观感调校。
     fixedIslands = {
         { entityType = "island", contentId = "island_peak_v1",
-            position = { x = 70, y = 10 }, radius = 7, blocking = false,
+            position = { x = 70, y = 10 }, radius = 7, blocking = true,
             tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
         { entityType = "island", contentId = "island_reefcluster_v1",
-            position = { x = 55, y = -20 }, radius = 9, blocking = false,
+            position = { x = 55, y = -20 }, radius = 9, blocking = true,
             tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
         { entityType = "island", contentId = "island_cliff_v1",
-            position = { x = -30, y = -15 }, radius = 9, blocking = false,
+            position = { x = -30, y = -15 }, radius = 9, blocking = true,
             tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
         { entityType = "island", contentId = "island_stele_v1",
-            position = { x = 20, y = -30 }, radius = 4, blocking = false,
+            position = { x = 20, y = -30 }, radius = 4, blocking = true,
             tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
         { entityType = "island", contentId = "island_twinhills_v1",
-            position = { x = 5, y = 55 }, radius = 10, blocking = false,
+            position = { x = 5, y = 55 }, radius = 10, blocking = true,
             tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
         { entityType = "island", contentId = "island_sandbar_v1",
-            position = { x = -15, y = 40 }, radius = 10, blocking = false,
+            position = { x = -15, y = 40 }, radius = 10, blocking = true,
             tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
     },
 },
@@ -143,9 +146,19 @@ local Config = {
     -- 波纹平铺层（2026-10-18 C4，用户提供水彩波纹纹理 sea_ripple_overlay）：
     -- 屏幕空间双向平铺（imagePattern REPEATX|REPEATY），叠加于海面底图之上，
     -- 替换程序 crest marks（贴图优先、加载失败回退 crests，零回归）。
-    -- alpha 为叠加不透明度（纹理近白，偏低值即可显纹）；tileScale 为瓦片缩放
-    -- （1=资产原生 512×288，调大=波纹更稀）。
-    seaRipple = { enabled = true, alpha = 0.28, tileScale = 1.0 },
+    -- alpha 为叠加不透明度；tileScale 为瓦片缩放（1=资产原生 512×288，调大=波纹更稀）。
+    -- 2026-10-18 晚修复：素材原为 RGB 无 alpha（白底不透明平铺→海面发白雾、
+    -- 波纹不可见），已去白底提取浪花白沫 alpha 通道（RGBA，.tmp/ripple_alpha_fix.py，
+    -- 接缝保持 0.0）；素材自持透明度后 0.28 压雾保守值上调 0.5 恢复波纹可见度。
+    -- 2026-10-19 真机二次修复：源图白底白波纹笔画色距极浅（raw max 78、p99=19），
+    -- 旧线性 GAIN=3.2 提取后 93.7% 像素 alpha=0 → 贴图不可见且 crests 被跳过
+    -- （两者同时消失的根因）。重提取改伽马 0.55 按源图动态范围归一
+    -- （.tmp/ripple_alpha_boost.py，笔画核心 alpha>160、接缝保持 0.0），alpha 0.5→0.6。
+    -- 随船移动：scrollScale=1 按近水速率随相机横移（与 SeaSurface scroll 同口径，
+    -- 1 世界米 = height/viewHeight 屏距）；0=钉死屏幕。
+    -- 2026-10-19 真机二轮：白波纹「太淡不明显 + 密度过大」→ alpha 0.6→0.9、
+    -- tileScale 1.0→1.6（瓦片放大，同屏波纹数量降到约 1/2.6，笔画也随之更粗）。
+    seaRipple = { enabled = true, alpha = 0.9, tileScale = 1.6, scrollScale = 1.0 },
     -- 天空图图层（2026-10-18 读海美术接入）：屏幕空间满幅天空贴图，绘于背景渐变
     -- 之上、日月云鸟之下（方案 B：不依赖 scissor，零回归）。昼夜相位复用 seaSurface
     -- 的 duskFrom/duskSpan/nightFade 映射（SkyFrame 委托 SeaSurfaceFrame，仅改写键名
@@ -153,6 +166,11 @@ local Config = {
     -- （画面贴图懒加载，首个 Backdrop 帧按需加载一次，句柄缓存）；scroll 默认开启、
     -- scrollScale 提供视差（天空无天区世界实体，横移仅微移纹理，与用户"随镜头横滚"一致）。
     skyLayer = { enabled = true, alpha = 1.0, scroll = true, scrollScale = 0.35 },
+    -- 日月云贴图层（2026-10-19 读海美术接入）：屏幕空间装饰精灵（ImageArt.ScreenSprite），
+    -- 替换矢量日/月/云（day=sky_sun+sky_cloud_light、night=sky_moon+sky_cloud_dark、
+    -- day 末段按 seaSurface 同源 blend 交叉淡入夜云）。贴图优先、加载失败回退矢量
+    -- （零回归）；preload=false 懒加载；enabled=false 整层回退矢量旧观感。
+    skyDecor = { enabled = true, alpha = 1.0 },
     wake = { lifetimeSec = 3, spacingMeters = 0.6, minSpeed = 0.15, maxSamples = 96,
         initialWidth = 0.65, spreadPerSec = 0.45, sternOffset = 2.5, opacity = 125 },
     projection = { circleSegments = 48, sectorSegments = 32, birdAltitude = 1.2 },
@@ -166,8 +184,8 @@ local Config = {
         cloudShadowDriftMps = 0.55, cloudShadowRadiusMeters = 24,
         fogCount = 10, fogOpacity = 46, fogDriftMps = 0.30,
         fogRadiusMeters = 22, fogNearOpacityScale = 0.12 },
-    shoreFoam = { enabled = true, bubbleCount = 36, ringRatio = 1.0,
-        bubbleRadiusMeters = 0.30, pulsePeriodSec = 3.2 },
+    -- shoreFoam 键已移除（2026-10-18 真机反馈岛外围白色泡沫观感不佳，全体岛屿
+    -- 移除泡沫渲染；SurfaceEffects.ShoreFoamArc 数学函数保留供契约直测）。
     -- Remote STEP-5 visual, confirmed by the planning workbook's night-visual rule.
     nightOverlay = { 10, 22, 48, 190 },
     background = { 15, 91, 125, 255 }, wave = { 109, 207, 216, 145 },

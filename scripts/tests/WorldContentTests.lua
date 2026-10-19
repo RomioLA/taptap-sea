@@ -5,6 +5,9 @@ local Circle1B2Progress = require "Gameplay.Circle1B2Progress"
 local Progress = require "Gameplay.WorldContentProgress"
 local Actions = require "Gameplay.WorldContentActions"
 local Loop = require "Gameplay.Loop"
+local MemoryFragments = require "Gameplay.MemoryFragments"
+local MemoryFragmentData = require "data.memory_fragments"
+local Content = require "data.content"
 
 local Tests = {}
 local MEMORY_IDS = { "memory_island_01", "memory_island_02", "memory_treasure_01" }
@@ -198,6 +201,151 @@ function Tests.Run()
             eq(sameToast.id, toast.id, "one action must enqueue one result")
             assert(state(f, case.contentId).completed and state(f, case.contentId).rewardOwned)
         end
+    end)
+
+    test("W-08 memory mapping keeps internal titles separate from player copy", function()
+        local fixedByReward = {}
+        for _, definition in ipairs(Content.fixed) do
+            if definition.rewardId then fixedByReward[definition.rewardId] = definition.contentId end
+        end
+        local expected = {
+            { rewardId = "memory_island_01", contentId = "island_01",
+                theme = "陪伴/安心", workingTitle = "有人牵着我的手" },
+            { rewardId = "memory_island_02", contentId = "island_02",
+                theme = "勇气/成长", workingTitle = "第一次自己走远" },
+            { rewardId = "memory_treasure_01", contentId = "underwater_treasure_01",
+                theme = "温暖/归属", workingTitle = "那盏还亮着的灯" },
+        }
+        for _, item in ipairs(expected) do
+            local definition = assert(MemoryFragmentData[item.rewardId])
+            eq(definition.contentId, item.contentId)
+            eq(fixedByReward[item.rewardId], item.contentId)
+            eq(definition.theme, item.theme)
+            eq(definition.workingTitle, item.workingTitle)
+            eq(definition.playerTitle, nil, "formal title is not authored yet")
+            eq(definition.body, nil, "formal player copy is not authored yet")
+        end
+    end)
+
+    test("W-08 first ownership opens the existing story modal and defers its toast until close", function()
+        local definition = MemoryFragmentData.memory_island_01
+        withPatched(definition, "body", "writer-provided test copy", function()
+            local loop = Loop.New()
+            local f = fixture(loop.player)
+            loop.worldContentActions = f.actions
+            assert(loop:Depart())
+            local token = assert(loop:BeginWorldContentAction("island_01", "explore"))
+            loop:Update(3.99)
+            eq(loop:GetStoryDialog(), nil, "incomplete action must not open the story modal")
+            loop:Update(0.01)
+
+            local receipt = assert(f.actions:GetReceipt(token))
+            eq(receipt.commitState, "committed")
+            eq(receipt.begin.rewardOwned, false)
+            eq(state(f, "island_01").rewardOwned, true)
+            local dialog = assert(loop:GetStoryDialog())
+            eq(dialog.kind, "memory_fragment")
+            eq(dialog.text, definition.body)
+            eq(dialog.title, nil, "internal working title must not reach the player")
+            assert(loop.player.story.memoryFragments == nil, "W-08 must not add a save marker")
+
+            local queuedToast = assert(loop.actionToast)
+            eq(loop:GetActionToast(), nil, "the reward toast must not cover the modal")
+            assert(loop:NotifyStoryShown(dialog.token))
+            assert(loop:CloseStoryDialog())
+            local deliveredToast = assert(loop:GetActionToast())
+            eq(deliveredToast.id, queuedToast.id)
+            eq(deliveredToast.text, queuedToast.text, "keep the existing reward feedback unchanged")
+            assert(loop:AcknowledgeActionToast(deliveredToast.id))
+            eq(loop:GetActionToast(), nil)
+
+            local repeated, reason = loop:BeginWorldContentAction("island_01", "explore")
+            eq(repeated, false); eq(reason, "already_completed")
+            eq(loop:GetStoryDialog(), nil, "an owned fragment must not display a second time")
+        end)
+    end)
+
+    test("W-08 missing or whitespace-only body never opens an empty modal", function()
+        local definition = MemoryFragmentData.memory_island_02
+        local function assertNoStory(body)
+            withPatched(definition, "body", body, function()
+                local loop = Loop.New()
+                local f = fixture(loop.player)
+                loop.worldContentActions = f.actions
+                assert(loop:Depart())
+                local token = assert(loop:BeginWorldContentAction("island_02", "explore"))
+                loop:Update(4)
+                eq(assert(f.actions:GetReceipt(token)).commitState, "committed")
+                eq(state(f, "island_02").rewardOwned, true)
+                eq(loop:GetStoryDialog(), nil, "missing copy must not create a modal")
+                local toast = assert(loop:GetActionToast(), "existing reward feedback stays available")
+                assert(toast.text:find("获得记忆：岛屿记忆二", 1, true))
+                assert(loop.player.story.memoryFragments == nil, "no separate shown marker")
+            end)
+        end
+        assertNoStory(nil)
+        assertNoStory("")
+        assertNoStory("  \n\t  ")
+    end)
+
+    test("W-08 same-frame competing story modal defers its completed receipt until close", function()
+        local definition = MemoryFragmentData.memory_treasure_01
+        withPatched(definition, "body", "writer-provided test copy", function()
+            local loop = Loop.New()
+            local f = fixture(loop.player)
+            loop.worldContentActions = f.actions
+            markTreasure(f)
+            loop.ProcessContextTeaching = function(self, allowObservation)
+                if allowObservation then
+                    self.storyDialog = { token = {}, kind = "teaching", text = "existing teaching" }
+                end
+                return allowObservation == true
+            end
+            assert(loop:Depart())
+            local token = assert(loop:BeginWorldContentAction("underwater_treasure_01", "salvage"))
+            loop:Update(4)
+
+            local teaching = assert(loop:GetStoryDialog())
+            eq(teaching.kind, "teaching", "earlier same-frame story keeps ownership")
+            eq(assert(f.actions:GetReceipt(token)).commitState, "committed")
+            eq(loop.worldContentFeedbackToken, token, "completed receipt remains available for W-08")
+            eq(loop.actionToast, nil, "W-08 feedback is not consumed under the teaching modal")
+
+            assert(loop:CloseStoryDialog())
+            loop:Update(0)
+            local memory = assert(loop:GetStoryDialog())
+            eq(memory.kind, "memory_fragment")
+            eq(memory.text, definition.body)
+            eq(loop.worldContentFeedbackToken, nil)
+            local queuedToast = assert(loop.actionToast)
+            eq(loop:GetActionToast(), nil, "toast waits until the memory modal closes")
+            assert(loop:NotifyStoryShown(memory.token))
+            assert(loop:CloseStoryDialog())
+            local deliveredToast = assert(loop:GetActionToast())
+            eq(deliveredToast.id, queuedToast.id)
+            assert(loop:AcknowledgeActionToast(deliveredToast.id))
+            eq(loop:GetActionToast(), nil)
+            loop:Update(0)
+            eq(loop:GetStoryDialog(), nil, "the completed receipt must not reopen the memory")
+            eq(loop:GetActionToast(), nil, "the reward toast is acknowledged only once")
+            assert(loop.player.story.memoryFragments == nil, "no separate shown marker")
+        end)
+    end)
+
+    test("an existing action toast stays queued through another story modal and is delivered once", function()
+        local loop = Loop.New()
+        loop.storyDialog = { token = {}, kind = "teaching", text = "existing teaching" }
+        local queued, id = loop:QueueActionToast("existing action feedback", 3)
+        assert(queued)
+        eq(loop:GetActionToast(), nil, "HUD must not consume a toast under a story modal")
+        eq(loop.actionToast.id, id)
+        assert(loop:NotifyStoryShown(loop.storyDialog.token))
+        assert(loop:CloseStoryDialog())
+        local delivered = assert(loop:GetActionToast())
+        eq(delivered.id, id)
+        eq(delivered.text, "existing action feedback")
+        assert(loop:AcknowledgeActionToast(delivered.id))
+        eq(loop:GetActionToast(), nil)
     end)
 
     test("cancelled world-content action creates no paid or memory toast", function()

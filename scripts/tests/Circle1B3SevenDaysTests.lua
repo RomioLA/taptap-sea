@@ -286,6 +286,8 @@ local function route(appleGiftDays)
         -- start through the same button callback used by the official HUD.
         advance(0.5)
         clickButton(root, "开始新周目")
+        -- V2.7（W-06）：NewRun 需二次确认后才写 D1 初始档。
+        clickButton(root, "确定重新开始")
         eq(loop.player.day, 1, "new run starts on day one")
         eq(loop.clock.timeScale, 1, "normal clock scale")
 
@@ -313,7 +315,8 @@ local function route(appleGiftDays)
                     local elderButton = findVisibleButton(root, "老人不在")
                     assert(not elderButton.disabled, "absent elder entry must explain why it is unavailable")
                     clickButton(root, "老人不在")
-                    assert(hasVisibleLabel(root, "操作未完成：老人不在船上，当前无法赠送。"),
+                    -- V2.7：老人离世后的统一拒绝语。
+                    assert(hasVisibleLabel(root, "老人已经不在了，无法再把东西交给他。"),
                         "absence click must explain the rejection")
                     assert(not loop.elderOpen, "unrescued elder dialogue must remain closed on day four")
                     routeData.day4ElderAccess = {
@@ -336,6 +339,15 @@ local function route(appleGiftDays)
                 clickButton(root, "给予 ▸")
                 clickInventoryRowButton(root, loop.player.inventory, "apple", "给予")
                 clickButton(root, "收起")
+            end
+
+            -- V2.7（W-02）：未救路线 D6 日初会弹一次苹果篮回想。
+            -- 它是一次性剧情模态，关闭后才能继续当天。
+            local dayEntry = loop:GetStoryDialog()
+            if dayEntry and dayEntry.kind == "apple_basket" then
+                hud.Refresh()
+                assert(hasVisibleLabel(root, dayEntry.text), "day-six recall text should be visible")
+                clickButton(root, "结束对话")
             end
 
             assert(loop:Ready(), string.format(

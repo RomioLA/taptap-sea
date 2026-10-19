@@ -10,6 +10,7 @@ local DefaultStrategy = require("Ocean.SpawnStrategy")
 local EntityStateSystem = require("Systems.EntityStateSystem")
 local TraceSystem = require("Systems.TraceSystem")
 local SurfaceSignals = require("Ocean.SurfaceSignals")
+local Presentation = require("Ocean.SeaPresentation")
 local Runtime = {}
 Runtime.__index = Runtime
 
@@ -255,6 +256,54 @@ end
 
 local function isValidPoint(point)
     return type(point) == "table" and isFiniteNumber(point.x) and isFiniteNumber(point.y)
+end
+
+---Whether an active surface cue passes the same broad-phase gate as SeaDraw.
+---This is draw eligibility, not proof that any cue pixel lands on screen.
+---@param kind "bird"|"splash"
+---@return boolean
+function Runtime:HasSurfaceSignalInView(kind)
+    if kind ~= "bird" and kind ~= "splash" then return false end
+    local movement, signals = self.movement, self.surfaceSignals
+    if not movement or movement.viewportReady ~= true or not signals then return false end
+
+    local found = false
+    local function inspect(x, y, length)
+        if found then return end
+        local point = { x = x, y = y }
+        if not isValidPoint(point) then return end
+        if type(length) ~= "number" or not isFiniteNumber(length) then length = nil end
+        local radius, height = Presentation.SignalBounds(kind, length)
+        if type(radius) ~= "number" or type(height) ~= "number" then return end
+        local ok, state = pcall(Presentation.State, movement, point, radius, height)
+        found = ok and type(state) == "table" and state.alpha > 0
+    end
+
+    local visit = signals[kind == "bird" and "VisitBirds" or "VisitSplashes"]
+    if type(visit) == "function" then
+        local ok = pcall(function()
+            if kind == "bird" then
+                visit(signals, function(x, y) inspect(x, y) end)
+            else
+                visit(signals, function(x, y, remaining, lifetime, heading, length)
+                    inspect(x, y, length)
+                end)
+            end
+        end)
+        return ok and found
+    end
+
+    -- Compatibility for light test doubles and older signal providers.
+    local get = signals[kind == "bird" and "GetBirds" or "GetSplashes"]
+    if type(get) ~= "function" then return false end
+    local ok, cues = pcall(get, signals)
+    if not ok or type(cues) ~= "table" then return false end
+    for _, cue in ipairs(cues) do
+        if type(cue) == "table" and type(cue.position) == "table" then
+            inspect(cue.position.x, cue.position.y, cue.trailLength)
+        end
+    end
+    return found
 end
 
 -- Validate the authored anchor before delegating occupancy to the world's

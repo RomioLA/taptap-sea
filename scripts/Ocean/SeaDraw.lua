@@ -7,10 +7,12 @@ local Geometry = require("Ocean.ProjectedGeometry")
 local Presentation = require("Ocean.SeaPresentation")
 local Atmosphere = require("Ocean.SeaAtmosphere")
 local ImageArt = require("Ocean.ImageArt")
+local Projection = require("Ocean.Projection")
 local PerfProbe = require("Ocean.PerfProbe")
 local SeaDraw = {}
 local FIXED_BARREL_CONTENT_ID = "driftwood_barrel"
 local PORT_MARK_RADIUS = 16
+local BIRD_SPAN_METERS = Presentation.BIRD_SPAN_METERS
 
 local function finite(value)
     return type(value) == "number" and value == value and math.abs(value) < math.huge
@@ -58,6 +60,24 @@ local function entityHeading(entity)
         heading = math.atan(direction.y, direction.x)
     end
     return heading
+end
+
+-- 海鸥立牌的屏幕空间最小翼展（像素）。2026-10-19 真机二轮反馈：俯冲姿态下翼展
+-- 缩到 0.68m，远处按透视折算后不足 ImageArt.UPRIGHT_MIN_PX=2 亚像素剔除线，
+-- 立牌返回 false 回退 WorldSeabird 矢量折线鸟——真机天空呈现三只白色折线鸟。
+-- 给一个可见下限（略高于剔除线，保证 nvgImagePattern 取到有效像素），远处海鸥
+-- 即便透视缩到亚像素也照常贴水彩立牌，不再掉回矢量。
+local BIRD_MIN_SCREEN_SPAN_PX = 3
+-- 立牌水平镜像死区（cos heading 的绝对值）：正前/正后飞时 cos≈0，若跟随符号翻转
+-- 会每帧抖动，故 ±0.26 内一律不翻转（≈ ±15°），保留"明显朝左/朝右"的朝向可读性。
+local BIRD_FLIP_DEADZONE = 0.26
+
+-- 屏幕空间水平朝向：投影为固定偏航（无相机偏航旋转），世界 heading 的屏幕横向
+-- 分量 ∝ cos(heading)。素材头朝 +X，故 cos<0（朝世界 -X）时需水平镜像才朝对方向。
+local function birdFlipsScreen(heading)
+    local cosine = math.cos(heading or 0)
+    if math.abs(cosine) < BIRD_FLIP_DEADZONE then return false end
+    return cosine < 0
 end
 
 -- Keep the existing vector silhouettes, projecting each meter-space path
@@ -541,8 +561,14 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
         local radius = entity and (entity.species
             and ((speciesData and speciesData.renderLength) or entity.radius or 1)
             or (entity.radius or 1)) or math.max(3, entry.length or 0)
+        -- 广相剔除高度：立牌海鸟的顶端在 birdAltitude + 立牌高（内容高宽比 < 1，
+        -- 取 BIRD_SPAN_METERS 作保守上界），否则公告板顶部会被地平线遮挡误剔除。
         local altitude = entry.kind == "entity" and entity.entityType == "island" and 5.4
-            or entry.kind == "bird" and Config.visual.projection.birdAltitude or 0
+            or entry.kind == "bird"
+                and (Config.visual.projection.birdAltitude + BIRD_SPAN_METERS) or 0
+        if entry.kind == "bird" or entry.kind == "splash" then
+            radius, altitude = Presentation.SignalBounds(entry.kind, entry.length)
+        end
         if entry.kind == "ship" then
             Art.Boat(ctx, movement, entity, time)
         else
@@ -579,21 +605,43 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
                             { 221, 239, 235, math.floor(alpha * 150) }, 1.2)
                     end
                 elseif entry.kind == "bird" then
-                    local birdAltitude = Config.visual.projection.birdAltitude * (1 - (entry.dive or 0))
-                    -- C2：生态层海鸟三帧（上张翅/展平/下张翅）循环优先；失败按俯冲态
-                    -- 回退 gull_dive（V26 俯冲贴图）或旧 gull 图，再回退矢量。
-                    -- flapScale 振翅节律只作用于回退链——生态三帧自身即振翅帧。
-                    local birdLength = 3.2
-                    local birdSpan = birdLength * (1 - 0.62 * (entry.dive or 0))
-                    if not ImageArt.Plane(ctx, ecoFrameName("eco_bird", time, 0), movement, point,
-                        birdLength, birdSpan, entry.heading, birdAltitude) then
+                    -- 2026-10-19 真机验收：eco_bird_f* 是水彩侧视素材（ART_PIPELINE
+                    -- 合规正视图），按 Plane 平铺在世界平面会被引擎斜投影二次压扁，
+                    -- 真机呈「漂浮贴图块」（用户红框标注）——与 10-18 木桶/岛饰/丘/树
+                    -- 同一病根，改竖幅公告板投影（Upright，与岛饰同一口径）立起。
+                    -- 尺寸口径由「画布米制」改为「内容主体米制」：Upright 的 worldWidth
+                    -- 直接是 catalog 内容框宽度，1.8m 与旧平铺的实际可见翼展
+                    -- （3.2m 画布 × 580/1024 ≈ 1.81m）一致，故本次只改投影模式不改体量。
+                    -- 悬停高度透传为立牌底沿 altitude（否则会站在水面上）；朝向按
+                    -- heading 的屏幕横向分量镜像（固定偏航投影下 ∝ cos(heading)，
+                    -- 死区避免正前/正后飞时来回翻转）。回退链不变：俯视素材
+                    -- gull/gull_dive 保持 Plane（正俯视本就该平铺），再失败走矢量。
+                    local dive = entry.dive or 0
+                    local birdAltitude = Config.visual.projection.birdAltitude * (1 - dive)
+                    local birdWidth = BIRD_SPAN_METERS * (1 - 0.62 * dive)
+                    -- 2026-10-19 真机二轮反馈（红框截图：天空三只海鸥是白色折线鸟）：
+                    -- 俯冲时翼展缩到 0.68m，远处 screenWidth 跌破 ImageArt 的
+                    -- UPRIGHT_MIN_PX=2 亚像素剔除线 → Upright 返回 false，回退
+                    -- WorldSeabird 矢量折线鸟（水彩立牌失效，即用户红框所见）。
+                    -- 立牌在此按屏幕像素给一个可见下限：远处海鸥即便按透视缩到
+                    -- 亚像素也照常贴水彩图，只有完全不可见时才交给矢量兜底。
+                    -- 换算回世界米制需除以该深度的投影 scale（Projection.Project
+                    -- 第三返回值即米→像素的 scale），故先取 scale。
+                    local _, _, spanScale = Projection.Project(movement, point, birdAltitude)
+                    if type(spanScale) == "number" and spanScale > 0 then
+                        birdWidth = math.max(birdWidth, BIRD_MIN_SCREEN_SPAN_PX / spanScale)
+                    end
+                    if not ImageArt.Upright(ctx, ecoFrameName("eco_bird", time, 0), movement,
+                        point, nil, 1, birdWidth, birdAltitude, birdFlipsScreen(entry.heading)) then
                         local flapScale = 1 + math.sin(time * 3.2) * 0.035
-                        local fallback = (entry.dive or 0) > 0.05
+                        local fallback = dive > 0.05
                             and ImageArt.IsLoaded(ctx, "gull_dive") and "gull_dive" or "gull"
+                        local birdLength = 3.2
+                        local birdSpan = birdLength * (1 - 0.62 * dive)
                         if not ImageArt.Plane(ctx, fallback, movement, point, birdLength,
                             birdSpan * flapScale, entry.heading, birdAltitude) then
                             groundFrame(ctx, movement, point, birdAltitude, function(scale, api)
-                                Draw.WorldSeabird(ctx, 0, 0, scale, entry.heading, entry.dive, api)
+                                Draw.WorldSeabird(ctx, 0, 0, scale, entry.heading, dive, api)
                             end)
                         end
                     end

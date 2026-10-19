@@ -90,9 +90,23 @@ local function finishNormalDay(loop, store, day)
     eq(loop.settlementPending, false, "ordinary settlement closes after save")
 end
 
+-- V2.7：日初剧情（D4 老人结果 / D6 未救回想 / D7 纸条）会在换日后自动打开，
+-- 其中 D4/D6 属于可关闭的结果模态；这里统一处理除 D7 纸条以外的日初剧情。
+local function closeEntryStory(loop)
+    local dialog = loop:GetStoryDialog()
+    while dialog and dialog.kind ~= "paper" do
+        assert(loop:NotifyStoryShown(dialog.token))
+        assert(loop:CloseStoryDialog())
+        loop:OpenDayEntryStory()
+        dialog = loop:GetStoryDialog()
+    end
+    return dialog
+end
+
 local function advanceToDay(loop, store, targetDay)
     while loop.player.day < targetDay do
         finishNormalDay(loop, store, loop.player.day)
+        if loop.player.day < targetDay then closeEntryStory(loop) end
     end
 end
 
@@ -663,12 +677,16 @@ cases[#cases + 1] = {
             eq(loop.player.day, day)
             eq(loop.endingPending, false)
             eq(loop.player.story.circle1B2.runCompleted, false)
+            -- V2.7：日初剧情属于当天 —— D4 老人结果只在 D4，D6 未救回想只在 D6。
             local dialog = loop:GetStoryDialog()
             if dialog then
-                eq(day, 4)
-                eq(dialog.kind, "elder_fate")
+                if day == 4 then eq(dialog.kind, "elder_fate")
+                elseif day == 6 then eq(dialog.kind, "apple_basket")
+                else assert(false, "no entry story is expected on this day") end
                 assert(loop:NotifyStoryShown(dialog.token))
                 assert(loop:CloseStoryDialog())
+            else
+                assert(day ~= 4 and day ~= 6, "day four and day six must open their entry story")
             end
             assert(loop:Ready(), "legacy days one through six remain playable")
         end
@@ -864,6 +882,7 @@ cases[#cases + 1] = {
             nextDays[#nextDays + 1] = day
         end })
         advanceToDay(loop, store, 6)
+        closeEntryStory(loop)  -- V2.7：D6 日初回想会打开一次
         eq(#nextDays, 5)
         loop.shopStock.apple = 0
         assert(loop:Depart())
@@ -1086,6 +1105,7 @@ cases[#cases + 1] = {
         end })
 
         advanceToDay(loop, store, 6)
+        closeEntryStory(loop)  -- V2.7：D6 日初回想会打开一次
         configureFinalResources(loop)
         loop.clock:Seek("night", 29.999)
         assert(loop:Depart())

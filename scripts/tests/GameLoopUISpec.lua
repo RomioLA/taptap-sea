@@ -238,7 +238,8 @@ test("pending cabin menu returns without closing then consumes and claims exactl
     contains(hud.root,"请腾出 1 格")
     button(hud.root,"操作",true)
     button(hud.root,"返回");eq(env.loop.inventoryOpen,true);eq(env.loop:HasPendingCatch(),true)
-    button(hud.root,"操作",true);button(hud.root,"食用")
+    -- V2.7：物品菜单统一为「使用／给老人／丢弃」。
+    button(hud.root,"操作",true);button(hud.root,"使用")
     local stamina=env.loop.player.stamina
     button(hud.root,"领取渔获")
     eq(env.loop:HasPendingCatch(),false);eq(env.loop.player.stamina,stamina)

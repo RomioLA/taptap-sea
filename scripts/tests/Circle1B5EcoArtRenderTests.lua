@@ -7,7 +7,10 @@
 --   5) 零状态改写：Scene 不推进 time/世界/船/相机/实体；
 --   6) SeaViewArt.Component：尺寸换算、heading/alpha 透传、非法输入与未知目录名返回 false。
 -- 2026-10-18 真机验收：木桶由平铺（Plane）改竖幅公告板投影（Upright）——预烘焙斜视
--- 资产平铺在世界平面会被引擎斜投影二次压扁；鱼/海鸟保持平铺口径不变。
+-- 资产平铺在世界平面会被引擎斜投影二次压扁；鱼保持平铺口径不变。
+-- 2026-10-19 真机验收：海鸟同样由平铺改立牌（用户红框「海鸟自带平铺效果」）——eco_bird_f*
+-- 是水彩侧视素材，平铺呈漂浮贴图块；改后按内容主体宽度（1.8m 翼展，对齐旧平铺的实际
+-- 可见翼展）+ 底沿悬停高度绘制，朝向由屏幕水平镜像表达（±15° 死区防抖）。鱼/木桶口径不变。
 local Tests = {}
 
 local Runtime = require("Ocean.SeaRuntime")
@@ -31,6 +34,8 @@ end
 -- 记录 ImageArt.Plane / ImageArt.Upright 调用；result 控制返回值（true=贴图可用 / false=加载失败）。
 -- 2026-10-18 真机验收：木桶由平铺（Plane）改竖幅公告板投影（Upright），录制器须同时
 -- 覆盖两个入口，否则桶绘制不被记录（生态帧循环/尺寸契约会静默失守）。
+-- 2026-10-19 真机验收：海鸟同样由平铺改立牌，且首次使用 Upright 的 worldWidth /
+-- altitude / flipX 三个可选参数，故桩一并录制（老调用点仍逐字等价）。
 local function withPlaneRecorder(result, fn)
     local calls = {}
     local originalPlane, originalUpright = ImageArt.Plane, ImageArt.Upright
@@ -40,9 +45,11 @@ local function withPlaneRecorder(result, fn)
             altitude = altitude, alpha = alpha }
         return result
     end
-    ImageArt.Upright = function(ctx, name, movement, position, worldHeight, alpha)
+    ImageArt.Upright = function(ctx, name, movement, position, worldHeight, alpha,
+        worldWidth, altitude, flipX)
         calls[#calls + 1] = { mode = "upright", name = name, x = position.x, y = position.y,
-            height = worldHeight, alpha = alpha }
+            height = worldHeight, alpha = alpha,
+            worldWidth = worldWidth, altitude = altitude, flipX = flipX }
         return result
     end
     local ok, err = pcall(fn)
@@ -66,7 +73,7 @@ local function countCalls(calls, prefix)
     return count
 end
 
-local function makeRuntime()
+local function makeRuntime(headingOverride)
     local fixed = Config.world.fixedBarrel.position
     local runtime = Runtime.New({
         departure = { x = fixed.x + BARREL_DISTANCE, y = fixed.y },
@@ -89,7 +96,7 @@ local function makeRuntime()
         GetSplashes = function() return {} end,
         GetBirds = function()
             return { { position = { x = bird.x, y = bird.y },
-                heading = BIRD_HEADING, diveProgress = BIRD_DIVE } }
+                heading = headingOverride or BIRD_HEADING, diveProgress = BIRD_DIVE } }
         end,
     }
     return runtime, sardine, tuna, bird
@@ -107,8 +114,8 @@ local function captureState(runtime)
     }
 end
 
-local function sceneAt(timeValue, planeResult)
-    local runtime = makeRuntime()
+local function sceneAt(timeValue, planeResult, headingOverride)
+    local runtime = makeRuntime(headingOverride)
     runtime.time = timeValue
     local before = captureState(runtime)
     local calls = withPlaneRecorder(planeResult, function()
@@ -179,10 +186,19 @@ function Tests.Run(recorder)
         local bird = findCall(calls, "eco_bird_f1")
         assert(bird, "bird did not draw through the eco bird art")
         local birdAltitude = Config.visual.projection.birdAltitude * (1 - BIRD_DIVE)
-        assert(near(bird.length, 3.2) and near(bird.width, 3.2 * (1 - 0.62 * BIRD_DIVE)),
-            "bird plane size did not follow the dive shrink contract")
-        assert(near(bird.heading, BIRD_HEADING, 1e-6), "bird heading was not the cue heading")
-        assert(near(bird.altitude, birdAltitude), "bird altitude did not follow the dive contract")
+        -- 2026-10-19 真机验收：海鸟由平铺（Plane）改竖幅公告板投影（Upright）——
+        -- 与木桶同一病根（预烘焙水彩素材被斜投影二次压扁成「漂浮贴图块」）。
+        assert(bird.mode == "upright",
+            "bird must draw through the upright billboard projection, got " .. tostring(bird.mode))
+        assert(bird.worldWidth ~= nil,
+            "bird upright must size by content width, not the old plane canvas length")
+        assert(bird.height == nil,
+            "bird upright must not pass a world height (width takes precedence)")
+        assert(near(bird.worldWidth, 1.8 * (1 - 0.62 * BIRD_DIVE)),
+            "bird upright width did not follow the dive shrink contract")
+        assert(near(bird.altitude, birdAltitude), "bird upright altitude did not follow the dive contract")
+        -- 朝向：素材头朝 +X，heading=0.4（朝世界 +X）不镜像。
+        assert(bird.flipX == false, "bird heading +X must not mirror the billboard")
         local barrel = findCall(calls, "eco_barrel_f1")
         assert(barrel, "fixed barrel did not draw through the eco barrel art")
         -- 2026-10-18 真机验收：平铺被斜投影二次压扁 → 竖幅公告板投影立起。
@@ -193,6 +209,110 @@ function Tests.Run(recorder)
             "barrel upright height did not follow the visual radius contract")
         assert(countCalls(calls, "eco_") == 4,
             "expected exactly 2 fish + 1 bird + 1 barrel eco draws, got " .. countCalls(calls, "eco_"))
+    end)
+
+    check("bird_upright_mirrors_only_outside_the_heading_deadzone", function()
+        -- 公告板恒面向相机，朝向只由屏幕水平镜像表达。素材头朝 +X：朝世界 +X 不镜像，
+        -- 朝世界 -X 镜像；正前/正后飞（cos≈0）落在死区内不翻转，避免每帧抖动。
+        local cases = {
+            { heading = 0.0, flip = false, label = "due +X" },
+            { heading = math.pi, flip = true, label = "due -X" },
+            { heading = math.pi / 2, flip = false, label = "due +Y (deadzone)" },
+            { heading = -math.pi / 2, flip = false, label = "due -Y (deadzone)" },
+        }
+        for _, case in ipairs(cases) do
+            local calls = sceneAt(0, true, case.heading)
+            local bird = findCall(calls, "eco_bird_f1")
+            assert(bird, "bird billboard missing for " .. case.label)
+            assert(bird.mode == "upright", "bird must stay on the billboard path for " .. case.label)
+            assert(bird.flipX == case.flip,
+                "bird billboard flip mismatch for " .. case.label
+                    .. " (heading=" .. tostring(case.heading) .. ", flipX=" .. tostring(bird.flipX) .. ")")
+        end
+    end)
+
+    check("upright_sizes_by_content_ratio_and_mirrors_in_place", function()
+        -- 直测 ImageArt.Upright 的三个新参数（海鸟立牌依赖）：桩只验参数透传不够，
+        -- 这里走真实投影代码，用 nvgRect/nvgScale 录制实际提交的几何。
+        -- 契约：①按 worldWidth 定内容宽、另一边按 catalog 内容比推导（等比不变形）；
+        --       ②底沿 altitude 抬高锚点（悬停不站水面）；③flipX 只加镜像变换、
+        --       提交矩形本身逐字不变（公告板恒面向相机）。
+        local runtime = makeRuntime()
+        local movement = runtime.movement
+        local spec = assert(ImageArt.GetSpec("eco_bird_f1"), "eco_bird_f1 missing from catalog")
+        local anchor = { x = runtime.ship.position.x + 4, y = runtime.ship.position.y + 3 }
+        local worldWidth, altitude = 1.8, 1.2
+
+        local captured = {}
+        local oldCreate = nvgCreateImage
+        local oldRect, oldScale, oldTranslate = nvgRect, nvgScale, nvgTranslate
+        local oldPattern, oldAntiAlias = nvgImagePattern, nvgShapeAntiAlias
+        nvgCreateImage = function() return 1 end
+        nvgImagePattern = nvgImagePattern or function(_, _, _, _, _, _, image, alpha)
+            return { image = image, alpha = alpha }
+        end
+        nvgShapeAntiAlias = nvgShapeAntiAlias or function() end
+        nvgRect = function(_, x, y, w, h) captured.rect = { x = x, y = y, w = w, h = h } end
+        nvgScale = function(_, sx, sy)
+            captured.scales = captured.scales or {}
+            captured.scales[#captured.scales + 1] = { sx = sx, sy = sy }
+        end
+        nvgTranslate = function(_, x, y)
+            captured.translates = captured.translates or {}
+            captured.translates[#captured.translates + 1] = { x = x, y = y }
+        end
+
+        local ok, err = pcall(function()
+            local function draw(flipX)
+                captured.rect, captured.scales, captured.translates = nil, nil, nil
+                assert(ImageArt.Upright({}, "eco_bird_f1", movement, anchor, nil, 1,
+                    worldWidth, altitude, flipX), "Upright refused a valid width-sized billboard")
+                assert(captured.rect, "Upright committed no rectangle")
+                return captured.rect, captured.scales, captured.translates
+            end
+
+            local plainRect, plainScales = draw(false)
+            -- 内容宽 = worldWidth；内容高按 catalog 内容比反推，故画布高宽比恒等比。
+            local scale = select(3, movement:WorldToScreen(anchor, altitude))
+            assert(type(scale) == "number" and scale > 0, "anchor did not project")
+            local contentWidth = plainRect.w * spec.contentWidth / spec.pixelWidth
+            local contentHeight = plainRect.h * spec.contentHeight / spec.pixelHeight
+            assert(math.abs(contentWidth - worldWidth * scale) < 1e-6,
+                "content width did not follow worldWidth (got " .. tostring(contentWidth) .. ")")
+            assert(math.abs(contentHeight - worldWidth * scale
+                * spec.contentHeight / spec.contentWidth) < 1e-6,
+                "content height was not derived from the catalog content ratio")
+            -- 底沿坐锚点：内容在画布内垂直居中，故内容底 = 画布顶 + (画布高+内容高)/2。
+            local anchorY = select(2, movement:WorldToScreen(anchor, altitude))
+            local contentBottom = plainRect.y + (plainRect.h + contentHeight) * 0.5
+            assert(math.abs(contentBottom - anchorY) < 1e-6,
+                "billboard bottom edge did not land on the elevated anchor")
+            -- altitude 生效：锚点抬到 birdAltitude 后，屏上锚点高于同位置 altitude=0 的投影。
+            local groundY = select(2, movement:WorldToScreen(anchor, 0))
+            assert(anchorY < groundY - 1e-6,
+                "elevated anchor did not project above the sea plane")
+            assert(plainScales == nil, "an unmirrored billboard must not push a scale transform")
+
+            local flippedRect, flippedScales = draw(true)
+            assert(flippedScales and #flippedScales == 1
+                and flippedScales[1].sx == -1 and flippedScales[1].sy == 1,
+                "flipX must add exactly one horizontal mirror transform")
+            assert(flippedRect.x == plainRect.x and flippedRect.y == plainRect.y
+                and flippedRect.w == plainRect.w and flippedRect.h == plainRect.h,
+                "flipX must not move or resize the billboard (camera-facing billboard)")
+        end)
+        ImageArt.Release({})
+        nvgCreateImage = oldCreate
+        nvgRect, nvgScale, nvgTranslate = oldRect, oldScale, oldTranslate
+        nvgImagePattern, nvgShapeAntiAlias = oldPattern, oldAntiAlias
+        if not ok then error(err) end
+
+        -- 尺寸口径守卫：宽度与高度都非法时必须拒绝（否则静默画出零尺寸公告板）。
+        local rejected = makeRuntime()
+        assert(not ImageArt.Upright({}, "eco_bird_f1", rejected.movement, anchor, nil, 1, nil, 0, false),
+            "Upright must reject a billboard with neither a usable width nor height")
+        assert(not ImageArt.Upright({}, "eco_bird_f1", rejected.movement, anchor, 0, 1, nil, 0, false),
+            "Upright must reject a non-positive height")
     end)
 
     check("eco_plane_failure_keeps_vector_fallback_identical", function()

@@ -244,10 +244,12 @@ function World:Init()
             radius = wreck.radius, blocking = false })
         self.fixedContentEntities[wreck.contentId] = entity
     end
-    -- 2026-10-18：6 座新岛屿矢量变体放置（OceanIslands）。与 fixedComponents 同构：
-    -- kind="scenery" 非阻挡装饰实体（entityType="island" 复用 SeaViewArt.Island 绘制
-    -- 入口，contentId 命中 ISLAND_VARIANTS 走变体矢量路径）；不进冻结集/fixed 计数/
-    -- blockingList；contentId 登记进 fixedContentEntities 防重复；isPositionFree 断言。
+    -- 2026-10-18：6 座新岛屿变体放置（OceanIslands）。与 fixedComponents 同构：
+    -- kind="scenery"（entityType="island" 复用 SeaViewArt.Island 绘制入口，
+    -- contentId 命中 ISLAND_VARIANTS）；不进冻结集/fixed 计数；contentId 登记
+    -- 进 fixedContentEntities 防重复；isPositionFree 断言。2026-10-18 晚改
+    -- blocking=true（用户「实体体积」）：进 blockingList，船不可穿越（A2 冻结
+    -- 契约数 kind=="fixed" 不受影响；岛也不应再触发 surface overlap 交互）。
     for _, island in ipairs(Config.world.fixedIslands or {}) do
         assert(type(island.contentId) == "string", "fixed island contentId required")
         assert(self.fixedContentEntities[island.contentId] == nil, "duplicate fixed contentId")
@@ -255,7 +257,7 @@ function World:Init()
             "fixed island " .. island.contentId .. " must be in open sea")
         local entity = self:spawn({ entityType = island.entityType, kind = "scenery", layer = "surface",
             contentId = island.contentId, position = island.position,
-            radius = island.radius, blocking = false })
+            radius = island.radius, blocking = island.blocking == true })
         self.fixedContentEntities[island.contentId] = entity
     end
 end
