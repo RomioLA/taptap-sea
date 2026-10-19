@@ -299,12 +299,11 @@ local function v28EntityOk(world, entity)
         and finite(entity.position.x) and finite(entity.position.y)
 end
 
--- 固定漂流瓶：已拾取（残页已持有）时不再绘制。
-local function v28BottleVisible(runtime, entity)
-    if type(runtime.GetWorldContent) ~= "function" then return true end
-    local ok, snapshot = pcall(runtime.GetWorldContent, runtime, entity.contentId)
-    if not ok or type(snapshot) ~= "table" then return true end
-    return true
+-- 浮藻假岛（kelp_mirage_01）是「海面假象」：策划要求 80m 内显岛影轮廓、20m 内识破为藻层。
+-- 它登记在 underwater 层（水下货箱在藻层下方，需探海镜标记），但岛影本身必须从海面可见，
+-- 否则无探海镜时 isVisible 恒为 false，80m 轮廓永远不会绘制（本函数即为此补正）。
+local function v28SurfaceIllusion(entity)
+    return entity.entityType == "kelp"
 end
 
 local function drawV28Node(ctx, runtime, entity, contentId, marked, recognized, picked)
@@ -709,8 +708,23 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
                 local ok, value = pcall(isWorldContentMarked, entity.contentId)
                 marked = ok and value == true
             end
+            -- 20m 识破后改画藻层（drawV28Node 依赖该标志切换轮廓半径）。
+            if type(isLocationRecognized) == "function" then
+                local ok, value = pcall(isLocationRecognized, entity.contentId)
+                recognized = ok and value == true
+            end
+            -- 浮藻假岛的 80m 岛影是海面假象：不依赖探海镜可见性，按 outlineDistance 绘制。
+            local illusion = false
+            if v28SurfaceIllusion(entity) then
+                local ship = runtime.ship
+                if type(ship) == "table" and type(ship.position) == "table" then
+                    local dx = entity.position.x - ship.position.x
+                    local dy = entity.position.y - ship.position.y
+                    illusion = dx * dx + dy * dy <= Config.interaction.outlineDistance ^ 2
+                end
+            end
             if entity.layer == "underwater" then
-                if marked or isVisible(world, entity) then
+                if marked or illusion or isVisible(world, entity) then
                     drawV28Node(ctx, runtime, entity, entity.contentId, marked, recognized, false)
                 end
             end
