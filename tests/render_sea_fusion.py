@@ -724,17 +724,28 @@ def _linear_gradient_image(gradient, size, x0, y0, scale, np, Image, ImageDraw):
 
 
 def _radial_gradient_image(gradient, size, x0, y0, scale, np, Image, ImageDraw):
-    """Radial paint fallback: distance-to-center interpolation between inner and outer color."""
+    """Radial paint fallback: distance-to-center interpolation between inner and outer color.
+
+    2026-10-20：补上 r_inner 支持。此前实现无条件从圆心（r=0）开始插值，
+    与 NanoVG `nvgRadialGradient(ctx, cx, cy, r_inner, r_outer, ...)` 的语义不符：
+    r_inner 以内应当是纯 start 色（不插值）。忽略它会让「中心留白、只压四角」
+    这类渐变在离线证据图里退化成「整屏从中心就开始渐变」，从而把正确的实现
+    误判成错误。真机 NanoVG 一直是对的，这里只是让离线证据可信。
+    """
     width, height = size
     cx = gradient.cx * scale - x0
     cy = gradient.cy * scale - y0
     r_outer = max(gradient.r_outer * scale, 1e-6)
+    r_inner = max(0.0, min(getattr(gradient, "r_inner", 0.0) * scale, r_outer))
     # PIL 的颜色分量必须是 int（_rgba 产出 float）
     start = tuple(round(max(0, min(255, v))) for v in NVGCapture._rgba(gradient.start))
     end = tuple(round(max(0, min(255, v))) for v in NVGCapture._rgba(gradient.end))
     if np is not None:
         yy, xx = np.ogrid[:height, :width]
-        t = np.clip(np.sqrt((xx - cx) ** 2 + (yy - cy) ** 2) / r_outer, 0.0, 1.0)
+        distance = np.sqrt((xx - cx) ** 2 + (yy - cy) ** 2)
+        # r_inner 以内 t=0（纯 start），r_inner..r_outer 之间线性映射到 0..1。
+        span = max(r_outer - r_inner, 1e-6)
+        t = np.clip((distance - r_inner) / span, 0.0, 1.0)
         arr = np.empty((height, width, 4), dtype=np.uint8)
         for channel in range(4):
             arr[:, :, channel] = np.rint(start[channel] + t * (end[channel] - start[channel])).astype(np.uint8)

@@ -316,8 +316,23 @@ local Config = {
         turnRateForMaxRoll = math.pi, turnSmoothSec = 0.22 },
     curvature = { heightRatio = 0.045 },
     horizonOcclusion = { tangentSpan = 0.1 },
+    -- 2026-10-20（真机帧率已验收后所做的画面层次提升）：maxOpacityLoss 0.48 → 0.62。
+    -- 旧值下 125m 外的岛/礁石与 30m 外的几乎一样清楚，整张海面没有纵深，
+    -- “远处”只能靠尺寸缩小来暗示。这是纯 alpha 衰减参数（不新增绘制批次、
+    -- 零成本、随时可回退），SeaPresentation.opacityLoss 的硬上限仍是 0.8。
     aerialPerspective = { enabled = true, startDepthMeters = 18,
-        endDepthMeters = 125, maxOpacityLoss = 0.48 },
+        endDepthMeters = 125, maxOpacityLoss = 0.62 },
+    -- 2026-10-20 屏幕四角压暗（vignette）。
+    -- 动机：整张画面亮度完全均匀，是“观感便宜”的主要来源之一；四角轻压能让
+    -- 视线自然收到船与近水交互区。纯屏幕空间一次径向渐变 fill（不是贴图、
+    -- 不进世界投影、不碰任何实体或玩法）。
+    -- enabled=false 即完全回退到原亮度均匀画面。
+    vignette = {
+        enabled = true,
+        strength = 0.30,     -- 四角最大压暗量（0~1）；0.30 是“能看见但不脏”的保守值
+        innerRadius = 0.55,  -- 内圈不压暗区（相对半对角线），越小压暗侵入越多
+        color = { 26, 46, 58 },
+    },
     atmosphere = { cloudShadowCount = 10, cloudShadowOpacity = 40,
         cloudShadowDriftMps = 0.55, cloudShadowRadiusMeters = 24,
         fogCount = 10, fogOpacity = 46, fogDriftMps = 0.30,

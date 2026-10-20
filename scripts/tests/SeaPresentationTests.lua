@@ -263,6 +263,165 @@ function Tests.Run(recorder)
             "the interaction radius must stay the authored radius")
     end)
 
+    -- =========================================================
+    -- 2026-10-20 画面层次：四角压暗（vignette）+ 空气透视
+    -- =========================================================
+    check("vignette darkens only the outer corners and stops inside the safe zone", function()
+        -- 四角压暗是纯屏幕空间的一次径向渐变填充：
+        --   中心区不压暗（保证船与近水交互点可读），
+        --   四角才压到 strength。
+        -- 这里用真实的 Scene 调用 + 一个只统计"径向渐变填充"的最小桩，
+        -- 断言它对每个分辨率都真的发生了一次，且参数随配置变化。
+        local calls = {}
+        local stubs = {
+            nvgRGBA = function(r, g, b, a) return { r = r, g = g, b = b, a = a or 255 } end,
+            nvgBeginPath = function() end, nvgMoveTo = function() end,
+            nvgLineTo = function() end, nvgQuadTo = function() end,
+            nvgBezierTo = function() end, nvgClosePath = function() end,
+            nvgRect = function() end, nvgRoundedRect = function() end,
+            nvgCircle = function() end, nvgEllipse = function() end,
+            nvgFillColor = function() end, nvgFill = function() end,
+            nvgStrokeColor = function() end, nvgStrokeWidth = function() end,
+            nvgStroke = function() end, nvgFillPaint = function() end,
+            nvgRadialGradient = function(ctx, cx, cy, innerR, outerR, c0, c1)
+                calls[#calls + 1] = { cx = cx, cy = cy, inner = innerR, outer = outerR,
+                    c0 = c0, c1 = c1 }
+                return 0
+            end,
+            nvgLinearGradient = function() return 0 end,
+            nvgSave = function() end, nvgRestore = function() end,
+            nvgTranslate = function() end, nvgScale = function() end, nvgRotate = function() end,
+            nvgScissor = function() end, nvgIntersectScissor = function() end,
+            nvgResetScissor = function() end, nvgGlobalAlpha = function() end,
+            nvgShapeAntiAlias = function() end, nvgTransform = function() end,
+            nvgImagePattern = function() return 0 end,
+            nvgCreateImage = function() return -1 end, nvgImageSize = function() end,
+            nvgText = function() end, nvgFontFace = function() end, nvgFontSize = function() end,
+            nvgTextAlign = function() end, nvgCreateFont = function() return 0 end,
+            nvgTextBounds = function() return 0, 0, 0, 0 end,
+            NVG_IMAGE_GENERATE_MIPMAPS = 1, NVG_IMAGE_REPEATX = 2,
+            NVG_IMAGE_REPEATY = 4, NVG_IMAGE_FLIPY = 8,
+            NVG_IMAGE_PREMULTIPLIED = 16, NVG_IMAGE_NEAREST = 32,
+        }
+        -- 只补运行器没提供的函数；已有绑定（recorder 的计数/globalAlpha 等）
+        -- 一律保留原样，否则会抹掉后续断言依赖的 recorder 能力。
+        local saved = {}
+        for name, fn in pairs(stubs) do
+            if _G[name] == nil then
+                saved[name] = false
+                _G[name] = fn
+            end
+        end
+        -- nvgRadialGradient 必须由本用例接管（要在调用时记录参数）。
+        local savedRadial = _G.nvgRadialGradient
+        _G.nvgRadialGradient = stubs.nvgRadialGradient
+        local function cleanup()
+            _G.nvgRadialGradient = savedRadial
+            for name, had in pairs(saved) do
+                if had == false then _G[name] = nil end
+            end
+        end
+
+        local okBody, bodyErr = pcall(function()
+            local settings = Config.visual.vignette
+            assert(type(settings) == "table", "visual.vignette config is missing")
+            assert(settings.enabled == true, "vignette ships enabled")
+
+            for _, viewport in ipairs({ { 1920, 1080 }, { 960, 540 }, { 800, 450 } }) do
+                local runtime = newRuntime(viewport[1], viewport[2])
+                calls = {}
+                SeaDraw.Scene({}, viewport[1], viewport[2], runtime, nil, nil,
+                    function() return false end, function() return false end)
+                assert(#calls >= 1,
+                    string.format("viewport %dx%d must paint at least one radial vignette",
+                        viewport[1], viewport[2]))
+                -- 找到"从中心向外扩散到覆盖四角"的那一次（外半径 == 半对角线）
+                local found
+                for _, call in ipairs(calls) do
+                    local cx, cy = viewport[1] * 0.5, viewport[2] * 0.5
+                    local expectOuter = math.sqrt(cx * cx + cy * cy)
+                    if math.abs(call.cx - cx) < 1e-6 and math.abs(call.cy - cy) < 1e-6
+                        and math.abs(call.outer - expectOuter) < 1e-6 then
+                        found = call
+                        break
+                    end
+                end
+                assert(found, string.format("viewport %dx%d vignette must be centred on screen "
+                    .. "and reach the corners", viewport[1], viewport[2]))
+                -- 中心透明 -> 边缘压暗；中心不压暗靠 inner > 0 保证。
+                assert(found.inner > 0,
+                    "the vignette must leave a clear centre (innerRadius > 0)")
+                -- nvgRGBA 在真实引擎返回 userdata、在离线 recorder 返回 table；
+                -- 用 pcall 双重探测，两种都能读。
+                local function alphaOf(c)
+                    if c == nil then return nil end
+                    local ok, a = pcall(function() return c.a end)
+                    if ok and type(a) == "number" then return a end
+                    local ok2, a2 = pcall(function() return c[4] end)
+                    if ok2 and type(a2) == "number" then return a2 end
+                    return nil
+                end
+                local edgeAlpha, centreAlpha = alphaOf(found.c1), alphaOf(found.c0)
+                assert(edgeAlpha and centreAlpha,
+                    "radial gradient stops must carry an alpha component")
+                assert(edgeAlpha > 0 and centreAlpha == 0,
+                    "the vignette must fade from transparent centre to tinted edge")
+                assert(edgeAlpha <= 255 * settings.strength + 1,
+                    "edge alpha must follow the configured strength")
+            end
+
+            -- 关掉后必须一次都不画（完全回退到原画面）。
+            local runtime = newRuntime(1280, 720)
+            local oldEnabled = settings.enabled
+            settings.enabled = false
+            calls = {}
+            SeaDraw.Scene({}, 1280, 720, runtime, nil, nil,
+                function() return false end, function() return false end)
+            local vignetteWhileOff = 0
+            local cx, cy = 640, 360
+            local expectOuter = math.sqrt(cx * cx + cy * cy)
+            for _, call in ipairs(calls) do
+                if math.abs(call.outer - expectOuter) < 1e-6 then
+                    vignetteWhileOff = vignetteWhileOff + 1
+                end
+            end
+            settings.enabled = oldEnabled
+            assert(vignetteWhileOff == 0,
+                "enabled=false must not paint the vignette at all")
+        end)
+        cleanup()
+        assert(okBody, bodyErr)
+    end)
+
+    check("aerial perspective now separates far objects from near ones", function()
+        -- 空气透视把远处物体按深度衰减 alpha。旧值 0.48 时远近几乎一样清楚，
+        -- 没有纵深；这里锁住"远明显比近淡"这个可量化的事实。
+        local Projection = require("Ocean.Projection")
+        local air = Config.visual.aerialPerspective
+        assert(air.enabled == true, "aerial perspective ships enabled")
+        local runtime = newRuntime(1920, 1080)
+        local camera = runtime.movement.camera
+        local function alphaAt(depth)
+            local state = Presentation.State(runtime.movement,
+                { x = camera.x, y = camera.y + depth }, 1.5, 0)
+            assert(state, "depth " .. depth .. " should be on screen")
+            return state.alpha
+        end
+        -- 用视野内可达的深度：VisibleDepth 由视口高度与相机参数决定，
+        -- 直接取可视深度的 30% 与 95% 作"近/远"两个采样点。
+        local visible = Projection.VisibleDepth(runtime.movement, 0)
+        local near = alphaAt(math.min(air.startDepthMeters + 1, visible * 0.3))
+        local far = alphaAt(visible * 0.95)
+        assert(near > far, string.format(
+            "far objects must be fainter than near ones (near=%.3f far=%.3f)", near, far))
+        -- 远端至少淡掉四成，才看得出"退进雾里"。
+        assert(1 - far >= 0.4, string.format(
+            "the far end must lose at least 40%% opacity, got %.3f", 1 - far))
+        -- 近端不得被压暗（不能为了纵深把近景一起弄灰）。
+        assert(near >= 0.99, string.format(
+            "near objects must stay fully opaque, got %.3f", near))
+    end)
+
     return { results = results }
 end
 

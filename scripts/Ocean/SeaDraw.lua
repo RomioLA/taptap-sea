@@ -653,6 +653,43 @@ local function drawTarget(ctx, movement)
     nvgStroke(ctx)
 end
 
+-- 2026-10-20：屏幕四角压暗（vignette）。纯屏幕空间一次径向渐变填充。
+-- 为什么用径向渐变而不是四角四块：单次 nvgFill、无接缝、形状天然圆润，
+-- 不会在角落留下方形边界。内圈半径外才开始压暗，中心区严格不动，
+-- 保证船与近水交互点（礁石/漂流瓶/渔网）的可读性不被削弱。
+-- 层级：必须在整个世界层（含夜罩、雾、港口标记）之后，否则会被后续绘制抹掉。
+-- 不碰世界投影、不改任何实体或玩法状态；enabled=false 即完全回退。
+---@param ctx NVGContextWrapper
+---@param width number
+---@param height number
+---@return boolean drawn
+local function drawVignette(ctx, width, height)
+    local settings = Config.visual.vignette
+    if type(settings) ~= "table" or settings.enabled == false then return false end
+    if not finite(width) or not finite(height) or width <= 0 or height <= 0 then return false end
+    local strength = settings.strength
+    if not finite(strength) or strength <= 0 then return false end
+    local inner = settings.innerRadius
+    if not finite(inner) or inner < 0 then inner = 0.55 end
+    if inner >= 1 then return false end
+    local color = settings.color or { 26, 46, 58 }
+    -- 以外接圆为准：保证屏幕四角都落在渐变外缘，横屏竖屏行为一致。
+    local cx, cy = width * 0.5, height * 0.5
+    local outerRadius = math.sqrt(cx * cx + cy * cy)
+    local innerRadius = outerRadius * inner
+    local alpha = math.floor(math.max(0, math.min(1, strength)) * 255)
+    if alpha <= 0 then return false end
+    nvgSave(ctx)
+    nvgBeginPath(ctx)
+    nvgRect(ctx, 0, 0, width, height)
+    nvgFillPaint(ctx, nvgRadialGradient(ctx, cx, cy, innerRadius, outerRadius,
+        nvgRGBA(color[1], color[2], color[3], 0),
+        nvgRGBA(color[1], color[2], color[3], alpha)))
+    nvgFill(ctx)
+    nvgRestore(ctx)
+    return true
+end
+
 local function drawPortMark(ctx, runtime, width, height, horizon)
     if type(runtime.GetPortPosition) ~= "function" then return end
     local point = runtime:GetPortPosition()
@@ -1063,6 +1100,10 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
         end
     end
     drawTarget(ctx, movement)
+    -- 2026-10-20：四角压暗必须压在**所有世界与信号层之后**（含夜罩/雾/港口标记），
+    -- 否则会被后续绘制抹掉。放在 showBounds 之前：调试可视化不被压暗，
+    -- 保证调试读数仍然清楚。
+    drawVignette(ctx, width, height)
     if flags.showBounds then
         local half = Config.world.halfSize
         Geometry.WorldPolygon(ctx, movement, { { x = -half, y = -half }, { x = half, y = -half },
