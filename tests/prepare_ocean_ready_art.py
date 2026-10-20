@@ -51,6 +51,15 @@ def catalog_text(manifest):
     # SeaSurface（纯海面 v2）：与 prepare_ocean_eco_art.py 同口径，清单缺失时按空合集处理。
     sea_manifest = ROOT / "assets/image/SeaSurface/manifest.json"
     sea = json.loads(sea_manifest.read_text(encoding="utf-8")) if sea_manifest.exists() else {"assets": {}}
+    # Sky / SkyDecor / OceanPlayerBoat（2026-10-20）：与 prepare_ocean_eco_art.py 同口径。
+    # 本文件此前落后于权威生成器（缺 Sky/SkyDecor，repeatTexture 名单过旧），
+    # 现补齐，两处 catalog_text 输出必须字节一致（任一 --check 才能互证）。
+    sky_manifest = ROOT / "assets/image/Sky/manifest.json"
+    sky = json.loads(sky_manifest.read_text(encoding="utf-8")) if sky_manifest.exists() else {"assets": {}}
+    skydecor_manifest = ROOT / "assets/image/SkyDecor/manifest.json"
+    skydecor = json.loads(skydecor_manifest.read_text(encoding="utf-8")) if skydecor_manifest.exists() else {"assets": {}}
+    boat_manifest = ROOT / "assets/image/OceanPlayerBoat/manifest.json"
+    boat = json.loads(boat_manifest.read_text(encoding="utf-8")) if boat_manifest.exists() else {"assets": {}}
     entries = {}
     # eco 合集按条目自带 preload（per-entry，如 sea_surface_day/dusk=true、
     # night=false），其余合集沿用既有默认；W2 selected 覆盖保留（boat/island
@@ -59,7 +68,9 @@ def catalog_text(manifest):
     for collection, preload, per_entry in ((existing["assets"], True, False), (manifest["assets"], False, False),
                                            (story["assets"], False, False), (decor["assets"], False, False),
                                            (components["assets"], False, False), (islands["assets"], False, False),
-                                           (eco["assets"], False, True), (sea["assets"], False, True)):
+                                           (eco["assets"], False, True), (sea["assets"], False, True),
+                                           (sky["assets"], False, True), (skydecor["assets"], False, True),
+                                           (boat["assets"], False, True)):
         for name, entry in collection.items():
             entries[name] = {**entry, "preload": entry.get("preload", preload) if per_entry else preload}
     selected = json.loads((WAVE2_OUT / "manifest.json").read_text(encoding="utf-8"))["assets"] \
@@ -83,7 +94,8 @@ def catalog_text(manifest):
             "        anchorX = 0.5, anchorY = 0.5,",
             "        preload = " + str(entry["preload"]).lower() + ",",
             "        repeatTexture = " + str(name in ("waterpaper", "waterpaper_story", "ocean_tile",
-                                                       "sea_surface_day", "sea_surface_dusk", "sea_surface_night")).lower() + ",",
+                                                       "sea_surface_day", "sea_surface_dusk", "sea_surface_night",
+                                                       "sea_ripple_overlay", "sky_day", "sky_dusk")).lower() + ",",
             "        completeIsland = " + str(entry.get("complete_island", False)).lower() + ",",
             "    },",
         ])

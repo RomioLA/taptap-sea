@@ -221,6 +221,10 @@ local Config = {
     projection = { circleSegments = 48, sectorSegments = 32, birdAltitude = 1.2 },
     boatMotion = { enabled = true, heaveMeters = 0.35, maxRollDegrees = 7,
         turnRateForMaxRoll = math.pi, turnSmoothSec = 0.22 },
+    -- 2026-10-20 玩家船贴图接入：船体改用正式水彩素材（OceanPlayerBoat/player_boat），
+    -- 素材为无桅杆的划艇式小木船；矢量立帆（正面白帆 + 桅杆）与水彩船体风格不搭，
+    -- 故贴图路径下默认不再绘制立帆。改为矢量兜底时仍保留立帆（保持旧观感）。
+    boatSail = { enabled = false },
     curvature = { heightRatio = 0.045 },
     horizonOcclusion = { tangentSpan = 0.1 },
     aerialPerspective = { enabled = true, startDepthMeters = 18,

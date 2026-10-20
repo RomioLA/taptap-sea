@@ -58,6 +58,10 @@ def catalog_text():
     # SkyDecor（2026-10-19 日月云贴图）：屏幕空间装饰层；清单缺失时按空合集处理。
     skydecor_manifest = ROOT / "assets/image/SkyDecor/manifest.json"
     skydecor = json.loads(skydecor_manifest.read_text(encoding="utf-8")) if skydecor_manifest.exists() else {"assets": {}}
+    # OceanPlayerBoat（2026-10-20 玩家船正式水彩素材）：3/4 斜俯视静态船体，
+    # 替代 SeaViewArt.Boat 的纯矢量艇身；尾流/横摇/footprint 仍由程序负责。
+    boat_manifest = ROOT / "assets/image/OceanPlayerBoat/manifest.json"
+    boat = json.loads(boat_manifest.read_text(encoding="utf-8")) if boat_manifest.exists() else {"assets": {}}
     entries = {}
     # eco/SeaSurface 合集按条目自带 preload（per-entry，如 sea_surface_day/dusk=true、
     # night=false），其余合集沿用既有默认；与 prepare_ocean_ready_art.py 的 catalog_text
@@ -69,7 +73,8 @@ def catalog_text():
                                            (eco["assets"], False, True),
                                            (sea["assets"], False, True),
                                            (sky["assets"], False, True),
-                                           (skydecor["assets"], False, True)):
+                                           (skydecor["assets"], False, True),
+                                           (boat["assets"], False, True)):
         for name, entry in collection.items():
             entries[name] = {**entry, "preload": entry.get("preload", preload) if per_entry else preload}
     selected = json.loads((WAVE2_OUT / "manifest.json").read_text(encoding="utf-8"))["assets"] \

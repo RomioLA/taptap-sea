@@ -280,6 +280,15 @@ return {
         repeatTexture = true,
         completeIsland = false,
     },
+    player_boat = {
+        path = "image/OceanPlayerBoat/player_boat.png",
+        pixelWidth = 1024, pixelHeight = 1024,
+        contentWidth = 819, contentHeight = 428,
+        anchorX = 0.5, anchorY = 0.5,
+        preload = false,
+        repeatTexture = false,
+        completeIsland = false,
+    },
     reef = {
         path = "image/OceanReady/reef.png",
         pixelWidth = 512, pixelHeight = 512,

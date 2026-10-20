@@ -14,6 +14,10 @@ local VIEW_PADDING_METERS = 0.8
 local AIR_PERSPECTIVE_TINT = { 181, 212, 203 }
 -- Presentation palette only: do not rewrite shared world/config tuning.
 local PAPER_WAVE = { 233, 243, 223, 255 }
+-- 玩家船贴图目录键（assets/image/OceanPlayerBoat/player_boat.png）。
+-- 入库时艏向已旋正到画布 +X，与 ImageArt.Plane 的「u=1 边缘映射到 +heading」
+-- 契约一致；贴图缺失时 SeaViewArt.Boat 回落纯矢量形态。
+local BOAT_ART_NAME = "player_boat"
 local SAND_SHORE = { 226, 207, 158, 255 }
 local SAGE_LAND = { 149, 171, 133, 255 }
 local islandGeometry = setmetatable({}, {__mode="k"})
@@ -1432,9 +1436,31 @@ function SeaViewArt.Boat(ctx, movement, ship, time)
         shadow[#shadow + 1] = { x = point.x + 1.5, y = point.y + 3, scale = point.scale }
     end
     fillPolygon(ctx, shadow, nvgRGBA(49, 99, 101, 65))
-    -- 2026-10-16 用户裁决：船贴图替换效果不好（竖幅画布被压进横幅世界矩形约 4×
-    -- 压扁、艏向偏 90°），还原无贴图矢量形态（艇身+甲板+立帆）。
-    -- boat/boat_story 目录项、ArtVariants 映射与素材文件已同步移除，无贴图加载路径。
+    -- 2026-10-20：玩家船正式水彩贴图（assets/image/OceanPlayerBoat/player_boat.png）。
+    -- 走 ImageArt.Plane 世界平面投影：贴图 u 轴（+u=右）= 艏向，对齐 world heading；
+    -- 入库时已把艏向旋正到画布 +X，故此处无需任何角度补偿。深度方向的压缩由
+    -- 引擎斜投影统一处理（世界 +Y 方向屏幕压缩比约 0.82），与鱼/海鸟/木桶同口径。
+    -- 画幅按 catalog 内容比换算，使贴图内容主体精确对应 length×width 的船体
+    -- footprint（Art.ContentPlaneSize），不把透明留白算进世界尺寸。
+    -- 尾流/横摇/船体投影阴影仍由程序负责（贴图不烘焙任何动态效果）。
+    local drawn = false
+    local planeLength, planeWidth = ImageArt.ContentPlaneSize(BOAT_ART_NAME, length, width)
+    if planeLength and planeWidth then
+        drawn = ImageArt.Plane(ctx, BOAT_ART_NAME, movement, ship.position,
+            planeLength, planeWidth, rotation, heave, 1, roll)
+    end
+    if drawn then
+        local center = screenPoint(movement, ship.position, heave)
+        if center then includeScreenPoint(bounds, center, 1) end
+        -- 立帆：贴图路径默认不画（素材为无桅杆划艇，矢量白帆与水彩船体不搭）。
+        -- Config.visual.boatSail.enabled = true 可恢复，便于 A/B 对比。
+        if (visual.boatSail and visual.boatSail.enabled) then
+            drawSail(ctx, movement, ship.position, forwardX, forwardY, sideX, sideY,
+                length, bounds, heave, rollSin)
+        end
+        return finishScreenBounds(bounds)
+    end
+    -- 贴图缺失/加载失败：回落纯矢量形态（艇身+甲板+立帆），保持零回归。
     fillPolygon(ctx, hullScreen, rgba(visual.ship, { 251, 222, 139, 255 }))
     strokePolygon(ctx, hullScreen, nvgRGBA(100, 67, 51, 245), 1.5)
 

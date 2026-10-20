@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "style": "读海日系水彩绘本风，玩家旧式小型木船（3/4 斜俯视，温暖棕木色，木板结构可读）",
+  "format": "RGBA PNG 直通 Alpha（256 色量化 P 模式等价语义）；1024x1024 画布，主体占 80%，四周透明留白",
+  "projection": "Ocean.Projection 世界平面分片投影（ImageArt.Plane），贴图 u 轴（+u=右）对应世界 heading",
+  "placement": "SeaViewArt.Boat 玩家船主体（替代纯矢量艇身）；尾流/横摇/footprint 仍由程序负责，贴图失败回落矢量",
+  "constraints": "严禁烘焙尾流、水花、投影底座、环境光效与海面阴影；桅杆/帆不入画（程序侧矢量立帆保留）",
+  "references": [
+    "assets/image/OceanEco/manifest.json",
+    "scripts/Ocean/SeaViewArt.lua",
+    "scripts/Ocean/ImageArt.lua"
+  ],
+  "assets": {
+    "player_boat": {
+      "path": "image/OceanPlayerBoat/player_boat.png",
+      "source": "E:/workbath/Fishing/_gen_player_boat_v1/raw_boat_v1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        102,
+        298,
+        921,
+        726
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.7370843887329102,
+      "sha256": "56ccba9b9d92d572ee0220ca510efae5eca4ce996fdcf95864ea5a54d0f697f0",
+      "source_sha256": "fba333bb399f3ee1221a6244f685e7898294a17fb23648a951c3743e907f52c7",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "player_boat",
+      "status": "ready_not_placed",
+      "normalized": {
+        "subject_size": [
+          781,
+          408
+        ],
+        "resized": [
+          819,
+          428
+        ],
+        "content_bounds": [
+          102,
+          298,
+          921,
+          726
+        ],
+        "occupancy": 0.7998,
+        "transparent_ratio": 0.7371,
+        "heading_source_degrees": 154.45,
+        "heading_corrected_degrees": 154.45,
+        "heading_final_degrees": -0.0,
+        "bytes": 145185
+      }
+    }
+  }
+}
