@@ -624,6 +624,38 @@ local function surfaceHorizonAt(movement, x, width, height, fallback)
     return fallback
 end
 
+-- 海面水区多边形填充（曲边地平线 + 屏底两角）。仅用 2-stop 线性渐变，
+-- 以「远→近 底层 + 远→中 / 中→近 两段透明→实色的柔带」拼出三层青绿分带。
+local function fillSeaPolygon(ctx, horizonPoints, width, height, paint)
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, horizonPoints[1].x, horizonPoints[1].y)
+    for index = 2, #horizonPoints do
+        nvgLineTo(ctx, horizonPoints[index].x, horizonPoints[index].y)
+    end
+    nvgLineTo(ctx, width, height)
+    nvgLineTo(ctx, 0, height)
+    nvgClosePath(ctx)
+    nvgFillPaint(ctx, paint)
+    nvgFill(ctx)
+end
+
+-- 三层青绿分带：底图为远→近深度渐变；banded 时叠加中段柔带（顶部/底部透明、
+-- 中段实色）形成可读的远/中/近三层、边界柔和。渐变在 X 轴恒定 → 横向天然无缝。
+-- 引擎仅支持 2-stop 线性渐变，故中段柔带用两段透明→实色渐变拼出（midT 处相接
+-- 同色，无可见接缝）。alpha 透出叠加强度（<255 保留贴图水彩笔触）。
+local function paintSeaBands(ctx, horizonPoints, width, height, topY, bottomY,
+    farC, midC, nearC, midT, alpha, emphasis)
+    local midY = topY + (bottomY - topY) * midT
+    fillSeaPolygon(ctx, horizonPoints, width, height, nvgLinearGradient(ctx, 0, topY, 0, bottomY,
+        nvgRGBA(farC[1], farC[2], farC[3], alpha), nvgRGBA(nearC[1], nearC[2], nearC[3], alpha)))
+    if emphasis then
+        fillSeaPolygon(ctx, horizonPoints, width, height, nvgLinearGradient(ctx, 0, topY, 0, midY,
+            nvgRGBA(farC[1], farC[2], farC[3], 0), nvgRGBA(midC[1], midC[2], midC[3], alpha)))
+        fillSeaPolygon(ctx, horizonPoints, width, height, nvgLinearGradient(ctx, 0, midY, 0, bottomY,
+            nvgRGBA(midC[1], midC[2], midC[3], alpha), nvgRGBA(nearC[1], nearC[2], nearC[3], 0)))
+    end
+end
+
 -- 纯海面贴图相位选择（2026-10-17 C2，方案 A 夜罩不动）：纯函数，不读 nvg。
 -- day 相 progress<duskFrom：昼图独显；[duskFrom,1] smoothstep 交叉淡入黄昏图；
 -- night 相前 nightFade 段由黄昏图 smoothstep 淡回昼图——夜罩瞬间全量叠加时
@@ -741,17 +773,19 @@ function SeaViewArt.Surface(ctx, movement, time, clock)
         return centerHorizon
     end
 
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, horizonPoints[1].x, horizonPoints[1].y)
-    for index = 2, #horizonPoints do
-        nvgLineTo(ctx, horizonPoints[index].x, horizonPoints[index].y)
-    end
-    nvgLineTo(ctx, width, height)
-    nvgLineTo(ctx, 0, height)
-    nvgClosePath(ctx)
-    nvgFillPaint(ctx, nvgLinearGradient(ctx, 0, centerHorizon, 0, height,
-        nvgRGBA(86, 178, 180, 255), nvgRGBA(43, 148, 162, 255)))
-    nvgFill(ctx)
+    -- 三层青绿分带（2026-10-20 v4 概念验收通过）：远/中/近由深度驱动的青绿渐变，
+    -- 柔和过渡，程序化横向无缝（渐变 X 轴恒定、贴图 REPEATX）。enabled=false 时
+    -- 退化为原 2-stop 渐变（零回归）。
+    local bands = (Config.visual and Config.visual.seaBands) or {}
+    local banded = bands.enabled == true
+    local farC = (banded and bands.far) or { 86, 178, 180 }
+    local midC = (banded and bands.mid) or { 65, 163, 171 }
+    local nearC = (banded and bands.near) or { 43, 148, 162 }
+    local midT = (banded and bands.midT) or 0.5
+    -- 底图恒为远→近 2-stop 深度渐变（与原成本一致）；中段柔带只走贴图之上的
+    -- overlay（banded 且贴图成功时），避免被贴图覆盖下白画两次。
+    paintSeaBands(ctx, horizonPoints, width, height, centerHorizon, height,
+        farC, midC, nearC, midT, 255, false)
     -- 纯海面贴图层（2026-10-17 C2，方案 A）：渐变保留为最终兜底；贴图可用时
     -- 叠加（base + 按相位交叉淡入的 over），只有加载失败/显式关闭才走纸纹层，
     -- 避免贴图与纸纹双重颗粒叠加。底图默认固定（scroll=false，2026-10-18 真机
@@ -780,6 +814,13 @@ function SeaViewArt.Surface(ctx, movement, time, clock)
         if seaDrawn and frame.over and frame.blend > 0 then
             ImageArt.SeaSurface(ctx, movement, width, height, frame.over, alpha * frame.blend, scrollX)
         end
+    end
+    -- 三层青绿分带叠加于海面贴图之上（overlayAlpha<1 保留贴图水彩笔触）；
+    -- 仅 banded 时生效，贴图关闭/失败则底图渐变已自带分带，无需叠加。
+    if banded and seaDrawn then
+        local a = clamp(math.floor((bands.overlayAlpha or 0.42) * 255 + 0.5), 0, 255)
+        paintSeaBands(ctx, horizonPoints, width, height, centerHorizon, height,
+            farC, midC, nearC, midT, a, true)
     end
     -- Optional flat paper material supplied by ImageArt; world crests below
     -- still own motion, fixed cell density and the bounded mark budget.

@@ -179,6 +179,13 @@ local Config = {
         amplitudeMeters = 0.18, periodSec = 5, maxMarks = 1800,
         nearSpacingMeters = 12, farSpacingMeters = 6,
         detailTransitionStartMeters = 35, detailTransitionEndMeters = 110 },
+    -- 三层青绿海面分带（2026-10-20 v4 概念验收通过）：在海面水彩贴图之上叠加由深度
+    -- 驱动的青绿分带渐变（远浅→中→近深），柔和过渡；程序化横向无缝（渐变 X 轴
+    -- 恒定、贴图 REPEATX）。enabled=false 整层跳过、完全回到原观感（零回归）。
+    -- overlayAlpha<1 保留贴图水彩笔触；midT 为中层竖直比例（0=地平线,1=屏底）。
+    seaBands = { enabled = true, overlayAlpha = 0.42,
+        far = { 150, 214, 206 }, mid = { 86, 186, 182 }, near = { 42, 150, 166 }, midT = 0.5 },
+
     -- 纯海面贴图层（2026-10-17 C2，方案 A 夜罩不动）：屏幕空间材质层，
     -- 参数仅影响表现，不触碰世界/玩法。duskFrom/duskSpan 控制昼相末段向
     -- 黄昏图交叉淡入；nightFade 控制入夜前 10% 淡回昼图（夜罩瞬间叠加
