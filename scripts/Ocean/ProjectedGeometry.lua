@@ -468,8 +468,11 @@ function Geometry.SampleSector(center, radius, heading, halfAngle, segments)
     return points
 end
 
-function Geometry.WorldPolygon(ctx, movement, points, fillColor, strokeColor, strokeWidth, altitude)
-    if fillColor then
+-- fillPaint（2026-10-19 探海镜水体）：可选渐变填充（nvgLinearGradient 产物），
+-- 传入时以 nvgFillPaint 替代 nvgFillColor，其余投影/裁剪/描边口径完全不变；
+-- 缺省即旧行为，既有全部调用零回归。
+function Geometry.WorldPolygon(ctx, movement, points, fillColor, strokeColor, strokeWidth, altitude, fillPaint)
+    if fillColor or fillPaint then
         local clipped = Geometry.ProjectPolygon(movement, points, altitude)
         if #clipped >= 3 then
             nvgBeginPath(ctx)
@@ -479,7 +482,7 @@ function Geometry.WorldPolygon(ctx, movement, points, fillColor, strokeColor, st
                 if index == 1 then nvgMoveTo(ctx, x, y) else nvgLineTo(ctx, x, y) end
             end
             nvgClosePath(ctx)
-            nvgFillColor(ctx, color(fillColor))
+            if fillPaint then nvgFillPaint(ctx, fillPaint) else nvgFillColor(ctx, color(fillColor)) end
             nvgFill(ctx)
         end
     end
@@ -495,9 +498,9 @@ function Geometry.WorldCircle(ctx, movement, center, radius, fillColor, strokeCo
         fillColor, strokeColor, strokeWidth, altitude)
 end
 
-function Geometry.WorldSector(ctx, movement, center, radius, heading, halfAngle, fillColor, strokeColor, strokeWidth)
+function Geometry.WorldSector(ctx, movement, center, radius, heading, halfAngle, fillColor, strokeColor, strokeWidth, altitude, fillPaint)
     return Geometry.WorldPolygon(ctx, movement, Geometry.SampleSector(center, radius, heading, halfAngle),
-        fillColor, strokeColor, strokeWidth)
+        fillColor, strokeColor, strokeWidth, altitude, fillPaint)
 end
 
 function Geometry.WorldLine(ctx, movement, from, to, strokeColor, strokeWidth, altitude)

@@ -14,8 +14,11 @@
 --      缺地平线函数返回 false；
 --   5) Surface 接入：波纹层可用即跳过 crests（GetViewBounds 入口断言），失败/
 --      enabled=false 回退 crests；alpha/tileScale 经 config 透传；
---   6) catalog 规格：海面三图（preload/repeatTexture/1920×1080）+ 波纹层
---      （preload=true/repeatTexture=true/512×288）。
+--      2026-10-20 裁定：波纹层默认 enabled=false（改回程序 crests 承接海面细节，
+--      贴图样式由程序层参考实现），故断言波纹层的检查一律显式开启后再断言，
+--      并新增默认口径检查（只画底图 + 进入 crests 段）；
+--   6) catalog 规格：海面三图（preload/repeatTexture/昼·黄昏 1728×972 用户水彩
+--      纹理 v2、夜 1920×1080）+ 波纹层（preload=true/repeatTexture=true/512×288）。
 local Tests = {}
 
 local SeaViewArt = require("Ocean.SeaViewArt")
@@ -94,6 +97,17 @@ local function makeBoundsProbeMovement()
         return { minY = 0, maxY = -1 }
     end
     return movement
+end
+
+-- 波纹层默认关闭（2026-10-20 裁定）后，断言波纹层的检查须显式开启再断言，
+-- 使断言与 Config 默认值解耦（默认值可再调整而不误伤本套契约）。
+local function withRippleEnabled(fn)
+    local settings = Config.visual.seaRipple or {}
+    local oldEnabled = settings.enabled
+    settings.enabled = true
+    local ok, err = pcall(fn)
+    settings.enabled = oldEnabled
+    if not ok then error(err) end
 end
 
 local function withWaterPaperCounter(fn)
@@ -226,7 +240,9 @@ function Tests.Run(recorder)
     check("Surface 接入：三参旧调用画 base+波纹层且零状态改写", function()
         local ctx = {}
         local movement = makeMovement(0)
-        SeaViewArt.Surface(ctx, movement, 1.5)
+        withRippleEnabled(function()
+            SeaViewArt.Surface(ctx, movement, 1.5)
+        end)
         assert(#patterns == 2, "无 clock 应画 base 与波纹层各一次")
         assert(pathOf(patterns[1].image) == DAY_PATH)
         near(patterns[1].alpha, 1, 1e-9)
@@ -238,7 +254,9 @@ function Tests.Run(recorder)
 
     check("Surface 接入：day 0.9 交叉淡入 dusk（over alpha=0.5）+ 波纹层", function()
         local ctx = {}
-        SeaViewArt.Surface(ctx, makeMovement(0), 1.5, { phase = "day", progress = 0.9 })
+        withRippleEnabled(function()
+            SeaViewArt.Surface(ctx, makeMovement(0), 1.5, { phase = "day", progress = 0.9 })
+        end)
         assert(#patterns == 3)
         assert(pathOf(patterns[1].image) == DAY_PATH)
         assert(pathOf(patterns[2].image) == DUSK_PATH)
@@ -249,13 +267,17 @@ function Tests.Run(recorder)
 
     check("Surface 接入：night 前 10% 淡回昼图、其后昼图过罩、夜图不自动加载", function()
         local ctx = {}
-        SeaViewArt.Surface(ctx, makeMovement(0), 1.5, { phase = "night", progress = 0.05 })
+        withRippleEnabled(function()
+            SeaViewArt.Surface(ctx, makeMovement(0), 1.5, { phase = "night", progress = 0.05 })
+        end)
         assert(#patterns == 3)
         assert(pathOf(patterns[2].image) == DUSK_PATH)
         assert(pathOf(patterns[3].image) == RIPPLE_PATH)
         near(patterns[2].alpha, 0.5, 1e-9)
         patterns = {}
-        SeaViewArt.Surface(ctx, makeMovement(0), 1.5, { phase = "night", progress = 0.5 })
+        withRippleEnabled(function()
+            SeaViewArt.Surface(ctx, makeMovement(0), 1.5, { phase = "night", progress = 0.5 })
+        end)
         assert(#patterns == 2, "nightFade 之后应只画昼图+波纹层（夜罩压暗）")
         assert(pathOf(patterns[1].image) == DAY_PATH)
         assert(pathOf(patterns[2].image) == RIPPLE_PATH)
@@ -307,7 +329,9 @@ function Tests.Run(recorder)
         Config.visual.seaSurface.enabled = false
         patterns = {}
         local calls = withWaterPaperCounter(function()
-            SeaViewArt.Surface({}, makeMovement(0), 1.5)
+            withRippleEnabled(function()
+                SeaViewArt.Surface({}, makeMovement(0), 1.5)
+            end)
         end)
         assert(calls == 1, "贴图层关闭应回退纸纹层（渐变仍在最底层）")
         assert(#patterns == 1 and pathOf(patterns[1].image) == RIPPLE_PATH,
@@ -317,16 +341,18 @@ function Tests.Run(recorder)
 
     -- crest 段入口断言：波纹层绘制成功即跳过程序 crest marks（GetViewBounds 是
     -- crest 段唯一入口，探针 movement 返回空世界带使零行绘制、不触投影）。
+    -- 三种情形显式设定波纹层开关（不再依赖 Config 默认值：默认已改为关闭）：
+    -- 缺省=可用（跳过 crests）、failRipple=加载失败、disableRipple=显式关闭。
     local function crestEntered(failRipple, disableRipple)
         local movement = makeBoundsProbeMovement()
         local ctx = {}
         if failRipple then failedPath = RIPPLE_PATH end
         local settings = Config.visual.seaRipple or {}
-        local oldEnabled = disableRipple and settings.enabled or nil
-        if disableRipple then settings.enabled = false end
+        local oldEnabled = settings.enabled
+        settings.enabled = not disableRipple
         SeaViewArt.Surface(ctx, movement, 1.5)
         failedPath = ""
-        if oldEnabled ~= nil then settings.enabled = oldEnabled end
+        settings.enabled = oldEnabled
         return movement.viewBoundsCalls
     end
 
@@ -402,13 +428,26 @@ function Tests.Run(recorder)
             "显式关闭波纹层应回退程序 crest marks 兜底")
     end)
 
+    check("默认口径：seaRipple.enabled=false，海面细节由程序 crests 承接", function()
+        local ripple = Config.visual.seaRipple or {}
+        assert(ripple.enabled == false,
+            "2026-10-20 用户裁定：波纹层默认关闭，波纹改回程序 crest marks")
+        local movement = makeBoundsProbeMovement()
+        SeaViewArt.Surface({}, movement, 1.5)
+        assert(movement.viewBoundsCalls == 1, "默认口径应进入程序 crest marks 段")
+        assert(#patterns == 1 and pathOf(patterns[1].image) == DAY_PATH,
+            "默认口径只画海面底图，不再叠加波纹平铺层")
+    end)
+
     check("Surface 接入：alpha/tileScale 经 config 透传至波纹层", function()
         local ctx = {}
         local ripple = Config.visual.seaRipple or {}
         local oldAlpha, oldScale = ripple.alpha, ripple.tileScale
         ripple.alpha, ripple.tileScale = 0.5, 2
         patterns = {}
-        SeaViewArt.Surface(ctx, makeMovement(0), 1.5)
+        withRippleEnabled(function()
+            SeaViewArt.Surface(ctx, makeMovement(0), 1.5)
+        end)
         assert(#patterns == 2, "base + 波纹层")
         assert(pathOf(patterns[2].image) == RIPPLE_PATH)
         near(patterns[2].alpha, 0.5, 1e-9)
@@ -417,16 +456,21 @@ function Tests.Run(recorder)
         ripple.alpha, ripple.tileScale = oldAlpha, oldScale
     end)
 
-    check("catalog 四图规格：海面三图 1920×1080 + 波纹层 512×288", function()
+    check("catalog 四图规格：昼/黄昏 1728×972 + 夜 1920×1080 + 波纹层 512×288", function()
         local day = assert(ImageArt.GetSpec("sea_surface_day"))
         assert(day.preload == true and day.repeatTexture == true)
-        assert(day.pixelWidth == 1920 and day.pixelHeight == 1080)
+        assert(day.pixelWidth == 1728 and day.pixelHeight == 972,
+            "2026-10-20 换装：昼图=用户水彩海面纹理 v2（1728×972 精确 16:9）")
         local dusk = assert(ImageArt.GetSpec("sea_surface_dusk"))
         assert(dusk.preload == true and dusk.repeatTexture == true)
+        assert(dusk.pixelWidth == 1728 and dusk.pixelHeight == 972,
+            "2026-10-20 换装：黄昏图=用户水彩海面纹理 v2 黄昏版")
         local night = assert(ImageArt.GetSpec("sea_surface_night"))
         assert(night.preload == false,
             "夜图留 SeaDebug/后续方案：不随场景启动预载")
         assert(night.repeatTexture == true, "夜图保持横拼标志备用")
+        assert(night.pixelWidth == 1920 and night.pixelHeight == 1080,
+            "夜图沿用锚点链 v2 满幅 1920×1080")
         local ripple = assert(ImageArt.GetSpec("sea_ripple_overlay"))
         assert(ripple.preload == true, "波纹层随场景启动预载，避免首帧尖峰")
         assert(ripple.repeatTexture == true, "双向平铺标志")

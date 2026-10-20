@@ -1,7 +1,17 @@
 """纯海面 v2（SeaSurface）入库：三张时段海面 + 波纹平铺层 → assets/image/SeaSurface/ + manifest + catalog 重生成。
 
-素材来源：E:/workbath/Fishing/_gen_pure_sea/pure_sea_{day,dusk,night}_v2.png
-（miora 锚点链生成 + .tmp/sea_postprocess_v2.py 去右下角 AI 水印 / 1920×1080 校正 / 左右 96px 无缝融合）。
+素材来源（2026-10-20 换装）：
+- day/dusk：E:/workbath/Fishing/_gen_pure_sea/watercolor_sea_{day,dusk}_v2.png
+  （用户 miora 再创作「读海_水彩海面纹理_v2」水彩海面：保留水彩底色、上浅下深明暗
+  层次、远景低对比低细节、近景清晰较疏波纹；1728×972 精确 16:9，裁角去平台水印。
+  复制为 ASCII 文件名入库；左右边缘非严格无缝，底图默认 scroll=false 固定，
+  repeatTexture 横拼标志保留备用）。
+- night：E:/workbath/Fishing/_gen_pure_sea/pure_sea_night_v2.png（miora 锚点链派生
+  v2，1920×1080；方案 A 夜图不进自动映射，留作 SeaDebug/后续方案）。
+- 波纹：E:/workbath/Fishing/_gen_pure_sea/sea_ripple_overlay_gamma_v2.png
+  （2026-10-19 真机修复后的权威产物快照：去白底提 alpha + 伽马 0.55 重提取，
+  RGBA 512×288 双向无缝瓦片。原 sea_ripple_serene_v1.png 为 RGB 白底原始素材，
+  直接重入库会静默回退真机修复，故改以修复版为源）。
 
 海面为屏幕空间材质层（ImageArt.SeaSurface：地平线裁剪 + imagePattern + 相机横向滚动），
 不是世界实体，因此与生态层组件的契约不同：
@@ -31,15 +41,16 @@ CATALOG = ROOT / "scripts/GeneratedData/OceanImageCatalog.lua"
 SOURCE_DIR = Path("E:/workbath/Fishing/_gen_pure_sea")
 # 目录名 -> 源文件（时段顺序即交付顺序）
 SOURCES = {
-    "sea_surface_day": "pure_sea_day_v2.png",
-    "sea_surface_dusk": "pure_sea_dusk_v2.png",
+    "sea_surface_day": "watercolor_sea_day_v2.png",
+    "sea_surface_dusk": "watercolor_sea_dusk_v2.png",
     "sea_surface_night": "pure_sea_night_v2.png",
-    "sea_ripple_overlay": "sea_ripple_serene_v1.png",
+    "sea_ripple_overlay": "sea_ripple_overlay_gamma_v2.png",
 }
-# 各素材目标像素尺寸：海面满幅 1920×1080；波纹平铺瓦片 512×288
+# 各素材目标像素尺寸：昼/黄昏为用户水彩纹理原生 1728×972（精确 16:9）；
+# 夜图沿用锚点链 v2 满幅 1920×1080；波纹平铺瓦片 512×288
 PIXEL_SIZES = {
-    "sea_surface_day": (1920, 1080),
-    "sea_surface_dusk": (1920, 1080),
+    "sea_surface_day": (1728, 972),
+    "sea_surface_dusk": (1728, 972),
     "sea_surface_night": (1920, 1080),
     "sea_ripple_overlay": (512, 288),
 }
@@ -93,8 +104,12 @@ def prepare():
                       "status": "ready_wired", "period": PERIODS[name]})
         entries[name] = entry
     manifest = {"schema_version": 1,
-                "style": "读海日系水彩绘本风，纯海面满幅（无天空/地平线），锚点链派生：风格参考图→日间锚点→黄昏/夜晚",
-                "format": "不透明 RGB PNG 满幅；上浅下深纵深过渡；左右边缘无缝可横向循环拼接",
+                "style": "读海日系水彩绘本风：昼/黄昏为 2026-10-20 用户提供水彩海面纹理 v2"
+                         "（宁静，纯海面满幅，上浅下深明暗层次），夜晚为 miora 锚点链派生 v2；"
+                         "波纹平铺层为 2026-10-18 用户提供水彩波纹纹理",
+                "format": "不透明 RGB 满幅/瓦片；昼/黄昏 1728×972 精确 16:9、夜 1920×1080；"
+                          "上浅下深纵深过渡；昼/黄昏左右边缘非严格无缝（底图默认 scroll=false 固定，"
+                          "repeatTexture 标志保留备用），波纹瓦片双向无缝可 REPEATX|REPEATY 平铺",
                 "projection": "屏幕空间材质层（ImageArt.SeaSurface）：地平线裁剪 + imagePattern + 相机横向滚动，非世界平面",
                 "placement": "SeaViewArt.Surface 相位映射（方案 A 夜罩不动）：day 承载日间与夜间（夜间=昼图过夜罩），"
                              "dusk 用于昼相 progress≥0.8 交叉淡入，night 留 SeaDebug/后续方案",
@@ -114,7 +129,12 @@ def check():
         path = ROOT / "assets" / entry["path"]
         assert path.is_file(), f"{name} 运行目录缺失"
         with Image.open(path) as image:
-            assert image.mode == "RGB", f"{name} 应为不透明 RGB 满幅"
+            if name == "sea_ripple_overlay":
+                # 波纹层 2026-10-19 起为 RGBA（去白底提 alpha + 伽马重提取），
+                # 自持透明度叠加于海面之上；其余海面三图为不透明 RGB 满幅。
+                assert image.mode == "RGBA", f"{name} 应为 RGBA（自持 alpha 波纹）"
+            else:
+                assert image.mode == "RGB", f"{name} 应为不透明 RGB 满幅"
             assert image.size == PIXEL_SIZES[name], f"{name} 尺寸不符（{PIXEL_SIZES[name]} 契约）"
             assert image.size == tuple(entry["size"]), f"{name} 清单尺寸不符"
         source = Path(entry["source"])
@@ -127,9 +147,11 @@ def check():
         actual = module.describe(path, entry["source"])
         for key in ("size", "content_bounds", "alpha_range", "sha256"):
             assert actual[key] == entry[key], f"{name} 的 {key} 与清单不一致"
-        # 海面契约：满幅不透明（与组件类的透明留边相反）
-        assert entry["alpha_range"] == [255, 255], f"{name} 应完全不透明"
-        assert entry["content_bounds"] == [0, 0, *PIXEL_SIZES[name]], f"{name} 应满幅无留边"
+        # 海面契约：三张海面满幅不透明（与组件类的透明留边相反）；
+        # 波纹层为 RGBA 自持 alpha（叠加层），不适用该断言
+        if name != "sea_ripple_overlay":
+            assert entry["alpha_range"] == [255, 255], f"{name} 应完全不透明"
+            assert entry["content_bounds"] == [0, 0, *PIXEL_SIZES[name]], f"{name} 应满幅无留边"
         assert entry["preload"] == PRELOAD[name], f"{name} preload 与方案 A 契约不符"
     text = CATALOG.read_text(encoding="utf-8")
     assert text == eco_importer().catalog_text(), "运行目录与素材清单不同步（catalog 需重生成）"

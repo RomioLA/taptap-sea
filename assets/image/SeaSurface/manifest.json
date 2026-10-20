@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "style": "读海日系水彩绘本风：日间海面为 2026-10-18 用户提供水彩海面（宁静，纯海面满幅），黄昏/夜晚为 miora 锚点链派生 v2；波纹平铺层为 2026-10-18 用户提供水彩波纹纹理",
-  "format": "不透明 RGB 满幅/瓦片；上浅下深纵深过渡；海面左右边缘无缝可横向循环拼接，波纹瓦片双向无缝可 REPEATX|REPEATY 平铺",
-  "projection": "屏幕空间材质层：海面（ImageArt.SeaSurface）地平线裁剪 + imagePattern + 相机横向滚动；波纹（ImageArt.SeaRipple）地平线裁剪 + 双向 imagePattern 平铺",
-  "placement": "SeaViewArt.Surface 相位映射（方案 A 夜罩不动）：day 承载日间与夜间（夜间=昼图过夜罩），dusk 用于昼相 progress≥0.8 交叉淡入，night 留 SeaDebug/后续方案；波纹层每帧叠加于海面之上，替换程序 crest marks（加载失败回退 crests）",
+  "style": "读海日系水彩绘本风：昼/黄昏为 2026-10-20 用户提供水彩海面纹理 v2（宁静，纯海面满幅，上浅下深明暗层次），夜晚为 miora 锚点链派生 v2；波纹平铺层为 2026-10-18 用户提供水彩波纹纹理",
+  "format": "不透明 RGB 满幅/瓦片；昼/黄昏 1728×972 精确 16:9、夜 1920×1080；上浅下深纵深过渡；昼/黄昏左右边缘非严格无缝（底图默认 scroll=false 固定，repeatTexture 标志保留备用），波纹瓦片双向无缝可 REPEATX|REPEATY 平铺",
+  "projection": "屏幕空间材质层（ImageArt.SeaSurface）：地平线裁剪 + imagePattern + 相机横向滚动，非世界平面",
+  "placement": "SeaViewArt.Surface 相位映射（方案 A 夜罩不动）：day 承载日间与夜间（夜间=昼图过夜罩），dusk 用于昼相 progress≥0.8 交叉淡入，night 留 SeaDebug/后续方案",
   "references": [
     "scripts/Ocean/SeaViewArt.lua",
     "scripts/Ocean/ImageArt.lua",
@@ -12,24 +12,24 @@
   "assets": {
     "sea_surface_day": {
       "path": "image/SeaSurface/sea_surface_day.png",
-      "source": "E:/workbath/Fishing/_gen_pure_sea/pure_sea_serene_v1.png",
+      "source": "E:/workbath/Fishing/_gen_pure_sea/watercolor_sea_day_v2.png",
       "size": [
-        1920,
-        1080
+        1728,
+        972
       ],
       "content_bounds": [
         0,
         0,
-        1920,
-        1080
+        1728,
+        972
       ],
       "alpha_range": [
         255,
         255
       ],
       "transparent_ratio": 0.0,
-      "sha256": "d688f41e5073ccf9eae32e61b0a6beaf999fa0eaa53afb117ed4c690b4a4ca86",
-      "source_sha256": "34123c44e56289522e0507dce1058ac14ed5806da4d8dd3406659ec48d379099",
+      "sha256": "550cc6f0dc62c858314d939ae499d5822d8e9ef1dff2d9f362d8732bdac6f66c",
+      "source_sha256": "1d731656048f9335cf936e0433db9b66e695b7b706c2d7bf263ba4d2e5a1416b",
       "preload": true,
       "anchor": [
         0.5,
@@ -41,24 +41,24 @@
     },
     "sea_surface_dusk": {
       "path": "image/SeaSurface/sea_surface_dusk.png",
-      "source": "E:/workbath/Fishing/_gen_pure_sea/pure_sea_dusk_v2.png",
+      "source": "E:/workbath/Fishing/_gen_pure_sea/watercolor_sea_dusk_v2.png",
       "size": [
-        1920,
-        1080
+        1728,
+        972
       ],
       "content_bounds": [
         0,
         0,
-        1920,
-        1080
+        1728,
+        972
       ],
       "alpha_range": [
         255,
         255
       ],
       "transparent_ratio": 0.0,
-      "sha256": "1318be85a590d59f08fc6876c8ac4791d8b7b574bcc9e3b33e389c22555fa448",
-      "source_sha256": "78e5fc0237b1c0549a291ad146c2cbe6739b69bbabb79ebeb94b63769243c06e",
+      "sha256": "2c44576147cc4920891916f8c35c6f42a8f9ee0104336b7714c8927e70b13328",
+      "source_sha256": "2472c0075a3d377ba88d8d34c15983e3ae56b01d9d503309b62181ebc177043f",
       "preload": true,
       "anchor": [
         0.5,
@@ -86,7 +86,7 @@
         255
       ],
       "transparent_ratio": 0.0,
-      "sha256": "5870b452486f51f70040dcd2c902c91ad0ff1bf8d791d8b50cc62c869542475c",
+      "sha256": "b66c657ef77b62fc9920d29c2e3be0e985e646bcb4ad40f19e41c7425407c77c",
       "source_sha256": "a43d00674c410fe889f08adc629fe236c2d5c52489cc4e48dcbcd13f1b4e4904",
       "preload": false,
       "anchor": [
@@ -105,17 +105,17 @@
         288
       ],
       "content_bounds": [
+        14,
         0,
-        0,
-        512,
+        500,
         288
       ],
       "alpha_range": [
-        255,
+        0,
         255
       ],
       "transparent_ratio": 0.0,
-      "sha256": "b7bc20aaea7c43f44ca914d92a1cefec82e7ccaaaa2a204e615537b2cce5bb48",
+      "sha256": "60974c27114aba34f289e08313a35fb3d40067a0f133b2bc89204d75e7602ae7",
       "source_sha256": "b7bc20aaea7c43f44ca914d92a1cefec82e7ccaaaa2a204e615537b2cce5bb48",
       "preload": true,
       "anchor": [

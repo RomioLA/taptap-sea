@@ -172,7 +172,28 @@ local Config = {
     -- 1 世界米 = height/viewHeight 屏距）；0=钉死屏幕。
     -- 2026-10-19 真机二轮：白波纹「太淡不明显 + 密度过大」→ alpha 0.6→0.9、
     -- tileScale 1.0→1.6（瓦片放大，同屏波纹数量降到约 1/2.6，笔画也随之更粗）。
-    seaRipple = { enabled = true, alpha = 0.9, tileScale = 1.6, scrollScale = 1.0 },
+    -- 2026-10-20 用户裁定：波纹改回程序 crest marks（enabled=false，绘制成功即
+    -- 跳过 crests 的门控天然失效），贴图样式改由程序层参考实现（见 visual.crest）。
+    -- 本层资产与代码路径完整保留：enabled=true 即一键回切旧口径，不删不弃。
+    seaRipple = { enabled = false, alpha = 0.9, tileScale = 1.6, scrollScale = 1.0 },
+    -- 程序 crest marks 贴图样式（2026-10-20 用户裁定「参考贴图样式」）。以
+    -- sea_ripple_overlay 水彩波纹贴图的笔触特征为参照目标：白沫色、细短弧线、
+    -- 缓 S 形、两端渐细、疏朗分布。全部为表现层参数，不触碰世界/玩法。
+    --   skipRatio      世界格密度呼吸：按格哈希跳过该比例（贴图式疏朗，也省 draw）
+    --   lengthJitter   长短笔触变化幅度（0=等长机械，1=长短错落如贴图）
+    --   skewMax        手绘感非对称弯度上限（贝塞尔控制点偏移）
+    --   taperAt/taperTip  尾端渐细：在 t 处拆分三次贝塞尔，后段线宽×taperTip
+    --   haloWidth/haloAlpha  水彩晕染柔边：整条再描一遍更宽更淡的同色笔画
+    --   companionChance/companionScale  伴生短笔触（贴图里主弧旁的卫星小笔）
+    --   color          白沫主色（贴图取色）；altColor 冷调变体（笔触色相抖动，
+    --                  配了才分桶；近景笔画仅 1~1.7px，冷暖差肉眼几乎不可辨却
+    --                  使 stroke 批次翻倍，故默认不配，留作可选旋钮）
+    --   alpha 为 color[4]，沿用 visual.wave 同口径（×layerWeight×0.66）。
+    crest = { skipRatio = 0.3, lengthJitter = 0.9, skewMax = 0.3,
+        taperAt = 0.6, taperTip = 0.62,
+        haloWidth = 1.85, haloAlpha = 0.38,
+        companionChance = 0.45, companionScale = 0.55,
+        color = { 244, 250, 242, 150 } },
     -- 天空图图层（2026-10-18 读海美术接入）：屏幕空间满幅天空贴图，绘于背景渐变
     -- 之上、日月云鸟之下（方案 B：不依赖 scissor，零回归）。昼夜相位复用 seaSurface
     -- 的 duskFrom/duskSpan/nightFade 映射（SkyFrame 委托 SeaSurfaceFrame，仅改写键名
@@ -185,6 +206,30 @@ local Config = {
     -- day 末段按 seaSurface 同源 blend 交叉淡入夜云）。贴图优先、加载失败回退矢量
     -- （零回归）；preload=false 懒加载；enabled=false 整层回退矢量旧观感。
     skyDecor = { enabled = true, alpha = 1.0 },
+    -- 探海镜水体光学层（2026-10-19 用户红框反馈「透镜 90° 扇形内水下鱼与海面渲染
+    -- 融为一体、肉眼无法区分」，裁决 A 全套 + 远端 0.55）。病根双重：生态鱼贴图
+    -- （蓝绿水彩）与海面贴图（青绿水彩）同色相同明度同笔触；且 SeaDraw 层级中鱼
+    -- （ImageArt.Plane altitude=0）与海面同平面相贴，中间没有水体介质。本组把扇区
+    -- 从「一层 alpha=24 淡青描边」升级为「一块有光学性质的水」：
+    --   ① 水深渐变：以船→扇区远端为渐变轴，近端浅青、远端深蓝青且压明度——鱼从
+    --      海面波纹里「沉」出来；渐变随船转向，无需额外状态；
+    --   ② 鱼体三件套：接触阴影（把鱼压进水体的接触感）+ 背光高光（水面透光的
+    --      湿感）+ 距离衰减（远处鱼化开水色、强化纵深）；
+    --   ③ 透镜边缘：亮青白 rim + 外圈柔光 glow + 双光柱 shaft（神器感与玻璃感）；
+    --   ④ 远景兜底：鱼屏幕长度 < silhouetteMinPx 切暗色剪影（复用 WorldRise 语言）。
+    -- 纯渲染层：零新素材、零包体增长、零行为/零世界状态变化；enabled=false 一鍵回退。
+    scopeLens = {
+        enabled = true,
+        nearColor = { 150, 225, 215 }, farColor = { 18, 84, 104 },
+        nearAlpha = 0.30, farAlpha = 0.55,
+        rimColor = { 235, 252, 246 }, rimAlpha = 190, rimWidth = 1.4,
+        glowColor = { 200, 240, 235 }, glowAlpha = 60, glowWidth = 4.0,
+        shaftColor = { 235, 250, 245 }, shaftAlpha = 24,
+        shadowColor = { 10, 50, 66 }, shadowAlpha = 70,
+        glintColor = { 255, 250, 225 }, glintAlpha = 150,
+        fadeFarAlpha = 0.82, fadeStartRatio = 0.35,
+        silhouetteMinPx = 14,
+    },
     wake = { lifetimeSec = 3, spacingMeters = 0.6, minSpeed = 0.15, maxSamples = 96,
         initialWidth = 0.65, spreadPerSec = 0.45, sternOffset = 2.5, opacity = 125 },
     projection = { circleSegments = 48, sectorSegments = 32, birdAltitude = 1.2 },

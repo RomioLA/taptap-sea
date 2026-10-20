@@ -196,6 +196,11 @@ end
 local function getSurfaceSettings()
     local visual = Config.visual or {}
     local settings = visual.surface or {}
+    -- 程序 crest 贴图样式（2026-10-20 用户裁定「波纹改回程序 crests 但参考贴图
+    -- 样式」）：以 sea_ripple_overlay 水彩笔触为参照——白沫色、两端渐细、水彩
+    -- 晕染柔边、主弧旁伴生小笔、疏朗分布。缺省值全部向内收敛到本文件历史口径，
+    -- 保证缺配置/旧配置零回归（width 0 → 不拆分、haloAlpha 0 → 不描晕染）。
+    local crest = visual.crest or {}
     local nearSpacing = math.max(1, settings.nearSpacingMeters
         or settings.spacingMeters or visual.waveSpacing or 12)
     local transitionStart = math.max(0, settings.detailTransitionStartMeters or 35)
@@ -218,6 +223,19 @@ local function getSurfaceSettings()
         nearStrokeWidthMeters = clamp(settings.nearStrokeWidthMeters or 0.12, 0.02, 0.3),
         farStrokeWidthMeters = clamp(settings.farStrokeWidthMeters or 0.055, 0.01, 0.16),
         maxMarks = math.max(1, math.floor(settings.maxMarks or 2400)),
+        crestSkipRatio = clamp(crest.skipRatio or 0, 0, 0.9),
+        crestLengthJitter = clamp(crest.lengthJitter or 0, 0, 2),
+        crestSkewMax = clamp(crest.skewMax or 0.16, 0.05, 0.6),
+        crestSkewMin = 0.06,
+        crestTaperAt = clamp(crest.taperAt or 0, 0, 0.9),
+        crestTaperTip = clamp(crest.taperTip or 1, 0.1, 1),
+        crestHaloWidth = clamp(crest.haloWidth or 1, 1, 4),
+        crestHaloAlpha = clamp(crest.haloAlpha or 0, 0, 1),
+        crestCompanionChance = clamp(crest.companionChance or 0, 0, 1),
+        crestCompanionScale = clamp(crest.companionScale or 0.55, 0.1, 1),
+        crestColor = crest.color,
+        crestAltColor = crest.altColor,
+        crestAlpha = (crest.color and crest.color[4]) or nil,
     }
 end
 
@@ -311,15 +329,23 @@ local function projectVector(movement, position, dx, dy)
     return endpoint.x - origin.x, endpoint.y - origin.y
 end
 
+-- isCompanion：标记本笔为「伴生小笔」（贴图参照：主弧旁常见的卫星短笔），
+-- 伴生笔不再派生下一级伴生笔（防递归）。
 local function surfaceMark(movement, position, settings, time, indexX, indexY,
-    viewportWidth, viewportHeight, horizonAtX, lengthScale, amplitudeScale, strokeWidthMeters)
+    viewportWidth, viewportHeight, horizonAtX, lengthScale, amplitudeScale, strokeWidthMeters,
+    isCompanion)
     local center = screenPoint(movement, position, 0)
     if not center then return nil end
     local phase = surfacePhase(settings, time, indexX, indexY)
     local shape = math.sin(phase)
 
+    -- 贴图式长短错落：贴图里既有长扫弧也有短笔触，等长会显机械。jitter=0 时
+    -- 完全退回历史口径（0.72~1.0），保证无 crest 配置零回归。
+    local jitter = settings.crestLengthJitter or 0
+    local lengthMix = 0.5 + 0.5 * math.cos(phase * 0.83)
     local markLength = settings.length * lengthScale
-        * (0.72 + 0.28 * (0.5 + 0.5 * math.cos(phase * 0.83)))
+        * ((jitter > 0) and (1 - 0.45 * jitter + 0.55 * jitter * lengthMix)
+            or (0.72 + 0.28 * lengthMix))
     local alongX, alongY = projectVector(movement, position, markLength, 0)
     if not alongX then return nil end
     local alongLength = math.sqrt(alongX * alongX + alongY * alongY)
@@ -363,9 +389,53 @@ local function surfaceMark(movement, position, settings, time, indexX, indexY,
     -- Only the separated-horizon fast path returns the original points table.
     -- Smooth inside that proven-safe convex hull; clipped fragments retain the
     -- existing line samples/root solver and cannot curve back across the edge.
-    return { fragments = fragments, curved = #fragments == 1 and fragments[1] == points,
-        skew = 0.06 + ((indexX * 0.618033989 + indexY * 0.414213562) % 1) * 0.16 }, center.scale
+    local skewHash = (indexX * 0.618033989 + indexY * 0.414213562) % 1
+    local skew = (settings.crestSkewMin or 0.06) + skewHash * (settings.crestSkewMax or 0.16)
+    -- 色相档：主白沫/冷调变体按格哈希二选一，避免同屏笔触一个色（贴图有冷暖笔）。
+    local tintHash = (indexX * 0.569840291 + indexY * 0.754877666) % 1
+    local mark = { fragments = fragments, curved = #fragments == 1 and fragments[1] == points,
+        skew = skew, variant = (tintHash < 0.5) and 0 or 1 }
+    if isCompanion then
+        mark.companion = true
+        return mark, nil, center.scale
+    end
+    local companionChance = settings.crestCompanionChance or 0
+    local companionHash = (indexX * 0.286863528 + indexY * 0.824151931) % 1
+    if companionHash < companionChance then
+        local offset = companionHash / companionChance - 0.5
+        local companion = surfaceMark(movement,
+            addPoint(position.x + offset * settings.length * 1.6,
+                position.y + (offset * 2 - 1) * settings.spacing * 0.22),
+            settings, time, indexX + 0.25, indexY + 0.75, viewportWidth, viewportHeight,
+            horizonAtX, lengthScale * (settings.crestCompanionScale or 0.55),
+            amplitudeScale * 0.85, strokeWidthMeters * 0.72, true)
+        if companion then return mark, companion, center.scale end
+    end
+    return mark, nil, center.scale
 end
+
+-- 贴图样式笔触（2026-10-20 用户裁定「波纹改回程序 crests 但参考贴图样式」）。
+-- 以 sea_ripple_overlay 水彩波纹贴图的笔触特征为参照目标，三处改造：
+--   ① halo：整条再描一遍更宽更淡的同色笔 → 水彩晕染的柔边（贴图笔触有渗色边）；
+--   ② taper：在 crestTaperAt 处拆分三次贝塞尔，尾段线宽 ×taperTip → 贴图笔触
+--      的两端渐细（单纯等宽描边是「线」不是「笔」）；
+--   ③ companion：主弧旁的卫星短笔（贴图里常见主笔+小笔成组），只走单笔细描。
+-- 同款（笔型 × 色相档）合并为一条 path 一次 stroke：逐笔 stroke 会把 draw call
+-- 放大到千级，合并后回到十级量级（与历史「整行一笔」同数量级）。
+-- 关闭口径：taperAt=0 不拆分、haloAlpha=0 不描晕染、companionChance=0 无伴生笔，
+-- 三者皆关即退回历史单笔（且因缺 crest 配置时缺省正是如此，零回归）。
+local function splitCubic(p0, c1, c2, p3, t)
+    local q0x, q0y = p0.x + (c1.x - p0.x) * t, p0.y + (c1.y - p0.y) * t
+    local q1x, q1y = c1.x + (c2.x - c1.x) * t, c1.y + (c2.y - c1.y) * t
+    local q2x, q2y = c2.x + (p3.x - c2.x) * t, c2.y + (p3.y - c2.y) * t
+    local r0x, r0y = q0x + (q1x - q0x) * t, q0y + (q1y - q0y) * t
+    local r1x, r1y = q1x + (q2x - q1x) * t, q1y + (q2y - q1y) * t
+    local sx, sy = r0x + (r1x - r0x) * t, r0y + (r1y - r0y) * t
+    return { p0, { x = q0x, y = q0y }, { x = r0x, y = r0y }, { x = sx, y = sy } },
+        { { x = sx, y = sy }, { x = r1x, y = r1y }, { x = q2x, y = q2y }, p3 }
+end
+
+local CREST_PART_RANK = { halo = 1, line = 2, companion = 3, root = 4, tip = 5 }
 
 local function drawSurfaceRow(ctx, marks, scale, settings, layerWeight, isFarLayer)
     if #marks == 0 or layerWeight <= 0 then return end
@@ -375,30 +445,100 @@ local function drawSurfaceRow(ctx, marks, scale, settings, layerWeight, isFarLay
     local lineWidth = isFarLayer
         and clamp(scale * widthMeters, 0.55, 1.15)
         or clamp(scale * widthMeters, 1.05, 3.2)
-    local alpha = (color[4] or 145) * layerWeight * 0.66
-    nvgBeginPath(ctx)
+    local alpha = (settings.crestAlpha or color[4] or 145) * layerWeight * 0.66
+
+    local taperAt = settings.crestTaperAt or 0
+    local taperTip = settings.crestTaperTip or 1
+    local haloAlpha = settings.crestHaloAlpha or 0
+    local haloWidth = settings.crestHaloWidth or 1
+    local groups, order = {}, {}
+
+    local function groupFor(kind, variant)
+        local key = kind .. "|" .. tostring(variant)
+        local entry = groups[key]
+        if not entry then
+            entry = { kind = kind, variant = variant, parts = {} }
+            groups[key] = entry
+            order[#order + 1] = entry
+        end
+        return entry
+    end
+
+    -- 色相档只在配了 altColor 时才分桶：否则 0/1 两档同色却各占一次 stroke，
+    -- 白白翻倍 draw call（缺 crest 配置时按此自动退回历史批次数）。
+    local splitTint = settings.crestAltColor ~= nil
     for _, mark in ipairs(marks) do
+        local variant = splitTint and (mark.variant or 0) or 0
         for _, fragment in ipairs(mark.fragments) do
-            nvgMoveTo(ctx, fragment[1].x, fragment[1].y)
-            if mark.curved then
+            if not mark.curved then
+                local entry = groupFor("line", variant)
+                entry.parts[#entry.parts + 1] = fragment
+            else
                 local a, b, c = fragment[1], fragment[2], fragment[3]
                 -- Unequal controls give a quiet, hand-drawn crest, still wholly
                 -- inside the old three-point envelope. No extra marks/samples.
-                nvgBezierTo(ctx, b.x + (a.x - b.x) * mark.skew,
-                    b.y + (a.y - b.y) * mark.skew,
-                    b.x + (c.x - b.x) * 0.04, b.y + (c.y - b.y) * 0.04,
-                    c.x, c.y)
-            else
-                for index = 2, #fragment do
-                    nvgLineTo(ctx, fragment[index].x, fragment[index].y)
+                local c1 = { x = b.x + (a.x - b.x) * mark.skew, y = b.y + (a.y - b.y) * mark.skew }
+                local c2 = { x = b.x + (c.x - b.x) * 0.04, y = b.y + (c.y - b.y) * 0.04 }
+                if mark.companion then
+                    local entry = groupFor("companion", variant)
+                    entry.parts[#entry.parts + 1] = { a, c1, c2, c }
+                else
+                    if haloAlpha > 0 then
+                        local entry = groupFor("halo", variant)
+                        entry.parts[#entry.parts + 1] = { a, c1, c2, c }
+                    end
+                    if taperAt > 0 then
+                        local root, tip = splitCubic(a, c1, c2, c, taperAt)
+                        local rootEntry = groupFor("root", variant)
+                        rootEntry.parts[#rootEntry.parts + 1] = root
+                        local tipEntry = groupFor("tip", variant)
+                        tipEntry.parts[#tipEntry.parts + 1] = tip
+                    else
+                        local entry = groupFor("root", variant)
+                        entry.parts[#entry.parts + 1] = { a, c1, c2, c }
+                    end
                 end
             end
         end
     end
-    -- A single matte paper-light brush stroke, not a dark halo/neon core.
-    nvgStrokeColor(ctx, rgba(PAPER_WAVE, nil, alpha))
-    nvgStrokeWidth(ctx, lineWidth * 0.86)
-    nvgStroke(ctx)
+    -- 晕染在最底、主体与尾尖在上：与贴图的「渗色边包着实笔」同序。
+    table.sort(order, function(left, right)
+        local leftRank = CREST_PART_RANK[left.kind] or 9
+        local rightRank = CREST_PART_RANK[right.kind] or 9
+        if leftRank ~= rightRank then return leftRank < rightRank end
+        return (left.variant or 0) < (right.variant or 0)
+    end)
+
+    for _, entry in ipairs(order) do
+        if #entry.parts > 0 then
+            nvgBeginPath(ctx)
+            for _, part in ipairs(entry.parts) do
+                nvgMoveTo(ctx, part[1].x, part[1].y)
+                if entry.kind == "line" then
+                    for index = 2, #part do
+                        nvgLineTo(ctx, part[index].x, part[index].y)
+                    end
+                else
+                    nvgBezierTo(ctx, part[2].x, part[2].y, part[3].x, part[3].y,
+                        part[4].x, part[4].y)
+                end
+            end
+            local width, partAlpha = lineWidth, alpha
+            if entry.kind == "halo" then
+                width, partAlpha = lineWidth * haloWidth, alpha * haloAlpha
+            elseif entry.kind == "tip" then
+                width = lineWidth * taperTip
+            elseif entry.kind == "companion" then
+                width, partAlpha = lineWidth * 0.72, alpha * 0.55
+            end
+            -- A single matte paper-light brush stroke, not a dark halo/neon core.
+            nvgStrokeColor(ctx, rgba(
+                (entry.variant == 1 and settings.crestAltColor) or settings.crestColor,
+                PAPER_WAVE, partAlpha))
+            nvgStrokeWidth(ctx, width * 0.86)
+            nvgStroke(ctx)
+        end
+    end
 end
 
 local function drawSurfaceLayer(ctx, movement, time, settings, bounds, horizonAtX,
@@ -442,12 +582,19 @@ local function drawSurfaceLayer(ctx, movement, time, settings, bounds, horizonAt
                 -- making marks jump or swim when the camera moves.
                 local jitterX = ((indexX * 0.754877666 + indexY * 0.569840291) % 1 - 0.5) * spacing * 0.55
                 local jitterY = ((indexX * 0.438579021 + indexY * 0.819172513) % 1 - 0.5) * spacing * 0.55
-                local mark = surfaceMark(movement, addPoint(indexX * spacing + jitterX, worldY + jitterY), settings,
-                    time, indexX, indexY, movement.viewportWidth, movement.viewportHeight,
-                    horizonAtX, lengthScale, amplitudeScale, strokeWidthMeters)
-                if mark then
-                    rowMarks[#rowMarks + 1] = mark
-                    if drawn + #rowMarks >= settings.maxMarks then break end
+                -- 贴图式疏朗：按格哈希跳过一批格位（贴图笔触并非满屏等密，
+                -- 留白本身就是海面的一部分）。skipRatio=0 时等同历史口径。
+                local skipHash = (indexX * 0.121669 + indexY * 0.947474) % 1
+                if skipHash >= (settings.crestSkipRatio or 0) then
+                    local mark, companion = surfaceMark(movement,
+                        addPoint(indexX * spacing + jitterX, worldY + jitterY), settings,
+                        time, indexX, indexY, movement.viewportWidth, movement.viewportHeight,
+                        horizonAtX, lengthScale, amplitudeScale, strokeWidthMeters)
+                    if mark then
+                        rowMarks[#rowMarks + 1] = mark
+                        if companion then rowMarks[#rowMarks + 1] = companion end
+                        if drawn + #rowMarks >= settings.maxMarks then break end
+                    end
                 end
             end
             drawSurfaceRow(ctx, rowMarks, rowAnchor.scale, settings, layerWeight, isFarLayer)
