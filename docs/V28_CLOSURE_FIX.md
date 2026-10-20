@@ -173,3 +173,89 @@
 01 / 02 / 04 / 07 / 09 / 11 六项剩余候选仍未实现——上一轮已核实它们在封板工作簿与
 全部权威策划源中零命中，属 `PRODUCT_DECISION_REQUIRED`，需策划补齐后才能施工。
 详见 `docs/V28_FULL_CONTENT_CLOSURE.md` 第一节。
+
+---
+
+# 第二轮独立审查修复（2026-10-20，截止前最终施工）
+
+前置 HEAD `6618f3a`。本轮不再新建工具或基础设施，只关闭真实玩家入口缺口、
+归因 5 个红 suite、并把 V2.7/V2.8 的海上内容做成“能被发现”。
+
+## 一、P1/P2 入口缺口
+
+| 编号 | 症状 | 根因 | 修复 |
+|---|---|---|---|
+| P1-01 | 苹果 / 鱼饵 / 沙丁鱼 / 金枪鱼从背包点【丢弃】**全部丢不掉** | `DropItem` 用 `Items.CanWorldDrop` 当判据，四个生态物都走 WorldDrop；背包丢弃没有海面坐标 → 正式 Bridge 一律回滚 | 判据改为“本次是否真有投放选点”。无选点 = 销毁腾格；有选点 = 交接世界。鱼饵保留船边投饵语义，为那一次交接临时补船位选点并在结束后恢复 |
+| P1-02 | 独立道具栏【给老人】点一次无反应 | HUD 直接调 `ShowV28TreasureToElder`，而 Loop 要求老人对话已打开 | 先 `SetElderOpen(true)`，成功后再展示（不消耗），与背包物品同一路径 |
+| P2-01 | 苹果/小鱼投海眼只得到通用“已交接投放请求” | `HandleVortexDrop` 只返回一个表，调用点却解包 `(handled, result)` → `result` 恒 nil，两个专属分支永不命中 | 按真实返回值接收，四种投放各有专属反馈 |
+| P2-02 | 不可丢弃物品“回调里有原因，但按钮永远点不到” | 真实引擎 `SetDisabled(true)` 拦截点击，原因只写在回调里 | 改为「禁用按钮 + 同屏原因文字」 |
+| P2-03 | 破网两鱼：第二条生成失败时第一条留在世界 | 只 `return false`，未清理已生成个体 | 记录已生成 id，失败时统一 `world:remove` 并清 behaviors |
+| P2-04 | 浮藻 80m 只验证逻辑条件，没验证真的画了 | — | 补真实 `SeaDraw.Scene` 绘制级用例（80m 内有填充 / 超过 80m 零填充 / 20m 识破后换藻层配色） |
+
+## 二、红 suite 归因
+
+| suite | 定性 | 处理 |
+|---|---|---|
+| AutoNavigationTests | **REAL_BUG** | 见下节 |
+| Circle1HUDReviewTests | STALE_TEST | 物品菜单已改名「使用/给老人/丢弃」，fixture 仍点 `button("给予")`，模糊匹配命中了老人卡的「给予 ▸」分类键。改为精确「给老人」 |
+| SeaDayNightCycleTests | STALE_TEST | 正式规则 60/30（`config/gameplay.lua`），套件硬编码 120/60 并把它写成“既有配置”。改为从 GameClock 取 DAY_SEC/NIGHT_SEC |
+| ShipScareTests | STALE_TEST | 鱼感知 0.2s 节流（`Fish.perceptionIntervalSec`，由 Circle1B5FishPerceptionTests 守护）。旧断言要求下一帧即 Flee。改为推进一个感知窗口后断言真实契约 |
+| OceanImageCatalogTests | STALE_TEST（假阴性） | 纹理 flag 断言只列 `waterpaper`/`sea_surface` 前缀，漏了同为重复纹理的 `sea_ripple_overlay`。改为按 catalog 的 `repeatTexture` 判定 |
+
+## 三、AutoNavigation 真实 bug
+
+**症状**：船在岛边（或港口回港走廊上）点自动返航，直接 `no_viable_detour`。
+
+**根因（两层）**：
+1. 六座**实体阻挡**变体岛全部挤在港口 70m 内，木桶距港 15.2m 且 r2+8m 裕度 = 11.8m。
+   船一起航就可能已经在**邻障碍**的 8m 裕度圈内，于是两条切线航段都被判“切入裕度圈”。
+2. 起点、障碍、港口三点共线时两条切线平行，`tangentLineIntersection` 返回 nil，
+   一个候选都产不出来。
+
+**修复（`Ocean/AutoNavigation.lua`）**：
+- `effectiveMargin()`：裕度圈已包含起点的障碍，只保留**硬碰撞圈**（radius + shipRadius）。
+  硬圈在任何情况下都不放宽，因此不会让船能撞上障碍。
+- `generateCandidates()`：切线法产不出候选时，回退到裕度圈上的两个侧向点；
+  `candidateValid()` 照旧做完整裕度/世界边界校验。
+
+**布点（`Ocean/Config.lua`）**：六岛从 70m 簇散到 60~135m 四象限，
+间距保持 ≥ r_i+r_j+4m；木桶 14,6 → 34,10（仍在出港第一屏可见，`ClipPolygon=48`，
+且不再压在回港走廊上）。
+
+**证据**：48 个 departure × level × heading 组合全部抵达、碰撞 0 次
+（修复前 24 个直接起航失败）；全图 20m 网格可行起点从 95/955 不可达降到 4 个共线退化点，
+且这 4 点已被共线回退覆盖。
+
+## 四、可发现性（许愿式优化，共 1 轮）
+
+- `reef_vis_02/03` 从 110,-80 / 160,-115 外移到 150,-92 / 200,-140，
+  三块礁石形成可读的东南向链条，而不是同一片水域里的三个重叠点。
+- **线索文案改为与实际方位一致**（指向错方向的线索比没有线索更糟）：
+  - `reef_vis_01`「西北方向」→「北边」（island_02 实际正北 36m）
+  - `reef_vis_02` 羽毛「东南」→「东北」（它引导的礁石链在东北）
+  - `reef_vis_03`「再往东南望去，一座海岛」→「再往西北望去」（礁石群实际西北 118m，
+    旧文案指向空海）
+
+未移动：island_01/02、水下宝藏、木板、沉船、两个漂流瓶、巨骨、海眼、破网、浮藻假岛。
+所有封板规则（近港禁大鱼、海眼半径、破网互斥、浮藻钥匙链）不受影响。
+
+## 五、结果
+
+| 项目 | 本轮前 | 本轮后 |
+|---|---|---|
+| `run_sea_view_regression` | 71/76（5 红） | **76/76 PASS** |
+| `run_world_content` | 342/342 | **344/344 PASS, 0 skipped** |
+| Lua 语法 | 177 文件 0 失败 | 177 文件 0 失败 |
+| LSP 错误 | 20（基线） | 20（同集合，行号偏移） |
+| Maker Preview | 曾进入首帧 | **进入首帧**（`[SeaV1] first frame rendered`），无新增 Lua fatal |
+
+Preview 日志里仅有的两条 ERROR 是既有引擎资源缺失
+（`Cube/Day/DaySpecularHDR.dds`、`themis_x64.dll`），非本轮引入。
+
+## 六、仍需人工判断
+
+`GUI_ACCEPTANCE=HUMAN_REQUIRED`。以下只能真人看画面/手感：
+- 六岛散开后近港是否仍然“有东西可看”而不是空旷；
+- 三条礁石线索链的实际可读性（文案已对齐方位，但节奏与密度需要眼睛）；
+- 海眼/巨骨/浮藻假岛在正常航行中是否真的会被注意到；
+- 丢弃/投放两个入口在真实触摸下是否不再混淆。
