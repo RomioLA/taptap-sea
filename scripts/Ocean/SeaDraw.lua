@@ -62,12 +62,20 @@ local function entityHeading(entity)
     return heading
 end
 
--- 海鸥立牌的屏幕空间最小翼展（像素）。2026-10-19 真机二轮反馈：俯冲姿态下翼展
--- 缩到 0.68m，远处按透视折算后不足 ImageArt.UPRIGHT_MIN_PX=2 亚像素剔除线，
--- 立牌返回 false 回退 WorldSeabird 矢量折线鸟——真机天空呈现三只白色折线鸟。
--- 给一个可见下限（略高于剔除线，保证 nvgImagePattern 取到有效像素），远处海鸥
--- 即便透视缩到亚像素也照常贴水彩立牌，不再掉回矢量。
-local BIRD_MIN_SCREEN_SPAN_PX = 3
+-- 海鸥立牌的屏幕空间最小翼展（像素）。
+-- 2026-10-19 真机二轮反馈：俯冲姿态下翼展缩到 0.68m，远处按透视折算后不足
+-- ImageArt.UPRIGHT_MIN_PX=2 亚像素剔除线，立牌返回 false 回退 WorldSeabird
+-- 矢量折线鸟。因此需要一个“技术不被剔除”的下限。
+-- 2026-10-20 真人试玩 RCA（HUMAN-PLAYTEST-RCA-FIX-01）：这个 3px 只是**技术**
+-- 下限（刚过剔除线），远低于**玩家可辨识**下限——真人反馈“鸟确实生成了，但屏幕
+-- 上几乎看不见”。现在把两个概念分开：
+--   · BIRD_MIN_SCREEN_SPAN_PX —— 玩家可辨识下限（首轮试玩值 10px），
+--     决定立牌实际画多大；
+--   · BIRD_RASTER_MIN_SPAN_PX —— 引擎亚像素剔除线，只用作“完全不可见”兜底。
+-- 只改 presentation，不动鸟与小鱼对应关系、出现条件、鱼 AI、捕鱼范围。
+local BIRD_MIN_SCREEN_SPAN_PX = 10
+-- 引擎侧亚像素剔除线（ImageArt.UPRIGHT_MIN_PX=2）上方的最低安全值。
+local BIRD_RASTER_MIN_SPAN_PX = 3
 -- 立牌水平镜像死区（cos heading 的绝对值）：正前/正后飞时 cos≈0，若跟随符号翻转
 -- 会每帧抖动，故 ±0.26 内一律不翻转（≈ ±15°），保留"明显朝左/朝右"的朝向可读性。
 local BIRD_FLIP_DEADZONE = 0.26
@@ -402,6 +410,219 @@ local function drawFixedWreck(ctx, runtime, entity)
     end)
 end
 
+-- V2.8 固定海上内容的占位渲染（用户规则：占位优先复用几何/色块/文字，
+-- 不制作正式美术）。正式美术接入时只需替换本函数，不改玩法逻辑。
+local V28_PALETTE = {
+    reef = { fill = { 122, 132, 118, 210 }, ink = { 196, 206, 186, 235 } },
+    debris = { fill = { 168, 138, 100, 200 }, ink = { 226, 202, 158, 235 } },
+    bottle = { fill = { 150, 210, 206, 205 }, ink = { 226, 248, 240, 240 } },
+    bones = { fill = { 226, 224, 208, 190 }, ink = { 250, 248, 232, 235 } },
+    vortex = { fill = { 78, 128, 158, 170 }, ink = { 176, 226, 238, 230 } },
+    net = { fill = { 150, 140, 110, 200 }, ink = { 214, 200, 160, 235 } },
+    kelp = { fill = { 88, 138, 96, 190 }, ink = { 176, 216, 158, 225 } },
+    wreck = { fill = { 128, 116, 100, 205 }, ink = { 208, 194, 170, 235 } },
+}
+
+local function v28EntityOk(world, entity)
+    return type(world) == "table" and type(world.fixedContentEntities) == "table"
+        and type(entity.contentId) == "string"
+        and world.fixedContentEntities[entity.contentId] == entity
+        and type(world.get) == "function" and world:get(entity.id) == entity
+        and not entity.removed and entity.alive ~= false
+        and finite(entity.position.x) and finite(entity.position.y)
+end
+
+-- 浮藻假岛（kelp_mirage_01）是「海面假象」：策划要求 80m 内显岛影轮廓、20m 内识破为藻层。
+-- 它登记在 underwater 层（水下货箱在藻层下方，需探海镜标记），但岛影本身必须从海面可见，
+-- 否则无探海镜时 isVisible 恒为 false，80m 轮廓永远不会绘制（本函数即为此补正）。
+local function v28SurfaceIllusion(entity)
+    return entity.entityType == "kelp"
+end
+
+-- 2026-10-20：V2.8 固定海上节点从矢量占位升级为正式水彩素材。
+-- 映射依据 assets/image/OceanArtCollection/manifest.json：
+--   debris      -> debris_01        （漂浮木板带）
+--   wreck       -> shipwreck_01     （水下旧木船）
+--   bones       -> leviathan_bones_01（巨兽骸骨）
+--   vortex      -> sea_eye_vortex_01（常态）/ sea_eye_vortex_01_boost（投放增强态）
+--   bottle      -> bottle_note_01   （漂流瓶）
+-- 贴图尺寸只由**世界尺寸**决定（不按像素推断玩法），绘制失败/未接入时退回
+-- 原有矢量占位（ART_PIPELINE §2.3：不得为了换美术删除回退路径）。
+local V28_TEXTURE = {
+    debris = "debris_01",
+    wreck = "shipwreck_01",
+    bones = "leviathan_bones_01",
+    vortex = "sea_eye_vortex_01",
+    bottle = "bottle_note_01",
+}
+-- 素材是正俯视水彩绘本（ART_PIPELINE §3），因此用世界平面投影 Plane。
+-- visualRadius 给出的是“岛影/油环”这类视觉外接半径；素材内容框长宽比不等，
+-- 这里按世界直径等比投放，不拉伸素材。
+local function v28PlaneTexture(ctx, movement, entity, name, worldDiameter, heading, alpha)
+    if type(Art.Plane) ~= "function" then return false end
+    local ok, drawn = pcall(Art.Plane, ctx, name, movement, entity.position,
+        worldDiameter, worldDiameter, heading or 0, 0, alpha)
+    return ok and drawn == true
+end
+
+---海眼是否处于“投放增强态”。
+---只用世界已有的 `vortexBoost` 临时诱饵**只读派生**，不新增状态位、不写存档。
+---@param world table
+---@return boolean
+local function vortexBoostedFromWorld(world)
+    if type(world) ~= "table" or type(world.entities) ~= "table" then return false end
+    for _, candidate in ipairs(world.entities) do
+        if not candidate.removed and candidate.kind == "temporary" then
+            local payload = candidate.payload
+            if type(payload) == "table" and payload.vortexBoost == true then return true end
+        end
+    end
+    return false
+end
+
+local function drawV28Node(ctx, runtime, entity, contentId, marked, recognized, picked)
+    local palette = V28_PALETTE[entity.entityType]
+    if not palette then return end
+    local movement, point = runtime.movement, entity.position
+    local radius = math.max(1.2, finite(entity.radius) and entity.radius or 2)
+    local visual = finite(entity.visualRadius) and entity.visualRadius or radius
+
+    -- ① 贴图优先。worldDiameter 用视觉半径×2（缺省时用碰撞半径×2）——
+    -- 世界米制尺寸是唯一口径，素材像素分辨率不参与玩法。
+    if not picked and V28_TEXTURE[entity.entityType] then
+        local textureName = V28_TEXTURE[entity.entityType]
+        -- 海眼：投放增强态（世界里有 vortexBoost 临时诱饵时）换 boost 素材。
+        if entity.entityType == "vortex" and vortexBoostedFromWorld(runtime.world) then
+            textureName = "sea_eye_vortex_01_boost"
+        end
+        local worldDiameter = visual * 2
+        -- 漂流瓶体量小，用碰撞半径的两倍作世界直径更贴近“一只瓶子”的观感。
+        if entity.entityType == "bottle" then worldDiameter = radius * 2 end
+        if v28PlaneTexture(ctx, movement, entity, textureName, worldDiameter) then
+            -- 贴图成功：保留“已标记”的完成记号（不重复画矢量主体）。
+            if marked then
+                local markX, markY = point.x + visual * 0.9, point.y + visual * 0.9
+                worldLine(ctx, movement, { x = markX - 0.8, y = markY },
+                    { x = markX - 0.2, y = markY - 0.7 }, { 255, 218, 150, 235 }, 1.8)
+                worldLine(ctx, movement, { x = markX - 0.2, y = markY - 0.7 },
+                    { x = markX + 0.9, y = markY + 0.7 }, { 255, 218, 150, 235 }, 1.8)
+            end
+            return
+        end
+    end
+
+    if entity.entityType == "reef" then
+        -- 礁石：三层不规则色块，保持 blocking 体积不变。
+        Geometry.WorldCircle(ctx, movement, point, visual, palette.fill, palette.ink, 1.4)
+        Geometry.WorldCircle(ctx, movement, { x = point.x + visual * 0.4, y = point.y - visual * 0.3 },
+            visual * 0.5, palette.fill, palette.ink, 1.0)
+        Geometry.WorldCircle(ctx, movement, { x = point.x - visual * 0.45, y = point.y + visual * 0.25 },
+            visual * 0.42, palette.fill, palette.ink, 1.0)
+    elseif entity.entityType == "debris" then
+        for index = -1, 1 do
+            local offset = index * visual * 0.55
+            Geometry.WorldPolygon(ctx, movement, {
+                { x = point.x + offset - visual * 0.5, y = point.y + visual * 0.2 },
+                { x = point.x + offset + visual * 0.5, y = point.y + visual * 0.05 },
+                { x = point.x + offset + visual * 0.45, y = point.y - visual * 0.18 },
+                { x = point.x + offset - visual * 0.45, y = point.y - visual * 0.1 },
+            }, palette.fill, palette.ink, 1.0)
+        end
+    elseif entity.entityType == "bottle" then
+        if picked then return end
+        Geometry.WorldCircle(ctx, movement, point, visual, palette.fill, palette.ink, 1.3)
+        Geometry.WorldCircle(ctx, movement, point, visual * 0.35, palette.ink, nil, 0)
+    elseif entity.entityType == "bones" then
+        -- 巨骨：横贯的脊骨 + 肋条（只在探海镜/水下可见时绘制）。
+        worldLine(ctx, movement, { x = point.x - visual * 2.4, y = point.y },
+            { x = point.x + visual * 2.4, y = point.y }, palette.ink, 2.2)
+        for index = -3, 3 do
+            local x = point.x + index * visual * 0.65
+            worldLine(ctx, movement, { x = x, y = point.y },
+                { x = x + visual * 0.4, y = point.y - visual * 1.1 }, palette.ink, 1.4)
+            worldLine(ctx, movement, { x = x, y = point.y },
+                { x = x + visual * 0.4, y = point.y + visual * 1.1 }, palette.ink, 1.4)
+        end
+        Geometry.WorldCircle(ctx, movement, point, visual * 1.6, nil, palette.ink, 1.0)
+    elseif entity.entityType == "vortex" then
+        -- 海眼：同心环 + 中心暗点；中心 3m 禁网区用深色小圈表达。
+        for ring = 1, 3 do
+            Geometry.WorldCircle(ctx, movement, point, visual * (0.35 + ring * 0.22),
+                nil, palette.ink, 1.2)
+        end
+        Geometry.WorldCircle(ctx, movement, point, visual * 0.18, palette.fill, palette.ink, 1.2)
+    elseif entity.entityType == "net" then
+        Geometry.WorldCircle(ctx, movement, point, visual, palette.fill, palette.ink, 1.4)
+        for index = -1, 1 do
+            worldLine(ctx, movement, { x = point.x - visual, y = point.y + index * visual * 0.45 },
+                { x = point.x + visual, y = point.y - index * visual * 0.45 }, palette.ink, 1.0)
+        end
+    elseif entity.entityType == "kelp" then
+        -- 浮藻假岛：80m 内显未知轮廓，20m 内识破为藻层。
+        local radiusForView = recognized and visual * 0.55 or visual
+        Geometry.WorldCircle(ctx, movement, point, radiusForView,
+            recognized and palette.fill or { 150, 170, 150, 90 }, palette.ink, 1.4)
+        if recognized then
+            for index = -2, 2 do
+                local offset = index * radiusForView * 0.32
+                worldLine(ctx, movement, { x = point.x + offset, y = point.y - radiusForView * 0.7 },
+                    { x = point.x + offset * 0.6, y = point.y + radiusForView * 0.7 }, palette.ink, 1.0)
+            end
+        end
+    elseif entity.entityType == "wreck" then
+        local size = visual * 1.6
+        Geometry.WorldPolygon(ctx, movement, {
+            { x = point.x - size, y = point.y },
+            { x = point.x - size * 0.5, y = point.y - size * 0.55 },
+            { x = point.x + size * 0.6, y = point.y - size * 0.5 },
+            { x = point.x + size, y = point.y + size * 0.1 },
+            { x = point.x + size * 0.4, y = point.y + size * 0.6 },
+            { x = point.x - size * 0.6, y = point.y + size * 0.55 },
+        }, palette.fill, palette.ink, 1.4)
+        worldLine(ctx, movement, { x = point.x - size * 0.5, y = point.y },
+            { x = point.x + size * 0.7, y = point.y }, palette.ink, 1.2)
+    end
+    -- 已标记：右上角小勾，与既有固定宝藏的完成记号同构。
+    if marked then
+        local markX, markY = point.x + visual * 0.9, point.y + visual * 0.9
+        worldLine(ctx, movement, { x = markX - 0.8, y = markY },
+            { x = markX - 0.2, y = markY - 0.7 }, { 255, 218, 150, 235 }, 1.8)
+        worldLine(ctx, movement, { x = markX - 0.2, y = markY - 0.7 },
+            { x = markX + 0.9, y = markY + 0.7 }, { 255, 218, 150, 235 }, 1.8)
+    end
+end
+
+-- V2.8 巨骨：海面 5m 内的深水慢气泡（与 A06 大鱼移动水花明显区分：
+-- 位置固定、上升缓慢、无方向尾迹）。只读固定坐标 + 运行时时间。
+local function drawLeviathanBubbles(ctx, runtime, time)
+    local world = runtime.world
+    if type(world) ~= "table" or type(world.fixedContentEntities) ~= "table" then return end
+    local entity = world.fixedContentEntities["leviathan_bones_01"]
+    if not entity or entity.removed or type(entity.position) ~= "table" then return end
+    local definition = entity
+    local bubble = { intervalSec = 1.5, surfaceRadius = 5 }
+    for _, item in ipairs(require("data.content").fixed) do
+        if item.contentId == "leviathan_bones_01" and type(item.bubble) == "table" then bubble = item.bubble end
+    end
+    local ship = runtime.ship
+    if type(ship) ~= "table" or type(ship.position) ~= "table" then return end
+    local dx = entity.position.x - ship.position.x
+    local dy = entity.position.y - ship.position.y
+    if dx * dx + dy * dy > (bubble.surfaceRadius or 5) ^ 2 then return end
+    local interval = bubble.intervalSec or 1.5
+    for index = 0, 2 do
+        local phase = ((time or 0) / interval + index * 0.37) % 1
+        local radius = 0.25 + phase * 0.55
+        local offset = math.sin(index * 2.1 + time * 0.4) * 1.1
+        local alpha = math.floor(210 * (1 - phase))
+        if alpha > 0 then
+            Geometry.WorldCircle(ctx, runtime.movement,
+                { x = entity.position.x + offset, y = entity.position.y + offset * 0.6 },
+                radius, nil, { 214, 240, 246, alpha }, 1.2)
+        end
+    end
+end
+
 local function drawPerception(ctx, movement, entity)
     local data = FishData[entity.species]
     if not data then return end
@@ -430,6 +651,43 @@ local function drawTarget(ctx, movement)
     nvgStrokeColor(ctx, color(Config.visual.target))
     nvgStrokeWidth(ctx, 1.5)
     nvgStroke(ctx)
+end
+
+-- 2026-10-20：屏幕四角压暗（vignette）。纯屏幕空间一次径向渐变填充。
+-- 为什么用径向渐变而不是四角四块：单次 nvgFill、无接缝、形状天然圆润，
+-- 不会在角落留下方形边界。内圈半径外才开始压暗，中心区严格不动，
+-- 保证船与近水交互点（礁石/漂流瓶/渔网）的可读性不被削弱。
+-- 层级：必须在整个世界层（含夜罩、雾、港口标记）之后，否则会被后续绘制抹掉。
+-- 不碰世界投影、不改任何实体或玩法状态；enabled=false 即完全回退。
+---@param ctx NVGContextWrapper
+---@param width number
+---@param height number
+---@return boolean drawn
+local function drawVignette(ctx, width, height)
+    local settings = Config.visual.vignette
+    if type(settings) ~= "table" or settings.enabled == false then return false end
+    if not finite(width) or not finite(height) or width <= 0 or height <= 0 then return false end
+    local strength = settings.strength
+    if not finite(strength) or strength <= 0 then return false end
+    local inner = settings.innerRadius
+    if not finite(inner) or inner < 0 then inner = 0.55 end
+    if inner >= 1 then return false end
+    local color = settings.color or { 26, 46, 58 }
+    -- 以外接圆为准：保证屏幕四角都落在渐变外缘，横屏竖屏行为一致。
+    local cx, cy = width * 0.5, height * 0.5
+    local outerRadius = math.sqrt(cx * cx + cy * cy)
+    local innerRadius = outerRadius * inner
+    local alpha = math.floor(math.max(0, math.min(1, strength)) * 255)
+    if alpha <= 0 then return false end
+    nvgSave(ctx)
+    nvgBeginPath(ctx)
+    nvgRect(ctx, 0, 0, width, height)
+    nvgFillPaint(ctx, nvgRadialGradient(ctx, cx, cy, innerRadius, outerRadius,
+        nvgRGBA(color[1], color[2], color[3], 0),
+        nvgRGBA(color[1], color[2], color[3], alpha)))
+    nvgFill(ctx)
+    nvgRestore(ctx)
+    return true
 end
 
 local function drawPortMark(ctx, runtime, width, height, horizon)
@@ -528,8 +786,14 @@ end
 local function drawCommuterFlock(ctx, width, height, runtime, isLocationRecognized)
     local layout = commuterFlockLayout(runtime, width, height, isLocationRecognized)
     if not layout then return 0 end
+    -- 2026-10-20 真人试玩 RCA（HUMAN-PLAYTEST-RCA-FIX-01）：通勤鸟群是 island_02 的
+    -- 唯一早期引导线索，但原 14 号屏幕尺寸在真机上偏小、难被注意到。
+    -- 首轮试玩值：整体视觉尺寸 ×1.6（14 -> 22.4）。
+    -- 只改 presentation：三只编队规则/只引导 island_02/识别后消失全部不变，
+    -- 不新增地图箭头、UI 导航线或新系统。
+    local COMMUTER_BIRD_SCREEN_SCALE = 14 * 1.6
     for _, bird in ipairs(layout.birds) do
-        Draw.WorldSeabird(ctx, bird.x, bird.y, 14, layout.bearingRadians, 0)
+        Draw.WorldSeabird(ctx, bird.x, bird.y, COMMUTER_BIRD_SCREEN_SCALE, layout.bearingRadians, 0)
     end
     return #layout.birds
 end
@@ -673,9 +937,39 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
             if isVisible(world, entity) then
                 drawFixedWreck(ctx, runtime, entity)
             end
+        elseif not entity.removed and entity.kind == "fixed" and V28_PALETTE[entity.entityType]
+            and v28EntityOk(world, entity) then
+            -- V2.8 固定海上内容：水下节点只在探海镜/水下可见时绘制，
+            -- 已标记/已识别的节点保持常驻记号（与固定宝藏同口径）。
+            local marked, recognized = false, false
+            if type(isWorldContentMarked) == "function" then
+                local ok, value = pcall(isWorldContentMarked, entity.contentId)
+                marked = ok and value == true
+            end
+            -- 20m 识破后改画藻层（drawV28Node 依赖该标志切换轮廓半径）。
+            if type(isLocationRecognized) == "function" then
+                local ok, value = pcall(isLocationRecognized, entity.contentId)
+                recognized = ok and value == true
+            end
+            -- 浮藻假岛的 80m 岛影是海面假象：不依赖探海镜可见性，按 outlineDistance 绘制。
+            local illusion = false
+            if v28SurfaceIllusion(entity) then
+                local ship = runtime.ship
+                if type(ship) == "table" and type(ship.position) == "table" then
+                    local dx = entity.position.x - ship.position.x
+                    local dy = entity.position.y - ship.position.y
+                    illusion = dx * dx + dy * dy <= Config.interaction.outlineDistance ^ 2
+                end
+            end
+            if entity.layer == "underwater" then
+                if marked or illusion or isVisible(world, entity) then
+                    drawV28Node(ctx, runtime, entity, entity.contentId, marked, recognized, false)
+                end
+            end
         end
     end
     Art.Wake(ctx, movement, movement.wake)
+    drawLeviathanBubbles(ctx, runtime, time)
     local snapshot = type(runtime.GetFixedBarrel) == "function" and runtime:GetFixedBarrel() or nil
     for _, entry in ipairs(surfaceEntries(runtime, entities)) do
         local entity, point = entry.entity, entry.position
@@ -704,6 +998,25 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
                         if world and entity == world.fixedBarrel then
                             drawFixedBarrel(ctx, runtime, entity, snapshot, isLocationRecognized)
                         else drawFloat(ctx, movement, entity, false, false, time) end
+                    elseif entity.kind == "fixed" and V28_PALETTE[entity.entityType]
+                        and v28EntityOk(world, entity) then
+                        -- V2.8 海面固定节点：礁石/木板/漂流瓶/海眼/破渔网/浮藻假岛。
+                        local marked = false
+                        if type(isWorldContentMarked) == "function" then
+                            local ok, value = pcall(isWorldContentMarked, entity.contentId)
+                            marked = ok and value == true
+                        end
+                        local picked = false
+                        if type(runtime.GetV28Picked) == "function" then
+                            local ok, value = pcall(runtime.GetV28Picked, runtime, entity.contentId)
+                            picked = ok and value == true
+                        end
+                        local recognized = false
+                        if type(isLocationRecognized) == "function" then
+                            local ok, value = pcall(isLocationRecognized, entity.contentId)
+                            recognized = ok and value == true
+                        end
+                        drawV28Node(ctx, runtime, entity, entity.contentId, marked, recognized, picked)
                     elseif entity.entityType == "droppedItem" then drawDroppedItem(ctx, movement, entity)
                     elseif entity.species then drawFish(ctx, movement, entity, flags.showActivity, time) end
                 elseif entry.kind == "rise" then
@@ -751,6 +1064,8 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
                     -- 第三返回值即米→像素的 scale），故先取 scale。
                     local _, _, spanScale = Projection.Project(movement, point, birdAltitude)
                     if type(spanScale) == "number" and spanScale > 0 then
+                        -- 先保证过剔除线（技术下限），再抬到玩家可辨识下限。
+                        birdWidth = math.max(birdWidth, BIRD_RASTER_MIN_SPAN_PX / spanScale)
                         birdWidth = math.max(birdWidth, BIRD_MIN_SCREEN_SPAN_PX / spanScale)
                     end
                     if not ImageArt.Upright(ctx, ecoFrameName("eco_bird", time, 0), movement,
@@ -785,6 +1100,10 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
         end
     end
     drawTarget(ctx, movement)
+    -- 2026-10-20：四角压暗必须压在**所有世界与信号层之后**（含夜罩/雾/港口标记），
+    -- 否则会被后续绘制抹掉。放在 showBounds 之前：调试可视化不被压暗，
+    -- 保证调试读数仍然清楚。
+    drawVignette(ctx, width, height)
     if flags.showBounds then
         local half = Config.world.halfSize
         Geometry.WorldPolygon(ctx, movement, { { x = -half, y = -half }, { x = half, y = -half },

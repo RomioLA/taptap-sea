@@ -32,8 +32,8 @@
 ## 二、文案裁决与仍待确认的内容
 
 - **W-05 救活结局正文**：2026-10-19 用户确认采用现版「改变结局｜有人同行」；旧稿「安稳」不再作为候选。
-- **W-08 三枚记忆碎片正文**：方向已纠正为「主角自己的童年记忆」，具体三段待文案方回填；未自行新写环境记忆。
-- **W-08 技术接入与数据契约**：`scripts/data/memory_fragments.lua` 按现有 reward ID 记录 `contentId`、主题、内部工作标题及可回填的 `playerTitle` / `body`。内部工作标题只供定位，不显示给玩家；当前正式标题和正文均未回填。领奖成功后仅在开始时未持有且当前 `player.treasures[rewardId] == true`、正文含非空白字符时，复用现有剧情模态；正文缺失或空白时不弹模态，保留原领奖 ActionToast。模态期间暂不交付该 toast，关闭后按现有 ack 链消费；不新增存档标记。
+- **W-08 三枚记忆碎片正文**：V2.8 封板已定稿三段主角童年记忆（《有人牵着我的手》《第一次自己走远》《那盏还亮着的灯》），已于 2026-10-19 回填到 `scripts/data/memory_fragments.lua`，详见 `docs/V28_SEA_CONTENT_IMPLEMENTATION.md`。
+- **W-08 技术接入与数据契约**：`scripts/data/memory_fragments.lua` 按现有 reward ID 记录 `contentId`、主题、内部工作标题及可回填的 `playerTitle` / `body`。内部工作标题只供定位，不显示给玩家；V2.8 封板后正式标题与正文均已回填。领奖成功后仅在开始时未持有且当前 `player.treasures[rewardId] == true`、正文含非空白字符时，复用现有剧情模态；正文缺失或空白时不弹模态，保留原领奖 ActionToast。模态期间暂不交付该 toast，关闭后按现有 ack 链消费；不新增存档标记。
 
   | reward ID | fixed content ID | 主题 | 内部工作标题 |
   |---|---|---|---|

@@ -54,10 +54,11 @@ local HUD = {}
 ---@field itemId string
 
 local presentation = require("Gameplay.HUDPresentation").Create(UI, Config, Items)
+-- V2.8（W-08 定稿）：三枚记忆碎片使用正式标题，不再使用“岛屿记忆一/海底记忆”。
 local MEMORY_TREASURE_LABELS = {
-    memory_island_01 = "岛屿记忆一",
-    memory_island_02 = "岛屿记忆二",
-    memory_treasure_01 = "海底记忆",
+    memory_island_01 = "《有人牵着我的手》",
+    memory_island_02 = "《第一次自己走远》",
+    memory_treasure_01 = "《那盏还亮着的灯》",
 }
 local MEMORY_TREASURE_ORDER = { "memory_island_01", "memory_island_02", "memory_treasure_01" }
 -- A 任务：只读事实性现象文案（鸟影下的空隙 / 退潮的箭头）。仅消费 SurfaceSignals
@@ -72,6 +73,19 @@ local UI_SIZE = presentation.UI_SIZE
 local makeThemer = presentation.makeThemer
 local makeLabel = presentation.makeLabel
 local fishDisplay = presentation.fishDisplay
+-- 2026-10-20：物品行图标（用户供的 V2.8 美术合集）。
+-- 图集由 tests/prepare_item_icon_atlas.py + tests/pack_watercolor_ui.py 生成，
+-- 走既有 UI.Sprite 通道（与状态图标条/图鉴同源），不另建图片系统。
+-- 未登记的 itemId 不画图标（保持原纯文字行，零回归）。
+local ITEM_ICON_SHEET = "image/WatercolorUI/item_icons.json"
+local ITEM_ICON_FRAMES = {
+    sea_note_01 = "sea_note",
+    sea_note_02 = "sea_note",
+    abyss_pearl = "abyss_pearl",
+    coral_branch = "coral_branch",
+    shipwreck_jewelry = "jewelry",
+}
+local ITEM_ICON_SIZE = 24
 local modeText = presentation.modeText
 local makeInfoLabel = presentation.makeInfoLabel
 local infoLine = presentation.infoLine
@@ -148,6 +162,8 @@ function HUD.Create(loop, parent, debugTools)
         throwPickerOpen = false,
         itemRowRecords = {},
         tabSkinApplied = nil,
+        -- V2.8：破渔网双分支面板当前目标 contentId（nil = 面板关闭）。
+        netChoiceContentId = nil,
     }
     ---@type table<string, any>
     local refs = {}
@@ -557,6 +573,70 @@ local header = UI.Panel {
         end
     end, "primary", 142)
     refs.worldContentAction:SetVisible(false)
+
+    -- V2.8：固定海上内容的动态场景按钮（观察礁石/木板/海眼、拾取漂流瓶、
+    -- 打捞沉船/货箱、处理破渔网）。捕鱼选点、投放选点与 4 秒动作期间统一隐藏。
+    local function readV28Prompt()
+        if type(loop.GetV28Prompt) ~= "function" then return nil end
+        local ok, prompt = Diagnostics.Call("HUD", "v28_prompt", loop.GetV28Prompt, loop)
+        if ok and type(prompt) == "table" and prompt.enabled == true
+            and type(prompt.operation) == "string" and type(prompt.contentId) == "string" then
+            return prompt
+        end
+        return nil
+    end
+    refs.v28Action = makeButton("观察", function()
+        local prompt = readV28Prompt()
+        if not prompt then refresh(); return end
+        if prompt.operation == "cancel" then
+            invokeLoop("CancelV28Action", prompt.token)
+        elseif prompt.operation == "observe" then
+            invokeLoop("ObserveV28Content", prompt.contentId)
+        elseif prompt.operation == "pickup" then
+            invokeLoop("PickupV28Content", prompt.contentId)
+        elseif prompt.operation == "net" then
+            local opened = invokeLoop("OpenTrappedNetChoice", prompt.contentId)
+            if opened then state.netChoiceContentId = prompt.contentId end
+            refresh()
+        elseif prompt.operation == "begin" then
+            invokeLoop("BeginV28Salvage", prompt.contentId)
+        end
+    end, "primary", 152)
+    refs.v28Action:SetVisible(false)
+
+    -- 破渔网双分支选择（0 体力打开；分支 A 40体力/4秒，分支 B 即时）。
+    refs.netChoicePanel = UI.Panel(UiKit.cardProps("panelLite", {
+        id = "v28NetChoicePanel",
+        position = "absolute", left = 24, top = 120, width = 300,
+        gap = 8, padding = 12,
+    }))
+    refs.netChoicePanel:AddChild(makeLabel("处理破渔网", UiKit.fontSize.teaching, UiKit.ink.title, "bold"))
+    refs.netChoiceText = makeLabel("", UiKit.fontSize.small, UiKit.ink.body)
+    refs.netChoicePanel:AddChild(refs.netChoiceText)
+    refs.netChoiceA = makeButton("强行收拢破网（40体力，4秒）", function()
+        local contentId = state.netChoiceContentId
+        state.netChoiceContentId = nil
+        refs.netChoicePanel:SetVisible(false)
+        if contentId then invokeLoop("ResolveTrappedNet", contentId, "A") end
+        refresh()
+    end, "primary", 260)
+    refs.netChoiceB = makeButton("割开破网解下钥匙（0体力，即时）", function()
+        local contentId = state.netChoiceContentId
+        state.netChoiceContentId = nil
+        refs.netChoicePanel:SetVisible(false)
+        if contentId then invokeLoop("ResolveTrappedNet", contentId, "B") end
+        refresh()
+    end, "secondary", 260)
+    refs.netChoiceCancel = makeButton("先不动它", function()
+        state.netChoiceContentId = nil
+        refs.netChoicePanel:SetVisible(false)
+        invokeLoop("CloseTrappedNetChoice")
+        refresh()
+    end, "secondary", 96)
+    refs.netChoicePanel:AddChild(refs.netChoiceA)
+    refs.netChoicePanel:AddChild(refs.netChoiceB)
+    refs.netChoicePanel:AddChild(refs.netChoiceCancel)
+    refs.netChoicePanel:SetVisible(false)
     refs.endToday = makeButton("结束今日", function() invokeLoop("EndToday") end, "primary", 98)
     -- 读取云存档/开始新周目移入信息滚动屏（低频港口操作，见 portPanel 段）。
     -- 背包开关（v2.1 批B 真机图1 修复）：背包已迁入信息滚动屏，按钮不再开关
@@ -633,6 +713,7 @@ local header = UI.Panel {
     dock:AddChild(refs.barrelToggle)
     dock:AddChild(refs.scopeToggleBar)
     dock:AddChild(refs.worldContentAction)
+    dock:AddChild(refs.v28Action)
     dock:AddChild(refs.inventoryToggle)
     dock:AddChild(refs.elderToggle)
     dock:AddChild(refs.depart)
@@ -653,6 +734,7 @@ local header = UI.Panel {
         { widget = refs.barrelToggle,     width = 132 },
         { widget = refs.scopeToggleBar,   width = 104 },
         { widget = refs.worldContentAction,width = 142 },
+        { widget = refs.v28Action,        width = 152 },
         { widget = refs.inventoryToggle,  width = 128 },
         { widget = refs.elderToggle,      width = 112 },
         { widget = refs.depart,           width = 80 },
@@ -906,6 +988,7 @@ local header = UI.Panel {
     refs.barrelPanel:AddChild(refs.barrelCancel)
     refs.barrelPanel:SetVisible(false)
     root:AddChild(refs.barrelPanel)
+    root:AddChild(refs.netChoicePanel)
 
     -- 望远镜状态行只读（信息滚动屏内）；开关入口收敛为按钮坞"望远镜"单按钮。
     refs.scopePanel = UI.Panel {
@@ -919,11 +1002,23 @@ local header = UI.Panel {
     refs.scopePanel:AddChild(refs.scopeStatus)
     content:AddChild(refs.scopePanel)
     -- 宝物是既有player.treasures状态，不占有限格inventory；开关复用既有探海镜入口。
+    -- V2.8 Closure：本卡原挂在永远隐藏的 gameplayInventoryDrawer 下
+    -- （refs.drawer:SetVisible(false) 写死），玩家实际看不到任何内容。
+    -- 现挂到常驻 cardHost，与背包/商店/老人三卡同级（卡自身仍需有持有时才显）。
     refs.treasurePanel = card("记忆与探海镜")
     refs.treasureSummary = makeLabel("已获得的记忆与探海镜会在此显示，不占船舱格。",
         UiKit.fontSize.teaching, UiKit.ink.dim)
     refs.treasurePanel:AddChild(refs.treasureSummary)
-    drawerContent:AddChild(refs.treasurePanel)
+    -- V2.8 Closure：独立道具栏（航海残页 / 生锈钥匙）的真实可点击操作入口。
+    -- 策划要求【使用】重读/查看、【给老人】展示、【丢弃】拒绝并给原因；
+    -- 不再只拼进 treasureSummary 文字。每帧按持有状态重建行，条目极少（≤3）。
+    refs.v28TreasureRows = UI.Panel {
+        width = "100%",
+        flexDirection = "column",
+        gap = 6,
+    }
+    refs.treasurePanel:AddChild(refs.v28TreasureRows)
+    cardHost:AddChild(refs.treasurePanel)
 
     -- v2.2 背包卡重构（信息完整 + 选项不被遮挡）：
     -- 旧结构问题：
@@ -2110,6 +2205,19 @@ local header = UI.Panel {
             }
             selectedBar:SetVisible(false)
             itemLine:AddChild(selectedBar)
+            -- 物品图标（可选）：图集里有该 itemId 的帧才插。
+            -- 位置在名称标签**之前**、同为 itemLine 的直属子节点，
+            -- 因此 Circle1B3SevenDays 的「标签 → label.parent → row.children 找按钮」
+            -- 契约不变（标签 parent 仍是 itemLine）。
+            local iconFrame = ITEM_ICON_FRAMES[itemId]
+            if iconFrame and type(UI.Sprite) == "function" then
+                itemLine:AddChild(UI.Sprite {
+                    src = ITEM_ICON_SHEET,
+                    frame = iconFrame,
+                    width = ITEM_ICON_SIZE,
+                    height = ITEM_ICON_SIZE,
+                })
+            end
             itemLine:AddChild(makeLabel(string.format("%02d · %s%s", itemIndex, name,
                 fishTag ~= "" and (" · " .. fishTag) or ""), UiKit.fontSize.teaching,
                 fishColor or UiKit.ink.title, "bold", { flexGrow = 1, flexBasis = 0 }))
@@ -2119,7 +2227,10 @@ local header = UI.Panel {
             end, "secondary", 58)
             itemActions:SetDisabled(actionsBlocked)
             itemLine:AddChild(itemActions)
-            if inPort and (itemId == "sardine" or itemId == "tuna") and definition then
+            local sellableRow = definition and definition.sellPrice and definition.sellPrice > 0
+                and not definition.independentBar
+                and (definition.category == "fish" or definition.category == "misc")
+            if inPort and sellableRow and definition then
                 local price = definition.sellPrice
                 local label = price and ("出售 ¥" .. tostring(price)) or "售价未定"
                 local sellButton = makeButton(label, function() invokeLoop("Sell", itemIndex, itemId, cargoRevision) end, "primary", 92)
@@ -2144,7 +2255,7 @@ local header = UI.Panel {
                 nil, { width = "100%" }))
             refs.inventoryRows:AddChild(inventoryRow)
 
-            if inPort and (itemId == "sardine" or itemId == "tuna") and definition then
+            if inPort and sellableRow and definition then
                 saleCount = saleCount + 1
                 -- ⚠️ 契约（Circle1B3SevenDaysTests:146-160）：测试用
                 -- "标签 %02d · 前缀 → 取 label.parent 当行 → 只在 row.children
@@ -2512,10 +2623,14 @@ local header = UI.Panel {
         local storyDialog
         if type(loop.GetStoryDialog) == "function" then
             local ok, value = pcall(loop.GetStoryDialog, loop)
+            -- P0（V2.8 Closure）：v28_note / v28_result 必须走正式 HUD 模态。
+            -- 漏掉这两种 kind 时 Loop 已经 clock:Pause("story")，但 HUD 不显示弹窗，
+            -- 造成“世界暂停、玩家看不到也关不掉”的隐形软锁。
             if ok and type(value) == "table"
                 and (value.kind == "paper" or value.kind == "elder" or value.kind == "elder_fate"
                     or value.kind == "teaching" or value.kind == "apple_basket"
-                    or value.kind == "memory_fragment")
+                    or value.kind == "memory_fragment"
+                    or value.kind == "v28_note" or value.kind == "v28_result")
                 and type(value.token) == "table" and type(value.text) == "string"
                 and (value.kind ~= "memory_fragment" or value.text:match("%S") ~= nil) then
                 storyDialog = value
@@ -2719,6 +2834,19 @@ local header = UI.Panel {
         local treasureSummary = hasLens
             and "探海镜 ×1 · 永久保留，不占船舱格，不能出售或丢弃。"
             or "尚未获得探海镜。"
+        -- V2.8：航海残页 / 生锈钥匙进入独立道具栏（不占普通船舱格）。
+        if type(loop.GetV28Treasures) == "function" then
+            local okBar, independent = pcall(loop.GetV28Treasures, loop)
+            if okBar and type(independent) == "table" and #independent > 0 then
+                local names = {}
+                for _, id in ipairs(independent) do
+                    local definition = Items.GetDefinition(id)
+                    names[#names + 1] = definition and definition.name or tostring(id)
+                end
+                treasureSummary = treasureSummary .. " 独立道具栏：" .. table.concat(names, "、")
+                    .. "（不占船舱格，不可出售或丢弃）。"
+            end
+        end
         if #ownedMemories > 0 then
             local names = {}
             for _, treasureId in ipairs(ownedMemories) do
@@ -2730,6 +2858,80 @@ local header = UI.Panel {
             treasureSummary = treasureSummary .. " 已获得的记忆会单独保留，不占船舱格。"
         end
         setText(refs.treasureSummary, "treasureSummary", treasureSummary)
+        -- V2.8 Closure：独立道具栏真实可点击操作行（航海残页重读 / 生锈钥匙查看 + 给老人）。
+        -- 条目极少（≤3），每帧重建代价可忽。
+        if refs.v28TreasureRows then
+            destroyChildren(refs.v28TreasureRows)
+            local okActs, acts = pcall(loop.GetV28TreasureActions, loop)
+            if okActs and type(acts) == "table" then
+                for _, entry in ipairs(acts) do
+                    local row = UI.Panel {
+                        width = "100%", flexDirection = "row", alignItems = "center", gap = 6,
+                    }
+                    -- 独立道具栏图标（可选）：图集里有该 id 的帧才插。
+                    local barIconFrame = ITEM_ICON_FRAMES[entry.treasureId]
+                    if barIconFrame and type(UI.Sprite) == "function" then
+                        row:AddChild(UI.Sprite {
+                            src = ITEM_ICON_SHEET,
+                            frame = barIconFrame,
+                            width = ITEM_ICON_SIZE,
+                            height = ITEM_ICON_SIZE,
+                        })
+                    end
+                    row:AddChild(makeLabel(entry.name, UiKit.fontSize.teaching,
+                        UiKit.ink.title, "bold", { flexGrow = 1, flexBasis = 0 }))
+                    local treasureId = entry.treasureId
+                    local useBtn = makeButton(entry.useLabel or "查看", function()
+                        invokeLoop("UseV28Treasure", treasureId)
+                        refresh()
+                    end, "secondary", 62)
+                    useBtn:SetDisabled(busy or entry.canUse ~= true)
+                    row:AddChild(useBtn)
+                    local giveBtn = makeButton("给老人", function()
+                        -- V2.8 Closure（第二轮审查）：Loop 的 ShowV28TreasureToElder 要求
+                        -- 老人对话已经打开（elder_dialog_required），否则直接失败。
+                        -- 旧实现直接调它，玩家点一次只能得到沉默或错误码。
+                        -- 这里与背包物品的「给老人」走同一条合法路径：先打开对话，
+                        -- 成功后再展示（展示不消耗）。
+                        local opened = invokeLoop("SetElderOpen", true)
+                        if opened and loop.elderOpen == true then
+                            local shown, feedback, exchange = invokeLoop("ShowV28TreasureToElder", treasureId)
+                            if shown then
+                                recordElderExchange(exchange, "展示 " .. entry.name, feedback)
+                            end
+                        end
+                        refresh()
+                    end, "secondary", 70)
+                    -- canGive 为假时保留按钮并置灰（不用置灰代替反馈：
+                    -- Loop 仍会给老人不在世等具体原因）。
+                    giveBtn:SetDisabled(busy or entry.canGive ~= true)
+                    row:AddChild(giveBtn)
+                    local discardBtn = makeButton("丢弃", function()
+                        invokeLoop("DiscardV28Treasure", treasureId)
+                        refresh()
+                    end, "secondary", 62)
+                    -- 策划：航海残页/生锈钥匙不可丢弃。
+                    -- V2.8 Closure（第二轮审查）：真实引擎里 SetDisabled(true) 会
+                    -- 拦掉点击，于是“回调里给原因”玩家永远看不到——原因只存在
+                    -- 于 Loop.lastMessage，而置灰按钮不会写它。
+                    -- 因此改为「禁用按钮 + 同屏明确原因文字」：
+                    -- 原因直接写在该行按钮旁边，玩家不用点也能读到为什么不能丢。
+                    local discardBlocked = entry.canDiscard ~= true
+                    discardBtn:SetDisabled(discardBlocked)
+                    row:AddChild(discardBtn)
+                    if discardBlocked and type(entry.discardDisabledReason) == "string"
+                        and entry.discardDisabledReason ~= "" then
+                        -- 独立道具栏条目极少（≤3），行内加一行小字不占版面，
+                        -- 且随条目重建，不会残留过期原因。
+                        row:AddChild(makeLabel(entry.discardDisabledReason,
+                            UiKit.fontSize.small, UiKit.ink.dim))
+                    end
+                    refs.v28TreasureRows:AddChild(row)
+                end
+            end
+            -- 独立道具栏空时不占版面；有持有时才显示该卡。
+            refs.treasurePanel:SetVisible(hasLens or #(refs.v28TreasureRows.children or {}) > 0)
+        end
         -- 信息滚动屏开合（真机反馈 2026-10-05）：纯派生态，不写用户偏好——
         -- · 需要点击海面的流程（捕鱼选点/投放选点）强制收起（流程结束自动恢复）；
         -- · 用户未操作过（nil）时：在港默认展开（商店/读取可用），出海默认收起；
@@ -2774,6 +2976,29 @@ local header = UI.Panel {
             setText(refs.worldContentAction, "worldContentActionLabel", contentPrompt.text)
             refs.worldContentAction:SetDisabled(busy or (contentPrompt.operation == "begin"
                 and (not ready or fishingRestricted)))
+        end
+        -- V2.8：固定海上内容的动态场景按钮。捕鱼/投放选点与 4 秒动作期间
+        -- Loop:GetV28Prompt 直接返回 nil，因此这里只跟随 prompt 显隐。
+        local v28Prompt = readV28Prompt()
+        refs.v28Action:SetVisible(not inPort and v28Prompt ~= nil)
+        if v28Prompt then
+            setText(refs.v28Action, "v28ActionLabel", v28Prompt.text)
+            refs.v28Action:SetDisabled(busy or (v28Prompt.operation == "begin"
+                and (not ready or fishingRestricted)))
+        end
+        -- 破渔网双分支面板：仅在显式打开时可见（0 体力打开，不暂停世界）。
+        local netChoiceOpen = state.netChoiceContentId ~= nil
+        refs.netChoicePanel:SetVisible(netChoiceOpen)
+        if netChoiceOpen then
+            local netContent = require("data.content")
+            local netText = "一团破损的旧渔网缠在海面浮木上，网眼里困着两条惊慌挣扎的小鱼，网绳死结处还挂着一把生锈的铜钥匙。"
+            for _, definition in ipairs(netContent.fixed) do
+                if definition.contentId == state.netChoiceContentId and definition.net
+                    and type(definition.net.choiceText) == "string" then
+                    netText = definition.net.choiceText
+                end
+            end
+            setText(refs.netChoiceText, "netChoiceText", netText)
         end
         -- V2.7（审查闭环 3-1 / 视听与交互 R12）：老人只要在世就始终与少年同行，
         -- 因此港口与海上都应提供「拜访老人」入口；离世后仍显示但只说明原因。
@@ -2971,8 +3196,10 @@ local header = UI.Panel {
         local sellableCount = 0
         for _, itemId in ipairs(items) do
             local definition = Items.GetDefinition(itemId)
-            if definition and definition.category == "fish"
-                and definition.sellPrice and definition.sellPrice > 0 then
+            -- V2.8：新增交易品（category=misc）同样可在港口出售。
+            if definition and definition.sellPrice and definition.sellPrice > 0
+                and not definition.independentBar
+                and (definition.category == "fish" or definition.category == "misc") then
                 sellableCount = sellableCount + 1
             end
         end
@@ -3091,6 +3318,10 @@ local header = UI.Panel {
             or storyDialog and storyDialog.kind == "memory_fragment"
                 and (type(storyDialog.title) == "string" and storyDialog.title:match("%S")
                     and storyDialog.title or "故事片段")
+            or storyDialog and storyDialog.kind == "v28_note"
+                and (type(storyDialog.title) == "string" and storyDialog.title:match("%S")
+                    and storyDialog.title or "航海残页")
+            or storyDialog and storyDialog.kind == "v28_result" and "发现"
             or "漂流瓶里的纸条"
         local overlayTitle = showEntry and "云存档" or showForced and "夜晚返港"
             or (showNewRunConfirm and "重新开始"

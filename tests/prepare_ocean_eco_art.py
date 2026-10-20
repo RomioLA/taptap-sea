@@ -62,6 +62,11 @@ def catalog_text():
     # 替代 SeaViewArt.Boat 的纯矢量艇身；尾流/横摇/footprint 仍由程序负责。
     boat_manifest = ROOT / "assets/image/OceanPlayerBoat/manifest.json"
     boat = json.loads(boat_manifest.read_text(encoding="utf-8")) if boat_manifest.exists() else {"assets": {}}
+    # OceanArtCollection（2026-10-20 用户供的 V2.8 美术合集）：V2.8 固定海上节点从
+    # 矢量占位升级为正式素材（debris/shipwreck/bones/vortex/bottle）+ 物品图标。
+    # 规格由 tests/prepare_ocean_art_collection.py 生成 manifest；清单缺失时按空合集处理。
+    art_manifest = ROOT / "assets/image/OceanArtCollection/manifest.json"
+    art = json.loads(art_manifest.read_text(encoding="utf-8")) if art_manifest.exists() else {"assets": {}}
     entries = {}
     # eco/SeaSurface 合集按条目自带 preload（per-entry，如 sea_surface_day/dusk=true、
     # night=false），其余合集沿用既有默认；与 prepare_ocean_ready_art.py 的 catalog_text
@@ -74,7 +79,8 @@ def catalog_text():
                                            (sea["assets"], False, True),
                                            (sky["assets"], False, True),
                                            (skydecor["assets"], False, True),
-                                           (boat["assets"], False, True)):
+                                           (boat["assets"], False, True),
+                                           (art["assets"], False, False)):
         for name, entry in collection.items():
             entries[name] = {**entry, "preload": entry.get("preload", preload) if per_entry else preload}
     selected = json.loads((WAVE2_OUT / "manifest.json").read_text(encoding="utf-8"))["assets"] \
@@ -88,7 +94,10 @@ def catalog_text():
             entries[name] = entry
     repeat_names = ("waterpaper", "waterpaper_story", "ocean_tile",
                     "sea_surface_day", "sea_surface_dusk", "sea_surface_night",
-                    "sea_ripple_overlay", "sky_day", "sky_dusk")
+                    "sea_ripple_overlay", "sky_day", "sky_dusk",
+                    # 近景海面动态层（2026-10-20）：运行期 UV 用的是无界世界平铺坐标，
+                    # 必须 REPEAT，否则出第一个瓦片就被 clamp 成边缘色/透明。
+                    "water_caustic_light", "water_caustic_light_alt", "water_dudv_flow")
     lines = ["-- 自动生成：python3 tests/prepare_ocean_eco_art.py；禁止手工编辑。",
              "-- 只含图片规格，不含实体、玩法数值或更新逻辑。", "return {"]
     for name, entry in sorted(entries.items()):

@@ -104,6 +104,8 @@ end
 
 local FIXED_CONTENT_ENTITY_TYPES = {
     island = true, treasure = true, wreck = true, reef = true, coral = true,
+    -- V2.8 第一批/第二批固定海上节点
+    debris = true, bottle = true, bones = true, vortex = true, net = true, kelp = true,
 }
 
 local function isFinitePoint(point)
@@ -210,6 +212,22 @@ function World:Init()
         end
     end
     assert(fixedTreasureCount == 1, "the existing fixed treasure is the only production treasure")
+    -- V2.8：固定阻塞节点（礁石/破渔网）也必须落在可航行海域，且彼此不重叠。
+    for _, object in ipairs(Content.fixed) do
+        if object.kind == "fixed" and object.blocking == true then
+            local entity = assert(self.fixedContentEntities[object.contentId])
+            local others = 0
+            for _, other in ipairs(self.blockingList) do
+                if other ~= entity and not other.removed then
+                    local dx, dy = entity.position.x - other.position.x, entity.position.y - other.position.y
+                    if dx * dx + dy * dy < (entity.radius + other.radius) ^ 2 then
+                        others = others + 1
+                    end
+                end
+            end
+            assert(others == 0, "fixed blocking content overlaps: " .. tostring(object.contentId))
+        end
+    end
     barrelGenerationCounter = barrelGenerationCounter + 1
     self.fixedBarrelGeneration = barrelGenerationCounter
     local barrel = Config.world.fixedBarrel
@@ -217,6 +235,9 @@ function World:Init()
     -- 真机反馈 #6（2026-10-04 用户验收）：木桶应和岛屿一样拥有碰撞实体。
     -- 固定身份与5米检查范围独立于碰撞；blocking 只影响航行阻挡。
     -- 注：B 侧 v2.2 曾改回 blocking=false，此处按用户显式反馈恢复，已同步适配测试。
+    -- V2.8：临时诱饵可在 payload 里声明更大的感知半径（海眼 60m 吸小鱼 / 90m 吸大鱼）。
+    -- World 维护“当前生效最大半径”索引，Fish 常规路径仍只做一次全表查询。
+    self.attractBoostRadius = {}
     self.fixedBarrel = self:spawn({ entityType = "float", kind = "fixed", layer = "surface",
         contentId = "driftwood_barrel", position = barrel.position, radius = barrel.radius,
         blocking = true })
@@ -255,9 +276,14 @@ function World:Init()
         assert(self.fixedContentEntities[island.contentId] == nil, "duplicate fixed contentId")
         assert(self:isPositionFree(island.position, island.radius),
             "fixed island " .. island.contentId .. " must be in open sea")
+        -- 2026-10-20 真人试玩修复（HUMAN-PLAYTEST-RCA-FIX-01）：
+        -- 这六座是可碰撞、看得见的实体岛，但原本“看得到却什么都做不了”。
+        -- 现在挂一句 0 体力环境观察（复用既有 observe 能力），kind 仍是 scenery、
+        -- 仍无奖励/无 memory/不写完成态；两座正式岛的【探索岛屿】不受影响。
         local entity = self:spawn({ entityType = island.entityType, kind = "scenery", layer = "surface",
             contentId = island.contentId, position = island.position,
-            radius = island.radius, blocking = island.blocking == true })
+            radius = island.radius, blocking = island.blocking == true,
+            observe = island.observe })
         self.fixedContentEntities[island.contentId] = entity
     end
 end
@@ -281,9 +307,16 @@ function World:RegisterFixedContent(definition)
 
     local position, positionError = resolveFixedContentPosition(self, definition)
     if not position then return nil, positionError end
+    -- V2.8 HUMAN-PLAYTEST-FIX-01：把作者的**表现尺寸**一并传给实体。
+    -- `visualRadius` 是纯展示字段（浮藻假岛 14m 岛影、海眼 6m 洋环），
+    -- 与碰撞/交互 `radius` 完全分离：SeaDraw 优先读它，缺失时回退到 radius。
+    -- 旧实现只白名单传递 radius，于是 kelp_mirage_01 的 14m 岛影退化成 2.5m，
+    -- 真人试玩完全看不到这个“假岛”。这里按字段透传而不是给 kelp 写特判，
+    -- 未来任何带 visualRadius 的 fixed content 都自动生效。
     local entity = self:spawn({ entityType = definition.entityType, kind = definition.kind,
         layer = definition.layer, contentId = definition.contentId, position = position,
-        radius = definition.radius, blocking = definition.blocking })
+        radius = definition.radius, visualRadius = definition.visualRadius,
+        blocking = definition.blocking })
     self.fixedContentEntities[definition.contentId] = entity
     self.fixedContentIds[#self.fixedContentIds + 1] = definition.contentId
     return entity
@@ -300,6 +333,10 @@ function World:spawn(spec)
         direction = { x = math.cos(spec.rotation or 0), y = math.sin(spec.rotation or 0) },
         active = spec.active ~= false, frozen = spec.frozen == true, state = spec.state or "Idle",
         radius = spec.radius or 0, blocking = spec.blocking == true, removed = false,
+        -- V2.8 HUMAN-PLAYTEST-FIX-01：纯展示尺寸透传（不参与碰撞/交互距离）。
+        visualRadius = spec.visualRadius,
+        -- 0 体力环境观察载荷（岛面描述）；未挂 observe 的实体保持 nil。
+        observe = spec.observe,
         species = spec.species, ordinaryFish = spec.ordinaryFish == true,
         itemId = spec.itemId, category = spec.category, worldEffect = spec.worldEffect or "NONE",
         contentId = spec.contentId,
@@ -319,6 +356,7 @@ function World:remove(id, reason, ownerToken)
     if not BaseWorld.RemoveEntity(self, id, reason, true) then return false end
     entity.captureLocked, entity.captureOwnerToken = false, nil
     self.overlaps[id] = nil
+    if type(entity.attractRadius) == "number" then self:refreshAttractBoostRadius(entity.worldEffect) end
     if self.surfaceSignals then self.surfaceSignals:OnRemoved(id) end
     return true
 end
@@ -580,9 +618,41 @@ function World:spawnDroppedItem(payload, position)
     local lifetime = payload.lifetimeSec or Config.world.temporaryLifetimeSec
     assert(type(lifetime) == "number" and lifetime > 0, "positive lifetimeSec required")
     assert(self:isPositionFree(position, 0), "drop must be inside playable sea")
-    return self:spawn({ entityType = "droppedItem", kind = "temporary", layer = "surface",
+    local entity = self:spawn({ entityType = "droppedItem", kind = "temporary", layer = "surface",
         position = position, radius = Config.world.overlapRadius, itemId = payload.itemId,
         category = payload.category, worldEffect = effect, lifetimeSec = lifetime })
+    -- V2.8 海眼：临时诱饵可显式声明更大的感知半径（60m/90m），
+    -- 由 Fish 查询时读取；诱饵过期/移除后索引自动回落。
+    local attractRadius = payload.attractRadius
+    if type(attractRadius) == "number" and attractRadius > 0 and attractRadius < math.huge then
+        entity.payload = { worldEffect = effect, attractRadius = attractRadius,
+            vortexBoost = payload.vortexBoost == true, source = payload.source }
+        entity.attractRadius = attractRadius
+        self:refreshAttractBoostRadius(effect)
+    end
+    return entity
+end
+
+-- 按 worldEffect 维护“当前生效最大感知半径”，避免 Fish 每次感知都全表扫描两遍。
+-- 只有携带更大半径的临时诱饵会抬高索引；诱饵过期后按剩余实体重算。
+function World:refreshAttractBoostRadius(effect)
+    local boost = self.attractBoostRadius or {}
+    self.attractBoostRadius = boost
+    if effect ~= nil and effect ~= "ATTRACT_SMALL_FISH" and effect ~= "ATTRACT_BIG_FISH" then
+        boost[effect] = nil
+        return
+    end
+    local effects = effect and { effect } or { "ATTRACT_SMALL_FISH", "ATTRACT_BIG_FISH" }
+    for _, key in ipairs(effects) do
+        local maximum = nil
+        for _, entity in ipairs(self.entities) do
+            if not entity.removed and entity.kind == "temporary" and entity.worldEffect == key
+                and type(entity.attractRadius) == "number" then
+                if not maximum or entity.attractRadius > maximum then maximum = entity.attractRadius end
+            end
+        end
+        boost[key] = maximum
+    end
 end
 
 function World:updateActivity(departure)

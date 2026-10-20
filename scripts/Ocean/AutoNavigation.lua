@@ -350,6 +350,25 @@ local function generateCandidates(start, goal, obstacle, shipRadius, margin, eps
                 start, goal, startTangent, goalTangent, epsilon)
         end
     end
+    -- 共线退化兜底（V2.8 截止前修复）：起点、障碍中心、港口几乎在一条直线上时，
+    -- 两侧切线平行 → tangentLineIntersection 返回 nil → 一个候选也没有，
+    -- 自动返航直接 no_viable_detour。玩家从远处直线驶向港口、恰好撞上这种
+    -- 几何时就会卡死（不是罕见角度，而是“直线回家”这个最常见意图）。
+    -- 兜底只在切线法真的产不出候选时才启用：取障碍圈上两个侧向切点作为中间航点，
+    -- 由 candidateValid 照旧做完整裕度/世界边界校验，不降低任何安全判定。
+    if result.left == nil or result.right == nil then
+        for _, side in ipairs({ "left", "right" }) do
+            if result[side] == nil then
+                local sign = side == "left" and 1 or -1
+                local offsetX = normalX * radius * sign
+                local offsetY = normalY * radius * sign
+                result[side] = {
+                    x = obstacle.position.x + offsetX,
+                    y = obstacle.position.y + offsetY,
+                }
+            end
+        end
+    end
     return result
 end
 
@@ -400,6 +419,26 @@ local function pointWithinWorld(point, limit)
         and math.abs(point.y) <= limit
 end
 
+-- 已包含起点的裕度圈不再要求“离开”：只保留硬碰撞圈。
+-- 真机根因（V2.8 截止前修复）：固定岛屿/木桶间距本来就小于 8m 裕度之和，
+-- 船停在岛边（或靠港）时起点已经落在另一件障碍的裕度圈内。旧实现要求
+-- 两条切线航段都不得触碰那个裕度圈，于是**任何**绕行候选都被判 no_viable_detour，
+-- 自动返航直接失败（玩家可复现）。
+-- 安全边界不变：硬圈（blocker.radius + shipRadius）在两种情况下都不放宽，
+-- 因此本修复不会让船能撞上障碍，只是不再要求它凭空“先离开一个已经身处的裕度圈”。
+---@param blocker table
+---@param start OceanPoint
+---@param shipRadius number
+---@param margin number
+---@param epsilon number
+---@return number
+local function effectiveMargin(blocker, start, shipRadius, margin, epsilon)
+    if margin <= 0 or not isPoint(start) then return margin end
+    local radius = blocker.radius + shipRadius + margin
+    if strictlyInside(start, blocker.position, radius, epsilon) then return 0 end
+    return margin
+end
+
 local function candidateValid(start, goal, candidate, obstacle, blockers, shipRadius, margin, halfSize, epsilon)
     if not isPoint(start) or not isPoint(goal) or not isPoint(candidate)
         or type(obstacle) ~= "table"
@@ -416,23 +455,25 @@ local function candidateValid(start, goal, candidate, obstacle, blockers, shipRa
     local limit = halfSize - shipRadius
     if not pointWithinWorld(candidate, limit) then return false, "world_bounds" end
 
-    local obstacleRadius = obstacle.radius + shipRadius + margin
+    local obstacleMargin = effectiveMargin(obstacle, start, shipRadius, margin, epsilon)
+    local obstacleRadius = obstacle.radius + shipRadius + obstacleMargin
     if strictlyInside(candidate, obstacle.position, obstacleRadius, epsilon) then
         return false, "no_viable_detour"
     end
     for _, blocker in ipairs(blockers) do
         if activeBlocker(blocker) and validBlockerShape(blocker, shipRadius, margin) then
-            local radius = blocker.radius + shipRadius + margin
+            local blockerMargin = effectiveMargin(blocker, start, shipRadius, margin, epsilon)
+            local radius = blocker.radius + shipRadius + blockerMargin
             if strictlyInside(candidate, blocker.position, radius, epsilon) then
                 return false, "no_viable_detour"
             end
-            if not segmentClearAgainst(start, candidate, blocker, shipRadius, margin, epsilon) then
+            if not segmentClearAgainst(start, candidate, blocker, shipRadius, blockerMargin, epsilon) then
                 return false, "no_viable_detour"
             end
         end
     end
-    if not segmentClearAgainst(start, candidate, obstacle, shipRadius, margin, epsilon)
-        or not segmentClearAgainst(candidate, goal, obstacle, shipRadius, margin, epsilon) then
+    if not segmentClearAgainst(start, candidate, obstacle, shipRadius, obstacleMargin, epsilon)
+        or not segmentClearAgainst(candidate, goal, obstacle, shipRadius, obstacleMargin, epsilon) then
         return false, "no_viable_detour"
     end
     return true
@@ -483,8 +524,12 @@ function Geometry.Plan(start, goal, blockers, shipRadius, halfSize, config)
         return { target = copyPoint(goal), kind = "direct" }
     end
 
+    -- 主障碍的裕度同样遵守“已身处则不重复要求”的规则（见 effectiveMargin）。
+    -- 否则船就停在礁石/岛屿边上时，切线切点根本不存在，一个候选也生成不了。
+    local obstacleMargin = effectiveMargin(
+        obstacle, start, shipRadius, settings.safetyMargin, settings.epsilon)
     local candidates = generateCandidates(
-        start, goal, obstacle, shipRadius, settings.safetyMargin, settings.epsilon)
+        start, goal, obstacle, shipRadius, obstacleMargin, settings.epsilon)
     local accepted = {}
     local reasons = {}
     for _, side in ipairs({ "left", "right" }) do

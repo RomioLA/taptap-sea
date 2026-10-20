@@ -139,6 +139,8 @@ def main():
         "tests.Circle1BFishingFlowTests",
         "tests.Circle1BPendingCatchTests",
         "tests.Circle1B3SevenDaysTests",
+        "tests.V28ContentTests",
+        "tests.V28ClosureFixTests",
     )
     suites = [run_module(name, LuaRuntime) for name in modules]
     suites.append(run_script("PersistenceRegressionSpec.lua", LuaRuntime))

@@ -34,6 +34,7 @@ local SeaDraw = require("Ocean.SeaDraw")
 local SeaViewArt = require("Ocean.SeaViewArt")
 local ImageArt = require("Ocean.ImageArt")
 local Config = require("Ocean.Config")
+local Content = require("data.content")
 
 local WIDTH, HEIGHT = 1280, 720
 local CLEARANCE = 4 -- 视觉间距裕量（isPositionFree 硬底线之外）
@@ -238,7 +239,8 @@ function Tests.Run(recorder)
         for _, entity in ipairs(world.entities) do
             if entity.kind == "fixed" then fixedKind = fixedKind + 1 end
         end
-        assert(fixedKind == 4, "kind==fixed count drifted: " .. fixedKind)
+        -- V2.8：固定海上内容增加 11 个节点；fixed 计数 = Content.fixed + 木桶。
+        assert(fixedKind == #Content.fixed + 1, "kind==fixed count drifted: " .. fixedKind)
         -- 实体体积：blockingList 必须含全部六岛，且各恰好一次。
         local blockedVariants = {}
         for _, entity in ipairs(world.blockingList) do

@@ -173,9 +173,9 @@ function Tests.Run()
 
     test("T08/T09 committed exploration and salvage toast exact memory and actual remaining stamina once", function()
         local cases = {
-            { contentId = "island_01", kind = "explore", label = "岛屿记忆一" },
-            { contentId = "island_02", kind = "explore", label = "岛屿记忆二" },
-            { contentId = "underwater_treasure_01", kind = "salvage", label = "海底记忆" },
+            { contentId = "island_01", kind = "explore", label = "《有人牵着我的手》" },
+            { contentId = "island_02", kind = "explore", label = "《第一次自己走远》" },
+            { contentId = "underwater_treasure_01", kind = "salvage", label = "《那盏还亮着的灯》" },
         }
         for _, case in ipairs(cases) do
             local loop = Loop.New()
@@ -190,6 +190,15 @@ function Tests.Run()
             loop:Update(3.99)
             eq(loop:GetActionToast(), nil, "incomplete action must not show a reward")
             loop:Update(0.01)
+            -- V2.8：W-08 正文已定稿，首次取得会先弹出标题+正文模态，
+            -- 既有奖励 toast 延后到模态关闭后交付（不新增 shown 存档）。
+            local dialog = assert(loop:GetStoryDialog(), "authored W-08 copy must open the story modal")
+            eq(dialog.kind, "memory_fragment")
+            eq(dialog.title, case.label:gsub("《(.-)》", "%1"),
+                "modal title must be the formal memory title")
+            assert(type(dialog.text) == "string" and dialog.text:match("%S"), "modal body must be authored")
+            assert(loop:NotifyStoryShown(dialog.token))
+            assert(loop:CloseStoryDialog())
             local toast = assert(loop:GetActionToast())
             assert(toast.text:find("获得记忆：" .. case.label, 1, true), "toast must name the committed memory")
             assert(toast.text:find(string.format("消耗40体力，剩余%d体力", loop.player.stamina), 1, true),
@@ -222,14 +231,17 @@ function Tests.Run()
             eq(fixedByReward[item.rewardId], item.contentId)
             eq(definition.theme, item.theme)
             eq(definition.workingTitle, item.workingTitle)
-            eq(definition.playerTitle, nil, "formal title is not authored yet")
-            eq(definition.body, nil, "formal player copy is not authored yet")
+            -- V2.8 封板：W-08 三段正文已定稿，playerTitle 与正文都必须存在。
+            eq(definition.playerTitle, item.workingTitle, "formal player title must match the authored copy")
+            assert(type(definition.body) == "string" and definition.body:match("%S"),
+                "formal player copy must be authored")
         end
     end)
 
     test("W-08 first ownership opens the existing story modal and defers its toast until close", function()
         local definition = MemoryFragmentData.memory_island_01
         withPatched(definition, "body", "writer-provided test copy", function()
+            withPatched(definition, "playerTitle", nil, function()
             local loop = Loop.New()
             local f = fixture(loop.player)
             loop.worldContentActions = f.actions
@@ -262,6 +274,7 @@ function Tests.Run()
             local repeated, reason = loop:BeginWorldContentAction("island_01", "explore")
             eq(repeated, false); eq(reason, "already_completed")
             eq(loop:GetStoryDialog(), nil, "an owned fragment must not display a second time")
+            end)
         end)
     end)
 
@@ -269,6 +282,7 @@ function Tests.Run()
         local definition = MemoryFragmentData.memory_island_02
         local function assertNoStory(body)
             withPatched(definition, "body", body, function()
+            withPatched(definition, "playerTitle", nil, function()
                 local loop = Loop.New()
                 local f = fixture(loop.player)
                 loop.worldContentActions = f.actions
@@ -279,8 +293,9 @@ function Tests.Run()
                 eq(state(f, "island_02").rewardOwned, true)
                 eq(loop:GetStoryDialog(), nil, "missing copy must not create a modal")
                 local toast = assert(loop:GetActionToast(), "existing reward feedback stays available")
-                assert(toast.text:find("获得记忆：岛屿记忆二", 1, true))
+                assert(toast.text:find("获得记忆：《第一次自己走远》", 1, true))
                 assert(loop.player.story.memoryFragments == nil, "no separate shown marker")
+            end)
             end)
         end
         assertNoStory(nil)

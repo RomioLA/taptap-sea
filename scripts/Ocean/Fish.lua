@@ -100,6 +100,10 @@ local function lengthSquared(x, y)
     return x * x + y * y
 end
 
+local function finitePositive(value)
+    return type(value) == "number" and value == value and value > 0 and value < math.huge
+end
+
 ---@param world table
 ---@param entity table
 ---@param speciesData table
@@ -259,6 +263,7 @@ function Fish:_findDanger()
 end
 
 ---@return table? attraction
+---@return number nearestDistanceSquared
 function Fish:_findAttraction()
     local data = self.speciesData
     local radius = data.attractRadius
@@ -267,10 +272,28 @@ function Fish:_findAttraction()
         or type(speed) ~= "number" or speed <= 0 then
         -- Missing/nonpositive species tuning disables attraction without discarding
         -- the effect payload. Official tuna tuning is supplied by FishData.
-        return nil
+        return nil, math.huge
     end
 
-    return self:_nearestEntity(radius, self.attractFilter, self.queryScratch)
+    local nearest, nearestDistanceSquared = self:_nearestEntity(radius, self.attractFilter, self.queryScratch)
+    if nearest then return nearest, nearestDistanceSquared end
+
+    -- V2.8 海眼：仅当世界里确实存在携带更大半径的临时诱饵时，才做第二次更宽查询。
+    -- 常规情况仍然只有 1 次全表查询（S1-d 节流契约不变）。
+    local boost = self.world.attractBoostRadius
+    local boostedRadius = type(boost) == "table" and boost[data.attractEffect] or nil
+    if not finitePositive(boostedRadius) or boostedRadius <= radius then
+        return nil, math.huge
+    end
+    nearest, nearestDistanceSquared = self:_nearestEntity(
+        boostedRadius, self.attractFilter, self.queryScratch)
+    if not nearest then return nil, math.huge end
+    local payload = nearest.payload
+    local effective = type(payload) == "table" and payload.attractRadius or radius
+    if not finitePositive(effective) or nearestDistanceSquared > effective * effective then
+        return nil, math.huge
+    end
+    return nearest, nearestDistanceSquared
 end
 
 ---@param candidate table?
@@ -465,6 +488,15 @@ function Fish:Update(dt)
     end
 
     dt = math.max(0, dt or 0)
+    -- V2.8：外部逃跑源有时效；到期后自然回到常规危险/诱饵/游荡判断。
+    local fleeSource = self.entity.fleeSource
+    if fleeSource then
+        self.entity.fleeSourceRemaining = (self.entity.fleeSourceRemaining or 0) - dt
+        if self.entity.fleeSourceRemaining <= 0 then
+            self.entity.fleeSource = nil
+            self.entity.fleeSourceRemaining = nil
+        end
+    end
     local data = self.speciesData
     ---@type string?
     local nextState = nil
@@ -493,7 +525,28 @@ function Fish:Update(dt)
         self.wasFleeing = false
     else
         self:_refreshPerception(dt)
-        local danger = self.dangerCache
+        -- V2.8 破渔网分支B：外部释放的鱼以“逃跑源”直接进入 Flee（7m/s 远离 + 上浮 2s）。
+        -- 这是既有 Flee 状态的一次外部触发，不新增 AI 状态；威胁优先级仍然最高。
+        local external = self.entity.fleeSource
+        if external then
+            local awayX, awayY = Math.normal(
+                self.entity.position.x - external.x,
+                self.entity.position.y - external.y
+            )
+            if awayX == 0 and awayY == 0 then awayX, awayY = directionFromAngle(self.entity.rotation or 0) end
+            nextState = "Flee"
+            targetAngle = angleOf(awayX, awayY)
+            speed = data.fleeSpeed or 0
+            fleeAwayX, fleeAwayY = awayX, awayY
+            self.wasFleeing = false
+            self:_updateFleeJitter(dt)
+            local jitter = self.fleeJitterRadians
+            if jitter ~= 0 then
+                local cosine, sine = math.cos(jitter), math.sin(jitter)
+                targetAngle = angleOf(awayX * cosine - awayY * sine, awayX * sine + awayY * cosine)
+            end
+        end
+        local danger = not nextState and self.dangerCache or nil
         if danger and not danger.removed then
             local awayX, awayY = Math.normal(
                 self.entity.position.x - danger.position.x,
@@ -513,7 +566,7 @@ function Fish:Update(dt)
             targetAngle = angleOf(jitteredX, jitteredY)
             speed = data.fleeSpeed or 0
             fleeAwayX, fleeAwayY = awayX, awayY
-        else
+        elseif not nextState then
             self.wasFleeing = false
             ---@type OceanFishPoint?
             local preyPosition = data.preySpecies and self:_getChaseTarget(dt) or nil

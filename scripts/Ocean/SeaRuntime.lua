@@ -172,12 +172,202 @@ function Runtime:refreshOrdinaryFish(daySeed, departure)
     -- Does not move the player, advance a day clock, reset fixed entities, or settle a day.
 end
 
+---查找固定内容实体（只读，不做邻接猜测）。
+---@param contentId string
+---@return table|nil, table|nil
+local function fixedContent(self, contentId)
+    if type(contentId) ~= "string" or not self.world or self.world.retired then return nil end
+    local entity = self.world.fixedContentEntities and self.world.fixedContentEntities[contentId]
+    if not entity or self.world:get(entity.id) ~= entity or entity.removed then return nil end
+    return entity, self.world.fixedContentEntities[contentId]
+end
+
+---V2.8 海眼：把正式 WorldDrop 转成 20 秒的扩域临时诱饵。
+---只有调用方已确认“正式投放”时才走这里；背包丢弃/鱼饵船边即时投饵不会调用。
+---@param payload table
+---@param position OceanPoint
+---@return table|nil, string|nil
+function Runtime:spawnVortexAttractant(payload, position)
+    local vortexConfig = Config.v28 and Config.v28.vortex or {}
+    local effect = payload.worldEffect or "NONE"
+    local radius
+    if effect == "ATTRACT_SMALL_FISH" then
+        radius = vortexConfig.smallFishAttractRadius or 60
+    elseif effect == "ATTRACT_BIG_FISH" then
+        radius = vortexConfig.bigFishAttractRadius or 90
+    else
+        return nil, "invalid_drop_position"
+    end
+    if M.distanceSquared(self.ship.position, position) > Config.interaction.maxThrowDistance^2 then
+        return nil, "throw_out_of_range"
+    end
+    if not self.world:isPositionFree(position, 0) then return nil, "invalid_drop_position" end
+    local boosted = {
+        itemId = payload.itemId,
+        category = payload.category,
+        worldEffect = effect,
+        lifetimeSec = vortexConfig.attractDurationSec or 20,
+        attractRadius = radius,
+        vortexBoost = true,
+        source = "sea_eye_vortex_01",
+    }
+    return self.world:spawnDroppedItem(boosted, position)
+end
+
 function Runtime:spawnDroppedItem(payload, position)
     if M.distanceSquared(self.ship.position, position) > Config.interaction.maxThrowDistance^2 then
         return nil, "throw_out_of_range"
     end
     if not self.world:isPositionFree(position, 0) then return nil, "invalid_drop_position" end
     return self.world:spawnDroppedItem(payload, position)
+end
+
+---V2.8 破渔网分支B：在固定内容处释放真实小鱼（Flee 上浮），不凭空生成大鱼。
+---策划要求 count=2 必须真的放走 2 条：先为全部 count 个个体预找合法位置，
+---任何一个找不到就整体失败且不生成任何鱼（不留半完成状态）。
+---@param contentId string
+---@param species string
+---@param count integer
+---@return boolean, string|nil
+function Runtime:ReleaseFishAtContent(contentId, species, count)
+    local entity = fixedContent(self, contentId)
+    if not entity then return false, "content_unavailable" end
+    local speciesData = require("Ocean.FishData")
+    if not speciesData[species] then return false, "unsupported_fish_species" end
+    count = math.floor(tonumber(count) or 0)
+    if count < 1 then return false, "invalid_fish_count" end
+
+    -- 阶段一：先为每一个个体找到合法位置。任何一个失败 → 整体放弃，不生成半套。
+    local positions = {}
+    for index = 1, count do
+        local placed
+        for _, radius in ipairs({ 4, 6, 9, 12 }) do
+            for attempt = 1, 16 do
+                local angle = (attempt / 16) * math.pi * 2 + index * 0.7
+                local position = { x = entity.position.x + math.cos(angle) * radius,
+                    y = entity.position.y + math.sin(angle) * radius }
+                local clear = self.world:isPositionFree(position, speciesData[species].radius)
+                if clear then
+                    -- 同批鱼之间也要留间距，否则两条会重叠。
+                    for _, taken in ipairs(positions) do
+                        local dx, dy = taken.x - position.x, taken.y - position.y
+                        if dx * dx + dy * dy < (speciesData[species].radius * 2) ^ 2 then
+                            clear = false
+                            break
+                        end
+                    end
+                end
+                if clear then
+                    placed = position
+                    break
+                end
+            end
+            if placed then break end
+        end
+        if not placed then return false, "fish_release_no_space" end
+        positions[index] = placed
+    end
+
+    -- 阶段二：全部位置已确认，统一生成并进入 Flee。
+    local spawned, spawnedIds = 0, {}
+    for index = 1, count do
+        local fish = self:spawnFish(species, positions[index], 0, true)
+        -- 直接进入 Flee 并上浮：由现有 FSM 的 Flee 状态承载，不新增 AI 状态。
+        -- fleeSource 让鱼在接下来的一段时间内持续远离释放点（7m/s + 上浮 2s）。
+        if fish then
+            fish.fleeSource = { x = entity.position.x, y = entity.position.y }
+            fish.fleeSourceRemaining = 4
+            fish.state = "Flee"
+            if fish.fsm then fish.fsm:Change("Flee") end
+            spawned = spawned + 1
+            spawnedIds[#spawnedIds + 1] = fish.id
+        end
+    end
+    if spawned ~= count then
+        -- V2.8 Closure（第二轮审查）：spawnFish 在位置已校验后仍失败属于异常。
+        -- 旧实现只 return false，**已生成的前几条鱼留在世界里**——玩家会看到
+        -- “破网判定失败但海面多了 1 条鱼”，钥匙也没拿到，属于半完成态。
+        -- 这里把已生成的个体全部撤掉（连同 behaviors 缓存），保证 0/2、1/2、2/2
+        -- 三种结果对外只有“全成”或“全无”。
+        for _, fishId in ipairs(spawnedIds) do
+            self.world:remove(fishId, "release_rollback")
+            if self.behaviors then self.behaviors[fishId] = nil end
+        end
+        return false, "fish_release_incomplete"
+    end
+    self.world:updateActivity(self.ship.position)
+    return true
+end
+
+---V2.8 海眼：正式 WorldDrop 是否落在海眼核心 ≤5m 内。
+---@param position OceanPoint
+---@return boolean, table|nil
+function Runtime:IsInsideVortexDropRadius(position)
+    local entity = fixedContent(self, "sea_eye_vortex_01")
+    if not entity then return false, nil end
+    local vortexConfig = Config.v28 and Config.v28.vortex or {}
+    local dropRadius = vortexConfig.dropRadius or 5
+    if M.distanceSquared(entity.position, position) > dropRadius * dropRadius then
+        return false, entity
+    end
+    return true, entity
+end
+
+---V2.8 海眼：正式 WorldDrop 的扩域诱饵。苹果/鱼饵 → 60m 吸小鱼；小鱼 → 90m 吸大鱼。
+---只影响真实存在的鱼，不凭空生成；大鱼由 Gameplay 走每周目一次珍珠原子结算。
+---@param payload table
+---@param position OceanPoint
+---@return table|nil, string|nil
+function Runtime:HandleVortexDrop(payload, position)
+    local inside, entity = self:IsInsideVortexDropRadius(position)
+    if not inside then return nil, "outside_vortex" end
+    local effect = payload.worldEffect or "NONE"
+    if effect == "ATTRACT_SMALL_FISH" then
+        local attractant, reason = self:spawnVortexAttractant(payload, position)
+        if not attractant then return nil, reason end
+        return { kind = "small", attractRadius = attractant.attractRadius,
+            entityId = attractant.id, vortexId = entity and entity.id }
+    elseif effect == "ATTRACT_BIG_FISH" then
+        local attractant, reason = self:spawnVortexAttractant(payload, position)
+        if not attractant then return nil, reason end
+        return { kind = "big", attractRadius = attractant.attractRadius,
+            entityId = attractant.id, vortexId = entity and entity.id }
+    end
+    -- 大鱼（NONE）：不生成世界诱饵，由调用方完成珍珠原子结算。
+    return { kind = "big_fish", vortexId = entity and entity.id }
+end
+
+---V2.8 海眼：核心 <3m 禁止作为捕鱼网心；外缘仍可正常下网。
+---@param center OceanPoint
+---@return boolean, string|nil
+function Runtime:IsFishingCenterAllowed(center)
+    local entity = fixedContent(self, "sea_eye_vortex_01")
+    if not entity then return true end
+    local vortexConfig = Config.v28 and Config.v28.vortex or {}
+    local noNet = vortexConfig.noNetRadius or 3
+    if M.distanceSquared(entity.position, center) < noNet * noNet then
+        return false, "vortex_core_no_net"
+    end
+    return true
+end
+
+---V2.8 漂流瓶拾取态：由 Gameplay 注入的只读查询（残页持有派生）。
+---@param contentId string
+---@return boolean
+function Runtime:GetV28Picked(contentId)
+    if type(self.isV28Picked) == "function" then
+        local ok, value = pcall(self.isV28Picked, contentId)
+        return ok and value == true
+    end
+    return false
+end
+
+---V2.8 巨兽骸骨：海面 5m 内的慢气泡提示（只读，供绘制使用）。
+---@return table|nil
+function Runtime:GetVortexCenter()
+    local entity = fixedContent(self, "sea_eye_vortex_01")
+    if not entity then return nil end
+    return { x = entity.position.x, y = entity.position.y }
 end
 
 -- Public boundary for orchestration layers; position reads never expose mutable sea state.
@@ -391,11 +581,15 @@ local function currentFixedContent(world, contentId)
         or type(world.fixedContentEntities) ~= "table" then return nil end
     local entity = world.fixedContentEntities[contentId]
     if not entity or type(world.get) ~= "function" or world:get(entity.id) ~= entity
-        or entity.removed or entity.alive == false or entity.kind ~= "fixed"
-        or entity.contentId ~= contentId or not validBarrelPoint(entity.position)
+        or entity.removed or entity.alive == false or entity.contentId ~= contentId
+        or not validBarrelPoint(entity.position)
         or not isFiniteNumber(entity.radius) or entity.radius < 0 then
         return nil
     end
+    -- V2.8 HUMAN-PLAYTEST-FIX-01：scenery 类实体也能参与“固定内容只读查询”，但仅限
+    -- 带了 0 体力 observe 载荷的（六座可碰撞变体岛）。其余 scenery（礁石/海岸底图/
+    -- 岛饰）继续不可交互，保持“实体≠可交互”的既有分层；kind=="fixed" 计数契约不变。
+    if entity.kind ~= "fixed" and type(entity.observe) ~= "table" then return nil end
     return entity
 end
 
@@ -529,6 +723,8 @@ end
 -- World-side selection only: one nearest live fish or nil, including hidden/frozen fish.
 -- Config owns net radius; the future action completes before removal of this one selected ID.
 function Runtime:canCastNet(center)
+    -- V2.8 海眼：核心 <3m 禁止作为网心；外缘 ≥3m 仍可正常下网。
+    if not self:IsFishingCenterAllowed(center) then return false end
     return self.world:isPositionFree(center, 0)
         and M.distanceSquared(self.ship.position, center) <= Config.fishing.maxCastDistance^2
 end

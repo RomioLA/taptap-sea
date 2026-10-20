@@ -43,4 +43,10 @@ for _, row in ipairs(FishRows) do
     fish.minShipSpawnDistance = row.spawn.minDistFromBoat
     fish.minSpawnDistance = row.spawn.minDistFromDayStart
 end
+-- V2.8 海眼：允许单个临时诱饵在 payload.attractRadius 里声明更大感知半径。
+-- 这是查询上限，不是鱼种全局感知；诱饵不在场时行为不变。
+local v28 = Config.v28 or {}
+local vortex = v28.vortex or {}
+FishData.sardine.attractMaxRadius = vortex.smallFishAttractRadius or 60
+FishData.tuna.attractMaxRadius = vortex.bigFishAttractRadius or 90
 return FishData

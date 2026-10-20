@@ -17,14 +17,33 @@ function Tests.Run()
     local created, deleted, failedPath = {}, {}, ""
     -- 基础 preload + W2 海鸥/浪花候选 + 四个 story 目标；船贴图与完整岛屿
     -- 候选保留在素材清单，但不替换主线矢量船和分层岛屿的运行目录项。
-    local startupNames = { "island", "barrel", "gull", "ripple", "waterpaper",
-        "gull_dive", "splash", "island_story", "barrel_story", "gull_story", "waterpaper_story",
-        "sea_surface_day", "sea_surface_dusk", "sea_ripple_overlay" }
+    -- 2026-10-20：清单改由 catalog 的 preload 标记 + ArtVariants 的 story 目标
+    -- 推导，不再手写名单——否则每加一张预载图（近景焦散 water_caustic_light）
+    -- 都要改测试，而测的其实是「Art.Load 是否履行了 catalog 声明」。
+    local catalog = require("GeneratedData.OceanImageCatalog")
+    local startupNames, seenStartup = {}, {}
+    local function addStartup(name)
+        if not seenStartup[name] then
+            seenStartup[name] = true
+            startupNames[#startupNames + 1] = name
+        end
+    end
+    for name, spec in pairs(catalog) do
+        if spec.preload then addStartup(name) end
+    end
+    -- story 变体 preload=false，但 Art.Load 在 ArtVariants 开启时会连带预载。
+    for _, name in ipairs(ArtVariants.StoryTargets()) do addStartup(name) end
+    table.sort(startupNames)
     local startupCount = #startupNames
     local a, b, c = {}, {}, {}
     NVG_IMAGE_GENERATE_MIPMAPS, NVG_IMAGE_REPEATX, NVG_IMAGE_REPEATY = 1, 2, 4
     nvgCreateImage = function(ctx, path, flags)
-        created[#created + 1] = { ctx = ctx, path = path, flags = flags }
+        -- 记下 path → catalog 名，后续按 catalog 的真实 repeatTexture 判定标志位。
+        local name
+        for candidate, spec in pairs(require("GeneratedData.OceanImageCatalog")) do
+            if spec.path == path then name = candidate; break end
+        end
+        created[#created + 1] = { ctx = ctx, path = path, flags = flags, name = name }
         if path == failedPath then return -1 end
         return #created
     end
@@ -53,8 +72,12 @@ function Tests.Run()
         -- 2026-10-15 修复前此处锁定 #created==6（story 变体无加载路径的 bug 契约）；
         -- 现在 ArtVariants 开启时 Load 必须连带预载 4 个 story 目标
         -- （boat_story 于 2026-10-16 随船贴图移除）。
-            assert(Art.IsLoaded(a, name))
+            assert(Art.IsLoaded(a, name), name .. " 声明 preload=true 却没有在 Art.Load 装入")
         end
+        assert(Art.IsLoaded(a, "sea_surface_day") and Art.IsLoaded(a, "sea_ripple_overlay"),
+            "海面底图/波纹层必须启动即载（首帧即需）")
+        assert(Art.IsLoaded(a, "water_caustic_light"),
+            "近景焦散 preload=true：必须在启动期解码，避免首帧尖峰")
         for _, name in ipairs(ArtVariants.StoryTargets()) do
             assert(Art.GetSpec(name), name .. " 必须在 catalog 中存在")
             assert(Art.IsLoaded(a, name), name .. " 必须随变体开启预载")
@@ -63,9 +86,14 @@ function Tests.Run()
         assert(not Art.IsLoaded(a, "sea_surface_night"),
             "夜图 preload=false：不随场景启动加载（SeaDebug/后续方案）")
         for _, entry in ipairs(created) do
-            local repeated = entry.path:find("waterpaper", 1, true)
-                or entry.path:find("sea_surface", 1, true)
-            assert(entry.flags == (repeated and 7 or 1))
+            -- 重复纹理（catalog repeatTexture=true）才带 REPEATX|REPEATY|MIPMAPS=7。
+            -- 2026-10-20：旧断言只列 waterpaper / sea_surface 两个前缀，
+            -- 漏掉了同为 repeatTexture 的 sea_ripple_overlay（波纹平铺层），
+            -- 于是把正确的 7 误判成回归。改为按 catalog 的真实标志判定。
+            local spec = assert(Art.GetSpec(entry.name or ""), "created image must come from the catalog")
+            local expected = spec.repeatTexture and 7 or 1
+            assert(entry.flags == expected,
+                entry.path .. " flags=" .. tostring(entry.flags) .. " expected=" .. tostring(expected))
         end
     end)
     check("story 变体目标清单与 catalog 一一对应", function()

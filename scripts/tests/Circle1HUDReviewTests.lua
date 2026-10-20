@@ -223,7 +223,10 @@ function Tests.Run()
             assert(loop:SetInventoryOpen(true)); hud.Refresh()
             button(hud.root, "操作").props.onClick()
             local stamina = loop.player.stamina
-            button(hud.root, "给予").props.onClick()
+            -- V2.8 Closure：物品菜单的三操作已统一为「使用／给老人／丢弃」，
+            -- 旧的模糊匹配「给予」会命中老人卡的一级键「给予 ▸」（不是物品按钮）。
+            -- 这里必须点物品菜单里真实的「给老人」，否则验的不是玩家入口。
+            exactButton(hud.root, "给老人").props.onClick()
             assert(loop.elderOpen and loop.clock.pauseReasons.elder)
             assert(#loop.player.inventory:GetItems() == 1 and loop.player.inventory:GetItems()[1] == "bait")
             assert(loop.player.stamina == stamina and loop:GetElderStatus().applesGiven == 1)
@@ -238,7 +241,8 @@ function Tests.Run()
             assert(not loop:IsElderPresent())
             assert(loop:SetInventoryOpen(true)); hud.Refresh()
             button(hud.root, "操作").props.onClick()
-            local give = button(hud.root, "给予")
+            -- 同上去模糊匹配：点物品菜单真实的「给老人」。
+            local give = exactButton(hud.root, "给老人")
             assert(not give.disabled); give.props.onClick()
             assert(not loop.elderOpen and #loop.player.inventory:GetItems() == 1)
             -- V2.7：老人离世后的统一拒绝语。
@@ -253,7 +257,7 @@ function Tests.Run()
         local oldUI, oldHUD = package.loaded["urhox-libs/UI"], package.loaded["Gameplay.HUD"]
         package.loaded["urhox-libs/UI"], package.loaded["Gameplay.HUD"] = uiHost(), nil
         local hud = require("Gameplay.HUD").Create(env.loop)
-        button(hud.root, "操作").props.onClick(); button(hud.root, "给予").props.onClick()
+        button(hud.root, "操作").props.onClick(); exactButton(hud.root, "给老人").props.onClick()
         assert(env.loop.elderOpen and env.loop.inventoryOpen and #env.loop.player.inventory:GetItems() == 4)
         assert(env.loop:GetElderStatus().applesGiven == 1)
         assert(env.loop:SetElderOpen(false)); hud.Refresh()

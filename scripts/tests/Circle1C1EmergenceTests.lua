@@ -25,6 +25,14 @@ local EXPECTED = {
         rewardId = "memory_treasure_01", markable = true },
 }
 
+-- V2.8：11 个新增固定海上节点（3 礁石 + 木板 + 沉船 + 2 漂流瓶 + 巨骨 + 海眼 + 破网 + 浮藻假岛）。
+-- 只登记“必须稳定存在”的字段，具体交互契约由 V28ContentTests 守护。
+local V28_NODES = {
+    "reef_vis_01", "reef_vis_02", "reef_vis_03", "debris_01", "shipwreck_01",
+    "bottle_note_01", "bottle_note_02", "leviathan_bones_01", "sea_eye_vortex_01",
+    "trapped_net_01", "kelp_mirage_01",
+}
+
 local function eq(actual, expected, label)
     assert(actual == expected, (label or "value mismatch") .. ": expected " .. tostring(expected)
         .. ", got " .. tostring(actual))
@@ -102,7 +110,7 @@ function Tests.Run()
     end
 
     test("T01 fixed content migration preserves all V25 fields", function()
-        eq(#Content.fixed, #EXPECTED, "production fixed content count")
+        eq(#Content.fixed, #EXPECTED + #V28_NODES, "production fixed content count")
         local seaWorld = World.New()
         for index, expected in ipairs(EXPECTED) do
             local definition = Content.fixed[index]
@@ -125,8 +133,20 @@ function Tests.Run()
             eq(entity.position.x, expected.x)
             eq(entity.position.y, expected.y)
             eq(entity.radius, expected.radius)
-            eq(entity.layer, expected.layer)
+            eq(entity.layer, definition.layer)
             eq(entity.blocking, expected.blocking)
+        end
+        -- V2.8 节点全部注册且坐标与 data.content 一致。
+        local byId = {}
+        for _, definition in ipairs(Content.fixed) do byId[definition.contentId] = definition end
+        for _, contentId in ipairs(V28_NODES) do
+            local definition = assert(byId[contentId], "missing V2.8 node " .. contentId)
+            local entity = assert(seaWorld.fixedContentEntities[contentId], "unregistered " .. contentId)
+            eq(entity.position.x, definition.position.x, contentId .. " x")
+            eq(entity.position.y, definition.position.y, contentId .. " y")
+            eq(entity.radius, definition.radius, contentId .. " radius")
+            eq(entity.layer, definition.layer, contentId .. " layer")
+            eq(entity.blocking, definition.blocking, contentId .. " blocking")
         end
         eq(Config.world.fixedObjects[1], Content.fixed[1], "island compatibility view 1")
         eq(Config.world.fixedObjects[2], Content.fixed[2], "island compatibility view 2")

@@ -61,8 +61,14 @@ local Config = {
     -- 非阻挡漂浮物，靠近 ≤ operateDistance(5m) 可检查（World:Init 注册）。
     -- 真机反馈（2026-10-05）：原演示漂浮物 float(10,0) 无任何玩法功能，
     -- 在返航点旁渲染为无意义圆形色块，已删除。
-    fixedBarrel = { position = { x = 14, y = 6 }, radius = 2,
-        tuningStatus = "TUTORIAL_PROVISIONAL_GEOMETRY" },
+    -- 2026-10-20：14,6 距港口 15.2m，r2 + 8m 安全裕度 = 11.8m，正好压在回港走廊上，
+    -- 是所有“直线回港”被 no_viable_detour 拒绝的主因（船一从港口方向驶回就撞上它的
+    -- 裕度圈）。
+    -- 新位置 34,10（距港 35.4m，东北向）：仍在出港第一屏可见（木桶剪影不被地平线
+    -- 切线剔掉，Circle1A2BarrelRenderTests 的 barrel+distance 出发点也全部落在
+    -- 可航行海域），不再骑在港口正前航道，也不再与 island_01 的裕度圈叠加。
+    fixedBarrel = { position = { x = 34, y = 10 }, radius = 2,
+        tuningStatus = "V28_DISCOVERABILITY_GEOMETRY" },
     -- C2（2026-10-17）：主场景组件世界放置（assets/image/OceanComponents，oblique 海面组件）。
     -- 与 fixedObjects（冻结的双岛集）/fixedTreasure 并列的独立清单：World:Init 以
     -- kind="scenery" 注册的非阻挡装饰实体，不影响航行/捕鱼/交互，仅 SeaDraw 贴图渲染。
@@ -92,25 +98,64 @@ local Config = {
     -- 半径×12/512（island_01 口径）取整；坐标满足 isPositionFree（避 island_01
     -- r12 / island_02 r20 / barrel r2 碰撞圈，彼此视觉间距 ≥ r_i+r_j+4）。
     -- 放置参数待真机观感调校。
+    -- 2026-10-20（V2.8 截止前可发现性 + 自动返航修复）：旧坐标把六座**实体阻挡**岛全部
+    -- 挤在港口 70m 内（55,-20 / 70,10 / 5,55 / -15,40 / -30,-15 / 20,-30）。后果有两个：
+    --  ① 出港第一眼全是岛，后面 V2.7/V2.8 的海上内容全被遮在背后，玩家反馈“东西好像
+    --     都没放到海上”；
+    --  ② 岛与岛之间的间隙普遍小于自动返航的 8m 安全裕度之和，船在岛边起航时起点
+    --     已经落在邻岛的裕度圈里，自动返航直接 no_viable_detour（真实玩家可复现）。
+    -- 新坐标按“近港留空 → 东/东南/西北/北分向”拉开：近港 30m 内只留木桶，
+    -- 六岛分居 4 个象限的 60~135m 环，彼此与岛_01/02/木桶间距 ≥ r_i+r_j+4m。
+    --
+    -- 2026-10-20 真人试玩修复（HUMAN-PLAYTEST-RCA-FIX-01）：这六座是**实体阻挡的岛**，
+    -- 玩家能看见、会撞上，但旧实现里它们没有任何交互资格 —— “明明是岛却什么都
+    -- 不能做”。现在每座带一句 0 体力/即时/可重复/不掉落/不存档的环境观察文本
+    -- （复用现有 observe 能力，只走 V28ContentActions，不写完成态）。
+    -- 仍然：无 rewardId / 无 actionKind / 无 memory / 原地可重复。
+    -- 两座正式岛 island_01 / island_02 的【探索岛屿】与奖励规则完全不变。
     fixedIslands = {
         { entityType = "island", contentId = "island_peak_v1",
-            position = { x = 70, y = 10 }, radius = 7, blocking = true,
-            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+            position = { x = 115, y = 25 }, radius = 7, blocking = true,
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
+            observe = {
+                promptText = "观察岛屿",
+                text = "一座顶着一道尖坡的小岛，坡上零星长着几棵树。浪打在东侧的岩根上，碎成白沫。",
+            } },
         { entityType = "island", contentId = "island_reefcluster_v1",
-            position = { x = 55, y = -20 }, radius = 9, blocking = true,
-            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+            position = { x = 112, y = -62 }, radius = 9, blocking = true,
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
+            observe = {
+                promptText = "观察岛屿",
+                text = "几块低矮的礁洲各自破水而出，中间隔着浅浅的水道，礁面上覆着薄薄一层青苔。",
+            } },
         { entityType = "island", contentId = "island_cliff_v1",
-            position = { x = -30, y = -15 }, radius = 9, blocking = true,
-            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+            position = { x = -70, y = -55 }, radius = 9, blocking = true,
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
+            observe = {
+                promptText = "观察岛屿",
+                text = "一道陡直的崖壁立在水上，崖脚堆着崩落的碎石，没有可以靠船的地方。",
+            } },
         { entityType = "island", contentId = "island_stele_v1",
-            position = { x = 20, y = -30 }, radius = 4, blocking = true,
-            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+            position = { x = 55, y = -135 }, radius = 4, blocking = true,
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
+            observe = {
+                promptText = "观察岛屿",
+                text = "一块矮岛上立着一根被风和盐磨圆了的石柱，柱脚散着几块同色的碎石。",
+            } },
         { entityType = "island", contentId = "island_twinhills_v1",
-            position = { x = 5, y = 55 }, radius = 10, blocking = true,
-            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+            position = { x = 20, y = 125 }, radius = 10, blocking = true,
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
+            observe = {
+                promptText = "观察岛屿",
+                text = "两个差不多高的丘并排立着，两丘之间凹下去一道浅浅的缝，风从缝里穿过去。",
+            } },
         { entityType = "island", contentId = "island_sandbar_v1",
-            position = { x = -15, y = 40 }, radius = 10, blocking = true,
-            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+            position = { x = -55, y = 130 }, radius = 10, blocking = true,
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
+            observe = {
+                promptText = "观察岛屿",
+                text = "一片平缓的沙洲，林线沿着岸势铺开，近水的沙面被潮水冲出一道道细纹。",
+            } },
     },
 },
     camera = { tuningStatus = "SEA_VIEW_VISUAL_TEST_VALUE",
@@ -162,6 +207,54 @@ local Config = {
     -- 跳过 crests 的门控天然失效），贴图样式改由程序层参考实现（见 visual.crest）。
     -- 本层资产与代码路径完整保留：enabled=true 即一键回切旧口径，不删不弃。
     seaRipple = { enabled = false, alpha = 0.9, tileScale = 1.6, scrollScale = 1.0 },
+    -- 近景海面动态效果（2026-10-20，焦散 + DuDv）：纯表现层，不影响世界/玩法。
+    -- 背景与限定：海面底图（seaSurface）与波纹（seaRipple）都是屏幕空间材质层，
+    -- 船一动就与世界实体速率脱节；本层改用世界米制投影，随船移动但钉在世界平面。
+    --
+    -- 实现路线（AB，无 GPU Shader）：NanoVG 图片分片贴图 + 逐顶点 UV 位移。
+    --   · 焦散贴图 water_caustic_light（512²，RGBA，双向无缝）由
+    --     tests/prepare_ocean_water_fx_art.py 程序化生成水彩亮丝网；
+    --   · 区域以相机（Movement 里跟随船，带 followSec 平滑）为中心的 sizeMeters 方形，
+    --     按 cellMeters 切网格，每片两个三角形做仿射贴图（与 ImageArt.triangle 同口径）；
+    --   · 边缘径向渐隐 feather + 哈希抗抖，无矩形边界；
+    --   · DuDv（water_dudv_flow，R/G 中性 0.5）在 CPU 解码成位移网格，
+    --     逐顶点偏移焦散 UV —— 这是 NanoVG 下真正生效的「采样偏移」，不是叠图。
+    --
+    -- 成本：每片 2 次 nvgFill（默认 6×6=36 片 → 72 fill/帧），单层、无 RenderTarget、
+    -- 无全屏 Shader；片数有 MAX_TILES_PER_SIDE=12 硬上限，亚像素片剔除。
+    -- 关闭方式：enabled=false（或只关 DuDv：dudvEnabled=false）。
+    -- 另有 SeaDebug 面板的 NearWater 按钮可运行时对比开关。
+    nearWaterFX = {
+        enabled = true,
+        -- 贴图层
+        causticName = "water_caustic_light",
+        causticAltName = "water_caustic_light_alt",
+        secondLayer = false,        -- 双层焦散（不同方向/速度），默认单层
+        secondLayerAlpha = 0.6,
+        alpha = 0.16,               -- 焦散不透明度（需求建议区间 0.06~0.20）
+        -- 区域与网格（世界米制）；数值按 960×540 离线预览调到「盖住近水、
+        -- 边缘在屏幕内完全淡完、不伸到天空」，真机可再微调。
+        sizeMeters = 84,            -- 区域边长（视野高 45m 的近水面约占下半屏）
+        cellMeters = 12,            -- 单格边长（84/12=7×7=49 片；地形畸变需细分）
+        feather = 0.52,             -- 径向渐隐起点（越早开始越柔，但中心也被淡化）
+        edgeJitter = 0.45,          -- 边缘按片哈希降权，打散同心色阶
+        edgeJitterSeed = 0.17,
+        -- 纹理滚动（归一化纹理单位/秒；与船位置完全解耦，船动不重置）
+        tileMeters = 22,            -- 一个瓦片覆盖的世界米数（越小网越密）
+        scrollX = 0.012,
+        scrollY = 0.008,
+        -- DuDv 置换
+        dudvEnabled = true,
+        dudvName = "water_dudv_flow",
+        dudvStrength = 0.008,       -- UV 偏移强度（建议 0.003~0.015）
+        dudvTileMeters = 26,
+        dudvScrollX = 0.017,
+        dudvScrollY = -0.011,
+        dudvResolution = 16,        -- 解码网格分辨率（顶点/边），只解码一次
+        -- 昼夜（复用现有 clock，不新增时钟）：夜间压到 nightScale
+        dayScale = 1.0,
+        nightScale = 0.28,
+    },
     -- 程序 crest marks 贴图样式（2026-10-20 用户裁定「参考贴图样式」）。以
     -- sea_ripple_overlay 水彩波纹贴图的笔触特征为参照目标：白沫色、细短弧线、
     -- 缓 S 形、两端渐细、疏朗分布。全部为表现层参数，不触碰世界/玩法。
@@ -227,8 +320,23 @@ local Config = {
     boatSail = { enabled = false },
     curvature = { heightRatio = 0.045 },
     horizonOcclusion = { tangentSpan = 0.1 },
+    -- 2026-10-20（真机帧率已验收后所做的画面层次提升）：maxOpacityLoss 0.48 → 0.62。
+    -- 旧值下 125m 外的岛/礁石与 30m 外的几乎一样清楚，整张海面没有纵深，
+    -- “远处”只能靠尺寸缩小来暗示。这是纯 alpha 衰减参数（不新增绘制批次、
+    -- 零成本、随时可回退），SeaPresentation.opacityLoss 的硬上限仍是 0.8。
     aerialPerspective = { enabled = true, startDepthMeters = 18,
-        endDepthMeters = 125, maxOpacityLoss = 0.48 },
+        endDepthMeters = 125, maxOpacityLoss = 0.62 },
+    -- 2026-10-20 屏幕四角压暗（vignette）。
+    -- 动机：整张画面亮度完全均匀，是“观感便宜”的主要来源之一；四角轻压能让
+    -- 视线自然收到船与近水交互区。纯屏幕空间一次径向渐变 fill（不是贴图、
+    -- 不进世界投影、不碰任何实体或玩法）。
+    -- enabled=false 即完全回退到原亮度均匀画面。
+    vignette = {
+        enabled = true,
+        strength = 0.30,     -- 四角最大压暗量（0~1）；0.30 是“能看见但不脏”的保守值
+        innerRadius = 0.55,  -- 内圈不压暗区（相对半对角线），越小压暗侵入越多
+        color = { 26, 46, 58 },
+    },
     atmosphere = { cloudShadowCount = 10, cloudShadowOpacity = 40,
         cloudShadowDriftMps = 0.55, cloudShadowRadiusMeters = 24,
         fogCount = 10, fogOpacity = 46, fogDriftMps = 0.30,
@@ -249,6 +357,34 @@ local Config = {
         birdOffset = 9, birdRadius = 3, birdsPerGroup = 1, birdPollSeconds = 0.25,
         birdDiveSeconds = 1.5, birdAngularSpeed = 1.8, birdAnimationStatus = "VISUAL_TEST_VALUE",
         splashInterval = 1, chaseSplashInterval = 0.5, splashLifetime = 0.6, trailLength = 2,
+    },
+    -- V2.8 首版试玩参数（集中存放，实机可单独调参而不改规则）：
+    -- 海眼 60m 吸小鱼 / 90m 吸大鱼、持续 20 秒；巨骨分区 4小+2大；
+    -- 探海镜连续观察 1 秒；固定内容交互 ≤5m；打捞 40 体力 / 4 秒。
+    v28 = {
+        tuningStatus = "V28_PLAYTEST_PARAMETERS",
+        interactDistance = 5,
+        lensMarkDurationSec = 1,
+        salvageDurationSec = 4,
+        salvageStaminaCost = 40,
+        vortex = {
+            smallFishAttractRadius = 60,
+            bigFishAttractRadius = 90,
+            attractDurationSec = 20,
+            dropRadius = 5,
+            noNetRadius = 3,
+            observeRadius = 5,
+            pearlItemId = "abyss_pearl",
+        },
+        -- 巨骨所在 120×120m 中海分区：默认 5小1大 → 4小2大（总数仍 6）。
+        leviathan = {
+            contentId = "leviathan_bones_01",
+            regionSize = 120,
+            sardineCount = 4,
+            tunaCount = 2,
+            bigFishRingMin = 15,
+            bigFishRingMax = 45,
+        },
     },
     seaTitle = "渔夫漂流记 · Sea Runtime V1",
 }

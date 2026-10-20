@@ -60,6 +60,10 @@ def catalog_text(manifest):
     skydecor = json.loads(skydecor_manifest.read_text(encoding="utf-8")) if skydecor_manifest.exists() else {"assets": {}}
     boat_manifest = ROOT / "assets/image/OceanPlayerBoat/manifest.json"
     boat = json.loads(boat_manifest.read_text(encoding="utf-8")) if boat_manifest.exists() else {"assets": {}}
+    # OceanArtCollection（2026-10-20 V2.8 美术合集）：与 prepare_ocean_eco_art.py 同口径，
+    # 两处 catalog_text 必须字节一致（单一生成器原则）；清单缺失时按空合集处理。
+    art_manifest = ROOT / "assets/image/OceanArtCollection/manifest.json"
+    art = json.loads(art_manifest.read_text(encoding="utf-8")) if art_manifest.exists() else {"assets": {}}
     entries = {}
     # eco 合集按条目自带 preload（per-entry，如 sea_surface_day/dusk=true、
     # night=false），其余合集沿用既有默认；W2 selected 覆盖保留（boat/island
@@ -70,7 +74,7 @@ def catalog_text(manifest):
                                            (components["assets"], False, False), (islands["assets"], False, False),
                                            (eco["assets"], False, True), (sea["assets"], False, True),
                                            (sky["assets"], False, True), (skydecor["assets"], False, True),
-                                           (boat["assets"], False, True)):
+                                           (boat["assets"], False, True), (art["assets"], False, False)):
         for name, entry in collection.items():
             entries[name] = {**entry, "preload": entry.get("preload", preload) if per_entry else preload}
     selected = json.loads((WAVE2_OUT / "manifest.json").read_text(encoding="utf-8"))["assets"] \
@@ -95,7 +99,9 @@ def catalog_text(manifest):
             "        preload = " + str(entry["preload"]).lower() + ",",
             "        repeatTexture = " + str(name in ("waterpaper", "waterpaper_story", "ocean_tile",
                                                        "sea_surface_day", "sea_surface_dusk", "sea_surface_night",
-                                                       "sea_ripple_overlay", "sky_day", "sky_dusk")).lower() + ",",
+                                                       "sea_ripple_overlay", "sky_day", "sky_dusk",
+                                                       "water_caustic_light", "water_caustic_light_alt",
+                                                       "water_dudv_flow")).lower() + ",",
             "        completeIsland = " + str(entry.get("complete_island", False)).lower() + ",",
             "    },",
         ])

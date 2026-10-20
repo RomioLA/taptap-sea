@@ -1,0 +1,352 @@
+{
+  "schema_version": 1,
+  "status": "RUNTIME_CANDIDATE",
+  "style": "读海日系水彩绘本风（与 OceanStory/OceanEco 同源）",
+  "format": "RGBA PNG 直通 Alpha；中心锚点；世界尺寸由实体 radius 决定，不由像素推导",
+  "projection": "Ocean.Projection 世界平面分片投影（ImageArt.Plane/Upright）；本批不外挂第二套投影",
+  "placement": "catalog 规格由此 manifest 汇总生成；绘制接入在 SeaDraw，贴图失败回退既有矢量占位",
+  "references": [
+    "docs/ART_PIPELINE.md",
+    "scripts/Ocean/SeaDraw.lua",
+    "scripts/Ocean/ImageArt.lua"
+  ],
+  "note": "sea_node 条目是 V2.8 固定海上节点从矢量占位升级为正式素材；item_icon 条目是物品图标（不进世界绘制）。两份 512 变体只作源料保留，不进 catalog。",
+  "assets": {
+    "debris_01": {
+      "path": "image/OceanArtCollection/23d6254c-debris_01.png",
+      "name": "debris_01",
+      "kind": "sea_node",
+      "note": "漂浮木板带（05-A）",
+      "size": [
+        1024,
+        768
+      ],
+      "content_bounds": [
+        114,
+        179,
+        947,
+        635
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.758503,
+      "sha256": "504d61b6da32a18ee6b810275847b8a4a473ec90539cdd6654d8015f2b228a29",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "23d6254c-debris_01.png"
+    },
+    "shipwreck_01": {
+      "path": "image/OceanArtCollection/d6ebaee5-shipwreck_01.png",
+      "name": "shipwreck_01",
+      "kind": "sea_node",
+      "note": "水下旧木船残骸（05-B，探海镜可见）",
+      "size": [
+        2048,
+        1024
+      ],
+      "content_bounds": [
+        164,
+        48,
+        2048,
+        1024
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.47972,
+      "sha256": "b81fe2068036f6a9f9b526759d63e9e27cedc4158f4f4636e92609b5bea7292f",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "d6ebaee5-shipwreck_01.png"
+    },
+    "leviathan_bones_01": {
+      "path": "image/OceanArtCollection/30a5a944-leviathan_bones_01_2048x1024.png",
+      "name": "leviathan_bones_01",
+      "kind": "sea_node",
+      "note": "巨兽骸骨（03，水下）",
+      "size": [
+        2048,
+        1024
+      ],
+      "content_bounds": [
+        124,
+        96,
+        1924,
+        927
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.507101,
+      "sha256": "82c25a56cd77fc8d88d281da32eb256c779474a75c32cca1fbb69102a4e11517",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "30a5a944-leviathan_bones_01_2048x1024.png"
+    },
+    "sea_eye_vortex_01": {
+      "path": "image/OceanArtCollection/f18b358c-sea_eye_vortex_01_v2_normal.png",
+      "name": "sea_eye_vortex_01",
+      "kind": "sea_node",
+      "note": "海眼漩涡常态（10）",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        93,
+        164,
+        931,
+        860
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.61411,
+      "sha256": "a666fedd14b2084be1c8833ea8b34d00f617d51bd6461f35b1241c9de6f028af",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "f18b358c-sea_eye_vortex_01_v2_normal.png"
+    },
+    "sea_eye_vortex_01_boost": {
+      "path": "image/OceanArtCollection/d437af41-sea_eye_vortex_01_v2_boost.png",
+      "name": "sea_eye_vortex_01_boost",
+      "kind": "sea_node",
+      "note": "海眼漩涡投放增强态（10）",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        93,
+        164,
+        931,
+        860
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.602464,
+      "sha256": "4531e7ab5b67766cf29356b265d4522d68f204feb9f0281f74f4ebc4d19f8e68",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "d437af41-sea_eye_vortex_01_v2_boost.png"
+    },
+    "bottle_note_01": {
+      "path": "image/OceanArtCollection/7e0e0194-drift_bottle_01_v2_1024.png",
+      "name": "bottle_note_01",
+      "kind": "sea_node",
+      "note": "漂流瓶（08-A/B，1024 运行时版）",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        238,
+        129,
+        786,
+        895
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.752732,
+      "sha256": "8db28326df597bfe41db60bdb631f8e0bda30b7fe476a5a50e2f47735071d58d",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "7e0e0194-drift_bottle_01_v2_1024.png"
+    },
+    "sea_note_01": {
+      "path": "image/OceanArtCollection/dacdad07-sea_note_01_v2_1024.png",
+      "name": "sea_note_01",
+      "kind": "item_icon",
+      "note": "航海残页图标（1024 运行时版）",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        103,
+        106,
+        920,
+        918
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.512843,
+      "sha256": "61a85de7c86769bb3e3611ce48c515655e71be46abebfcbfd90817872f414f3d",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "dacdad07-sea_note_01_v2_1024.png"
+    },
+    "abyss_pearl": {
+      "path": "image/OceanArtCollection/3dc43067-abyss_pearl.png",
+      "name": "abyss_pearl",
+      "kind": "item_icon",
+      "note": "深海珍珠图标",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        74,
+        70,
+        460,
+        455
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.563404,
+      "sha256": "b840ffb70aa4b27cfb94ff4c17d41a185a98a3da784dcc05f4bfb1602fc7c664",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "3dc43067-abyss_pearl.png"
+    },
+    "coral_branch": {
+      "path": "image/OceanArtCollection/157da5af-coral_branch_01.png",
+      "name": "coral_branch",
+      "kind": "item_icon",
+      "note": "珊瑚枝图标",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        51,
+        33,
+        460,
+        479
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.69965,
+      "sha256": "e55fdf8c535c4143e18064b4152dec8cf1f90102beb10cbca8f14fa3521ad95d",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "157da5af-coral_branch_01.png"
+    },
+    "jewelry_01": {
+      "path": "image/OceanArtCollection/e5b77519-jewelry_01.png",
+      "name": "jewelry_01",
+      "kind": "item_icon",
+      "note": "沉船珠宝图标",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        68,
+        37,
+        444,
+        475
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.546936,
+      "sha256": "8c5e18c1291766294ec639f9e2ece298da6af8ca2cd399c99d02bfe5ff1f0550",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "e5b77519-jewelry_01.png"
+    }
+  },
+  "source_only": {
+    "f7da323f-drift_bottle_01_v2_512.png": {
+      "path": "image/OceanArtCollection/f7da323f-drift_bottle_01_v2_512.png",
+      "name": "f7da323f-drift_bottle_01_v2_512.png",
+      "kind": "source_only",
+      "note": "bottle_note_01 的 512 备用版",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        117,
+        62,
+        395,
+        450
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.747715,
+      "sha256": "84e69baff37937e4cf8641029d83a8db2fb83359649c08f663ca1adaddbdbc5c",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false
+    },
+    "deb68261-sea_note_01_v2_512.png": {
+      "path": "image/OceanArtCollection/deb68261-sea_note_01_v2_512.png",
+      "name": "deb68261-sea_note_01_v2_512.png",
+      "kind": "source_only",
+      "note": "sea_note_01 的 512 备用版",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        49,
+        51,
+        462,
+        461
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.50753,
+      "sha256": "947f9451f1236b8ec587a1d9c239aa3790a191c489fa1a0e8eca87dbe1bd6008",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false
+    }
+  }
+}

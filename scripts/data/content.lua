@@ -1,4 +1,7 @@
 -- Authored fixed world content. Keep this file as data only.
+-- V2.8 第一批/第二批固定海上节点（来源：V2.8最终封板 / 系统规则·固定世界坐标总表 /
+-- 游戏道具总表 68~75 行）。坐标以港口中心为相对原点；跨 NewRun 固定不变。
+-- 旧存档没有这些 contentId 时由 WorldContentProgress.Initialize 补 false，不判坏档。
 return {
     fixed = {
         -- 来源：既有 V25 fixed content；T01 等价迁移。
@@ -40,6 +43,246 @@ return {
             rewardId = "memory_treasure_01",
             markable = true,
             tuningStatus = "V25_INTEGRATION_PLAYTEST_GEOMETRY",
+        },
+
+        -- ===== V2.8 第一批 =====
+        -- 观察礁石（既有视觉礁石盘活）：0体力、可重复、无掉落、无 shown 存档。
+        {
+            contentId = "reef_vis_01",
+            entityType = "reef",
+            kind = "fixed",
+            position = { x = -70, y = 55 },
+            radius = 3,
+            layer = "surface",
+            blocking = true,
+            observe = {
+                text = "暗礁上附着湿漉漉的海藻。顺着北边望去，更远处的海雾里似乎横着一片陆地的影子。",
+            },
+            tuningStatus = "V28_FIRST_WAVE_GEOMETRY",
+        },
+        {
+            contentId = "reef_vis_02",
+            entityType = "reef",
+            kind = "fixed",
+            position = { x = 150, y = -92 },
+            radius = 3,
+            layer = "surface",
+            blocking = true,
+            observe = {
+                text = "孤立的礁石顶上落着几根白色海鸟羽毛，朝东南方向被风压弯。看来常有海鸟借这里歇脚，再往东南飞去。",
+            },
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
+        },
+        {
+            contentId = "reef_vis_03",
+            entityType = "reef",
+            kind = "fixed",
+            position = { x = 200, y = -140 },
+            radius = 3,
+            layer = "surface",
+            blocking = true,
+            observe = {
+                text = "这里的海水明显变深，礁石外侧的浪花也更急。再往西北望去，一座海岛的轮廓已经隐约可见。",
+            },
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
+        },
+        -- 05-A 漂浮木板带：0体力即时观察，单点 authored 线索（非全局洋流）。
+        {
+            contentId = "debris_01",
+            entityType = "debris",
+            kind = "fixed",
+            position = { x = -96, y = -72 },
+            radius = 3,
+            layer = "surface",
+            blocking = false,
+            observe = {
+                text = "海面上漂着几块散落的旧船木板，断口处还挂着水草。顺着木板漂来的西南偏西方向望去，不远处的水下似乎沉着什么东西。",
+            },
+            tuningStatus = "V28_FIRST_WAVE_GEOMETRY",
+        },
+        -- 05-B 水下沉船：探海镜1s标记 → ≤5m 40体力/4s、需2空格 → 珠宝+珊瑚枝。
+        {
+            contentId = "shipwreck_01",
+            entityType = "wreck",
+            kind = "fixed",
+            position = { x = -116, y = -87 },
+            radius = 3.5,
+            layer = "underwater",
+            blocking = false,
+            stateFields = { "marked", "completed" },
+            markable = true,
+            lensMark = true,
+            markText = "水下浮现出一艘倾覆的旧木船残骸，已记录位置。",
+            v28Action = {
+                kind = "salvage",
+                duration = 4,
+                staminaCost = 40,
+                freeSlots = 2,
+                promptText = "打捞沉船",
+                beginText = "开始打捞沉船",
+                successText = "你顺着残骸的裂口摸索了一番，从淤泥掩埋的船舱里捞出了一件【珠宝】和一截完好的【珊瑚枝】。",
+                rewards = {
+                    { itemId = "shipwreck_jewelry", count = 1 },
+                    { itemId = "coral_branch", count = 1 },
+                },
+                refusals = {
+                    insufficient_stamina = "体力不足，暂时做不了这个动作。",
+                    inventory_full = "船舱至少需要2个空位才能打捞沉船。",
+                    already_completed = "这艘沉船已经被你打捞过了。",
+                },
+            },
+            tuningStatus = "V28_FIRST_WAVE_GEOMETRY",
+        },
+        -- 08-A/08-B 固定漂流瓶：0体力即时拾取；残页入独立道具栏；
+        -- 是否已拾取直接由 treasures[sea_note_xx] 派生，不新增 picked 布尔位。
+        {
+            contentId = "bottle_note_01",
+            entityType = "bottle",
+            kind = "fixed",
+            position = { x = -55, y = 95 },
+            radius = 1.2,
+            layer = "surface",
+            blocking = false,
+            pickup = {
+                treasureId = "sea_note_01",
+                promptText = "拾取漂流瓶",
+                text = "你捞起海面上半浮半沉的旧玻璃瓶，拔开木塞，抽出一张《航海残页（一）》。",
+                readTitle = "航海残页（一）",
+                readText = "瓶里塞着半页被海水泡黄的笔记：“往北再走百来米，海面上总有洗不散的孤泡。早年我贴着水面往下看，隐约瞧见一副吓人的大骨头……怪的是，那儿的小鱼虽少，大鱼却总爱围着骨头转悠。”",
+            },
+            tuningStatus = "V28_FIRST_WAVE_GEOMETRY",
+        },
+        {
+            contentId = "bottle_note_02",
+            entityType = "bottle",
+            kind = "fixed",
+            position = { x = 145, y = -45 },
+            radius = 1.2,
+            layer = "surface",
+            blocking = false,
+            pickup = {
+                treasureId = "sea_note_02",
+                promptText = "拾取漂流瓶",
+                text = "你捞起随波打转的漂流瓶，里面塞着一张字迹潦草的《航海残页（二）》。",
+                readTitle = "航海残页（二）",
+                readText = "纸页边缘已经烂了，只剩几行歪斜的字：“东北边的中海有一处打旋的海眼，里头连着深水暗流。我试着往旋儿里扔过平时喂鱼的碎食，也扔过刚捞上来的活小鱼，水底下的动静一次比一次凶……要是有人舍得把海里最肥的大物扔进去，不知那海眼最底下会吐出什么来？”",
+            },
+            tuningStatus = "V28_FIRST_WAVE_GEOMETRY",
+        },
+        -- 03 水下巨兽骸骨：探海镜1s识别（每周目一次顶部轻提示）；所在分区 4小+2大。
+        {
+            contentId = "leviathan_bones_01",
+            entityType = "bones",
+            kind = "fixed",
+            position = { x = -40, y = 235 },
+            radius = 4,
+            layer = "underwater",
+            blocking = false,
+            stateFields = { "recognized" },
+            recognizeText = "巨大的骸骨沉在深水里，大鱼常在骨骸附近游弋。",
+            -- 2026-10-20 真人试玩 RCA（HUMAN-PLAYTEST-RCA-FIX-01）：
+            -- surfaceRadius 是“海面慢气泡提示”的**发现半径**，不是互动距离。
+            -- 旧值 5m 意味着必须撞到巨骨脸上才能看到线索，完全失去发现作用
+            -- （真人反馈：根本不知道该往哪开）。首轮试玩值改为 40m。
+            -- 只改提示绘制距离：巨骨真实坐标、探海镜 20m/90°、水下显示、
+            -- 捕鱼规则、大鱼分布、实际互动距离（仍 5m）全部不变。
+            -- 气泡仍与“大鱼移动水花”明显不同：固定位置、缓慢、无方向尾迹。
+            bubble = { intervalSec = 1.5, surfaceRadius = 40 },
+            tuningStatus = "V28_FIRST_WAVE_GEOMETRY",
+        },
+        -- 10 海眼漩涡：0体力观察；中心<3m禁网心；仅正式 WorldDrop 触发。
+        {
+            contentId = "sea_eye_vortex_01",
+            entityType = "vortex",
+            kind = "fixed",
+            position = { x = 215, y = 115 },
+            radius = 6,
+            visualRadius = 6,
+            layer = "surface",
+            blocking = false,
+            observe = {
+                text = "幽深的海水在这里拧成一道缓慢旋转的漩涡，中心暗流涌动。若是往漩涡里正式【投放】些什么，气味或许会被暗流卷去很远的地方。",
+            },
+            vortex = {
+                observeRadius = 5,
+                dropRadius = 5,
+                noNetRadius = 3,
+                smallFishAttractRadius = 60,
+                bigFishAttractRadius = 90,
+                attractDurationSec = 20,
+            },
+            tuningStatus = "V28_FIRST_WAVE_PLAYTEST",
+        },
+
+        -- ===== V2.8 第二批 =====
+        -- 06 缠鱼破渔网：双分支互斥；分支B为本周目唯一生锈钥匙来源。
+        {
+            contentId = "trapped_net_01",
+            entityType = "net",
+            kind = "fixed",
+            position = { x = -195, y = -75 },
+            radius = 2,
+            layer = "surface",
+            blocking = true,
+            stateFields = { "completed" },
+            net = {
+                promptText = "处理破渔网",
+                choiceText = "一团破损的旧渔网缠在海面浮木上，网眼里困着两条惊慌挣扎的小鱼，网绳死结处还挂着一把生锈的铜钥匙。",
+                branchA = {
+                    label = "强行收拢破网（40体力，4秒）",
+                    duration = 4,
+                    staminaCost = 40,
+                    freeSlots = 2,
+                    successText = "你费力把整团破网拽上船舷，抓到了里面的两条【小鱼】；但挂在网底的旧钥匙在拉扯中崩断绳结，沉入了深海。",
+                    rewards = { { itemId = "sardine", count = 2 } },
+                    refusals = {
+                        insufficient_stamina = "体力不足，暂时做不了这个动作。",
+                        inventory_full = "船舱至少需要2个空位才能收网。",
+                    },
+                },
+                branchB = {
+                    label = "割开破网解下钥匙（0体力，即时）",
+                    successText = "你用小刀利落地割开缠结的网绳，将那把【生锈钥匙】收进怀里。受惊的两条小鱼猛地窜向海面，朝远处逃去！",
+                    treasureId = "rusty_key",
+                    releaseFish = { species = "sardine", count = 2 },
+                },
+            },
+            tuningStatus = "V28_SECOND_WAVE_GEOMETRY",
+        },
+        -- 12 浮藻假岛：80m轮廓/20m识破；探海镜1s标记水下货箱；钥匙+40体力/4s。
+        {
+            contentId = "kelp_mirage_01",
+            entityType = "kelp",
+            kind = "fixed",
+            position = { x = 85, y = -195 },
+            radius = 2.5,
+            visualRadius = 14,
+            layer = "underwater",
+            blocking = false,
+            stateFields = { "recognized", "marked", "completed" },
+            markable = true,
+            lensMark = true,
+            markText = "海藻根部的水下缠着一只上锁的金属货箱，已记录位置。",
+            recognizeDistance = 20,
+            recognizeText = "靠近才发现，这并不是真正的陆地，而是一大片纠结漂浮的厚海藻；海藻下方的暗影里似乎藏着什么。",
+            v28Action = {
+                kind = "salvage",
+                duration = 4,
+                staminaCost = 40,
+                freeSlots = 1,
+                requiredTreasure = "rusty_key",
+                consumeTreasure = true,
+                promptText = "打捞货箱",
+                beginText = "开始打捞货箱",
+                successText = "你潜下抓钩将铁箱拉近船边，用那把【生锈钥匙】拧开了锈蚀的锁扣（生锈钥匙已消耗），成功打捞起【海底金属货箱】！",
+                rewards = { { itemId = "salvaged_chest", count = 1 } },
+                refusals = {
+                    insufficient_stamina = "体力不足，暂时做不了这个动作。",
+                    missing_key = "水下的金属货箱死死锁着，没有匹配的钥匙，无法打捞开启。",
+                    inventory_full = "船舱满了，先腾出1个空位再来打捞货箱。",
+                },
+            },
+            tuningStatus = "V28_SECOND_WAVE_GEOMETRY",
         },
     },
 }

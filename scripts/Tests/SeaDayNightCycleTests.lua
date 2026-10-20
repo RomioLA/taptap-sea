@@ -108,13 +108,17 @@ function Tests.Run(recorder)
         assert(count == 1, label .. " should record one sun core with its clock-driven color")
     end
 
+    -- V2.8 正式规则：白天 60 秒 / 夜晚 30 秒（scripts/config/gameplay.lua clock）。
+    -- 本套件验的是「天象按归一化 progress 绘制」，不锁具体秒数；旧 120/60 断言
+    -- 是 V2.7 之前的时长，已随正式规则作废。
     local clock = GameClock.New()
-    assert(clock.daySec == 120 and clock.nightSec == 60,
-        "the celestial cycle should reuse the existing 120/60 second configuration")
+    local DAY_SEC, NIGHT_SEC = clock.daySec, clock.nightSec
+    assert(DAY_SEC == 60 and NIGHT_SEC == 30,
+        "the celestial cycle should follow the sealed 60/30 second configuration")
 
     clock:Seek("day", 0)
     local east = clock:GetState()
-    assert(east.progress == 0 and east.duration == 120,
+    assert(east.progress == 0 and east.duration == DAY_SEC,
         "day state should expose normalized progress and configured duration")
     render(east, "day sunrise draw")
     local eastX, eastY, sunRadius, eastHorizon = assertCelestial(east, 0, "sunrise")
@@ -122,7 +126,7 @@ function Tests.Run(recorder)
     assert(recorder.countFillColor(table.unpack(Config.visual.nightOverlay)) == 0,
         "daytime should not use the night overlay")
 
-    clock:Seek("day", 60)
+    clock:Seek("day", DAY_SEC / 2)
     local noon = clock:GetState()
     assert(noon.progress == 0.5, "the day midpoint should use half of its configured duration")
     render(noon, "day midpoint draw")
@@ -134,7 +138,7 @@ function Tests.Run(recorder)
     assert(noonX < eastX and noonY < eastY - sunRadius,
         "the sun should move westward and rise above the horizon")
 
-    clock:Seek("day", 120)
+    clock:Seek("day", DAY_SEC)
     local west = clock:GetState()
     render(west, "day sunset draw")
     local westX, westY, _, westHorizon = assertCelestial(west, 1, "sunset")
@@ -143,9 +147,9 @@ function Tests.Run(recorder)
     assert(westY - sunRadius >= westHorizon - 0.02,
         "the sunset disc should be covered by the sea at the phase boundary")
 
-    clock:Seek("night", 30)
+    clock:Seek("night", NIGHT_SEC / 2)
     local moonState = clock:GetState()
-    assert(moonState.progress == 0.5 and moonState.duration == 60,
+    assert(moonState.progress == 0.5 and moonState.duration == NIGHT_SEC,
         "night should use its own configured duration")
     render(moonState, "night midpoint draw")
     local moonX, moonY, moonRadius, moonHorizon = assertCelestial(moonState, 0.5, "moonrise arc")
@@ -160,7 +164,7 @@ function Tests.Run(recorder)
     assert(near(rawMoonX, moonX) and near(rawMoonY, moonY),
         "SeaDraw should render the actual GameClock object like its normalized state")
 
-    -- The visual path follows normalized progress, not an assumed 120/60 timer.
+    -- The visual path follows normalized progress, not an assumed fixed timer.
     clock.daySec = 240
     clock:Seek("day", 60)
     local longerDay = clock:GetState()
@@ -168,8 +172,8 @@ function Tests.Run(recorder)
         "a changed day duration should be reflected in clock progress")
     render(longerDay, "longer configured day draw")
     local longerX, longerY = assertCelestial(longerDay, 0.25, "quarter-day sun")
-    clock.daySec = 120
-    clock:Seek("day", 30)
+    clock.daySec = DAY_SEC
+    clock:Seek("day", DAY_SEC / 4)
     local defaultDayQuarter = clock:GetState()
     render(defaultDayQuarter, "default configured day draw")
     local defaultX, defaultY = assertCelestial(defaultDayQuarter, 0.25, "default quarter-day sun")
@@ -189,8 +193,8 @@ function Tests.Run(recorder)
         "a changed night duration should be reflected in clock progress")
     render(longerNight, "longer configured night draw")
     local longerMoonX, longerMoonY = assertCelestial(longerNight, 0.25, "quarter-night moon")
-    clock.nightSec = 60
-    clock:Seek("night", 15)
+    clock.nightSec = NIGHT_SEC
+    clock:Seek("night", NIGHT_SEC / 4)
     local defaultNightQuarter = clock:GetState()
     render(defaultNightQuarter, "default configured night draw")
     local defaultMoonX, defaultMoonY = assertCelestial(defaultNightQuarter, 0.25, "default quarter-night moon")
@@ -205,7 +209,7 @@ function Tests.Run(recorder)
     assertCelestial(normalizedOnly, 0.5, "progress-priority sun")
 
     -- Paused daytime holds both the twilight palette and the sun location.
-    clock:Seek("day", 30)
+    clock:Seek("day", DAY_SEC / 4)
     clock:Pause("settings")
     local pausedDayBefore = clock:GetState()
     clock:Update(17)
@@ -224,7 +228,7 @@ function Tests.Run(recorder)
     clock:Resume("settings")
 
     -- Paused night also retains its moon location and the one existing overlay.
-    clock:Seek("night", 15)
+    clock:Seek("night", NIGHT_SEC / 4)
     clock:Pause("settings")
     local pausedBefore = clock:GetState()
     assert(pausedBefore.paused and pausedBefore.progress == 0.25,
@@ -247,7 +251,7 @@ function Tests.Run(recorder)
             "clock_normalized_progress_drives_actual_sun_and_moon_ellipses",
             "sun_and_moon_rise_east_to_west_over_the_projected_horizon",
             "celestial_discs_are_covered_at_phase_boundaries_by_existing_sea_surface",
-            "existing_120_60_second_clock_configuration_is_reused",
+            "sealed_60_30_second_clock_configuration_is_reused",
             "equal_normalized_progress_is_independent_of_phase_duration",
             "equal_normalized_night_progress_is_independent_of_phase_duration",
             "sea_scene_accepts_the_raw_GameClock_used_by_Bootstrap_Render",

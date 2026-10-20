@@ -5,6 +5,7 @@ local Inventory = require("Gameplay.Inventory")
 local Items = require("data.items")
 local Progress = require("Gameplay.Circle1B2Progress")
 local WorldContentProgress = require("Gameplay.WorldContentProgress")
+local V28Progress = require("Gameplay.V28Progress")
 local EvidenceSystem = require("Gameplay.EvidenceSystem")
 local Diagnostics = require("Gameplay.Diagnostics")
 local LocalSaveBackend = require("Gameplay.LocalSaveBackend")
@@ -47,6 +48,8 @@ function Persistence.Snapshot(player)
     assert(initialized, initializeError or "invalid_progress_state")
     local progressValid, progressError = WorldContentProgress.Validate(player)
     assert(progressValid, progressError or "invalid_progress_state")
+    local v28Valid, v28Error = V28Progress.Validate(player)
+    assert(v28Valid, v28Error or "invalid_progress_state")
     local evidenceValid, evidenceError = EvidenceSystem.Validate(player)
     assert(evidenceValid, evidenceError or "invalid_hypothesis_progress")
     local treasures = rawget(player, "treasures")
@@ -136,6 +139,9 @@ local function restoreValidated(data)
     end
     local worldContentValid, worldContentError = WorldContentProgress.Validate(data)
     if not worldContentValid then return nil, worldContentError or "invalid_progress_state" end
+    -- V2.7 旧档缺 V2.8 字段时按 false/未持有初始化（Initialize 在下方补齐）。
+    local v28DataValid, v28DataError = V28Progress.Validate(data)
+    if not v28DataValid then return nil, v28DataError or "invalid_progress_state" end
     local player = assert(PlayerState.New())
     player.day, player.maxStamina = data.day, data.maxStamina
     player.stamina, player.money = data.stamina, data.money
@@ -158,6 +164,10 @@ local function restoreValidated(data)
     end
     local progressValid, progressError = WorldContentProgress.Validate(player)
     if not progressValid then return nil, progressError or "invalid_progress_state" end
+    local v28Initialized, v28InitError = V28Progress.Initialize(player)
+    if not v28Initialized then return nil, v28InitError or "invalid_progress_state" end
+    local v28Valid, v28Error = V28Progress.Validate(player)
+    if not v28Valid then return nil, v28Error or "invalid_progress_state" end
     local evidenceProgressValid, evidenceProgressError = EvidenceSystem.Validate(player)
     if not evidenceProgressValid then
         return nil, evidenceProgressError or "invalid_hypothesis_progress"

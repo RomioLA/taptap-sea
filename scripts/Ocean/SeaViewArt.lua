@@ -7,6 +7,7 @@ local Geometry = require("Ocean.ProjectedGeometry")
 local SurfaceEffects = require("Ocean.SeaSurfaceEffects")
 local ImageArt = require("Ocean.ImageArt")
 local PerfProbe = require("Ocean.PerfProbe")
+local WaterFX = require("Ocean.WaterFX")
 
 local SeaViewArt = {}
 local TWO_PI = math.pi * 2
@@ -788,6 +789,16 @@ function SeaViewArt.Surface(ctx, movement, time, clock)
     if rippleSettings.enabled ~= false and type(ImageArt.SeaRipple) == "function" then
         rippleDrawn = ImageArt.SeaRipple(ctx, movement, width, height,
             rippleSettings.alpha, rippleSettings.tileScale)
+    end
+
+    -- 近景海面动态效果（2026-10-20 焦散 + DuDv）：世界米制网格分片贴焦散图，
+    -- 区域以相机（在 Movement 里跟随船）为中心，逐顶点 UV 含 DuDv 位移，
+    -- 画在底图/波纹层之上、程序 crests 之下（水纹笔触仍压在最上层）。
+    -- 与海面底图、波纹层完全解耦：enabled=false 或贴图加载失败即整层跳过，
+    -- 原有表现一字不变（零回归）。纯读状态，不碰相机/世界。
+    local nearWater = Config.visual.nearWaterFX
+    if type(nearWater) == "table" and nearWater.enabled == true then
+        WaterFX.Draw(ctx, movement, nil, time, clock, nearWater)
     end
 
     -- Draw the same sampled curve over the fill so the two edges stay aligned.

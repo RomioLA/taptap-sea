@@ -3,6 +3,8 @@
 local OceanConfig = require("Ocean.Config")
 local OceanMath = require("Ocean.Math")
 local Loop = require("Gameplay.Loop")
+local Items = require("data.items")
+local V28Progress = require("Gameplay.V28Progress")
 local Game = require("Game.Game")
 local Diagnostics = require("Gameplay.Diagnostics")
 
@@ -75,6 +77,26 @@ local function handleBarrelReadError(err)
     return err
 end
 
+-- V2.8：浮藻假岛 20m 识破 + 巨骨海面慢气泡（纯只读提示，不写存档）。
+---@param self GameplayOceanBridge
+local function recognizeV28Proximity(self)
+    local runtime, loop = self.runtime, self.loop
+    if type(runtime.GetShipPosition) ~= "function" then return end
+    local position = runtime:GetShipPosition()
+    if not isPoint(position) then return end
+    for _, contentId in ipairs({ "kelp_mirage_01" }) do
+        local content = type(runtime.GetWorldContent) == "function"
+            and runtime:GetWorldContent(contentId) or nil
+        if content and type(content.position) == "table" then
+            local dx, dy = content.position.x - position.x, content.position.y - position.y
+            local distance = math.sqrt(dx * dx + dy * dy)
+            if distance <= 20 and not loop.player:IsRecognized(contentId) then
+                self:RecognizeLocation(contentId, content.position)
+            end
+        end
+    end
+end
+
 ---@param self GameplayOceanBridge
 local function recognizeFixedBarrel(self)
     local runtime = self.runtime
@@ -99,6 +121,73 @@ local function handleNewDay(self, day)
     return true
 end
 
+---V2.8 海眼：正式 WorldDrop 落在核心 ≤5m 时的原子结算。
+---只在 receiveDrop（底部【投放】选点 / 鱼饵“使用”选点）里调用；
+---背包【丢弃】与鱼饵船边即时投饵都不走这里，因此绝不触发海眼。
+---物品类型一律由 Items.VortexRole 的显式身份表决定，不用 worldEffect 推断：
+---worldEffect=NONE 同时也是珠宝/珊瑚枝/深海珍珠/货箱的值，拿它当“大鱼”会串类型。
+---@param self GameplayOceanBridge
+---@param payload table
+---@param position table
+---@return boolean, table|nil 已处理=true 时不再走常规掉落
+local function receiveVortexDrop(self, payload, position)
+    local runtime, loop = self.runtime, self.loop
+    if type(runtime.HandleVortexDrop) ~= "function" then return nil end
+    local inside = type(runtime.IsInsideVortexDropRadius) == "function"
+        and runtime:IsInsideVortexDropRadius(position)
+    if not inside then return nil end
+
+    -- 海眼只接受明确登记过的生态物；其余物品当作普通掉落处理（不触发海眼）。
+    -- 三态返回：nil = 不归海眼管（走普通掉落）；true = 已处理；false = 归海眼管但本次拒绝。
+    local role = Items.VortexRole(payload.itemId)
+    if role == nil then return nil end
+
+    if role == "pearl" then
+        -- 大鱼：本周目首次 → 同一事务里消耗大鱼、释放 1 格、珍珠直接进该格。
+        if not V28Progress.IsPearlClaimed(loop.player) then
+            -- 原子性（V2.8 Closure）：先确认海眼后置表现真的可执行，
+            -- 再提交珍珠/claim 状态。否则会出现「鱼被消耗 + 珍珠已发 + claim=true，
+            -- 但海眼表现失败」的半完成态，且后续再投大鱼会落入「已领过」分支。
+            local probeOk, probe = pcall(runtime.HandleVortexDrop, runtime, payload, position)
+            if probeOk and probe then
+                local claimed, reason = loop:ClaimVortexPearl(payload)
+                payload.vortexFeedback = loop.lastMessage
+                if claimed then return true end
+                -- 珍珠发放失败：没有任何状态变更（ClaimVortexPearl 自回滚），
+                -- 本次投放按普通掉落继续，不吞鱼。
+                Diagnostics.Event("Integration", "vortex_pearl_claim_failed", {
+                    kind = "failure", reason = tostring(reason or "pearl_claim_failed") })
+                return false
+            end
+            -- 海眼后置表现不可执行：不消耗大鱼、不发珍珠、不置 claim。
+            Diagnostics.Event("Integration", "vortex_post_effect_unavailable", {
+                kind = "failure", reason = "post_effect_unavailable" })
+            return false
+        end
+        -- 已领取过：仍消耗大鱼、不再产珍珠，只给反馈。
+        local consumed = loop:ConsumeVortexBigFish(payload)
+        payload.vortexFeedback = loop.lastMessage
+        if consumed then
+            runtime:HandleVortexDrop(payload, position)
+            return true
+        end
+        return false
+    end
+
+    -- V2.8 Closure（第二轮审查）：HandleVortexDrop 只返回**一个**表（失败时返回 nil, reason），
+    -- 旧实现写 `local handled, result = runtime:HandleVortexDrop(...)`，于是 result 恒为 nil，
+    -- 下面两个 kind 分支永远不会命中 —— 苹果/小鱼投放只得到通用“已交接投放请求”，
+    -- 玩家看不到海眼专属反馈。这里按真实返回值收。
+    local result = runtime:HandleVortexDrop(payload, position)
+    if not result then return false end
+    if result.kind == "small" then
+        payload.vortexFeedback = "吃食被卷入旋转的海眼，顺着水底暗流，气味向更远的海域扩散开去。"
+    elseif result.kind == "big" then
+        payload.vortexFeedback = "小鱼被海眼的暗流卷住，血腥与动静顺着涡流远远传开，远处的水面似乎有了躁动。"
+    end
+    return true
+end
+
 ---@param self GameplayOceanBridge
 ---@param payload table
 ---@return boolean
@@ -112,6 +201,23 @@ local function receiveDrop(self, payload)
     local position = copyPoint(target)
     local distanceSquared = OceanMath.distanceSquared(self.runtime:GetShipPosition(), position)
     if distanceSquared > OceanConfig.interaction.maxThrowDistance ^ 2 then return false end
+
+    -- V2.8 海眼：只响应正式投放（底部【投放】/ 鱼饵“使用”选点）。
+    -- 背包【丢弃】与鱼饵船边即时投饵没有 officialThrow 标记，绝不触发。
+    if payload.officialThrow == true then
+        -- receiveVortexDrop 三态：nil = 不归海眼管（走普通掉落）；
+        -- true = 已处理；false = 归海眼管但本次拒绝。
+        local vortexHandled = receiveVortexDrop(self, payload, position)
+        if vortexHandled == false then
+            -- 本该由海眼处理的物品被拒（例如珍珠写入失败）：必须终止整个投放并让
+            -- DropItem 回滚，不能掉进普通 WorldDrop——否则会出现“鱼被消耗、珍珠没发”。
+            assert(self.loop.actions):SetDropTarget(nil)
+            return false
+        elseif vortexHandled == true then
+            assert(self.loop.actions):SetDropTarget(nil)
+            return true
+        end
+    end
 
     local spawnOk, entity = Diagnostics.Call("Integration", "drop_spawn", self.runtime.spawnDroppedItem, self.runtime, payload, position)
     if not spawnOk or not entity then return false end
@@ -169,6 +275,10 @@ function Bridge.New(runtime, options)
     self.loop = Loop.New(loopOptions)
     self.loop:EnableWorldActions():BindRuntime(runtime)
     self.loop:BindRuntime(runtime)
+    -- V2.8：绘制侧只读查询——漂流瓶是否已拾取（由残页持有派生）。
+    runtime.isV28Picked = function(contentId)
+        return V28Progress.IsBottlePicked(self.loop.player, contentId)
+    end
     self.game = Game.New(runtime, self.loop)
     self.game.afterWorldUpdate = function() self:ProcessAutoReturnArrival() end
     self.loop:SetStateObserver(function() self:Sync() end)
@@ -201,6 +311,7 @@ function Bridge:Update(dt, axisX, axisY)
     -- 逐帧识别（契约：getter 异常只记一次直至恢复；快照必须每次新鲜）。
     -- GC 优化只做无闭包化（handler 提升），不节流、不改快照语义。
     recognizeFixedBarrel(self)
+    recognizeV28Proximity(self)
     return true, dt
 end
 

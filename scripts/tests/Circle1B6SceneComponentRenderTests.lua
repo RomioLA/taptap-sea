@@ -23,6 +23,7 @@ local SeaDraw = require("Ocean.SeaDraw")
 local SeaViewArt = require("Ocean.SeaViewArt")
 local ImageArt = require("Ocean.ImageArt")
 local Config = require("Ocean.Config")
+local Content = require("data.content")
 
 local WIDTH, HEIGHT = 1280, 720
 -- 2026-10-18：礁石/海岸撤出生产投放后仅存于夹具；夹具位复用原生产坐标
@@ -181,7 +182,9 @@ function Tests.Run(recorder)
                 if entity.kind == "fixed" then fixedKind = fixedKind + 1 end
                 if entity.kind == "scenery" then sceneryKind = sceneryKind + 1 end
             end
-            assert(fixedKind == 4, "fixed-kind entities must stay 2 islands + treasure + barrel, got " .. fixedKind)
+            -- V2.8：固定海上内容增加 11 个节点；fixed 计数 = Content.fixed + 木桶。
+            assert(fixedKind == #Content.fixed + 1,
+                "fixed-kind entities must equal authored content plus the barrel, got " .. fixedKind)
             assert(sceneryKind == #COMPONENT_FIXTURES + #Config.world.fixedWrecks + #Config.world.fixedIslands,
                 "scenery-kind entities must match the fixture + wreck + variant island placement lists")
         end)

@@ -367,10 +367,17 @@ function SeaDebug.Create(runtime, options)
                 buildButton("seaDebugStoryArt", "StoryArt OFF", function()
                     ArtVariants.SetEnabled(not ArtVariants.IsEnabled())
                 end),
+                -- 近景海面动态层（2026-10-20）：真机验收最需要的开关——
+                -- 同一局面一键对比「有/无焦散+DuDv」，不靠重构建。
+                buildButton("seaDebugNearWater", "NearWater OFF", function()
+                    local visual = Config.visual
+                    local fx = visual and visual.nearWaterFX
+                    if type(fx) == "table" then fx.enabled = not (fx.enabled == true) end
+                end),
             }),
             UI.Label { text = "F3 panel | U underwater | H states | P perception", fontSize = 9, fontColor = { 156, 185, 195, 255 } },
             UI.Label { text = "J activity | 1 sardine | 2 tuna | C clear | B lure", fontSize = 9, fontColor = { 156, 185, 195, 255 } },
-            UI.Label { text = "Space pause | R reset", fontSize = 9, fontColor = { 156, 185, 195, 255 } },
+            UI.Label { text = "Space pause | R reset | NearWater toggle in panel", fontSize = 9, fontColor = { 156, 185, 195, 255 } },
         },
     }
 
@@ -498,6 +505,9 @@ function SeaDebug.Create(runtime, options)
         updateButtonText(buttons.seaDebugPerception, "Perception " .. (flagValue(runtime, "showPerception") and "ON" or "OFF"))
         updateButtonText(buttons.seaDebugActivity, "Activity " .. (flagValue(runtime, "showActivity") and "ON" or "OFF"))
         updateButtonText(buttons.seaDebugStoryArt, "StoryArt " .. (ArtVariants.IsEnabled() and "ON" or "OFF"))
+        local nearWater = Config.visual and Config.visual.nearWaterFX
+        updateButtonText(buttons.seaDebugNearWater, "NearWater "
+            .. ((type(nearWater) == "table" and nearWater.enabled == true) and "ON" or "OFF"))
         updateFishLabels(runtime, labelPool)
     end
 
