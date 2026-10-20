@@ -439,12 +439,77 @@ local function v28SurfaceIllusion(entity)
     return entity.entityType == "kelp"
 end
 
+-- 2026-10-20：V2.8 固定海上节点从矢量占位升级为正式水彩素材。
+-- 映射依据 assets/image/OceanArtCollection/manifest.json：
+--   debris      -> debris_01        （漂浮木板带）
+--   wreck       -> shipwreck_01     （水下旧木船）
+--   bones       -> leviathan_bones_01（巨兽骸骨）
+--   vortex      -> sea_eye_vortex_01（常态）/ sea_eye_vortex_01_boost（投放增强态）
+--   bottle      -> bottle_note_01   （漂流瓶）
+-- 贴图尺寸只由**世界尺寸**决定（不按像素推断玩法），绘制失败/未接入时退回
+-- 原有矢量占位（ART_PIPELINE §2.3：不得为了换美术删除回退路径）。
+local V28_TEXTURE = {
+    debris = "debris_01",
+    wreck = "shipwreck_01",
+    bones = "leviathan_bones_01",
+    vortex = "sea_eye_vortex_01",
+    bottle = "bottle_note_01",
+}
+-- 素材是正俯视水彩绘本（ART_PIPELINE §3），因此用世界平面投影 Plane。
+-- visualRadius 给出的是“岛影/油环”这类视觉外接半径；素材内容框长宽比不等，
+-- 这里按世界直径等比投放，不拉伸素材。
+local function v28PlaneTexture(ctx, movement, entity, name, worldDiameter, heading, alpha)
+    if type(Art.Plane) ~= "function" then return false end
+    local ok, drawn = pcall(Art.Plane, ctx, name, movement, entity.position,
+        worldDiameter, worldDiameter, heading or 0, 0, alpha)
+    return ok and drawn == true
+end
+
+---海眼是否处于“投放增强态”。
+---只用世界已有的 `vortexBoost` 临时诱饵**只读派生**，不新增状态位、不写存档。
+---@param world table
+---@return boolean
+local function vortexBoostedFromWorld(world)
+    if type(world) ~= "table" or type(world.entities) ~= "table" then return false end
+    for _, candidate in ipairs(world.entities) do
+        if not candidate.removed and candidate.kind == "temporary" then
+            local payload = candidate.payload
+            if type(payload) == "table" and payload.vortexBoost == true then return true end
+        end
+    end
+    return false
+end
+
 local function drawV28Node(ctx, runtime, entity, contentId, marked, recognized, picked)
     local palette = V28_PALETTE[entity.entityType]
     if not palette then return end
     local movement, point = runtime.movement, entity.position
     local radius = math.max(1.2, finite(entity.radius) and entity.radius or 2)
     local visual = finite(entity.visualRadius) and entity.visualRadius or radius
+
+    -- ① 贴图优先。worldDiameter 用视觉半径×2（缺省时用碰撞半径×2）——
+    -- 世界米制尺寸是唯一口径，素材像素分辨率不参与玩法。
+    if not picked and V28_TEXTURE[entity.entityType] then
+        local textureName = V28_TEXTURE[entity.entityType]
+        -- 海眼：投放增强态（世界里有 vortexBoost 临时诱饵时）换 boost 素材。
+        if entity.entityType == "vortex" and vortexBoostedFromWorld(runtime.world) then
+            textureName = "sea_eye_vortex_01_boost"
+        end
+        local worldDiameter = visual * 2
+        -- 漂流瓶体量小，用碰撞半径的两倍作世界直径更贴近“一只瓶子”的观感。
+        if entity.entityType == "bottle" then worldDiameter = radius * 2 end
+        if v28PlaneTexture(ctx, movement, entity, textureName, worldDiameter) then
+            -- 贴图成功：保留“已标记”的完成记号（不重复画矢量主体）。
+            if marked then
+                local markX, markY = point.x + visual * 0.9, point.y + visual * 0.9
+                worldLine(ctx, movement, { x = markX - 0.8, y = markY },
+                    { x = markX - 0.2, y = markY - 0.7 }, { 255, 218, 150, 235 }, 1.8)
+                worldLine(ctx, movement, { x = markX - 0.2, y = markY - 0.7 },
+                    { x = markX + 0.9, y = markY + 0.7 }, { 255, 218, 150, 235 }, 1.8)
+            end
+            return
+        end
+    end
 
     if entity.entityType == "reef" then
         -- 礁石：三层不规则色块，保持 blocking 体积不变。

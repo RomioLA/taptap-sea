@@ -1312,6 +1312,116 @@ function Tests.Run(recorder)
             "debris_01 points southwest toward the wreck")
     end)
 
+    -- =========================================================
+    -- 2026-10-20 用户美术合集接入（OceanArtCollection）
+    -- =========================================================
+    test("V2.8 sea nodes register their runtime art specs in the existing catalog", function()
+        -- 美术合集已入库，但必须走既有唯一 catalog 链（ART_PIPELINE §2.13：
+        -- GeneratedData 自动生成、不手工编辑、不建第二套目录）。
+        local Art = require("Ocean.ImageArt")
+        local expected = {
+            debris_01 = "image/OceanArtCollection/",
+            shipwreck_01 = "image/OceanArtCollection/",
+            leviathan_bones_01 = "image/OceanArtCollection/",
+            sea_eye_vortex_01 = "image/OceanArtCollection/",
+            sea_eye_vortex_01_boost = "image/OceanArtCollection/",
+            bottle_note_01 = "image/OceanArtCollection/",
+            -- 物品图标（不进世界绘制，但同样只登记在这一份 catalog）
+            sea_note_01 = "image/OceanArtCollection/",
+            abyss_pearl = "image/OceanArtCollection/",
+            coral_branch = "image/OceanArtCollection/",
+            jewelry_01 = "image/OceanArtCollection/",
+        }
+        for name, prefix in pairs(expected) do
+            local spec = assert(Art.GetSpec(name), name .. " must be in the runtime catalog")
+            assert(spec.path:sub(1, #prefix) == prefix,
+                name .. " must resolve into the OceanArtCollection runtime path, got " .. spec.path)
+            assert(spec.pixelWidth > 0 and spec.pixelHeight > 0, name .. " must carry pixel size")
+            assert(spec.contentWidth > 0 and spec.contentHeight > 0,
+                name .. " must carry visible content bounds (draw size uses content, not canvas)")
+            assert(spec.contentWidth <= spec.pixelWidth and spec.contentHeight <= spec.pixelHeight,
+                name .. " content bounds must fit inside the canvas")
+        end
+        -- 既有条目一个都不能被这轮覆盖掉（回归保护）。
+        for _, legacyName in ipairs({
+            "island", "barrel", "gull", "waterpaper", "sky_day", "sky_dusk", "sky_moon",
+            "sea_surface_day", "sea_surface_dusk", "eco_fish_small_f1", "island_peak_v1",
+        }) do
+            assert(Art.GetSpec(legacyName) ~= nil, "catalog lost the existing entry " .. legacyName)
+        end
+    end)
+
+    test("V2.8 sea node textures fall back to vectors when the image is unavailable", function()
+        -- 绘制级验证（可跑的那一半）：贴图不可用时，五个节点必须仍然真实绘制矢量占位，
+        -- 画面不得空白。这是 ART_PIPELINE §2.3 的硬要求（不得为换美术删除回退路径）。
+        -- 「贴图优先」那一半需要 nvgCreateImage，而本仓库的离线 recorder 不绑定它，
+        -- 因此按实机 GUI 验收处理：标记 GUI_CHECK_REQUIRED 而不是伪造通过。
+        local SeaDraw = require("Ocean.SeaDraw")
+        -- 两套运行器能力不同：这里自带一个只统计 fill/stroke/imagePattern 的最小桩，
+        -- 保证本用例在任何运行器下都真的跑绘制路径（不 skip）。
+        local counters = { fill = 0, stroke = 0, imagePattern = 0 }
+        local stubs = {
+            nvgRGBA = function(r, g, b, a) return { r = r, g = g, b = b, a = a or 255 } end,
+            nvgBeginPath = function() end, nvgMoveTo = function() end,
+            nvgLineTo = function() end, nvgQuadTo = function() end,
+            nvgBezierTo = function() end, nvgClosePath = function() end,
+            nvgRect = function() end, nvgRoundedRect = function() end,
+            nvgCircle = function() end, nvgEllipse = function() end,
+            nvgFillColor = function() end, nvgFill = function() counters.fill = counters.fill + 1 end,
+            nvgStrokeColor = function() end, nvgStrokeWidth = function() end,
+            nvgStroke = function() counters.stroke = counters.stroke + 1 end,
+            nvgImagePattern = function() counters.imagePattern = counters.imagePattern + 1; return 0 end,
+            nvgFillPaint = function() end,
+            nvgSave = function() end, nvgRestore = function() end,
+            nvgTranslate = function() end, nvgScale = function() end, nvgRotate = function() end,
+            nvgScissor = function() end, nvgIntersectScissor = function() end,
+            nvgResetScissor = function() end, nvgGlobalAlpha = function() end,
+            nvgShapeAntiAlias = function() end, nvgTransform = function() end,
+            nvgLinearGradient = function() return 0 end, nvgRadialGradient = function() return 0 end,
+            nvgCreateImage = function() return -1 end, nvgImageSize = function() end,
+            nvgText = function() end, nvgFontFace = function() end, nvgFontSize = function() end,
+            nvgTextAlign = function() end, nvgCreateFont = function() return 0 end,
+            nvgTextBounds = function() return 0, 0, 0, 0 end,
+            NVG_IMAGE_GENERATE_MIPMAPS = 1, NVG_IMAGE_REPEATX = 2,
+            NVG_IMAGE_REPEATY = 4, NVG_IMAGE_FLIPY = 8,
+            NVG_IMAGE_PREMULTIPLIED = 16, NVG_IMAGE_NEAREST = 32,
+        }
+        local saved = {}
+        for name, fn in pairs(stubs) do saved[name] = _G[name]; _G[name] = fn end
+        local function cleanup()
+            for name in pairs(stubs) do _G[name] = saved[name] end
+        end
+        local okBody, bodyErr = pcall(function()
+        local Art = require("Ocean.ImageArt")
+        local runtime = Runtime.New({ departure = { x = 0, y = 0 }, initializeRegions = false })
+        runtime.movement:SetViewport(1920, 1080)
+        runtime.world.showUnderwater = true
+        local ctx = {}
+        local nodes = { "debris_01", "shipwreck_01", "leviathan_bones_01",
+            "sea_eye_vortex_01", "bottle_note_01" }
+        for _, contentId in ipairs(nodes) do
+            local entity = assert(runtime.world.fixedContentEntities[contentId], contentId)
+            runtime.ship.position = { x = entity.position.x, y = entity.position.y - (entity.radius + 6) }
+            -- 全新 context：catalog 有规格但没有任何已加载句柄 -> 必然走矢量回退。
+            assert(not Art.IsLoaded(ctx, contentId),
+                contentId .. " must not be silently preloaded on a fresh context")
+            recorder.reset()
+            local ok, err = pcall(function()
+                SeaDraw.Scene(ctx, 1920, 1080, runtime, nil, nil,
+                    function() return false end, function() return false end)
+            end)
+            assert(ok, tostring(err))
+            assert(counters.fill + counters.stroke > 0,
+                contentId .. " must keep its vector fallback when the texture is unavailable")
+            assert(counters.imagePattern == 0,
+                contentId .. " must not paint an unloaded image")
+        end
+        end)
+        cleanup()
+        assert(okBody, bodyErr)
+    end)
+
+
     return { results = results }
 end
 

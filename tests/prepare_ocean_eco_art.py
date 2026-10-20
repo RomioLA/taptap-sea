@@ -58,6 +58,11 @@ def catalog_text():
     # SkyDecor（2026-10-19 日月云贴图）：屏幕空间装饰层；清单缺失时按空合集处理。
     skydecor_manifest = ROOT / "assets/image/SkyDecor/manifest.json"
     skydecor = json.loads(skydecor_manifest.read_text(encoding="utf-8")) if skydecor_manifest.exists() else {"assets": {}}
+    # OceanArtCollection（2026-10-20 用户供的 V2.8 美术合集）：V2.8 固定海上节点从
+    # 矢量占位升级为正式素材（debris/shipwreck/bones/vortex/bottle）+ 物品图标。
+    # 规格由 tests/prepare_ocean_art_collection.py 生成 manifest；清单缺失时按空合集处理。
+    art_manifest = ROOT / "assets/image/OceanArtCollection/manifest.json"
+    art = json.loads(art_manifest.read_text(encoding="utf-8")) if art_manifest.exists() else {"assets": {}}
     entries = {}
     # eco/SeaSurface 合集按条目自带 preload（per-entry，如 sea_surface_day/dusk=true、
     # night=false），其余合集沿用既有默认；与 prepare_ocean_ready_art.py 的 catalog_text
@@ -69,7 +74,8 @@ def catalog_text():
                                            (eco["assets"], False, True),
                                            (sea["assets"], False, True),
                                            (sky["assets"], False, True),
-                                           (skydecor["assets"], False, True)):
+                                           (skydecor["assets"], False, True),
+                                           (art["assets"], False, False)):
         for name, entry in collection.items():
             entries[name] = {**entry, "preload": entry.get("preload", preload) if per_entry else preload}
     selected = json.loads((WAVE2_OUT / "manifest.json").read_text(encoding="utf-8"))["assets"] \
