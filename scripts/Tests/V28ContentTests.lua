@@ -1422,6 +1422,51 @@ function Tests.Run(recorder)
     end)
 
 
+    -- =========================================================
+    -- 2026-10-20 物品图标图集（用户供美术合集的 item_icon 部分）
+    -- =========================================================
+    test("item icons ship as a UI atlas that UI.Sprite can consume", function()
+        -- 这四张不是海上节点占位符，而是背包/独立道具栏用的物品图标。
+        -- HUD 里唯一能直接显示图片的控件是 UI.Sprite，它读 PixiJS 图集 JSON，
+        -- 所以图标走既有 WatercolorUI 图集链，而不是新建图片绘制路径。
+        local path = "image/WatercolorUI/item_icons.json"
+        local file = assert(io.open("assets/" .. path, "r"), "item icon atlas json is missing")
+        local text = file:read("*a")
+        file:close()
+        assert(text:find('"frames"', 1, true) ~= nil, "atlas json must carry frames")
+        for _, frame in ipairs({ "sea_note", "abyss_pearl", "coral_branch", "jewelry" }) do
+            assert(text:find('"' .. frame .. '"', 1, true) ~= nil,
+                "item icon atlas must contain the frame " .. frame)
+        end
+        -- 图集指向的图片必须真实存在（打包器产物）。
+        local imagePath = "assets/image/WatercolorUI/atlas/item_icons.png"
+        local image = assert(io.open(imagePath, "rb"), "item icon atlas png is missing")
+        local size = image:seek("end")
+        image:close()
+        assert(size > 1000, "item icon atlas png looks empty (" .. tostring(size) .. " bytes)")
+    end)
+
+    test("every icon-bearing item maps to an existing atlas frame", function()
+        -- 物品行只对登记过的 itemId 画图标；未登记的物品保持纯文字行（零回归）。
+        -- 这里锁住映射表与图集帧集合的一致性，避免改名后静默丢图标。
+        local mapping = {
+            sea_note_01 = "sea_note", sea_note_02 = "sea_note",
+            abyss_pearl = "abyss_pearl", coral_branch = "coral_branch",
+            shipwreck_jewelry = "jewelry",
+        }
+        local file = assert(io.open("assets/image/WatercolorUI/item_icons.json", "r"))
+        local atlas = file:read("*a")
+        file:close()
+        local Items = require("data.items")
+        for itemId, frame in pairs(mapping) do
+            assert(Items.GetDefinition(itemId) ~= nil, itemId .. " must be a real item")
+            assert(atlas:find('"' .. frame .. '"', 1, true) ~= nil,
+                itemId .. " maps to a frame that does not exist: " .. frame)
+        end
+        -- 没有图标的物品不得被误映射（例如 rusty_key 暂无专属素材）。
+        assert(mapping.rusty_key == nil, "rusty_key has no icon asset yet; keep it unmapped")
+    end)
+
     return { results = results }
 end
 

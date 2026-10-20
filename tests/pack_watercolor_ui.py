@@ -41,6 +41,10 @@ SEMANTIC = {
         "turtle", "jellyfish",
     ],
     "characters": ["fisherman_elder", "fisherman_young"],
+    # 2026-10-20：V2.8 美术合集的物品图标（用户供图）→ UI 图集。
+    # 顺序必须与 tests/prepare_item_icon_atlas.py 的写入顺序一致
+    # （该脚本按 semantic 字典序写 item_icons_000..003）。
+    "item_icons": ["abyss_pearl", "coral_branch", "jewelry", "sea_note"],
 }
 
 
@@ -95,6 +99,17 @@ def pack_sheet(sheet: str, entries: list[dict]) -> dict:
 
 
 def main() -> None:
+    # 2026-10-20：增 --sheet 过滤。既有 42 个切片源文件已在
+    # 8141a5d「清理零引用美术资产」中被删除（只保留 atlas/*.png 成品），
+    # 因此全量重打会直接 FileNotFoundError。新增图集只需单独打自己的 sheet，
+    # 不重建既有成品。
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--sheet", action="append", default=None,
+                        help="只打指定 sheet（可重复）；缺省为全量")
+    args = parser.parse_args()
+    only = set(args.sheet) if args.sheet else None
+
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))["assets"]
     groups: dict[str, list[dict]] = {}
     for name, entry in manifest.items():
@@ -103,6 +118,11 @@ def main() -> None:
         assert semantic_list, f"SEMANTIC 缺少 sheet：{sheet}"
         semantic = semantic_list[int(index)]
         groups.setdefault(sheet, []).append({**entry, "semantic": semantic})
+
+    if only is not None:
+        unknown = only - set(groups)
+        assert not unknown, f"未知 sheet：{sorted(unknown)}"
+        groups = {k: v for k, v in groups.items() if k in only}
 
     report = [pack_sheet(sheet, items) for sheet, items in sorted(groups.items())]
     total_kb = sum(r["atlasKB"] for r in report)

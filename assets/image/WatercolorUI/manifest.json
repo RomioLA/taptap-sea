@@ -759,6 +759,78 @@
         0.5,
         0.5
       ]
+    },
+    "item_icons_000": {
+      "file": "image/WatercolorUI/item_icons/abyss_pearl.png",
+      "sheet": "item_icons",
+      "bboxInSheet": [
+        0,
+        0,
+        96,
+        96
+      ],
+      "size": [
+        96,
+        96
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "item_icons_001": {
+      "file": "image/WatercolorUI/item_icons/coral_branch.png",
+      "sheet": "item_icons",
+      "bboxInSheet": [
+        0,
+        0,
+        96,
+        96
+      ],
+      "size": [
+        96,
+        96
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "item_icons_002": {
+      "file": "image/WatercolorUI/item_icons/jewelry.png",
+      "sheet": "item_icons",
+      "bboxInSheet": [
+        0,
+        0,
+        96,
+        96
+      ],
+      "size": [
+        96,
+        96
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "item_icons_003": {
+      "file": "image/WatercolorUI/item_icons/sea_note.png",
+      "sheet": "item_icons",
+      "bboxInSheet": [
+        0,
+        0,
+        96,
+        96
+      ],
+      "size": [
+        96,
+        96
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
     }
   }
 }

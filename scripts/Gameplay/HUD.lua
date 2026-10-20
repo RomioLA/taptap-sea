@@ -73,6 +73,19 @@ local UI_SIZE = presentation.UI_SIZE
 local makeThemer = presentation.makeThemer
 local makeLabel = presentation.makeLabel
 local fishDisplay = presentation.fishDisplay
+-- 2026-10-20：物品行图标（用户供的 V2.8 美术合集）。
+-- 图集由 tests/prepare_item_icon_atlas.py + tests/pack_watercolor_ui.py 生成，
+-- 走既有 UI.Sprite 通道（与状态图标条/图鉴同源），不另建图片系统。
+-- 未登记的 itemId 不画图标（保持原纯文字行，零回归）。
+local ITEM_ICON_SHEET = "image/WatercolorUI/item_icons.json"
+local ITEM_ICON_FRAMES = {
+    sea_note_01 = "sea_note",
+    sea_note_02 = "sea_note",
+    abyss_pearl = "abyss_pearl",
+    coral_branch = "coral_branch",
+    shipwreck_jewelry = "jewelry",
+}
+local ITEM_ICON_SIZE = 24
 local modeText = presentation.modeText
 local makeInfoLabel = presentation.makeInfoLabel
 local infoLine = presentation.infoLine
@@ -2192,6 +2205,19 @@ local header = UI.Panel {
             }
             selectedBar:SetVisible(false)
             itemLine:AddChild(selectedBar)
+            -- 物品图标（可选）：图集里有该 itemId 的帧才插。
+            -- 位置在名称标签**之前**、同为 itemLine 的直属子节点，
+            -- 因此 Circle1B3SevenDays 的「标签 → label.parent → row.children 找按钮」
+            -- 契约不变（标签 parent 仍是 itemLine）。
+            local iconFrame = ITEM_ICON_FRAMES[itemId]
+            if iconFrame and type(UI.Sprite) == "function" then
+                itemLine:AddChild(UI.Sprite {
+                    src = ITEM_ICON_SHEET,
+                    frame = iconFrame,
+                    width = ITEM_ICON_SIZE,
+                    height = ITEM_ICON_SIZE,
+                })
+            end
             itemLine:AddChild(makeLabel(string.format("%02d · %s%s", itemIndex, name,
                 fishTag ~= "" and (" · " .. fishTag) or ""), UiKit.fontSize.teaching,
                 fishColor or UiKit.ink.title, "bold", { flexGrow = 1, flexBasis = 0 }))
@@ -2842,6 +2868,16 @@ local header = UI.Panel {
                     local row = UI.Panel {
                         width = "100%", flexDirection = "row", alignItems = "center", gap = 6,
                     }
+                    -- 独立道具栏图标（可选）：图集里有该 id 的帧才插。
+                    local barIconFrame = ITEM_ICON_FRAMES[entry.treasureId]
+                    if barIconFrame and type(UI.Sprite) == "function" then
+                        row:AddChild(UI.Sprite {
+                            src = ITEM_ICON_SHEET,
+                            frame = barIconFrame,
+                            width = ITEM_ICON_SIZE,
+                            height = ITEM_ICON_SIZE,
+                        })
+                    end
                     row:AddChild(makeLabel(entry.name, UiKit.fontSize.teaching,
                         UiKit.ink.title, "bold", { flexGrow = 1, flexBasis = 0 }))
                     local treasureId = entry.treasureId
