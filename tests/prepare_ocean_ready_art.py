@@ -83,7 +83,9 @@ def catalog_text(manifest):
             "        anchorX = 0.5, anchorY = 0.5,",
             "        preload = " + str(entry["preload"]).lower() + ",",
             "        repeatTexture = " + str(name in ("waterpaper", "waterpaper_story", "ocean_tile",
-                                                       "sea_surface_day", "sea_surface_dusk", "sea_surface_night")).lower() + ",",
+                                                       "sea_surface_day", "sea_surface_dusk", "sea_surface_night",
+                                                       "water_caustic_light", "water_caustic_light_alt",
+                                                       "water_dudv_flow")).lower() + ",",
             "        completeIsland = " + str(entry.get("complete_island", False)).lower() + ",",
             "    },",
         ])

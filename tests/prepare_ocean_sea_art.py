@@ -124,8 +124,16 @@ def prepare():
 def check():
     module = importer()
     manifest = manifest_text()
-    assert set(manifest["assets"]) == set(SOURCES), "SeaSurface 清单与预期三件套不一致"
+    # 2026-10-20：SeaSurface 合集新增近景动态层（焦散/dudv，由
+    # prepare_ocean_water_fx_art.py 入库）。本脚本只校验自己负责的那三件套，
+    # 其余条目不得出现在 SOURCES 之外的同名冲突里。
+    water_fx_names = {"water_caustic_light", "water_caustic_light_alt", "water_dudv_flow"}
+    present = set(manifest["assets"])
+    assert set(SOURCES).issubset(present), "SeaSurface 清单缺少本脚本负责的海面三件套"
+    assert present <= set(SOURCES) | water_fx_names, "SeaSurface 清单出现未登记条目"
     for name, entry in manifest["assets"].items():
+        if name in water_fx_names:
+            continue  # 由 prepare_ocean_water_fx_art.py 的 --check 负责
         path = ROOT / "assets" / entry["path"]
         assert path.is_file(), f"{name} 运行目录缺失"
         with Image.open(path) as image:

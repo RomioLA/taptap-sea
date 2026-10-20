@@ -101,13 +101,25 @@ end
 
 -- 波纹层默认关闭（2026-10-20 裁定）后，断言波纹层的检查须显式开启再断言，
 -- 使断言与 Config 默认值解耦（默认值可再调整而不误伤本套契约）。
+-- 近景海面动态层（2026-10-20 焦散 + DuDv）是叠加在底图/波纹层之上的独立图层。
+-- 本套件断言的是「底图 + 波纹层」的贴图契约（imagePattern 序号、nvgFill 次数等），
+-- 因此统一在检查体内把近景层关掉，让断言只看本套件负责的那两层；
+-- 近景层自身的契约由 SeaNearWaterFXTests 守护。
+local function withNearWaterDisabled(fn)
+    local settings = Config.visual.nearWaterFX or {}
+    local oldEnabled = settings.enabled
+    settings.enabled = false
+    local ok, err = pcall(fn)
+    settings.enabled = oldEnabled
+    if not ok then error(err) end
+end
+
 local function withRippleEnabled(fn)
     local settings = Config.visual.seaRipple or {}
     local oldEnabled = settings.enabled
     settings.enabled = true
-    local ok, err = pcall(fn)
+    withNearWaterDisabled(fn)
     settings.enabled = oldEnabled
-    if not ok then error(err) end
 end
 
 local function withWaterPaperCounter(fn)
@@ -302,6 +314,7 @@ function Tests.Run(recorder)
     end)
 
     check("Surface 接入：滚动偏移随 camera.x，scroll=false 静止，alpha 经 config 透传", function()
+        withNearWaterDisabled(function()
         local ctx = {}
         local base = HEIGHT / Config.camera.viewHeight
         local oldScroll = Config.visual.seaSurface.scroll
@@ -322,6 +335,7 @@ function Tests.Run(recorder)
         near(patterns[1].alpha, 0.8, 1e-9)
         near(patterns[2].alpha, 0.4, 1e-9, "over alpha = config.alpha × blend")
         Config.visual.seaSurface.alpha = oldAlpha
+        end)
     end)
 
     check("Surface 接入：enabled=false 跳过贴图层走纸纹，波纹层仍叠加", function()
@@ -433,7 +447,9 @@ function Tests.Run(recorder)
         assert(ripple.enabled == false,
             "2026-10-20 用户裁定：波纹层默认关闭，波纹改回程序 crest marks")
         local movement = makeBoundsProbeMovement()
-        SeaViewArt.Surface({}, movement, 1.5)
+        withNearWaterDisabled(function()
+            SeaViewArt.Surface({}, movement, 1.5)
+        end)
         assert(movement.viewBoundsCalls == 1, "默认口径应进入程序 crest marks 段")
         assert(#patterns == 1 and pathOf(patterns[1].image) == DAY_PATH,
             "默认口径只画海面底图，不再叠加波纹平铺层")

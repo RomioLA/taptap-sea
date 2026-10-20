@@ -125,6 +125,110 @@
       "layer": "sea_surface",
       "status": "ready_wired",
       "period": "all"
+    },
+    "water_caustic_light": {
+      "path": "image/SeaSurface/water_caustic_light.png",
+      "source": "procedural:water_caustic_light",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.46612548828125,
+      "sha256": "14fcef1e0276dfba79137eaab9a430de0565df2ba2a0d94c5d0bcb1a56393192",
+      "preload": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "sea_surface",
+      "status": "ready_wired",
+      "kind": "caustic",
+      "period": "all",
+      "generator": "tests/prepare_ocean_water_fx_art.py"
+    },
+    "water_caustic_light_alt": {
+      "path": "image/SeaSurface/water_caustic_light_alt.png",
+      "source": "procedural:water_caustic_light_alt",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.17578887939453125,
+      "sha256": "21ce7af88105b0b38c2fc1d6c4599d52450b3d9932350defd8ca9285fc4bf46c",
+      "preload": false,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "sea_surface",
+      "status": "ready_wired",
+      "kind": "caustic",
+      "period": "all",
+      "generator": "tests/prepare_ocean_water_fx_art.py"
+    },
+    "water_dudv_flow": {
+      "path": "image/SeaSurface/water_dudv_flow.png",
+      "source": "procedural:water_dudv_flow",
+      "size": [
+        256,
+        256
+      ],
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "4549c298b9b6b5d4e67e14f810df26e0b0d1101c5350ccaecdda80918336fe15",
+      "preload": false,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "layer": "sea_surface",
+      "status": "ready_not_placed",
+      "kind": "dudv",
+      "period": "all",
+      "encoding": {
+        "neutral": 0.5,
+        "channels": [
+          "r",
+          "g"
+        ],
+        "decode": "(rgb - 0.5) * 2 * strength"
+      },
+      "generator": "tests/prepare_ocean_water_fx_art.py"
     }
+  },
+  "near_water_fx": {
+    "style": "焦散：低饱和浅青/浅蓝白水彩亮丝网（无圆斑、无硬边）；dudv：周期性卷曲位移场",
+    "format": "caustic 为 RGBA（RGB 浅青白 + A 光斑强度，双向无缝可平铺）；dudv 为 RGB 双通道位移（R/G = 0.5 + 偏移，中性 0.5）",
+    "placement": "SeaViewArt.Surface 近景层（Lua + NanoVG 图片纹理），随船的世界锚点区域，区域边缘径向渐隐；dudv 仅在启用 GPU 置换路径时读取",
+    "generator": "tests/prepare_ocean_water_fx_art.py"
   }
 }

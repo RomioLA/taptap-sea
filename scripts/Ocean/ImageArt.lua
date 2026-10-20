@@ -104,6 +104,23 @@ function Art.IsLoaded(ctx, name)
     return images ~= nil and (images[name] or 0) > 0
 end
 
+-- 取出（必要时按需加载）某素材的 NanoVG 图像句柄；失败/未知返回 0。
+-- 供需要自己做 imagePattern/仿射映射的表现层（如近景焦散网格）复用同一套
+-- 懒加载与失败缓存语义，避免第二套图片句柄表。
+---@param ctx NVGContextWrapper
+---@param name string
+---@return integer
+function Art.ImageHandle(ctx, name)
+    local spec = catalog[name]
+    if not spec then return 0 end
+    local images = contexts[ctx]
+    local image = images and images[name] or 0
+    if image > 0 then return image end
+    Art.LoadImage(ctx, name)
+    images = contexts[ctx]
+    return images and images[name] or 0
+end
+
 -- 每个三角片用三个实际投影点计算 UV→屏幕仿射矩阵。
 -- 大岛分片，小船分片；不能整张斜视图片做屏幕旋转，也不修改摄像机。
 -- projected 走模块级 scratch 复用（同帧同步消费，无跨帧别名），削减每帧 GC 压力。

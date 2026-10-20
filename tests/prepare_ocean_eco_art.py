@@ -89,7 +89,10 @@ def catalog_text():
             entries[name] = entry
     repeat_names = ("waterpaper", "waterpaper_story", "ocean_tile",
                     "sea_surface_day", "sea_surface_dusk", "sea_surface_night",
-                    "sea_ripple_overlay", "sky_day", "sky_dusk")
+                    "sea_ripple_overlay", "sky_day", "sky_dusk",
+                    # 近景海面动态层（2026-10-20）：运行期 UV 用的是无界世界平铺坐标，
+                    # 必须 REPEAT，否则出第一个瓦片就被 clamp 成边缘色/透明。
+                    "water_caustic_light", "water_caustic_light_alt", "water_dudv_flow")
     lines = ["-- 自动生成：python3 tests/prepare_ocean_eco_art.py；禁止手工编辑。",
              "-- 只含图片规格，不含实体、玩法数值或更新逻辑。", "return {"]
     for name, entry in sorted(entries.items()):

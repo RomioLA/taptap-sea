@@ -207,6 +207,54 @@ local Config = {
     -- 跳过 crests 的门控天然失效），贴图样式改由程序层参考实现（见 visual.crest）。
     -- 本层资产与代码路径完整保留：enabled=true 即一键回切旧口径，不删不弃。
     seaRipple = { enabled = false, alpha = 0.9, tileScale = 1.6, scrollScale = 1.0 },
+    -- 近景海面动态效果（2026-10-20，焦散 + DuDv）：纯表现层，不影响世界/玩法。
+    -- 背景与限定：海面底图（seaSurface）与波纹（seaRipple）都是屏幕空间材质层，
+    -- 船一动就与世界实体速率脱节；本层改用世界米制投影，随船移动但钉在世界平面。
+    --
+    -- 实现路线（AB，无 GPU Shader）：NanoVG 图片分片贴图 + 逐顶点 UV 位移。
+    --   · 焦散贴图 water_caustic_light（512²，RGBA，双向无缝）由
+    --     tests/prepare_ocean_water_fx_art.py 程序化生成水彩亮丝网；
+    --   · 区域以相机（Movement 里跟随船，带 followSec 平滑）为中心的 sizeMeters 方形，
+    --     按 cellMeters 切网格，每片两个三角形做仿射贴图（与 ImageArt.triangle 同口径）；
+    --   · 边缘径向渐隐 feather + 哈希抗抖，无矩形边界；
+    --   · DuDv（water_dudv_flow，R/G 中性 0.5）在 CPU 解码成位移网格，
+    --     逐顶点偏移焦散 UV —— 这是 NanoVG 下真正生效的「采样偏移」，不是叠图。
+    --
+    -- 成本：每片 2 次 nvgFill（默认 6×6=36 片 → 72 fill/帧），单层、无 RenderTarget、
+    -- 无全屏 Shader；片数有 MAX_TILES_PER_SIDE=12 硬上限，亚像素片剔除。
+    -- 关闭方式：enabled=false（或只关 DuDv：dudvEnabled=false）。
+    -- 另有 SeaDebug 面板的 NearWater 按钮可运行时对比开关。
+    nearWaterFX = {
+        enabled = true,
+        -- 贴图层
+        causticName = "water_caustic_light",
+        causticAltName = "water_caustic_light_alt",
+        secondLayer = false,        -- 双层焦散（不同方向/速度），默认单层
+        secondLayerAlpha = 0.6,
+        alpha = 0.16,               -- 焦散不透明度（需求建议区间 0.06~0.20）
+        -- 区域与网格（世界米制）；数值按 960×540 离线预览调到「盖住近水、
+        -- 边缘在屏幕内完全淡完、不伸到天空」，真机可再微调。
+        sizeMeters = 84,            -- 区域边长（视野高 45m 的近水面约占下半屏）
+        cellMeters = 12,            -- 单格边长（84/12=7×7=49 片；地形畸变需细分）
+        feather = 0.52,             -- 径向渐隐起点（越早开始越柔，但中心也被淡化）
+        edgeJitter = 0.45,          -- 边缘按片哈希降权，打散同心色阶
+        edgeJitterSeed = 0.17,
+        -- 纹理滚动（归一化纹理单位/秒；与船位置完全解耦，船动不重置）
+        tileMeters = 22,            -- 一个瓦片覆盖的世界米数（越小网越密）
+        scrollX = 0.012,
+        scrollY = 0.008,
+        -- DuDv 置换
+        dudvEnabled = true,
+        dudvName = "water_dudv_flow",
+        dudvStrength = 0.008,       -- UV 偏移强度（建议 0.003~0.015）
+        dudvTileMeters = 26,
+        dudvScrollX = 0.017,
+        dudvScrollY = -0.011,
+        dudvResolution = 16,        -- 解码网格分辨率（顶点/边），只解码一次
+        -- 昼夜（复用现有 clock，不新增时钟）：夜间压到 nightScale
+        dayScale = 1.0,
+        nightScale = 0.28,
+    },
     -- 程序 crest marks 贴图样式（2026-10-20 用户裁定「参考贴图样式」）。以
     -- sea_ripple_overlay 水彩波纹贴图的笔触特征为参照目标：白沫色、细短弧线、
     -- 缓 S 形、两端渐细、疏朗分布。全部为表现层参数，不触碰世界/玩法。
