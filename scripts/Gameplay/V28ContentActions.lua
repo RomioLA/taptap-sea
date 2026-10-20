@@ -5,6 +5,7 @@
 --   * 事务开始不扣费；成功完成才扣体力、发奖、置状态；主动取消/夜尽中断 0扣费0奖励；
 --   * 运行态可立即内存置位防同局重复，持久化仍由既有检查点负责。
 local Content = require "data.content"
+local OceanConfig = require "Ocean.Config"
 local Items = require "data.items"
 local V28 = require "Gameplay.V28Progress"
 local WorldContentProgress = require "Gameplay.WorldContentProgress"
@@ -34,6 +35,19 @@ for _, definition in ipairs(Content.fixed) do
             or definition.lensMark or definition.recognizeText or definition.net) then
         DEFINITIONS[definition.contentId] = definition
         CONTENT_IDS[#CONTENT_IDS + 1] = definition.contentId
+    end
+end
+-- V2.8 HUMAN-PLAYTEST-FIX-01：六座可碰撞的变体岛（Config.world.fixedIslands）
+-- 也带 0 体力环境 observe。它们**不是** Content.fixed 的正式节点（无奖励、不写
+-- 完成态、kind 仍是 scenery），所以单独并入同一张 DEFINITIONS 表复用现有
+-- observe 能力，而不是新建系统。
+-- 追加在正式节点之后：GetPrompt 按 CONTENT_IDS 顺序取第一个合法目标，
+-- 正式节点优先级因此不变。
+for _, island in ipairs((OceanConfig.world and OceanConfig.world.fixedIslands) or {}) do
+    if type(island.contentId) == "string" and type(island.observe) == "table"
+        and DEFINITIONS[island.contentId] == nil then
+        DEFINITIONS[island.contentId] = island
+        CONTENT_IDS[#CONTENT_IDS + 1] = island.contentId
     end
 end
 

@@ -581,11 +581,15 @@ local function currentFixedContent(world, contentId)
         or type(world.fixedContentEntities) ~= "table" then return nil end
     local entity = world.fixedContentEntities[contentId]
     if not entity or type(world.get) ~= "function" or world:get(entity.id) ~= entity
-        or entity.removed or entity.alive == false or entity.kind ~= "fixed"
-        or entity.contentId ~= contentId or not validBarrelPoint(entity.position)
+        or entity.removed or entity.alive == false or entity.contentId ~= contentId
+        or not validBarrelPoint(entity.position)
         or not isFiniteNumber(entity.radius) or entity.radius < 0 then
         return nil
     end
+    -- V2.8 HUMAN-PLAYTEST-FIX-01：scenery 类实体也能参与“固定内容只读查询”，但仅限
+    -- 带了 0 体力 observe 载荷的（六座可碰撞变体岛）。其余 scenery（礁石/海岸底图/
+    -- 岛饰）继续不可交互，保持“实体≠可交互”的既有分层；kind=="fixed" 计数契约不变。
+    if entity.kind ~= "fixed" and type(entity.observe) ~= "table" then return nil end
     return entity
 end
 

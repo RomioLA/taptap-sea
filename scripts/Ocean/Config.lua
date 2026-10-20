@@ -106,25 +106,56 @@ local Config = {
     --     已经落在邻岛的裕度圈里，自动返航直接 no_viable_detour（真实玩家可复现）。
     -- 新坐标按“近港留空 → 东/东南/西北/北分向”拉开：近港 30m 内只留木桶，
     -- 六岛分居 4 个象限的 60~135m 环，彼此与岛_01/02/木桶间距 ≥ r_i+r_j+4m。
+    --
+    -- 2026-10-20 真人试玩修复（HUMAN-PLAYTEST-RCA-FIX-01）：这六座是**实体阻挡的岛**，
+    -- 玩家能看见、会撞上，但旧实现里它们没有任何交互资格 —— “明明是岛却什么都
+    -- 不能做”。现在每座带一句 0 体力/即时/可重复/不掉落/不存档的环境观察文本
+    -- （复用现有 observe 能力，只走 V28ContentActions，不写完成态）。
+    -- 仍然：无 rewardId / 无 actionKind / 无 memory / 原地可重复。
+    -- 两座正式岛 island_01 / island_02 的【探索岛屿】与奖励规则完全不变。
     fixedIslands = {
         { entityType = "island", contentId = "island_peak_v1",
             position = { x = 115, y = 25 }, radius = 7, blocking = true,
-            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY" },
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
+            observe = {
+                promptText = "观察岛屿",
+                text = "一座顶着一道尖坡的小岛，坡上零星长着几棵树。浪打在东侧的岩根上，碎成白沫。",
+            } },
         { entityType = "island", contentId = "island_reefcluster_v1",
             position = { x = 112, y = -62 }, radius = 9, blocking = true,
-            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY" },
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
+            observe = {
+                promptText = "观察岛屿",
+                text = "几块低矮的礁洲各自破水而出，中间隔着浅浅的水道，礁面上覆着薄薄一层青苔。",
+            } },
         { entityType = "island", contentId = "island_cliff_v1",
             position = { x = -70, y = -55 }, radius = 9, blocking = true,
-            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY" },
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
+            observe = {
+                promptText = "观察岛屿",
+                text = "一道陡直的崖壁立在水上，崖脚堆着崩落的碎石，没有可以靠船的地方。",
+            } },
         { entityType = "island", contentId = "island_stele_v1",
             position = { x = 55, y = -135 }, radius = 4, blocking = true,
-            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY" },
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
+            observe = {
+                promptText = "观察岛屿",
+                text = "一块矮岛上立着一根被风和盐磨圆了的石柱，柱脚散着几块同色的碎石。",
+            } },
         { entityType = "island", contentId = "island_twinhills_v1",
             position = { x = 20, y = 125 }, radius = 10, blocking = true,
-            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY" },
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
+            observe = {
+                promptText = "观察岛屿",
+                text = "两个差不多高的丘并排立着，两丘之间凹下去一道浅浅的缝，风从缝里穿过去。",
+            } },
         { entityType = "island", contentId = "island_sandbar_v1",
             position = { x = -55, y = 130 }, radius = 10, blocking = true,
-            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY" },
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
+            observe = {
+                promptText = "观察岛屿",
+                text = "一片平缓的沙洲，林线沿着岸势铺开，近水的沙面被潮水冲出一道道细纹。",
+            } },
     },
 },
     camera = { tuningStatus = "SEA_VIEW_VISUAL_TEST_VALUE",

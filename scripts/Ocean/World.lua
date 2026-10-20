@@ -276,9 +276,14 @@ function World:Init()
         assert(self.fixedContentEntities[island.contentId] == nil, "duplicate fixed contentId")
         assert(self:isPositionFree(island.position, island.radius),
             "fixed island " .. island.contentId .. " must be in open sea")
+        -- 2026-10-20 真人试玩修复（HUMAN-PLAYTEST-RCA-FIX-01）：
+        -- 这六座是可碰撞、看得见的实体岛，但原本“看得到却什么都做不了”。
+        -- 现在挂一句 0 体力环境观察（复用既有 observe 能力），kind 仍是 scenery、
+        -- 仍无奖励/无 memory/不写完成态；两座正式岛的【探索岛屿】不受影响。
         local entity = self:spawn({ entityType = island.entityType, kind = "scenery", layer = "surface",
             contentId = island.contentId, position = island.position,
-            radius = island.radius, blocking = island.blocking == true })
+            radius = island.radius, blocking = island.blocking == true,
+            observe = island.observe })
         self.fixedContentEntities[island.contentId] = entity
     end
 end
@@ -302,9 +307,16 @@ function World:RegisterFixedContent(definition)
 
     local position, positionError = resolveFixedContentPosition(self, definition)
     if not position then return nil, positionError end
+    -- V2.8 HUMAN-PLAYTEST-FIX-01：把作者的**表现尺寸**一并传给实体。
+    -- `visualRadius` 是纯展示字段（浮藻假岛 14m 岛影、海眼 6m 洋环），
+    -- 与碰撞/交互 `radius` 完全分离：SeaDraw 优先读它，缺失时回退到 radius。
+    -- 旧实现只白名单传递 radius，于是 kelp_mirage_01 的 14m 岛影退化成 2.5m，
+    -- 真人试玩完全看不到这个“假岛”。这里按字段透传而不是给 kelp 写特判，
+    -- 未来任何带 visualRadius 的 fixed content 都自动生效。
     local entity = self:spawn({ entityType = definition.entityType, kind = definition.kind,
         layer = definition.layer, contentId = definition.contentId, position = position,
-        radius = definition.radius, blocking = definition.blocking })
+        radius = definition.radius, visualRadius = definition.visualRadius,
+        blocking = definition.blocking })
     self.fixedContentEntities[definition.contentId] = entity
     self.fixedContentIds[#self.fixedContentIds + 1] = definition.contentId
     return entity
@@ -321,6 +333,10 @@ function World:spawn(spec)
         direction = { x = math.cos(spec.rotation or 0), y = math.sin(spec.rotation or 0) },
         active = spec.active ~= false, frozen = spec.frozen == true, state = spec.state or "Idle",
         radius = spec.radius or 0, blocking = spec.blocking == true, removed = false,
+        -- V2.8 HUMAN-PLAYTEST-FIX-01：纯展示尺寸透传（不参与碰撞/交互距离）。
+        visualRadius = spec.visualRadius,
+        -- 0 体力环境观察载荷（岛面描述）；未挂 observe 的实体保持 nil。
+        observe = spec.observe,
         species = spec.species, ordinaryFish = spec.ordinaryFish == true,
         itemId = spec.itemId, category = spec.category, worldEffect = spec.worldEffect or "NONE",
         contentId = spec.contentId,
