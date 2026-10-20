@@ -15,16 +15,37 @@ function Tests.Run()
         local ok, reason = pcall(fn)
         results[#results + 1] = { name = name, passed = ok, error = not ok and tostring(reason) or nil }
     end
-    check("actual movement frightens small fish; stopping immediately restores bait attraction", function()
+    check("actual movement frightens small fish; stopping restores bait attraction", function()
+        -- 2026-10-20：鱼感知按 Fish.perceptionIntervalSec = 0.2s 节流（S1-d 卡顿优化，
+        -- 见 Ocean/Fish.lua 顶部注释；契约由 Circle1B5FishPerceptionTests 守护）。
+        -- 旧断言要求“移动后下一帧就 Flee / 停下后下一帧就 Attracted”，
+        -- 那是节流引入前的帧级语义，与当前正式实现冲突。
+        -- 这里改为在节流窗口内推进，验证真实玩家观感：
+        --   持续移动 → 0.2s 内一定 Flee（威胁优先于诱饵）；
+        --   停下 → 下一个感知窗口内回到 Attracted（无持久记忆的延迟惩罚）。
         local r = fresh()
         local fish = r:spawnFish("sardine", { x = -292, y = -298 })
         assert(r:spawnDroppedItem({ itemId = "bait", worldEffect = "ATTRACT_SMALL_FISH" }, fish.position))
         r:Update(0.05, 0, 0)
         assert(not r.ship.isMoving and fish.state == "Attracted")
-        r:Update(0.05, 1, 0)
-        assert(r.ship.isMoving and fish.state == "Flee", "movement threat must outrank bait")
-        r:Update(0.05, 0, 0)
-        assert(not r.ship.isMoving and fish.state == "Attracted", "no stop recovery delay")
+
+        -- 保持移动直到感知刷新（最多 0.25s，> 0.2s 间隔）。
+        local fled = false
+        for _ = 1, 5 do
+            r:Update(0.05, 1, 0)
+            assert(r.ship.isMoving)
+            if fish.state == "Flee" then fled = true; break end
+        end
+        assert(fled, "movement threat must outrank bait within one perception interval")
+
+        -- 停止后同样只需一个感知窗口就恢复诱饵吸引（没有额外的恢复延迟）。
+        local recovered = false
+        for _ = 1, 5 do
+            r:Update(0.05, 0, 0)
+            assert(not r.ship.isMoving)
+            if fish.state == "Attracted" then recovered = true; break end
+        end
+        assert(recovered, "stopping must restore bait attraction within one perception interval")
     end)
     check("movement threat uses existing inclusive danger radius without frightening tuna", function()
         local r = fresh()

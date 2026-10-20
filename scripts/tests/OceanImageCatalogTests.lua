@@ -24,7 +24,12 @@ function Tests.Run()
     local a, b, c = {}, {}, {}
     NVG_IMAGE_GENERATE_MIPMAPS, NVG_IMAGE_REPEATX, NVG_IMAGE_REPEATY = 1, 2, 4
     nvgCreateImage = function(ctx, path, flags)
-        created[#created + 1] = { ctx = ctx, path = path, flags = flags }
+        -- 记下 path → catalog 名，后续按 catalog 的真实 repeatTexture 判定标志位。
+        local name
+        for candidate, spec in pairs(require("GeneratedData.OceanImageCatalog")) do
+            if spec.path == path then name = candidate; break end
+        end
+        created[#created + 1] = { ctx = ctx, path = path, flags = flags, name = name }
         if path == failedPath then return -1 end
         return #created
     end
@@ -63,9 +68,14 @@ function Tests.Run()
         assert(not Art.IsLoaded(a, "sea_surface_night"),
             "夜图 preload=false：不随场景启动加载（SeaDebug/后续方案）")
         for _, entry in ipairs(created) do
-            local repeated = entry.path:find("waterpaper", 1, true)
-                or entry.path:find("sea_surface", 1, true)
-            assert(entry.flags == (repeated and 7 or 1))
+            -- 重复纹理（catalog repeatTexture=true）才带 REPEATX|REPEATY|MIPMAPS=7。
+            -- 2026-10-20：旧断言只列 waterpaper / sea_surface 两个前缀，
+            -- 漏掉了同为 repeatTexture 的 sea_ripple_overlay（波纹平铺层），
+            -- 于是把正确的 7 误判成回归。改为按 catalog 的真实标志判定。
+            local spec = assert(Art.GetSpec(entry.name or ""), "created image must come from the catalog")
+            local expected = spec.repeatTexture and 7 or 1
+            assert(entry.flags == expected,
+                entry.path .. " flags=" .. tostring(entry.flags) .. " expected=" .. tostring(expected))
         end
     end)
     check("story 变体目标清单与 catalog 一一对应", function()
