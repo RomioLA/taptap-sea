@@ -317,9 +317,15 @@ local Config = {
     projection = { circleSegments = 48, sectorSegments = 32, birdAltitude = 1.2 },
     boatMotion = { enabled = true, heaveMeters = 0.35, maxRollDegrees = 7,
         turnRateForMaxRoll = math.pi, turnSmoothSec = 0.22 },
-    -- 2026-10-20 玩家船贴图接入：船体改用正式水彩素材（OceanPlayerBoat/player_boat），
+    -- 2026-10-20 玩家船贴图接入：船体曾改用正式水彩素材（OceanPlayerBoat/player_boat），
     -- 素材为无桅杆的划艇式小木船；矢量立帆（正面白帆 + 桅杆）与水彩船体风格不搭，
-    -- 故贴图路径下默认不再绘制立帆。改为矢量兜底时仍保留立帆（保持旧观感）。
+    -- 故贴图路径下默认不再绘制立帆。
+    -- 2026-10-20 晚：真机截图反馈写实贴图缩到 5m×2.4m 后木纹/绳结细节糊成一团
+    -- 棕色，用户裁定还原矢量船（程序绘制的艇身+甲板+立帆，旧版观感）。
+    -- 贴图资产、catalog 条目与 Circle1PlayerBoatArtTests 契约全部保留（不删不改），
+    -- boatTexture.enabled=true 即可 A/B 切回贴图路径；矢量路径下立帆恢复绘制
+    -- （boatSail 门控只作用于贴图路径）。
+    boatTexture = { enabled = false },
     boatSail = { enabled = false },
     curvature = { heightRatio = 0.045 },
     horizonOcclusion = { tangentSpan = 0.1 },

@@ -17,7 +17,8 @@ local AIR_PERSPECTIVE_TINT = { 181, 212, 203 }
 local PAPER_WAVE = { 233, 243, 223, 255 }
 -- 玩家船贴图目录键（assets/image/OceanPlayerBoat/player_boat.png）。
 -- 入库时艏向已旋正到画布 +X，与 ImageArt.Plane 的「u=1 边缘映射到 +heading」
--- 契约一致；贴图缺失时 SeaViewArt.Boat 回落纯矢量形态。
+-- 契约一致。2026-10-20 晚起默认走矢量船形态（Config.visual.boatTexture.enabled
+-- =false）；开关开启且贴图缺失时 SeaViewArt.Boat 回落纯矢量形态。
 local BOAT_ART_NAME = "player_boat"
 local SAND_SHORE = { 226, 207, 158, 255 }
 local SAGE_LAND = { 149, 171, 133, 255 }
@@ -1463,11 +1464,16 @@ function SeaViewArt.Boat(ctx, movement, ship, time)
     -- 画幅按 catalog 内容比换算，使贴图内容主体精确对应 length×width 的船体
     -- footprint（Art.ContentPlaneSize），不把透明留白算进世界尺寸。
     -- 尾流/横摇/船体投影阴影仍由程序负责（贴图不烘焙任何动态效果）。
+    -- 2026-10-20 晚：写实贴图缩到 5m×2.4m 后细节糊（真机反馈），用户裁定还原
+    -- 矢量船；Config.visual.boatTexture.enabled=false（默认）即走下方矢量形态，
+    -- =true 切回贴图（资产/catalog/契约均保留，A/B 零成本）。
     local drawn = false
-    local planeLength, planeWidth = ImageArt.ContentPlaneSize(BOAT_ART_NAME, length, width)
-    if planeLength and planeWidth then
-        drawn = ImageArt.Plane(ctx, BOAT_ART_NAME, movement, ship.position,
-            planeLength, planeWidth, rotation, heave, 1, roll)
+    if visual.boatTexture and visual.boatTexture.enabled then
+        local planeLength, planeWidth = ImageArt.ContentPlaneSize(BOAT_ART_NAME, length, width)
+        if planeLength and planeWidth then
+            drawn = ImageArt.Plane(ctx, BOAT_ART_NAME, movement, ship.position,
+                planeLength, planeWidth, rotation, heave, 1, roll)
+        end
     end
     if drawn then
         local center = screenPoint(movement, ship.position, heave)
@@ -1480,7 +1486,8 @@ function SeaViewArt.Boat(ctx, movement, ship, time)
         end
         return finishScreenBounds(bounds)
     end
-    -- 贴图缺失/加载失败：回落纯矢量形态（艇身+甲板+立帆），保持零回归。
+    -- 矢量船形态（2026-10-20 晚起为默认路径）：艇身+甲板+立帆。
+    -- 贴图开关关闭或贴图缺失/加载失败时均回落至此，保持零回归。
     fillPolygon(ctx, hullScreen, rgba(visual.ship, { 251, 222, 139, 255 }))
     strokePolygon(ctx, hullScreen, nvgRGBA(100, 67, 51, 245), 1.5)
 
