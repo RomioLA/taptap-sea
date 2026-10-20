@@ -1147,6 +1147,171 @@ function Tests.Run(recorder)
         assert(okBody, bodyErr)
     end)
 
+    -- =========================================================
+    -- 2026-10-20 真人试玩修复（HUMAN-PLAYTEST-RCA-FIX-01）
+    -- =========================================================
+    test("authored visualRadius reaches the entity without touching collision radius", function()
+        -- 真人试玩 RCA：kelp_mirage_01 的 visualRadius=14 没有被 World 实体保留，
+        -- SeaDraw 回退到 radius=2.5，80m 岛影缩成一个几乎看不见的小圈。
+        -- 这里锁三层：definition -> entity -> 绘制读取值。
+        local runtime = Runtime.New({ departure = { x = 0, y = 0 }, initializeRegions = false })
+        local kelpDefinition = definition("kelp_mirage_01")
+        eq(kelpDefinition.visualRadius, 14, "the authored 80m island silhouette radius")
+        local kelp = assert(runtime.world.fixedContentEntities["kelp_mirage_01"])
+        eq(kelp.visualRadius, 14,
+            "P1 REGRESSION: World must copy visualRadius onto the entity")
+        -- 碰撞半径与交互半径不得被 visualRadius 影响。
+        eq(kelp.radius, kelpDefinition.radius, "collision radius must stay authored radius")
+        eq(kelp.blocking, false, "the kelp node stays non-blocking")
+        eq(kelp.layer, "underwater", "the kelp node stays on the underwater layer")
+        -- 绘制侧：SeaDraw 优先读 entity.visualRadius。
+        eq(kelp.visualRadius ~= kelp.radius, true,
+            "the drawn radius must differ from the collision radius for the mirage")
+
+        -- 不是只为 kelp 写特判：任何带 visualRadius 的 fixed content 都应被透传。
+        local probe = assert(runtime:RegisterWorldContent({
+            contentId = "probe_visual_radius", entityType = "reef", kind = "fixed",
+            position = { x = -300, y = 300 }, radius = 2, visualRadius = 11,
+            layer = "surface", blocking = false,
+        }))
+        local probeEntity = assert(runtime.world.fixedContentEntities["probe_visual_radius"])
+        eq(probeEntity.visualRadius, 11, "visualRadius must be a generic pass-through field")
+        eq(probeEntity.radius, 2, "collision radius stays independent")
+        truthy(probe, "the probe entity must register")
+    end)
+
+    test("scenery island variants expose a repeatable 0-stamina observe and no reward", function()
+        -- 真人试玩 RCA：六座可碰撞变体岛“看得到却什么都做不了”。
+        -- 现在每座带一句 0体力/即时/可重复/不掉落/不存档的环境观察。
+        local runtime, bridge, loop = bridgeFixture()
+        truthy(loop:Depart())
+        local ids = {
+            "island_peak_v1", "island_reefcluster_v1", "island_cliff_v1",
+            "island_stele_v1", "island_twinhills_v1", "island_sandbar_v1",
+        }
+        for _, contentId in ipairs(ids) do
+            local entity = assert(runtime.world.fixedContentEntities[contentId], contentId)
+            eq(entity.kind, "scenery",
+                contentId .. " must stay scenery (the frozen kind==\"fixed\" count is untouched)")
+            assert(type(entity.observe) == "table", contentId .. " must carry an observe payload")
+            assert(type(entity.observe.text) == "string" and entity.observe.text ~= "",
+                contentId .. " must carry a one-line environment text")
+            -- 无奖励 / 无完成态：不经 WorldContentActions。
+            eq(entity.rewardId, nil, contentId .. " must not grant a reward")
+            eq(entity.actionKind, nil, contentId .. " must not be a formal action node")
+
+            runtime.ship.position = { x = entity.position.x, y = entity.position.y - (entity.radius + 2) }
+            local prompt = loop:GetV28Prompt()
+            assert(prompt and prompt.operation == "observe" and prompt.contentId == contentId,
+                contentId .. " must expose an observe prompt when the ship is in range")
+            local stamina = loop.player.stamina
+            local day = loop.player.day
+            truthy(loop:ObserveV28Content(contentId), contentId .. " observe must succeed")
+            eq(loop.player.stamina, stamina, contentId .. " observe must cost 0 stamina")
+            eq(loop.player.day, day, "observe must not advance time")
+            -- 可重复：同一局内可以再观察一次。
+            truthy(loop:ObserveV28Content(contentId),
+                contentId .. " observe must be repeatable, not a one-shot")
+        end
+        -- 也不会写进任何正式完成态。
+        for _, contentId in ipairs(ids) do
+            local state = loop:GetV28State(contentId)
+            eq(state, nil, contentId .. " must not persist V2.8 completion state")
+        end
+    end)
+
+    test("formal island explore semantics are unchanged by the scenery observe", function()
+        local runtime, bridge, loop = bridgeFixture()
+        truthy(loop:Depart())
+        for _, contentId in ipairs({ "island_01", "island_02" }) do
+            local entity = assert(runtime.world.fixedContentEntities[contentId], contentId)
+            eq(entity.kind, "fixed", contentId .. " must stay a formal fixed node")
+            eq(entity.observe, nil, contentId .. " must NOT gain the scenery observe path")
+            runtime.ship.position = { x = entity.position.x, y = entity.position.y - (entity.radius + 3) }
+            local prompt = loop:GetWorldContentPrompt()
+            assert(prompt and prompt.operation == "begin" and prompt.contentId == contentId,
+                contentId .. " must keep the formal explore entry")
+            eq(prompt.staminaCost, 40, contentId .. " keeps the 40 stamina explore cost")
+            assert(tostring(prompt.text):find("探索岛屿", 1, true) ~= nil,
+                contentId .. " keeps the explore wording")
+            -- 不得同时冒出 V2.8 观察按钮，避免两个入口打架。
+            local v28 = loop:GetV28Prompt()
+            eq(v28, nil, contentId .. " must not also expose the scenery observe prompt")
+        end
+    end)
+
+    test("leviathan surface bubbles are a 40m discovery cue but keep 5m interaction", function()
+        -- 真人试玩 RCA：气泡原先只在 <=5m 绘制，等于没有发现作用。
+        local leviathan = definition("leviathan_bones_01")
+        eq(leviathan.bubble.surfaceRadius, 40, "the discovery cue radius is the first-playtest value")
+        eq(leviathan.radius, 4, "the interaction radius is unchanged")
+        -- 互动距离仍是统一的 5m（配置层）。
+        eq(Config.v28.interactDistance, 5, "the authored interaction distance stays 5m")
+        eq(leviathan.position.x, -40, "the bones coordinates are unchanged")
+        eq(leviathan.position.y, 235, "the bones coordinates are unchanged")
+        -- 探海镜 20m 规则未变。
+        eq(Config.interaction.recognitionDistance, 20, "the lens recognition distance is unchanged")
+    end)
+
+    test("directional clue text matches the real world bearing", function()
+        -- 真人试玩 RCA：部分线索文字方向与实际目标坐标不一致（指向空海）。
+        -- 这里按真实坐标计算 bearing，锁住文案里的方位词。
+        -- 六座变体岛在 Config.world.fixedIslands（scenery），其余在 data.content。
+        local function positionOf(contentId)
+            local ok, item = pcall(definition, contentId)
+            if ok and item then return item.position end
+            for _, island in ipairs(Config.world.fixedIslands or {}) do
+                if island.contentId == contentId then return island.position end
+            end
+            error("missing content " .. tostring(contentId))
+        end
+        local function bearingOf(fromId, toId)
+            local a, b = positionOf(fromId), positionOf(toId)
+            return math.deg(math.atan(b.y - a.y, b.x - a.x))
+        end
+        local function compass(bearing)
+            if bearing >= -22.5 and bearing < 22.5 then return "E" end
+            if bearing >= 22.5 and bearing < 67.5 then return "NE" end
+            if bearing >= 67.5 and bearing < 112.5 then return "N" end
+            if bearing >= 112.5 and bearing < 157.5 then return "NW" end
+            if bearing >= 157.5 or bearing < -157.5 then return "W" end
+            if bearing >= -157.5 and bearing < -112.5 then return "SW" end
+            if bearing >= -112.5 and bearing < -67.5 then return "S" end
+            return "SE"
+        end
+
+        -- bottle_note_01 -> leviathan_bones_01 实际是正北（旧文案写“北偏西”）。
+        eq(compass(bearingOf("bottle_note_01", "leviathan_bones_01")), "N")
+        local note1 = definition("bottle_note_01").pickup.readText
+        assert(note1:find("往北再走", 1, true) ~= nil,
+            "bottle_note_01 must point due north, matching the real bearing")
+        assert(note1:find("北偏西", 1, true) == nil,
+            "P1 REGRESSION: bottle_note_01 must not claim north-by-west any more")
+
+        -- bottle_note_02 -> sea_eye_vortex_01 实际是东北（文案本就正确）。
+        eq(compass(bearingOf("bottle_note_02", "sea_eye_vortex_01")), "NE")
+        local note2 = definition("bottle_note_02").pickup.readText
+        assert(note2:find("东北", 1, true) ~= nil, "bottle_note_02 points northeast, matching reality")
+
+        -- reef_vis_02 -> reef_vis_03 实际是东南（旧文案写“东北”）。
+        eq(compass(bearingOf("reef_vis_02", "reef_vis_03")), "SE")
+        local reef2 = definition("reef_vis_02").observe.text
+        assert(reef2:find("东南", 1, true) ~= nil,
+            "reef_vis_02 must point southeast toward reef_vis_03")
+        assert(reef2:find("东北", 1, true) == nil,
+            "P1 REGRESSION: reef_vis_02 must not claim northeast any more")
+
+        -- reef_vis_03 -> 礁石群岛 实际是西北（文案本就正确）。
+        eq(compass(bearingOf("reef_vis_03", "island_reefcluster_v1")), "NW")
+        assert(definition("reef_vis_03").observe.text:find("西北", 1, true) ~= nil,
+            "reef_vis_03 points northwest toward the reef island")
+
+        -- debris_01 -> shipwreck_01 实际是西南（文案本就正确）。
+        eq(compass(bearingOf("debris_01", "shipwreck_01")), "SW")
+        assert(definition("debris_01").observe.text:find("西南", 1, true) ~= nil,
+            "debris_01 points southwest toward the wreck")
+    end)
+
     return { results = results }
 end
 
