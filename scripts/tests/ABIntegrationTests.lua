@@ -448,16 +448,24 @@ function Tests.Run()
         assert(not env.runtime.paused)
     end)
 
-    check("drop requires a selected copied position and spawns a 20-second world item", function()
+    check("formal throw requires a copied position and spawns a 20-second world item", function()
         local env = fixture()
         depart(env)
         local before = env.loop.player.inventory:GetItems()
-        assert(not env.loop:DropItem(1), "dropping without explicit pointer selection must fail")
-        sameItems(env.loop.player, before)
+        -- V2.8 封板语义：背包【丢弃】= 直接销毁腾格（不需要坐标、不产生 WorldDrop）；
+        -- 【投放】= 选点后才交给世界。旧断言“无选点必须失败”是丢弃/投放未分离时的
+        -- 契约，已被策划规则取代（也正是本轮修掉的玩家入口缺口）。
+        assert(env.loop:DropItem(1), "cabin discard frees a slot without a drop position")
+        assert(#env.loop.player.inventory:GetItems() == #before - 1)
+        assert(not findDrop(env.runtime, "apple"), "cabin discard must not create a world item")
+        assert(env.loop.player.inventory:Add("apple"), "restore the item for the throw check")
+        before = env.loop.player.inventory:GetItems()
+        -- 恢复的苹果是新格子，必须重新走【投放】选点（丢弃不建立投放选点）。
+        assert(env.loop:BeginThrowItem(#before), "the restored apple re-enters the throw flow")
         local point = readonlyPoint(-8, -20) -- exactly twelve meters from the ship
         assert(env.bridge:SetDropTarget(point))
         assert(not pcall(function() point.x = -7 end), "test point must reject writes")
-        local ok = env.loop:DropItem(1)
+        local ok = env.loop:DropItem(#before)
         assert(ok, "a twelve-meter throw should be accepted")
         local dropped = findDrop(env.runtime, "apple")
         assert(dropped, "A should own the spawned dropped item")
@@ -494,13 +502,17 @@ function Tests.Run()
         local before = env.loop.player.inventory:GetItems()
         assert(env.bridge:SetDropTarget({ x = -8, y = -20 }))
         assert(not env.bridge:SetDropTarget({ x = 100000, y = 100000 }), "off-map targets are invalid")
-        local rejected = env.loop:DropItem(1)
-        assert(not rejected, "an invalid new target must clear the older valid target")
-        sameItems(env.loop.player, before)
-        assert(not findDrop(env.runtime, "apple"))
+        -- 无效的新选点会清掉旧选点；此时点【丢弃】按封板语义= 直接销毁腾格，
+        -- 不再走“无选点即失败”的旧路径，也绝不落到旧坐标上。
+        assert(env.loop:DropItem(1), "cabin discard after a cleared target frees the slot")
+        assert(not findDrop(env.runtime, "apple"), "a cleared target must not reuse the old position")
+        assert(receiverCalls == 0, "no world handoff happened for the discard")
+        assert(env.loop.player.inventory:Add("apple"))
+        assert(env.loop:BeginThrowItem(#env.loop.player.inventory:GetItems()),
+            "the restored apple re-enters the throw flow")
 
         assert(env.bridge:SetDropTarget(readonlyPoint(-8, -20)))
-        assert(env.loop:DropItem(1))
+        assert(env.loop:DropItem(#env.loop.player.inventory:GetItems()))
         assert(receiverCalls == 1 and #env.loop.player.inventory:GetItems() == 1)
         assert(findDrop(env.runtime, "apple"))
     end)
@@ -1056,13 +1068,19 @@ function Tests.Run()
         context.ui.hit = {}
         assert(not sea:HandlePointer(1200, 648), "a UI overlay hit must not become a sea target")
         local before = sea.loop.player.inventory:GetItems()
-        assert(not sea.loop:DropItem(1), "the blocked UI click must leave no selected drop target")
-        sameItems(sea.loop.player, before)
+        -- 被 UI 遮住的点击不得建立海面选点；此时点【丢弃】按封板语义= 直接销毁腾格。
+        assert(sea.loop.actions:GetDropTarget() == nil,
+            "the blocked UI click must leave no selected drop target")
+        assert(sea.loop:DropItem(1), "cabin discard works without a sea target")
+        assert(#sea.loop.player.inventory:GetItems() == #before - 1)
+        assert(not findDrop(sea.runtime, "apple"), "the blocked UI click must not create a world drop")
+        assert(sea.loop.player.inventory:Add("apple"))
+        before = sea.loop.player.inventory:GetItems()
         context.ui.hit = nil
 
         -- Use legal open water rather than the existing float at (10,0).
         local target = sea.runtime.movement:ScreenToWorld(540, 348)
-        assert(sea.loop:BeginThrowItem(1), "throwing requires an explicit item selection")
+        assert(sea.loop:BeginThrowItem(#before), "throwing requires an explicit item selection")
         assert(sea:HandlePointer(1080, 696), "throw selection must consume the sea click")
         assert(not sea.loop:GetThrowSelection() and sea.runtime.movement.target == nil,
             "a completed throw must not turn into navigation")

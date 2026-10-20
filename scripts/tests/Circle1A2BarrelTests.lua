@@ -465,8 +465,12 @@ function Tests.Run()
             metrics.voyages[#metrics.voyages + 1] = voyage(seed)
         end
         local first = metrics.voyages[1]
-        -- 桶位 (14,6)：dist(start,(35,5))=√1250 ≈ 35.3553，dist((35,5),(14,6))=√442 ≈ 21.0238。
-        assertNear(first.theoreticalWaypointLength, 56.3791, 0.001)
+        -- 桶位 (34,10)（2026-10-20 从 14,6 外移：旧位距港 15.2m，r2+8m 安全裕度
+        -- 正好压在回港走廊上，是自动返航 no_viable_detour 的主因；新位仍属出港
+        -- 第一屏可见范围，但不再与 island_01 的裕度圈叠加）。
+        -- 固定航点 (35,5)：dist(start,(35,5))=√1250 ≈ 35.3553，
+        -- dist((35,5),(34,10))=√26 ≈ 5.0990。
+        assertNear(first.theoreticalWaypointLength, 40.4543, 0.001)
         -- 起点/木桶几何已改；按当前路径和停车半径核对，不锁死旧坐标的里程。
         assert(first.visits[1].traveledDistance >= first.theoreticalWaypointLength
             - Config.interaction.operateDistance - 2 * Config.ship.arrivalRadius,
