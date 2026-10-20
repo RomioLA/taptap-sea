@@ -117,16 +117,20 @@ function Tests.Run(recorder)
         runtime.movement:SetViewport(1280, 720)
         local oldLimit = Config.visual.surface.maxMarks
         Config.visual.surface.maxMarks = 3
-        local ok, err = pcall(function()
+        -- Surface 返回本次实际绘制的 crest marks 数（近/远层共用计数器）。
+        -- 旧断言用 nvgMoveTo-2 代理 marks 数，但 10-20 crest 贴图样式改造后
+        -- 每 marks 含主笔+晕染+伴生笔多条 path、且 10-20 WaterFX 层也贡献
+        -- MoveTo/LineTo，代理关系已失效；改为对 marks 数本身直接断言。
+        local ok, drawn = pcall(function()
             recorder.reset()
-            Art.Surface({}, runtime.movement, 1.5)
-            -- The fill and horizon each have one initial move; every wave mark
-            -- has one additional move even when many share a batched row path.
-            local marks = recorder.callCount("nvgMoveTo") - 2
-            assert(marks > 0 and marks <= 3, "a batched row exceeded the configured mark budget")
+            return Art.Surface({}, runtime.movement, 1.5)
         end)
         Config.visual.surface.maxMarks = oldLimit
-        assert(ok, tostring(err))
+        assert(ok, tostring(drawn))
+        assert(type(drawn) == "number" and drawn > 0 and drawn <= 3,
+            "mark budget exceeded: " .. tostring(drawn))
+        -- 确有绘制发生：horizon 描边 + crest 合并 path 都走 nvgStroke。
+        assert(recorder.callCount("nvgStroke") > 0, "no crest strokes were recorded")
     end)
     check("meter-width foam clips once and returns the same projected edge endpoints", function()
         local Geometry = require("Ocean.ProjectedGeometry")

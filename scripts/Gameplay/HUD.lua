@@ -13,6 +13,16 @@ local SoundSystem = require("Systems.SoundSystem")
 
 local HUD = {}
 
+-- 存档完成反馈语（Loop.finishSettlement 保存成功分支）与 saveStatus=="saved" 的
+-- 「已自动保存」是同一事件的两种表达。日志槽二选一时保留存档状态行
+-- （GameLoopUISpec 契约：保存完成后「已自动保存」必须可见）；
+-- V2.7「刚发生的玩家反馈优先」对教学/拒绝等一次性反馈仍然有效
+-- （那些反馈不走这两个 key，不会被误排除）。
+local SAVE_DONE_MESSAGES = {
+    ["每日结算已保存，下一天已就绪"] = true,
+    ["本次出海已结束，进度已保存。"] = true,
+}
+
 ---@class HUDFishingCenter
 ---@field x number
 ---@field y number
@@ -2499,8 +2509,8 @@ local header = UI.Panel {
         --   GameLoopUISpec 契约要求保存完成后"已自动保存"可见。）
         local localMessage = state.localMessage ~= "" and state.localMessage or nil
         local lastMessageText = userMessage(loop.lastMessage)
-        local lastMessageEvent = (lastMessageText ~= "" and lastMessageText ~= "出海采集，返港交易与结算。")
-            and lastMessageText or nil
+        local lastMessageEvent = (lastMessageText ~= "" and lastMessageText ~= "出海采集，返港交易与结算。"
+            and not SAVE_DONE_MESSAGES[lastMessageText]) and lastMessageText or nil
         local saveStatus = loop.saveStatus
         local autoReturnState = readAutoReturnState()
         if type(autoReturnState) == "table" and autoReturnState.phase == "failed" then

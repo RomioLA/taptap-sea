@@ -193,24 +193,70 @@ test("transactions read item prices, reject invalid/full/sea without side effect
     eq(#store.saves, 0)
 end)
 
-test("drop acceptance payloads and rejected/error receiver retains item", function()
-    for _, id in ipairs({"apple","bait","sardine","tuna"}) do
+test("drop splits cabin discard from formal throw; rejection retains item", function()
+    -- V2.8 Closure（228e08f）语义：
+    --   【丢弃】= 船舱直接销毁腾格，不产生 WorldDrop、不调 dropReceiver；
+    --   【投放】= 正式选点（BeginThrowItem + actions:SetDropTarget）后交接世界，
+    --            receiver 同步确认；拒绝/报错则回滚，物品保留。
+    --   【鱼饵丢弃】= 船边即时投饵（V2.7 P-06/C-08），非正式投放。
+    -- ① 背包【丢弃】：普通物品直接腾格，receiver 零调用。
+    for _, id in ipairs({"apple","sardine","tuna"}) do
+        local calls = 0
+        local loop = newLoop({dropReceiver=function() calls = calls + 1; return true end})
+        while #loop.player.inventory:GetItems() > 0 do loop.player.inventory:Remove(1) end
+        assert(loop.player.inventory:Add(id)); assert(loop:Depart())
+        local ok, result = loop:DropItem(1)
+        assert(ok); eq(result, "discarded")
+        eq(calls, 0, "cabin discard must not reach the WorldDrop receiver")
+        eq(#loop.player.inventory:GetItems(), 0, "the slot is freed")
+    end
+    -- ② 鱼饵【丢弃】= 船边即时投饵：仍交接世界，但标记非正式投放。
+    do
+        local calls = 0
+        local request = {}
+        local loop = newLoop({dropReceiver=function(payload) calls = calls + 1; request = payload; return true end})
+        while #loop.player.inventory:GetItems() > 0 do loop.player.inventory:Remove(1) end
+        assert(loop.player.inventory:Add("bait")); assert(loop:Depart())
+        local ok, payload = loop:DropItem(1)
+        assert(ok); eq(payload, request); eq(calls, 1)
+        local definition = Items.GetDefinition("bait")
+        eq(payload.itemId, "bait"); eq(payload.category, definition.category)
+        eq(payload.worldEffect, definition.worldEffect); eq(payload.lifetimeSec, 20)
+        eq(payload.officialThrow, false)
+        eq(#loop.player.inventory:GetItems(), 0)
+    end
+    -- ③ 正式【投放】：选点后走 WorldDrop，payload 字段契约 + receiver 同一张表。
+    for _, id in ipairs({"apple","sardine","tuna"}) do
         local request = {}
         local loop = newLoop({dropReceiver=function(payload) request = payload; return true end})
         while #loop.player.inventory:GetItems() > 0 do loop.player.inventory:Remove(1) end
         assert(loop.player.inventory:Add(id)); assert(loop:Depart())
+        loop:EnableWorldActions()
+        assert(loop:BeginThrowItem(1))
+        assert(loop.actions):SetDropTarget({x = 0, y = 0})
         local ok, payload = loop:DropItem(1); assert(ok); eq(payload, request)
         local definition = Items.GetDefinition(id)
         eq(payload.itemId, id); eq(payload.category, definition.category)
         eq(payload.worldEffect, definition.worldEffect); eq(payload.lifetimeSec, 20)
+        eq(payload.officialThrow, true)
         eq(#loop.player.inventory:GetItems(), 0); eq((payload --[[@as table]]).position, nil)
     end
+    -- ④ 正式投放被拒绝/报错：回滚，物品保留。
     for _, receiver in ipairs({function() return false end,function() error("rejected") end}) do
-        local loop = newLoop({dropReceiver=receiver}); assert(loop:Depart())
-        eq(loop:DropItem(1), false); eq(#loop.player.inventory:GetItems(), 2)
+        local loop = newLoop({dropReceiver=receiver})
+        while #loop.player.inventory:GetItems() > 0 do loop.player.inventory:Remove(1) end
+        assert(loop.player.inventory:Add("apple")); assert(loop:Depart())
+        loop:EnableWorldActions()
+        assert(loop:BeginThrowItem(1))
+        assert(loop.actions):SetDropTarget({x = 0, y = 0})
+        eq(loop:DropItem(1), false); eq(#loop.player.inventory:GetItems(), 1)
     end
-    local loop = newLoop(); assert(loop:Depart()); eq(loop:DropItem(1), false)
-    eq(#loop.player.inventory:GetItems(), 2)
+    -- ⑤ 无 receiver 时背包【丢弃】仍可直接腾格（V2.8：只有投放选点才需要接收方）。
+    local loop = newLoop(); assert(loop:Depart())
+    while #loop.player.inventory:GetItems() > 0 do loop.player.inventory:Remove(1) end
+    assert(loop.player.inventory:Add("apple"))
+    local ok, result = loop:DropItem(1)
+    assert(ok); eq(result, "discarded"); eq(#loop.player.inventory:GetItems(), 0)
 end)
 
 test("new run resets gameplay and immediately saves its starting snapshot", function()

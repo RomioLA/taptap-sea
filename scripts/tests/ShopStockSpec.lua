@@ -57,8 +57,13 @@ test("stock-independent-of-holding-and-apple-use",function()
     eq(l.player.stamina,80); eq(l:GetShopStock("apple"),0) -- 可吃超过两苹果。
 end)
 test("drop-world-rejection-keeps-inventory",function()
+    -- V2.8 Closure：背包【丢弃】= 直接销毁腾格（不调 receiver）；只有正式
+    -- 【投放】选点后的交接被 receiver 拒绝才回滚、保留物品。
     local l=newLoop({dropReceiver=function() return false end}); assert(l:Depart())
-    local count=#l.player.inventory:GetItems(); eq(l:DropItem(1),false)
+    local count=#l.player.inventory:GetItems()
+    l:EnableWorldActions()
+    assert(l:BeginThrowItem(1)); assert(l.actions):SetDropTarget({x=0,y=0})
+    eq(l:DropItem(1),false)
     eq(#l.player.inventory:GetItems(),count); eq(l.player.inventory:GetItems()[1],"apple")
 end)
 test("fishing4sec-clock-runs-empty-catch-free",function()

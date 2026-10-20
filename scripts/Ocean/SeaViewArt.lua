@@ -596,9 +596,15 @@ local function drawSurfaceLayer(ctx, movement, time, settings, bounds, horizonAt
                         time, indexX, indexY, movement.viewportWidth, movement.viewportHeight,
                         horizonAtX, lengthScale, amplitudeScale, strokeWidthMeters)
                     if mark then
-                        rowMarks[#rowMarks + 1] = mark
-                        if companion then rowMarks[#rowMarks + 1] = companion end
+                        -- 预算硬顶：先查后加。主笔与伴生笔在同一次循环里成对产生，
+                        -- 「先加后查」会让一行最多越过 maxMarks 一笔（伴生笔超发），
+                        -- 预算就不再是硬顶；近/远两层共用同一计数器，跨层同样受控。
                         if drawn + #rowMarks >= settings.maxMarks then break end
+                        rowMarks[#rowMarks + 1] = mark
+                        if companion then
+                            if drawn + #rowMarks >= settings.maxMarks then break end
+                            rowMarks[#rowMarks + 1] = companion
+                        end
                     end
                 end
             end
@@ -813,7 +819,7 @@ function SeaViewArt.Surface(ctx, movement, time, clock)
 
     -- 波纹平铺层已承接海面细节：跳过程序 crest marks（GetViewBounds 是 crest 段
     -- 入口，测试以此断言是否进入浪脊格绘制）。
-    if rippleDrawn then return end
+    if rippleDrawn then return 0 end
     local settings = getSurfaceSettings()
     if type(movement.GetViewBounds) ~= "function" then return end
     local bounds = movement:GetViewBounds(settings.length * 0.75)
@@ -824,10 +830,13 @@ function SeaViewArt.Surface(ctx, movement, time, clock)
     local camera = movement.camera
     if type(camera) ~= "table" or not finite(camera.x) or not finite(camera.y) then return end
 
+    -- 返回本次实际绘制的 crest marks 数（近/远两层共用一个预算计数器），
+    -- 供 maxMarks 性能预算硬顶直接断言；既有调用方（SeaDraw）忽略返回值零回归。
     local drawn = drawSurfaceLayer(ctx, movement, time, settings, bounds, horizonAtX,
         settings.nearSpacing, false, 0)
-    drawSurfaceLayer(ctx, movement, time, settings, bounds, horizonAtX,
+    drawn = drawSurfaceLayer(ctx, movement, time, settings, bounds, horizonAtX,
         settings.farSpacing, true, drawn)
+    return drawn
 end
 
 local function circlePoints(center, radius, segmentCount)
