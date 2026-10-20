@@ -7,6 +7,8 @@ local ArtVariants = require("Ocean.ArtVariants")
 local DialogueStyle = require("Gameplay.DialogueStyle")
 local UiKit = require("Gameplay.UiKit")
 local Achievements = require("Gameplay.Achievements")
+-- A2（记事本「图鉴」页接真实内容）：读取本周目已持有的海上传闻/记载正文。
+local MemoryFragments = require("Gameplay.MemoryFragments")
 -- v3.0 P0：屏幕适配层（断点 / 按钮坞让位 / 对话条数公式），见方案 §4.1。
 local UiLayout = require("Gameplay.UiLayout")
 local SoundSystem = require("Systems.SoundSystem")
@@ -174,6 +176,14 @@ function HUD.Create(loop, parent, debugTools)
         tabSkinApplied = nil,
         -- V2.8：破渔网双分支面板当前目标 contentId（nil = 面板关闭）。
         netChoiceContentId = nil,
+        -- A2：记忆与探海镜卡折叠态（收起=仅标题+展开键 slim 条）与行重建签名。
+        -- treasureRowsSig：内容签名（条目+禁用态+busy），不变则跳过整段重建；
+        -- treasureContentSig：纯条目签名，变化时自动解除折叠（新残页到手即展开）。
+        -- 三态：nil = 自动（在港有新卡时折成 slim 条），true = 玩家收起，
+        --       false = 玩家展开（即使在港也展开）。
+        treasureCollapsed = nil,
+        treasureRowsSig = nil,
+        treasureContentSig = nil,
     }
     ---@type table<string, any>
     local refs = {}
@@ -1023,11 +1033,22 @@ local header = UI.Panel {
     -- 策划要求【使用】重读/查看、【给老人】展示、【丢弃】拒绝并给原因；
     -- 不再只拼进 treasureSummary 文字。每帧按持有状态重建行，条目极少（≤3）。
     refs.v28TreasureRows = UI.Panel {
+        id = "v28TreasureRows",
         width = "100%",
         flexDirection = "column",
         gap = 6,
     }
     refs.treasurePanel:AddChild(refs.v28TreasureRows)
+    -- A2（真机反馈「无法关闭常驻挂起」）：宝物卡自带「收起/展开」开关。
+    -- 旧行为：卡只要持有探海镜/残页就全尺寸常驻，海上无「收起信息」按钮
+    -- （infoToggle 仅港口可见），玩家没有任何手段收掉它。现改为二态：
+    -- 展开=摘要+行+收起键；收起=仅标题+展开键（slim 条，不占纵向预算）。
+    -- state.treasureCollapsed 在内容签名变化时自动解除（新残页到手即展开）。
+    refs.treasureCollapse = makeButton("收起", function()
+        state.treasureCollapsed = not (state.treasureCollapsed == true)
+        refresh()
+    end, "secondary", 72)
+    refs.treasurePanel:AddChild(refs.treasureCollapse)
     cardHost:AddChild(refs.treasurePanel)
 
     -- v2.2 背包卡重构（信息完整 + 选项不被遮挡）：
@@ -1855,9 +1876,15 @@ local header = UI.Panel {
     compTabs:AddChild(refs.compTabAchievements)
     compTabs:AddChild(refs.compTabMarine)
     refs.compendiumBody:AddChild(compTabs)
-    refs.compList = UI.Panel { width = "100%", flexDirection = "column", gap = 6 }
+    refs.compList = UI.Panel { id = "compendiumList", width = "100%", flexDirection = "column", gap = 6 }
+    -- A2（真机"记事本内容缺失"）：补齐与 elderDialogueScroll（唯一在真机验证过
+    -- 的卡内滚动：flexBasis=0 + **minHeight=0**）一致的属性集。缺少 minHeight=0 时
+    -- Yoga 的 min-height:auto 会让本层按内容自增长，而 ScrollView 自身又是
+    -- flexBasis=0 的伸缩项，两条约束互相拉扯时内容区可能直接不渲染（预留空间在、
+    -- 行不可见），正是截图里"tabs 在、内容全空"的观感。
     refs.compendiumBody:AddChild(UI.ScrollView {
-        width = "100%", flexGrow = 1, flexBasis = 0, scrollY = true, showScrollbar = true,
+        width = "100%", flexGrow = 1, flexBasis = 0, minHeight = 0,
+        scrollY = true, showScrollbar = true,
         children = { refs.compList },
     })
     refs.compendiumBody:AddChild(makeButton("返回游戏", function()
@@ -2422,44 +2449,84 @@ local header = UI.Panel {
         ray = "鳐鱼", octopus = "章鱼", jellyfish = "水母", turtle = "海龟",
         shark = "鲨鱼", tuna = "金枪鱼", dolphin = "海豚", mackerel = "鲭鱼",
     }
+    -- A2 改写（真机"记事本内容缺失"）：
+    --  ① 行统一走 addInfoRow，`width = "auto"` 改为 flexGrow + minWidth —— 与
+    --     ScrollView 内其它已验证行写法一致，避免 measurement 差异导致整行塌缩；
+    --  ② 图鉴页除 8 条海洋生物外，补入**玩家本周目真正拿到过的内容**（独立道具栏
+    --     的航海残页/生锈钥匙、以及已读的金斯顿类记载 MemoryFragments），旧版只有
+    --     一行"发现记录待接入"占位，真机上与"内容缺失"难以区分；
+    --  ③ 两页都加空态行——任何数据源为空时也必须有可见条目，不再出现整片空白。
     local function buildCompendiumRows(tab)
         if not refs.compList then return end
         destroyChildren(refs.compList)
+        local added = 0
+        local function addInfoRow(name, detail, unlocked, spriteSheet, spriteFrame)
+            local row = UI.Panel { width = "100%", flexDirection = "row", alignItems = "center", gap = 8 }
+            if type(UI.Sprite) == "function" and spriteSheet and spriteFrame then
+                row:AddChild(UI.Sprite {
+                    src = spriteSheet, frame = spriteFrame, width = 26, height = 26,
+                })
+            end
+            local info = UI.Panel { flexGrow = 1, flexBasis = 0, minWidth = 0, flexDirection = "column", gap = 2 }
+            info:AddChild(makeLabel(name, UiKit.fontSize.body,
+                unlocked and UiKit.ink.teaching or UiKit.ink.body))
+            info:AddChild(makeLabel(detail, UiKit.fontSize.teaching, UiKit.ink.dim))
+            row:AddChild(info)
+            refs.compList:AddChild(row)
+            added = added + 1
+        end
+        -- 截断不依赖 utf8 库（脚本层零历史用法，真机运行时可能未提供）：
+        -- 按「非续字节码 0x80~0xBF 即一个字」计数，且只在字符边界落刀。
+        local function clipText(value, limit)
+            local text = tostring(value or ""):gsub("\n", " ")
+            local count, cutAt = 0, #text
+            local i = 1
+            while i <= #text do
+                local byte = string.byte(text, i)
+                local isLead = byte < 0x80 or byte > 0xBF
+                if isLead then
+                    count = count + 1
+                    if count == limit then cutAt = i; break end
+                end
+                i = i + 1
+            end
+            if count < limit then return text end
+            local width = (string.byte(text, cutAt) or 0) < 0x80 and 1 or 3
+            return string.sub(text, 1, cutAt + width - 1) .. "…"
+        end
         if tab == "marine" then
             for _, frame in ipairs({ "ray", "octopus", "jellyfish", "turtle", "shark", "tuna", "dolphin", "mackerel" }) do
-                local row = UI.Panel { width = "100%", flexDirection = "row", alignItems = "center", gap = 8 }
-                if type(UI.Sprite) == "function" then
-                    row:AddChild(UI.Sprite {
-                        src = "image/WatercolorUI/marine_life.json",
-                        frame = frame, width = 26, height = 26,
-                    })
+                addInfoRow(MARINE_NAMES[frame] or frame, "发现记录待接入（圈2 知识层）",
+                    false, "image/WatercolorUI/marine_life.json", frame)
+            end
+            -- 随身物品（V2.8 独立道具栏）：航海残页 / 生锈钥匙等，按真实持有列出。
+            local okCarry, carry = pcall(loop.GetV28TreasureActions, loop)
+            if okCarry and type(carry) == "table" then
+                for _, entry in ipairs(carry) do
+                    addInfoRow(entry.name .. "（随身）",
+                        "可在海上的「记忆与探海镜」卡里操作。", true)
                 end
-                local info = UI.Panel { width = "auto", flexDirection = "column", gap = 2 }
-                info:AddChild(makeLabel(MARINE_NAMES[frame] or frame, UiKit.fontSize.body, UiKit.ink.body))
-                info:AddChild(makeLabel("发现记录待接入（圈2 知识层）", UiKit.fontSize.teaching, UiKit.ink.dim))
-                row:AddChild(info)
-                refs.compList:AddChild(row)
+            end
+            -- 已读到的海上记载（W-08 记忆正文）。
+            local okStories, stories = pcall(MemoryFragments.OwnedStories, loop.player)
+            if okStories and type(stories) == "table" then
+                for _, story in ipairs(stories) do
+                    addInfoRow(story.title, clipText(story.text, 48), true)
+                end
             end
         else
             for _, def in ipairs(Achievements.Definitions()) do
                 local isUnlocked = Achievements.IsUnlocked(def.id)
-                local row = UI.Panel { width = "100%", flexDirection = "row", alignItems = "center", gap = 8 }
-                if type(UI.Sprite) == "function" then
-                    row:AddChild(UI.Sprite {
-                        src = "image/WatercolorUI/button_states.json",
-                        frame = isUnlocked and "circle_gold" or "circle_gray",
-                        width = 26, height = 26,
-                    })
-                end
-                local info = UI.Panel { width = "auto", flexDirection = "column", gap = 2 }
-                info:AddChild(makeLabel(
-                    def.name .. (isUnlocked and " · 已解锁" or ""),
-                    UiKit.fontSize.body,
-                    isUnlocked and UiKit.ink.teaching or UiKit.ink.body))
-                info:AddChild(makeLabel(def.desc, UiKit.fontSize.teaching, UiKit.ink.dim))
-                row:AddChild(info)
-                refs.compList:AddChild(row)
+                addInfoRow(def.name .. (isUnlocked and " · 已解锁" or ""), def.desc,
+                    isUnlocked, "image/WatercolorUI/button_states.json",
+                    isUnlocked and "circle_gold" or "circle_gray")
             end
+        end
+        if added == 0 then
+            local empty = tab == "marine"
+                and "还没有可记的东西。航海残页、漂流瓶里的纸条都会在拿到后记到这里。"
+                or "暂时没有成就进度。"
+            refs.compList:AddChild(makeLabel(empty, UiKit.fontSize.teaching, UiKit.ink.dim))
         end
     end
 
@@ -2892,78 +2959,111 @@ local header = UI.Panel {
         end
         setText(refs.treasureSummary, "treasureSummary", treasureSummary)
         -- V2.8 Closure：独立道具栏真实可点击操作行（航海残页重读 / 生锈钥匙查看 + 给老人）。
-        -- 条目极少（≤3），每帧重建代价可忽。
+        -- A2（真机反馈「航海残页按钮无效无法点击」）：**签名闸重建**。
+        -- 旧实现每帧无条件 destroyChildren 重建（Bootstrap.Update 每帧 hud.Refresh）——
+        -- 真机上手指按下与抬起相隔数帧，按下瞬间锁定的按钮实例在下一帧已被
+        -- 销毁重建，OnPointerUp 无处投递，点击静默丢失（与 v3.2.1 老人对话
+        -- 每帧全量重建同源根因，那次也是加闸才修好）。
+        -- 现按「条目内容 + 禁用态 + busy」签名重建：签名不变则整段跳过，
+        -- 按钮实例跨帧存活，点击可正常命中；条目增减/灰态变化/busy 翻转仍即时刷新。
         if refs.v28TreasureRows then
-            destroyChildren(refs.v28TreasureRows)
+            local sigParts, contentParts = {}, {}
             local okActs, acts = pcall(loop.GetV28TreasureActions, loop)
-            if okActs and type(acts) == "table" then
+            local actsOk = okActs and type(acts) == "table"
+            if actsOk then
                 for _, entry in ipairs(acts) do
-                    local row = UI.Panel {
-                        width = "100%", flexDirection = "row", alignItems = "center", gap = 6,
-                    }
-                    -- 独立道具栏图标（可选）：图集里有该 id 的帧才插。
-                    local barIconFrame = ITEM_ICON_FRAMES[entry.treasureId]
-                    if barIconFrame and type(UI.Sprite) == "function" then
-                        row:AddChild(UI.Sprite {
-                            src = ITEM_ICON_SHEET,
-                            frame = barIconFrame,
-                            width = ITEM_ICON_SIZE,
-                            height = ITEM_ICON_SIZE,
-                        })
-                    end
-                    row:AddChild(makeLabel(entry.name, UiKit.fontSize.teaching,
-                        UiKit.ink.title, "bold", { flexGrow = 1, flexBasis = 0 }))
-                    local treasureId = entry.treasureId
-                    local useBtn = makeButton(entry.useLabel or "查看", function()
-                        invokeLoop("UseV28Treasure", treasureId)
-                        refresh()
-                    end, "secondary", 62)
-                    useBtn:SetDisabled(busy or entry.canUse ~= true)
-                    row:AddChild(useBtn)
-                    local giveBtn = makeButton("给老人", function()
-                        -- V2.8 Closure（第二轮审查）：Loop 的 ShowV28TreasureToElder 要求
-                        -- 老人对话已经打开（elder_dialog_required），否则直接失败。
-                        -- 旧实现直接调它，玩家点一次只能得到沉默或错误码。
-                        -- 这里与背包物品的「给老人」走同一条合法路径：先打开对话，
-                        -- 成功后再展示（展示不消耗）。
-                        local opened = invokeLoop("SetElderOpen", true)
-                        if opened and loop.elderOpen == true then
-                            local shown, feedback, exchange = invokeLoop("ShowV28TreasureToElder", treasureId)
-                            if shown then
-                                recordElderExchange(exchange, "展示 " .. entry.name, feedback)
-                            end
+                    local content = table.concat({
+                        tostring(entry.treasureId), tostring(entry.name), tostring(entry.useLabel),
+                        tostring(entry.canUse == true), tostring(entry.canGive == true),
+                        tostring(entry.canDiscard == true),
+                        tostring(entry.discardDisabledReason),
+                    }, "|")
+                    contentParts[#contentParts + 1] = content
+                    sigParts[#sigParts + 1] = content
+                end
+            end
+            local contentSig = table.concat(contentParts, ";")
+            local rowsSig = contentSig .. "#" .. tostring(busy)
+            -- 内容签名变化（新残页/钥匙到手、消耗、丢弃）→ 回到自动态重新裁决
+            -- （nil = 由"在港与否"决定；新内容到手不该被上一轮的收起意图压住）。
+            if contentSig ~= state.treasureContentSig then
+                state.treasureContentSig = contentSig
+                state.treasureCollapsed = nil
+            end
+            if rowsSig ~= state.treasureRowsSig then
+                state.treasureRowsSig = rowsSig
+                destroyChildren(refs.v28TreasureRows)
+                if actsOk then
+                    for _, entry in ipairs(acts) do
+                        local row = UI.Panel {
+                            width = "100%", flexDirection = "row", alignItems = "center", gap = 6,
+                        }
+                        -- 独立道具栏图标（可选）：图集里有该 id 的帧才插。
+                        local barIconFrame = ITEM_ICON_FRAMES[entry.treasureId]
+                        if barIconFrame and type(UI.Sprite) == "function" then
+                            row:AddChild(UI.Sprite {
+                                src = ITEM_ICON_SHEET,
+                                frame = barIconFrame,
+                                width = ITEM_ICON_SIZE,
+                                height = ITEM_ICON_SIZE,
+                            })
                         end
-                        refresh()
-                    end, "secondary", 70)
-                    -- canGive 为假时保留按钮并置灰（不用置灰代替反馈：
-                    -- Loop 仍会给老人不在世等具体原因）。
-                    giveBtn:SetDisabled(busy or entry.canGive ~= true)
-                    row:AddChild(giveBtn)
-                    local discardBtn = makeButton("丢弃", function()
-                        invokeLoop("DiscardV28Treasure", treasureId)
-                        refresh()
-                    end, "secondary", 62)
-                    -- 策划：航海残页/生锈钥匙不可丢弃。
-                    -- V2.8 Closure（第二轮审查）：真实引擎里 SetDisabled(true) 会
-                    -- 拦掉点击，于是“回调里给原因”玩家永远看不到——原因只存在
-                    -- 于 Loop.lastMessage，而置灰按钮不会写它。
-                    -- 因此改为「禁用按钮 + 同屏明确原因文字」：
-                    -- 原因直接写在该行按钮旁边，玩家不用点也能读到为什么不能丢。
-                    local discardBlocked = entry.canDiscard ~= true
-                    discardBtn:SetDisabled(discardBlocked)
-                    row:AddChild(discardBtn)
-                    if discardBlocked and type(entry.discardDisabledReason) == "string"
-                        and entry.discardDisabledReason ~= "" then
-                        -- 独立道具栏条目极少（≤3），行内加一行小字不占版面，
-                        -- 且随条目重建，不会残留过期原因。
-                        row:AddChild(makeLabel(entry.discardDisabledReason,
-                            UiKit.fontSize.small, UiKit.ink.dim))
+                        row:AddChild(makeLabel(entry.name, UiKit.fontSize.teaching,
+                            UiKit.ink.title, "bold", { flexGrow = 1, flexBasis = 0 }))
+                        local treasureId = entry.treasureId
+                        local useBtn = makeButton(entry.useLabel or "查看", function()
+                            invokeLoop("UseV28Treasure", treasureId)
+                            refresh()
+                        end, "secondary", 62)
+                        useBtn:SetDisabled(busy or entry.canUse ~= true)
+                        row:AddChild(useBtn)
+                        local giveBtn = makeButton("给老人", function()
+                            -- V2.8 Closure（第二轮审查）：Loop 的 ShowV28TreasureToElder 要求
+                            -- 老人对话已经打开（elder_dialog_required），否则直接失败。
+                            -- 旧实现直接调它，玩家点一次只能得到沉默或错误码。
+                            -- 这里与背包物品的「给老人」走同一条合法路径：先打开对话，
+                            -- 成功后再展示（展示不消耗）。
+                            local opened = invokeLoop("SetElderOpen", true)
+                            if opened and loop.elderOpen == true then
+                                local shown, feedback, exchange = invokeLoop("ShowV28TreasureToElder", treasureId)
+                                if shown then
+                                    recordElderExchange(exchange, "展示 " .. entry.name, feedback)
+                                end
+                            end
+                            refresh()
+                        end, "secondary", 70)
+                        -- canGive 为假时保留按钮并置灰（不用置灰代替反馈：
+                        -- Loop 仍会给老人不在世等具体原因）。
+                        giveBtn:SetDisabled(busy or entry.canGive ~= true)
+                        row:AddChild(giveBtn)
+                        local discardBtn = makeButton("丢弃", function()
+                            invokeLoop("DiscardV28Treasure", treasureId)
+                            refresh()
+                        end, "secondary", 62)
+                        -- 策划：航海残页/生锈钥匙不可丢弃。
+                        -- V2.8 Closure（第二轮审查）：真实引擎里 SetDisabled(true) 会
+                        -- 拦掉点击，于是"回调里给原因"玩家永远看不到——原因只存在
+                        -- 于 Loop.lastMessage，而置灰按钮不会写它。
+                        -- 因此改为「禁用按钮 + 同屏明确原因文字」：
+                        -- 原因直接写在该行按钮旁边，玩家不用点也能读到为什么不能丢。
+                        local discardBlocked = entry.canDiscard ~= true
+                        discardBtn:SetDisabled(discardBlocked)
+                        row:AddChild(discardBtn)
+                        if discardBlocked and type(entry.discardDisabledReason) == "string"
+                            and entry.discardDisabledReason ~= "" then
+                            -- 独立道具栏条目极少（≤3），行内加一行小字不占版面，
+                            -- 且随条目重建，不会残留过期原因。
+                            row:AddChild(makeLabel(entry.discardDisabledReason,
+                                UiKit.fontSize.small, UiKit.ink.dim))
+                        end
+                        refs.v28TreasureRows:AddChild(row)
                     end
-                    refs.v28TreasureRows:AddChild(row)
                 end
             end
             -- 独立道具栏空时不占版面；有持有时才显示该卡。
-            refs.treasurePanel:SetVisible(hasLens or #(refs.v28TreasureRows.children or {}) > 0)
+            -- A2：最终显隐与折叠结算改到互斥链处统一赋值（拿到 shopVisibleNow 后），
+            -- 此处只计算内容条件，不再直接 SetVisible。
+            treasureHasContent = hasLens or #(refs.v28TreasureRows.children or {}) > 0
         end
         -- 信息滚动屏开合（真机反馈 2026-10-05）：纯派生态，不写用户偏好——
         -- · 需要点击海面的流程（捕鱼选点/投放选点）强制收起（流程结束自动恢复）；
@@ -3077,6 +3177,21 @@ local header = UI.Panel {
             SoundSystem.OpenMenu()
         end
         refs.shopVisPrev = { inPort = inPort, blocked = not shopVisibleNow }
+        -- A2（真机"左侧屏挤占"）：记忆与探海镜卡纳入 §7.13 互斥链末位。
+        -- 老人 > 背包 > 宝物。此前本卡只按「持有即显」独立判定，与背包卡上下堆叠
+        -- （cardHost 是纵向列容器），两卡合计高度越过 cardHost.bottom 的坞让位线，
+        -- 底段控件压在按钮坞上（截图：船舱卡压住 记事本/收起船舱/拜访老人/自动返航）。
+        -- 老人/背包在屏时本卡整体让位；其余场景保留可见（V2.8 引入本卡的目的就是
+        -- 让独立道具栏有可见入口），但**在港自动折成 slim 条**（只有标题+展开键），
+        -- 避免与港口商店卡堆叠。玩家可以手动展开（state.treasureCollapsed=false）。
+        refs.treasurePanel:SetVisible(treasureHasContent and not elderActive and not showInventory)
+        local autoCollapsed = state.treasureCollapsed == nil and shopVisibleNow
+        local treasureCollapsed = state.treasureCollapsed == true or autoCollapsed
+        refs.treasureSummary:SetVisible(not treasureCollapsed)
+        refs.v28TreasureRows:SetVisible(not treasureCollapsed)
+        if refs.treasureCollapse then
+            refs.treasureCollapse:SetText(treasureCollapsed and "展开" or "收起")
+        end
         -- 港口摘要头：把决策所需的四个前置数值一次给全
         -- （金币 / 体力 / 船速等级 / 容量），避免用户翻区找数。
         setText(refs.portSummary, "portSummary", string.format(
@@ -3336,7 +3451,14 @@ local header = UI.Panel {
             state.compendiumOpen = false
         end
         -- v2.1 §7.11：showElder 已改为信息滚动屏卡片，不再触发模态遮罩。
-                -- V2.7（W-06）：NewRun 二次确认页。优先级高于结局/入口页，但低于保存失败类页面。
+        -- V2.7（W-06）：NewRun 二次确认页。优先级高于结局/入口页，但低于保存失败类页面。
+        -- A2 修复（真机"结局重新开始按钮无效"）：确认页原先只排除了
+        -- forced/settlement/story，从结局页点「重新开始」时 newRunConfirmBody 与
+        -- endingBody 会**同帧双显**（两块 flexGrow=1 页面对半分 modalCard 高度
+        -- maxHeight 460），确认文案与「确定重新开始」被挤出可视区，玩家只看到
+        -- "点了没反应"。此处保留原优先级（确认页照常打开），改由下方页面级闸门
+        -- 在确认期间把结局页/入口页压为不可见（endingBody / entryBody）。
+
         local showNewRunConfirm = state.newRunConfirmOpen == true
             and not showForced and not showSettlement and not showStory
         local overlayShown = showEntry or showForced or showSettlement or showStory
@@ -3388,7 +3510,7 @@ local header = UI.Panel {
             or (showEnding and "第 7 天 · 结局" or (showStory and storyTitle
             or (showCompendium and "图鉴 · 成就" or "")))))
         setText(refs.modalTitle, "modalTitle", overlayTitle)
-        refs.entryBody:SetVisible(showEntry)
+        refs.entryBody:SetVisible(showEntry and not showNewRunConfirm)
         if showEntry then
             local initialStatus = loop.initialSaveStatus or "idle"
             local initialSaving = initialStatus == "saving"
@@ -3409,7 +3531,9 @@ local header = UI.Panel {
         end
         refs.forcedBody:SetVisible(showForced)
         refs.settlementBody:SetVisible(showSettlement)
-        refs.endingBody:SetVisible(showEnding)
+        -- A2：NewRun 确认页对结局/入口页**独占压制**——确认页打开时它们不再各占
+        -- 一半卡高（否则确认按钮被挤到 460 卡外，玩家看不到也点不到）。
+        refs.endingBody:SetVisible(showEnding and not showNewRunConfirm)
         refs.newRunConfirmBody:SetVisible(showNewRunConfirm)
         refs.storyBody:SetVisible(showStory or showOpening)
         -- v2.1 §7.13（用户 23:48「三个显示均独占，滚动屏不一起显示」）：

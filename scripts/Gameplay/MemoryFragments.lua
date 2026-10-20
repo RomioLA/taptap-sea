@@ -57,4 +57,35 @@ function MemoryFragments.GetOwnedStory(player, contentId)
     return { title = playerTitle, text = body }
 end
 
+---List every owned W-08 story for this run (read-only, sorted by title).
+---HUD 记事本「图鉴」页用它把玩家真正读到的记载列出来（此前该页只有占位条目，
+---真机上看起来像"内容缺失"）。
+---@param player table
+---@return table[] rows each { contentId = string, title = string, text = string }
+function MemoryFragments.OwnedStories(player)
+    local result = {}
+    if type(player) ~= "table" then return result end
+    local treasures = rawget(player, "treasures")
+    if type(treasures) ~= "table" then return result end
+    for contentId, mapping in pairs(FRAGMENT_BY_CONTENT) do
+        if rawget(treasures, mapping.rewardId) == true then
+            local definition = mapping.definition
+            local body = rawget(definition, "body")
+            if hasText(body) then
+                local playerTitle = rawget(definition, "playerTitle")
+                local workingTitle = rawget(definition, "workingTitle")
+                local title = hasText(playerTitle) and playerTitle
+                    or (hasText(workingTitle) and workingTitle or contentId)
+                result[#result + 1] = {
+                    contentId = contentId,
+                    title = title,
+                    text = body,
+                }
+            end
+        end
+    end
+    table.sort(result, function(a, b) return a.title < b.title end)
+    return result
+end
+
 return MemoryFragments
