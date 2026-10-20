@@ -56,7 +56,7 @@ return {
             layer = "surface",
             blocking = true,
             observe = {
-                text = "暗礁上附着湿漉漉的海藻。顺着西北方向望去，更远处的海雾里似乎横着一片陆地的影子。",
+                text = "暗礁上附着湿漉漉的海藻。顺着北边望去，更远处的海雾里似乎横着一片陆地的影子。",
             },
             tuningStatus = "V28_FIRST_WAVE_GEOMETRY",
         },
@@ -64,27 +64,27 @@ return {
             contentId = "reef_vis_02",
             entityType = "reef",
             kind = "fixed",
-            position = { x = 110, y = -80 },
+            position = { x = 150, y = -92 },
             radius = 3,
             layer = "surface",
             blocking = true,
             observe = {
-                text = "孤立的礁石顶上落着几根白色海鸟羽毛，朝东南方向被风压弯。看来常有海鸟借这里歇脚，再往东南飞去。",
+                text = "孤立的礁石顶上落着几根白色海鸟羽毛，朝东北方向被风压弯。看来常有海鸟借这里歇脚，再往东北飞去。",
             },
-            tuningStatus = "V28_FIRST_WAVE_GEOMETRY",
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
         },
         {
             contentId = "reef_vis_03",
             entityType = "reef",
             kind = "fixed",
-            position = { x = 160, y = -115 },
+            position = { x = 200, y = -140 },
             radius = 3,
             layer = "surface",
             blocking = true,
             observe = {
-                text = "这里的海水明显变深，礁石外侧的浪花也更急。再往东南望去，一座海岛的轮廓已经隐约可见。",
+                text = "这里的海水明显变深，礁石外侧的浪花也更急。再往西北望去，一座海岛的轮廓已经隐约可见。",
             },
-            tuningStatus = "V28_FIRST_WAVE_GEOMETRY",
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
         },
         -- 05-A 漂浮木板带：0体力即时观察，单点 authored 线索（非全局洋流）。
         {
