@@ -61,8 +61,14 @@ local Config = {
     -- 非阻挡漂浮物，靠近 ≤ operateDistance(5m) 可检查（World:Init 注册）。
     -- 真机反馈（2026-10-05）：原演示漂浮物 float(10,0) 无任何玩法功能，
     -- 在返航点旁渲染为无意义圆形色块，已删除。
-    fixedBarrel = { position = { x = 14, y = 6 }, radius = 2,
-        tuningStatus = "TUTORIAL_PROVISIONAL_GEOMETRY" },
+    -- 2026-10-20：14,6 距港口 15.2m，r2 + 8m 安全裕度 = 11.8m，正好压在回港走廊上，
+    -- 是所有“直线回港”被 no_viable_detour 拒绝的主因（船一从港口方向驶回就撞上它的
+    -- 裕度圈）。
+    -- 新位置 34,10（距港 35.4m，东北向）：仍在出港第一屏可见（木桶剪影不被地平线
+    -- 切线剔掉，Circle1A2BarrelRenderTests 的 barrel+distance 出发点也全部落在
+    -- 可航行海域），不再骑在港口正前航道，也不再与 island_01 的裕度圈叠加。
+    fixedBarrel = { position = { x = 34, y = 10 }, radius = 2,
+        tuningStatus = "V28_DISCOVERABILITY_GEOMETRY" },
     -- C2（2026-10-17）：主场景组件世界放置（assets/image/OceanComponents，oblique 海面组件）。
     -- 与 fixedObjects（冻结的双岛集）/fixedTreasure 并列的独立清单：World:Init 以
     -- kind="scenery" 注册的非阻挡装饰实体，不影响航行/捕鱼/交互，仅 SeaDraw 贴图渲染。
@@ -92,25 +98,33 @@ local Config = {
     -- 半径×12/512（island_01 口径）取整；坐标满足 isPositionFree（避 island_01
     -- r12 / island_02 r20 / barrel r2 碰撞圈，彼此视觉间距 ≥ r_i+r_j+4）。
     -- 放置参数待真机观感调校。
+    -- 2026-10-20（V2.8 截止前可发现性 + 自动返航修复）：旧坐标把六座**实体阻挡**岛全部
+    -- 挤在港口 70m 内（55,-20 / 70,10 / 5,55 / -15,40 / -30,-15 / 20,-30）。后果有两个：
+    --  ① 出港第一眼全是岛，后面 V2.7/V2.8 的海上内容全被遮在背后，玩家反馈“东西好像
+    --     都没放到海上”；
+    --  ② 岛与岛之间的间隙普遍小于自动返航的 8m 安全裕度之和，船在岛边起航时起点
+    --     已经落在邻岛的裕度圈里，自动返航直接 no_viable_detour（真实玩家可复现）。
+    -- 新坐标按“近港留空 → 东/东南/西北/北分向”拉开：近港 30m 内只留木桶，
+    -- 六岛分居 4 个象限的 60~135m 环，彼此与岛_01/02/木桶间距 ≥ r_i+r_j+4m。
     fixedIslands = {
         { entityType = "island", contentId = "island_peak_v1",
-            position = { x = 70, y = 10 }, radius = 7, blocking = true,
-            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+            position = { x = 115, y = 25 }, radius = 7, blocking = true,
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY" },
         { entityType = "island", contentId = "island_reefcluster_v1",
-            position = { x = 55, y = -20 }, radius = 9, blocking = true,
-            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+            position = { x = 112, y = -62 }, radius = 9, blocking = true,
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY" },
         { entityType = "island", contentId = "island_cliff_v1",
-            position = { x = -30, y = -15 }, radius = 9, blocking = true,
-            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+            position = { x = -70, y = -55 }, radius = 9, blocking = true,
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY" },
         { entityType = "island", contentId = "island_stele_v1",
-            position = { x = 20, y = -30 }, radius = 4, blocking = true,
-            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+            position = { x = 55, y = -135 }, radius = 4, blocking = true,
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY" },
         { entityType = "island", contentId = "island_twinhills_v1",
-            position = { x = 5, y = 55 }, radius = 10, blocking = true,
-            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+            position = { x = 20, y = 125 }, radius = 10, blocking = true,
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY" },
         { entityType = "island", contentId = "island_sandbar_v1",
-            position = { x = -15, y = 40 }, radius = 10, blocking = true,
-            tuningStatus = "ISLAND_VARIANT_PLAYTEST_GEOMETRY" },
+            position = { x = -55, y = 130 }, radius = 10, blocking = true,
+            tuningStatus = "V28_DISCOVERABILITY_GEOMETRY" },
     },
 },
     camera = { tuningStatus = "SEA_VIEW_VISUAL_TEST_VALUE",

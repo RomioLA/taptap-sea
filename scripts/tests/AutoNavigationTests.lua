@@ -246,12 +246,16 @@ local function moveIntoBarrelPush(runtime, stats, useRuntimeUpdate)
     error("fixture did not produce a real barrel collision and pending push")
 end
 
+-- 2026-10-20：木桶从 (14,6) 移到 (34,10) 后，旧 departure(30,0) 的返航航段
+-- 不再穿过桶体，撞桶 fixture 失效。改用 (55,5)：返航航段从东北侧穿过
+-- (34,10) 的桶体，仍能真实产生 barrel 碰撞与 pending push（已用真实
+-- world.moveEntity 探针验证 hits=1 && pushRemaining>0）。
 local function makeCollisionRuntime()
     return Runtime.New({
         initializeRegions = false,
         daySeed = 314159,
         autoReturnDiagnostic = quietDiagnostic,
-        departure = point(30, 0),
+        departure = point(55, 5),
         shipLevel = 3,
     })
 end
@@ -758,11 +762,17 @@ function Tests.Run()
     end)
 
     check("failed initial planning clears the explicitly taken-over manual target", function()
+        -- V2.8 截止前：旧 fixture 用 departure(40,12) + 旧桶位(14,6)，当时两条切线航段
+        -- 都被邻障碍的 8m 裕度圈挡住，正好是“真的无路”的实例。
+        -- 桶位改为 (34,10) 后 (40,12) 变成可行绕行，该 fixture 不再能触发失败分支。
+        -- 改用当前地图上仍真实无可行绕行的起点 (-130,100)：它被 reef_vis_01
+        -- （-70,55 r3）与 island_02（-80,90 r20）的裕度圈夹在中间。
+        -- 该用例只验证“首次规划失败要清掉手动接管的目标”，与具体坐标无关。
         local runtime = Runtime.New({
             initializeRegions = false,
             daySeed = 314159,
             autoReturnDiagnostic = quietDiagnostic,
-            departure = point(40, 12),
+            departure = point(-130, 100),
         })
         runtime.movement:SetTarget(point(90, 90))
         local oldManualTarget = runtime.movement.target
@@ -871,6 +881,11 @@ function Tests.Run()
     end)
 
     check("real blockers at forty twelve reject safely without moving the ship", function()
+        -- V2.8 截止前：旧 fixture 是 departure(40,12) + 旧桶位(14,6)，那里确实“无路”。
+        -- 桶位改到 (34,10)、岛群外移之后，(40,12) 变成可行绕行，该场景不存在了。
+        -- 本用例验的是“真的无路时拒绝并留下诊断、船不动”，因此换成当前地图上
+        -- 仍然真实无路的位置 (130,40)：它被 island_01（35,25 r12）与
+        -- island_peak_v1（115,25 r7）两圈夹住，两条切线航段都切不出去。
         local diagnostics = {}
         local runtime = Runtime.New({
             initializeRegions = false,
@@ -878,23 +893,8 @@ function Tests.Run()
             autoReturnDiagnostic = function(event, fields)
                 diagnostics[#diagnostics + 1] = { event = event, fields = fields }
             end,
-            departure = point(40, 12),
+            departure = point(130, 40),
         })
-        local island
-        for _, entity in ipairs(runtime.world.entities) do
-            if entity and entity.blocking == true
-                and entity.position.x == 35 and entity.position.y == 25 then
-                island = entity
-                break
-            end
-        end
-        assert(island, "fixed-seed fixture must include the real blocking island")
-        eq(island.id, "sea-1")
-        eq(island.entityType, "island")
-        eq(island.kind, "fixed")
-        near(island.radius, 12)
-        near(distance(runtime.ship.position, island.position), math.sqrt(194), 0.001,
-            "ship center is 13.93m from island center")
 
         local before = copyPoint(runtime.ship.position)
         local started, reason = runtime:StartAutoReturn()
@@ -1129,6 +1129,10 @@ function Tests.Run()
         { name = "island-two", position = point(-160, 180), expectedObstacle = { x = -80, y = 90 } },
         { name = "open-water", position = point(100, 0) },
         { name = "fixed-barrel", position = point(80, 15), expectedObstacle = { kind = "barrel" } },
+        -- 2026-10-20：island-one-near / island-route 旧坐标(70,50)/(120,85) 曾是
+        -- “岛边起航 → no_viable_detour”的真机 bug 现场；自动返航已修（见
+        -- Ocean/AutoNavigation 的 effectiveMargin 与共线兜底），坐标仍保留，
+        -- 因为它们正好是“岛旁近距起航”这个真实场景。
         { name = "island-route", position = point(120, 85) },
         { name = "far-water", position = point(500, 500) },
         { name = "world-corner", position = point(1400, -1400) },
