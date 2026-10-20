@@ -15,6 +15,11 @@ local VIEW_PADDING_METERS = 0.8
 local AIR_PERSPECTIVE_TINT = { 181, 212, 203 }
 -- Presentation palette only: do not rewrite shared world/config tuning.
 local PAPER_WAVE = { 233, 243, 223, 255 }
+-- 玩家船贴图目录键（assets/image/OceanPlayerBoat/player_boat.png）。
+-- 入库时艏向已旋正到画布 +X，与 ImageArt.Plane 的「u=1 边缘映射到 +heading」
+-- 契约一致。2026-10-20 晚起默认走矢量船形态（Config.visual.boatTexture.enabled
+-- =false）；开关开启且贴图缺失时 SeaViewArt.Boat 回落纯矢量形态。
+local BOAT_ART_NAME = "player_boat"
 local SAND_SHORE = { 226, 207, 158, 255 }
 local SAGE_LAND = { 149, 171, 133, 255 }
 local islandGeometry = setmetatable({}, {__mode="k"})
@@ -592,9 +597,15 @@ local function drawSurfaceLayer(ctx, movement, time, settings, bounds, horizonAt
                         time, indexX, indexY, movement.viewportWidth, movement.viewportHeight,
                         horizonAtX, lengthScale, amplitudeScale, strokeWidthMeters)
                     if mark then
-                        rowMarks[#rowMarks + 1] = mark
-                        if companion then rowMarks[#rowMarks + 1] = companion end
+                        -- 预算硬顶：先查后加。主笔与伴生笔在同一次循环里成对产生，
+                        -- 「先加后查」会让一行最多越过 maxMarks 一笔（伴生笔超发），
+                        -- 预算就不再是硬顶；近/远两层共用同一计数器，跨层同样受控。
                         if drawn + #rowMarks >= settings.maxMarks then break end
+                        rowMarks[#rowMarks + 1] = mark
+                        if companion then
+                            if drawn + #rowMarks >= settings.maxMarks then break end
+                            rowMarks[#rowMarks + 1] = companion
+                        end
                     end
                 end
             end
@@ -611,6 +622,38 @@ local function surfaceHorizonAt(movement, x, width, height, fallback)
     local y = Projection.Horizon(movement, clamp(x, 0, width))
     if finite(y) then return clamp(y, 0, height) end
     return fallback
+end
+
+-- 海面水区多边形填充（曲边地平线 + 屏底两角）。仅用 2-stop 线性渐变，
+-- 以「远→近 底层 + 远→中 / 中→近 两段透明→实色的柔带」拼出三层青绿分带。
+local function fillSeaPolygon(ctx, horizonPoints, width, height, paint)
+    nvgBeginPath(ctx)
+    nvgMoveTo(ctx, horizonPoints[1].x, horizonPoints[1].y)
+    for index = 2, #horizonPoints do
+        nvgLineTo(ctx, horizonPoints[index].x, horizonPoints[index].y)
+    end
+    nvgLineTo(ctx, width, height)
+    nvgLineTo(ctx, 0, height)
+    nvgClosePath(ctx)
+    nvgFillPaint(ctx, paint)
+    nvgFill(ctx)
+end
+
+-- 三层青绿分带：底图为远→近深度渐变；banded 时叠加中段柔带（顶部/底部透明、
+-- 中段实色）形成可读的远/中/近三层、边界柔和。渐变在 X 轴恒定 → 横向天然无缝。
+-- 引擎仅支持 2-stop 线性渐变，故中段柔带用两段透明→实色渐变拼出（midT 处相接
+-- 同色，无可见接缝）。alpha 透出叠加强度（<255 保留贴图水彩笔触）。
+local function paintSeaBands(ctx, horizonPoints, width, height, topY, bottomY,
+    farC, midC, nearC, midT, alpha, emphasis)
+    local midY = topY + (bottomY - topY) * midT
+    fillSeaPolygon(ctx, horizonPoints, width, height, nvgLinearGradient(ctx, 0, topY, 0, bottomY,
+        nvgRGBA(farC[1], farC[2], farC[3], alpha), nvgRGBA(nearC[1], nearC[2], nearC[3], alpha)))
+    if emphasis then
+        fillSeaPolygon(ctx, horizonPoints, width, height, nvgLinearGradient(ctx, 0, topY, 0, midY,
+            nvgRGBA(farC[1], farC[2], farC[3], 0), nvgRGBA(midC[1], midC[2], midC[3], alpha)))
+        fillSeaPolygon(ctx, horizonPoints, width, height, nvgLinearGradient(ctx, 0, midY, 0, bottomY,
+            nvgRGBA(midC[1], midC[2], midC[3], alpha), nvgRGBA(nearC[1], nearC[2], nearC[3], 0)))
+    end
 end
 
 -- 纯海面贴图相位选择（2026-10-17 C2，方案 A 夜罩不动）：纯函数，不读 nvg。
@@ -730,17 +773,19 @@ function SeaViewArt.Surface(ctx, movement, time, clock)
         return centerHorizon
     end
 
-    nvgBeginPath(ctx)
-    nvgMoveTo(ctx, horizonPoints[1].x, horizonPoints[1].y)
-    for index = 2, #horizonPoints do
-        nvgLineTo(ctx, horizonPoints[index].x, horizonPoints[index].y)
-    end
-    nvgLineTo(ctx, width, height)
-    nvgLineTo(ctx, 0, height)
-    nvgClosePath(ctx)
-    nvgFillPaint(ctx, nvgLinearGradient(ctx, 0, centerHorizon, 0, height,
-        nvgRGBA(86, 178, 180, 255), nvgRGBA(43, 148, 162, 255)))
-    nvgFill(ctx)
+    -- 三层青绿分带（2026-10-20 v4 概念验收通过）：远/中/近由深度驱动的青绿渐变，
+    -- 柔和过渡，程序化横向无缝（渐变 X 轴恒定、贴图 REPEATX）。enabled=false 时
+    -- 退化为原 2-stop 渐变（零回归）。
+    local bands = (Config.visual and Config.visual.seaBands) or {}
+    local banded = bands.enabled == true
+    local farC = (banded and bands.far) or { 86, 178, 180 }
+    local midC = (banded and bands.mid) or { 65, 163, 171 }
+    local nearC = (banded and bands.near) or { 43, 148, 162 }
+    local midT = (banded and bands.midT) or 0.5
+    -- 底图恒为远→近 2-stop 深度渐变（与原成本一致）；中段柔带只走贴图之上的
+    -- overlay（banded 且贴图成功时），避免被贴图覆盖下白画两次。
+    paintSeaBands(ctx, horizonPoints, width, height, centerHorizon, height,
+        farC, midC, nearC, midT, 255, false)
     -- 纯海面贴图层（2026-10-17 C2，方案 A）：渐变保留为最终兜底；贴图可用时
     -- 叠加（base + 按相位交叉淡入的 over），只有加载失败/显式关闭才走纸纹层，
     -- 避免贴图与纸纹双重颗粒叠加。底图默认固定（scroll=false，2026-10-18 真机
@@ -769,6 +814,13 @@ function SeaViewArt.Surface(ctx, movement, time, clock)
         if seaDrawn and frame.over and frame.blend > 0 then
             ImageArt.SeaSurface(ctx, movement, width, height, frame.over, alpha * frame.blend, scrollX)
         end
+    end
+    -- 三层青绿分带叠加于海面贴图之上（overlayAlpha<1 保留贴图水彩笔触）；
+    -- 仅 banded 时生效，贴图关闭/失败则底图渐变已自带分带，无需叠加。
+    if banded and seaDrawn then
+        local a = clamp(math.floor((bands.overlayAlpha or 0.42) * 255 + 0.5), 0, 255)
+        paintSeaBands(ctx, horizonPoints, width, height, centerHorizon, height,
+            farC, midC, nearC, midT, a, true)
     end
     -- Optional flat paper material supplied by ImageArt; world crests below
     -- still own motion, fixed cell density and the bounded mark budget.
@@ -809,7 +861,7 @@ function SeaViewArt.Surface(ctx, movement, time, clock)
 
     -- 波纹平铺层已承接海面细节：跳过程序 crest marks（GetViewBounds 是 crest 段
     -- 入口，测试以此断言是否进入浪脊格绘制）。
-    if rippleDrawn then return end
+    if rippleDrawn then return 0 end
     local settings = getSurfaceSettings()
     if type(movement.GetViewBounds) ~= "function" then return end
     local bounds = movement:GetViewBounds(settings.length * 0.75)
@@ -820,10 +872,13 @@ function SeaViewArt.Surface(ctx, movement, time, clock)
     local camera = movement.camera
     if type(camera) ~= "table" or not finite(camera.x) or not finite(camera.y) then return end
 
+    -- 返回本次实际绘制的 crest marks 数（近/远两层共用一个预算计数器），
+    -- 供 maxMarks 性能预算硬顶直接断言；既有调用方（SeaDraw）忽略返回值零回归。
     local drawn = drawSurfaceLayer(ctx, movement, time, settings, bounds, horizonAtX,
         settings.nearSpacing, false, 0)
-    drawSurfaceLayer(ctx, movement, time, settings, bounds, horizonAtX,
+    drawn = drawSurfaceLayer(ctx, movement, time, settings, bounds, horizonAtX,
         settings.farSpacing, true, drawn)
+    return drawn
 end
 
 local function circlePoints(center, radius, segmentCount)
@@ -1443,9 +1498,37 @@ function SeaViewArt.Boat(ctx, movement, ship, time)
         shadow[#shadow + 1] = { x = point.x + 1.5, y = point.y + 3, scale = point.scale }
     end
     fillPolygon(ctx, shadow, nvgRGBA(49, 99, 101, 65))
-    -- 2026-10-16 用户裁决：船贴图替换效果不好（竖幅画布被压进横幅世界矩形约 4×
-    -- 压扁、艏向偏 90°），还原无贴图矢量形态（艇身+甲板+立帆）。
-    -- boat/boat_story 目录项、ArtVariants 映射与素材文件已同步移除，无贴图加载路径。
+    -- 2026-10-20：玩家船正式水彩贴图（assets/image/OceanPlayerBoat/player_boat.png）。
+    -- 走 ImageArt.Plane 世界平面投影：贴图 u 轴（+u=右）= 艏向，对齐 world heading；
+    -- 入库时已把艏向旋正到画布 +X，故此处无需任何角度补偿。深度方向的压缩由
+    -- 引擎斜投影统一处理（世界 +Y 方向屏幕压缩比约 0.82），与鱼/海鸟/木桶同口径。
+    -- 画幅按 catalog 内容比换算，使贴图内容主体精确对应 length×width 的船体
+    -- footprint（Art.ContentPlaneSize），不把透明留白算进世界尺寸。
+    -- 尾流/横摇/船体投影阴影仍由程序负责（贴图不烘焙任何动态效果）。
+    -- 2026-10-20 晚：写实贴图缩到 5m×2.4m 后细节糊（真机反馈），用户裁定还原
+    -- 矢量船；Config.visual.boatTexture.enabled=false（默认）即走下方矢量形态，
+    -- =true 切回贴图（资产/catalog/契约均保留，A/B 零成本）。
+    local drawn = false
+    if visual.boatTexture and visual.boatTexture.enabled then
+        local planeLength, planeWidth = ImageArt.ContentPlaneSize(BOAT_ART_NAME, length, width)
+        if planeLength and planeWidth then
+            drawn = ImageArt.Plane(ctx, BOAT_ART_NAME, movement, ship.position,
+                planeLength, planeWidth, rotation, heave, 1, roll)
+        end
+    end
+    if drawn then
+        local center = screenPoint(movement, ship.position, heave)
+        if center then includeScreenPoint(bounds, center, 1) end
+        -- 立帆：贴图路径默认不画（素材为无桅杆划艇，矢量白帆与水彩船体不搭）。
+        -- Config.visual.boatSail.enabled = true 可恢复，便于 A/B 对比。
+        if (visual.boatSail and visual.boatSail.enabled) then
+            drawSail(ctx, movement, ship.position, forwardX, forwardY, sideX, sideY,
+                length, bounds, heave, rollSin)
+        end
+        return finishScreenBounds(bounds)
+    end
+    -- 矢量船形态（2026-10-20 晚起为默认路径）：艇身+甲板+立帆。
+    -- 贴图开关关闭或贴图缺失/加载失败时均回落至此，保持零回归。
     fillPolygon(ctx, hullScreen, rgba(visual.ship, { 251, 222, 139, 255 }))
     strokePolygon(ctx, hullScreen, nvgRGBA(100, 67, 51, 245), 1.5)
 

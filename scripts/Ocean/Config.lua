@@ -179,6 +179,13 @@ local Config = {
         amplitudeMeters = 0.18, periodSec = 5, maxMarks = 1800,
         nearSpacingMeters = 12, farSpacingMeters = 6,
         detailTransitionStartMeters = 35, detailTransitionEndMeters = 110 },
+    -- 三层青绿海面分带（2026-10-20 v4 概念验收通过）：在海面水彩贴图之上叠加由深度
+    -- 驱动的青绿分带渐变（远浅→中→近深），柔和过渡；程序化横向无缝（渐变 X 轴
+    -- 恒定、贴图 REPEATX）。enabled=false 整层跳过、完全回到原观感（零回归）。
+    -- overlayAlpha<1 保留贴图水彩笔触；midT 为中层竖直比例（0=地平线,1=屏底）。
+    seaBands = { enabled = true, overlayAlpha = 0.42,
+        far = { 150, 214, 206 }, mid = { 86, 186, 182 }, near = { 42, 150, 166 }, midT = 0.5 },
+
     -- 纯海面贴图层（2026-10-17 C2，方案 A 夜罩不动）：屏幕空间材质层，
     -- 参数仅影响表现，不触碰世界/玩法。duskFrom/duskSpan 控制昼相末段向
     -- 黄昏图交叉淡入；nightFade 控制入夜前 10% 淡回昼图（夜罩瞬间叠加
@@ -234,13 +241,16 @@ local Config = {
         alpha = 0.16,               -- 焦散不透明度（需求建议区间 0.06~0.20）
         -- 区域与网格（世界米制）；数值按 960×540 离线预览调到「盖住近水、
         -- 边缘在屏幕内完全淡完、不伸到天空」，真机可再微调。
+        -- 2026-10-20 B 方向合成链调优：cellMeters 12→16（7×7→6×6=36 片，
+        -- 实测单层 fill 58→44，-24%；格距加大由 tileMeters 22→18 纹样加密补偿，
+        -- alpha 不动——网格铺满区域、覆盖率与格数无关，0.16 仍是需求区间中值）。
         sizeMeters = 84,            -- 区域边长（视野高 45m 的近水面约占下半屏）
-        cellMeters = 12,            -- 单格边长（84/12=7×7=49 片；地形畸变需细分）
+        cellMeters = 16,            -- 单格边长（84/16→6×6=36 片；地形畸变需细分）
         feather = 0.52,             -- 径向渐隐起点（越早开始越柔，但中心也被淡化）
         edgeJitter = 0.45,          -- 边缘按片哈希降权，打散同心色阶
         edgeJitterSeed = 0.17,
         -- 纹理滚动（归一化纹理单位/秒；与船位置完全解耦，船动不重置）
-        tileMeters = 22,            -- 一个瓦片覆盖的世界米数（越小网越密）
+        tileMeters = 18,            -- 一个瓦片覆盖的世界米数（越小网越密）
         scrollX = 0.012,
         scrollY = 0.008,
         -- DuDv 置换
@@ -314,6 +324,16 @@ local Config = {
     projection = { circleSegments = 48, sectorSegments = 32, birdAltitude = 1.2 },
     boatMotion = { enabled = true, heaveMeters = 0.35, maxRollDegrees = 7,
         turnRateForMaxRoll = math.pi, turnSmoothSec = 0.22 },
+    -- 2026-10-20 玩家船贴图接入：船体曾改用正式水彩素材（OceanPlayerBoat/player_boat），
+    -- 素材为无桅杆的划艇式小木船；矢量立帆（正面白帆 + 桅杆）与水彩船体风格不搭，
+    -- 故贴图路径下默认不再绘制立帆。
+    -- 2026-10-20 晚：真机截图反馈写实贴图缩到 5m×2.4m 后木纹/绳结细节糊成一团
+    -- 棕色，用户裁定还原矢量船（程序绘制的艇身+甲板+立帆，旧版观感）。
+    -- 贴图资产、catalog 条目与 Circle1PlayerBoatArtTests 契约全部保留（不删不改），
+    -- boatTexture.enabled=true 即可 A/B 切回贴图路径；矢量路径下立帆恢复绘制
+    -- （boatSail 门控只作用于贴图路径）。
+    boatTexture = { enabled = false },
+    boatSail = { enabled = false },
     curvature = { heightRatio = 0.045 },
     horizonOcclusion = { tangentSpan = 0.1 },
     -- 2026-10-20（真机帧率已验收后所做的画面层次提升）：maxOpacityLoss 0.48 → 0.62。

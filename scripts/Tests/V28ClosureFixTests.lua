@@ -135,6 +135,24 @@ local function findButtons(root, text)
     return found
 end
 
+local function expandTreasureDrawer(root)
+    -- 740bbaa（A2 真机缺陷）：独立道具栏在港会自动折成 slim 条（避免与港口商店卡堆叠）。
+    -- 页面里同时存在「收起」与「展开」两个按钮（状态切换时只换文字），因此必须按
+    -- 「可见的那个」判断，不能只按文字找。
+    local toggle = nil
+    walk(root, function(widget)
+        if widget.kind ~= "Button" then return end
+        local text = widget.props.text
+        if (text ~= "展开" and text ~= "收起") or not isVisible(widget) then return end
+        if text == "展开" then toggle = widget end
+    end)
+    if toggle then
+        toggle.props.onClick()
+        return true
+    end
+    return false
+end
+
 local function button(root, text)
     local found = findButtons(root, text)
     assert(#found > 0, "missing button: " .. text)
@@ -442,9 +460,8 @@ function Tests.Run()
         local note = assert(Items.GetDefinition("sea_note_01"))
         withHUD(function(HUD)
             local hud = HUD.Create(f.loop)
-            -- 宝物卡挂在信息屏（drawerContent）下，港口默认展开；
-            -- 显式点「港口商店」确保玩家入口可见。
-            if not isVisible(findById(hud.root, "storyDialogText") or hud.root) then end
+            -- 宝物卡在港默认折成 slim 条（740bbaa），先展开再找入口。
+            expandTreasureDrawer(hud.root)
             local rows = true
             -- 找到「重读」按钮并点击：这就是玩家的真实入口。
             local reread = button(hud.root, "重读")
@@ -470,6 +487,7 @@ function Tests.Run()
         local key = assert(Items.GetDefinition("rusty_key"))
         withHUD(function(HUD)
             local hud = HUD.Create(f.loop)
+            expandTreasureDrawer(hud.root)
             local view = button(hud.root, "查看")
             truthy(isVisible(view), "the key view button must be visible")
             click(view)

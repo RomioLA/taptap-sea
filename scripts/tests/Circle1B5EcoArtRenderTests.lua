@@ -17,6 +17,7 @@ local Runtime = require("Ocean.SeaRuntime")
 local SeaDraw = require("Ocean.SeaDraw")
 local SeaViewArt = require("Ocean.SeaViewArt")
 local ImageArt = require("Ocean.ImageArt")
+local Draw = require("Ocean.Draw")
 local Config = require("Ocean.Config")
 local FishData = require("Ocean.FishData")
 
@@ -73,7 +74,7 @@ local function countCalls(calls, prefix)
     return count
 end
 
-local function makeRuntime(headingOverride)
+local function makeRuntime(headingOverride, diveOverride)
     local fixed = Config.world.fixedBarrel.position
     local runtime = Runtime.New({
         departure = { x = fixed.x + BARREL_DISTANCE, y = fixed.y },
@@ -92,11 +93,12 @@ local function makeRuntime(headingOverride)
         radius = FishData.tuna.radius, rotation = FISH_TUNA_ROTATION,
     })
     local bird = { x = runtime.ship.position.x + 8, y = runtime.ship.position.y + 6 }
+    local dive = diveOverride or BIRD_DIVE
     runtime.surfaceSignals = {
         GetSplashes = function() return {} end,
         GetBirds = function()
             return { { position = { x = bird.x, y = bird.y },
-                heading = headingOverride or BIRD_HEADING, diveProgress = BIRD_DIVE } }
+                heading = headingOverride or BIRD_HEADING, diveProgress = dive } }
         end,
     }
     return runtime, sardine, tuna, bird
@@ -114,8 +116,8 @@ local function captureState(runtime)
     }
 end
 
-local function sceneAt(timeValue, planeResult, headingOverride)
-    local runtime = makeRuntime(headingOverride)
+local function sceneAt(timeValue, planeResult, headingOverride, diveOverride)
+    local runtime = makeRuntime(headingOverride, diveOverride)
     runtime.time = timeValue
     local before = captureState(runtime)
     local calls = withPlaneRecorder(planeResult, function()
@@ -229,6 +231,61 @@ function Tests.Run(recorder)
                 "bird billboard flip mismatch for " .. case.label
                     .. " (heading=" .. tostring(case.heading) .. ", flipX=" .. tostring(bird.flipX) .. ")")
         end
+    end)
+
+    check("bird_dive_end_keeps_the_final_frame_readable_and_drawn", function()
+        -- 2026-10-20 修复（反馈：俯冲结束后鸟看起来像消失）。diveProgress 走到 1.0 时，
+        -- 旧口径把翼展压到 38%（1.8m → 0.684m）、悬停高度压到 0（贴住水面），
+        -- 而鸟群此刻仍应继续盘旋并绘制——于是远处只剩几像素、又与水面糊在一起，
+        -- 读起来就是「鸟没了」。契约：
+        --   ①末帧照常绘制（立牌不被跳过）；②折叠有下限（≥72% 翼展）；
+        --   ③悬停高度有下限（≥45% birdAltitude，不下压到水面）；
+        --   ④平铺/矢量两条回退路径共用同一折叠口径，不会绕过下限。
+        local baseAltitude = Config.visual.projection.birdAltitude
+        local floorWidth = 1.8 * (1 - 0.62 * SeaDraw.BIRD_DIVE_FOLD_MAX)
+
+        local glide = findCall(sceneAt(0, true, nil, 0), "eco_bird_f1")
+        assert(glide and near(glide.worldWidth, 1.8),
+            "a gliding bird (dive=0) must keep the full authored span")
+
+        local dived = findCall(sceneAt(0, true, nil, 1.0), "eco_bird_f1")
+        assert(dived, "the fully dived bird must still be drawn, not culled")
+        assert(dived.mode == "upright", "the fully dived bird must stay on the billboard path")
+        assert(dived.worldWidth >= floorWidth - 0.001,
+            string.format("dive=1 collapsed the bird to %.3fm, below the %.3fm readable floor",
+                dived.worldWidth, floorWidth))
+        assert(dived.worldWidth < 1.8 - 0.001,
+            "the dive must still read as a fold (span below the authored span)")
+        assert(dived.altitude > 0 and dived.altitude
+            >= baseAltitude * SeaDraw.BIRD_DIVE_ALTITUDE_MIN_RATIO - 1e-6,
+            "dive=1 must not drop the bird onto the sea surface (altitude floor violated)")
+
+        -- 屏幕口径：满折叠时翼展换算回像素仍达玩家可辨识下限。
+        local runtime = makeRuntime(nil, 1.0)
+        local _, _, scale = runtime.movement:WorldToScreen(
+            { x = runtime.ship.position.x + 8, y = runtime.ship.position.y + 6 }, dived.altitude)
+        assert(type(scale) == "number" and scale > 0, "the dived bird anchor did not project")
+        assert(dived.worldWidth * scale >= 10 - 1e-6,
+            string.format("dive=1 drew a %.1fpx span, below the 10px readable floor",
+                dived.worldWidth * scale))
+
+        -- 回退路径同样受折叠下限约束（贴图不可用时不会退回 38% 体量）。
+        local originalSeabird, dives = Draw.WorldSeabird, {}
+        Draw.WorldSeabird = function(ctx, x, y, birdScale, heading, dive, api)
+            dives[#dives + 1] = dive
+            return originalSeabird(ctx, x, y, birdScale, heading, dive, api)
+        end
+        local ok, err = pcall(function() sceneAt(0, false, nil, 1.0) end)
+        Draw.WorldSeabird = originalSeabird
+        assert(ok, tostring(err))
+        assert(#dives > 0, "the vector fallback path must still draw the dived bird")
+        local clamped = false
+        for _, dive in ipairs(dives) do
+            assert(type(dive) == "number" and dive <= SeaDraw.BIRD_DIVE_FOLD_MAX + 1e-9,
+                "a fallback path received an unclamped dive fold: " .. tostring(dive))
+            if near(dive, SeaDraw.BIRD_DIVE_FOLD_MAX) then clamped = true end
+        end
+        assert(clamped, "the vector fallback did not receive the clamped dive fold")
     end)
 
     check("upright_sizes_by_content_ratio_and_mirrors_in_place", function()

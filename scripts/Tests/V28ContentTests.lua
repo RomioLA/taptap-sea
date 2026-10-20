@@ -1460,7 +1460,7 @@ function Tests.Run(recorder)
             leviathan_bubbles_01 = "image/OceanArtCollection/",
             salvaged_chest_01 = "image/OceanArtCollection/",
             rusty_key_01 = "image/OceanArtCollection/",
-            player_boat = "image/OceanShip/",
+            player_boat = "image/OceanPlayerBoat/",
             island_01_full = "image/OceanStoryLayer/",
             island_02_full = "image/OceanStoryLayer/",
         }

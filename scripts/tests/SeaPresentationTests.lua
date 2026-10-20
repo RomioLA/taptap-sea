@@ -132,10 +132,15 @@ function Tests.Run(recorder)
         for _, viewport in ipairs({ { 1280, 720 }, { 960, 540 }, { 800, 450 } }) do
             local runtime = newRuntime(viewport[1], viewport[2])
             local camera = runtime.movement.camera
-            for _, spec in ipairs({ { 110, 0.0 }, { 110, 0.62 }, { 80, 0.0 }, { 80, 0.62 } }) do
+            for _, spec in ipairs({ { 110, 0.0 }, { 110, 0.62 }, { 110, 1.0 },
+                { 80, 0.0 }, { 80, 0.62 }, { 80, 1.0 } }) do
                 local depth, dive = spec[1], spec[2]
-                local altitude = Config.visual.projection.birdAltitude * (1 - dive)
-                local authoredWidth = Presentation.BIRD_SPAN_METERS * (1 - 0.62 * dive)
+                -- 与 SeaDraw 同源：折叠幅度与下压高度都有下限（2026-10-20 俯冲末帧修复），
+                -- 这里直接引用导出的契约常量，避免测试自算一套口径再次漂移。
+                local altitude = math.max(Config.visual.projection.birdAltitude * (1 - dive),
+                    Config.visual.projection.birdAltitude * SeaDraw.BIRD_DIVE_ALTITUDE_MIN_RATIO)
+                local authoredWidth = Presentation.BIRD_SPAN_METERS
+                    * (1 - 0.62 * SeaDraw.BirdDiveFold(dive))
                 local point = { x = camera.x, y = camera.y + depth }
                 local _, _, scale = Projection.Project(runtime.movement, point, altitude)
                 if type(scale) == "number" and scale > 0 then

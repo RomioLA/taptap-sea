@@ -61,19 +61,15 @@ def catalog_text():
     # SkyDecor（2026-10-19 日月云贴图）：屏幕空间装饰层；清单缺失时按空合集处理。
     skydecor_manifest = ROOT / "assets/image/SkyDecor/manifest.json"
     skydecor = json.loads(skydecor_manifest.read_text(encoding="utf-8")) if skydecor_manifest.exists() else {"assets": {}}
+    # OceanPlayerBoat（2026-10-20 玩家船正式水彩素材）：3/4 斜俯视静态船体，
+    # 替代 SeaViewArt.Boat 的纯矢量艇身；尾流/横摇/footprint 仍由程序负责。
+    boat_manifest = ROOT / "assets/image/OceanPlayerBoat/manifest.json"
+    boat = json.loads(boat_manifest.read_text(encoding="utf-8")) if boat_manifest.exists() else {"assets": {}}
     # OceanArtCollection（2026-10-20 用户供的 V2.8 美术合集）：V2.8 固定海上节点从
     # 矢量占位升级为正式素材（debris/shipwreck/bones/vortex/bottle）+ 物品图标。
     # 规格由 tests/prepare_ocean_art_collection.py 生成 manifest；清单缺失时按空合集处理。
     art_manifest = ROOT / "assets/image/OceanArtCollection/manifest.json"
     art = json.loads(art_manifest.read_text(encoding="utf-8")) if art_manifest.exists() else {"assets": {}}
-    # OceanShip（2026-10-20 Fishing 交付批次）：玩家船正式水彩 + 参考合成图。
-    # 清单缺失时按空合集处理，老工作区不受影响。
-    ship_manifest = ROOT / "assets/image/OceanShip/manifest.json"
-    ship = json.loads(ship_manifest.read_text(encoding="utf-8")) if ship_manifest.exists() else {"assets": {}}
-    # 只把运行时船素材并入 catalog；scene/sheet/view 三张是参考合成图
-    # （kind=reference，不做世界绘制），不进 catalog 键位。
-    ship_assets = {name: entry for name, entry in ship["assets"].items()
-                   if entry.get("kind") != "reference"}
     # OceanArtCollection 里 kind=codex_icon 的图鉴备用图（2026-10-20 第二批交付的
     # 标本式画法）暂不参与世界绘制，因此不进 catalog 键位；需要时改一行即可接入。
     art_assets = {name: entry for name, entry in art["assets"].items()
@@ -90,7 +86,7 @@ def catalog_text():
                                            (sea["assets"], False, True),
                                            (sky["assets"], False, True),
                                            (skydecor["assets"], False, True),
-                                           (ship_assets, False, False),
+                                           (boat["assets"], False, True),
                                            (art_assets, False, False)):
         for name, entry in collection.items():
             entries[name] = {**entry, "preload": entry.get("preload", preload) if per_entry else preload}

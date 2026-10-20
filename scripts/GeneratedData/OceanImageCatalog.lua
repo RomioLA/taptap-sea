@@ -57,8 +57,8 @@ return {
     },
     coast_base_v3 = {
         path = "image/OceanComponents/coast_base_v3.png",
-        pixelWidth = 1024, pixelHeight = 1024,
-        contentWidth = 1024, contentHeight = 761,
+        pixelWidth = 800, pixelHeight = 800,
+        contentWidth = 704, contentHeight = 704,
         anchorX = 0.5, anchorY = 0.5,
         preload = false,
         repeatTexture = false,
@@ -398,7 +398,7 @@ return {
         completeIsland = false,
     },
     player_boat = {
-        path = "image/OceanShip/player_boat.png",
+        path = "image/OceanPlayerBoat/player_boat.png",
         pixelWidth = 1024, pixelHeight = 1024,
         contentWidth = 819, contentHeight = 428,
         anchorX = 0.5, anchorY = 0.5,
@@ -417,8 +417,8 @@ return {
     },
     reef_rocks_v1 = {
         path = "image/OceanComponents/reef_rocks_v1.png",
-        pixelWidth = 1024, pixelHeight = 1024,
-        contentWidth = 935, contentHeight = 722,
+        pixelWidth = 800, pixelHeight = 800,
+        contentWidth = 704, contentHeight = 704,
         anchorX = 0.5, anchorY = 0.5,
         preload = false,
         repeatTexture = false,

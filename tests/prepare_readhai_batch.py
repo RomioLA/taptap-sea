@@ -101,20 +101,6 @@ BATCH = {
             "读海_船舱物品_v1_assets/6f2840c2-rusty_key_01.png",
             "item_icon", "物品图标：生锈钥匙（06 破渔网分支 B）"),
     },
-    "OceanShip": {
-        "player_boat": (
-            "读海_玩家船_正式水彩素材_assets/d9c2abf1-player_boat.png",
-            "boat", "玩家船正式水彩（正俯视，船头 +X）"),
-        "player_boat_scene": (
-            "读海_玩家船_正式水彩素材_assets/0b7dfe2c-_scene_boat_zoom.png",
-            "reference", "玩家船场景合成参考（非运行时，RGB 整幅）"),
-        "player_boat_sheet": (
-            "读海_玩家船_正式水彩素材_assets/5312d634-boat_only_sheet.png",
-            "reference", "玩家船部件表（非运行时，RGB 整幅）"),
-        "player_boat_view": (
-            "读海_玩家船_正式水彩素材_assets/587cfafa-_view_final3.png",
-            "reference", "玩家船合成视图（非运行时，RGB 整幅）"),
-    },
     "WatercolorUI": {
         # 成就徽章 6 枚（交付命名按图片语义，不猜测与 A1~A6/C1~C3 的一一对应：
         # 现有成就数据里没有徽章绑定字段，擅自映射会把美术语义写成玩法事实）。
@@ -170,7 +156,6 @@ UI_PIXEL_LIMITS = {"badge": 192, "ui_chrome": 768}
 MANIFESTS = {
     "OceanStoryLayer": ROOT / "assets/image/OceanStoryLayer/manifest.json",
     "OceanArtCollection": ROOT / "assets/image/OceanArtCollection/manifest.json",
-    "OceanShip": ROOT / "assets/image/OceanShip/manifest.json",
     "WatercolorUI": ROOT / "assets/image/WatercolorUI/manifest.json",
 }
 

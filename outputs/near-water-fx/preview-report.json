@@ -6,47 +6,47 @@
     {
       "case": "day-ship-center",
       "drew": true,
-      "tiles": 29,
+      "tiles": 18,
       "alpha": 0.16,
       "dudv": true,
-      "columns": 7,
-      "fills": 58
+      "columns": 6,
+      "fills": 36
     },
     {
       "case": "night-ship-center",
       "drew": true,
-      "tiles": 29,
+      "tiles": 18,
       "alpha": 0.044800000000000006,
       "dudv": true,
-      "columns": 7,
-      "fills": 58
+      "columns": 6,
+      "fills": 36
     },
     {
       "case": "day-two-layer",
       "drew": true,
-      "tiles": 58,
+      "tiles": 36,
       "alpha": 0.16,
       "dudv": true,
-      "columns": 7,
-      "fills": 116
+      "columns": 6,
+      "fills": 72
     },
     {
       "case": "day-dudv-off",
       "drew": true,
-      "tiles": 29,
+      "tiles": 18,
       "alpha": 0.16,
       "dudv": false,
-      "columns": 7,
-      "fills": 58
+      "columns": 6,
+      "fills": 36
     },
     {
       "case": "day-caustic-strong",
       "drew": true,
-      "tiles": 29,
+      "tiles": 22,
       "alpha": 0.3,
       "dudv": true,
-      "columns": 7,
-      "fills": 58
+      "columns": 6,
+      "fills": 44
     }
   ]
 }
