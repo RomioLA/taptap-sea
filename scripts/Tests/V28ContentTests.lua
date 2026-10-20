@@ -1441,15 +1441,133 @@ function Tests.Run(recorder)
         -- 图集指向的图片必须真实存在（打包器产物）。
         local imagePath = "assets/image/WatercolorUI/atlas/item_icons.png"
         local image = assert(io.open(imagePath, "rb"), "item icon atlas png is missing")
-        local size = image:seek("end")
+        local size = image:seek("end", 0)
         image:close()
         assert(size > 1000, "item icon atlas png looks empty (" .. tostring(size) .. " bytes)")
     end)
 
+    -- =========================================================
+    -- 2026-10-20 读海交付批次：V2.8 节点正式素材 + 成就徽章图集
+    -- =========================================================
+    test("readhai batch art lands in the existing catalog without a second image path", function()
+        -- 交付批次只允许扩展既有 catalog（ART_PIPELINE §2.13），不得另建目录/投影。
+        local Art = require("Ocean.ImageArt")
+        local expected = {
+            trapped_net_01 = "image/OceanArtCollection/",
+            kelp_mirage_01 = "image/OceanArtCollection/",
+            kelp_mirage_01_b = "image/OceanArtCollection/",
+            underwater_treasure_01 = "image/OceanArtCollection/",
+            leviathan_bubbles_01 = "image/OceanArtCollection/",
+            salvaged_chest_01 = "image/OceanArtCollection/",
+            rusty_key_01 = "image/OceanArtCollection/",
+            player_boat = "image/OceanShip/",
+            island_01_full = "image/OceanStoryLayer/",
+            island_02_full = "image/OceanStoryLayer/",
+        }
+        for name, prefix in pairs(expected) do
+            local spec = assert(Art.GetSpec(name), name .. " must be in the runtime catalog")
+            assert(spec.path:sub(1, #prefix) == prefix,
+                name .. " must resolve into " .. prefix .. ", got " .. spec.path)
+            assert(spec.pixelWidth > 0 and spec.contentWidth > 0,
+                name .. " must carry pixel and content size")
+        end
+    end)
+
+    test("V2.8 net and kelp nodes keep vector fallbacks when textures are unavailable", function()
+        -- 与上一套回退契约同口径：新接线（net/kelp 双态、宝藏贴图、巨骨气泡贴图）
+        -- 在图片不可用时必须仍然画出东西，不允许空白。
+        local SeaDraw = require("Ocean.SeaDraw")
+        local counters = { fill = 0, stroke = 0, imagePattern = 0 }
+        local stubs = {
+            nvgRGBA = function(r, g, b, a) return { r = r, g = g, b = b, a = a or 255 } end,
+            nvgBeginPath = function() end, nvgMoveTo = function() end,
+            nvgLineTo = function() end, nvgQuadTo = function() end,
+            nvgBezierTo = function() end, nvgClosePath = function() end,
+            nvgRect = function() end, nvgRoundedRect = function() end,
+            nvgCircle = function() end, nvgEllipse = function() end,
+            nvgFillColor = function() end, nvgFill = function() counters.fill = counters.fill + 1 end,
+            nvgStrokeColor = function() end, nvgStrokeWidth = function() end,
+            nvgStroke = function() counters.stroke = counters.stroke + 1 end,
+            nvgImagePattern = function() counters.imagePattern = counters.imagePattern + 1; return 0 end,
+            nvgFillPaint = function() end,
+            nvgSave = function() end, nvgRestore = function() end,
+            nvgTranslate = function() end, nvgScale = function() end, nvgRotate = function() end,
+            nvgScissor = function() end, nvgIntersectScissor = function() end,
+            nvgResetScissor = function() end, nvgGlobalAlpha = function() end,
+            nvgShapeAntiAlias = function() end, nvgTransform = function() end,
+            nvgLinearGradient = function() return 0 end, nvgRadialGradient = function() return 0 end,
+            nvgCreateImage = function() return -1 end, nvgImageSize = function() end,
+            nvgText = function() end, nvgFontFace = function() end, nvgFontSize = function() end,
+            nvgTextAlign = function() end, nvgCreateFont = function() return 0 end,
+            nvgTextBounds = function() return 0, 0, 0, 0 end,
+            NVG_IMAGE_GENERATE_MIPMAPS = 1, NVG_IMAGE_REPEATX = 2,
+            NVG_IMAGE_REPEATY = 4, NVG_IMAGE_FLIPY = 8,
+            NVG_IMAGE_PREMULTIPLIED = 16, NVG_IMAGE_NEAREST = 32,
+        }
+        local saved = {}
+        for name, fn in pairs(stubs) do saved[name] = _G[name]; _G[name] = fn end
+        local function cleanup()
+            for name in pairs(stubs) do _G[name] = saved[name] end
+        end
+        local okBody, bodyErr = pcall(function()
+            local runtime = Runtime.New({ departure = { x = 0, y = 0 }, initializeRegions = false })
+            runtime.movement:SetViewport(1920, 1080)
+            runtime.world.showUnderwater = true
+            local ctx = {}
+            for _, contentId in ipairs({ "trapped_net_01", "kelp_mirage_01",
+                "underwater_treasure_01", "leviathan_bones_01" }) do
+                local entity = assert(runtime.world.fixedContentEntities[contentId], contentId)
+                runtime.ship.position = { x = entity.position.x, y = entity.position.y - (entity.radius + 4) }
+                for _, flag in ipairs({ false, true }) do
+                    counters.fill, counters.stroke, counters.imagePattern = 0, 0, 0
+                    local ok, err = pcall(function()
+                        SeaDraw.Scene(ctx, 1920, 1080, runtime, nil, nil,
+                            function() return flag end, function() return flag end)
+                    end)
+                    assert(ok, tostring(err))
+                    assert(counters.fill + counters.stroke > 0,
+                        contentId .. " must keep its vector fallback (recognized=" .. tostring(flag) .. ")")
+                    assert(counters.imagePattern == 0,
+                        contentId .. " must not paint an unloaded image")
+                end
+            end
+        end)
+        cleanup()
+        assert(okBody, bodyErr)
+    end)
+
+    test("achievement badges ship as a UI atlas frame set", function()
+        -- 徽章走既有 WatercolorUI 图集链（UI.Sprite 唯一可消费格式），不新建图片系统。
+        local file = assert(io.open("assets/image/WatercolorUI/readhai.json", "r"),
+            "badge atlas json is missing")
+        local text = file:read("*a")
+        file:close()
+        for _, frame in ipairs({
+            "achievement_first_lens", "achievement_unconventional_path",
+            "achievement_lifesaving_bait", "achievement_full_load",
+            "achievement_big_fish", "achievement_safe_return",
+            "ui_dialogue_panel", "ui_bubble_tip", "ui_btn_normal",
+        }) do
+            assert(text:find('"' .. frame .. '"', 1, true) ~= nil,
+                "badge atlas must contain the frame " .. frame)
+        end
+        local image = assert(io.open("assets/image/WatercolorUI/atlas/readhai.png", "rb"))
+        local size = image:seek("end", 0)
+        image:close()
+        assert(size > 1000, "badge atlas png looks empty (" .. tostring(size) .. " bytes)")
+    end)
+
     test("every icon-bearing item maps to an existing atlas frame", function()
-        -- 物品行只对登记过的 itemId 画图标；未登记的物品保持纯文字行（零回归）。
-        -- 这里锁住映射表与图集帧集合的一致性，避免改名后静默丢图标。
+        -- 物品行/独立道具栏只对登记过的 itemId 画图标；未登记的物品保持纯文字行。
+        -- 本表是 scripts/Gameplay/HUD.lua 的 ITEM_ICON_FRAMES 镜像（HUD 有大量
+        -- 引擎依赖，测试里不便于 require），锁定「映射集合与图集帧集合一致」，
+        -- 避免改名或漏打图集后静默丢图标。
         local mapping = {
+            -- 基础物品（2026-10-20 第二批交付补图标）
+            apple = "apple", bait = "bait", sardine = "sardine", tuna = "tuna",
+            -- V2.8 关键物品
+            salvaged_chest = "salvaged_chest", rusty_key = "rusty_key",
+            -- 宝物与残页
             sea_note_01 = "sea_note", sea_note_02 = "sea_note",
             abyss_pearl = "abyss_pearl", coral_branch = "coral_branch",
             shipwreck_jewelry = "jewelry",
@@ -1457,14 +1575,21 @@ function Tests.Run(recorder)
         local file = assert(io.open("assets/image/WatercolorUI/item_icons.json", "r"))
         local atlas = file:read("*a")
         file:close()
-        local Items = require("data.items")
+        local used = {}
         for itemId, frame in pairs(mapping) do
             assert(Items.GetDefinition(itemId) ~= nil, itemId .. " must be a real item")
             assert(atlas:find('"' .. frame .. '"', 1, true) ~= nil,
                 itemId .. " maps to a frame that does not exist: " .. frame)
+            used[frame] = true
         end
-        -- 没有图标的物品不得被误映射（例如 rusty_key 暂无专属素材）。
-        assert(mapping.rusty_key == nil, "rusty_key has no icon asset yet; keep it unmapped")
+        -- 图集里不得有孤儿帧（打了图却没人用 = 包体浪费 + 语义漂移）。
+        -- 帧名直接取自图集 JSON 的 `"名字":{"frame":...}` 形式，不做第二份名单。
+        local frameCount = 0
+        for frame in atlas:gmatch('"([%w_]+)":%s*{%s*"frame"') do
+            frameCount = frameCount + 1
+            assert(used[frame], "atlas frame has no item mapping: " .. frame)
+        end
+        assert(frameCount >= 10, "item icon atlas looks truncated: " .. frameCount .. " frames")
     end)
 
     return { results = results }

@@ -98,7 +98,8 @@ def check():
         path = ROOT / "assets" / entry["path"]
         assert path.is_file(), f"{name} 运行目录缺失"
         with Image.open(path) as image:
-            assert image.mode == "RGBA", f"{name} 应为 RGBA 直通 Alpha"
+            # 允许调色板量化产物（P + tRNS，直通 Alpha 语义不变）。
+            assert image.mode in ("RGBA", "P"), f"{name} 应为 RGBA/调色板直通 Alpha"
             assert image.size == PIXEL_SIZES[name], f"{name} 尺寸不符（{PIXEL_SIZES[name]} 契约）"
             assert image.size == tuple(entry["size"]), f"{name} 清单尺寸不符"
         source = Path(entry["source"])

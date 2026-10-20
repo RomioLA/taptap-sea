@@ -28,7 +28,7 @@
         255
       ],
       "transparent_ratio": 0.0,
-      "sha256": "550cc6f0dc62c858314d939ae499d5822d8e9ef1dff2d9f362d8732bdac6f66c",
+      "sha256": "ad70d303e82a367a448fdf411c256306d3db495c5e65ca9015f078929412f9e9",
       "source_sha256": "1d731656048f9335cf936e0433db9b66e695b7b706c2d7bf263ba4d2e5a1416b",
       "preload": true,
       "anchor": [
@@ -57,7 +57,7 @@
         255
       ],
       "transparent_ratio": 0.0,
-      "sha256": "2c44576147cc4920891916f8c35c6f42a8f9ee0104336b7714c8927e70b13328",
+      "sha256": "10789ca9c28f16a98e65b444b696bf650bc1ab806546a72b8478a66073533808",
       "source_sha256": "2472c0075a3d377ba88d8d34c15983e3ae56b01d9d503309b62181ebc177043f",
       "preload": true,
       "anchor": [
@@ -86,7 +86,7 @@
         255
       ],
       "transparent_ratio": 0.0,
-      "sha256": "b66c657ef77b62fc9920d29c2e3be0e985e646bcb4ad40f19e41c7425407c77c",
+      "sha256": "887aedb21a3efdacb829e1cddc58413c93f4600597aa72efc8a67fc0ef703d8f",
       "source_sha256": "a43d00674c410fe889f08adc629fe236c2d5c52489cc4e48dcbcd13f1b4e4904",
       "preload": false,
       "anchor": [
@@ -112,10 +112,10 @@
       ],
       "alpha_range": [
         0,
-        255
+        235
       ],
-      "transparent_ratio": 0.0,
-      "sha256": "60974c27114aba34f289e08313a35fb3d40067a0f133b2bc89204d75e7602ae7",
+      "transparent_ratio": 0.9474826388888888,
+      "sha256": "a9d5c3d43950abb11dd31a4a2afc6de4901d85533afb04933fdf745bf9740c2e",
       "source_sha256": "b7bc20aaea7c43f44ca914d92a1cefec82e7ccaaaa2a204e615537b2cce5bb48",
       "preload": true,
       "anchor": [
@@ -223,6 +223,156 @@
         "decode": "(rgb - 0.5) * 2 * strength"
       },
       "generator": "tests/prepare_ocean_water_fx_art.py"
+    },
+    "sea_surface_day_v1": {
+      "path": "image/SeaSurface/sea_surface_day_v1.png",
+      "name": "sea_surface_day_v1",
+      "kind": "sea_surface_variant",
+      "note": "海面日相候选 v1",
+      "size": [
+        1920,
+        1080
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "a485f7e00b4548dbbc66e66fc3c637f52c5681615b24b0ba567b57c7539654b1",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_海面_v1_assets/7cc7fbc4-pure_sea_day_v2.png",
+      "source_root": "Fishing",
+      "source_sha256": "a485f7e00b4548dbbc66e66fc3c637f52c5681615b24b0ba567b57c7539654b1"
+    },
+    "sea_surface_dusk_v1": {
+      "path": "image/SeaSurface/sea_surface_dusk_v1.png",
+      "name": "sea_surface_dusk_v1",
+      "kind": "sea_surface_variant",
+      "note": "海面暮相候选 v1",
+      "size": [
+        1920,
+        1080
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "78e5fc0237b1c0549a291ad146c2cbe6739b69bbabb79ebeb94b63769243c06e",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_海面_v1_assets/a52e3c66-pure_sea_dusk_v2.png",
+      "source_root": "Fishing",
+      "source_sha256": "78e5fc0237b1c0549a291ad146c2cbe6739b69bbabb79ebeb94b63769243c06e"
+    },
+    "sea_surface_night_v1": {
+      "path": "image/SeaSurface/sea_surface_night_v1.png",
+      "name": "sea_surface_night_v1",
+      "kind": "sea_surface_variant",
+      "note": "海面夜相候选 v1",
+      "size": [
+        1920,
+        1080
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "a43d00674c410fe889f08adc629fe236c2d5c52489cc4e48dcbcd13f1b4e4904",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_海面_v1_assets/482bf56c-pure_sea_night_v2.png",
+      "source_root": "Fishing",
+      "source_sha256": "a43d00674c410fe889f08adc629fe236c2d5c52489cc4e48dcbcd13f1b4e4904"
+    },
+    "sea_surface_day_flat": {
+      "path": "image/SeaSurface/sea_surface_day_flat.png",
+      "name": "sea_surface_day_flat",
+      "kind": "sea_surface_variant",
+      "note": "海面日相平涂版",
+      "size": [
+        1920,
+        1080
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "15f23ebc0b7d4a5be7e077c55fa96a809bb2e54ed9d6a2b2afd86bf4b95db62b",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_主场景昼夜套件_v1_assets/906c42bb-pure_sea_day_flat_v1.png",
+      "source_root": "Fishing",
+      "source_sha256": "15f23ebc0b7d4a5be7e077c55fa96a809bb2e54ed9d6a2b2afd86bf4b95db62b"
+    },
+    "sea_surface_night_flat": {
+      "path": "image/SeaSurface/sea_surface_night_flat.png",
+      "name": "sea_surface_night_flat",
+      "kind": "sea_surface_variant",
+      "note": "海面夜相平涂版",
+      "size": [
+        1920,
+        1080
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "01b9b43982ea8ae97f091415e640dcde0f975abb426ef50a6072577e8aa6e150",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_主场景昼夜套件_v1_assets/cf2021b4-pure_sea_night_flat_v1.png",
+      "source_root": "Fishing",
+      "source_sha256": "01b9b43982ea8ae97f091415e640dcde0f975abb426ef50a6072577e8aa6e150"
     }
   },
   "near_water_fx": {
@@ -230,5 +380,8 @@
     "format": "caustic 为 RGBA（RGB 浅青白 + A 光斑强度，双向无缝可平铺）；dudv 为 RGB 双通道位移（R/G = 0.5 + 偏移，中性 0.5）",
     "placement": "SeaViewArt.Surface 近景层（Lua + NanoVG 图片纹理），随船的世界锚点区域，区域边缘径向渐隐；dudv 仅在启用 GPU 置换路径时读取",
     "generator": "tests/prepare_ocean_water_fx_art.py"
+  },
+  "variants": {
+    "note": "海面候选变体（A/B 与备用相位）"
   }
 }

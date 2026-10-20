@@ -142,6 +142,66 @@
       ],
       "layer": "story",
       "status": "variant_not_wired_default_off"
+    },
+    "island_01_full": {
+      "path": "image/OceanStoryLayer/island_01_full.png",
+      "name": "island_01_full",
+      "kind": "island_body",
+      "note": "初遇之岛 01 完整分层底图（岸线+丘+植被）",
+      "size": [
+        1536,
+        1024
+      ],
+      "content_bounds": [
+        188,
+        214,
+        1380,
+        827
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.687892,
+      "sha256": "254a65a9e558de848f4f76481f70cbff4965a4ff4e5e06b1d00477cd1cb61df7",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_完整岛屿_island01_v1_assets/540e96e8-读海_island_01_完整岛屿_v1.png",
+      "source_root": "Fishing",
+      "source_sha256": "254a65a9e558de848f4f76481f70cbff4965a4ff4e5e06b1d00477cd1cb61df7"
+    },
+    "island_02_full": {
+      "path": "image/OceanStoryLayer/island_02_full.png",
+      "name": "island_02_full",
+      "kind": "island_body",
+      "note": "第二座岛 02 完整分层底图",
+      "size": [
+        1536,
+        1024
+      ],
+      "content_bounds": [
+        189,
+        215,
+        1384,
+        782
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.746379,
+      "sha256": "ab983321501ad2d6d164fc34085a5974d62f35e620f06a629a474df2c57559e8",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_完整岛屿_island01_v1_assets/729885a0-读海_island_02_完整岛屿_v1.png",
+      "source_root": "Fishing",
+      "source_sha256": "ab983321501ad2d6d164fc34085a5974d62f35e620f06a629a474df2c57559e8"
     }
   }
 }

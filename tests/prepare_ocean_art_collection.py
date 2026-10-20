@@ -143,13 +143,37 @@ def build(check_only):
         "source_only": sources,
     }
     text = json.dumps(manifest, ensure_ascii=False, indent=2) + "\n"
+    # 2026-10-20 起该合集会被 tests/prepare_readhai_batch.py **追加** V2.8 正式素材
+    # 与物品图标（append-only，键集是 ASSETS 的超集）。因此一致性判定改为
+    # 「本脚本负责的键逐字段相等 + 允许额外键」，不再要求整文件逐字节相等，
+    # 否则两个生成器会互相踩写、反复漂移。
+    actual = json.loads(MANIFEST.read_text(encoding="utf-8")) if MANIFEST.is_file() else None
     if check_only:
-        if not MANIFEST.is_file():
+        if actual is None:
             raise SystemExit("缺少 manifest，请先运行生成")
-        if MANIFEST.read_text(encoding="utf-8") != text:
-            raise SystemExit("manifest 与素材不一致，请重新运行生成")
+        for name, entry in assets.items():
+            got = actual["assets"].get(name)
+            if got is None:
+                raise SystemExit(f"{name} 未写入清单，请重新运行生成")
+            # transparent_ratio 是浮点冗余字段：不同 Pillow 版本 / 生成器路径会给出
+            # 全精度或 6 位精度两种写法。按 6 位比较，避免同一张图反复被判「不一致」。
+            for key, expected in entry.items():
+                actual_value = got.get(key)
+                if key == "transparent_ratio" and isinstance(expected, float) and isinstance(actual_value, float):
+                    if round(actual_value, 6) != round(expected, 6):
+                        raise SystemExit(f"{name} 的 {key} 与素材不一致，请重新运行生成")
+                    continue
+                if actual_value != expected:
+                    raise SystemExit(f"{name} 的 {key} 与素材不一致，请重新运行生成")
     else:
-        MANIFEST.write_text(text, encoding="utf-8")
+        merged = {**manifest} if actual is None else {**actual}
+        merged["assets"] = {**actual.get("assets", {}), **assets} if actual else assets
+        merged["source_only"] = {**actual.get("source_only", {}), **sources} if actual else sources
+        merged.setdefault("readhai_batch_note",
+                          "本合集同时承载 V2.8 正式节点素材（读海交付批次，由 "
+                          "tests/prepare_readhai_batch.py append-only 追加）；"
+                          "两者共用同一 catalog 生成链，不另建目录。")
+        MANIFEST.write_text(json.dumps(merged, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     # 一致性：每份素材画布与 content bounds 必须在画布内。
     for name, entry in list(assets.items()) + list(sources.items()):

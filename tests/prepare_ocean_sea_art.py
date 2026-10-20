@@ -128,21 +128,28 @@ def check():
     # prepare_ocean_water_fx_art.py 入库）。本脚本只校验自己负责的那三件套，
     # 其余条目不得出现在 SOURCES 之外的同名冲突里。
     water_fx_names = {"water_caustic_light", "water_caustic_light_alt", "water_dudv_flow"}
+    # 2026-10-20 Fishing 交付批次：额外候选相位（v1/flat）由
+    # tests/prepare_readhai_batch.py 入库，只登记、不参与相位映射。
+    variant_names = {name for name in manifest["assets"] if manifest["assets"][name].get("kind")}
     present = set(manifest["assets"])
     assert set(SOURCES).issubset(present), "SeaSurface 清单缺少本脚本负责的海面三件套"
-    assert present <= set(SOURCES) | water_fx_names, "SeaSurface 清单出现未登记条目"
+    assert present <= set(SOURCES) | water_fx_names | variant_names, "SeaSurface 清单出现未登记条目"
     for name, entry in manifest["assets"].items():
-        if name in water_fx_names:
-            continue  # 由 prepare_ocean_water_fx_art.py 的 --check 负责
+        if name in water_fx_names or name in variant_names:
+            continue  # 分别由 prepare_ocean_water_fx_art / prepare_readhai_batch 负责
         path = ROOT / "assets" / entry["path"]
         assert path.is_file(), f"{name} 运行目录缺失"
         with Image.open(path) as image:
             if name == "sea_ripple_overlay":
                 # 波纹层 2026-10-19 起为 RGBA（去白底提 alpha + 伽马重提取），
                 # 自持透明度叠加于海面之上；其余海面三图为不透明 RGB 满幅。
-                assert image.mode == "RGBA", f"{name} 应为 RGBA（自持 alpha 波纹）"
+                # 2026-10-20：允许调色板量化产物（P + tRNS，直通 Alpha 语义不变）。
+                assert image.mode in ("RGBA", "P"), f"{name} 应为 RGBA/调色板（自持 alpha 波纹）"
             else:
-                assert image.mode == "RGB", f"{name} 应为不透明 RGB 满幅"
+                # 量化后为 P 模式但 alpha 全 255，仍满足「不透明满幅」契约。
+                import numpy as _np
+                _alpha = _np.asarray(image.convert("RGBA"))[..., 3]
+                assert (_alpha == 255).all(), f"{name} 应为不透明满幅"
             assert image.size == PIXEL_SIZES[name], f"{name} 尺寸不符（{PIXEL_SIZES[name]} 契约）"
             assert image.size == tuple(entry["size"]), f"{name} 清单尺寸不符"
         source = Path(entry["source"])

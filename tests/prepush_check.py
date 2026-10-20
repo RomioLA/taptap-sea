@@ -27,21 +27,20 @@ BUILD_INFO = ROOT / "scripts" / "GeneratedData" / "BuildInfo.lua"
 PROJECT_JSON = ROOT / ".project" / "project.json"
 CONFIG_LUA = ROOT / "scripts" / "Ocean" / "Config.lua"
 
-AUDIO_BUDGET_MB = 40.0        # assets/audio 总量上限（TapTap 60MB 包体红线内预留 image/store）
-SINGLE_FILE_MB = 2.0          # 单资产文件大小上限（超过的多半是未压缩 WAV，须转 mp3/降采样）
+# 2026-10-20 结构调整：8 个环境声床（amb_*/ambience_*）降采样到 22.05kHz。
+# 实测这些素材 >11kHz 的能量占比 <0.5%（几乎全在低频），降采样听感不可辨，
+# 但把 audio 从 35.1MB 压到 18.6MB，让出包体余量给美术。
+# 预算随之收紧：40MB 时总量已顶到 60MB 红线，现在按 22MB 守。
+AUDIO_BUDGET_MB = 22.0
+# 单资产上限：环境声床降采样后最大 2.53MB（30s/22.05kHz/立体声），故设 3MB。
+# 更长的未降采样 WAV（>3MB）会被拦下，提示降采样或转码。
+SINGLE_FILE_MB = 3.0
 # 已知环境声床（AudioDirector.SPECS 中 loop=true 的 8 条）：已按 key 懒加载，
 # 只在首次启床时同步解码单条，运行时风险有界；仅作提醒不拦截。
 # 若真机开老人卡/暂停仍出现可感 Hitch，再按方案文档把这些床转 mp3/降采样。
-BED_WAV_WHITELIST = {
-    "assets/audio/sfx/ambience_calm_sea_loop.wav",
-    "assets/audio/sfx/ambience_night_ocean_loop.wav",
-    "assets/audio/sfx/amb_morning_sea_ai.wav",
-    "assets/audio/sfx/amb_overcast_sea_ai.wav",
-    "assets/audio/sfx/amb_storm_premonition_ai.wav",
-    "assets/audio/sfx/amb_rare_fish_ai.wav",
-    "assets/audio/sfx/amb_deep_ruins_ai.wav",
-    "assets/audio/sfx/amb_elder_npc_ai.wav",
-}
+# 空：8 个环境声床已于 2026-10-20 降采样到 22.05kHz，单文件均 ≤2.6MB 且走懒加载，
+# 不再需要「超限白名单」。若将来重新导入未降采样的声床，应重新降采样而不是加白名单。
+BED_WAV_WHITELIST = set()
 
 problems: list[str] = []
 warnings: list[str] = []
@@ -171,6 +170,96 @@ def check_build_stamp() -> None:
         "  然后重跑本检查（戳指向 HEAD~1 且 HEAD 仅含 BuildInfo 时视为通过）")
 
 
+RESOURCES_JSON = ROOT / ".project" / "resources.json"
+IMAGE_BUDGET_MB = 40.0   # assets/image 入包上限（与 60MB 红线内 audio 预算配套）
+
+
+def check_asset_meta() -> None:
+    """资源 .meta 的 uuid 规格：base64url(18B) = 24 字符。
+
+    schemas/resources.schema.json 的 uuid 协议是 `^uuid://[A-Za-z0-9]{24}$`。
+    2026-10-20 踩过：用 `uuid.UUID.bytes[:18]` 生成（该属性恒 16 字节）得到 22 字符的
+    非法短 id，Maker 侧无法按 uuid 引用这些资源。
+    只检查新增/未提交的可疑项，既有 21~23 字符的历史文件只作提醒（不阻塞推送）。
+    """
+    import base64
+    legacy = []
+    broken = []
+    for meta in sorted((ROOT / "assets").rglob("*.meta")):
+        try:
+            uuid_value = json.loads(meta.read_text(encoding="utf-8")).get("uuid", "")
+        except Exception:  # noqa: BLE001
+            broken.append(meta)
+            continue
+        if len(uuid_value) == 24:
+            try:
+                if len(base64.urlsafe_b64decode(uuid_value + "=" * (-len(uuid_value) % 4))) == 18:
+                    continue
+            except Exception:  # noqa: BLE001
+                pass
+        broken.append(meta)
+    # 只把「本次改动涉及的」当阻断项：已提交进 HEAD 的历史文件不阻塞推送。
+    try:
+        committed = set(
+            line.strip() for line in run(["git", "ls-files", "assets"]).stdout.splitlines())
+    except Exception:  # noqa: BLE001
+        committed = set()
+    fresh = [m for m in broken if m.relative_to(ROOT).as_posix() not in committed]
+    if fresh:
+        listing = "\n".join(f"    {m.relative_to(ROOT).as_posix()}" for m in fresh[:10])
+        problems.append(
+            f"{len(fresh)} 个资源 .meta 的 uuid 不是 24 字符 base64url(18B)，Maker 无法按 uuid 引用：\n"
+            + listing)
+    else:
+        legacy = broken
+    if legacy:
+        warnings.append(f"{len(legacy)} 个历史 .meta 的 uuid 长度非 24（多为音频，既有问题，不阻塞）")
+
+
+def check_image_budget() -> None:
+    """assets/image 的**入包**体积闸门（按 resources.json 的 groups 规则实算）。
+
+    背景（2026-10-20）：一次美术入库把 image 从 31MB 推到 68MB，而 resources.json
+    是 `**` 全量引用、构建不做引用裁剪，于是「已入库但未接线」的候选图全部进了包体。
+    本检查把入包体积算清楚：候选图要么被代码真正引用、要么进 resources.json 的排除表。
+    """
+    import fnmatch
+    try:
+        rules = json.loads(RESOURCES_JSON.read_text(encoding="utf-8"))["groups"]["default"]
+    except Exception as error:  # noqa: BLE001
+        warnings.append(f"无法解析 resources.json（{error}），跳过 image 预算检查")
+        return
+
+    def packed(rel: str) -> bool:
+        keep = False
+        for rule in rules:
+            negative = rule.startswith("!")
+            pattern = rule[1:] if negative else rule
+            if fnmatch.fnmatch(rel, pattern) or (
+                    pattern.endswith("/**") and rel.startswith(pattern[:-3] + "/")):
+                keep = not negative
+        return keep
+
+    image_dir = ROOT / "assets" / "image"
+    if not image_dir.exists():
+        return
+    total = 0
+    for path in image_dir.rglob("*"):
+        if path.is_file() and packed(path.relative_to(ROOT).as_posix()):
+            total += path.stat().st_size
+    total_mb = total / 1024 / 1024
+    if total_mb > IMAGE_BUDGET_MB:
+        largest = sorted((p for p in image_dir.rglob("*") if p.is_file()
+                          and packed(p.relative_to(ROOT).as_posix())),
+                         key=lambda p: -p.stat().st_size)[:10]
+        listing = "\n".join(f"    {p.stat().st_size / 1024 / 1024:6.2f}MB  {p.relative_to(ROOT).as_posix()}"
+                            for p in largest)
+        problems.append(
+            f"assets/image 入包体积超预算：{total_mb:.1f}MB > {IMAGE_BUDGET_MB:.0f}MB。"
+            "要么让代码真正引用这些图，要么把「入库但未接线」的候选加进 "
+            ".project/resources.json 的排除表。最大的 10 个：\n" + listing)
+
+
 def check_asset_budget() -> None:
     audio_dir = ROOT / "assets" / "audio"
     if not audio_dir.exists():
@@ -240,6 +329,8 @@ def main() -> int:
     check_build_stamp()
     print("[prepush] 4/5 资产预算")
     check_asset_budget()
+    check_image_budget()
+    check_asset_meta()
     check_debug_switch()
     if not args.skip_b5:
         print("[prepush] 5/5 b5 回归")

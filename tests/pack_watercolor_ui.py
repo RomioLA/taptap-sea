@@ -44,7 +44,20 @@ SEMANTIC = {
     # 2026-10-20：V2.8 美术合集的物品图标（用户供图）→ UI 图集。
     # 顺序必须与 tests/prepare_item_icon_atlas.py 的写入顺序一致
     # （该脚本按 semantic 字典序写 item_icons_000..003）。
-    "item_icons": ["abyss_pearl", "coral_branch", "jewelry", "sea_note"],
+    # 顺序必须与 tests/prepare_item_icon_atlas.py 的 sorted(ICONS) 一致（10 项）。
+    "item_icons": [
+        "abyss_pearl", "apple", "bait", "coral_branch", "jewelry",
+        "rusty_key", "salvaged_chest", "sardine", "sea_note", "tuna",
+    ],
+    # 2026-10-20 读海交付批次：成就徽章 6 枚 + UI 底板 3 件。
+    # 顺序必须与 tests/prepare_readhai_batch.py 的 readhai_frames 一致
+    # （按语义名排序后写 readhai_000..008）。
+    "readhai": [
+        "achievement_big_fish", "achievement_first_lens", "achievement_full_load",
+        "achievement_lifesaving_bait", "achievement_safe_return",
+        "achievement_unconventional_path",
+        "ui_btn_normal", "ui_bubble_tip", "ui_dialogue_panel",
+    ],
 }
 
 

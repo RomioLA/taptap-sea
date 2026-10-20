@@ -333,8 +333,8 @@ def check():
         path = ROOT / "assets" / entry["path"]
         assert path.is_file(), f"{name} 运行目录缺失"
         with Image.open(path) as image:
-            mode = "RGBA" if name in CAUSTICS else "RGB"
-            assert image.mode == mode, f"{name} 应为 {mode}，实际 {image.mode}"
+            allowed = ("RGBA", "P") if name in CAUSTICS else ("RGB", "P")
+            assert image.mode in allowed, f"{name} 应为 {allowed}，实际 {image.mode}"
             array = np.array(image)
         if name in CAUSTICS:
             assert image.size == (CAUSTIC_SIZE, CAUSTIC_SIZE), f"{name} 尺寸不符"

@@ -28,8 +28,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.23647718933463796,
-      "sha256": "f481047cc69ab68c49c8fde1964a1ecf6f11c152ea94c2950d43d342be2251bc",
+      "transparent_ratio": 0.23940496575342465,
+      "sha256": "258a69af0142680f9795470a089d2fe4556bd78a9ce32d6a37202f695e223667",
       "source_sha256": "f481047cc69ab68c49c8fde1964a1ecf6f11c152ea94c2950d43d342be2251bc",
       "preload": false,
       "anchor": [
@@ -57,8 +57,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.23517608642578125,
-      "sha256": "cee2ae412398e9ee7d9d12926972ab7540fd2eb2c435319dad69da0ef66a3e1b",
+      "transparent_ratio": 0.2518806457519531,
+      "sha256": "b5111a7ad14876a430dde9661c0acf4c566d8052ed92677e21c462aec630a6b2",
       "source_sha256": "cee2ae412398e9ee7d9d12926972ab7540fd2eb2c435319dad69da0ef66a3e1b",
       "preload": false,
       "anchor": [
@@ -86,8 +86,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.5066856971153846,
-      "sha256": "11f0f08992e81cea479fa1f846bd392cf481f44e4881a3ab719717e03c2b48c8",
+      "transparent_ratio": 0.5083216479700855,
+      "sha256": "ed1054af94db4f69b94f71d408e9c0ed4a93b8abbea5db463562cef997ed1a9b",
       "source_sha256": "11f0f08992e81cea479fa1f846bd392cf481f44e4881a3ab719717e03c2b48c8",
       "preload": false,
       "anchor": [
@@ -115,8 +115,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.48946707589285715,
-      "sha256": "e37271ae6d71bc2d26c5cb67059902115547c8bed312f8aaf78b74d86c002b82",
+      "transparent_ratio": 0.4900599888392857,
+      "sha256": "6affd7af41ab03b5d7d1c457e70b24961a9e647964f53629dbc7f0d7d950dd69",
       "source_sha256": "e37271ae6d71bc2d26c5cb67059902115547c8bed312f8aaf78b74d86c002b82",
       "preload": false,
       "anchor": [

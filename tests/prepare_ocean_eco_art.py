@@ -22,7 +22,10 @@ OUT = ROOT / "assets/image/OceanEco"
 CATALOG = ROOT / "scripts/GeneratedData/OceanImageCatalog.lua"
 SELECTION = ROOT / "docs/art-runtime-selection.json"
 WAVE2_OUT = ROOT / "assets/image/OceanWave2"
-SOURCE_DIR = Path("E:/workbath/Fishing/_gen_eco_v2/final")
+# 2026-10-20：原 E:/workbath/Fishing 工作盘已不可达，交付素材迁到
+# C:/codex/taptap-jam/Fishing（用户提供的正式交付目录）。源图 sha256 未变，
+# 只有目录换了；缺失时 check 仍会按「源图缺失」报错，不做静默跳过。
+SOURCE_DIR = Path("C:/codex/taptap-jam/Fishing/读海_生态层组件_v2_assets")
 # 基础名 -> 是否需要水平翻转（头朝左 -> 头朝右）
 FRAMES = {
     "eco_fish_small": True,
@@ -63,6 +66,18 @@ def catalog_text():
     # 规格由 tests/prepare_ocean_art_collection.py 生成 manifest；清单缺失时按空合集处理。
     art_manifest = ROOT / "assets/image/OceanArtCollection/manifest.json"
     art = json.loads(art_manifest.read_text(encoding="utf-8")) if art_manifest.exists() else {"assets": {}}
+    # OceanShip（2026-10-20 Fishing 交付批次）：玩家船正式水彩 + 参考合成图。
+    # 清单缺失时按空合集处理，老工作区不受影响。
+    ship_manifest = ROOT / "assets/image/OceanShip/manifest.json"
+    ship = json.loads(ship_manifest.read_text(encoding="utf-8")) if ship_manifest.exists() else {"assets": {}}
+    # 只把运行时船素材并入 catalog；scene/sheet/view 三张是参考合成图
+    # （kind=reference，不做世界绘制），不进 catalog 键位。
+    ship_assets = {name: entry for name, entry in ship["assets"].items()
+                   if entry.get("kind") != "reference"}
+    # OceanArtCollection 里 kind=codex_icon 的图鉴备用图（2026-10-20 第二批交付的
+    # 标本式画法）暂不参与世界绘制，因此不进 catalog 键位；需要时改一行即可接入。
+    art_assets = {name: entry for name, entry in art["assets"].items()
+                  if entry.get("kind") != "codex_icon"}
     entries = {}
     # eco/SeaSurface 合集按条目自带 preload（per-entry，如 sea_surface_day/dusk=true、
     # night=false），其余合集沿用既有默认；与 prepare_ocean_ready_art.py 的 catalog_text
@@ -75,7 +90,8 @@ def catalog_text():
                                            (sea["assets"], False, True),
                                            (sky["assets"], False, True),
                                            (skydecor["assets"], False, True),
-                                           (art["assets"], False, False)):
+                                           (ship_assets, False, False),
+                                           (art_assets, False, False)):
         for name, entry in collection.items():
             entries[name] = {**entry, "preload": entry.get("preload", preload) if per_entry else preload}
     selected = json.loads((WAVE2_OUT / "manifest.json").read_text(encoding="utf-8"))["assets"] \
@@ -119,8 +135,11 @@ def prepare():
     for base, flip in FRAMES.items():
         for index in range(1, FRAME_COUNT + 1):
             name = f"{base}_f{index}"
-            # 源目录命名为 fish_small_f1（无 eco_ 前缀）
-            source = SOURCE_DIR / f"{base[4:]}_f{index}.png"
+            # 源目录命名为 fish_small_f1（无 eco_ 前缀）；交付批次文件名带
+            # `<hash>-` 前缀（miora 导出约定），按后缀匹配，前缀不参与语义。
+            suffix = f"{base[4:]}_f{index}.png"
+            matches = sorted(SOURCE_DIR.glob("*-" + suffix))
+            source = matches[0] if matches else SOURCE_DIR / suffix
             image = Image.open(source).convert("RGBA")
             if flip:
                 image = image.transpose(Image.FLIP_LEFT_RIGHT)

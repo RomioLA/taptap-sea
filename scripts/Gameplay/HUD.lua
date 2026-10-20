@@ -79,6 +79,13 @@ local fishDisplay = presentation.fishDisplay
 -- 未登记的 itemId 不画图标（保持原纯文字行，零回归）。
 local ITEM_ICON_SHEET = "image/WatercolorUI/item_icons.json"
 local ITEM_ICON_FRAMES = {
+    -- 2026-10-20 第二批交付：四个基础物品 + 两个 V2.8 关键物品补齐图标。
+    apple = "apple",
+    bait = "bait",
+    sardine = "sardine",
+    tuna = "tuna",
+    salvaged_chest = "salvaged_chest",
+    rusty_key = "rusty_key",
     sea_note_01 = "sea_note",
     sea_note_02 = "sea_note",
     abyss_pearl = "abyss_pearl",
@@ -86,6 +93,37 @@ local ITEM_ICON_FRAMES = {
     shipwreck_jewelry = "jewelry",
 }
 local ITEM_ICON_SIZE = 24
+-- 成就徽章图集（2026-10-20 读海交付批次）：与物品图标同一套 UI.Sprite 通道。
+-- 图集 JSON 由 tests/pack_watercolor_ui.py --sheet readhai 产出；帧名与
+-- assets/image/WatercolorUI/manifest.json 的 readhai_frames 一一对应。
+local BADGE_SHEET = "image/WatercolorUI/readhai.json"
+local ACHIEVEMENT_BADGE_FRAMES = {
+    "achievement_big_fish",
+    "achievement_first_lens",
+    "achievement_full_load",
+    "achievement_lifesaving_bait",
+    "achievement_safe_return",
+    "achievement_unconventional_path",
+}
+-- 成就 id -> 徽章帧：**只登记语义确实对得上的**，其余留空走圆形状态点。
+-- 交付的 6 枚徽章画面语义（按文件名）：first_lens 探海镜 / unconventional_path
+-- 非常规路径 / lifesaving_bait 救命鱼饵 / full_load 满载 / big_fish 大鱼 /
+-- safe_return 平安归港。与 achievements.lua 的实际条目逐一对照后：
+--   A1 首日探海镜        → first_lens          ✓ 同名
+--   A2 单日零空网        → （交付没有对应画面）
+--   A3 三个苹果          → （同上）
+--   A4 非常规分支        → unconventional_path ✓ 近义
+--   A5 满载而归          → full_load          ✓ 同名
+--   A6 无强返通关        → safe_return        ✓ 近义（平安归港）
+--   C1~C3 认知成就       → （交付没有对应画面）
+-- 未登记的成就不画徽章，不硬凑：宁可显示中性状态点，也不给玩家错误的画面暗示。
+-- 要把 A2/A3/C1~C3 也接上，需要美术补对应画面，或策划确认可接受的替代语义。
+local ACHIEVEMENT_BADGE_BY_ID = {
+    A1 = "achievement_first_lens",
+    A4 = "achievement_unconventional_path",
+    A5 = "achievement_full_load",
+    A6 = "achievement_safe_return",
+}
 local modeText = presentation.modeText
 local makeInfoLabel = presentation.makeInfoLabel
 local infoLine = presentation.infoLine
@@ -1896,13 +1934,27 @@ local header = UI.Panel {
     themedPanels[#themedPanels + 1] = {
         widget = refs.achievementToast, day = UI_PALETTE.cardDay, night = UI_PALETTE.cardNight,
     }
-    if type(UI.Sprite) == "function" then
-        -- 与水彩图标条同源：resource_icons 图集（宝箱暂代徽章，正式图标待批3b）。
-        refs.achievementToast:AddChild(UI.Sprite {
+    -- 2026-10-20：正式成就徽章（读海交付批次，6 枚）替换占位的宝箱图标。
+    -- 徽章语义尚未与 A1~A6/C1~C3 绑定（achievements.lua 无徽章字段），
+    -- 因此 toast 按成就 id 稳定取用其中一枚，不把美术语义写成玩法规则。
+    local badgeSprite
+    -- toast 的初始帧只是占位；真正弹出时按 ACHIEVEMENT_BADGE_BY_ID 切换，
+    -- 未登记的成就不切帧（保留初始帧），语义上不指向任何具体成就。
+    local badgeFrame = ACHIEVEMENT_BADGE_FRAMES[1]
+    if type(UI.Sprite) == "function" and badgeFrame then
+        badgeSprite = UI.Sprite {
+            src = BADGE_SHEET,
+            frame = badgeFrame, width = 22, height = 22,
+        }
+    elseif type(UI.Sprite) == "function" then
+        -- 徽章图集缺失时保持原占位（resource_icons 宝箱），零回归。
+        badgeSprite = UI.Sprite {
             src = "image/WatercolorUI/resource_icons.json",
             frame = "chest", width = 22, height = 22,
-        })
+        }
     end
+    if badgeSprite then refs.achievementToast:AddChild(badgeSprite) end
+    refs.achievementBadgeSprite = badgeSprite
     refs.achievementToastText = makeLabel("", UiKit.fontSize.teaching, UiKit.ink.teaching, "bold")
     refs.achievementToast:AddChild(refs.achievementToastText)
     refs.achievementToast:SetVisible(false)
@@ -2411,7 +2463,14 @@ local header = UI.Panel {
             for _, def in ipairs(Achievements.Definitions()) do
                 local isUnlocked = Achievements.IsUnlocked(def.id)
                 local row = UI.Panel { width = "100%", flexDirection = "row", alignItems = "center", gap = 8 }
-                if type(UI.Sprite) == "function" then
+                local badge = ACHIEVEMENT_BADGE_BY_ID[def.id]
+                if type(UI.Sprite) == "function" and badge and isUnlocked then
+                    -- 2026-10-20：已解锁成就显示正式徽章（未解锁仍用圆形状态点，
+                    -- 避免「未获得也亮着徽章」的语义反转）。
+                    row:AddChild(UI.Sprite {
+                        src = BADGE_SHEET, frame = badge, width = 26, height = 26,
+                    })
+                elseif type(UI.Sprite) == "function" then
                     row:AddChild(UI.Sprite {
                         src = "image/WatercolorUI/button_states.json",
                         frame = isUnlocked and "circle_gold" or "circle_gray",
@@ -2613,6 +2672,12 @@ local header = UI.Panel {
         if not state.achievementToastUntil then
             local toast = Achievements.PollToast()
             if toast then
+                -- 按成就 id 切换徽章帧（图集里没有该帧时保留原样）。
+                local badge = ACHIEVEMENT_BADGE_BY_ID[toast.id]
+                local sprite = refs.achievementBadgeSprite
+                if badge and sprite and type(sprite.GotoFrameKey) == "function" then
+                    sprite:GotoFrameKey(badge)
+                end
                 refs.achievementToastText:SetText("成就解锁：" .. toast.name)
                 refs.achievementToast:SetVisible(true)
                 state.achievementToastUntil = now + 3

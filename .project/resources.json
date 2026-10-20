@@ -1,13 +1,38 @@
 {
   "$schema": "../schemas/resources.schema.json",
-
-  "preload_groups": [
-
-  ],
-
+  "preload_groups": [],
   "groups": {
     "default": [
-      "**"
+      "**",
+      "!assets/image/SeaSurface/sea_surface_day_v1.png",
+      "!assets/image/SeaSurface/sea_surface_dusk_v1.png",
+      "!assets/image/SeaSurface/sea_surface_night_v1.png",
+      "!assets/image/SeaSurface/sea_surface_day_flat.png",
+      "!assets/image/SeaSurface/sea_surface_night_flat.png",
+      "!assets/image/Sky/sky_day_v1.png",
+      "!assets/image/Sky/sky_night_v1.png",
+      "!assets/image/Sky/sky_day_v1_preview.png",
+      "!assets/image/Sky/sky_dusk_v1_preview.png",
+      "!assets/image/OceanStoryLayer/island_01_full.png",
+      "!assets/image/OceanStoryLayer/island_02_full.png",
+      "!assets/image/OceanShip/player_boat.png",
+      "!assets/image/OceanShip/player_boat_scene.png",
+      "!assets/image/OceanShip/player_boat_sheet.png",
+      "!assets/image/OceanShip/player_boat_view.png",
+      "!assets/image/OceanArtCollection/sea_eye_vortex_01_v1.png",
+      "!assets/image/OceanArtCollection/sea_eye_vortex_01_v1_boost.png",
+      "!assets/image/OceanArtCollection/codex_sardine_01.png",
+      "!assets/image/OceanArtCollection/codex_tuna_01.png",
+      "!assets/image/reading_sea_watercolor_ocean_tile_20261005115327.png",
+      "!assets/image/OceanDecor_foam_ring_20261015225230.png",
+      "!assets/image/WatercolorUI/achievement_*.png",
+      "!assets/image/WatercolorUI/ui_btn_normal.png",
+      "!assets/image/WatercolorUI/ui_bubble_tip.png",
+      "!assets/image/WatercolorUI/ui_dialogue_panel.png",
+      "!assets/image/WatercolorUI/item_icons/*.png",
+      "!assets/generated/**",
+      "!assets/image/OceanWave2/boat.png",
+      "!assets/audio/sfx/*.mp3"
     ]
   }
 }

@@ -48,9 +48,27 @@ def catalog_text(manifest):
     components = json.loads((ROOT / "assets/image/OceanComponents/manifest.json").read_text(encoding="utf-8"))
     islands = json.loads((ROOT / "assets/image/OceanIslands/manifest.json").read_text(encoding="utf-8"))
     eco = json.loads((ROOT / "assets/image/OceanEco/manifest.json").read_text(encoding="utf-8"))
-    # SeaSurface（纯海面 v2）：与 prepare_ocean_eco_art.py 同口径，清单缺失时按空合集处理。
+    # SeaSurface / Sky / SkyDecor / OceanArtCollection / OceanShip：与
+    # prepare_ocean_eco_art.py 的 catalog_text 保持同构（单一生成器原则：
+    # 两处输出必须字节一致，任一脚本的 --check 才能互证）。
     sea_manifest = ROOT / "assets/image/SeaSurface/manifest.json"
     sea = json.loads(sea_manifest.read_text(encoding="utf-8")) if sea_manifest.exists() else {"assets": {}}
+    sky_manifest = ROOT / "assets/image/Sky/manifest.json"
+    sky = json.loads(sky_manifest.read_text(encoding="utf-8")) if sky_manifest.exists() else {"assets": {}}
+    skydecor_manifest = ROOT / "assets/image/SkyDecor/manifest.json"
+    skydecor = json.loads(skydecor_manifest.read_text(encoding="utf-8")) if skydecor_manifest.exists() else {"assets": {}}
+    art_manifest = ROOT / "assets/image/OceanArtCollection/manifest.json"
+    art = json.loads(art_manifest.read_text(encoding="utf-8")) if art_manifest.exists() else {"assets": {}}
+    # OceanShip（2026-10-20 Fishing 交付批次）：玩家船正式水彩 + 参考合成图。
+    ship_manifest = ROOT / "assets/image/OceanShip/manifest.json"
+    ship = json.loads(ship_manifest.read_text(encoding="utf-8")) if ship_manifest.exists() else {"assets": {}}
+    # OceanShip 只把运行时船素材并入 catalog；reference 类（场景/部件表/合成视图）
+    # 只做美术留档，不占 catalog 键位。
+    ship_assets = {name: entry for name, entry in ship["assets"].items()
+                   if entry.get("kind") != "reference"}
+    # kind=codex_icon（图鉴备用画法）暂不进 catalog，与 OceanShip 的 reference 同口径。
+    art_assets = {name: entry for name, entry in art["assets"].items()
+                  if entry.get("kind") != "codex_icon"}
     entries = {}
     # eco 合集按条目自带 preload（per-entry，如 sea_surface_day/dusk=true、
     # night=false），其余合集沿用既有默认；W2 selected 覆盖保留（boat/island
@@ -59,7 +77,9 @@ def catalog_text(manifest):
     for collection, preload, per_entry in ((existing["assets"], True, False), (manifest["assets"], False, False),
                                            (story["assets"], False, False), (decor["assets"], False, False),
                                            (components["assets"], False, False), (islands["assets"], False, False),
-                                           (eco["assets"], False, True), (sea["assets"], False, True)):
+                                           (eco["assets"], False, True), (sea["assets"], False, True),
+                                           (sky["assets"], False, True), (skydecor["assets"], False, True),
+                                           (ship_assets, False, False), (art_assets, False, False)):
         for name, entry in collection.items():
             entries[name] = {**entry, "preload": entry.get("preload", preload) if per_entry else preload}
     selected = json.loads((WAVE2_OUT / "manifest.json").read_text(encoding="utf-8"))["assets"] \
@@ -84,6 +104,7 @@ def catalog_text(manifest):
             "        preload = " + str(entry["preload"]).lower() + ",",
             "        repeatTexture = " + str(name in ("waterpaper", "waterpaper_story", "ocean_tile",
                                                        "sea_surface_day", "sea_surface_dusk", "sea_surface_night",
+                                                       "sea_ripple_overlay", "sky_day", "sky_dusk",
                                                        "water_caustic_light", "water_caustic_light_alt",
                                                        "water_dudv_flow")).lower() + ",",
             "        completeIsland = " + str(entry.get("complete_island", False)).lower() + ",",

@@ -3,7 +3,7 @@
   "style": "读海日系水彩绘本风，生态层组件（小鱼/大鱼/海鸟/木桶），锚点链派生自主场景昼夜套件",
   "format": "RGBA PNG 直通 Alpha（256 色量化 P 模式等价语义）；帧间同画布坐标系不裁剪",
   "projection": "Ocean.Projection 世界平面分片投影（ImageArt.Plane），鱼/鸟 heading 沿世界朝向，木桶 heading=0",
-  "placement": "C2（2026-10-17）已接入 SeaDraw：鱼（sardine→eco_fish_small / tuna→eco_fish_big）、海鸟、木桶三帧循环（6fps，鱼按实体 id 相位错相）；贴图失败逐级回退旧图/矢量，世界状态零改写。沉船顶视与告示牌替换元素不在这批（见 OceanComponents manifest）",
+  "placement": "SeaDraw 渲染接入：鱼（sardine→eco_fish_small / tuna→eco_fish_big）、海鸟、木桶三帧循环；加载失败保持矢量兜底",
   "references": [
     "assets/image/OceanComponents/manifest.json",
     "scripts/Ocean/SeaDraw.lua",
@@ -12,7 +12,7 @@
   "assets": {
     "eco_fish_small_f1": {
       "path": "image/OceanEco/eco_fish_small_f1.png",
-      "source": "E:/workbath/Fishing/_gen_eco_v2/final/fish_small_f1.png",
+      "source": "C:/codex/taptap-jam/Fishing/读海_生态层组件_v2_assets/84912b59-fish_small_f1.png",
       "size": [
         1024,
         1024
@@ -35,12 +35,12 @@
         0.5
       ],
       "layer": "component",
-      "status": "placed_in_seadraw",
+      "status": "ready_not_placed",
       "frame": 1
     },
     "eco_fish_small_f2": {
       "path": "image/OceanEco/eco_fish_small_f2.png",
-      "source": "E:/workbath/Fishing/_gen_eco_v2/final/fish_small_f2.png",
+      "source": "C:/codex/taptap-jam/Fishing/读海_生态层组件_v2_assets/99ddbccb-fish_small_f2.png",
       "size": [
         1024,
         1024
@@ -63,12 +63,12 @@
         0.5
       ],
       "layer": "component",
-      "status": "placed_in_seadraw",
+      "status": "ready_not_placed",
       "frame": 2
     },
     "eco_fish_small_f3": {
       "path": "image/OceanEco/eco_fish_small_f3.png",
-      "source": "E:/workbath/Fishing/_gen_eco_v2/final/fish_small_f3.png",
+      "source": "C:/codex/taptap-jam/Fishing/读海_生态层组件_v2_assets/06605c3b-fish_small_f3.png",
       "size": [
         1024,
         1024
@@ -91,12 +91,12 @@
         0.5
       ],
       "layer": "component",
-      "status": "placed_in_seadraw",
+      "status": "ready_not_placed",
       "frame": 3
     },
     "eco_fish_big_f1": {
       "path": "image/OceanEco/eco_fish_big_f1.png",
-      "source": "E:/workbath/Fishing/_gen_eco_v2/final/fish_big_f1.png",
+      "source": "C:/codex/taptap-jam/Fishing/读海_生态层组件_v2_assets/099041b7-fish_big_f1.png",
       "size": [
         1024,
         1024
@@ -119,12 +119,12 @@
         0.5
       ],
       "layer": "component",
-      "status": "placed_in_seadraw",
+      "status": "ready_not_placed",
       "frame": 1
     },
     "eco_fish_big_f2": {
       "path": "image/OceanEco/eco_fish_big_f2.png",
-      "source": "E:/workbath/Fishing/_gen_eco_v2/final/fish_big_f2.png",
+      "source": "C:/codex/taptap-jam/Fishing/读海_生态层组件_v2_assets/de64520a-fish_big_f2.png",
       "size": [
         1024,
         1024
@@ -147,12 +147,12 @@
         0.5
       ],
       "layer": "component",
-      "status": "placed_in_seadraw",
+      "status": "ready_not_placed",
       "frame": 2
     },
     "eco_fish_big_f3": {
       "path": "image/OceanEco/eco_fish_big_f3.png",
-      "source": "E:/workbath/Fishing/_gen_eco_v2/final/fish_big_f3.png",
+      "source": "C:/codex/taptap-jam/Fishing/读海_生态层组件_v2_assets/104ad7b0-fish_big_f3.png",
       "size": [
         1024,
         1024
@@ -175,12 +175,12 @@
         0.5
       ],
       "layer": "component",
-      "status": "placed_in_seadraw",
+      "status": "ready_not_placed",
       "frame": 3
     },
     "eco_bird_f1": {
       "path": "image/OceanEco/eco_bird_f1.png",
-      "source": "E:/workbath/Fishing/_gen_eco_v2/final/bird_f1.png",
+      "source": "C:/codex/taptap-jam/Fishing/读海_生态层组件_v2_assets/b3a58600-bird_f1.png",
       "size": [
         1024,
         1024
@@ -203,12 +203,12 @@
         0.5
       ],
       "layer": "component",
-      "status": "placed_in_seadraw",
+      "status": "ready_not_placed",
       "frame": 1
     },
     "eco_bird_f2": {
       "path": "image/OceanEco/eco_bird_f2.png",
-      "source": "E:/workbath/Fishing/_gen_eco_v2/final/bird_f2.png",
+      "source": "C:/codex/taptap-jam/Fishing/读海_生态层组件_v2_assets/ca4437fc-bird_f2.png",
       "size": [
         1024,
         1024
@@ -231,12 +231,12 @@
         0.5
       ],
       "layer": "component",
-      "status": "placed_in_seadraw",
+      "status": "ready_not_placed",
       "frame": 2
     },
     "eco_bird_f3": {
       "path": "image/OceanEco/eco_bird_f3.png",
-      "source": "E:/workbath/Fishing/_gen_eco_v2/final/bird_f3.png",
+      "source": "C:/codex/taptap-jam/Fishing/读海_生态层组件_v2_assets/8f5bb577-bird_f3.png",
       "size": [
         1024,
         1024
@@ -259,12 +259,12 @@
         0.5
       ],
       "layer": "component",
-      "status": "placed_in_seadraw",
+      "status": "ready_not_placed",
       "frame": 3
     },
     "eco_barrel_f1": {
       "path": "image/OceanEco/eco_barrel_f1.png",
-      "source": "E:/workbath/Fishing/_gen_eco_v2/final/barrel_f1.png",
+      "source": "C:/codex/taptap-jam/Fishing/读海_生态层组件_v2_assets/ac69b663-barrel_f1.png",
       "size": [
         1024,
         1024
@@ -287,12 +287,12 @@
         0.5
       ],
       "layer": "component",
-      "status": "placed_in_seadraw",
+      "status": "ready_not_placed",
       "frame": 1
     },
     "eco_barrel_f2": {
       "path": "image/OceanEco/eco_barrel_f2.png",
-      "source": "E:/workbath/Fishing/_gen_eco_v2/final/barrel_f2.png",
+      "source": "C:/codex/taptap-jam/Fishing/读海_生态层组件_v2_assets/46f17c82-barrel_f2.png",
       "size": [
         1024,
         1024
@@ -315,12 +315,12 @@
         0.5
       ],
       "layer": "component",
-      "status": "placed_in_seadraw",
+      "status": "ready_not_placed",
       "frame": 2
     },
     "eco_barrel_f3": {
       "path": "image/OceanEco/eco_barrel_f3.png",
-      "source": "E:/workbath/Fishing/_gen_eco_v2/final/barrel_f3.png",
+      "source": "C:/codex/taptap-jam/Fishing/读海_生态层组件_v2_assets/2a99fc4c-barrel_f3.png",
       "size": [
         1024,
         1024
@@ -343,7 +343,7 @@
         0.5
       ],
       "layer": "component",
-      "status": "placed_in_seadraw",
+      "status": "ready_not_placed",
       "frame": 3
     }
   }

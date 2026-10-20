@@ -29,7 +29,7 @@
         255
       ],
       "transparent_ratio": 0.6,
-      "sha256": "9471d5bfe96efc51de6ab4ad104aafe779f770638bad0ad74c562ce73d2b7356",
+      "sha256": "09798cebb68194626f119a831e0970fd0947f7b3fca289913521411d136d650f",
       "source_sha256": "55928c4f4be3026d897de676e87080caa84c478b4499c8477907c11d94b0aa22",
       "preload": false,
       "anchor": [
@@ -58,7 +58,7 @@
         255
       ],
       "transparent_ratio": 0.6,
-      "sha256": "6611c470036f3b2d88749e264ba589442fc6b14a21d17751cb8b0c585a369983",
+      "sha256": "40b594b953592f12d9e0c040ce810b382aa6af49ee8e3ccec0f0d526beaacc5a",
       "source_sha256": "b8f79478536ff26e76940f919d735c016d76828ec5b2bbf66dc26a8a728ba9bf",
       "preload": false,
       "anchor": [
@@ -68,6 +68,129 @@
       "layer": "sky",
       "status": "ready_wired",
       "period": "dusk"
+    },
+    "sky_day_v1": {
+      "path": "image/Sky/sky_day_v1.png",
+      "name": "sky_day_v1",
+      "kind": "sky_variant",
+      "note": "天空日相整幅候选",
+      "size": [
+        1920,
+        1080
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "dc55b93ec8c303009bd3bee4ba664fcc0a423f7216cc3ca015cbc046320dde49",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_主场景昼夜套件_v1_assets/c01a5859-pure_sea_day_v1.png",
+      "source_root": "Fishing",
+      "source_sha256": "dc55b93ec8c303009bd3bee4ba664fcc0a423f7216cc3ca015cbc046320dde49"
+    },
+    "sky_night_v1": {
+      "path": "image/Sky/sky_night_v1.png",
+      "name": "sky_night_v1",
+      "kind": "sky_variant",
+      "note": "天空夜相整幅候选",
+      "size": [
+        1920,
+        1080
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "e0b5f27f4fb2446b7973a97c13f0ae96c9fa7582afad4a35dc50dab41c967fe6",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_主场景昼夜套件_v1_assets/3402aeea-pure_sea_night_v1.png",
+      "source_root": "Fishing",
+      "source_sha256": "e0b5f27f4fb2446b7973a97c13f0ae96c9fa7582afad4a35dc50dab41c967fe6"
+    },
+    "sky_day_v1_preview": {
+      "path": "image/Sky/sky_day_v1_preview.png",
+      "name": "sky_day_v1_preview",
+      "kind": "sky_variant",
+      "note": "天空日相预览图",
+      "size": [
+        1920,
+        1080
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "cc066cb0f23f6c119d51f092d70b3b16329bcfa0226fe17465b243ca6c4ef7ab",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_天空_v1_assets/be08783f-pure_sky_day_v1_preview.png",
+      "source_root": "Fishing",
+      "source_sha256": "cc066cb0f23f6c119d51f092d70b3b16329bcfa0226fe17465b243ca6c4ef7ab"
+    },
+    "sky_dusk_v1_preview": {
+      "path": "image/Sky/sky_dusk_v1_preview.png",
+      "name": "sky_dusk_v1_preview",
+      "kind": "sky_variant",
+      "note": "天空暮相预览图",
+      "size": [
+        1920,
+        1080
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "91d7bd3dc6c6884fecd995b4ba107a15238a30a3ee7204b2aea56c4c9068c364",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_天空_v1_assets/fd749a74-pure_sky_dusk_v1_preview.png",
+      "source_root": "Fishing",
+      "source_sha256": "91d7bd3dc6c6884fecd995b4ba107a15238a30a3ee7204b2aea56c4c9068c364"
     }
+  },
+  "variants": {
+    "note": "天空候选变体（整幅候选与预览）"
   }
 }

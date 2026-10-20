@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "style": "读海日系水彩绘本风（Fishing 交付批次 2026-10-20）",
+  "format": "RGBA PNG 直通 Alpha；中心锚点；世界尺寸由实体 radius 决定，不由像素推导",
+  "projection": "Ocean.Projection 世界平面分片投影（ImageArt.Plane/Sprite）；本批不外挂第二套投影",
+  "placement": "catalog 规格由本 manifest 汇总生成；绘制侧贴图优先、失败回退既有矢量",
+  "references": [
+    "docs/ART_PIPELINE.md",
+    "scripts/Ocean/SeaDraw.lua",
+    "scripts/Ocean/ImageArt.lua"
+  ],
+  "assets": {
+    "player_boat": {
+      "path": "image/OceanShip/player_boat.png",
+      "name": "player_boat",
+      "kind": "boat",
+      "note": "玩家船正式水彩（正俯视，船头 +X）",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        102,
+        298,
+        921,
+        726
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.737084,
+      "sha256": "56ccba9b9d92d572ee0220ca510efae5eca4ce996fdcf95864ea5a54d0f697f0",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_玩家船_正式水彩素材_assets/d9c2abf1-player_boat.png",
+      "source_root": "Fishing",
+      "source_sha256": "56ccba9b9d92d572ee0220ca510efae5eca4ce996fdcf95864ea5a54d0f697f0"
+    },
+    "player_boat_scene": {
+      "path": "image/OceanShip/player_boat_scene.png",
+      "name": "player_boat_scene",
+      "kind": "reference",
+      "note": "玩家船场景合成参考（非运行时，RGB 整幅）",
+      "size": [
+        1290,
+        656
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1290,
+        656
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "29d44b9e5e22b13b204cc701cdcdafce1240e680eeea277916273577f4b0f2bb",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_玩家船_正式水彩素材_assets/0b7dfe2c-_scene_boat_zoom.png",
+      "source_root": "Fishing",
+      "source_sha256": "29d44b9e5e22b13b204cc701cdcdafce1240e680eeea277916273577f4b0f2bb"
+    },
+    "player_boat_sheet": {
+      "path": "image/OceanShip/player_boat_sheet.png",
+      "name": "player_boat_sheet",
+      "kind": "reference",
+      "note": "玩家船部件表（非运行时，RGB 整幅）",
+      "size": [
+        1280,
+        360
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1280,
+        360
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "7d266dbbacc9d2e717d21ea6ff1902152b33fcb53678395a6b6f1edda19ef130",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_玩家船_正式水彩素材_assets/5312d634-boat_only_sheet.png",
+      "source_root": "Fishing",
+      "source_sha256": "7d266dbbacc9d2e717d21ea6ff1902152b33fcb53678395a6b6f1edda19ef130"
+    },
+    "player_boat_view": {
+      "path": "image/OceanShip/player_boat_view.png",
+      "name": "player_boat_view",
+      "kind": "reference",
+      "note": "玩家船合成视图（非运行时，RGB 整幅）",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "alpha_range": [
+        255,
+        255
+      ],
+      "transparent_ratio": 0.0,
+      "sha256": "01d57b372d957b2271437a6dbba284464519b9c5b1c69cbe2567da9736a1a54f",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_玩家船_正式水彩素材_assets/587cfafa-_view_final3.png",
+      "source_root": "Fishing",
+      "source_sha256": "01d57b372d957b2271437a6dbba284464519b9c5b1c69cbe2567da9736a1a54f"
+    }
+  }
+}

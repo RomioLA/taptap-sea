@@ -44,6 +44,14 @@ ICONS = {
     "abyss_pearl": "3dc43067-abyss_pearl.png",            # 深海珍珠
     "coral_branch": "157da5af-coral_branch_01.png",        # 珊瑚枝
     "jewelry": "e5b77519-jewelry_01.png",                  # 沉船珠宝
+    # 2026-10-20 第二批交付（读海_船舱物品_v1_assets 更新版）：四个基础物品
+    # 此前完全没有图标素材（HUD 只有文字行）；两个 V2.8 关键物品补齐。
+    "apple": "apple_01.png",                              # 苹果
+    "bait": "bait_01.png",                                # 鱼饵
+    "sardine": "sardine_01.png",                          # 沙丁鱼
+    "tuna": "tuna_01.png",                                # 金枪鱼
+    "salvaged_chest": "salvaged_chest_01.png",            # 海底金属货箱
+    "rusty_key": "rusty_key_01.png",                      # 生锈钥匙
 }
 
 

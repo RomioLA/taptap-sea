@@ -779,7 +779,7 @@
       ]
     },
     "item_icons_001": {
-      "file": "image/WatercolorUI/item_icons/coral_branch.png",
+      "file": "image/WatercolorUI/item_icons/apple.png",
       "sheet": "item_icons",
       "bboxInSheet": [
         0,
@@ -797,7 +797,7 @@
       ]
     },
     "item_icons_002": {
-      "file": "image/WatercolorUI/item_icons/jewelry.png",
+      "file": "image/WatercolorUI/item_icons/bait.png",
       "sheet": "item_icons",
       "bboxInSheet": [
         0,
@@ -815,6 +815,96 @@
       ]
     },
     "item_icons_003": {
+      "file": "image/WatercolorUI/item_icons/coral_branch.png",
+      "sheet": "item_icons",
+      "bboxInSheet": [
+        0,
+        0,
+        96,
+        96
+      ],
+      "size": [
+        96,
+        96
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "item_icons_004": {
+      "file": "image/WatercolorUI/item_icons/jewelry.png",
+      "sheet": "item_icons",
+      "bboxInSheet": [
+        0,
+        0,
+        96,
+        96
+      ],
+      "size": [
+        96,
+        96
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "item_icons_005": {
+      "file": "image/WatercolorUI/item_icons/rusty_key.png",
+      "sheet": "item_icons",
+      "bboxInSheet": [
+        0,
+        0,
+        96,
+        96
+      ],
+      "size": [
+        96,
+        96
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "item_icons_006": {
+      "file": "image/WatercolorUI/item_icons/salvaged_chest.png",
+      "sheet": "item_icons",
+      "bboxInSheet": [
+        0,
+        0,
+        96,
+        96
+      ],
+      "size": [
+        96,
+        96
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "item_icons_007": {
+      "file": "image/WatercolorUI/item_icons/sardine.png",
+      "sheet": "item_icons",
+      "bboxInSheet": [
+        0,
+        0,
+        96,
+        96
+      ],
+      "size": [
+        96,
+        96
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "item_icons_008": {
       "file": "image/WatercolorUI/item_icons/sea_note.png",
       "sheet": "item_icons",
       "bboxInSheet": [
@@ -831,6 +921,377 @@
         0.5,
         0.5
       ]
+    },
+    "item_icons_009": {
+      "file": "image/WatercolorUI/item_icons/tuna.png",
+      "sheet": "item_icons",
+      "bboxInSheet": [
+        0,
+        0,
+        96,
+        96
+      ],
+      "size": [
+        96,
+        96
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "readhai_000": {
+      "path": "image/WatercolorUI/achievement_big_fish.png",
+      "name": "achievement_big_fish",
+      "kind": "badge",
+      "note": "成就徽章：大鱼",
+      "size": [
+        192,
+        192
+      ],
+      "content_bounds": [
+        6,
+        20,
+        187,
+        173
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.745063,
+      "sha256": "635dcb29625a1b6872a5f361dcab3c6ec0e52f986f29d8c6fbcb429515d454dd",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_成就徽章_v1_assets/achievement_big_fish.png",
+      "source_root": "Fishing",
+      "source_sha256": "be39de0ed728e19d184531b7a745c592ea26aa73d8ca1b9f2bfcfe45572ce85a",
+      "file": "image/WatercolorUI/achievement_big_fish.png",
+      "sheet": "readhai",
+      "bboxInSheet": [
+        0,
+        0,
+        192,
+        192
+      ]
+    },
+    "readhai_001": {
+      "path": "image/WatercolorUI/achievement_first_lens.png",
+      "name": "achievement_first_lens",
+      "kind": "badge",
+      "note": "成就徽章：首日探海镜",
+      "size": [
+        192,
+        192
+      ],
+      "content_bounds": [
+        35,
+        9,
+        156,
+        184
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.741781,
+      "sha256": "9d21179f4c188107a340f9c9b698607584758cabfcd0b77434d9a109c3c01ded",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_成就徽章_v1_assets/achievement_first_lens.png",
+      "source_root": "Fishing",
+      "source_sha256": "3594ea31a1eccf9a8335b2cb3fbafc2c89176c2a8626ae0a027aa946b6942234",
+      "file": "image/WatercolorUI/achievement_first_lens.png",
+      "sheet": "readhai",
+      "bboxInSheet": [
+        0,
+        0,
+        192,
+        192
+      ]
+    },
+    "readhai_002": {
+      "path": "image/WatercolorUI/achievement_full_load.png",
+      "name": "achievement_full_load",
+      "kind": "badge",
+      "note": "成就徽章：满载而归",
+      "size": [
+        192,
+        192
+      ],
+      "content_bounds": [
+        17,
+        13,
+        175,
+        177
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.508274,
+      "sha256": "2567225a79ce72e39281a499f51f225d3e437044543d1cc772ca6dc6b77c30bf",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_成就徽章_v1_assets/achievement_full_load.png",
+      "source_root": "Fishing",
+      "source_sha256": "237e6adbb3ca8e5ff5a209108ecd195c97998371d75a724679a4a85a02401daa",
+      "file": "image/WatercolorUI/achievement_full_load.png",
+      "sheet": "readhai",
+      "bboxInSheet": [
+        0,
+        0,
+        192,
+        192
+      ]
+    },
+    "readhai_003": {
+      "path": "image/WatercolorUI/achievement_lifesaving_bait.png",
+      "name": "achievement_lifesaving_bait",
+      "kind": "badge",
+      "note": "成就徽章：救命鱼饵",
+      "size": [
+        192,
+        192
+      ],
+      "content_bounds": [
+        25,
+        33,
+        167,
+        160
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.818224,
+      "sha256": "fcbb5c13906851ad097121e5f5e1d66e778a7bd20b7faa3b1899e64a3f7b6e66",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_成就徽章_v1_assets/achievement_lifesaving_bait.png",
+      "source_root": "Fishing",
+      "source_sha256": "e358418868c7342360817a7df9d1c0779a956fd8f4fcfbeca5c8da2c0aaa7655",
+      "file": "image/WatercolorUI/achievement_lifesaving_bait.png",
+      "sheet": "readhai",
+      "bboxInSheet": [
+        0,
+        0,
+        192,
+        192
+      ]
+    },
+    "readhai_004": {
+      "path": "image/WatercolorUI/achievement_safe_return.png",
+      "name": "achievement_safe_return",
+      "kind": "badge",
+      "note": "成就徽章：平安归港",
+      "size": [
+        192,
+        192
+      ],
+      "content_bounds": [
+        15,
+        47,
+        176,
+        146
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.737929,
+      "sha256": "d825e77e612237312a0c45526b06ade92d7dafb6a212beffd54b07ec622cc8f5",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_成就徽章_v1_assets/achievement_safe_return.png",
+      "source_root": "Fishing",
+      "source_sha256": "5926aa3b25e224383a19f880384ff80020670c549de40e4c8725075dcf379e78",
+      "file": "image/WatercolorUI/achievement_safe_return.png",
+      "sheet": "readhai",
+      "bboxInSheet": [
+        0,
+        0,
+        192,
+        192
+      ]
+    },
+    "readhai_005": {
+      "path": "image/WatercolorUI/achievement_unconventional_path.png",
+      "name": "achievement_unconventional_path",
+      "kind": "badge",
+      "note": "成就徽章：非常规路径",
+      "size": [
+        192,
+        192
+      ],
+      "content_bounds": [
+        32,
+        46,
+        161,
+        145
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.785319,
+      "sha256": "60e676c55bf2685d861d89c3d13bb5aece99242b2317b638949f0f407170d6bb",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_成就徽章_v1_assets/achievement_unconventional_path.png",
+      "source_root": "Fishing",
+      "source_sha256": "89f749c1285e6fa9ebbf6a2e6e804153d42690518be1bfd5d1fc794cb9077bf1",
+      "file": "image/WatercolorUI/achievement_unconventional_path.png",
+      "sheet": "readhai",
+      "bboxInSheet": [
+        0,
+        0,
+        192,
+        192
+      ]
+    },
+    "readhai_006": {
+      "path": "image/WatercolorUI/ui_btn_normal.png",
+      "name": "ui_btn_normal",
+      "kind": "ui_chrome",
+      "note": "按钮常态底板",
+      "size": [
+        768,
+        256
+      ],
+      "content_bounds": [
+        102,
+        40,
+        667,
+        213
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.518738,
+      "sha256": "ebd4006b32127f945573721fbf41b9840070b960b25e5c1e91bfe29e69f2187e",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_UI素材_v1_assets/deb56a2f-ui_btn_normal_v1.png",
+      "source_root": "Fishing",
+      "source_sha256": "ebd4006b32127f945573721fbf41b9840070b960b25e5c1e91bfe29e69f2187e",
+      "file": "image/WatercolorUI/ui_btn_normal.png",
+      "sheet": "readhai",
+      "bboxInSheet": [
+        0,
+        0,
+        768,
+        256
+      ]
+    },
+    "readhai_007": {
+      "path": "image/WatercolorUI/ui_bubble_tip.png",
+      "name": "ui_bubble_tip",
+      "kind": "ui_chrome",
+      "note": "气泡提示底板",
+      "size": [
+        512,
+        256
+      ],
+      "content_bounds": [
+        114,
+        15,
+        403,
+        241
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.662575,
+      "sha256": "e62e5340cc5d4071b2daa55140dd6d74181b1b3ae1c930e9bca0d5b32ba8941b",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_UI素材_v1_assets/60dcbe7e-ui_bubble_tip_v1.png",
+      "source_root": "Fishing",
+      "source_sha256": "e62e5340cc5d4071b2daa55140dd6d74181b1b3ae1c930e9bca0d5b32ba8941b",
+      "file": "image/WatercolorUI/ui_bubble_tip.png",
+      "sheet": "readhai",
+      "bboxInSheet": [
+        0,
+        0,
+        512,
+        256
+      ]
+    },
+    "readhai_008": {
+      "path": "image/WatercolorUI/ui_dialogue_panel.png",
+      "name": "ui_dialogue_panel",
+      "kind": "ui_chrome",
+      "note": "对话底板（水彩羊皮纸）",
+      "size": [
+        768,
+        154
+      ],
+      "content_bounds": [
+        133,
+        8,
+        640,
+        148
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.423033,
+      "sha256": "8339b8d53d07b94af0d68715eafe0382ec5d09c9dc8a0eb4436cb3ee6a569e70",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_UI素材_v1_assets/0961a748-ui_dialogue_panel_v1.png",
+      "source_root": "Fishing",
+      "source_sha256": "4ab9b56b6a09eded0b247d2c49235af45431afda71fbe006dc9c988bc53a5402",
+      "file": "image/WatercolorUI/ui_dialogue_panel.png",
+      "sheet": "readhai",
+      "bboxInSheet": [
+        0,
+        0,
+        768,
+        154
+      ]
     }
+  },
+  "readhai_frames": {
+    "readhai_000": "achievement_big_fish",
+    "readhai_001": "achievement_first_lens",
+    "readhai_002": "achievement_full_load",
+    "readhai_003": "achievement_lifesaving_bait",
+    "readhai_004": "achievement_safe_return",
+    "readhai_005": "achievement_unconventional_path",
+    "readhai_006": "ui_btn_normal",
+    "readhai_007": "ui_bubble_tip",
+    "readhai_008": "ui_dialogue_panel"
   }
 }

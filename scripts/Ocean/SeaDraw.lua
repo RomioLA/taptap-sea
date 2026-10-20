@@ -335,8 +335,23 @@ local function drawFixedTreasure(ctx, runtime, entity, marked)
         { x = point.x - radius * 0.68, y = point.y },
     }
     Presentation.Draw(ctx, runtime.movement, point, radius * 2.2, -0.8, function()
-        Geometry.WorldCircle(ctx, runtime.movement, point, radius * 1.75, glow, ink, 1.2)
-        Geometry.WorldPolygon(ctx, runtime.movement, diamond, glow, ink, 1.5)
+        -- 2026-10-20 正式素材优先（水下宝藏 PNG），失败回退既有矢量菱形标记。
+        -- 世界直径取 8×radius（radius=0.5 → 4m）：与该节点 5m 探海镜作用范围同量级，
+        -- 太小会在 1080p 下只剩十几个像素。内容比走 ContentPlaneSize，不拉伸。
+        local treasureLength, treasureWidth = ImageArt.ContentPlaneSize("underwater_treasure_01", radius * 8)
+        local textureDrawn = treasureLength ~= nil and type(Art.Plane) == "function"
+            and Art.Plane(ctx, "underwater_treasure_01", runtime.movement, point,
+                treasureLength, treasureWidth, 0, 0)
+        if not textureDrawn then
+            Geometry.WorldCircle(ctx, runtime.movement, point, radius * 1.75, glow, ink, 1.2)
+            Geometry.WorldPolygon(ctx, runtime.movement, diamond, glow, ink, 1.5)
+        end
+        -- 贴图自带半透明光晕，夜间/水下整体压暗后描边容易糊掉；
+        -- 贴图模式下补一圈细光环，保证「已发现的水下宝藏」在斜视投影里仍可辨识，
+        -- 但不覆盖素材本身（只画描边，不填充）。
+        if textureDrawn then
+            Geometry.WorldCircle(ctx, runtime.movement, point, radius * 1.35, nil, glow, 1.0)
+        end
         if marked then
             worldLine(ctx, runtime.movement,
                 { x = point.x - radius * 0.35, y = point.y },
@@ -446,6 +461,8 @@ end
 --   bones       -> leviathan_bones_01（巨兽骸骨）
 --   vortex      -> sea_eye_vortex_01（常态）/ sea_eye_vortex_01_boost（投放增强态）
 --   bottle      -> bottle_note_01   （漂流瓶）
+--   net         -> trapped_net_01   （06 破渔网；2026-10-20 第二批交付接入）
+--   kelp        -> kelp_mirage_01   （12 浮藻假岛岛影态）/ kelp_mirage_01_b（识破态）
 -- 贴图尺寸只由**世界尺寸**决定（不按像素推断玩法），绘制失败/未接入时退回
 -- 原有矢量占位（ART_PIPELINE §2.3：不得为了换美术删除回退路径）。
 local V28_TEXTURE = {
@@ -454,14 +471,29 @@ local V28_TEXTURE = {
     bones = "leviathan_bones_01",
     vortex = "sea_eye_vortex_01",
     bottle = "bottle_note_01",
+    net = "trapped_net_01",
+}
+-- 双态贴图：entityType -> {default, alt, when}。海眼已由 vortexBoostedFromWorld 单独
+-- 判定；浮藻假岛按「20m 识破后」在岛影态与藻层态之间切换（recognized 由 Gameplay
+-- 只读派生，不新增状态位，也不写存档）。
+local V28_TEXTURE_STATES = {
+    kelp = { default = "kelp_mirage_01", alt = "kelp_mirage_01_b", when = "recognized" },
 }
 -- 素材是正俯视水彩绘本（ART_PIPELINE §3），因此用世界平面投影 Plane。
--- visualRadius 给出的是“岛影/油环”这类视觉外接半径；素材内容框长宽比不等，
--- 这里按世界直径等比投放，不拉伸素材。
+-- visualRadius 给出的是“岛影/油环”这类视觉外接半径。
+--
+-- 2026-10-20 修复：旧实现把 length/width 都传 worldDiameter，即一律按正方形投放，
+-- 素材内容框长宽比不等时主体会被拉伸（巨骨 2.17:1、气泡 1:2.79、沉船 1.93:1）。
+-- 改为走 ImageArt.ContentPlaneSize：以**内容主体最长边**为世界直径，另一维按
+-- catalog 的内容比换算，画布则按 pixel/content 补留边。语义与
+-- SeaViewArt.Component / Island.Plane 底图同口径（单一尺寸换算入口）。
+---@param worldDiameter number 内容主体的世界最长边（米）
 local function v28PlaneTexture(ctx, movement, entity, name, worldDiameter, heading, alpha)
     if type(Art.Plane) ~= "function" then return false end
+    local canvasLength, canvasWidth = ImageArt.ContentPlaneSize(name, worldDiameter)
+    if not canvasLength then return false end
     local ok, drawn = pcall(Art.Plane, ctx, name, movement, entity.position,
-        worldDiameter, worldDiameter, heading or 0, 0, alpha)
+        canvasLength, canvasWidth, heading or 0, 0, alpha)
     return ok and drawn == true
 end
 
@@ -489,11 +521,16 @@ local function drawV28Node(ctx, runtime, entity, contentId, marked, recognized, 
 
     -- ① 贴图优先。worldDiameter 用视觉半径×2（缺省时用碰撞半径×2）——
     -- 世界米制尺寸是唯一口径，素材像素分辨率不参与玩法。
-    if not picked and V28_TEXTURE[entity.entityType] then
-        local textureName = V28_TEXTURE[entity.entityType]
+    local state = V28_TEXTURE_STATES[entity.entityType]
+    local textureName = V28_TEXTURE[entity.entityType] or (state and state.default)
+    if not picked and textureName then
         -- 海眼：投放增强态（世界里有 vortexBoost 临时诱饵时）换 boost 素材。
         if entity.entityType == "vortex" and vortexBoostedFromWorld(runtime.world) then
             textureName = "sea_eye_vortex_01_boost"
+        end
+        -- 浮藻假岛：20m 识破后换藻层态（岛影态 -> 藻层态），同一世界锚点与尺寸。
+        if state and state.when == "recognized" and recognized then
+            textureName = state.alt
         end
         local worldDiameter = visual * 2
         -- 漂流瓶体量小，用碰撞半径的两倍作世界直径更贴近“一只瓶子”的观感。
@@ -616,9 +653,17 @@ local function drawLeviathanBubbles(ctx, runtime, time)
         local offset = math.sin(index * 2.1 + time * 0.4) * 1.1
         local alpha = math.floor(210 * (1 - phase))
         if alpha > 0 then
-            Geometry.WorldCircle(ctx, runtime.movement,
-                { x = entity.position.x + offset, y = entity.position.y + offset * 0.6 },
-                radius, nil, { 214, 240, 246, alpha }, 1.2)
+            local center = { x = entity.position.x + offset, y = entity.position.y + offset * 0.6 }
+            -- 2026-10-20 正式素材优先（气泡簇 PNG），失败回退原矢量气泡圆。
+            -- 尺寸走同一换算入口：气泡素材内容比 1:2.79，正方形投放会压扁。
+            local bubbleLength, bubbleWidth = ImageArt.ContentPlaneSize("leviathan_bubbles_01", radius * 6)
+            local drew = (bubbleLength ~= nil and type(Art.Plane) == "function" and Art.Plane(
+                ctx, "leviathan_bubbles_01", runtime.movement, center,
+                bubbleLength, bubbleWidth, 0, 0, (alpha / 255) * 0.9)) or false
+            if not drew then
+                Geometry.WorldCircle(ctx, runtime.movement, center,
+                    radius, nil, { 214, 240, 246, alpha }, 1.2)
+            end
         end
     end
 end

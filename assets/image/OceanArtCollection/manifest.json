@@ -31,7 +31,7 @@
         0,
         255
       ],
-      "transparent_ratio": 0.758503,
+      "transparent_ratio": 0.7585029602050781,
       "sha256": "504d61b6da32a18ee6b810275847b8a4a473ec90539cdd6654d8015f2b228a29",
       "anchor": [
         0.5,
@@ -59,8 +59,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.47972,
-      "sha256": "b81fe2068036f6a9f9b526759d63e9e27cedc4158f4f4636e92609b5bea7292f",
+      "transparent_ratio": 0.48287439346313477,
+      "sha256": "3856d47b6c53c87f178be5cd66e3d1ca826267ba807b610a7c1a218d9912ee85",
       "anchor": [
         0.5,
         0.5
@@ -80,15 +80,15 @@
       "content_bounds": [
         124,
         96,
-        1924,
+        1923,
         927
       ],
       "alpha_range": [
         0,
         255
       ],
-      "transparent_ratio": 0.507101,
-      "sha256": "82c25a56cd77fc8d88d281da32eb256c779474a75c32cca1fbb69102a4e11517",
+      "transparent_ratio": 0.5093283653259277,
+      "sha256": "785b4df057caa443297de21559dfc6d404b0bf209fd3a3da79cc6d372fe9b0a5",
       "anchor": [
         0.5,
         0.5
@@ -115,8 +115,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.61411,
-      "sha256": "a666fedd14b2084be1c8833ea8b34d00f617d51bd6461f35b1241c9de6f028af",
+      "transparent_ratio": 0.6173124313354492,
+      "sha256": "6321ad23d6b5ae5c6e2b28897c508e0033f2d338b211521549adbc8546f9e27f",
       "anchor": [
         0.5,
         0.5
@@ -143,8 +143,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.602464,
-      "sha256": "4531e7ab5b67766cf29356b265d4522d68f204feb9f0281f74f4ebc4d19f8e68",
+      "transparent_ratio": 0.6055564880371094,
+      "sha256": "6b1facb68bee2fffe674b175898945054c8362bb018fd516c73ea95bc621c25c",
       "anchor": [
         0.5,
         0.5
@@ -171,8 +171,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.752732,
-      "sha256": "8db28326df597bfe41db60bdb631f8e0bda30b7fe476a5a50e2f47735071d58d",
+      "transparent_ratio": 0.7542638778686523,
+      "sha256": "569c3504fef5f915fc9b9e53ad6028f73784c11a4978327f733078eed2b7f9bc",
       "anchor": [
         0.5,
         0.5
@@ -199,8 +199,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.512843,
-      "sha256": "61a85de7c86769bb3e3611ce48c515655e71be46abebfcbfd90817872f414f3d",
+      "transparent_ratio": 0.5139646530151367,
+      "sha256": "ca5b61bf36bc33854aec95dbe52aeb7bb5530df3d4d0e921dd921853d9a7faa1",
       "anchor": [
         0.5,
         0.5
@@ -218,17 +218,17 @@
         512
       ],
       "content_bounds": [
-        74,
-        70,
-        460,
-        455
+        75,
+        71,
+        459,
+        454
       ],
       "alpha_range": [
         0,
         255
       ],
-      "transparent_ratio": 0.563404,
-      "sha256": "b840ffb70aa4b27cfb94ff4c17d41a185a98a3da784dcc05f4bfb1602fc7c664",
+      "transparent_ratio": 0.5668678283691406,
+      "sha256": "260018ef5d03443531c81772cc25df630ba6295d2c30f1fce101407c5fd3de64",
       "anchor": [
         0.5,
         0.5
@@ -255,8 +255,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.69965,
-      "sha256": "e55fdf8c535c4143e18064b4152dec8cf1f90102beb10cbca8f14fa3521ad95d",
+      "transparent_ratio": 0.7007675170898438,
+      "sha256": "fe9abdcba3d0293cba41daa92e7be74af84fde6f5fb9a9f4ba8b75792d25cf0c",
       "anchor": [
         0.5,
         0.5
@@ -283,14 +283,464 @@
         0,
         255
       ],
-      "transparent_ratio": 0.546936,
-      "sha256": "8c5e18c1291766294ec639f9e2ece298da6af8ca2cd399c99d02bfe5ff1f0550",
+      "transparent_ratio": 0.548431396484375,
+      "sha256": "9f2f55846821537330db29d9805333c3845249c21422e08e22ac859d766e2063",
       "anchor": [
         0.5,
         0.5
       ],
       "preload": false,
       "source_file": "e5b77519-jewelry_01.png"
+    },
+    "underwater_treasure_01": {
+      "path": "image/OceanArtCollection/underwater_treasure_01.png",
+      "name": "underwater_treasure_01",
+      "kind": "sea_node",
+      "note": "03 水下宝藏（探海镜标记点）",
+      "size": [
+        1024,
+        768
+      ],
+      "content_bounds": [
+        213,
+        68,
+        803,
+        643
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.706148,
+      "sha256": "2128a7bec53a3cfa709dd3eaaae758b21b679eb2eb707c465f79e2c23f71c608",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_水下宝藏_v1_assets/4797806b-underwater_treasure_01.png",
+      "source_root": "Fishing",
+      "source_sha256": "2128a7bec53a3cfa709dd3eaaae758b21b679eb2eb707c465f79e2c23f71c608"
+    },
+    "trapped_net_01": {
+      "path": "image/OceanArtCollection/trapped_net_01.png",
+      "name": "trapped_net_01",
+      "kind": "sea_node",
+      "note": "06 破渔网双分支节点",
+      "size": [
+        768,
+        768
+      ],
+      "content_bounds": [
+        57,
+        151,
+        707,
+        646
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.643217,
+      "sha256": "548763c81f11193e491e2d4d498e7460ae20fcc68ea735699dae57d9b2f73ece",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_破渔网_v1_assets/trapped_net_01.png",
+      "source_root": "Fishing",
+      "source_sha256": "548763c81f11193e491e2d4d498e7460ae20fcc68ea735699dae57d9b2f73ece"
+    },
+    "kelp_mirage_01": {
+      "path": "image/OceanArtCollection/kelp_mirage_01.png",
+      "name": "kelp_mirage_01",
+      "kind": "sea_node",
+      "note": "12 浮藻假岛（岛影态，80m 轮廓）",
+      "size": [
+        1536,
+        1024
+      ],
+      "content_bounds": [
+        115,
+        154,
+        1421,
+        869
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.590684,
+      "sha256": "e7eb18779ecd45f2e7477a9439affd86adae8eb71ca65fb25928a2c4be33e5d3",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_破渔网_v1_assets/kelp_mirage_01_a.png",
+      "source_root": "Fishing",
+      "source_sha256": "e7eb18779ecd45f2e7477a9439affd86adae8eb71ca65fb25928a2c4be33e5d3"
+    },
+    "kelp_mirage_01_b": {
+      "path": "image/OceanArtCollection/kelp_mirage_01_b.png",
+      "name": "kelp_mirage_01_b",
+      "kind": "sea_node",
+      "note": "12 浮藻假岛（20m 识破后的藻层态）",
+      "size": [
+        1536,
+        1024
+      ],
+      "content_bounds": [
+        115,
+        172,
+        1421,
+        851
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.624027,
+      "sha256": "096cc30381354e85fdb92cef9222051c5ebe07f94e4a6a028985fb72cae004de",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_破渔网_v1_assets/kelp_mirage_01_b.png",
+      "source_root": "Fishing",
+      "source_sha256": "096cc30381354e85fdb92cef9222051c5ebe07f94e4a6a028985fb72cae004de"
+    },
+    "leviathan_bubbles_01": {
+      "path": "image/OceanArtCollection/leviathan_bubbles_01.png",
+      "name": "leviathan_bubbles_01",
+      "kind": "fx",
+      "note": "03 巨骨海面慢气泡",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        174,
+        25,
+        338,
+        483
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.915035,
+      "sha256": "ca0d00f454c2e64c04915acb5a16199c1aa5cc68cbaa1253379703b15f6690ca",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_沉船_v1_assets/43594104-leviathan_bubbles_01.png",
+      "source_root": "Fishing",
+      "source_sha256": "ca0d00f454c2e64c04915acb5a16199c1aa5cc68cbaa1253379703b15f6690ca"
+    },
+    "sea_eye_vortex_01_v1": {
+      "path": "image/OceanArtCollection/sea_eye_vortex_01_v1.png",
+      "name": "sea_eye_vortex_01_v1",
+      "kind": "fx",
+      "note": "10 海眼漩涡 v1 常态（v2 为主用，v1 留 A/B）",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        110,
+        122,
+        913,
+        902
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.546077,
+      "sha256": "5b2452d8652442050b638dcdec2bb42776e6699375b7eff21977c7f38e4214f7",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_海面特效_v1_assets/363c72a9-sea_eye_vortex_01.png",
+      "source_root": "Fishing",
+      "source_sha256": "5b2452d8652442050b638dcdec2bb42776e6699375b7eff21977c7f38e4214f7"
+    },
+    "sea_eye_vortex_01_v1_boost": {
+      "path": "image/OceanArtCollection/sea_eye_vortex_01_v1_boost.png",
+      "name": "sea_eye_vortex_01_v1_boost",
+      "kind": "fx",
+      "note": "10 海眼漩涡 v1 增强态",
+      "size": [
+        1024,
+        1024
+      ],
+      "content_bounds": [
+        108,
+        122,
+        918,
+        902
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.543188,
+      "sha256": "82a9ca84b2451ea3139e0c80acc71b98d0e235bb4c4305d16ae3565c247a3611",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_海面特效_v1_assets/bb401ed7-sea_eye_vortex_01_boost.png",
+      "source_root": "Fishing",
+      "source_sha256": "82a9ca84b2451ea3139e0c80acc71b98d0e235bb4c4305d16ae3565c247a3611"
+    },
+    "salvaged_chest_01": {
+      "path": "image/OceanArtCollection/salvaged_chest_01.png",
+      "name": "salvaged_chest_01",
+      "kind": "item_icon",
+      "note": "物品图标：海底金属货箱（12 浮藻假岛奖励）",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        52,
+        65,
+        459,
+        446
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.571419,
+      "sha256": "e6a2420ed9d74c80a69158c5459dbb9ff394d936f940f7138f6f8cf53109ec2f",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_船舱物品_v1_assets/03a7091c-salvaged_chest_01.png",
+      "source_root": "Fishing",
+      "source_sha256": "e6a2420ed9d74c80a69158c5459dbb9ff394d936f940f7138f6f8cf53109ec2f"
+    },
+    "rusty_key_01": {
+      "path": "image/OceanArtCollection/rusty_key_01.png",
+      "name": "rusty_key_01",
+      "kind": "item_icon",
+      "note": "物品图标：生锈钥匙（06 破渔网分支 B）",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        86,
+        52,
+        426,
+        459
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.86684,
+      "sha256": "5feb2f6f34501449064367c3701c3c718ad4c972c70b1685342ca04cc3009090",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_船舱物品_v1_assets/6f2840c2-rusty_key_01.png",
+      "source_root": "Fishing",
+      "source_sha256": "5feb2f6f34501449064367c3701c3c718ad4c972c70b1685342ca04cc3009090"
+    },
+    "apple_01": {
+      "path": "image/OceanArtCollection/apple_01.png",
+      "name": "apple_01",
+      "kind": "item_icon",
+      "note": "物品图标：苹果",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        60,
+        49,
+        452,
+        463
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.559361,
+      "sha256": "23f3bf5f2e60584a8f66edab33f71087911c37d47a465a4305de03925c96c8a8",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_船舱物品_v1_assets/apple_01.png",
+      "source_root": "taptap-jam",
+      "source_sha256": "23f3bf5f2e60584a8f66edab33f71087911c37d47a465a4305de03925c96c8a8"
+    },
+    "bait_01": {
+      "path": "image/OceanArtCollection/bait_01.png",
+      "name": "bait_01",
+      "kind": "item_icon",
+      "note": "物品图标：鱼饵",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        49,
+        104,
+        462,
+        408
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.649677,
+      "sha256": "ad0d6a897c23230041c3342fe2d446a862ac7bf0081f2cef37c361f18ada8cbc",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_船舱物品_v1_assets/bait_01.png",
+      "source_root": "taptap-jam",
+      "source_sha256": "ad0d6a897c23230041c3342fe2d446a862ac7bf0081f2cef37c361f18ada8cbc"
+    },
+    "sardine_01": {
+      "path": "image/OceanArtCollection/sardine_01.png",
+      "name": "sardine_01",
+      "kind": "item_icon",
+      "note": "物品图标：沙丁鱼",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        50,
+        152,
+        463,
+        360
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.881485,
+      "sha256": "f8fe53b5936af863bdf451ed743521d3f6a1372910fb59d9127eb4e61fd83779",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_船舱物品_v1_assets/sardine_01.png",
+      "source_root": "taptap-jam",
+      "source_sha256": "f8fe53b5936af863bdf451ed743521d3f6a1372910fb59d9127eb4e61fd83779"
+    },
+    "tuna_01": {
+      "path": "image/OceanArtCollection/tuna_01.png",
+      "name": "tuna_01",
+      "kind": "item_icon",
+      "note": "物品图标：金枪鱼",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        49,
+        161,
+        462,
+        350
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.86124,
+      "sha256": "7230f166db4d0ea3d16bf07812b1bbc7ee8b033c4a07ffa2fedbc2d29074046d",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_船舱物品_v1_assets/tuna_01.png",
+      "source_root": "taptap-jam",
+      "source_sha256": "7230f166db4d0ea3d16bf07812b1bbc7ee8b033c4a07ffa2fedbc2d29074046d"
+    },
+    "codex_sardine_01": {
+      "path": "image/OceanArtCollection/codex_sardine_01.png",
+      "name": "codex_sardine_01",
+      "kind": "codex_icon",
+      "note": "图鉴图标：沙丁鱼标本版",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        49,
+        141,
+        460,
+        370
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.865158,
+      "sha256": "e9759029aa2f075681a22726927ae71d14b65b0a7880de0e393ec4c7efb2a7e1",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_船舱物品_v1_assets/codex_sardine_01.png",
+      "source_root": "taptap-jam",
+      "source_sha256": "e9759029aa2f075681a22726927ae71d14b65b0a7880de0e393ec4c7efb2a7e1"
+    },
+    "codex_tuna_01": {
+      "path": "image/OceanArtCollection/codex_tuna_01.png",
+      "name": "codex_tuna_01",
+      "kind": "codex_icon",
+      "note": "图鉴图标：金枪鱼标本版",
+      "size": [
+        512,
+        512
+      ],
+      "content_bounds": [
+        49,
+        159,
+        463,
+        352
+      ],
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_ratio": 0.854507,
+      "sha256": "eec5cbfc0b920eeb17604fde8b3519fd39df39e808af37eb9fecd9399074c527",
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "preload": false,
+      "source_file": "读海_船舱物品_v1_assets/codex_tuna_01.png",
+      "source_root": "taptap-jam",
+      "source_sha256": "eec5cbfc0b920eeb17604fde8b3519fd39df39e808af37eb9fecd9399074c527"
     }
   },
   "source_only": {
@@ -313,8 +763,8 @@
         0,
         255
       ],
-      "transparent_ratio": 0.747715,
-      "sha256": "84e69baff37937e4cf8641029d83a8db2fb83359649c08f663ca1adaddbdbc5c",
+      "transparent_ratio": 0.749641,
+      "sha256": "09a65775464b40009b5692f0e967c072fc058617be7994062a6fe4caf6a5d7fb",
       "anchor": [
         0.5,
         0.5
@@ -331,7 +781,7 @@
         512
       ],
       "content_bounds": [
-        49,
+        50,
         51,
         462,
         461
@@ -340,13 +790,14 @@
         0,
         255
       ],
-      "transparent_ratio": 0.50753,
-      "sha256": "947f9451f1236b8ec587a1d9c239aa3790a191c489fa1a0e8eca87dbe1bd6008",
+      "transparent_ratio": 0.509136,
+      "sha256": "1df22a4b3976b5eaa7e72729807bc908851c87b7725697b528efca962c354585",
       "anchor": [
         0.5,
         0.5
       ],
       "preload": false
     }
-  }
+  },
+  "readhai_batch_note": "本合集同时承载 V2.8 正式节点素材（读海交付批次，由 tests/prepare_readhai_batch.py append-only 追加）；两者共用同一 catalog 生成链，不另建目录。"
 }
