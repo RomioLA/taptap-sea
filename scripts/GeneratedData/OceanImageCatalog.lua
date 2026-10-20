@@ -37,10 +37,15 @@ return {
         repeatTexture = false,
         completeIsland = false,
     },
+    -- 2026-10-20 真机反馈「岛屿底图白边方正突兀」重制：原图 alpha 铺到画布
+    -- 左右边（bbox x=0..1024）且主体中心下偏 ~90px，Plane 以 2r 见方铺满后就是
+    -- 一块硬边白水彩。新版=原画笔触经极坐标归一成近圆岛体（800×800，四角透明，
+    -- alpha 在画布内归零），content 取岛体直径 704（=800×BODY_RATIO 2×0.88），
+    -- 岛体边缘对齐世界半径 r（旧版泡沫外沿约 1.17r）。
     coast_base_v3 = {
         path = "image/OceanComponents/coast_base_v3.png",
-        pixelWidth = 1024, pixelHeight = 1024,
-        contentWidth = 1024, contentHeight = 761,
+        pixelWidth = 800, pixelHeight = 800,
+        contentWidth = 704, contentHeight = 704,
         anchorX = 0.5, anchorY = 0.5,
         preload = false,
         repeatTexture = false,
@@ -352,10 +357,16 @@ return {
         repeatTexture = false,
         completeIsland = false,
     },
+    -- 2026-10-20 与 coast_base_v3 同批重制（island_02 底图，真机「岛屿底图白边
+    -- 方正突兀」同源问题）：原图 1024²、内容 935×722（宽高比 1.29）且水彩底色
+    -- 铺到画布内缩边界，Plane 铺 2r 后仍是方形水色块。新版经 tests/prepare_island_base.py
+    -- 极坐标归一为近圆礁石群（800×800，四角透明），content 取岛体直径 704，
+    -- 岛岸线对齐世界半径 r；独立礁石组件（SeaViewArt.Component）尺寸语义不变
+    -- （传入 contentLength 米数依旧对应内容主体宽度）。
     reef_rocks_v1 = {
         path = "image/OceanComponents/reef_rocks_v1.png",
-        pixelWidth = 1024, pixelHeight = 1024,
-        contentWidth = 935, contentHeight = 722,
+        pixelWidth = 800, pixelHeight = 800,
+        contentWidth = 704, contentHeight = 704,
         anchorX = 0.5, anchorY = 0.5,
         preload = false,
         repeatTexture = false,

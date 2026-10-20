@@ -14,21 +14,21 @@
       "path": "image/OceanComponents/coast_base_v3.png",
       "source": "image/OceanComponents/coast_base_v3.png",
       "size": [
-        1024,
-        1024
+        800,
+        800
       ],
       "content_bounds": [
-        0,
-        226,
-        1024,
-        987
+        48,
+        48,
+        752,
+        752
       ],
       "alpha_range": [
         0,
         255
       ],
-      "transparent_ratio": 0.5576438903808594,
-      "sha256": "698fcd970415486b39f5ababc728e097f5b02c64f439866e8e418a939af1982e",
+      "transparent_ratio": 0.4619859375,
+      "sha256": "116589fe3664e6d35baa7a795c78ec984ca28cff7d405cd10da939688b46302d",
       "anchor": [
         0.5,
         0.5
@@ -40,21 +40,21 @@
       "path": "image/OceanComponents/reef_rocks_v1.png",
       "source": "image/OceanComponents/reef_rocks_v1.png",
       "size": [
-        1024,
-        1024
+        800,
+        800
       ],
       "content_bounds": [
         48,
-        184,
-        983,
-        906
+        48,
+        752,
+        752
       ],
       "alpha_range": [
         0,
         255
       ],
-      "transparent_ratio": 0.5045642852783203,
-      "sha256": "7992870ccee2df3bb447ac4a5237556bcca25ea250c80819bae7b11e84559019",
+      "transparent_ratio": 0.3748125,
+      "sha256": "8848a2e70837580a3e9830064f5eac3fb82ab3cfe3413672f34edbd5749e4b57",
       "anchor": [
         0.5,
         0.5
