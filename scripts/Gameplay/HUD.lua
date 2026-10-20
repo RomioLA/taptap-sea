@@ -1559,10 +1559,23 @@ local header = UI.Panel {
     refs.settlementBody:AddChild(refs.settlementSkip)
     refs.modalCard:AddChild(refs.settlementBody)
 
-    -- T1（2026-10-06）：第 7 天结局模态；文案占位，正式版按 Q-006 由 B 侧替换。
-    refs.endingBody = UI.Panel { width = "100%", flexGrow = 1, gap = 12 }
+    -- A1（UI 重设计 v2.0 · 2026-10-20 真机截图红框②）：结局正文收入卡内
+    -- ScrollView。模态卡是固定尺寸容器（width 420 / maxHeight 460），而
+    -- W-04/W-05 两份结局文案均为 150~250 字长文——此前 endingText 直接挂
+    -- endingBody 无滚动容器，文字溢出卡外渲染在海面上。现包一层 ScrollView，
+    -- 「重新开始」按钮留在滚动区之外（sectionCard footer 不滚动契约）。
+    refs.endingBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 12 }
     refs.endingText = makeLabel("", 14)
-    refs.endingBody:AddChild(refs.endingText)
+    refs.endingBody:AddChild(UI.ScrollView {
+        id = "endingTextScroll",
+        width = "100%",
+        flexGrow = 1,
+        flexBasis = 0,
+        minHeight = 0,
+        scrollY = true,
+        showScrollbar = true,
+        children = { refs.endingText },
+    })
     refs.endingNewRun = makeButton("重新开始", function() requestNewRun() end, "primary", 130)
     refs.endingBody:AddChild(refs.endingNewRun)
     refs.modalCard:AddChild(refs.endingBody)
@@ -1853,11 +1866,12 @@ local header = UI.Panel {
     end, "secondary", 130))
     refs.modalCard:AddChild(refs.compendiumBody)
 
-    -- v2.1 §7.9 修订（真机 21:46 文字溢出）：曾给剧情/老人/图鉴三页套
-    -- ScrollView 兜底，但**必须回退**——测试用 walk(root) + isVisible 沿父链
-    -- 判定，多包一层 ScrollView 会改变树结构导致 3 套件红（Circle1B2/
-    -- B3SevenDays/GameLoopUI，failureCount 6→9）。现改为不加包裹层，
-    -- 靠 modalCard 的 maxHeight + 各页内容长度控制溢出。
+    -- A1（UI 重设计 v2.0 · 2026-10-20 真机截图红框②）：剧情正文收入卡内
+    -- ScrollView（id=storyTextScroll），「结束对话」留在滚动区之外（契约同结局页）。
+    -- 注：旧注释声称 §7.9 不能给剧情页套 ScrollView（会改树结构致 3 套件红）——
+    -- 该结论基于「walk+isVisible 沿父链判定」的旧测试；现契约（Circle1B12）已改为
+    -- 显式按 id 查找滚动容器，且故事关闭按钮仍为 storyBody 直接子节点，树结构等价，
+    -- 包裹 ScrollView 不再引发回归（compList / elderDialogueScroll 早已安全使用）。
     refs.storyBody = UI.Panel { width = "100%", flexGrow = 1, flexBasis = 0, gap = 12 }
     refs.storyText = UI.Label {
         id = "storyDialogText",
@@ -1867,7 +1881,16 @@ local header = UI.Panel {
         fontColor = UiKit.ink.body,
         whiteSpace = "normal",
     }
-    refs.storyBody:AddChild(refs.storyText)
+    refs.storyBody:AddChild(UI.ScrollView {
+        id = "storyTextScroll",
+        width = "100%",
+        flexGrow = 1,
+        flexBasis = 0,
+        minHeight = 0,
+        scrollY = true,
+        showScrollbar = true,
+        children = { refs.storyText },
+    })
     refs.storyClose = makeButton("结束对话", function()
         if state.openingActive then
             state.openingDismissedGeneration = state.openingGeneration
@@ -3320,6 +3343,32 @@ local header = UI.Panel {
             or showEnding or showOpening or showCompendium or showNewRunConfirm
         refs.overlay:SetVisible(overlayShown)
         fadeOpacity(refs.modalCard, overlayShown and 1 or 0)
+        -- A1（UI 重设计 v2.0 · 2026-10-20 真机截图红框①）：游玩中模态打开时，
+        -- 收敛所有与模态争夺焦点的 HUD 元素（卡宿主/操作坞/水彩条/成就 toast/
+        -- 捕鱼气泡/投掷/木桶/破网/调试面板），让模态独占海面视野。
+        -- 启动流模态（云存档 entry / 第1天开场教学）不收敛：两者本就是全屏暗遮罩，
+        -- 港口默认版式即初始状态，收敛再恢复只在最初几帧造成无意义闪动。
+        -- 恢复语义：cardHost 在上方（line 2968）每帧按 infoOpen 赋值、各浮层
+        -- （catchBubble/throw*/barrel/netChoice/watercolorStrip）也有每帧显隐逻辑，
+        -- 不覆盖即自动恢复；actionBar 历史以来无每帧显隐逻辑，必须在此显式恢复。
+        -- 注意不能用 `not overlayShown` 作恢复条件——结局关闭后开场教学模态会接替
+        -- （overlayShown 仍为真但属启动流不收敛），那样坞会一直留在隐藏态。改为
+        -- 「非收敛帧且坞当前处于隐藏」才写恢复，既覆盖模态关闭也避免每帧重复 SetVisible。
+        local collapseHud = overlayShown and not showEntry and not showOpening
+        if collapseHud then
+            cardHost:SetVisible(false)
+            if actionBar then actionBar:SetVisible(false) end
+            if refs.watercolorStrip then refs.watercolorStrip:SetVisible(false) end
+            refs.achievementToast:SetVisible(false)
+            refs.catchBubble:SetVisible(false)
+            refs.throwPickerPanel:SetVisible(false)
+            refs.throwSelectionPanel:SetVisible(false)
+            refs.barrelPanel:SetVisible(false)
+            refs.netChoicePanel:SetVisible(false)
+            if refs.debugPanel then refs.debugPanel:SetVisible(false) end
+        elseif actionBar and not actionBar:IsVisible() then
+            actionBar:SetVisible(true)
+        end
         -- V2.7：教学提示/回想与其它剧情结果共用同一单一模态（不并发）。
         local storyTitle = storyDialog and storyDialog.kind == "elder_fate" and "第4天 · 老人"
             or storyDialog and storyDialog.kind == "apple_basket" and "第6天 · 船舱"
