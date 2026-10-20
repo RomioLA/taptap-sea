@@ -76,6 +76,20 @@ end
 local BIRD_MIN_SCREEN_SPAN_PX = 10
 -- 引擎侧亚像素剔除线（ImageArt.UPRIGHT_MIN_PX=2）上方的最低安全值。
 local BIRD_RASTER_MIN_SPAN_PX = 3
+-- 俯冲末帧的可读性下限（2026-10-20 修复：俯冲结束像「鸟消失」）。
+-- 旧口径把 diveProgress 线性乘进体量：dive=1 时翼展 1.8m→0.684m（38%）、
+-- 悬停高度 1.2m→0（贴住水面）。鸟群此刻本应继续盘旋并被绘制，但「38% 体量 +
+-- 零高度」在远处只剩几像素且与水面糊在一起，玩家读到的就是「鸟没了」。
+-- 因此俯冲只表达姿态、不表达体量归零：折叠幅度与下压高度都设下限，
+-- 满折叠仍保有 72% 翼展、45% 悬停高度，立牌/平铺/矢量三条绘制路径共用同一口径。
+local BIRD_DIVE_FOLD_MAX = 0.45
+local BIRD_DIVE_ALTITUDE_MIN_RATIO = 0.45
+
+-- 俯冲进度 → 折叠幅度（0..BIRD_DIVE_FOLD_MAX）：满折叠不再继续压翼展。
+local function birdDiveFold(dive)
+    local value = finite(dive) and dive or 0
+    return math.min(BIRD_DIVE_FOLD_MAX, math.max(0, value))
+end
 -- 立牌水平镜像死区（cos heading 的绝对值）：正前/正后飞时 cos≈0，若跟随符号翻转
 -- 会每帧抖动，故 ±0.26 内一律不翻转（≈ ±15°），保留"明显朝左/朝右"的朝向可读性。
 local BIRD_FLIP_DEADZONE = 0.26
@@ -1051,9 +1065,15 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
                     -- heading 的屏幕横向分量镜像（固定偏航投影下 ∝ cos(heading)，
                     -- 死区避免正前/正后飞时来回翻转）。回退链不变：俯视素材
                     -- gull/gull_dive 保持 Plane（正俯视本就该平铺），再失败走矢量。
-                    local dive = entry.dive or 0
-                    local birdAltitude = Config.visual.projection.birdAltitude * (1 - dive)
-                    local birdWidth = BIRD_SPAN_METERS * (1 - 0.62 * dive)
+                    local dive = finite(entry.dive) and entry.dive or 0
+                    dive = math.min(1, math.max(0, dive))
+                    -- 俯冲只折叠姿态：折叠幅度与下压高度都有下限（见 BIRD_DIVE_FOLD_MAX），
+                    -- 满折叠的末帧仍有 72% 翼展、45% 悬停高度——鸟群继续盘旋时不会「缩没」。
+                    local fold = birdDiveFold(dive)
+                    local birdAltitude = math.max(
+                        Config.visual.projection.birdAltitude * (1 - dive),
+                        Config.visual.projection.birdAltitude * BIRD_DIVE_ALTITUDE_MIN_RATIO)
+                    local birdWidth = BIRD_SPAN_METERS * (1 - 0.62 * fold)
                     -- 2026-10-19 真机二轮反馈（红框截图：天空三只海鸥是白色折线鸟）：
                     -- 俯冲时翼展缩到 0.68m，远处 screenWidth 跌破 ImageArt 的
                     -- UPRIGHT_MIN_PX=2 亚像素剔除线 → Upright 返回 false，回退
@@ -1074,11 +1094,11 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
                         local fallback = dive > 0.05
                             and ImageArt.IsLoaded(ctx, "gull_dive") and "gull_dive" or "gull"
                         local birdLength = 3.2
-                        local birdSpan = birdLength * (1 - 0.62 * dive)
+                        local birdSpan = birdLength * (1 - 0.62 * fold)
                         if not ImageArt.Plane(ctx, fallback, movement, point, birdLength,
                             birdSpan * flapScale, entry.heading, birdAltitude) then
                             groundFrame(ctx, movement, point, birdAltitude, function(scale, api)
-                                Draw.WorldSeabird(ctx, 0, 0, scale, entry.heading, dive, api)
+                                Draw.WorldSeabird(ctx, 0, 0, scale, entry.heading, fold, api)
                             end)
                         end
                     end
@@ -1120,5 +1140,9 @@ end
 
 -- Read-only screen-edge view used by Scene and the headless presentation tests.
 SeaDraw.BuildCommuterFlockLayout = commuterFlockLayout
+-- 俯冲末帧可读性契约（供离线渲染测试直接引用，避免测试里重复写死魔数）。
+SeaDraw.BIRD_DIVE_FOLD_MAX = BIRD_DIVE_FOLD_MAX
+SeaDraw.BIRD_DIVE_ALTITUDE_MIN_RATIO = BIRD_DIVE_ALTITUDE_MIN_RATIO
+SeaDraw.BirdDiveFold = birdDiveFold
 
 return SeaDraw
