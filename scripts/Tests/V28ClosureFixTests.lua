@@ -331,12 +331,32 @@ function Tests.Run()
         eq(f.loop.player.inventory:GetItems()[1], "apple", "the other item is untouched")
     end)
 
-    test("P1 ecology items still go through the WorldDrop receiver", function()
-        local f = atSea({ items = { "apple" } })
+    test("P1 ecology items only reach the WorldDrop receiver through the formal throw flow", function()
+        -- 第二轮审查修正后的正式语义：
+        --   【丢弃】= 直接销毁腾格（不需要坐标，不产生 WorldDrop）；
+        --   【投放】= 底部【投放】/ 鱼饵“使用”选点 → 选点 → WorldDrop。
+        -- 旧断言要求“苹果点丢弃也走 WorldDrop”，正是本轮要修掉的入口缺口
+        -- （背包丢弃没有海面坐标，正式 Bridge 一律回滚，玩家丢不掉苹果）。
+        local f = atSea({ items = { "apple", "apple" } })
         local dropCalls = 0
-        f.loop.options.dropReceiver = function() dropCalls = dropCalls + 1; return true end
-        truthy(f.loop:DropItem(1))
-        eq(dropCalls, 1, "apple discard still produces a world drop (existing bait/throw path)")
+        f.loop.options.dropReceiver = function(payload)
+            dropCalls = dropCalls + 1
+            return payload ~= nil
+        end
+        -- ① 背包【丢弃】：销毁腾格，receiver 调用 0 次。
+        local discarded, discardResult = f.loop:DropItem(1)
+        truthy(discarded, "an ecology item can be discarded from the cabin menu")
+        eq(discardResult, "discarded")
+        eq(dropCalls, 0, "P1 REGRESSION: cabin discard must not reach the WorldDrop receiver")
+        eq(#f.loop.player.inventory:GetItems(), 1, "the slot is freed")
+
+        -- ② 底部【投放】：选点后仍走 WorldDrop，receiver 调用 1 次。
+        local index = #f.loop.player.inventory:GetItems()
+        truthy(f.loop:BeginThrowItem(index), "the same item stays throwable through the formal flow")
+        assert(f.loop.actions):SetDropTarget({ x = f.runtime.ship.position.x,
+            y = f.runtime.ship.position.y })
+        truthy(f.loop:DropItem(index), "formal throw hands the item to the world")
+        eq(dropCalls, 1, "the formal throw flow still produces a WorldDrop")
     end)
 
     -- =========================================================
@@ -533,6 +553,37 @@ function Tests.Run()
         local before = fishCount(runtime)
         truthy(runtime:ReleaseFishAtContent("trapped_net_01", "sardine", 2))
         eq(fishCount(runtime), before + 2, "2/2 spawns two fish")
+    end)
+
+    test("P2 a spawn failure after the first fish rolls the whole batch back", function()
+        -- 第二轮审查：位置全部校验通过、但第二条 spawnFish 异常失败时，
+        -- 旧实现只 return false，第一条鱼留在世界里 → 玩家看到“处理失败
+        -- 但海面多了一条鱼”，钥匙也没拿到（半完成态）。
+        -- 这里注入「第二次 spawnFish 返回 nil」，断言世界里 0 条新鱼。
+        local runtime = Runtime.New({ departure = { x = 0, y = 0 }, initializeRegions = false })
+        local before = fishCount(runtime)
+        local originalSpawn = runtime.spawnFish
+        local calls = 0
+        runtime.spawnFish = function(self, species, position, rotation, deferActivity)
+            calls = calls + 1
+            if calls >= 2 then return nil end -- 第二条生成失败
+            return originalSpawn(self, species, position, rotation, deferActivity)
+        end
+        local ok, reason = runtime:ReleaseFishAtContent("trapped_net_01", "sardine", 2)
+        runtime.spawnFish = originalSpawn
+        eq(ok, false, "P2 REGRESSION: a half-spawned batch must fail")
+        eq(reason, "fish_release_incomplete")
+        eq(calls, 2, "the runtime did attempt both individuals")
+        eq(fishCount(runtime), before,
+            "P2 REGRESSION: the already-spawned first fish must be rolled back")
+        -- behaviors 缓存也不能留下孤儿条目。
+        local orphans = 0
+        for _, entity in ipairs(runtime.world.entities) do
+            if entity.species == "sardine" and not entity.removed and runtime.behaviors[entity.id] == nil then
+                orphans = orphans + 1
+            end
+        end
+        eq(orphans, 0, "no fish survives without a behavior")
     end)
 
     -- =========================================================

@@ -2852,19 +2852,44 @@ local header = UI.Panel {
                     useBtn:SetDisabled(busy or entry.canUse ~= true)
                     row:AddChild(useBtn)
                     local giveBtn = makeButton("给老人", function()
-                        invokeLoop("ShowV28TreasureToElder", treasureId)
+                        -- V2.8 Closure（第二轮审查）：Loop 的 ShowV28TreasureToElder 要求
+                        -- 老人对话已经打开（elder_dialog_required），否则直接失败。
+                        -- 旧实现直接调它，玩家点一次只能得到沉默或错误码。
+                        -- 这里与背包物品的「给老人」走同一条合法路径：先打开对话，
+                        -- 成功后再展示（展示不消耗）。
+                        local opened = invokeLoop("SetElderOpen", true)
+                        if opened and loop.elderOpen == true then
+                            local shown, feedback, exchange = invokeLoop("ShowV28TreasureToElder", treasureId)
+                            if shown then
+                                recordElderExchange(exchange, "展示 " .. entry.name, feedback)
+                            end
+                        end
                         refresh()
                     end, "secondary", 70)
+                    -- canGive 为假时保留按钮并置灰（不用置灰代替反馈：
+                    -- Loop 仍会给老人不在世等具体原因）。
                     giveBtn:SetDisabled(busy or entry.canGive ~= true)
                     row:AddChild(giveBtn)
                     local discardBtn = makeButton("丢弃", function()
                         invokeLoop("DiscardV28Treasure", treasureId)
                         refresh()
                     end, "secondary", 62)
-                    -- 策划：航海残页/生锈钥匙不可丢弃；保留按钮但置灰，
-                    -- 点击路径仍会给出明确原因（不用置灰代替反馈）。
-                    discardBtn:SetDisabled(entry.canDiscard ~= true)
+                    -- 策划：航海残页/生锈钥匙不可丢弃。
+                    -- V2.8 Closure（第二轮审查）：真实引擎里 SetDisabled(true) 会
+                    -- 拦掉点击，于是“回调里给原因”玩家永远看不到——原因只存在
+                    -- 于 Loop.lastMessage，而置灰按钮不会写它。
+                    -- 因此改为「禁用按钮 + 同屏明确原因文字」：
+                    -- 原因直接写在该行按钮旁边，玩家不用点也能读到为什么不能丢。
+                    local discardBlocked = entry.canDiscard ~= true
+                    discardBtn:SetDisabled(discardBlocked)
                     row:AddChild(discardBtn)
+                    if discardBlocked and type(entry.discardDisabledReason) == "string"
+                        and entry.discardDisabledReason ~= "" then
+                        -- 独立道具栏条目极少（≤3），行内加一行小字不占版面，
+                        -- 且随条目重建，不会残留过期原因。
+                        row:AddChild(makeLabel(entry.discardDisabledReason,
+                            UiKit.fontSize.small, UiKit.ink.dim))
+                    end
                     refs.v28TreasureRows:AddChild(row)
                 end
             end

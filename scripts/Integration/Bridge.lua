@@ -174,11 +174,15 @@ local function receiveVortexDrop(self, payload, position)
         return false
     end
 
-    local handled, result = runtime:HandleVortexDrop(payload, position)
-    if not handled then return false end
-    if result and result.kind == "small" then
+    -- V2.8 Closure（第二轮审查）：HandleVortexDrop 只返回**一个**表（失败时返回 nil, reason），
+    -- 旧实现写 `local handled, result = runtime:HandleVortexDrop(...)`，于是 result 恒为 nil，
+    -- 下面两个 kind 分支永远不会命中 —— 苹果/小鱼投放只得到通用“已交接投放请求”，
+    -- 玩家看不到海眼专属反馈。这里按真实返回值收。
+    local result = runtime:HandleVortexDrop(payload, position)
+    if not result then return false end
+    if result.kind == "small" then
         payload.vortexFeedback = "吃食被卷入旋转的海眼，顺着水底暗流，气味向更远的海域扩散开去。"
-    elseif result and result.kind == "big" then
+    elseif result.kind == "big" then
         payload.vortexFeedback = "小鱼被海眼的暗流卷住，血腥与动静顺着涡流远远传开，远处的水面似乎有了躁动。"
     end
     return true

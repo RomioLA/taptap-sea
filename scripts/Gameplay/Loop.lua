@@ -2145,13 +2145,22 @@ function Loop:DropItem(index)
         self.lastMessage = "船上才能丢弃物品，请先出海。"
         return false, "sea_required"
     end
-    -- V2.8 Closure：区分「丢弃」与「投放」。
-    -- 【丢弃】= 从船舱删除物品腾格，不产生 WorldDrop、不参与鱼 AI、不参与海眼、
-    -- 不需要海面坐标；【投放】才是底部【投放】→ 选点 → WorldDrop。
-    -- 只有显式登记在 Items.CanWorldDrop 的生态物（苹果/鱼饵/小鱼/大鱼）
-    -- 才走下面的 WorldDrop 交接；其余普通交易品（珠宝/珊瑚枝/深海珍珠/
-    -- 海底金属货箱）直接销毁腾格。
-    if not Items.CanWorldDrop(id) then
+    -- V2.8 Closure：区分「丢弃」与「投放」（第二轮审查修正）。
+    --
+    -- 【丢弃】= 从船舱直接销毁物品腾格，不产生 WorldDrop、不参与鱼 AI、
+    --           不参与海眼、不需要海面坐标。
+    -- 【投放】= 底部【投放】/ 鱼饵“使用”选点 → 选点 → WorldDrop。
+    --
+    -- 判定依据是「本次是否真的有正式投放选点」，而不是「这个物品能不能投放」。
+    -- 旧实现拿 Items.CanWorldDrop 当判据，于是苹果/鱼饵/沙丁鱼/金枪鱼从
+    -- 背包菜单点【丢弃】时仍然走 WorldDrop，而背包丢弃没有海面坐标，
+    -- 正式 Bridge 一律回滚 → 玩家看到“丢弃失败，物品仍保留”，四个常见
+    -- 可丢弃物全丢不掉（真实玩家入口缺口）。
+    -- 现在：没有投放选点 → 直接销毁腾格；有选点（底部【投放】流程）才交接世界。
+    local officialThrow = self.actions ~= nil
+        and type(self.actions.GetDropTarget) == "function"
+        and self.actions:GetDropTarget() ~= nil
+    if not officialThrow then
         local removed, reason = self.player.inventory:Remove(index)
         if removed ~= true then
             self.lastMessage = "物品已不存在。"
@@ -2165,16 +2174,9 @@ function Loop:DropItem(index)
         self.lastMessage = "附近没有接收地点，物品仍保留在船舱里。"
         return false, "drop_receiver_unavailable"
     end
-    -- V2.8：区分「正式投放」与「背包丢弃」。
-    -- 只有通过 SetDropTarget 显式选定的海面投放点（底部【投放】/ 鱼饵“使用”选点）
-    -- 才是正式 WorldDrop；物品菜单【丢弃】与 ThrowItemAtShip 快捷路径没有该选点，
-    -- 因此绝不触发海眼特殊回应。
-    local officialThrow = self.actions ~= nil
-        and type(self.actions.GetDropTarget) == "function"
-        and self.actions:GetDropTarget() ~= nil
     local payload = { itemId = id, category = definition.category,
         worldEffect = definition.worldEffect, lifetimeSec = definition.lifetimeSec,
-        officialThrow = officialThrow == true }
+        officialThrow = true }
     self.dropInFlight = true
     local removed, previous, stamina = self:RemoveCargo(index)
     if not removed then self.dropInFlight = false; return false, previous end
@@ -2227,14 +2229,43 @@ function Loop:DropBaitBesideShip(index, definition)
         return false, "drop_receiver_unavailable"
     end
 
+    -- V2.8 Closure（第二轮审查）：船边投饵必须在**船当前位置**交接，
+    -- 而不是靠“上一次点过的海面投放点”。
+    -- 旧实现直接调 dropReceiver，而正式 Bridge.receiveDrop 必须先
+    -- GetDropTarget() 拿到坐标才接受；背包【丢弃】根本没有选点，
+    -- 于是鱼饵丢弃恒为 drop_rejected → 物品回滚（真实玩家入口缺口）。
+    -- 这里为本次交接临时装一个船位选点，交接结束后无论成败都恢复原选点，
+    -- 不污染底部【投放】的状态。
+    -- 注意：这里不覆盖已有的海面投放选点。Bridge:HandleThrowPointer 是
+    -- SetDropTarget → DropItem 的同步链路，交接时选点必须还在，
+    -- 覆盖成船位会让“点海面投放”的落点被悄悄改成船位。
+    -- 只有在**根本没有选点**（= 背包【丢弃】）时才临时补一个船位选点。
+    local actions = self.actions
+    local previousTarget = actions and type(actions.GetDropTarget) == "function"
+        and actions:GetDropTarget() or nil
+    local restoreTarget
+    if actions and previousTarget == nil then
+        local shipPosition = self.runtime and type(self.runtime.GetShipPosition) == "function"
+            and self.runtime:GetShipPosition() or nil
+        if type(shipPosition) == "table"
+            and type(shipPosition.x) == "number" and type(shipPosition.y) == "number" then
+            local placed = pcall(actions.SetDropTarget, actions, { x = shipPosition.x, y = shipPosition.y })
+            if placed then
+                restoreTarget = function() pcall(actions.SetDropTarget, actions, nil) end
+            end
+        end
+    end
+
     self.dropInFlight = true
     local removed, previous, stamina = self:RemoveCargo(index)
     if not removed then
         self.dropInFlight = false
+        if restoreTarget then restoreTarget() end
         return false, previous
     end
     local ok, accepted = Diagnostics.Call("Loop", "drop_receiver", self.options.dropReceiver, payload)
     self.dropInFlight = false
+    if restoreTarget then restoreTarget() end
     if ok and accepted == true then
         self.lastMessage = "鱼饵沉入水中，泛起一点细小的波纹。也许附近的小鱼很快就会察觉。"
         if self.knowledge and payload.worldEffect then

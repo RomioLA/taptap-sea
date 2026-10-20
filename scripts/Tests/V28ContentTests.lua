@@ -92,7 +92,7 @@ local function bridgeFixture()
     return runtime, bridge, bridge.loop
 end
 
-function Tests.Run()
+function Tests.Run(recorder)
     local results = {}
     local names = {}
     local function test(name, run)
@@ -106,8 +106,12 @@ function Tests.Run()
     test("V2.8 authored coordinates, radii, layers and blocking match the sealed workbook", function()
         local expected = {
             { "reef_vis_01", -70, 55, 3, "surface", true },
-            { "reef_vis_02", 110, -80, 3, "surface", true },
-            { "reef_vis_03", 160, -115, 3, "surface", true },
+            -- 2026-10-20（V2.8 截止前可发现性）：reef_vis_02/03 从 110,-80 / 160,-115
+            -- 向外移到 150,-92 / 200,-140，与东南向的海岛链（island_reefcluster_v1 /
+            -- island_stele_v1）形成“礁石→羽毛→岛影”的逐段引导，而不是三个点
+            -- 堆在同一块水域里（旧坐标三者互相遮住）。半径/层/阻挡未改。
+            { "reef_vis_02", 150, -92, 3, "surface", true },
+            { "reef_vis_03", 200, -140, 3, "surface", true },
             { "debris_01", -96, -72, 3, "surface", false },
             { "shipwreck_01", -116, -87, 3.5, "underwater", false },
             { "bottle_note_01", -55, 95, 1.2, "surface", false },
@@ -1019,6 +1023,128 @@ function Tests.Run()
         dy = kelp.position.y - runtime.ship.position.y
         falsy(dx * dx + dy * dy <= Config.interaction.outlineDistance ^ 2,
             "beyond 80m the illusion must not draw")
+    end)
+
+    test("kelp mirage 80m silhouette really reaches the draw commands", function()
+        -- 第二轮审查：上一条只验「逻辑条件」，没验「真的画了」。
+        -- 这里用运行器提供的真实 NVG 录制器跑一遍 SeaDraw.Scene，断言：
+        --   ① 60m 处（无探海镜、水下隐藏）假岛轮廓真的产生填充绘制；
+        --   ② 20m 内识破后轮廓半径收窄（同屏填充量下降，不是同一张图）；
+        --   ③ 超过 80m 后零绘制。
+        -- 若运行器未提供录制器（例如被单独 require），跳过并明确标记。
+        -- 两套运行器能力不同：sea_view_regression 注入真实 NVGCapture，
+        -- world_content 不注入任何 nvg 绑定。后者在这里装一个**只记录填充色**
+        -- 的最小桩，保证本用例在任何运行器下都真的跑绘制路径（不 skcip）。
+        local ownRecorder = nil
+        if recorder == nil or type(recorder.reset) ~= "function" then
+            ownRecorder = { elements = {} }
+            function ownRecorder.reset() ownRecorder.elements = {} end
+            function ownRecorder.setFillColor(ctx, color)
+                ownRecorder.pending = color
+            end
+            function ownRecorder.fill(ctx)
+                local c = ownRecorder.pending
+                if type(c) == "table" then
+                    ownRecorder.elements[#ownRecorder.elements + 1] = {
+                        r = c.r or c[1], g = c.g or c[2], b = c.b or c[3], a = c.a or c[4],
+                    }
+                end
+            end
+            function ownRecorder.countFillColor(r, g, b, a)
+                local count = 0
+                for _, e in ipairs(ownRecorder.elements) do
+                    if math.abs(e.r - r) < 1 and math.abs(e.g - g) < 1
+                        and math.abs(e.b - b) < 1 and math.abs(e.a - (a or 255)) < 1 then
+                        count = count + 1
+                    end
+                end
+                return count
+            end
+            local stubs = {
+                nvgRGBA = function(r, g, b, a)
+                    return { r = r, g = g, b = b, a = a or 255 }
+                end,
+                nvgBeginPath = function() end, nvgMoveTo = function() end,
+                nvgLineTo = function() end, nvgQuadTo = function() end,
+                nvgBezierTo = function() end, nvgClosePath = function() end,
+                nvgRect = function() end, nvgRoundedRect = function() end,
+                nvgCircle = function() end, nvgEllipse = function() end,
+                nvgFillColor = ownRecorder.setFillColor, nvgFill = ownRecorder.fill,
+                nvgStrokeColor = function() end, nvgStrokeWidth = function() end,
+                nvgStroke = function() end, nvgSave = function() end,
+                nvgRestore = function() end, nvgTranslate = function() end,
+                nvgScale = function() end, nvgRotate = function() end,
+                nvgScissor = function() end, nvgIntersectScissor = function() end,
+                nvgResetScissor = function() end, nvgGlobalAlpha = function() end,
+                nvgShapeAntiAlias = function() end, nvgTransform = function() end,
+                nvgFillPaint = function() end, nvgLinearGradient = function() return 0 end,
+                nvgRadialGradient = function() return 0 end,
+                nvgImagePattern = function() return 0 end,
+                nvgCreateImage = function() return -1 end,
+                nvgImageSize = function() end,
+                nvgText = function() end, nvgFontFace = function() end,
+                nvgFontSize = function() end, nvgTextAlign = function() end,
+                nvgCreateFont = function() return 0 end,
+                nvgTextBounds = function() return 0, 0, 0, 0 end,
+                -- ImageArt 读取这几个标志常量做位运算（REPEATX|REPEATY|MIPMAPS）。
+                NVG_IMAGE_GENERATE_MIPMAPS = 1,
+                NVG_IMAGE_REPEATX = 2,
+                NVG_IMAGE_REPEATY = 4,
+                NVG_IMAGE_FLIPY = 8,
+                NVG_IMAGE_PREMULTIPLIED = 16,
+                NVG_IMAGE_NEAREST = 32,
+            }
+            local saved = {}
+            for name, fn in pairs(stubs) do
+                saved[name] = _G[name]
+                _G[name] = fn
+            end
+            recorder = ownRecorder
+            recorder._restore = function()
+                for name in pairs(stubs) do _G[name] = saved[name] end
+            end
+        end
+        local function cleanup()
+            if ownRecorder and ownRecorder._restore then ownRecorder._restore() end
+        end
+        local SeaDraw = require("Ocean.SeaDraw")
+        local runtime = Runtime.New({ departure = { x = 0, y = 0 }, initializeRegions = false })
+        runtime.movement:SetViewport(1280, 720)
+        local kelp = assert(runtime.world.fixedContentEntities["kelp_mirage_01"])
+        runtime.world.showUnderwater = false
+        runtime.world.scopeEnabled = false
+
+        local function drawAt(distance)
+            runtime.ship.position = { x = kelp.position.x, y = kelp.position.y - distance }
+            runtime.movement:ResetAtPosition(runtime.ship.position)
+            recorder.reset()
+            SeaDraw.Scene({}, 1280, 720, runtime, nil, nil,
+                function() return false end, function() return false end)
+            return recorder.countFillColor(150, 170, 150, 90) -- 未识破的岛影填充色
+        end
+
+        local okBody, bodyErr = pcall(function()
+        local farIllusion = drawAt(60)
+        assert(farIllusion > 0,
+            "at 60m the unknown-island silhouette must really be painted, got " .. farIllusion .. " fills")
+        local beyondRange = drawAt(85)
+        eq(beyondRange, 0, "beyond 80m the illusion must paint nothing")
+
+        -- 20m 内识破：改用藻层配色（V28_PALETTE.kelp.fill = 88,138,96,190）。
+        runtime.ship.position = { x = kelp.position.x, y = kelp.position.y - 15 }
+        runtime.movement:ResetAtPosition(runtime.ship.position)
+        recorder.reset()
+        SeaDraw.Scene({}, 1280, 720, runtime, nil, nil,
+            function(contentId) return contentId == "kelp_mirage_01" end,
+            function() return false end)
+        local recognizedFills = recorder.countFillColor(88, 138, 96, 190)
+        assert(recognizedFills > 0,
+            "once recognized the kelp layer must be painted instead of the illusion")
+        eq(recorder.countFillColor(150, 170, 150, 90), 0,
+            "the unknown-island fill must disappear after recognition")
+        end)
+        cleanup()
+        assert(okBody, bodyErr)
     end)
 
     return { results = results }

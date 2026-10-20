@@ -269,7 +269,7 @@ function Runtime:ReleaseFishAtContent(contentId, species, count)
     end
 
     -- 阶段二：全部位置已确认，统一生成并进入 Flee。
-    local spawned = 0
+    local spawned, spawnedIds = 0, {}
     for index = 1, count do
         local fish = self:spawnFish(species, positions[index], 0, true)
         -- 直接进入 Flee 并上浮：由现有 FSM 的 Flee 状态承载，不新增 AI 状态。
@@ -280,10 +280,19 @@ function Runtime:ReleaseFishAtContent(contentId, species, count)
             fish.state = "Flee"
             if fish.fsm then fish.fsm:Change("Flee") end
             spawned = spawned + 1
+            spawnedIds[#spawnedIds + 1] = fish.id
         end
     end
     if spawned ~= count then
-        -- spawnFish 在位置已校验后仍失败属于异常；回滚已生成的鱼，不留半套。
+        -- V2.8 Closure（第二轮审查）：spawnFish 在位置已校验后仍失败属于异常。
+        -- 旧实现只 return false，**已生成的前几条鱼留在世界里**——玩家会看到
+        -- “破网判定失败但海面多了 1 条鱼”，钥匙也没拿到，属于半完成态。
+        -- 这里把已生成的个体全部撤掉（连同 behaviors 缓存），保证 0/2、1/2、2/2
+        -- 三种结果对外只有“全成”或“全无”。
+        for _, fishId in ipairs(spawnedIds) do
+            self.world:remove(fishId, "release_rollback")
+            if self.behaviors then self.behaviors[fishId] = nil end
+        end
         return false, "fish_release_incomplete"
     end
     self.world:updateActivity(self.ship.position)
