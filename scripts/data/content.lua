@@ -69,7 +69,7 @@ return {
             layer = "surface",
             blocking = true,
             observe = {
-                text = "孤立的礁石顶上落着几根白色海鸟羽毛，朝东北方向被风压弯。看来常有海鸟借这里歇脚，再往东北飞去。",
+                text = "孤立的礁石顶上落着几根白色海鸟羽毛，朝东南方向被风压弯。看来常有海鸟借这里歇脚，再往东南飞去。",
             },
             tuningStatus = "V28_DISCOVERABILITY_GEOMETRY",
         },
@@ -148,7 +148,7 @@ return {
                 promptText = "拾取漂流瓶",
                 text = "你捞起海面上半浮半沉的旧玻璃瓶，拔开木塞，抽出一张《航海残页（一）》。",
                 readTitle = "航海残页（一）",
-                readText = "瓶里塞着半页被海水泡黄的笔记：“往北偏西再走百来米，海面上总有洗不散的孤泡。早年我贴着水面往下看，隐约瞧见一副吓人的大骨头……怪的是，那儿的小鱼虽少，大鱼却总爱围着骨头转悠。”",
+                readText = "瓶里塞着半页被海水泡黄的笔记：“往北再走百来米，海面上总有洗不散的孤泡。早年我贴着水面往下看，隐约瞧见一副吓人的大骨头……怪的是，那儿的小鱼虽少，大鱼却总爱围着骨头转悠。”",
             },
             tuningStatus = "V28_FIRST_WAVE_GEOMETRY",
         },
@@ -180,7 +180,14 @@ return {
             blocking = false,
             stateFields = { "recognized" },
             recognizeText = "巨大的骸骨沉在深水里，大鱼常在骨骸附近游弋。",
-            bubble = { intervalSec = 1.5, surfaceRadius = 5 },
+            -- 2026-10-20 真人试玩 RCA（HUMAN-PLAYTEST-RCA-FIX-01）：
+            -- surfaceRadius 是“海面慢气泡提示”的**发现半径**，不是互动距离。
+            -- 旧值 5m 意味着必须撞到巨骨脸上才能看到线索，完全失去发现作用
+            -- （真人反馈：根本不知道该往哪开）。首轮试玩值改为 40m。
+            -- 只改提示绘制距离：巨骨真实坐标、探海镜 20m/90°、水下显示、
+            -- 捕鱼规则、大鱼分布、实际互动距离（仍 5m）全部不变。
+            -- 气泡仍与“大鱼移动水花”明显不同：固定位置、缓慢、无方向尾迹。
+            bubble = { intervalSec = 1.5, surfaceRadius = 40 },
             tuningStatus = "V28_FIRST_WAVE_GEOMETRY",
         },
         -- 10 海眼漩涡：0体力观察；中心<3m禁网心；仅正式 WorldDrop 触发。

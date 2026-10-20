@@ -62,12 +62,20 @@ local function entityHeading(entity)
     return heading
 end
 
--- 海鸥立牌的屏幕空间最小翼展（像素）。2026-10-19 真机二轮反馈：俯冲姿态下翼展
--- 缩到 0.68m，远处按透视折算后不足 ImageArt.UPRIGHT_MIN_PX=2 亚像素剔除线，
--- 立牌返回 false 回退 WorldSeabird 矢量折线鸟——真机天空呈现三只白色折线鸟。
--- 给一个可见下限（略高于剔除线，保证 nvgImagePattern 取到有效像素），远处海鸥
--- 即便透视缩到亚像素也照常贴水彩立牌，不再掉回矢量。
-local BIRD_MIN_SCREEN_SPAN_PX = 3
+-- 海鸥立牌的屏幕空间最小翼展（像素）。
+-- 2026-10-19 真机二轮反馈：俯冲姿态下翼展缩到 0.68m，远处按透视折算后不足
+-- ImageArt.UPRIGHT_MIN_PX=2 亚像素剔除线，立牌返回 false 回退 WorldSeabird
+-- 矢量折线鸟。因此需要一个“技术不被剔除”的下限。
+-- 2026-10-20 真人试玩 RCA（HUMAN-PLAYTEST-RCA-FIX-01）：这个 3px 只是**技术**
+-- 下限（刚过剔除线），远低于**玩家可辨识**下限——真人反馈“鸟确实生成了，但屏幕
+-- 上几乎看不见”。现在把两个概念分开：
+--   · BIRD_MIN_SCREEN_SPAN_PX —— 玩家可辨识下限（首轮试玩值 10px），
+--     决定立牌实际画多大；
+--   · BIRD_RASTER_MIN_SPAN_PX —— 引擎亚像素剔除线，只用作“完全不可见”兜底。
+-- 只改 presentation，不动鸟与小鱼对应关系、出现条件、鱼 AI、捕鱼范围。
+local BIRD_MIN_SCREEN_SPAN_PX = 10
+-- 引擎侧亚像素剔除线（ImageArt.UPRIGHT_MIN_PX=2）上方的最低安全值。
+local BIRD_RASTER_MIN_SPAN_PX = 3
 -- 立牌水平镜像死区（cos heading 的绝对值）：正前/正后飞时 cos≈0，若跟随符号翻转
 -- 会每帧抖动，故 ±0.26 内一律不翻转（≈ ±15°），保留"明显朝左/朝右"的朝向可读性。
 local BIRD_FLIP_DEADZONE = 0.26
@@ -676,8 +684,14 @@ end
 local function drawCommuterFlock(ctx, width, height, runtime, isLocationRecognized)
     local layout = commuterFlockLayout(runtime, width, height, isLocationRecognized)
     if not layout then return 0 end
+    -- 2026-10-20 真人试玩 RCA（HUMAN-PLAYTEST-RCA-FIX-01）：通勤鸟群是 island_02 的
+    -- 唯一早期引导线索，但原 14 号屏幕尺寸在真机上偏小、难被注意到。
+    -- 首轮试玩值：整体视觉尺寸 ×1.6（14 -> 22.4）。
+    -- 只改 presentation：三只编队规则/只引导 island_02/识别后消失全部不变，
+    -- 不新增地图箭头、UI 导航线或新系统。
+    local COMMUTER_BIRD_SCREEN_SCALE = 14 * 1.6
     for _, bird in ipairs(layout.birds) do
-        Draw.WorldSeabird(ctx, bird.x, bird.y, 14, layout.bearingRadians, 0)
+        Draw.WorldSeabird(ctx, bird.x, bird.y, COMMUTER_BIRD_SCREEN_SCALE, layout.bearingRadians, 0)
     end
     return #layout.birds
 end
@@ -948,6 +962,8 @@ function SeaDraw.Scene(ctx, width, height, runtime, clock, fishingView, isLocati
                     -- 第三返回值即米→像素的 scale），故先取 scale。
                     local _, _, spanScale = Projection.Project(movement, point, birdAltitude)
                     if type(spanScale) == "number" and spanScale > 0 then
+                        -- 先保证过剔除线（技术下限），再抬到玩家可辨识下限。
+                        birdWidth = math.max(birdWidth, BIRD_RASTER_MIN_SPAN_PX / spanScale)
                         birdWidth = math.max(birdWidth, BIRD_MIN_SCREEN_SPAN_PX / spanScale)
                     end
                     if not ImageArt.Upright(ctx, ecoFrameName("eco_bird", time, 0), movement,
