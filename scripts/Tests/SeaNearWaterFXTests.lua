@@ -196,7 +196,7 @@ function Tests.Run(recorder)
         -- 默认配置下的实际布局（守住「片数有界」）
         local settings = Config.visual.nearWaterFX
         local live = WaterFX.Layout({ x = 0, y = 0 }, settings)
-        assert(#live.tiles <= 49, "默认配置片数必须在预算内")
+        assert(#live.tiles <= 36, "默认配置片数必须在预算内（B 方向调优后 6×6）")
         assert(live.sizeMeters <= 120, "默认区域不得超出单屏近水面")
         -- 中心片的中心即锚点，其归一化距离为 0（满强度）。
         -- 注意：6×6 网格没有「恰好在中心」的片（中心落在四片交界），所以取
@@ -229,7 +229,7 @@ function Tests.Run(recorder)
             local drew, stats = WaterFX.Draw({}, makeMovement(0), nil, 1, nil)
             assert(drew, "开启且贴图可用时应绘制")
             assert(stats.tiles > 0, "至少绘制到了一片")
-            assert(stats.tiles <= 49, "不得超出 7×7 片")
+            assert(stats.tiles <= 36, "不得超出 6×6 片")
             assert(#transforms >= stats.tiles * 2, "每片两个三角形各一次仿射")
             for _, entry in ipairs(patterns) do
                 assert(entry.image > 0, "图案必须绑定有效图像句柄")
