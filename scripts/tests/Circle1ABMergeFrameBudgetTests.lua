@@ -63,14 +63,15 @@ function Tests.Run()
         assert(current.id == barrel.id and current.generation == barrel.generation)
     end)
 
-    check("inventory pause stops clock sea and barrel progress together", function()
+    -- V2.7（系统规则 A16）：木桶检查期间不再允许打开船舱，
+    -- 因此“背包暂停同时冻结木桶进度”的场景已不存在。
+    -- 改为验证门禁本身：船舱与老人都被拒绝，且世界时间继续推进。
+    check("the barrel action locks the cabin and the elder while time keeps running", function()
         local runtime, bridge, loop = fixture()
-        assert(loop:SetInventoryOpen(true))
-        guardedUpdate(bridge, 0.5, 1)
-        near(runtime.time, 0); near(loop.clock.elapsed, 0); near(loop.barrel.active.elapsed, 0)
-        assert(loop:SetInventoryOpen(false))
+        assert(not loop:SetInventoryOpen(true), "cabin is locked during the barrel action")
+        assert(not loop:SetElderOpen(true), "elder is locked during the barrel action")
         guardedUpdate(bridge, 0.1)
-        near(runtime.time, 0.1); near(loop.barrel.active.elapsed, 0.1)
+        near(loop.barrel.active.elapsed, 0.1)
     end)
 
     check("rounded exact night tie settles completed barrel once before forcing port", function()

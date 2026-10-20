@@ -359,15 +359,23 @@ function Barrel:AcceptCompletion(record, evidence)
             "木桶补给已保留，请腾出两格后同时领取苹果和鱼饵。")
     else
         record.result = table.pack(true, record.stage == 1 and "empty" or "rewarded")
-        Diagnostics.Call("barrel", "message", self.loop.SetMessage, self.loop, record.stage == 1 and "什么都没有捕捞到"
-            or (record.stage == 0 and "取得1个苹果和1个鱼饵。" or "已取得探海镜。"))
+        -- V2.7（W-07，已采纳）：三阶段结果文案。第二阶段一字不改。
+        local stageMessage
+        if record.stage == 1 then
+            stageMessage = "什么都没有捕捞到"
+        elseif record.stage == 0 then
+            stageMessage = "木桶里竟有一个苹果和一份鱼饵。你把它们收好，至少今天的出海多了点底气。"
+        else
+            stageMessage = "桶底压着一片奇怪的探海镜。你举到眼前，海面下的轮廓竟清楚了一些。"
+        end
+        Diagnostics.Call("barrel", "message", self.loop.SetMessage, self.loop, stageMessage)
     end
     local barrelOutcome = record.result and record.result[2]
     local costFeedback = string.format("消耗%d体力，剩余%d体力",
         Config.barrel.cost, math.floor(tonumber(self.loop.player.stamina) or 0))
     if record.stage == 2 then
-        local lensFeedback = "获得探海镜。\n"
-            .. "打开探海镜，可看见船前方约20米、总角度90°的水下区域；船转向时观察方向也会跟着改变。\n"
+        local lensFeedback = "打开探海镜，可看见船前方约20米、总角度90°的水下区域；"
+            .. "船转向时，观察方向也会跟着改变。\n"
             .. "持续对准目标约1秒即可标记；靠近目标后可以打捞。"
         if type(self.loop.QueueActionToast) == "function" then
             self.loop:QueueActionToast(lensFeedback .. "\n" .. costFeedback, 7)
